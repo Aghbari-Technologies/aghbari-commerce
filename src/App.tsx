@@ -4,7 +4,7 @@ import { calculateClientPreviewTotal } from './domain/order';
 import { formatMoney } from './domain/pricing';
 import { getCatalog, getProductImageUrls, type CatalogItem } from './services/catalog';
 import { getCategories, type CategoryOption } from './services/categories';
-import { getCart, removeCartItem, setCartItem } from './services/cart';
+import { getCart, removeCartItem, setCartItem, syncOfflineCart } from './services/cart';
 import { createOrder } from './services/orders';
 import { getCustomerOrders, type CustomerOrderSummary } from './services/customerOrders';
 import { getSession, signIn, signOut } from './services/auth';
@@ -32,6 +32,7 @@ export default function App() {
   const [cart, setCart] = useState<CartLine[]>([]); const [checkoutKey, setCheckoutKey] = useState<string | null>(null); const [warehouseId, setWarehouseId] = useState<string | null>(null); const [customerId, setCustomerId] = useState<string | null>(null);
   const [orders, setOrders] = useState<CustomerOrderSummary[]>([]); const [ordersLoading, setOrdersLoading] = useState(false); const [ordersError, setOrdersError] = useState<string | null>(null);
   const [runtimeError, setRuntimeError] = useState<string | null>(null); const [orderBusy, setOrderBusy] = useState(false); const [orderResult, setOrderResult] = useState<string | null>(null);
+  const [isOnline, setIsOnline] = useState(() => typeof navigator === 'undefined' ? true : navigator.onLine);
 
   async function loadIdentity(userId: string) {
     if (!supabase) return;
@@ -65,13 +66,29 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    const handleOnline = () => {
+      setIsOnline(true);
+      void syncOfflineCart().then(({ failed }) => {
+        if (failed) setRuntimeError('تمت استعادة الاتصال، لكن بعض تحديثات السلة تحتاج إعادة المحاولة.');
+      }).catch(() => setRuntimeError('تعذر مزامنة السلة بعد استعادة الاتصال.'));
+    };
+    const handleOffline = () => setIsOnline(false);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  useEffect(() => {
     if (!signedIn) return;
     const timer = window.setTimeout(() => setCatalogSearch(query.trim()), 250);
     return () => window.clearTimeout(timer);
   }, [query, signedIn]);
 
   useEffect(() => {
-    if (!signedIn || !supabase) return; let cancelled = false;
+    if (!signedIn || !supabase || !isOnline) return; let cancelled = false;
     async function loadRuntime() {
       setCatalogLoading(true); setRuntimeError(null);
       try {
@@ -94,14 +111,14 @@ export default function App() {
       } finally { if (!cancelled) setCatalogLoading(false); }
     }
     void loadRuntime(); return () => { cancelled = true; };
-  }, [catalogSearch, categoryId, signedIn]);
+  }, [catalogSearch, categoryId, signedIn, isOnline]);
 
   useEffect(() => {
-    if (!signedIn) return; let cancelled = false;
+    if (!signedIn || !isOnline) return; let cancelled = false;
     setOrdersLoading(true); setOrdersError(null);
     void getCustomerOrders(20).then((items) => { if (!cancelled) setOrders(items); }).catch((error) => { if (!cancelled) setOrdersError(error instanceof Error ? error.message : 'تعذر تحميل الطلبات.'); }).finally(() => { if (!cancelled) setOrdersLoading(false); });
     return () => { cancelled = true; };
-  }, [signedIn, orderResult]);
+  }, [signedIn, orderResult, isOnline]);
 
   const categories = useMemo(() => [{ id: null, name: 'الكل' }, ...categoryOptions], [categoryOptions]);
   const priceFor = (product: Product) => serverPrices[product.id] ?? 0;
@@ -142,6 +159,7 @@ export default function App() {
   }
 
   async function submitOrder() {
+    if (!isOnline) { setRuntimeError('إرسال الطلب يحتاج اتصالًا بالإنترنت. تم حفظ تغييرات السلة فقط.'); return; }
     if (!customerId || !warehouseId || !cart.length || orderBusy) return;
     setOrderBusy(true); setOrderResult(null); setRuntimeError(null);
     const idempotencyKey = checkoutKey ?? crypto.randomUUID();
@@ -156,12 +174,13 @@ export default function App() {
   if (!sessionReady) return <div className="auth-shell"><div className="auth-card"><span className="eyebrow">الأغبري</span><h1>جارٍ التحقق من الجلسة</h1><p>يتم التحقق من الهوية قبل عرض بيانات المتجر.</p></div></div>;
   if (!signedIn) return <div className="auth-shell"><form className="auth-card" onSubmit={handleLogin}><span className="eyebrow">بوابة الأغبري التجارية</span><h1>تسجيل الدخول</h1><p>ادخل بحسابك للوصول إلى الكتالوج والأسعار المصرح بها.</p><label>البريد الإلكتروني<input type="email" value={email} onChange={(event) => setEmail(event.target.value)} required autoComplete="email" /></label><label>كلمة المرور<input type="password" value={password} onChange={(event) => setPassword(event.target.value)} required autoComplete="current-password" /></label>{authError && <div className="error-banner" role="alert">{authError}</div>}<button className="checkout" disabled={authBusy}>{authBusy ? 'جارٍ الدخول…' : 'دخول آمن'}</button></form></div>;
 
-  return <div className="app-shell"><header className="topbar"><div className="brand"><span className="brand-mark">أ</span><div><strong>بوابة الأغبري</strong><small>للتجارة والجملة</small></div></div><nav aria-label="التنقل الرئيسي"><a className="active" href="#catalog">المنتجات</a>{STAFF_ROLES.has(role) && <a href="#account">مركز التحكم</a>}<a href="#orders">طلباتي</a></nav><button className="cart-button" aria-label={`السلة، ${cart.length} أصناف`} onClick={() => document.getElementById('cart')?.scrollIntoView({ behavior: 'smooth' })}>السلة <b>{cart.length}</b></button><button className="signout" onClick={() => void handleSignOut()}>خروج</button></header>
-    <main><section className="hero" id="catalog"><div><span className="eyebrow">تجارة جملة أسرع</span><h1>اطلب احتياج متجرك<br/>بخطوات بسيطة.</h1><p>الكتالوج والسعر والمخزون تأتي من الخادم بعد التحقق من هوية العميل وتصنيفه.</p></div><div className="hero-card"><span>حالة الخدمة</span><strong>{runtimeError ? 'يحتاج انتباهًا' : 'متصل'}</strong><small>{runtimeError ?? 'الأسعار المعروضة هي السعر الفعّال المصرح به لحسابك.'}</small></div></section>
+  return <div className="app-shell"><header className="topbar"><div className="brand"><span className="brand-mark">أ</span><div><strong>بوابة الأغبري</strong><small>للتجارة والجملة</small></div></div><nav aria-label="التنقل الرئيسي"><a className="active" href="#catalog">المنتجات</a>{STAFF_ROLES.has(role) && <a href="#account">مركز التحكم</a>}<a href="#orders">طلباتي</a></nav><div className="topbar-actions"><button className="cart-button" aria-label={`السلة، ${cart.length} أصناف`} onClick={() => document.getElementById('cart')?.scrollIntoView({ behavior: 'smooth' })}>السلة <b>{cart.length}</b></button><button className="signout" onClick={() => void handleSignOut()}>خروج</button></div></header>
+    {!isOnline && <div className="offline-banner" role="status" aria-live="polite">أنت الآن دون اتصال. يمكنك تعديل السلة، وسيتم مزامنتها عند عودة الاتصال. <strong>إرسال الطلب يحتاج اتصالًا.</strong></div>}
+    <main><section className="hero" id="catalog"><div><span className="eyebrow">تجارة جملة أسرع</span><h1>اطلب احتياج متجرك<br/>بخطوات بسيطة.</h1><p>الكتالوج والسعر والمخزون تأتي من الخادم بعد التحقق من هوية العميل وتصنيفه.</p></div><div className="hero-card"><span>حالة الخدمة</span><strong>{runtimeError ? 'يحتاج انتباهًا' : isOnline ? 'متصل' : 'دون اتصال'}</strong><small>{runtimeError ?? (isOnline ? 'الأسعار المعروضة هي السعر الفعّال المصرح به لحسابك.' : 'البيانات المحلية قد تكون قديمة؛ لا تعتمد عليها لإتمام الطلب.')}</small></div></section>
       {runtimeError && <div className="error-banner" role="alert">{runtimeError}</div>}
       <section className="toolbar"><label className="search"><span aria-hidden="true">⌕</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="ابحث بالاسم أو SKU..." aria-label="بحث المنتجات" /></label><div className="chips" aria-label="تصنيف المنتجات">{categories.map((item) => <button key={item.id ?? 'all'} className={item.id === categoryId ? 'chip selected' : 'chip'} onClick={() => setCategoryId(item.id)}>{item.name}</button>)}</div></section>
-      <section className="catalog-grid" aria-busy={catalogLoading}>{catalogLoading && <div className="empty">جارٍ تحميل المنتجات…</div>}{!catalogLoading && products.map((product) => <article className="product-card" key={product.id}><div className="product-image">{product.imageUrl ? <img src={product.imageUrl} alt={product.name} loading="lazy" /> : <span aria-hidden="true">{product.name.slice(0, 1)}</span>}</div><div className="product-meta"><span>{product.category}</span><code>{product.sku}</code></div><h2>{product.name}</h2><p className="unit">الوحدة: {product.unit} · المتاح: {product.availableQuantity}</p><div className="product-footer"><strong>{priceFor(product) ? formatMoney(priceFor(product)) : 'السعر غير متاح'}</strong><button disabled={!priceFor(product) || product.availableQuantity < 1} onClick={() => void addToCart(product)}>أضف للسلة</button></div></article>)}{!catalogLoading && !products.length && <div className="empty">لا توجد أصناف متاحة لعرضها.</div>}</section>
-      <section className="cart-panel" id="cart"><div className="section-heading"><div><span className="eyebrow">طلبك الحالي</span><h2>السلة</h2></div><span>{cart.length} أصناف</span></div>{!cart.length ? <div className="cart-empty">السلة فارغة. أضف الأصناف التي تريد طلبها.</div> : <><div className="cart-lines">{cart.map((line) => <div className="cart-line" key={line.product.id}><div><strong>{line.product.name}</strong><small>{formatMoney(line.unitPrice)} / {line.product.unit}</small></div><div className="quantity"><button onClick={() => void updateQuantity(line.product.id, line.quantity - 1)} aria-label={`إنقاص ${line.product.name}`}>−</button><span aria-live="polite">{line.quantity}</span><button onClick={() => void updateQuantity(line.product.id, line.quantity + 1)} aria-label={`زيادة ${line.product.name}`}>+</button></div><strong>{formatMoney(line.unitPrice * line.quantity)}</strong></div>)}</div><div className="cart-total"><span>الإجمالي التقديري</span><strong>{formatMoney(total)}</strong></div><button className="checkout" disabled={orderBusy || !warehouseId || !customerId} onClick={() => void submitOrder()}>{orderBusy ? 'جارٍ اعتماد الطلب…' : 'إرسال الطلب'}</button>{orderResult && <div className="success" role="status">{orderResult}</div>}</>}</section>
+      <section className="catalog-grid" aria-busy={catalogLoading}>{catalogLoading && <div className="empty">جارٍ تحميل المنتجات…</div>}{!catalogLoading && products.map((product) => <article className="product-card" key={product.id}><div className="product-image">{product.imageUrl ? <img src={product.imageUrl} alt={product.name} loading="lazy" /> : <span aria-hidden="true">{product.name.slice(0, 1)}</span>}</div><div className="product-meta"><span>{product.category}</span><code>{product.sku}</code></div><h2>{product.name}</h2><p className="unit">الوحدة: {product.unit} · المتاح: {product.availableQuantity}</p><div className="product-footer"><strong>{priceFor(product) ? formatMoney(priceFor(product)) : 'السعر غير متاح'}</strong><button disabled={!priceFor(product) || product.availableQuantity < 1 || !isOnline} onClick={() => void addToCart(product)}>أضف للسلة</button></div></article>)}{!catalogLoading && !products.length && <div className="empty">لا توجد أصناف متاحة لعرضها.</div>}</section>
+      <section className="cart-panel" id="cart"><div className="section-heading"><div><span className="eyebrow">طلبك الحالي</span><h2>السلة</h2></div><span>{cart.length} أصناف</span></div>{!cart.length ? <div className="cart-empty">السلة فارغة. أضف الأصناف التي تريد طلبها.</div> : <><div className="cart-lines">{cart.map((line) => <div className="cart-line" key={line.product.id}><div><strong>{line.product.name}</strong><small>{formatMoney(line.unitPrice)} / {line.product.unit}</small></div><div className="quantity"><button onClick={() => void updateQuantity(line.product.id, line.quantity - 1)} aria-label={`إنقاص ${line.product.name}`}>−</button><span aria-live="polite">{line.quantity}</span><button onClick={() => void updateQuantity(line.product.id, line.quantity + 1)} aria-label={`زيادة ${line.product.name}`}>+</button></div><strong>{formatMoney(line.unitPrice * line.quantity)}</strong></div>)}</div><div className="cart-total"><span>الإجمالي التقديري</span><strong>{formatMoney(total)}</strong></div><button className="checkout" disabled={orderBusy || !warehouseId || !customerId || !isOnline} onClick={() => void submitOrder()}>{orderBusy ? 'جارٍ اعتماد الطلب…' : !isOnline ? 'الاتصال مطلوب لإرسال الطلب' : 'إرسال الطلب'}</button>{orderResult && <div className="success" role="status">{orderResult}</div>}</>}</section>
       <section className="cart-panel" id="orders"><div className="section-heading"><div><span className="eyebrow">المتابعة</span><h2>طلباتي</h2></div><span>{orders.length} طلبات حديثة</span></div>{ordersLoading ? <div className="cart-empty">جارٍ تحميل الطلبات…</div> : ordersError ? <div className="error-banner" role="alert">{ordersError}</div> : !orders.length ? <div className="cart-empty">لا توجد طلبات سابقة بعد.</div> : <div className="cart-lines">{orders.map((order) => <article className="cart-line" key={order.id}><div><strong>طلب #{order.order_number}</strong><small>{new Date(order.created_at).toLocaleString('ar-YE')} · {STATUS_LABELS[order.status]}</small></div><strong>{formatMoney(order.total)} {order.currency}</strong></article>)}</div>}</section>
       {STAFF_ROLES.has(role) && <AdminPanel role={role} />}</main><footer>بوابة الأغبري · النظام التشغيلي للتجارة</footer></div>;
 }
