@@ -10,7 +10,8 @@ export interface ImportRow {
 
 export interface ImportDiagnostic { rowNumber: number; field: string; message: string; }
 
-export const MAX_IMPORT_ROWS = 50_000;
+// The database staging boundary is 10,000 rows; keep browser validation identical.
+export const MAX_IMPORT_ROWS = 10_000;
 export const MAX_IMPORT_SKU_LENGTH = 80;
 export const MAX_IMPORT_NAME_LENGTH = 240;
 export const MAX_IMPORT_UNIT_LENGTH = 80;
