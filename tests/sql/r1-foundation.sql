@@ -3,11 +3,13 @@ create role authenticated login;
 \i supabase/migrations/0001_core_foundation.sql
 \i supabase/migrations/0002_auth_scope_hardening.sql
 \i supabase/migrations/0003_order_state_machine.sql
+\i supabase/migrations/0004_import_media_reliability.sql
+\i supabase/migrations/0005_outbox_delivery.sql
 
 insert into app.organizations(id,name) values ('00000000-0000-0000-0000-0000000000a1','Tenant A'),('00000000-0000-0000-0000-0000000000b1','Tenant B');
-insert into app.roles(id,code) values('00000000-0000-0000-0000-000000000001','customer');
-insert into app.users(id,display_name) values('00000000-0000-0000-0000-0000000000aa','User A'),('00000000-0000-0000-0000-0000000000bb','User B');
-insert into app.user_roles(user_id,organization_id,role_id) values('00000000-0000-0000-0000-0000000000aa','00000000-0000-0000-0000-0000000000a1','00000000-0000-0000-0000-000000000001'),('00000000-0000-0000-0000-0000000000bb','00000000-0000-0000-0000-0000000000b1','00000000-0000-0000-0000-000000000001');
+insert into app.roles(id,code) values('00000000-0000-0000-0000-000000000001','customer'),('00000000-0000-0000-0000-000000000002','integration_worker');
+insert into app.users(id,display_name) values('00000000-0000-0000-0000-0000000000aa','User A'),('00000000-0000-0000-0000-0000000000bb','User B'),('00000000-0000-0000-0000-0000000000cc','Worker A');
+insert into app.user_roles(user_id,organization_id,role_id) values('00000000-0000-0000-0000-0000000000aa','00000000-0000-0000-0000-0000000000a1','00000000-0000-0000-0000-000000000001'),('00000000-0000-0000-0000-0000000000bb','00000000-0000-0000-0000-0000000000b1','00000000-0000-0000-0000-000000000001'),('00000000-0000-0000-0000-0000000000cc','00000000-0000-0000-0000-0000000000a1','00000000-0000-0000-0000-000000000002');
 insert into app.branches(id,organization_id,name) values('00000000-0000-0000-0000-0000000000a2','00000000-0000-0000-0000-0000000000a1','Main A'),('00000000-0000-0000-0000-0000000000b2','00000000-0000-0000-0000-0000000000b1','Main B');
 insert into app.warehouses(id,organization_id,branch_id,name) values('00000000-0000-0000-0000-0000000000a3','00000000-0000-0000-0000-0000000000a1','00000000-0000-0000-0000-0000000000a2','Warehouse A'),('00000000-0000-0000-0000-0000000000b3','00000000-0000-0000-0000-0000000000b1','00000000-0000-0000-0000-0000000000b2','Warehouse B');
 insert into app.customer_tiers(id,organization_id,code,name) values('00000000-0000-0000-0000-0000000000c1','00000000-0000-0000-0000-0000000000a1','tier1','Tier 1'),('00000000-0000-0000-0000-0000000000c2','00000000-0000-0000-0000-0000000000a1','tier2','Tier 2'),('00000000-0000-0000-0000-0000000000c3','00000000-0000-0000-0000-0000000000a1','tier3','Tier 3'),('00000000-0000-0000-0000-0000000000d1','00000000-0000-0000-0000-0000000000b1','tier1','Tier 1');
@@ -59,7 +61,16 @@ do $$ begin
   if (select count(*) from app.inventory_movements where movement_type='release') <> 1 then raise exception 'release movement missing'; end if;
 end $$;
 
+-- Worker authorization is separate from customer access and remains tenant-scoped.
+set request.jwt.claim.sub = '00000000-0000-0000-0000-0000000000cc';
+set request.jwt.claim.customer_id = '';
+select count(*) from app.claim_outbox_batch(10);
+select app.mark_outbox_delivered((select id from app.outbox_events order by created_at limit 1));
+do $$ begin if (select count(*) from app.outbox_events where published_at is not null) <> 1 then raise exception 'outbox delivery acknowledgement failed'; end if; end $$;
+
 -- Insufficient inventory must not partially create an order.
+set request.jwt.claim.sub = '00000000-0000-0000-0000-0000000000aa';
+set request.jwt.claim.customer_id = '00000000-0000-0000-0000-0000000000ca';
 select * from app.create_order('00000000-0000-0000-0000-000000000002','00000000-0000-0000-0000-0000000000fa',3,'00000000-0000-0000-0000-0000000000a3');
 do $$ begin
   begin perform app.create_order('00000000-0000-0000-0000-000000000003','00000000-0000-0000-0000-0000000000fa',1,'00000000-0000-0000-0000-0000000000a3'); raise exception 'oversell accepted';
@@ -69,4 +80,4 @@ do $$ begin
 end $$;
 
 reset role;
-select 'R1 FOUNDATION + ORDER STATE PROOF PASS' as result;
+select 'R1 FOUNDATION + ORDER + IMPORT/OUTBOX PRIMITIVES PROOF PASS' as result;
