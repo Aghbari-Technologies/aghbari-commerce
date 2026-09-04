@@ -1,0 +1,12 @@
+{
+  "name": "بوابة الأغبري للمواد الغذائية",
+  "short_name": "الأغبري",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#0f172a",
+  "description": "منصة التجارة التشغيلية B2B لبوابة الأغبري للمواد الغذائية",
+  "icons": []
+}
