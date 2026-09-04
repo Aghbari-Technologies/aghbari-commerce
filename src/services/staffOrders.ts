@@ -24,7 +24,18 @@ export async function getStaffOrders(limit = 50): Promise<StaffOrderSummary[]> {
   if (error) throw error;
   return (data ?? []).map((row) => {
     const item = row as typeof row & { customers?: { name?: string } | null };
-    return { ...item, customer_name: item.customers?.name ?? 'عميل غير معروف' } as StaffOrderSummary;
+    return {
+      id: item.id,
+      order_number: item.order_number,
+      customer_id: item.customer_id,
+      customer_name: item.customers?.name ?? 'عميل غير معروف',
+      warehouse_id: item.warehouse_id,
+      status: item.status,
+      total: item.total,
+      currency: item.currency,
+      created_at: item.created_at,
+      updated_at: item.updated_at,
+    };
   });
 }
 
