@@ -7,7 +7,7 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Default branch: `main`
-- Current exact HEAD: `00d301572de581c9e318ebfe504fbb905545bdf6`
+- Current exact HEAD: `aba98fa8a2522d4395ea3f47f4a868fc1b2d314c`
 
 ## Certification model
 
@@ -26,27 +26,28 @@
 **Status: IN PROGRESS**
 
 Completed:
-- Repository existence, organization ownership, private visibility, default branch, and write access verified.
-- Repository was confirmed empty before initialization.
+- Repository and write access baseline verified.
 - Product identity fixed as الأغبري.
 - Operational-vs-analytics boundary documented.
 - Owner-Level / Evidence-First protocol established in-repo.
 - Architecture boundary baseline documented.
-- Master Execution Index established as the canonical ledger.
-- Existing architecture is preserved as the starting knowledge base and will be evolved, not blindly recreated.
-- First-pass legacy requirements extraction completed from Batch 1 and Batch 2.
+- Master Execution Index established.
+- Existing architecture/tree retained as the starting knowledge base and explicitly marked for evolution.
+- First-pass legacy requirements extraction from Batch 1 and Batch 2 completed.
+- Provisional domain/bounded-context map created.
+- Provisional architecture decision log created.
+- Batch 1/2 requirements classification matrix created.
+- Provisional evidence-based testing/certification matrix created.
 
 Pending:
 - Incorporate legacy Batch 3 when supplied.
-- Cross-batch requirements matrix and conflict classification.
-- Final domain map and bounded contexts.
-- Final technology selection based on requirements and current engineering trade-offs.
+- Reconcile Batch 3 against the current matrix and architecture candidate.
+- Final technology selection and ADRs.
 - Final database/data ownership model.
 - Final API/integration contracts.
 - Final admin/navigation model.
 - Final security/RBAC/RLS model.
 - Final offline/cache/sync model.
-- Final testing and certification matrix.
 - Architecture Candidate freeze.
 
 ## Non-negotiable boundaries
@@ -55,10 +56,10 @@ Pending:
 2. Every PASS must identify its exact evidence and exact HEAD.
 3. `NOT PROVEN` remains `NOT PROVEN` until runtime evidence exists.
 4. Do not duplicate Report-Advisor analytics/BI/forecasting/decision intelligence inside الأغبري.
-5. Do not treat the old العامري implementation or technology choices as binding.
+5. Do not treat old العامري implementation or technology choices as binding.
 6. No production mutation as a substitute for proof.
 7. External blockers are recorded explicitly and do not stop unaffected engineering work.
-8. The architecture/protocol may be revised when evidence proves a better approach.
+8. Architecture/protocol may be revised when evidence proves a better approach.
 
 ## Decision record format
 
@@ -68,12 +69,12 @@ Every material execution update records:
 
 ## Latest boundary
 
-**ACTION:** Reconcile the ledger with the actual repository HEAD and continue forensic architecture synthesis from the already-established requirements corpus.
+**ACTION:** Execute a high-intensity Phase-0 forensic synthesis without waiting for routine owner decisions.
 
-**RESULT:** Ledger provenance is corrected to the actual latest repository HEAD `00d301572de581c9e318ebfe504fbb905545bdf6`. Phase 0 remains intentionally open; no implementation or certification claim is made.
+**RESULT:** Added provisional forensic synthesis, architecture decision log, Batch 1/2 requirements matrix, and evidence-bound test/certification matrix. Corrected the ledger provenance before continuing and bound this boundary to the newest exact `main` HEAD.
 
-**EVIDENCE:** The ledger was read directly from GitHub before this update. The prior recorded value `4cbcd1737c25505e532ce3a27ee16c9f99858cea` was superseded by the subsequent canonical commit `00d301572de581c9e318ebfe504fbb905545bdf6`.
+**EVIDENCE:** New canonical artifacts are present under `docs/`: `PHASE-0-FORENSIC-SYNTHESIS.md`, `ARCHITECTURE-DECISION-LOG.md`, `REQUIREMENTS-MATRIX-BATCH1-BATCH2.md`, and `TEST-CERTIFICATION-MATRIX.md`. Exact HEAD after this boundary: `aba98fa8a2522d4395ea3f47f4a868fc1b2d314c`.
 
-**BLOCKER:** Batch 3 is not present in the current requirements corpus, so final architecture freeze would be premature. This is not a blocker to preparatory forensic work.
+**BLOCKER:** Batch 3 is still absent. Final architecture freeze is therefore intentionally withheld. No implementation/certification claim is made.
 
-**NEXT:** Produce the strongest safe Phase-0 artifacts now: requirements taxonomy, domain/bounded-context candidate map, legacy-to-new re-engineering rules, architecture decision log, risk register, integration contract skeletons, and certification/test strategy. Re-freeze only after Batch 3 is incorporated.
+**NEXT:** Incorporate Batch 3 immediately when available, then perform conflict resolution, final ADRs, schema/data ownership, API contracts, security model, UX command-center IA, and architecture freeze. Implementation waves begin only against the frozen candidate.
