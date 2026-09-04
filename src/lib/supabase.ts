@@ -16,7 +16,7 @@ export function useProducts(enabled = true, search = '') {
     if (!enabled || !supabase) { setLoading(false); return; }
     setLoading(true); setError(null);
     (async () => {
-      const { data, error: queryError } = await supabase.rpc('get_product_catalog', { p_search: search.trim() || null, p_limit: 100 });
+      const { data, error: queryError } = await supabase.schema('app').rpc('get_product_catalog', { p_search: search.trim() || null, p_limit: 100 });
       if (!active) return;
       if (queryError) setError(queryError.message); else setProducts((data ?? []) as Product[]);
       setLoading(false);
