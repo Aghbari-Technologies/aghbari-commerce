@@ -24,8 +24,8 @@ fail_expected psql -v ON_ERROR_STOP=1 -c "SELECT * FROM g1_poc.create_order('000
 
 # 2. Successful order uses canonical price and server-calculated total.
 psql -v ON_ERROR_STOP=1 -c "SELECT * FROM g1_poc.create_order('00000000-0000-0000-0000-000000000002', 1, 1, 10.00);"
+[[ "$(psql -At -c "SELECT unit_price || ':' || total FROM g1_poc.orders WHERE operation_id = '00000000-0000-0000-0000-000000000002'::uuid")" == "10.00:10.00" ]]
 [[ "$(psql -At -c 'SELECT quantity FROM g1_poc.inventory WHERE product_id = 1')" == "0" ]]
-[[ "$(psql -At -c 'SELECT unit_price || '\''':'\'' || total FROM g1_poc.orders WHERE operation_id = '\''00000000-0000-0000-0000-000000000002'\''')" == "10.00:10.00" ]]
 
 # 3. Replaying the exact operation returns the original order without mutation.
 [[ "$(psql -At -c "SELECT replayed FROM g1_poc.create_order('00000000-0000-0000-0000-000000000002', 1, 1, 10.00)")" == "t" ]]
