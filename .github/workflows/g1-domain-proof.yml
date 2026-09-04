@@ -37,7 +37,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
       - name: Run deterministic G1 domain proof
         run: node --test poc/transactional-core/invariants.mjs
       - name: Run PostgreSQL transactional G1 proof
