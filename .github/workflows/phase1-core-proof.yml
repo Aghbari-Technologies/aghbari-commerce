@@ -47,7 +47,7 @@ jobs:
         env:
           PGPASSWORD: postgres
         run: |
-          psql -h 127.0.0.1 -U postgres -d aghbari -v ON_ERROR_STOP=1 -c "create schema if not exists auth; create or replace function auth.uid() returns uuid language sql stable as \$\$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid \$\$;"
+          psql -h 127.0.0.1 -U postgres -d aghbari -v ON_ERROR_STOP=1 -c "create schema if not exists auth; create or replace function auth.uid() returns uuid language sql stable as \$\$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid \$\$; do \$\$ begin create role authenticated; exception when duplicate_object then null; end \$\$;"
           for migration in supabase/migrations/*.sql; do
             echo "Applying $migration"
             psql -h 127.0.0.1 -U postgres -d aghbari -v ON_ERROR_STOP=1 -f "$migration"
@@ -57,4 +57,7 @@ jobs:
           PGPASSWORD: postgres
         run: |
           test "$(psql -h 127.0.0.1 -U postgres -d aghbari -Atc "select count(*) from information_schema.tables where table_schema='public' and table_name in ('organizations','branches','warehouses','customers','products','product_prices','inventory_balances','inventory_movements','carts','cart_items','orders','order_items','order_status_history','outbox_events','audit_events');")" = "15"
-          psql -h 127.0.0.1 -U postgres -d aghbari -v ON_ERROR_STOP=1 -c "select 1 from orders where false; select 1 from inventory_balances where false;"
+      - name: Execute transactional and authorization proof
+        env:
+          PGPASSWORD: postgres
+        run: psql -h 127.0.0.1 -U postgres -d aghbari -v ON_ERROR_STOP=1 -f supabase/tests/phase1-core.sql
