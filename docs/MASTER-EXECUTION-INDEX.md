@@ -1,47 +1,56 @@
 # Aghbari — Master Execution Index
 
-**Canonical status ledger.** This file is updated after every meaningful execution boundary.
+**Canonical status ledger.** Updated after every meaningful execution boundary.
 
 ## Identity
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Default branch: `main`
-- Current exact HEAD: `e671cbfd1a27cb05e648ef91c733dcb858ce5594`
+- Current exact HEAD: `c43d584e1ba077028355f8c2b5b3f180268ddd77`
+
+## Standing execution command
+Owner shorthand: **`1` = CONTINUE / EXECUTE AUTONOMOUSLY**. Routine technical/product decisions are made without waiting for owner input, while evidence and safety gates remain mandatory.
 
 ## Certification model
 | Stage | Meaning | Current state |
 |---|---|---|
 | BUILT | Code/artifact exists | NOT STARTED — implementation has not begun |
-| INTEGRATED | Correctly integrated into the canonical branch | NOT STARTED |
-| VERIFIED | Automated/static/regression evidence passes | NOT STARTED |
-| RUNTIME PROVEN | Real supported environments have been exercised | NOT STARTED |
+| INTEGRATED | Correctly integrated into canonical branch | NOT STARTED |
+| VERIFIED | Automated/static/regression/security evidence passes | NOT STARTED |
+| RUNTIME PROVEN | Real supported environments exercised | NOT STARTED |
 | PRODUCTION CERTIFIED | Release boundary independently proven | NOT STARTED |
 
 ## Current phase
 ### PHASE 0 — Architecture & Requirements Forensics
-**Status: IN PROGRESS — FULL RE-ENGINEERING MODE**
+**Status: IN PROGRESS — FULL RE-ENGINEERING + ADAPTIVE EXECUTION MODE**
 
-Completed:
+### Completed
 - Repository/write baseline and product identity.
 - Operational-vs-analytics boundary.
 - Owner-Level / Evidence-First protocol.
+- Adaptive autonomous execution command (`1`).
 - Architecture boundary and master index.
 - Legacy Batch 1/2 extraction and classification.
 - Provisional domain map, ADR log, and certification matrix.
-- **Full system re-engineering mandate:** historical specifications are business evidence, not implementation blueprints.
-- **Engineering transformation contract:** `Historical wording → Business capability → Engineering requirement → Acceptance criteria → Verification evidence`.
-- Engineering quality gates for invariant, authorization, data ownership, contracts, failure modes, idempotency/concurrency, observability, testing, and runtime evidence.
-- **Engineering Requirements Baseline** covering P0 transactional/security/integration requirements and P1 resilience/UX requirements.
-- **Data Ownership & Transactional Invariants** defining canonical domain owners and high-risk concurrency boundaries.
+- Full-system re-engineering mandate.
+- Engineering transformation contract.
+- Engineering quality gates.
+- Engineering Requirements Baseline.
+- Data Ownership & Transactional Invariants baseline.
+- API & Integration Contracts baseline.
+- Security / RBAC / RLS baseline.
+- Offline / Cache / Sync baseline.
+- Operational Admin Command Center IA baseline.
 
-Pending:
-- Batch 3 incorporation and reconciliation.
-- Final technology ADRs.
-- Final API/integration contracts.
-- Final admin/navigation model.
-- Final security/RBAC/RLS model.
-- Final offline/cache/sync model.
-- Architecture Candidate freeze.
+## Pending / next highest-value work
+1. Batch 3 incorporation and reconciliation when supplied.
+2. Technology evaluation and final technology ADRs.
+3. Canonical database model and migration strategy.
+4. Final API/service and external integration schemas.
+5. Final security/RBAC/RLS policy matrix.
+6. Final offline/cache/sync implementation contract.
+7. Architecture Candidate freeze after reconciliation.
+8. Implementation wave planning and vertical-slice build.
 
 ## Non-negotiable boundaries
 1. No fake PASS.
@@ -54,17 +63,16 @@ Pending:
 8. No production mutation as a substitute for proof.
 9. External blockers are explicit and do not stop unaffected work.
 10. Architecture/protocol may evolve when evidence proves a better approach.
-
-## Decision record format
-`ACTION → RESULT → EVIDENCE → BLOCKER (if any) → NEXT`
+11. Documentation is not runtime evidence.
+12. A green CI/build is not runtime proof.
 
 ## Latest boundary
-**ACTION:** Continue Phase 0 autonomously under the upgraded full-system re-engineering mandate, without waiting for routine owner decisions.
+**ACTION:** Execute autonomously and evolve the protocol itself while deepening Phase 0.
 
-**RESULT:** Added the engineering requirements baseline and canonical data ownership/invariants baseline. These convert legacy business intent into measurable engineering constraints and establish authoritative ownership plus concurrency/security boundaries before implementation.
+**RESULT:** Added the API/integration, security/RBAC/RLS, offline/cache/sync, and operational command-center baselines; strengthened the Owner-Level protocol with a standing `1` execution command, adaptive self-improvement, decision priority, adversarial test challenge, and stricter no-false-closure rules.
 
-**EVIDENCE:** `docs/ENGINEERING-REQUIREMENTS-BASELINE.md` and `docs/DATA-OWNERSHIP-AND-INVARIANTS.md` are present on `main`. Exact HEAD after this boundary: `e671cbfd1a27cb05e648ef91c733dcb858ce5594`.
+**EVIDENCE:** `docs/API-INTEGRATION-CONTRACTS-BASELINE.md`, `docs/SECURITY-RBAC-RLS-BASELINE.md`, `docs/OFFLINE-CACHE-SYNC-BASELINE.md`, `docs/ADMIN-COMMAND-CENTER-IA.md`, and updated `docs/OWNER-LEVEL-PROTOCOL.md` are committed on `main`. Exact boundary HEAD: `c43d584e1ba077028355f8c2b5b3f180268ddd77`.
 
-**BLOCKER:** Batch 3 is still absent. Final architecture freeze remains intentionally withheld. No implementation or certification PASS is claimed.
+**BLOCKER:** Batch 3 is still absent. Architecture freeze is therefore withheld. No implementation or certification PASS is claimed.
 
-**NEXT:** Continue autonomous Phase-0 work on API/service contracts, integration contracts, security/RBAC/RLS, offline/sync semantics, admin command-center IA, technology evaluation, and certification mapping. Batch 3 will be reconciled when available before architecture freeze.
+**NEXT:** Continue with technology evaluation, canonical database model, migration/versioning strategy, and certification traceability; reconcile Batch 3 before freezing architecture, then move into implementation vertical slices.
