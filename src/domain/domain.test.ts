@@ -18,7 +18,7 @@ describe('commerce domain invariants', () => {
   it('validates positive quantities, integer quantities, and stock limits', () => {
     const inventory = new Map([['p1', 3]]);
     expect(() => validateOrderDraft({ customerId: 'c1', idempotencyKey: '1234567890123456', lines: [{ productId: 'p1', quantity: 4 }] }, inventory)).toThrow('insufficient stock');
-    expect(() => validateOrderDraft({ customerId: 'c1', idempotencyKey: '1234567890123456', lines: [{ productId: 'p1', quantity: 1.5 }] }, inventory)).toThrow('positive integer');
+    expect(() => validateOrderDraft({ customerId: 'c1', idempotencyKey: '1234567890123456', lines: [{ productId: 'p1', quantity: 1.5 }] }, inventory)).toThrow('positive safe integer');
     expect(() => validateOrderDraft({ customerId: 'c1', idempotencyKey: '1234567890123456', lines: [{ productId: 'p1', quantity: 2 }] }, inventory)).not.toThrow();
   });
 
