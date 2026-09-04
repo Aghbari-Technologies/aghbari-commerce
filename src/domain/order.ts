@@ -11,15 +11,16 @@ export class OrderValidationError extends Error {
 }
 
 export function validateOrderDraft(draft: OrderDraft, inventory: Map<string, number>): void {
-  if (!draft.customerId) throw new OrderValidationError('customerId is required');
-  if (!draft.idempotencyKey || draft.idempotencyKey.length < 16) {
+  if (!draft.customerId?.trim()) throw new OrderValidationError('customerId is required');
+  if (!draft.idempotencyKey?.trim() || draft.idempotencyKey.trim().length < 16) {
     throw new OrderValidationError('idempotencyKey must be at least 16 characters');
   }
-  if (draft.lines.length === 0) throw new OrderValidationError('order must contain at least one line');
+  if (!Array.isArray(draft.lines) || draft.lines.length === 0) throw new OrderValidationError('order must contain at least one line');
   if (draft.lines.length > MAX_ORDER_LINES) throw new OrderValidationError(`order cannot contain more than ${MAX_ORDER_LINES} lines`);
 
   const seen = new Set<string>();
   for (const line of draft.lines) {
+    if (!line.productId?.trim()) throw new OrderValidationError('productId is required');
     if (seen.has(line.productId)) throw new OrderValidationError('duplicate product line');
     seen.add(line.productId);
     if (!Number.isInteger(line.quantity) || line.quantity <= 0) {
@@ -29,6 +30,7 @@ export function validateOrderDraft(draft: OrderDraft, inventory: Map<string, num
       throw new OrderValidationError(`quantity cannot exceed ${MAX_ORDER_QUANTITY_PER_LINE}`);
     }
     const available = inventory.get(line.productId) ?? 0;
+    if (!Number.isInteger(available) || available < 0) throw new OrderValidationError('invalid inventory quantity');
     if (line.quantity > available) throw new OrderValidationError('insufficient stock');
   }
 }
