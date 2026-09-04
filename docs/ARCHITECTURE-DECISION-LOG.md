@@ -2,6 +2,15 @@
 
 Status: **PROVISIONAL** until Batch 3 reconciliation and architecture freeze.
 
+## ADR-000 — Full system re-engineering and modernization
+**Decision:** Historical requirements are treated as business evidence, not as a blueprint for implementation. The system will undergo full re-engineering and architectural modernization using current engineering standards, proven modern technologies, and measurable/testable requirements.
+
+**Engineering rule:** Preserve business capability and intent; redesign obsolete workflows, architecture, data structures, integrations, security controls, and UX where evidence shows a better solution.
+
+**Required transformation:** `Legacy Requirement → Business Intent → Engineering Requirement → Architecture/Contract → Implementation → Evidence`.
+
+**Consequence:** No legacy framework, library, data model, UI structure, or integration shortcut is binding merely because it existed previously.
+
 ## ADR-001 — Operational system of record
 **Decision:** Aghbari owns transactional and operational truth.
 
