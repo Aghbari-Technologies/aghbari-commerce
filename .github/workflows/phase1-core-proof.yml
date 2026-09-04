@@ -52,6 +52,7 @@ jobs:
             echo "Applying $migration"
             psql -h 127.0.0.1 -U postgres -d aghbari -v ON_ERROR_STOP=1 -f "$migration"
           done
+          psql -h 127.0.0.1 -U postgres -d aghbari -v ON_ERROR_STOP=1 -c "grant usage on schema public to authenticated; grant select on organizations,branches,warehouses,users,customers,categories,units,products,product_identifiers,price_lists,product_prices,orders,order_items,order_status_history to authenticated; grant execute on function public.create_order(uuid,uuid,jsonb,text,text) to authenticated;"
       - name: Verify core schema
         env:
           PGPASSWORD: postgres
