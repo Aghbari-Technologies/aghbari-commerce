@@ -15,6 +15,17 @@ jobs:
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
+      - name: Fail fast on duplicate migration versions
+        shell: bash
+        run: |
+          versions="$(find supabase/migrations -maxdepth 1 -type f -name '*.sql' -printf '%f\n' | sed -E 's/^([0-9]+)_.*/\1/' | sort)"
+          duplicates="$(printf '%s\n' "$versions" | uniq -d)"
+          if [[ -n "$duplicates" ]]; then
+            echo "Duplicate migration versions detected:"
+            printf '%s\n' "$duplicates"
+            exit 1
+          fi
+          echo "Migration version uniqueness: PASS"
       - uses: supabase/setup-cli@v1
         with:
           version: latest
