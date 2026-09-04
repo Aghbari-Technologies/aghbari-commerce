@@ -4,7 +4,7 @@ import { calculateClientPreviewTotal } from './domain/order';
 import { formatMoney } from './domain/pricing';
 import { getCatalog, getProductImageUrls, type CatalogItem } from './services/catalog';
 import { getCategories, type CategoryOption } from './services/categories';
-import { clearCart, getCart, removeCartItem, setCartItem } from './services/cart';
+import { getCart, removeCartItem, setCartItem } from './services/cart';
 import { createOrder } from './services/orders';
 import { getCustomerOrders, type CustomerOrderSummary } from './services/customerOrders';
 import { getSession, signIn, signOut } from './services/auth';
@@ -20,15 +20,9 @@ const STATUS_LABELS: Record<OrderStatus, string> = {
 
 function mapCatalogItem(item: CatalogItem, categoryName: string, imageUrl?: string): Product & { authorizedPrice?: number } {
   return {
-    id: item.id,
-    sku: item.sku,
-    name: item.name,
-    unit: item.unit,
-    category: categoryName,
-    description: item.description ?? undefined,
-    availableQuantity: item.available_quantity,
-    status: item.status === 'active' ? 'active' : 'inactive',
-    imageUrl,
+    id: item.id, sku: item.sku, name: item.name, unit: item.unit, category: categoryName,
+    description: item.description ?? undefined, availableQuantity: item.available_quantity,
+    status: item.status === 'active' ? 'active' : 'inactive', imageUrl,
     authorizedPrice: item.authorized_price ?? undefined
   };
 }
@@ -88,9 +82,7 @@ export default function App() {
       try {
         const [{ data: warehouse, error: warehouseError }, items, savedCart, categories] = await Promise.all([
           supabase.from('warehouses').select('id').eq('is_active', true).order('created_at').limit(1).maybeSingle(),
-          getCatalog(catalogSearch, categoryId, 100, 0),
-          getCart(),
-          getCategories()
+          getCatalog(catalogSearch, categoryId, 100, 0), getCart(), getCategories()
         ]);
         if (warehouseError) throw warehouseError;
         if (!warehouse?.id) throw new Error('لا يوجد مستودع تشغيلي نشط.');
@@ -104,9 +96,7 @@ export default function App() {
         setCart(savedCart.map((item) => ({ product: mapped.find((product) => product.id === item.product_id) ?? { id: item.product_id, sku: item.sku, name: item.name, unit: item.unit, category: 'أصناف', availableQuantity: 0, status: 'active' }, quantity: item.quantity, unitPrice: item.authorized_price ?? 0 })));
       } catch (error) {
         if (!cancelled) setRuntimeError(error instanceof Error ? error.message : 'تعذر تحميل بيانات المتجر.');
-      } finally {
-        if (!cancelled) setCatalogLoading(false);
-      }
+      } finally { if (!cancelled) setCatalogLoading(false); }
     }
     void loadRuntime(); return () => { cancelled = true; };
   }, [catalogSearch, categoryId, signedIn]);
@@ -161,7 +151,7 @@ export default function App() {
     setOrderBusy(true); setOrderResult(null); setRuntimeError(null);
     try {
       const result = await createOrder({ customerId, idempotencyKey: crypto.randomUUID(), lines: cart.map((line) => ({ productId: line.product.id, quantity: line.quantity })) }, warehouseId);
-      await clearCart(); setCart([]); setOrderResult(result ? `تم إرسال الطلب رقم ${result.order_number} بنجاح.` : 'تم إرسال الطلب بنجاح.');
+      setCart([]); setOrderResult(result ? `تم إرسال الطلب رقم ${result.order_number} بنجاح.` : 'تم إرسال الطلب بنجاح.');
     } catch (error) { setRuntimeError(error instanceof Error ? error.message : 'تعذر إرسال الطلب. لم يتم اعتماد أي سعر من العميل.'); }
     finally { setOrderBusy(false); }
   }
