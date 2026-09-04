@@ -6,7 +6,7 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Branch: `main`
-- Current exact HEAD: `PENDING_COMMIT_SHA`
+- Current exact HEAD: **`PENDING_COMMIT_SHA` until this index write returns its commit SHA; then that returned SHA becomes canonical.**
 
 ## Standing execution command
 **`1` = CONTINUE / EXECUTE AUTONOMOUSLY / DEEPEN / TEST / VERIFY / DOCUMENT / SELF-IMPROVE.**
@@ -40,12 +40,16 @@
 - Consolidated Architecture Decision Log.
 - Physical Schema Contract V1.
 - Phase-0 Consistency Audit V1.
+- Candidate Migration Skeleton V1.
+- Domain/API Contract Map V1.
+- Adversarial Architecture Review V1.
 
 ## This wave
-- Converted the logical data model into a physical schema contract with PostgreSQL conventions, scope keys, constraints, state-machine boundaries, and migration gates.
-- Performed a cross-document consistency/drift audit covering product identity, analytics ownership, authorization, inventory truth, pricing truth, integrations, migration safety, and technology currency.
-- Confirmed PostgreSQL 18 as the production baseline candidate; PostgreSQL 19 beta is excluded from production.
-- Confirmed that security authorization must remain server-side and deny-by-default; UI-only controls are insufficient.
+- Built a dependency-ordered candidate migration skeleton covering scope, identity, catalog, pricing, inventory, sales, purchasing, asynchronous side effects, imports/exports, and audit.
+- Defined migration gates for clean install, upgrade, determinism, constraints, RLS, concurrency, and schema evidence.
+- Converted bounded contexts into a domain/API contract map with actor, authorization, transaction, idempotency, concurrency, error, audit, and evidence requirements.
+- Executed an adversarial architecture review against cross-scope access, price-tier leakage, replay, concurrent inventory/order operations, illegal state transitions, import poisoning, offline conflicts, integration retries, soft-delete bypasses, enumeration, audit evasion, secret leakage, and rate abuse.
+- Confirmed the documented architecture remains coherent under these challenges, while correctly keeping all implementation/runtime claims unproven.
 
 ## Pending gates
 1. Batch 3 reconciliation when supplied.
@@ -62,12 +66,16 @@
 Documentation PASS means only that the documented design check passed. It does **not** mean implementation PASS, runtime PASS, or certification PASS.
 
 ## Latest boundary
-**ACTION:** Autonomous `1` — deepen physical data architecture and audit the Phase-0 design for contradictions and technology drift.
+**ACTION:** Autonomous `1` — execute the next architecture-hardening wave without inventing Batch 3.
 
-**RESULT:** Added `PHYSICAL-SCHEMA-CONTRACT-V1.md` and `PHASE-0-CONSISTENCY-AUDIT-V1.md`. The architecture now has explicit physical-design constraints, migration gates, and a documented consistency audit. Current technology evidence confirms PostgreSQL 18 as the supported production line while PostgreSQL 19 remains beta; Next.js 16.3.3 is the current Active LTS security baseline identified in August 2026.
+**RESULT:** Added `CANDIDATE-MIGRATION-SKELETON-V1.md`, `DOMAIN-API-CONTRACT-MAP-V1.md`, and `ADVERSARIAL-ARCHITECTURE-REVIEW-V1.md`. The candidate design is now mapped from logical model → physical migration sequence → domain/API contracts → adversarial controls.
 
-**EVIDENCE:** GitHub commits in this wave: `72f910dd97b11a7146dd5e96e37f44a0b4ff11b2` (physical schema contract) and `945fca4550d32901bf6ceb334b1282d14938a102` (consistency audit). The final index-update commit SHA is recorded by GitHub immediately after this write.
+**EVIDENCE:**
+- `fb00a12f02811b3cd04b035aaf9adf673b0738ac` — candidate migration skeleton.
+- `8301b47d8ed65d1d5cf0b7300c919d839fb193f2` — domain/API contract map.
+- `e16723ba5413abc3f12eb675097d959d441b3f06` — adversarial architecture review.
+- This index update's returned commit SHA is the final exact HEAD for this boundary.
 
-**BLOCKER:** Batch 3 remains absent. Architecture is coherent but intentionally not frozen/certified.
+**BLOCKER:** Batch 3 remains absent. Architecture is intentionally not frozen/certified.
 
-**NEXT:** Build the final candidate migration skeleton and domain/API contract map, while continuing adversarial consistency checks. Do not invent Batch 3 requirements.
+**NEXT:** Reconcile Batch 3 when supplied; otherwise proceed with technology proof gates, candidate migration implementation design, final authorization matrix, and vertical-slice execution preparation. Continue challenging all contracts for bypasses and hidden coupling.
