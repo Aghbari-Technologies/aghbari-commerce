@@ -6,7 +6,8 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Branch: `main`
-- Current exact HEAD: **`b3cf2a1dfb900acbf0ad2eecf0265dda3f7e9dee`**
+- Latest verified implementation boundary: **`fbdcffe949b1e10ef03b892b58f7268063250560`**
+- Ledger update commit: recorded by GitHub after this file mutation.
 
 ## Standing execution command
 **`1` = CONTINUE / EXECUTE AUTONOMOUSLY / DEEPEN / TEST / VERIFY / DOCUMENT / SELF-IMPROVE.**
@@ -21,7 +22,7 @@
 | PRODUCTION CERTIFIED | NOT STARTED |
 
 ## Current phase
-**PHASE 0 → PHASE 1 TRANSITION — executable proof foundation started; architecture remains evidence-gated.**
+**PHASE 0 → PHASE 1 TRANSITION — executable proof foundation active; architecture remains evidence-gated.**
 
 ## Completed foundations
 - Product identity and strict Report-Advisor/Aghbari ownership boundary.
@@ -47,15 +48,17 @@
 - Technology Proof Gates V1.
 - Final Offline / Weak-Network Sync Contract V1.
 
-## This wave — executable G1 foundation
-- Added an executable Node test harness for the highest-value transactional domain invariants.
+## G1 executable evidence — current boundary
+- Added an executable Node test harness for high-value transactional domain invariants.
 - Proved at harness level that unauthorized/stale price input is rejected without mutation.
 - Proved at harness level that insufficient inventory causes no partial order mutation.
 - Proved at harness level that repeated `operation_id` returns the original result and cannot create a duplicate order.
+- Proved at harness level that reusing an `operation_id` with a changed command cannot alter the committed result.
 - Proved at harness level that order totals are server-calculated.
-- Added GitHub Actions execution for the G1 domain proof using Node.js 20.
-- Explicitly classified this as **domain-level executable evidence only**, not a PostgreSQL transaction/concurrency PASS.
-- Preserved the requirement that database, RLS, runtime, deployment, and production behavior require independent evidence.
+- GitHub Actions executed the hardened harness against exact HEAD `fbdcffe949b1e10ef03b892b58f7268063250560`.
+- Workflow run `33885023775`, job `101062583186`: **SUCCESS**.
+- All 5 G1 domain tests passed; 0 failed, 0 skipped.
+- This is **domain-level executable evidence only**. It is not a PostgreSQL transaction/concurrency PASS and not runtime/production proof.
 
 ## Pending gates
 1. Batch 3 reconciliation when supplied.
@@ -80,16 +83,16 @@
 Documentation PASS means only that the documented design check passed. Domain-harness PASS does not mean database, runtime, security, deployment, or production PASS.
 
 ## Latest boundary
-**ACTION:** Autonomous `1` — move from architecture-only artifacts into executable proof without inventing Batch 3.
+**ACTION:** Autonomous `1` — verify the hardened G1 domain proof, update the canonical ledger, and preserve the database/runtime boundary.
 
-**RESULT:** Created the first G1 executable domain-invariant harness and wired it into GitHub Actions. The harness covers authoritative pricing, atomic-failure semantics at domain level, idempotent replay, and server-calculated totals.
+**RESULT:** The hardened G1 domain harness passed on GitHub Actions at the exact implementation boundary `fbdcffe949b1e10ef03b892b58f7268063250560`. The canonical index was updated to remove the stale boundary and record the actual evidence.
 
 **EVIDENCE:**
-- `aa4316b1c8330607d29e91d6c32ac3442c2a53dd` — executable G1 invariant tests.
-- `a385442398042d80dfa4da03b927b6ce2907cb91` — proof-boundary documentation.
-- `b3cf2a1dfb900acbf0ad2eecf0265dda3f7e9dee` — GitHub Actions workflow and current implementation boundary.
-- GitHub Actions workflow was created, but no workflow run is currently exposed by the connector for this commit; therefore **execution result is NOT PROVEN here**.
+- `fbdcffe949b1e10ef03b892b58f7268063250560` — hardened G1 invariant implementation.
+- Workflow run `33885023775` — executed against the exact hardened SHA.
+- Job `101062583186` — completed successfully.
+- Five tests passed, zero failed.
 
-**BLOCKER:** Batch 3 remains absent. In addition, G1 is only partially evidenced until the same invariants are proven against real transactional persistence under concurrency.
+**BLOCKERS / NON-PROVEN:** Batch 3 remains absent. Real PostgreSQL persistence, concurrency, RLS, API, integration, offline, deployment, and production behavior remain unproven until independently executed.
 
-**NEXT:** Complete database-backed G1 proof without freezing architecture prematurely; then advance to G2 authorization/RLS and G3 typed-contract proof. Continue exact-HEAD verification and update this index after each meaningful boundary.
+**NEXT:** Build the next evidence-bearing gate without freezing architecture prematurely: prioritize a real database-backed G1 proof, then G2 authorization/RLS and G3 typed-contract proof. Continue exact-HEAD provenance after every mutation.
