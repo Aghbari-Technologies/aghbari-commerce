@@ -32,7 +32,24 @@ export function validateImportRows(rows: ImportRow[]): ImportDiagnostic[] {
   return diagnostics;
 }
 
-export function fingerprintImport(rows: ImportRow[]): string {
-  const canonical = rows.map((r) => [normalizeSku(r.sku), r.name.trim(), r.unit.trim(), r.category.trim(), r.quantity, r.prices.retail, r.prices.wholesale, r.prices.distributor]);
-  return JSON.stringify(canonical);
+function canonicalize(rows: ImportRow[]): string {
+  return JSON.stringify(rows.map((row) => ({
+    sku: normalizeSku(row.sku),
+    name: row.name.trim(),
+    unit: row.unit.trim(),
+    category: row.category.trim(),
+    quantity: row.quantity,
+    prices: {
+      retail: row.prices.retail,
+      wholesale: row.prices.wholesale,
+      distributor: row.prices.distributor
+    }
+  })));
+}
+
+/** SHA-256 over canonical import content; stable across equivalent formatting. */
+export async function fingerprintImport(rows: ImportRow[]): Promise<string> {
+  const bytes = new TextEncoder().encode(canonicalize(rows));
+  const digest = await globalThis.crypto.subtle.digest('SHA-256', bytes);
+  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('');
 }
