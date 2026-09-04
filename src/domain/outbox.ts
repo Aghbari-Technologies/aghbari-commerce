@@ -22,7 +22,8 @@ export function claimEvent(event: OutboxEvent, now: string): OutboxEvent {
 
 export function markDelivered(event: OutboxEvent): OutboxEvent {
   if (event.status !== 'PROCESSING') throw new Error(`CONFLICT:CANNOT_DELIVER:${event.status}`);
-  return { ...event, status: 'DELIVERED', lastError: undefined, nextAttemptAt: undefined };
+  const { lastError: _lastError, nextAttemptAt: _nextAttemptAt, ...stable } = event;
+  return { ...stable, status: 'DELIVERED' };
 }
 
 export function markRetryable(event: OutboxEvent, nextAttemptAt: string, error: string): OutboxEvent {
@@ -36,5 +37,6 @@ export function markDeadLetter(event: OutboxEvent, error: string): OutboxEvent {
     throw new Error(`CONFLICT:CANNOT_DEAD_LETTER:${event.status}`);
   }
   if (!error) throw new Error('VALIDATION_FAILED:error');
-  return { ...event, status: 'DEAD_LETTER', lastError: error, nextAttemptAt: undefined };
+  const { nextAttemptAt: _nextAttemptAt, ...stable } = event;
+  return { ...stable, status: 'DEAD_LETTER', lastError: error };
 }
