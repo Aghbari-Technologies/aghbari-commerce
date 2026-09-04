@@ -1,7 +1,7 @@
 :root { font-family: "Noto Sans Arabic", "Segoe UI", Tahoma, sans-serif; color: #172033; background: #f5f7fb; font-synthesis: none; }
 * { box-sizing: border-box; }
 body { margin: 0; min-width: 320px; background: #f5f7fb; }
-button, input { font: inherit; }
+button, input, select { font: inherit; }
 button { cursor: pointer; }
 button:disabled { cursor: not-allowed; opacity: .55; }
 .app-shell { min-height: 100vh; }
@@ -20,7 +20,7 @@ button:disabled { cursor: not-allowed; opacity: .55; }
 nav { display: flex; gap: 18px; }
 nav a { color: #697386; text-decoration: none; padding: 8px 2px; }
 nav a.active { color: #172033; font-weight: 700; }
-.cart-button, .product-footer button, .checkout, .signout { border: 0; border-radius: 11px; background: #172033; color: white; padding: 10px 16px; font-weight: 700; min-height: 42px; }
+.cart-button, .product-footer button, .checkout, .signout, .admin-card button { border: 0; border-radius: 11px; background: #172033; color: white; padding: 10px 16px; font-weight: 700; min-height: 42px; }
 .signout { background: #eef1f6; color: #172033; }
 .cart-button b { display: inline-grid; place-items: center; min-width: 22px; height: 22px; margin-inline-start: 5px; border-radius: 50%; background: white; color: #172033; }
 main { width: min(1180px, calc(100% - 32px)); margin: auto; }
@@ -50,7 +50,7 @@ h1 { margin: 12px 0; font-size: clamp(38px, 6vw, 66px); line-height: 1.08; lette
 .product-footer strong { font-size: 18px; }
 .product-footer button { padding: 9px 12px; }
 .empty, .cart-empty { grid-column: 1 / -1; padding: 48px; text-align: center; color: #7b8495; background: white; border-radius: 18px; }
-.cart-panel { margin: 56px 0; padding: 24px; background: white; border: 1px solid #e7eaf0; border-radius: 22px; }
+.cart-panel, .admin-panel { margin: 56px 0; padding: 24px; background: white; border: 1px solid #e7eaf0; border-radius: 22px; }
 .section-heading { display: flex; align-items: end; justify-content: space-between; margin-bottom: 18px; }
 .section-heading h2 { margin: 5px 0 0; font-size: 28px; }
 .section-heading > span { color: #7b8495; }
@@ -62,8 +62,13 @@ h1 { margin: 12px 0; font-size: clamp(38px, 6vw, 66px); line-height: 1.08; lette
 .quantity span { width: 40px; text-align: center; }
 .cart-total { display: flex; justify-content: space-between; padding: 20px 0; font-size: 18px; }
 .checkout { width: 100%; padding: 14px; }
+.admin-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.admin-card { display: grid; gap: 10px; padding: 18px; border: 1px solid #e7eaf0; border-radius: 16px; background: #fbfcfe; }
+.admin-card h3 { margin: 0 0 4px; }
+.admin-card input, .admin-card select { width: 100%; min-height: 42px; border: 1px solid #dfe4ec; border-radius: 10px; padding: 9px 11px; background: white; outline: none; }
+.admin-card input:focus, .admin-card select:focus { border-color: #8b5cf6; }
 .success { margin-top: 12px; padding: 12px 14px; border-radius: 10px; background: #ecfdf5; color: #047857; line-height: 1.7; font-size: 13px; }
 .error-banner { margin: 12px 0; padding: 12px 14px; border-radius: 10px; background: #fff1f2; color: #be123c; line-height: 1.7; font-size: 13px; }
 footer { padding: 30px 16px; text-align: center; color: #8b93a1; }
-@media (max-width: 850px) { .hero { grid-template-columns: 1fr; } .catalog-grid { grid-template-columns: repeat(2, 1fr); } nav { display: none; } }
-@media (max-width: 560px) { main { width: min(100% - 20px, 1180px); } .topbar { padding-inline: 8px; } .brand small { display: none; } .signout { padding-inline: 10px; } .catalog-grid { grid-template-columns: 1fr; } .hero { padding-top: 42px; } h1 { letter-spacing: -1px; } .cart-line { grid-template-columns: 1fr auto; } .cart-line > strong:last-child { grid-column: 1 / -1; } }
+@media (max-width: 850px) { .hero { grid-template-columns: 1fr; } .catalog-grid, .admin-grid { grid-template-columns: repeat(2, 1fr); } nav { display: none; } }
+@media (max-width: 560px) { main { width: min(100% - 20px, 1180px); } .topbar { padding-inline: 8px; } .brand small { display: none; } .signout { padding-inline: 10px; } .catalog-grid, .admin-grid { grid-template-columns: 1fr; } .hero { padding-top: 42px; } h1 { letter-spacing: -1px; } .cart-line { grid-template-columns: 1fr auto; } .cart-line > strong:last-child { grid-column: 1 / -1; } }
