@@ -21,7 +21,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 nav { display: flex; gap: 18px; }
 nav a { color: #697386; text-decoration: none; padding: 8px 2px; }
 nav a.active { color: #172033; font-weight: 700; }
-.cart-button, .product-footer button, .checkout, .signout, .admin-card button { border: 0; border-radius: 11px; background: #172033; color: white; padding: 10px 16px; font-weight: 700; min-height: 42px; }
+.cart-button, .product-footer button, .checkout, .signout, .admin-card button, .status-actions button { border: 0; border-radius: 11px; background: #172033; color: white; padding: 10px 16px; font-weight: 700; min-height: 42px; }
 .signout { background: #eef1f6; color: #172033; }
 .cart-button b { display: inline-grid; place-items: center; min-width: 22px; height: 22px; margin-inline-start: 5px; border-radius: 50%; background: white; color: #172033; }
 main { width: min(1180px, calc(100% - 32px)); margin: auto; }
@@ -61,6 +61,8 @@ h1 { margin: 12px 0; font-size: clamp(38px, 6vw, 66px); line-height: 1.08; lette
 .quantity { display: flex; align-items: center; border: 1px solid #e0e4ec; border-radius: 10px; overflow: hidden; }
 .quantity button { width: 40px; height: 40px; border: 0; background: #f7f8fa; }
 .quantity span { width: 40px; text-align: center; }
+.status-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; min-width: 190px; }
+.status-actions button { min-height: 36px; padding: 7px 10px; white-space: nowrap; }
 .cart-total { display: flex; justify-content: space-between; padding: 20px 0; font-size: 18px; }
 .checkout { width: 100%; padding: 14px; }
 .admin-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
@@ -72,6 +74,6 @@ h1 { margin: 12px 0; font-size: clamp(38px, 6vw, 66px); line-height: 1.08; lette
 .success { margin-top: 12px; padding: 12px 14px; border-radius: 10px; background: #ecfdf5; color: #047857; line-height: 1.7; font-size: 13px; }
 .error-banner { margin: 12px 0; padding: 12px 14px; border-radius: 10px; background: #fff1f2; color: #be123c; line-height: 1.7; font-size: 13px; }
 footer { padding: 30px 16px; text-align: center; color: #8b93a1; }
-@media (max-width: 850px) { .hero { grid-template-columns: 1fr; } .catalog-grid, .admin-grid { grid-template-columns: repeat(2, 1fr); } nav { display: none; } }
-@media (max-width: 560px) { main { width: min(100% - 20px, 1180px); } .topbar { padding-inline: 8px; } .brand small { display: none; } .signout { padding-inline: 10px; } .catalog-grid, .admin-grid { grid-template-columns: 1fr; } .hero { padding-top: 42px; } h1 { letter-spacing: -1px; } .cart-line { grid-template-columns: 1fr auto; } .cart-line > strong:last-child { grid-column: 1 / -1; } }
+@media (max-width: 850px) { .hero { grid-template-columns: 1fr; } .catalog-grid, .admin-grid { grid-template-columns: repeat(2, 1fr); } nav { display: none; } .status-actions { justify-content: flex-start; min-width: 0; } }
+@media (max-width: 560px) { main { width: min(100% - 20px, 1180px); } .topbar { padding-inline: 8px; } .brand small { display: none; } .signout { padding-inline: 10px; } .catalog-grid, .admin-grid { grid-template-columns: 1fr; } .hero { padding-top: 42px; } h1 { letter-spacing: -1px; } .cart-line { grid-template-columns: 1fr auto; } .cart-line > strong:last-child { grid-column: 1 / -1; } .status-actions { grid-column: 1 / -1; width: 100%; } .status-actions button { flex: 1 1 auto; } }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; } }
