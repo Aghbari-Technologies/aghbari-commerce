@@ -38,8 +38,12 @@ select order_id, order_number, total from public.create_order(
 ) \gset replay_
 
 select case when :'order_order_id' = :'replay_order_id' and :'order_order_number' = :'replay_order_number' and :'order_total' = :'replay_total' then 'PASS: idempotent replay' else 'FAIL: idempotent replay' end;
+
+-- Ledger verification is performed with the database owner; customer-facing inventory reads remain denied by RLS.
+set role postgres;
 select case when available = 3 and reserved = 2 and version = 2 then 'PASS: atomic inventory reservation' else 'FAIL: atomic inventory reservation' end
 from inventory_balances where warehouse_id = '00000000-0000-0000-0000-000000000021' and product_id = '00000000-0000-0000-0000-000000000071';
+set role authenticated;
 select case when count(*) = 1 then 'PASS: customer sees own order' else 'FAIL: customer sees own order' end from orders where customer_id = '00000000-0000-0000-0000-000000000051';
 select case when count(*) = 0 then 'PASS: cross-customer order blocked' else 'FAIL: cross-customer order blocked' end from orders where customer_id = '00000000-0000-0000-0000-000000000052';
 
@@ -73,6 +77,7 @@ exception when check_violation then
   raise notice 'PASS: oversell blocked';
 end $$;
 
+set role postgres;
 select case when available = 3 and reserved = 2 then 'PASS: oversell rollback preserved stock' else 'FAIL: oversell rollback changed stock' end
 from inventory_balances where warehouse_id = '00000000-0000-0000-0000-000000000021' and product_id = '00000000-0000-0000-0000-000000000071';
 
