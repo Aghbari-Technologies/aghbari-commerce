@@ -19,11 +19,13 @@ declare
   v_role public.user_role := public.current_role();
   v_media_id uuid;
   v_object storage.objects%rowtype;
+  v_object_mime text;
+  v_object_size bigint;
 begin
   if v_org is null or v_role not in ('owner','admin','sales') then
     raise exception using errcode='42501', message='product media registration access required';
   end if;
-  if p_product_id is null or p_storage_path is null or p_storage_path !~ '^[0-9a-fA-F-]{36}/[0-9a-fA-F-]{36}/[^/]+\\.(webp|png|jpe?g)$' then
+  if p_product_id is null or p_storage_path is null or p_storage_path !~ '^[0-9a-fA-F-]{36}/[0-9a-fA-F-]{36}/[^/]+[.](webp|png|jpe?g)$' then
     raise exception using errcode='22023', message='invalid product media path';
   end if;
   if split_part(p_storage_path,'/',1)::uuid <> v_org or split_part(p_storage_path,'/',2)::uuid <> p_product_id then
@@ -47,6 +49,11 @@ begin
   where bucket_id='product-media' and name=p_storage_path;
   if not found then
     raise exception using errcode='P0002', message='uploaded product media not found';
+  end if;
+  v_object_mime := lower(coalesce(v_object.metadata->>'mimetype',''));
+  v_object_size := nullif(v_object.metadata->>'size','')::bigint;
+  if v_object_mime <> lower(p_mime_type) or (v_object_size is not null and v_object_size <> p_byte_size) then
+    raise exception using errcode='22023', message='uploaded product media metadata mismatch';
   end if;
   if v_object.owner_id is not null and v_object.owner_id <> auth.uid() then
     raise exception using errcode='42501', message='product media owner mismatch';
