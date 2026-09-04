@@ -13,6 +13,7 @@ export function validateOrderDraft(draft: OrderDraft, inventory: Map<string, num
     throw new OrderValidationError('idempotencyKey must be at least 16 characters');
   }
   if (draft.lines.length === 0) throw new OrderValidationError('order must contain at least one line');
+  if (draft.lines.length > 100) throw new OrderValidationError('order cannot contain more than 100 lines');
 
   const seen = new Set<string>();
   for (const line of draft.lines) {
