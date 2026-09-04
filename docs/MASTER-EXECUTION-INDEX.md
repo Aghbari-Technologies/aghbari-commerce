@@ -6,7 +6,7 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Branch: `main`
-- Current exact HEAD: **`PENDING_COMMIT_SHA` until this index write returns its commit SHA; then that returned SHA becomes canonical.**
+- Current exact HEAD: **`a67ef7c9e160f63d5259b847ddf02e9099253b04`**
 
 ## Standing execution command
 **`1` = CONTINUE / EXECUTE AUTONOMOUSLY / DEEPEN / TEST / VERIFY / DOCUMENT / SELF-IMPROVE.**
@@ -45,21 +45,23 @@
 - Adversarial Architecture Review V1.
 - Candidate RBAC/RLS Policy Matrix V1.
 - Technology Proof Gates V1.
+- Final Offline / Weak-Network Sync Contract V1.
 
 ## This wave
-- Added a deny-by-default RBAC/RLS matrix covering customer, sales, warehouse, accounting, moderation, administration, and scope boundaries.
-- Added field-level exposure rules for tier pricing, security material, private customer data, and integration credentials.
-- Added adversarial authorization cases that must fail through direct API requests, not only through UI restrictions.
-- Added technology proof gates covering transactional correctness, authorization, typed contracts, background delivery, weak-network/PWA behavior, bulk import/export, performance, observability, deployment/recovery, and deterministic testing.
-- Kept technology and architecture freeze explicitly evidence-gated; no runtime or implementation PASS is claimed.
+- Converted the offline/weak-network baseline into a concrete implementation contract.
+- Defined which capabilities may operate offline and which remain server-authoritative.
+- Defined the client operation envelope with UUID idempotency, command version, payload hash, sequence, and correlation ID.
+- Defined deterministic replay, conflict classes, queue safety, bounded retry/dead-letter behavior, cache metadata, and account/session isolation.
+- Explicitly prohibited offline authorization bypass and stale inventory from becoming authoritative truth.
+- Preserved the strict Report-Advisor boundary: Aghbari remains operational system of record; analytics remain in Report-Advisor.
 
 ## Pending gates
 1. Batch 3 reconciliation when supplied.
-2. Execute technology proof-of-concept gates.
+2. Execute technology proof-of-concept gates with executable evidence.
 3. Exact physical schema/migrations after Batch-3 reconciliation.
 4. Final API schemas/versioning.
 5. Final RBAC/RLS policy matrix (candidate now exists; final freeze pending schema/Batch 3).
-6. Final offline/sync implementation contract.
+6. Implement and test offline/sync contract.
 7. Architecture freeze.
 8. Implementation vertical slices.
 9. Automated and runtime certification.
@@ -68,15 +70,14 @@
 Documentation PASS means only that the documented design check passed. It does **not** mean implementation PASS, runtime PASS, or certification PASS.
 
 ## Latest boundary
-**ACTION:** Autonomous `1` — harden authorization and make technology selection evidence-driven without inventing Batch 3.
+**ACTION:** Autonomous `1` — advance the highest-value architecture contract without inventing Batch 3.
 
-**RESULT:** Added `RBAC-RLS-POLICY-MATRIX-V1.md` and `TECHNOLOGY-POC-GATES-V1.md`. Authorization is now mapped to explicit roles/scopes/actions with direct-request negative tests; technology choices are mapped to executable proof gates rather than preference.
+**RESULT:** Added `FINAL-OFFLINE-SYNC-CONTRACT-V1.md`, defining safe offline operation, idempotent replay, conflict handling, cache/security rules, queue safety, and executable evidence requirements.
 
 **EVIDENCE:**
-- `ef1facd75011fe047f450bc5fe62374d2f831c6a` — candidate RBAC/RLS policy matrix.
-- `bf93ffbdbc5be7297ecd08e481b1845460712e69` — technology proof gates.
-- This index update's returned commit SHA is the final exact HEAD for this boundary.
+- `a67ef7c9e160f63d5259b847ddf02e9099253b04` — offline/weak-network sync contract.
+- This index update records that exact implementation boundary.
 
-**BLOCKER:** Batch 3 remains absent. Architecture is intentionally not frozen/certified.
+**BLOCKER:** Batch 3 remains absent. Architecture is intentionally not frozen/certified, and the offline contract remains unproven until implementation/runtime tests exist.
 
-**NEXT:** Execute the highest-value technology/architecture gates that can be completed without Batch 3, then begin the first implementation vertical slice only when its contract is sufficiently frozen. Continue adversarial testing and evidence capture.
+**NEXT:** Execute the highest-value executable technology/architecture proof gates available without Batch 3; then start the first implementation vertical slice when its contracts are sufficiently frozen. Continue adversarial testing, exact-HEAD verification, and evidence capture.
