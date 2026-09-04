@@ -61,11 +61,12 @@ create table public.roles (
 );
 
 create table public.user_roles (
+  organization_id uuid not null references public.organizations(id),
   user_id uuid not null references public.users(id) on delete cascade,
   role_id uuid not null references public.roles(id) on delete cascade,
   branch_id uuid references public.branches(id),
   warehouse_id uuid references public.warehouses(id),
-  primary key (user_id, role_id, branch_id, warehouse_id)
+  primary key (organization_id, user_id, role_id, branch_id, warehouse_id)
 );
 
 create table public.customer_tiers (
