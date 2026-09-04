@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { MAX_ORDER_LINES, MAX_ORDER_QUANTITY_PER_LINE, OrderValidationError, validateOrderDraft } from './order';
+import { MAX_IDEMPOTENCY_KEY_LENGTH, MAX_ORDER_LINES, MAX_ORDER_QUANTITY_PER_LINE, OrderValidationError, calculateClientPreviewTotal, validateOrderDraft } from './order';
 
 const product = (id: string, quantity = 10) => [id, quantity] as const;
 
@@ -17,6 +17,10 @@ describe('validateOrderDraft', () => {
     expect(() => validateOrderDraft(draft([{ productId: 'product-1', quantity: 1 }, { productId: 'product-1', quantity: 2 }]), new Map([product('product-1')]))).toThrow(OrderValidationError);
   });
 
+  it('rejects duplicate product lines after whitespace normalization', () => {
+    expect(() => validateOrderDraft(draft([{ productId: ' product-1 ', quantity: 1 }, { productId: 'product-1', quantity: 2 }]), new Map([product('product-1')]))).toThrow(/duplicate/);
+  });
+
   it('does not require client-supplied customer identity', () => {
     const order = draft([{ productId: 'product-1', quantity: 1 }]);
     expect(order).not.toHaveProperty('customerId');
@@ -28,8 +32,16 @@ describe('validateOrderDraft', () => {
     expect(() => validateOrderDraft({ ...draft([{ productId: 'product-1', quantity: 1 }]), idempotencyKey: '                ' }, new Map([product('product-1')]))).toThrow(/idempotencyKey/);
   });
 
+  it('rejects an idempotency key above the boundary limit', () => {
+    expect(() => validateOrderDraft({ ...draft([{ productId: 'product-1', quantity: 1 }]), idempotencyKey: 'x'.repeat(MAX_IDEMPOTENCY_KEY_LENGTH + 1) }, new Map([product('product-1')]))).toThrow(/cannot exceed/);
+  });
+
   it('rejects quantities above the domain limit', () => {
     expect(() => validateOrderDraft(draft([{ productId: 'product-1', quantity: MAX_ORDER_QUANTITY_PER_LINE + 1 }]), new Map([product('product-1', MAX_ORDER_QUANTITY_PER_LINE + 1)]))).toThrow(/cannot exceed/);
+  });
+
+  it('rejects unsafe integer quantities', () => {
+    expect(() => validateOrderDraft(draft([{ productId: 'product-1', quantity: Number.MAX_SAFE_INTEGER + 1 }]), new Map([product('product-1', Number.MAX_SAFE_INTEGER)]))).toThrow(/safe integer/);
   });
 
   it('rejects more than the maximum number of lines', () => {
@@ -42,7 +54,28 @@ describe('validateOrderDraft', () => {
     expect(() => validateOrderDraft(draft([{ productId: 'product-1', quantity: 11 }]), new Map([product('product-1', 10)]))).toThrow(/insufficient stock/);
   });
 
-  it('rejects invalid negative inventory instead of treating it as usable stock', () => {
+  it('rejects invalid negative or unsafe inventory quantities', () => {
     expect(() => validateOrderDraft(draft([{ productId: 'product-1', quantity: 1 }]), new Map([product('product-1', -1)]))).toThrow(/invalid inventory/);
+    expect(() => validateOrderDraft(draft([{ productId: 'product-1', quantity: 1 }]), new Map([product('product-1', Number.NaN)]))).toThrow(/invalid inventory/);
+  });
+});
+
+describe('calculateClientPreviewTotal', () => {
+  it('keeps valid finite preview values', () => {
+    const total = calculateClientPreviewTotal([
+      { product: { id: '1', sku: '1', name: 'A', unit: 'قطعة', category: 'أ', availableQuantity: 10, status: 'active' }, quantity: 2, unitPrice: 5 },
+      { product: { id: '2', sku: '2', name: 'B', unit: 'قطعة', category: 'أ', availableQuantity: 10, status: 'active' }, quantity: 3, unitPrice: 2 },
+    ]);
+    expect(total).toBe(16);
+  });
+
+  it('ignores non-finite, negative, or unsafe client-preview values', () => {
+    const productValue = { id: '1', sku: '1', name: 'A', unit: 'قطعة', category: 'أ', availableQuantity: 10, status: 'active' as const };
+    expect(calculateClientPreviewTotal([
+      { product: productValue, quantity: 2, unitPrice: Number.POSITIVE_INFINITY },
+      { product: productValue, quantity: 2, unitPrice: -5 },
+      { product: productValue, quantity: Number.MAX_SAFE_INTEGER + 1, unitPrice: 5 },
+      { product: productValue, quantity: 1, unitPrice: 4 },
+    ])).toBe(4);
   });
 });
