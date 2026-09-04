@@ -2,19 +2,19 @@ import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import type { CartLine, Product } from './domain/types';
 import { calculateClientPreviewTotal } from './domain/order';
 import { formatMoney } from './domain/pricing';
-import { getCatalog, type CatalogItem } from './services/catalog';
+import { getCatalog, getProductImageUrls, type CatalogItem } from './services/catalog';
 import { clearCart, getCart, setCartItem } from './services/cart';
 import { createOrder } from './services/orders';
 import { getSession, signIn, signOut } from './services/auth';
 import { requireSupabase, supabase } from './lib/supabase';
 import './styles.css';
 
-function mapCatalogItem(item: CatalogItem): Product & { authorizedPrice?: number } {
+function mapCatalogItem(item: CatalogItem, imageUrl?: string): Product & { authorizedPrice?: number } {
   return {
     id: item.id, sku: item.sku, name: item.name, unit: item.unit,
     category: item.category_id ?? 'أصناف', description: item.description ?? undefined,
     availableQuantity: item.available_quantity, status: item.status === 'active' ? 'active' : 'inactive',
-    imageUrl: item.image_path ?? undefined, authorizedPrice: item.authorized_price ?? undefined
+    imageUrl, authorizedPrice: item.authorized_price ?? undefined
   };
 }
 
@@ -66,8 +66,10 @@ export default function App() {
         if (warehouseError) throw warehouseError;
         if (!warehouse?.id) throw new Error('لا يوجد مستودع تشغيلي نشط.');
         if (cancelled) return;
+        const imageUrls = await getProductImageUrls(items.map((item) => item.image_path));
+        if (cancelled) return;
         setWarehouseId(warehouse.id);
-        const mapped = items.map(mapCatalogItem);
+        const mapped = items.map((item) => mapCatalogItem(item, item.image_path ? imageUrls.get(item.image_path) : undefined));
         setProducts(mapped);
         setServerPrices(Object.fromEntries(items.map((item) => [item.id, item.authorized_price ?? 0])));
         setCart(savedCart.map((item) => ({
@@ -161,6 +163,6 @@ export default function App() {
   return <div className="app-shell"><header className="topbar"><div className="brand"><span className="brand-mark">أ</span><div><strong>بوابة الأغبري</strong><small>للتجارة والجملة</small></div></div><nav aria-label="التنقل الرئيسي"><a className="active" href="#catalog">المنتجات</a><a href="#orders">طلباتي</a><a href="#account">حسابي</a></nav><button className="cart-button" onClick={() => document.getElementById('cart')?.scrollIntoView({ behavior: 'smooth' })}>السلة <b>{cart.length}</b></button><button className="signout" onClick={() => void handleSignOut()}>خروج</button></header>
     <main><section className="hero" id="catalog"><div><span className="eyebrow">تجارة جملة أسرع</span><h1>اطلب احتياج متجرك<br/>بخطوات بسيطة.</h1><p>الكتالوج والسعر والمخزون تأتي من الخادم بعد التحقق من هوية العميل وتصنيفه.</p></div><div className="hero-card"><span>حالة الخدمة</span><strong>{runtimeError ? 'يحتاج انتباهًا' : 'متصل'}</strong><small>{runtimeError ?? 'الأسعار المعروضة هي السعر الفعّال المصرح به لحسابك.'}</small></div></section>
       {runtimeError && <div className="error-banner" role="alert">{runtimeError}</div>}<section className="toolbar"><label className="search"><span>⌕</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="ابحث بالاسم أو SKU..." aria-label="بحث المنتجات"/></label><div className="chips">{categories.map((item) => <button key={item} className={item === category ? 'chip selected' : 'chip'} onClick={() => setCategory(item)}>{item}</button>)}</div></section>
-      <section className="catalog-grid">{filtered.map((product) => <article className="product-card" key={product.id}><div className="product-image" aria-hidden="true">{product.name.slice(0, 1)}</div><div className="product-meta"><span>{product.category}</span><code>{product.sku}</code></div><h2>{product.name}</h2><p className="unit">الوحدة: {product.unit} · المتاح: {product.availableQuantity}</p><div className="product-footer"><strong>{priceFor(product) ? formatMoney(priceFor(product)) : 'السعر غير متاح'}</strong><button disabled={!priceFor(product) || product.availableQuantity < 1} onClick={() => void addToCart(product)}>أضف للسلة</button></div></article>)}{!filtered.length && <div className="empty">لا توجد أصناف متاحة لعرضها.</div>}</section>
+      <section className="catalog-grid">{filtered.map((product) => <article className="product-card" key={product.id}><div className="product-image">{product.imageUrl ? <img src={product.imageUrl} alt="" loading="lazy" /> : product.name.slice(0, 1)}</div><div className="product-meta"><span>{product.category}</span><code>{product.sku}</code></div><h2>{product.name}</h2><p className="unit">الوحدة: {product.unit} · المتاح: {product.availableQuantity}</p><div className="product-footer"><strong>{priceFor(product) ? formatMoney(priceFor(product)) : 'السعر غير متاح'}</strong><button disabled={!priceFor(product) || product.availableQuantity < 1} onClick={() => void addToCart(product)}>أضف للسلة</button></div></article>)}{!filtered.length && <div className="empty">لا توجد أصناف متاحة لعرضها.</div>}</section>
       <section className="cart-panel" id="cart"><div className="section-heading"><div><span className="eyebrow">طلبك الحالي</span><h2>السلة</h2></div><span>{cart.length} أصناف</span></div>{!cart.length ? <div className="cart-empty">السلة فارغة. أضف الأصناف التي تريد طلبها.</div> : <><div className="cart-lines">{cart.map((line) => <div className="cart-line" key={line.product.id}><div><strong>{line.product.name}</strong><small>{formatMoney(line.unitPrice)} / {line.product.unit}</small></div><div className="quantity"><button onClick={() => void updateQuantity(line.product.id, line.quantity - 1)} aria-label="إنقاص">−</button><span>{line.quantity}</span><button onClick={() => void updateQuantity(line.product.id, line.quantity + 1)} aria-label="زيادة">+</button></div><strong>{formatMoney(line.unitPrice * line.quantity)}</strong></div>)}</div><div className="cart-total"><span>الإجمالي التقديري</span><strong>{formatMoney(total)}</strong></div><button className="checkout" disabled={orderBusy || !warehouseId || !customerId} onClick={() => void submitOrder()}>{orderBusy ? 'جارٍ اعتماد الطلب…' : 'إرسال الطلب'}</button>{orderResult && <div className="success" role="status">{orderResult}</div>}</>}</section></main><footer>بوابة الأغبري · النظام التشغيلي للتجارة</footer></div>;
 }
