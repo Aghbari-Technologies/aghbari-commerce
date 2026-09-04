@@ -3,6 +3,7 @@ import { requireSupabase } from '../lib/supabase';
 const MAX_SOURCE_BYTES = 10 * 1024 * 1024;
 const MAX_OUTPUT_BYTES = 5 * 1024 * 1024;
 const MAX_DIMENSION = 1600;
+const MAX_SOURCE_PIXELS = 25_000_000;
 const WEBP_QUALITY = 0.82;
 const ALLOWED_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -19,6 +20,15 @@ export function validateImageFile(file: File): void {
   if (file.size < 1 || file.size > MAX_SOURCE_BYTES) throw new Error('حجم الصورة الأصلية يجب ألا يتجاوز 10 MB.');
 }
 
+export function validateDecodedImageDimensions(width: number, height: number): void {
+  if (!Number.isSafeInteger(width) || !Number.isSafeInteger(height) || width < 1 || height < 1) {
+    throw new Error('أبعاد الصورة غير صالحة.');
+  }
+  if (width * height > MAX_SOURCE_PIXELS) {
+    throw new Error('أبعاد الصورة الأصلية تتجاوز الحد الآمن للمعالجة.');
+  }
+}
+
 export function validateProductImageTarget(productId: string): void {
   if (!UUID_PATTERN.test(productId.trim())) throw new Error('معرّف المنتج غير صالح.');
 }
@@ -30,7 +40,7 @@ export async function processProductImage(file: File): Promise<ProcessedImage> {
     const image = new Image();
     image.src = url;
     await image.decode();
-    if (!image.naturalWidth || !image.naturalHeight) throw new Error('تعذر قراءة أبعاد الصورة.');
+    validateDecodedImageDimensions(image.naturalWidth, image.naturalHeight);
 
     const scale = Math.min(1, MAX_DIMENSION / image.naturalWidth, MAX_DIMENSION / image.naturalHeight);
     const width = Math.max(1, Math.round(image.naturalWidth * scale));
