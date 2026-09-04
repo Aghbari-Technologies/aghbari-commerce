@@ -9,3 +9,7 @@
 .primary-button:disabled { opacity:.55; cursor:wait; }
 .secondary-button { background:#fff; border:1px solid #cbd5e1; color:#0f172a; }
 .topbar-actions { display:flex; align-items:center; gap:8px; }
+.price-row { display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:14px; }
+.price-row strong { font-size:19px; }
+.price-row span { color:#64748b; font-size:12px; }
+.product-footer button:disabled { opacity:.5; cursor:not-allowed; }
