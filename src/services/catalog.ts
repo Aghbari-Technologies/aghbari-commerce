@@ -1,5 +1,6 @@
 import { requireSupabase } from '../lib/supabase';
 import { normalizeCatalogQuery } from '../domain/catalog';
+import { retryRead } from '../lib/retry';
 
 export interface CatalogItem {
   id: string;
@@ -25,15 +26,16 @@ function finiteNumber(value: unknown, fallback = 0): number {
 }
 
 export async function getCatalog(search = '', categoryId: string | null = null, limit = 24, offset = 0) {
-  const client = requireSupabase();
   const query = normalizeCatalogQuery(search, limit, offset);
-  const { data, error } = await client.rpc('get_catalog', {
+  const { data, error } = await retryRead(() => requireSupabase().rpc('get_catalog', {
     p_search: query.search || null,
     p_category_id: categoryId,
     p_limit: query.limit,
     p_offset: query.offset
-  });
-  if (error) throw error;
+  }).then((result) => {
+    if (result.error) throw result.error;
+    return result;
+  }));
   return (data ?? []).map((item) => ({
     ...(item as Omit<CatalogItem, 'available_quantity' | 'authorized_price'>),
     available_quantity: finiteNumber(item.available_quantity),
@@ -56,8 +58,10 @@ export async function getProductImageUrls(paths: Array<string | null>) {
   }
 
   if (missing.length) {
-    const { data, error } = await client.storage.from('product-media').createSignedUrls(missing, SIGNED_URL_TTL_SECONDS);
-    if (error) throw error;
+    const { data, error } = await retryRead(() => client.storage.from('product-media').createSignedUrls(missing, SIGNED_URL_TTL_SECONDS).then((response) => {
+      if (response.error) throw response.error;
+      return response;
+    }));
     for (const [index, item] of (data ?? []).entries()) {
       const path = missing[index];
       if (!path || !item.signedUrl) continue;
