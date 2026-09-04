@@ -1,20 +1,38 @@
 import { useCallback, useEffect, useState } from 'react';
-import type { CustomerTier } from './domain/types';
+import type { CustomerTier, OrderStatus } from './domain/types';
 import { adjustInventory, createCategory, setProductPrice, upsertProduct } from './services/admin';
 import { commitProductImport, stageProductImport } from './services/importExcel';
 import { getCategories, type CategoryOption } from './services/categories';
 import { uploadProductImage } from './services/imagePipeline';
+import { getStaffOrders, transitionOrder, type StaffOrderSummary } from './services/staffOrders';
 import { supabase } from './lib/supabase';
 
 interface StaffProduct { id: string; sku: string; name: string; unit: string; }
 interface Warehouse { id: string; name: string; }
 type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer';
 const tiers: CustomerTier[] = ['retail', 'wholesale', 'distributor'];
+const STATUS_LABELS: Record<OrderStatus, string> = { draft: 'مسودة', pending: 'قيد المراجعة', confirmed: 'مؤكد', preparing: 'قيد التجهيز', ready: 'جاهز', completed: 'مكتمل', cancelled: 'ملغي' };
+
+function allowedNextStatuses(status: OrderStatus, role: UserRole): OrderStatus[] {
+  const allowed = new Set<UserRole>();
+  if (status === 'pending') ['owner', 'admin', 'sales'].forEach((item) => allowed.add(item as UserRole));
+  if (status === 'confirmed' || status === 'preparing' || status === 'ready') ['owner', 'admin', 'warehouse'].forEach((item) => allowed.add(item as UserRole));
+  if (status === 'ready') ['sales'].forEach((item) => allowed.add(item as UserRole));
+  if (['pending', 'confirmed', 'preparing'].includes(status)) ['owner', 'admin', 'sales', 'warehouse'].forEach((item) => allowed.add(item as UserRole));
+  if (!allowed.has(role)) return [];
+  if (status === 'pending') return ['confirmed', 'cancelled'];
+  if (status === 'confirmed') return ['preparing', 'cancelled'];
+  if (status === 'preparing') return ['ready', 'cancelled'];
+  if (status === 'ready' && ['owner', 'admin', 'warehouse', 'sales'].includes(role)) return ['completed'];
+  return [];
+}
 
 export default function AdminPanel({ role }: { role: UserRole }) {
   const [products, setProducts] = useState<StaffProduct[]>([]);
   const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
   const [categories, setCategories] = useState<CategoryOption[]>([]);
+  const [orders, setOrders] = useState<StaffOrderSummary[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
   const [product, setProduct] = useState({ sku: '', name: '', unit: 'كرتون', categoryId: '', description: '' });
   const [category, setCategory] = useState({ name: '', slug: '', parentId: '' });
   const [selectedProduct, setSelectedProduct] = useState('');
@@ -33,15 +51,17 @@ export default function AdminPanel({ role }: { role: UserRole }) {
 
   const reload = useCallback(async () => {
     if (!supabase) return;
-    const [{ data: productRows, error: productError }, { data: warehouseRows, error: warehouseError }, categoryRows] = await Promise.all([
+    const [{ data: productRows, error: productError }, { data: warehouseRows, error: warehouseError }, categoryRows, orderRows] = await Promise.all([
       supabase.from('products').select('id,sku,name,unit').eq('status', 'active').order('name').limit(200),
       supabase.from('warehouses').select('id,name').eq('is_active', true).order('created_at'),
-      getCategories()
+      getCategories(),
+      getStaffOrders(50)
     ]);
     if (productError) throw productError;
     if (warehouseError) throw warehouseError;
     setProducts((productRows ?? []) as StaffProduct[]);
     setCategories(categoryRows);
+    setOrders(orderRows);
     const nextWarehouses = (warehouseRows ?? []) as Warehouse[];
     setWarehouses(nextWarehouses);
     if (!warehouseId && nextWarehouses[0]) setWarehouseId(nextWarehouses[0].id);
@@ -78,9 +98,15 @@ export default function AdminPanel({ role }: { role: UserRole }) {
     await run(async () => { const result = await commitProductImport(importJobId, warehouseId); setImportJobId(null); setImportFile(null); setImportPreview(null); return result; }, 'تم اعتماد الاستيراد بالكامل وتسجيل أثر المخزون والتدقيق.');
   }
 
+  async function changeOrderStatus(orderId: string, status: OrderStatus) {
+    await run(async () => transitionOrder(orderId, status), `تم تحديث حالة الطلب إلى: ${STATUS_LABELS[status]}.`);
+  }
+
   const canCatalog = role === 'owner' || role === 'admin' || role === 'sales';
   const canCategory = role === 'owner' || role === 'admin';
   const canInventory = role === 'owner' || role === 'admin' || role === 'warehouse';
+  const canOrderWorkflow = STAFF_ROLES.has(role);
+  const STAFF_ROLES = new Set<UserRole>(['owner', 'admin', 'sales', 'warehouse']);
 
   return <section className="admin-panel" id="account">
     <div className="section-heading"><div><span className="eyebrow">إدارة التشغيل</span><h2>مركز التحكم</h2></div><span>الصلاحيات تُفرض على الخادم أيضًا</span></div>
@@ -89,9 +115,7 @@ export default function AdminPanel({ role }: { role: UserRole }) {
         <h3>منتج جديد</h3><input aria-label="SKU" placeholder="SKU" value={product.sku} onChange={(e) => setProduct({ ...product, sku: e.target.value })} required />
         <input aria-label="اسم المنتج" placeholder="اسم المنتج" value={product.name} onChange={(e) => setProduct({ ...product, name: e.target.value })} required />
         <input aria-label="الوحدة" placeholder="الوحدة" value={product.unit} onChange={(e) => setProduct({ ...product, unit: e.target.value })} required />
-        <select aria-label="تصنيف المنتج" value={product.categoryId} onChange={(e) => setProduct({ ...product, categoryId: e.target.value })}>
-          <option value="">بدون تصنيف</option>{categories.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
-        </select>
+        <select aria-label="تصنيف المنتج" value={product.categoryId} onChange={(e) => setProduct({ ...product, categoryId: e.target.value })}><option value="">بدون تصنيف</option>{categories.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select>
         <textarea aria-label="وصف المنتج" placeholder="وصف المنتج (اختياري)" value={product.description} onChange={(e) => setProduct({ ...product, description: e.target.value })} rows={3} />
         <button disabled={busy}>حفظ المنتج</button>
       </form>}
@@ -127,6 +151,7 @@ export default function AdminPanel({ role }: { role: UserRole }) {
         <input aria-label="التغيير" type="number" step="1" placeholder="+ أو - الكمية" value={delta} onChange={(e) => setDelta(e.target.value)} required /><input aria-label="سبب التعديل" placeholder="سبب التعديل" value={reason} onChange={(e) => setReason(e.target.value)} required /><button disabled={busy}>تسجيل الحركة</button>
       </form>}
     </div>
+    {canOrderWorkflow && <div className="cart-panel"><div className="section-heading"><div><span className="eyebrow">التشغيل</span><h2>إدارة الطلبات</h2></div><span>{orders.length} طلبات</span></div>{ordersLoading ? <div className="cart-empty">جارٍ تحميل الطلبات…</div> : !orders.length ? <div className="cart-empty">لا توجد طلبات تشغيلية بعد.</div> : <div className="cart-lines">{orders.map((order) => <article className="cart-line" key={order.id}><div><strong>طلب #{order.order_number}</strong><small>العميل: {order.customer_id} · {new Date(order.created_at).toLocaleString('ar-YE')}</small></div><div><strong>{formatMoney(order.total)} {order.currency}</strong><small>الحالة: {STATUS_LABELS[order.status]}</small></div><div className="quantity">{allowedNextStatuses(order.status, role).map((next) => <button key={next} disabled={busy} onClick={() => void changeOrderStatus(order.id, next)} aria-label={`تحويل الطلب ${order.order_number} إلى ${STATUS_LABELS[next]}`}>{STATUS_LABELS[next]}</button>)}</div></article>)}</div>}</div>}
     {error && <div className="error-banner" role="alert">{error}</div>}{message && <div className="success" role="status">{message}</div>}
   </section>;
 }
