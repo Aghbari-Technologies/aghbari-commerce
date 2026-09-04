@@ -1,0 +1,30 @@
+name: Intelligence Contract Proof
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'contracts/intelligence-analytics-dataset.v1.schema.json'
+      - 'poc/intelligence-gateway/**'
+      - 'docs/INTELLIGENCE-INTEGRATION-CONTRACT-V1.md'
+      - '.github/workflows/intelligence-contract-proof.yml'
+  pull_request:
+    paths:
+      - 'contracts/intelligence-analytics-dataset.v1.schema.json'
+      - 'poc/intelligence-gateway/**'
+      - 'docs/INTELLIGENCE-INTEGRATION-CONTRACT-V1.md'
+      - '.github/workflows/intelligence-contract-proof.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  contract-proof:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Run deterministic intelligence contract proof
+        run: node poc/intelligence-gateway/contract-proof.mjs
