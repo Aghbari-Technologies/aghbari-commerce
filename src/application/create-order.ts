@@ -66,7 +66,7 @@ export function createOrder(deps: CreateOrderDeps, command: CreateOrderCommand):
       }
       const price = resolvePrice(deps.prices, command.pricingContext, line.productId, at);
       const lineTotal = price.unitPrice * line.quantity;
-      if (!Number.isSafeInteger(lineTotal) && !Number.isFinite(lineTotal)) {
+      if (!Number.isFinite(lineTotal) || lineTotal < 0) {
         throw new DomainError('VALIDATION_FAILED', 'Order line total is invalid.');
       }
       return {
@@ -78,6 +78,10 @@ export function createOrder(deps: CreateOrderDeps, command: CreateOrderCommand):
     });
 
     const subtotal = lines.reduce((sum, line) => sum + line.lineTotal, 0);
+    if (!Number.isFinite(subtotal) || subtotal < 0) {
+      throw new DomainError('VALIDATION_FAILED', 'Order total is invalid.');
+    }
+
     const order: Order = {
       id: deps.newId(),
       orderNumber: deps.nextOrderNumber(),
