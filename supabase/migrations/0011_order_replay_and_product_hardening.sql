@@ -53,7 +53,6 @@ begin
     raise exception using errcode='42501', message='active customer required';
   end if;
 
-  -- Serialize all attempts for the same organization-scoped business key.
   perform pg_advisory_xact_lock(hashtextextended(v_org::text || ':' || v_requested_key, 0));
 
   -- Validate the complete request shape before replay lookup so malformed replays cannot
@@ -77,8 +76,7 @@ begin
   end loop;
 
   if exists (
-    select 1
-    from (
+    select 1 from (
       select value->>'product_id' as product_id
       from jsonb_array_elements(p_lines)
     ) lines
@@ -127,8 +125,6 @@ begin
     raise exception using errcode='42501', message='warehouse not available';
   end if;
 
-  -- Lock inventory in deterministic product order. This prevents avoidable deadlocks
-  -- when multiple customers check out overlapping carts concurrently.
   for v_line in
     select value from jsonb_array_elements(p_lines)
     order by value->>'product_id'
@@ -239,14 +235,9 @@ begin
 
   return query select v_order.id, v_order.order_number, v_order.status, v_order.total;
 exception when unique_violation then
-  select * into v_existing
-  from public.orders
-  where organization_id = v_org and idempotency_key = v_requested_key;
-  if found then
-    return query select v_existing.id, v_existing.order_number, v_existing.status, v_existing.total;
-  else
-    raise;
-  end if;
+  -- Same-key races are serialized above. Do not convert unrelated unique violations
+  -- (for example a schema/sequence defect) into a false idempotent success.
+  raise;
 end;
 $$;
 
