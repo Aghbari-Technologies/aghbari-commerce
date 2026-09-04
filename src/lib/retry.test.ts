@@ -11,6 +11,10 @@ describe('retryRead', () => {
     expect(isTransientReadFailure({ status: 422 })).toBe(false);
   });
 
+  it('classifies browser network TypeErrors as transient', () => {
+    expect(isTransientReadFailure(new TypeError('Failed to fetch'))).toBe(true);
+  });
+
   it('retries a transient read with bounded backoff and then succeeds', async () => {
     let calls = 0;
     const delays: number[] = [];
