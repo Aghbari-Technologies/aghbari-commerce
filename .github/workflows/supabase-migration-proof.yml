@@ -32,8 +32,8 @@ jobs:
       - run: supabase start
       - name: Apply migrations from empty database
         run: supabase db reset --local
-      - name: Verify migration inventory
-        run: supabase migration list
+      - name: Verify local migration inventory
+        run: supabase migration list --local
       - name: Stop local Supabase
         if: always()
         run: supabase stop --no-backup
