@@ -1,6 +1,6 @@
 # Aghbari — Canonical Operational Data Model V1
 
-**Status:** Phase-0 candidate baseline; implementation begins only after Batch-3 reconciliation.
+**Status:** Phase-0 candidate baseline; implementation begins only after Batch-3 reconciliation. V2 architecture hardening is incorporated below.
 
 ## 1. Ownership rule
 Each business fact has one canonical owner. Derived views, caches, exports, and Report-Advisor datasets never become competing sources of truth.
@@ -41,8 +41,15 @@ Customer-facing reads resolve one authorized price. Alternative tiers are never 
 - stock adjustment records
 - thresholds
 - reservations where required by the order lifecycle
+- optional lot/batch records
+- optional expiry dates
+- receiving provenance
+- blocked/expired/quarantined stock states where required
+- allocation policy metadata, including FEFO where enabled
 
 Balance is a transactional projection supported by a movement ledger. Every material mutation has actor, reason, source/reference, and timestamp.
+
+For expiry-sensitive stock, the trace chain should remain reconstructable from receiving through movement/reservation/order/adjustment. FEFO is an allocation policy; it never permits silent stock mutation.
 
 ## 6. Sales
 - orders
@@ -51,8 +58,11 @@ Balance is a transactional projection supported by a movement ledger. Every mate
 - order notes
 - invoices/operational invoice snapshots where needed
 - customer/order delivery records
+- line-level fulfillment state where split fulfillment is introduced
 
 An order has one canonical identity and immutable audit provenance. Lines reference canonical products and preserve the price/quantity actually committed to the order.
+
+Order lifecycle is an explicit state machine. Invalid, stale, unauthorized, or replayed transitions are rejected and audited.
 
 ## 7. Purchasing
 - purchase orders
@@ -82,8 +92,9 @@ Notifications are side effects and never block the canonical order transaction.
 - idempotency keys
 - correlation IDs
 - retry/dead-letter state
+- consumer-side processed-event/idempotency records where required
 
-External system state is stored as integration evidence, not treated as canonical internal business truth.
+External system state is stored as integration evidence, not treated as canonical internal business truth. Outbox persistence alone is insufficient: consumers must be idempotent against at-least-once delivery.
 
 ## 11. Import/export
 Imports use:
@@ -104,6 +115,8 @@ Audit records cover sensitive business and security actions. They must be append
 7. External retries cannot duplicate internal business mutations.
 8. Unique order numbers are generated server-side.
 9. Soft deletion cannot bypass security or uniqueness invariants.
+10. External consumers cannot apply the same event twice.
+11. Reuse of an idempotency/event key with a different payload is rejected.
 
 ## 14. Financial integrity
 Never trust client-calculated totals as canonical. Server-side calculation uses the authorized price, quantity, discounts, taxes/fees if enabled, and rounding policy. The committed transaction stores sufficient snapshot information to reproduce the operational invoice.
@@ -111,8 +124,15 @@ Never trust client-calculated totals as canonical. Server-side calculation uses 
 ## 15. Report-Advisor boundary
 Operational facts originate here. Analytical projections may be exported/published through a controlled bridge to Report-Advisor. Report-Advisor calculations must not write competing operational truth back into core tables.
 
-## 16. Migration principle
+## 16. Synchronization model
+Offline synchronization uses scoped projections and, where supported, a server-issued monotonic cursor rather than relying solely on client timestamps.
+
+A sync page may contain changed records and tombstones plus the next cursor. The client advances its cursor only after applying the complete page atomically. Cursor scope, schema version, and authorization remain server-controlled.
+
+## 17. Migration principle
 Schema changes are forward, reviewable, repeatable, and testable. Destructive changes require an explicit migration plan, backup/recovery consideration, compatibility window where needed, and evidence.
 
-## 17. V1 decision
-Use a normalized transactional core with explicit bounded-context ownership, immutable identifiers, auditable movements/events, transactional projections, and adapter boundaries. Exact physical table names/indexes await final Batch-3 reconciliation and technology freeze.
+## 18. V1 decision
+Use a normalized transactional core with explicit bounded-context ownership, immutable identifiers, auditable movements/events, transactional projections, and adapter boundaries. The V2 hardening adds food-grade lot/expiry traceability, explicit order state machines, consumer-side idempotency, deterministic incremental sync, and scan-first operational support without prematurely introducing distributed infrastructure.
+
+Exact physical table names/indexes await final Batch-3 reconciliation and technology freeze.
