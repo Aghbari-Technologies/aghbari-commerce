@@ -7,8 +7,11 @@ export function canClaim(record: OutboxRecord, now = Date.now()): boolean {
 }
 
 export function nextRetryAt(attempt: number, now = Date.now()): number {
-  const boundedAttempt = Math.min(Math.max(attempt, 1), 8);
-  const delay = Math.min(15 * 60_000, 2 ** boundedAttempt * 1000);
+  const normalizedAttempt = Math.max(Math.trunc(attempt), 1);
+  // Keep exponential growth bounded independently from the terminal-attempt policy.
+  // This guarantees the configured 15-minute ceiling even for very large retry counts.
+  const exponent = Math.min(normalizedAttempt, 20);
+  const delay = Math.min(15 * 60_000, 2 ** exponent * 1000);
   return now + delay;
 }
 
