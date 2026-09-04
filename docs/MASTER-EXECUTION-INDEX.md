@@ -6,7 +6,9 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Branch: `main`
-- Latest verified implementation boundary: **`fbdcffe949b1e10ef03b892b58f7268063250560`**
+- Latest implementation boundary: **`7cf9dad42abd2bc5bf6cf9f2cd092cfab668f207`**
+- Latest independently verified G1 domain-proof boundary: **`fbdcffe949b1e10ef03b892b58f7268063250560`**
+- Latest verified PostgreSQL G1 boundary: **NOT YET PROVEN**
 - Ledger update commit: recorded by GitHub after this file mutation.
 
 ## Standing execution command
@@ -15,14 +17,14 @@
 ## Certification stages
 | Stage | State |
 |---|---|
-| BUILT | NOT STARTED |
+| BUILT | FOUNDATION / IMPLEMENTATION IN PROGRESS |
 | INTEGRATED | NOT STARTED |
-| VERIFIED | NOT STARTED |
+| VERIFIED | G1 DOMAIN PROVEN; REMAINDER OPEN |
 | RUNTIME PROVEN | NOT STARTED |
 | PRODUCTION CERTIFIED | NOT STARTED |
 
 ## Current phase
-**PHASE 0 → PHASE 1 TRANSITION — executable proof foundation active; architecture remains evidence-gated.**
+**PHASE 0 → PHASE 1 TRANSITION — executable proof foundation active; architecture hardened with V2 quality requirements.**
 
 ## Completed foundations
 - Product identity and strict Report-Advisor/Aghbari ownership boundary.
@@ -47,6 +49,7 @@
 - Candidate RBAC/RLS Policy Matrix V1.
 - Technology Proof Gates V1.
 - Final Offline / Weak-Network Sync Contract V1.
+- **Architecture Enhancements V2:** food-grade lot/expiry traceability, FEFO policy support, explicit order workflow state machine, consumer-side idempotency, deterministic cursor sync, scan-first warehouse UX, operational exception center, and release-gated infrastructure complexity.
 
 ## G1 executable evidence — current boundary
 - Added an executable Node test harness for high-value transactional domain invariants.
@@ -60,39 +63,47 @@
 - All 5 G1 domain tests passed; 0 failed, 0 skipped.
 - This is **domain-level executable evidence only**. It is not a PostgreSQL transaction/concurrency PASS and not runtime/production proof.
 
+## New executable proof surface
+- Added `poc/order-workflow/invariants.mjs` covering valid lifecycle progression, terminal-state protection, invalid jumps, and non-silent rejection.
+- Added `.github/workflows/order-workflow-proof.yml` to execute the state-machine proof on main/PRs.
+- The new workflow has been committed but its GitHub Actions execution is **not yet observed in this ledger**; therefore it is not marked PASS.
+
 ## Pending gates
 1. Batch 3 reconciliation when supplied.
-2. Execute G1 against a real transactional persistence candidate, including concurrency/atomicity evidence.
-3. G2 direct-request authorization + RLS negative tests.
-4. G3 typed API contract proof.
-5. G4 durable outbox/worker/delivery/retry proof.
-6. G5 offline/sync implementation and executable evidence.
-7. G6 import/export proof.
-8. G7 performance budgets and p50/p95/p99 evidence.
-9. G8 observability proof.
-10. G9 deployment/recovery proof.
-11. G10 deterministic test suite proof.
-12. Exact physical schema/migrations after Batch-3 reconciliation and technology evidence.
-13. Final API schemas/versioning.
-14. Final RBAC/RLS freeze.
-15. Architecture freeze.
-16. Implementation vertical slices.
-17. Automated/runtime certification.
+2. Verify the hardened PostgreSQL G1 proof to completion; do not infer PASS from an in-progress run.
+3. Verify the new order workflow proof on GitHub Actions.
+4. G2 direct-request authorization + RLS negative tests.
+5. G3 typed API contract proof.
+6. G4 durable outbox/worker/delivery/retry + consumer idempotency proof.
+7. G5 offline/sync implementation, monotonic cursor, tombstone, and executable evidence.
+8. G6 import/export proof.
+9. G7 performance budgets and p50/p95/p99 evidence.
+10. G8 observability proof.
+11. G9 deployment/recovery proof.
+12. G10 deterministic test suite proof.
+13. Food-grade lot/expiry/FEFO implementation proof where business data supports it.
+14. Exact physical schema/migrations after Batch-3 reconciliation and technology evidence.
+15. Final API schemas/versioning.
+16. Final RBAC/RLS freeze.
+17. Architecture freeze.
+18. Implementation vertical slices.
+19. Automated/runtime certification.
 
 ## No-false-closure
-Documentation PASS means only that the documented design check passed. Domain-harness PASS does not mean database, runtime, security, deployment, or production PASS.
+Documentation PASS means only that the documented design check passed. Domain-harness PASS does not mean database, runtime, security, deployment, or production PASS. A successful outbox producer does not prove exactly-once consumer effects. Offline contracts do not prove offline runtime behavior.
 
 ## Latest boundary
-**ACTION:** Autonomous `1` — verify the hardened G1 domain proof, update the canonical ledger, and preserve the database/runtime boundary.
+**ACTION:** Autonomous `1` — incorporate only high-value architecture improvements, make them evidence-gated, implement the first executable workflow proof, and preserve exact-HEAD provenance.
 
-**RESULT:** The hardened G1 domain harness passed on GitHub Actions at the exact implementation boundary `fbdcffe949b1e10ef03b892b58f7268063250560`. The canonical index was updated to remove the stale boundary and record the actual evidence.
+**RESULT:** Architecture V2 hardening was adopted and recorded. The canonical data model now includes food-grade lot/expiry traceability, explicit order state-machine semantics, consumer-side idempotency, and monotonic-cursor synchronization. The offline contract now requires atomic cursor advancement and tombstone-safe recovery. An executable order workflow proof and CI gate were added.
 
 **EVIDENCE:**
-- `fbdcffe949b1e10ef03b892b58f7268063250560` — hardened G1 invariant implementation.
-- Workflow run `33885023775` — executed against the exact hardened SHA.
-- Job `101062583186` — completed successfully.
-- Five tests passed, zero failed.
+- `dce8e3f2f24c43e8926b9e2883c8204c8581a9d5` — Architecture Enhancements V2.
+- `0f1fdfe7c9e031776900f6e2b125634fc5b98637` — canonical data model hardening.
+- `49e1543be87fe12c96d4a4bb98bc87b0d66af3a0` — offline synchronization hardening.
+- `8af3a707085aee39148e950b6519da9a8d6b0c24` — executable order workflow invariants.
+- `7cf9dad42abd2bc5bf6cf9f2cd092cfab668f207` — order workflow CI gate.
 
-**BLOCKERS / NON-PROVEN:** Batch 3 remains absent. Real PostgreSQL persistence, concurrency, RLS, API, integration, offline, deployment, and production behavior remain unproven until independently executed.
+**BLOCKERS / NON-PROVEN:** Batch 3 remains absent. PostgreSQL G1 completion must still be independently verified. Authorization/RLS, API, integrations, offline runtime, deployment, and production behavior remain unproven.
 
-**NEXT:** Build the next evidence-bearing gate without freezing architecture prematurely: prioritize a real database-backed G1 proof, then G2 authorization/RLS and G3 typed-contract proof. Continue exact-HEAD provenance after every mutation.
+**NEXT:** Verify all newly added evidence surfaces at exact HEAD, then proceed to G2 authorization/RLS before broad implementation. Do not freeze physical schema or claim runtime readiness without executable evidence.
