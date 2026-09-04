@@ -19,12 +19,7 @@ const STATUS_LABELS: Record<OrderStatus, string> = {
 };
 
 function mapCatalogItem(item: CatalogItem, categoryName: string, imageUrl?: string): Product & { authorizedPrice?: number } {
-  return {
-    id: item.id, sku: item.sku, name: item.name, unit: item.unit, category: categoryName,
-    description: item.description ?? undefined, availableQuantity: item.available_quantity,
-    status: item.status === 'active' ? 'active' : 'inactive', imageUrl,
-    authorizedPrice: item.authorized_price ?? undefined
-  };
+  return { id: item.id, sku: item.sku, name: item.name, unit: item.unit, category: categoryName, description: item.description ?? undefined, availableQuantity: item.available_quantity, status: item.status === 'active' ? 'active' : 'inactive', imageUrl, authorizedPrice: item.authorized_price ?? undefined };
 }
 
 export default function App() {
@@ -34,7 +29,7 @@ export default function App() {
   const [query, setQuery] = useState(''); const [catalogSearch, setCatalogSearch] = useState(''); const [categoryId, setCategoryId] = useState<string | null>(null);
   const [categoryOptions, setCategoryOptions] = useState<CategoryOption[]>([]); const [products, setProducts] = useState<Product[]>([]); const [serverPrices, setServerPrices] = useState<Record<string, number>>({});
   const [catalogLoading, setCatalogLoading] = useState(false);
-  const [cart, setCart] = useState<CartLine[]>([]); const [warehouseId, setWarehouseId] = useState<string | null>(null); const [customerId, setCustomerId] = useState<string | null>(null);
+  const [cart, setCart] = useState<CartLine[]>([]); const [checkoutKey, setCheckoutKey] = useState<string | null>(null); const [warehouseId, setWarehouseId] = useState<string | null>(null); const [customerId, setCustomerId] = useState<string | null>(null);
   const [orders, setOrders] = useState<CustomerOrderSummary[]>([]); const [ordersLoading, setOrdersLoading] = useState(false); const [ordersError, setOrdersError] = useState<string | null>(null);
   const [runtimeError, setRuntimeError] = useState<string | null>(null); const [orderBusy, setOrderBusy] = useState(false); const [orderResult, setOrderResult] = useState<string | null>(null);
 
@@ -63,7 +58,7 @@ export default function App() {
           void loadIdentity(nextSession.user.id).catch((error) => setAuthError(error instanceof Error ? error.message : 'تعذر تحميل هوية الحساب.'));
         }
       } else {
-        setCustomerId(null); setRole('viewer'); setOrders([]); setWarehouseId(null); setProducts([]); setCart([]); setServerPrices({});
+        setCustomerId(null); setRole('viewer'); setOrders([]); setWarehouseId(null); setProducts([]); setCart([]); setServerPrices({}); setCheckoutKey(null);
       }
     });
     return () => { cancelled = true; listener?.data.subscription.unsubscribe(); };
@@ -121,7 +116,7 @@ export default function App() {
 
   async function handleSignOut() {
     try { await signOut(); }
-    finally { setProducts([]); setCart([]); setOrders([]); setCustomerId(null); setWarehouseId(null); setRole('viewer'); setOrderResult(null); }
+    finally { setProducts([]); setCart([]); setOrders([]); setCustomerId(null); setWarehouseId(null); setRole('viewer'); setCheckoutKey(null); setOrderResult(null); }
   }
 
   async function addToCart(product: Product) {
@@ -132,7 +127,7 @@ export default function App() {
     try {
       await setCartItem(product.id, quantity);
       setCart((current) => existing ? current.map((line) => line.product.id === product.id ? { ...line, quantity } : line) : [...current, { product, quantity, unitPrice: price }]);
-      setOrderResult(null); setRuntimeError(null);
+      setCheckoutKey(null); setOrderResult(null); setRuntimeError(null);
     } catch (error) { setRuntimeError(error instanceof Error ? error.message : 'تعذر تحديث السلة.'); }
   }
 
@@ -142,16 +137,18 @@ export default function App() {
     try {
       if (next === 0) { await removeCartItem(id); setCart((current) => current.filter((item) => item.product.id !== id)); }
       else { await setCartItem(id, next); setCart((current) => current.map((item) => item.product.id === id ? { ...item, quantity: next } : item)); }
-      setRuntimeError(null);
+      setCheckoutKey(null); setRuntimeError(null);
     } catch (error) { setRuntimeError(error instanceof Error ? error.message : 'تعذر تحديث الكمية.'); }
   }
 
   async function submitOrder() {
     if (!customerId || !warehouseId || !cart.length || orderBusy) return;
     setOrderBusy(true); setOrderResult(null); setRuntimeError(null);
+    const idempotencyKey = checkoutKey ?? crypto.randomUUID();
+    setCheckoutKey(idempotencyKey);
     try {
-      const result = await createOrder({ customerId, idempotencyKey: crypto.randomUUID(), lines: cart.map((line) => ({ productId: line.product.id, quantity: line.quantity })) }, warehouseId);
-      setCart([]); setOrderResult(result ? `تم إرسال الطلب رقم ${result.order_number} بنجاح.` : 'تم إرسال الطلب بنجاح.');
+      const result = await createOrder({ customerId, idempotencyKey, lines: cart.map((line) => ({ productId: line.product.id, quantity: line.quantity })) }, warehouseId);
+      setCart([]); setCheckoutKey(null); setOrderResult(result ? `تم إرسال الطلب رقم ${result.order_number} بنجاح.` : 'تم إرسال الطلب بنجاح.');
     } catch (error) { setRuntimeError(error instanceof Error ? error.message : 'تعذر إرسال الطلب. لم يتم اعتماد أي سعر من العميل.'); }
     finally { setOrderBusy(false); }
   }
