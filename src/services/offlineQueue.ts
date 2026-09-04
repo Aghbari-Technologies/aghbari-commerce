@@ -9,12 +9,15 @@ export interface OfflineOperation<T = unknown> {
   createdAt: string;
   attempts: number;
   userId: string;
+  nextAttemptAt?: string;
 }
 
 const STORAGE_KEY = 'aghbari.offline.operations.v1';
 export const MAX_OFFLINE_OPERATIONS = 100;
 export const MAX_OFFLINE_ATTEMPTS = 8;
 export const MAX_OFFLINE_PAYLOAD_BYTES = 16 * 1024;
+const INITIAL_RETRY_DELAY_MS = 2_000;
+const MAX_RETRY_DELAY_MS = 15 * 60_000;
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function payloadBytes(payload: unknown): number {
@@ -42,6 +45,7 @@ function read<T>(): OfflineOperation<T>[] {
       (item as OfflineOperation).attempts <= MAX_OFFLINE_ATTEMPTS &&
       typeof (item as OfflineOperation).userId === 'string' &&
       UUID_PATTERN.test((item as OfflineOperation).userId) &&
+      ((item as OfflineOperation).nextAttemptAt === undefined || Number.isFinite(Date.parse((item as OfflineOperation).nextAttemptAt!))) &&
       payloadBytes((item as OfflineOperation).payload) <= MAX_OFFLINE_PAYLOAD_BYTES
     ));
   } catch {
@@ -86,31 +90,37 @@ export function removeOfflineOperation(operationId: string): void {
   persist(read<unknown>().filter((item) => item.operationId !== operationId));
 }
 
-export function markOfflineOperationAttempt(operationId: string): void {
+export function markOfflineOperationAttempt(operationId: string, now = Date.now()): void {
   const queue = read<unknown>();
   const existing = queue.find((item) => item.operationId === operationId);
   if (!existing) return;
   if (existing.attempts >= MAX_OFFLINE_ATTEMPTS) {
     throw new Error(`تجاوزت العملية الحد الأقصى لإعادة المحاولة (${MAX_OFFLINE_ATTEMPTS}).`);
   }
-  persist(queue.map((item) => item.operationId === operationId ? { ...item, attempts: item.attempts + 1 } : item));
+  const attempts = existing.attempts + 1;
+  const delay = Math.min(MAX_RETRY_DELAY_MS, INITIAL_RETRY_DELAY_MS * 2 ** (attempts - 1));
+  persist(queue.map((item) => item.operationId === operationId
+    ? { ...item, attempts, nextAttemptAt: new Date(now + delay).toISOString() }
+    : item));
 }
 
 export async function drainOfflineOperations(
   processor: (operation: OfflineOperation) => Promise<void>,
   userId?: string,
+  now = Date.now(),
 ): Promise<{ processed: number; failed: number }> {
   if (typeof navigator !== 'undefined' && navigator.onLine === false) return { processed: 0, failed: 0 };
   const operations = pendingOfflineOperations(userId);
   let processed = 0;
   let failed = 0;
   for (const operation of operations) {
+    if (operation.nextAttemptAt && Date.parse(operation.nextAttemptAt) > now) continue;
     try {
       await processor(operation);
       removeOfflineOperation(operation.operationId);
       processed += 1;
     } catch {
-      markOfflineOperationAttempt(operation.operationId);
+      markOfflineOperationAttempt(operation.operationId, now);
       failed += 1;
     }
   }
