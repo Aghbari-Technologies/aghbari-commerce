@@ -18,6 +18,7 @@ jobs:
         with:
           fetch-depth: 1
           ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
       - name: Exact-head binding
         if: ${{ github.event_name == 'pull_request' }}
         run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha }}"
@@ -28,6 +29,8 @@ jobs:
         run: npm install --ignore-scripts
       - name: Audit production dependency graph
         run: npm audit --omit=dev --audit-level=high
+      - name: Database security contract
+        run: node scripts/check-database-security-contract.mjs
       - name: Reject server secrets from browser sources
         shell: bash
         run: |
