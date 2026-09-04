@@ -92,7 +92,7 @@ export function markOfflineOperationAttempt(operationId: string): void {
 export async function drainOfflineOperations(
   processor: (operation: OfflineOperation) => Promise<void>,
 ): Promise<{ processed: number; failed: number }> {
-  if (typeof navigator !== 'undefined' && !navigator.onLine) return { processed: 0, failed: 0 };
+  if (typeof navigator !== 'undefined' && navigator.onLine === false) return { processed: 0, failed: 0 };
   let processed = 0;
   let failed = 0;
   for (const operation of pendingOfflineOperations()) {
