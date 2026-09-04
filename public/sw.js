@@ -1,6 +1,7 @@
-const CACHE = 'aghbari-shell-v3';
-const APP_SHELL = ['/', '/index.html', '/manifest.webmanifest'];
+const CACHE = 'aghbari-shell-v4';
+const APP_SHELL = ['/', '/index.html', '/manifest.webmanifest', '/offline.html'];
 const STATIC_DESTINATIONS = new Set(['script', 'style', 'font', 'worker']);
+const CACHE_PREFIX = 'aghbari-shell-';
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(APP_SHELL)));
@@ -9,7 +10,7 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => Promise.all(keys.filter((key) => key !== CACHE).map((key) => caches.delete(key))))
+    caches.keys().then((keys) => Promise.all(keys.filter((key) => key.startsWith(CACHE_PREFIX) && key !== CACHE).map((key) => caches.delete(key))))
       .then(() => self.clients.claim())
   );
 });
@@ -33,6 +34,6 @@ self.addEventListener('fetch', (event) => {
         event.waitUntil(caches.open(CACHE).then((cache) => cache.put(event.request, copy)));
       }
       return response;
-    }).catch(() => caches.match(event.request).then((cached) => cached ?? caches.match('/index.html')))
+    }).catch(() => caches.match(event.request).then((cached) => cached ?? caches.match('/offline.html')))
   );
 });
