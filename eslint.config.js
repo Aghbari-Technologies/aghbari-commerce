@@ -14,5 +14,22 @@ export default tseslint.config(
       ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }]
     }
+  },
+  {
+    files: ['**/*.mjs'],
+    languageOptions: {
+      globals: { console: 'readonly' }
+    }
+  },
+  {
+    files: ['public/sw.js'],
+    languageOptions: {
+      globals: {
+        caches: 'readonly',
+        fetch: 'readonly',
+        self: 'readonly',
+        URL: 'readonly'
+      }
+    }
   }
 );
