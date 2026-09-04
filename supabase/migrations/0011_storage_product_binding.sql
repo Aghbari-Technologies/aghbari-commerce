@@ -6,8 +6,6 @@ drop policy if exists product_media_insert on storage.objects;
 drop policy if exists product_media_update on storage.objects;
 drop policy if exists product_media_delete on storage.objects;
 
-auto policy product_media_select;
-
 create policy product_media_select on storage.objects for select to authenticated
 using (
   bucket_id = 'product-media'
