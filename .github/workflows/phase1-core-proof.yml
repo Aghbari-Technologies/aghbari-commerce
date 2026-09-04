@@ -1,0 +1,64 @@
+name: phase-1-core-proof
+
+on:
+  push:
+    branches: ['main', 'execution/**']
+  pull_request:
+
+jobs:
+  typecheck-and-domain-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install
+      - run: npm run typecheck
+      - run: npm test
+
+  postgres-migration-proof:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: aghbari
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d aghbari"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - name: Wait for PostgreSQL
+        run: |
+          for i in {1..30}; do
+            pg_isready -h 127.0.0.1 -p 5432 -U postgres -d aghbari && exit 0
+            sleep 1
+          done
+          exit 1
+      - name: Install migrations
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h 127.0.0.1 -U postgres -d aghbari -v ON_ERROR_STOP=1 -c "create schema if not exists auth; create or replace function auth.uid() returns uuid language sql stable as \$\$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid \$\$; do \$\$ begin create role authenticated; exception when duplicate_object then null; end \$\$;"
+          for migration in supabase/migrations/*.sql; do
+            echo "Applying $migration"
+            psql -h 127.0.0.1 -U postgres -d aghbari -v ON_ERROR_STOP=1 -f "$migration"
+          done
+          psql -h 127.0.0.1 -U postgres -d aghbari -v ON_ERROR_STOP=1 -c "grant usage on schema public to authenticated; grant select on organizations,branches,warehouses,users,customers,categories,units,products,product_identifiers,price_lists,product_prices,orders,order_items,order_status_history to authenticated; grant execute on function public.create_order(uuid,uuid,jsonb,text,text) to authenticated;"
+      - name: Verify core schema
+        env:
+          PGPASSWORD: postgres
+        run: |
+          test "$(psql -h 127.0.0.1 -U postgres -d aghbari -Atc "select count(*) from information_schema.tables where table_schema='public' and table_name in ('organizations','branches','warehouses','customers','products','product_prices','inventory_balances','inventory_movements','carts','cart_items','orders','order_items','order_status_history','outbox_events','audit_events');")" = "15"
+      - name: Execute transactional and authorization proof
+        env:
+          PGPASSWORD: postgres
+        run: psql -h 127.0.0.1 -U postgres -d aghbari -v ON_ERROR_STOP=1 -f supabase/tests/phase1-core.sql
