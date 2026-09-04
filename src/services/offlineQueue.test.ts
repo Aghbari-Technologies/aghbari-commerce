@@ -12,6 +12,10 @@ import {
 } from './offlineQueue';
 
 const storage = new Map<string, string>();
+const USER_A = '11111111-1111-4111-8111-111111111111';
+const USER_B = '22222222-2222-4222-8222-222222222222';
+const PRODUCT_A = '33333333-3333-4333-8333-333333333333';
+const PRODUCT_B = '44444444-4444-4444-8444-444444444444';
 
 Object.defineProperty(globalThis, 'localStorage', {
   configurable: true,
@@ -27,59 +31,91 @@ describe('offline operation queue', () => {
   beforeEach(() => storage.clear());
 
   it('rejects empty and unsafe operation types', () => {
-    expect(() => enqueueOfflineOperation('   ', {})).toThrow('نوع العملية مطلوب');
-    expect(() => enqueueOfflineOperation('order:submit', {})).toThrow('لا يُسمح بتأجيلها');
-    enqueueOfflineOperation(OFFLINE_CART_SET_ITEM, { productId: '11111111-1111-4111-8111-111111111111', quantity: 1 });
-    expect(pendingOfflineOperations()).toHaveLength(1);
+    expect(() => enqueueOfflineOperation(USER_A, '   ', {})).toThrow('نوع العملية مطلوب');
+    expect(() => enqueueOfflineOperation(USER_A, 'order:submit', {})).toThrow('لا يُسمح بتأجيلها');
+    enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: 1 });
+    expect(pendingOfflineOperations(USER_A)).toHaveLength(1);
+  });
+
+  it('requires a valid authenticated user scope', () => {
+    expect(() => enqueueOfflineOperation('not-a-user', OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: 1 })).toThrow('هوية المستخدم مطلوبة');
   });
 
   it('tracks attempts without losing operation identity', () => {
-    const operation = enqueueOfflineOperation(OFFLINE_CART_SET_ITEM, { productId: '11111111-1111-4111-8111-111111111111', quantity: 1 });
-    markOfflineOperationAttempt(operation.operationId);
-    expect(pendingOfflineOperations()[0]).toMatchObject({ operationId: operation.operationId, attempts: 1, type: OFFLINE_CART_SET_ITEM });
+    const operation = enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: 1 });
+    markOfflineOperationAttempt(operation.operationId, 1_000);
+    expect(pendingOfflineOperations(USER_A)[0]).toMatchObject({ operationId: operation.operationId, userId: USER_A, attempts: 1, type: OFFLINE_CART_SET_ITEM });
+    expect(Date.parse(pendingOfflineOperations(USER_A)[0].nextAttemptAt!)).toBe(3_000);
+  });
+
+  it('uses bounded exponential retry backoff and does not retry early', async () => {
+    const operation = enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: 1 });
+    markOfflineOperationAttempt(operation.operationId, 10_000);
+    const processor = async () => { throw new Error('transient'); };
+    const early = await drainOfflineOperations(processor, USER_A, 11_999);
+    expect(early).toEqual({ processed: 0, failed: 0 });
+    const due = await drainOfflineOperations(processor, USER_A, 12_000);
+    expect(due).toEqual({ processed: 0, failed: 1 });
+    expect(pendingOfflineOperations(USER_A)[0].attempts).toBe(2);
+    expect(Date.parse(pendingOfflineOperations(USER_A)[0].nextAttemptAt!)).toBe(16_000);
   });
 
   it('caps retry attempts instead of allowing an endless local retry loop', () => {
-    const operation = enqueueOfflineOperation(OFFLINE_CART_SET_ITEM, { productId: '11111111-1111-4111-8111-111111111111', quantity: 1 });
-    for (let index = 0; index < MAX_OFFLINE_ATTEMPTS; index += 1) markOfflineOperationAttempt(operation.operationId);
-    expect(pendingOfflineOperations()[0].attempts).toBe(MAX_OFFLINE_ATTEMPTS);
-    expect(() => markOfflineOperationAttempt(operation.operationId)).toThrow(/الحد الأقصى/);
+    const operation = enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: 1 });
+    for (let index = 0; index < MAX_OFFLINE_ATTEMPTS; index += 1) markOfflineOperationAttempt(operation.operationId, 1_000 + index);
+    expect(pendingOfflineOperations(USER_A)[0].attempts).toBe(MAX_OFFLINE_ATTEMPTS);
+    expect(() => markOfflineOperationAttempt(operation.operationId, 2_000)).toThrow(/الحد الأقصى/);
   });
 
-  it('discards malformed persisted records rather than replaying them', () => {
+  it('drops legacy or malformed persisted records rather than replaying them', () => {
     storage.set('aghbari.offline.operations.v1', JSON.stringify([
-      { operationId: 'not-a-uuid', type: OFFLINE_CART_SET_ITEM, createdAt: new Date().toISOString(), attempts: 0, payload: {} },
-      { operationId: crypto.randomUUID(), type: 'order:submit', createdAt: new Date().toISOString(), attempts: 0, payload: {} },
-      { operationId: crypto.randomUUID(), type: OFFLINE_CART_SET_ITEM, createdAt: new Date().toISOString(), attempts: 0, payload: { productId: '11111111-1111-4111-8111-111111111111', quantity: 1 } }
+      { operationId: 'not-a-uuid', userId: USER_A, type: OFFLINE_CART_SET_ITEM, createdAt: new Date().toISOString(), attempts: 0, payload: {} },
+      { operationId: crypto.randomUUID(), userId: USER_A, type: 'order:submit', createdAt: new Date().toISOString(), attempts: 0, payload: {} },
+      { operationId: crypto.randomUUID(), type: OFFLINE_CART_SET_ITEM, createdAt: new Date().toISOString(), attempts: 0, payload: { productId: PRODUCT_A, quantity: 1 } },
+      { operationId: crypto.randomUUID(), userId: USER_A, type: OFFLINE_CART_SET_ITEM, createdAt: new Date().toISOString(), attempts: 0, payload: { productId: PRODUCT_A, quantity: 1 } }
     ]));
-    expect(pendingOfflineOperations()).toHaveLength(1);
+    expect(pendingOfflineOperations(USER_A)).toHaveLength(0);
+  });
+
+  it('keeps each authenticated user isolated in the local queue', () => {
+    enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: 1 });
+    enqueueOfflineOperation(USER_B, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_B, quantity: 2 });
+    expect(pendingOfflineOperations(USER_A)).toHaveLength(1);
+    expect(pendingOfflineOperations(USER_B)).toHaveLength(1);
+    expect(pendingOfflineOperations(USER_A)[0].userId).toBe(USER_A);
+    expect(pendingOfflineOperations(USER_B)[0].userId).toBe(USER_B);
+    clearOfflineQueue(USER_A);
+    expect(pendingOfflineOperations(USER_A)).toHaveLength(0);
+    expect(pendingOfflineOperations(USER_B)).toHaveLength(1);
   });
 
   it('enforces a payload size ceiling', () => {
-    expect(() => enqueueOfflineOperation(OFFLINE_CART_SET_ITEM, { productId: '11111111-1111-4111-8111-111111111111', blob: 'x'.repeat(MAX_OFFLINE_PAYLOAD_BYTES) })).toThrow(/حجم بيانات/);
+    expect(() => enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, blob: 'x'.repeat(MAX_OFFLINE_PAYLOAD_BYTES) })).toThrow(/حجم بيانات/);
   });
 
   it('enforces a hard queue ceiling', () => {
     for (let index = 0; index < MAX_OFFLINE_OPERATIONS; index += 1) {
-      enqueueOfflineOperation(OFFLINE_CART_SET_ITEM, { productId: '11111111-1111-4111-8111-111111111111', quantity: 1 });
+      enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: 1 });
     }
-    expect(() => enqueueOfflineOperation(OFFLINE_CART_SET_ITEM, { productId: '11111111-1111-4111-8111-111111111111', quantity: 1 })).toThrow('100');
-    clearOfflineQueue();
-    expect(pendingOfflineOperations()).toHaveLength(0);
+    expect(() => enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: 1 })).toThrow('100');
+    clearOfflineQueue(USER_A);
+    expect(pendingOfflineOperations(USER_A)).toHaveLength(0);
   });
 
-  it('drains successful operations and retains failed operations for recovery', async () => {
-    const success = enqueueOfflineOperation(OFFLINE_CART_SET_ITEM, { productId: '11111111-1111-4111-8111-111111111111', quantity: 2 });
-    const failed = enqueueOfflineOperation(OFFLINE_CART_SET_ITEM, { productId: '22222222-2222-4222-8222-222222222222', quantity: 3 });
+  it('drains only the selected user scope and retains failed operations for recovery', async () => {
+    const success = enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: 2 });
+    const failed = enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_B, quantity: 3 });
+    const otherUser = enqueueOfflineOperation(USER_B, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: 4 });
     const seen: string[] = [];
     const result = await drainOfflineOperations(async (operation) => {
       seen.push(operation.operationId);
       if (operation.operationId === failed.operationId) throw new Error('transient');
-    });
+    }, USER_A, Date.now());
     expect(result).toEqual({ processed: 1, failed: 1 });
     expect(seen).toEqual([success.operationId, failed.operationId]);
-    expect(pendingOfflineOperations()).toHaveLength(1);
-    expect(pendingOfflineOperations()[0].operationId).toBe(failed.operationId);
-    expect(pendingOfflineOperations()[0].attempts).toBe(1);
+    expect(pendingOfflineOperations(USER_A)).toHaveLength(1);
+    expect(pendingOfflineOperations(USER_A)[0].operationId).toBe(failed.operationId);
+    expect(pendingOfflineOperations(USER_A)[0].attempts).toBe(1);
+    expect(pendingOfflineOperations(USER_B)[0].operationId).toBe(otherUser.operationId);
   });
 });
