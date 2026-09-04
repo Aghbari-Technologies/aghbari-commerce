@@ -28,7 +28,7 @@ function isValidMoney(value: unknown): value is number {
     && Number.isFinite(value)
     && value >= 0
     && value <= MAX_IMPORT_PRICE
-    && Number.isSafeInteger(Math.round(value * 100));
+    && Number(value.toFixed(2)) === value;
 }
 
 export function validateImportRows(rows: ImportRow[]): ImportDiagnostic[] {
