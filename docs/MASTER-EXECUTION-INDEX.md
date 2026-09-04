@@ -7,7 +7,7 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Default branch: `main`
-- Current exact HEAD: `4cbcd1737c25505e532ce3a27ee16c9f99858cea`
+- Current exact HEAD: `00d301572de581c9e318ebfe504fbb905545bdf6`
 
 ## Certification model
 
@@ -34,16 +34,11 @@ Completed:
 - Architecture boundary baseline documented.
 - Master Execution Index established as the canonical ledger.
 - Existing architecture is preserved as the starting knowledge base and will be evolved, not blindly recreated.
-
-Requirements corpus currently available:
-- Existing الأغبري architecture/tree from prior design work.
-- Legacy العامري Batch 1.
-- Legacy العامري Batch 2.
+- First-pass legacy requirements extraction completed from Batch 1 and Batch 2.
 
 Pending:
 - Incorporate legacy Batch 3 when supplied.
-- Full cross-batch requirements matrix.
-- Conflict/duplication/risk classification.
+- Cross-batch requirements matrix and conflict classification.
 - Final domain map and bounded contexts.
 - Final technology selection based on requirements and current engineering trade-offs.
 - Final database/data ownership model.
@@ -73,12 +68,12 @@ Every material execution update records:
 
 ## Latest boundary
 
-**ACTION:** Initialize the empty Aghbari repository with the engineering governance baseline and bind the ledger to the latest canonical commit.
+**ACTION:** Reconcile the ledger with the actual repository HEAD and continue forensic architecture synthesis from the already-established requirements corpus.
 
-**RESULT:** Governance, protocol, architecture-boundary, and master-index artifacts are committed to `main`.
+**RESULT:** Ledger provenance is corrected to the actual latest repository HEAD `00d301572de581c9e318ebfe504fbb905545bdf6`. Phase 0 remains intentionally open; no implementation or certification claim is made.
 
-**EVIDENCE:** Latest exact HEAD at this boundary is `4cbcd1737c25505e532ce3a27ee16c9f99858cea`. The architecture-boundary content is independently verified in commit `130c1947c78215dac2c2dd12071d485f9a22fda1`. 
+**EVIDENCE:** The ledger was read directly from GitHub before this update. The prior recorded value `4cbcd1737c25505e532ce3a27ee16c9f99858cea` was superseded by the subsequent canonical commit `00d301572de581c9e318ebfe504fbb905545bdf6`.
 
-**BLOCKER:** Final architecture remains intentionally unfrozen until the complete requirements corpus, including Batch 3, has been incorporated.
+**BLOCKER:** Batch 3 is not present in the current requirements corpus, so final architecture freeze would be premature. This is not a blocker to preparatory forensic work.
 
-**NEXT:** Continue Phase 0 forensic synthesis. After the full input set is available, freeze the Architecture Candidate and execute implementation waves without requiring routine owner decisions.
+**NEXT:** Produce the strongest safe Phase-0 artifacts now: requirements taxonomy, domain/bounded-context candidate map, legacy-to-new re-engineering rules, architecture decision log, risk register, integration contract skeletons, and certification/test strategy. Re-freeze only after Batch 3 is incorporated.
