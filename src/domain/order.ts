@@ -11,7 +11,6 @@ export class OrderValidationError extends Error {
 }
 
 export function validateOrderDraft(draft: OrderDraft, inventory: Map<string, number>): void {
-  if (!draft.customerId?.trim()) throw new OrderValidationError('customerId is required');
   if (!draft.idempotencyKey?.trim() || draft.idempotencyKey.trim().length < 16) {
     throw new OrderValidationError('idempotencyKey must be at least 16 characters');
   }

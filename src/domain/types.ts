@@ -30,7 +30,9 @@ export interface CartLine {
 }
 
 export interface OrderDraft {
-  customerId: string;
+  // Deprecated compatibility field. It is intentionally ignored by validation and the RPC.
+  // The authenticated server context remains the sole authority for customer binding.
+  customerId?: string;
   idempotencyKey: string;
   lines: Array<{ productId: string; quantity: number }>;
 }

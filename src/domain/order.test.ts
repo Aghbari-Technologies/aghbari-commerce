@@ -4,7 +4,7 @@ import { MAX_ORDER_LINES, MAX_ORDER_QUANTITY_PER_LINE, OrderValidationError, val
 const product = (id: string, quantity = 10) => [id, quantity] as const;
 
 function draft(lines: Array<{ productId: string; quantity: number }>) {
-  return { customerId: 'customer-1', idempotencyKey: '0123456789abcdef', lines };
+  return { idempotencyKey: '0123456789abcdef', lines };
 }
 
 describe('validateOrderDraft', () => {
@@ -17,9 +17,14 @@ describe('validateOrderDraft', () => {
     expect(() => validateOrderDraft(draft([{ productId: 'product-1', quantity: 1 }, { productId: 'product-1', quantity: 2 }]), new Map([product('product-1')]))).toThrow(OrderValidationError);
   });
 
-  it('rejects blank identity fields at the client boundary', () => {
-    expect(() => validateOrderDraft({ ...draft([{ productId: 'product-1', quantity: 1 }]), customerId: '   ' }, new Map([product('product-1')]))).toThrow(/customerId/);
-    expect(() => validateOrderDraft({ ...draft([{ productId: '   ', quantity: 1 }]) }, new Map([product('product-1')]))).toThrow(/productId/);
+  it('does not require client-supplied customer identity', () => {
+    const order = draft([{ productId: 'product-1', quantity: 1 }]);
+    expect(order).not.toHaveProperty('customerId');
+    validateOrderDraft(order, new Map([product('product-1')]));
+  });
+
+  it('rejects blank product and idempotency fields at the client boundary', () => {
+    expect(() => validateOrderDraft(draft([{ productId: '   ', quantity: 1 }]), new Map([product('product-1')]))).toThrow(/productId/);
     expect(() => validateOrderDraft({ ...draft([{ productId: 'product-1', quantity: 1 }]), idempotencyKey: '                ' }, new Map([product('product-1')]))).toThrow(/idempotencyKey/);
   });
 
