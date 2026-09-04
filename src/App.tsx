@@ -76,7 +76,7 @@ export default function App() {
       setCatalogLoading(true); setRuntimeError(null);
       try {
         const [{ data: warehouse, error: warehouseError }, items, savedCart, categories] = await Promise.all([
-          supabase.from('warehouses').select('id').eq('is_active', true).order('created_at').limit(1).maybeSingle(),
+          supabase!.from('warehouses').select('id').eq('is_active', true).order('created_at').limit(1).maybeSingle(),
           getCatalog(catalogSearch, categoryId, 100, 0), getCart(), getCategories()
         ]);
         if (warehouseError) throw warehouseError;
