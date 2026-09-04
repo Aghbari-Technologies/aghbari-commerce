@@ -44,6 +44,10 @@ BEGIN
     RAISE EXCEPTION 'invalid quantity' USING ERRCODE = '22023';
   END IF;
 
+  -- Serialize requests sharing the same idempotency key before the read.
+  -- This makes concurrent identical submissions converge on one committed order.
+  PERFORM pg_advisory_xact_lock(hashtextextended(p_operation_id::text, 0));
+
   SELECT * INTO v_existing
   FROM g1_poc.orders
   WHERE operation_id = p_operation_id;
@@ -92,7 +96,7 @@ BEGIN
   RETURN NEXT;
 EXCEPTION
   WHEN unique_violation THEN
-    -- A concurrent request may win the idempotency insert. Return its exact result.
+    -- Defensive fallback for races that bypass the advisory-key serialization.
     SELECT * INTO v_existing FROM g1_poc.orders WHERE operation_id = p_operation_id;
     IF FOUND AND v_existing.payload_hash = v_payload_hash THEN
       RETURN QUERY SELECT v_existing.order_id, v_existing.total, true;
