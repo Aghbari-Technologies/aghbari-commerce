@@ -1,4 +1,5 @@
 import { requireSupabase } from '../lib/supabase';
+import { normalizeCatalogQuery } from '../domain/catalog';
 
 export interface CatalogItem {
   id: string;
@@ -14,19 +15,14 @@ export interface CatalogItem {
   currency: string;
 }
 
-const DEFAULT_LIMIT = 24;
-const MAX_LIMIT = 100;
-
-export async function getCatalog(search = '', categoryId: string | null = null, limit = DEFAULT_LIMIT, offset = 0) {
+export async function getCatalog(search = '', categoryId: string | null = null, limit = 24, offset = 0) {
   const client = requireSupabase();
-  const safeSearch = search.trim().slice(0, 120);
-  const safeLimit = Number.isInteger(limit) ? Math.min(Math.max(limit, 1), MAX_LIMIT) : DEFAULT_LIMIT;
-  const safeOffset = Number.isInteger(offset) ? Math.max(offset, 0) : 0;
+  const query = normalizeCatalogQuery(search, limit, offset);
   const { data, error } = await client.rpc('get_catalog', {
-    p_search: safeSearch || null,
+    p_search: query.search || null,
     p_category_id: categoryId,
-    p_limit: safeLimit,
-    p_offset: safeOffset
+    p_limit: query.limit,
+    p_offset: query.offset
   });
   if (error) throw error;
   return (data ?? []) as CatalogItem[];
