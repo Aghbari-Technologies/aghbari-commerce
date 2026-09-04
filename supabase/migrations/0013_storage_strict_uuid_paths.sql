@@ -39,7 +39,7 @@ with check (
 create policy product_media_delete on storage.objects for delete to authenticated
 using (
   bucket_id='product-media' and public.is_staff()
-  and name ~ '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/[^/]+[.](webp|png|jpe?g)$'
+  and name ~ '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/[^/]+[.](webp|png|jpe?g)$'
   and split_part(name,'/',1)::uuid=public.current_organization_id()
   and exists (select 1 from public.products p where p.id=split_part(name,'/',2)::uuid and p.organization_id=public.current_organization_id())
 );
