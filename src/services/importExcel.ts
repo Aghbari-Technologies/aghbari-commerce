@@ -1,5 +1,6 @@
 import { readSheet } from 'read-excel-file/browser';
 import { fingerprintImport, normalizeSku, validateImportRows, type ImportRow } from '../domain/import';
+import { requireSupabase } from '../lib/supabase';
 
 const REQUIRED_HEADERS = ['SKU','Name','Unit','Category','Quantity','Retail Price','Wholesale Price','Distributor Price'];
 
@@ -28,4 +29,25 @@ export async function parseProductWorkbook(file: File) {
   }));
 
   return { rows: parsed, diagnostics: validateImportRows(parsed), fingerprint: fingerprintImport(parsed) };
+}
+
+export async function stageProductImport(file: File) {
+  const parsed = await parseProductWorkbook(file);
+  if (parsed.diagnostics.length) return { ...parsed, jobId: null };
+  const { data, error } = await requireSupabase().rpc('stage_product_import', {
+    p_source_name: file.name,
+    p_source_fingerprint: parsed.fingerprint,
+    p_rows: parsed.rows
+  });
+  if (error) throw error;
+  return { ...parsed, jobId: data as string };
+}
+
+export async function commitProductImport(importJobId: string, warehouseId: string) {
+  const { data, error } = await requireSupabase().rpc('commit_product_import', {
+    p_import_job_id: importJobId,
+    p_warehouse_id: warehouseId
+  });
+  if (error) throw error;
+  return data?.[0] ?? null;
 }
