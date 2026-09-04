@@ -5,6 +5,7 @@ const MAX_OUTPUT_BYTES = 5 * 1024 * 1024;
 const MAX_DIMENSION = 1600;
 const WEBP_QUALITY = 0.82;
 const ALLOWED_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 export interface ProcessedImage {
   blob: Blob;
@@ -16,6 +17,10 @@ export interface ProcessedImage {
 export function validateImageFile(file: File): void {
   if (!ALLOWED_TYPES.has(file.type)) throw new Error('صيغة الصورة غير مدعومة. استخدم JPG أو PNG أو WebP.');
   if (file.size < 1 || file.size > MAX_SOURCE_BYTES) throw new Error('حجم الصورة الأصلية يجب ألا يتجاوز 10 MB.');
+}
+
+export function validateProductImageTarget(productId: string): void {
+  if (!UUID_PATTERN.test(productId.trim())) throw new Error('معرّف المنتج غير صالح.');
 }
 
 export async function processProductImage(file: File): Promise<ProcessedImage> {
@@ -48,6 +53,7 @@ export async function processProductImage(file: File): Promise<ProcessedImage> {
 }
 
 export async function uploadProductImage(productId: string, file: File) {
+  validateProductImageTarget(productId);
   const client = requireSupabase();
   const { data: { user } } = await client.auth.getUser();
   if (!user) throw new Error('جلسة الدخول مطلوبة لرفع الصورة.');
@@ -56,7 +62,7 @@ export async function uploadProductImage(productId: string, file: File) {
   if (!['owner', 'admin', 'sales'].includes(profile.role)) throw new Error('ليس لديك صلاحية رفع صور المنتجات.');
 
   const processed = await processProductImage(file);
-  const objectPath = `${profile.organization_id}/${productId}/${crypto.randomUUID()}.webp`;
+  const objectPath = `${profile.organization_id}/${productId.trim()}/${crypto.randomUUID()}.webp`;
   const { error: uploadError } = await client.storage.from('product-media').upload(objectPath, processed.blob, {
     contentType: processed.mimeType,
     cacheControl: '31536000',
@@ -66,7 +72,7 @@ export async function uploadProductImage(productId: string, file: File) {
 
   try {
     const { data: mediaId, error: registerError } = await client.rpc('register_product_media', {
-      p_product_id: productId,
+      p_product_id: productId.trim(),
       p_storage_path: objectPath,
       p_mime_type: processed.mimeType,
       p_width: processed.width,
