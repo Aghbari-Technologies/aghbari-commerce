@@ -11,18 +11,13 @@ interface StaffProduct { id: string; sku: string; name: string; unit: string; }
 interface Warehouse { id: string; name: string; }
 type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer';
 const tiers: CustomerTier[] = ['retail', 'wholesale', 'distributor'];
+const STAFF_ROLES = new Set<UserRole>(['owner', 'admin', 'sales', 'warehouse']);
 const STATUS_LABELS: Record<OrderStatus, string> = { draft: 'مسودة', pending: 'قيد المراجعة', confirmed: 'مؤكد', preparing: 'قيد التجهيز', ready: 'جاهز', completed: 'مكتمل', cancelled: 'ملغي' };
 
 function allowedNextStatuses(status: OrderStatus, role: UserRole): OrderStatus[] {
-  const allowed = new Set<UserRole>();
-  if (status === 'pending') ['owner', 'admin', 'sales'].forEach((item) => allowed.add(item as UserRole));
-  if (status === 'confirmed' || status === 'preparing' || status === 'ready') ['owner', 'admin', 'warehouse'].forEach((item) => allowed.add(item as UserRole));
-  if (status === 'ready') ['sales'].forEach((item) => allowed.add(item as UserRole));
-  if (['pending', 'confirmed', 'preparing'].includes(status)) ['owner', 'admin', 'sales', 'warehouse'].forEach((item) => allowed.add(item as UserRole));
-  if (!allowed.has(role)) return [];
-  if (status === 'pending') return ['confirmed', 'cancelled'];
-  if (status === 'confirmed') return ['preparing', 'cancelled'];
-  if (status === 'preparing') return ['ready', 'cancelled'];
+  if (status === 'pending' && ['owner', 'admin', 'sales'].includes(role)) return ['confirmed', 'cancelled'];
+  if (status === 'confirmed' && ['owner', 'admin', 'warehouse'].includes(role)) return ['preparing', 'cancelled'];
+  if (status === 'preparing' && ['owner', 'admin', 'warehouse'].includes(role)) return ['ready', 'cancelled'];
   if (status === 'ready' && ['owner', 'admin', 'warehouse', 'sales'].includes(role)) return ['completed'];
   return [];
 }
@@ -51,20 +46,20 @@ export default function AdminPanel({ role }: { role: UserRole }) {
 
   const reload = useCallback(async () => {
     if (!supabase) return;
-    const [{ data: productRows, error: productError }, { data: warehouseRows, error: warehouseError }, categoryRows, orderRows] = await Promise.all([
-      supabase.from('products').select('id,sku,name,unit').eq('status', 'active').order('name').limit(200),
-      supabase.from('warehouses').select('id,name').eq('is_active', true).order('created_at'),
-      getCategories(),
-      getStaffOrders(50)
-    ]);
-    if (productError) throw productError;
-    if (warehouseError) throw warehouseError;
-    setProducts((productRows ?? []) as StaffProduct[]);
-    setCategories(categoryRows);
-    setOrders(orderRows);
-    const nextWarehouses = (warehouseRows ?? []) as Warehouse[];
-    setWarehouses(nextWarehouses);
-    if (!warehouseId && nextWarehouses[0]) setWarehouseId(nextWarehouses[0].id);
+    setOrdersLoading(true);
+    try {
+      const [{ data: productRows, error: productError }, { data: warehouseRows, error: warehouseError }, categoryRows, orderRows] = await Promise.all([
+        supabase.from('products').select('id,sku,name,unit').eq('status', 'active').order('name').limit(200),
+        supabase.from('warehouses').select('id,name').eq('is_active', true).order('created_at'),
+        getCategories(),
+        getStaffOrders(50)
+      ]);
+      if (productError) throw productError;
+      if (warehouseError) throw warehouseError;
+      setProducts((productRows ?? []) as StaffProduct[]); setCategories(categoryRows); setOrders(orderRows);
+      const nextWarehouses = (warehouseRows ?? []) as Warehouse[]; setWarehouses(nextWarehouses);
+      if (!warehouseId && nextWarehouses[0]) setWarehouseId(nextWarehouses[0].id);
+    } finally { setOrdersLoading(false); }
   }, [warehouseId]);
 
   useEffect(() => { void reload().catch((e) => setError(e instanceof Error ? e.message : 'تعذر تحميل مركز التحكم.')); }, [reload]);
@@ -106,7 +101,6 @@ export default function AdminPanel({ role }: { role: UserRole }) {
   const canCategory = role === 'owner' || role === 'admin';
   const canInventory = role === 'owner' || role === 'admin' || role === 'warehouse';
   const canOrderWorkflow = STAFF_ROLES.has(role);
-  const STAFF_ROLES = new Set<UserRole>(['owner', 'admin', 'sales', 'warehouse']);
 
   return <section className="admin-panel" id="account">
     <div className="section-heading"><div><span className="eyebrow">إدارة التشغيل</span><h2>مركز التحكم</h2></div><span>الصلاحيات تُفرض على الخادم أيضًا</span></div>
