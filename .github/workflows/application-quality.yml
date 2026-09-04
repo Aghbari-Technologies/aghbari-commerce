@@ -18,7 +18,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
+      # No lockfile is committed yet; avoid setup-node cache's hard requirement for one.
       - run: npm install
       - run: npm run test
       - run: npm run lint
