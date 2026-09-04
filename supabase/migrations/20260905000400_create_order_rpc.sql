@@ -11,13 +11,12 @@ create or replace function public.create_order(
 )
 returns table(order_id uuid, order_number text, total numeric)
 language plpgsql
-security invoker
-set search_path = public
+security definer
+set search_path = public, pg_temp
 as $$
 declare
   v_actor_id uuid := auth.uid();
   v_customer customers%rowtype;
-  v_order orders%rowtype;
   v_line jsonb;
   v_product_id uuid;
   v_quantity numeric;
@@ -52,18 +51,11 @@ begin
     raise exception using errcode = '42501', message = 'FORBIDDEN';
   end if;
 
-  if not exists (
-    select 1 from branches
-    where id = p_branch_id and organization_id = v_customer.organization_id and status = 'active'
-  ) then
+  if not exists (select 1 from branches where id = p_branch_id and organization_id = v_customer.organization_id and status = 'active') then
     raise exception using errcode = '42501', message = 'FORBIDDEN';
   end if;
 
-  if not exists (
-    select 1 from warehouses
-    where id = p_warehouse_id and organization_id = v_customer.organization_id
-      and branch_id = p_branch_id and status = 'active'
-  ) then
+  if not exists (select 1 from warehouses where id = p_warehouse_id and organization_id = v_customer.organization_id and branch_id = p_branch_id and status = 'active') then
     raise exception using errcode = '42501', message = 'FORBIDDEN';
   end if;
 
@@ -78,12 +70,7 @@ begin
     raise exception using errcode = '22023', message = 'VALIDATION_FAILED: authorized price list not configured';
   end if;
 
-  v_fingerprint := encode(digest(convert_to(
-    jsonb_build_object(
-      'branch_id', p_branch_id,
-      'warehouse_id', p_warehouse_id,
-      'lines', p_lines
-    )::text, 'utf8'), 'sha256'), 'hex');
+  v_fingerprint := encode(digest(convert_to(jsonb_build_object('branch_id', p_branch_id, 'warehouse_id', p_warehouse_id, 'lines', p_lines)::text, 'utf8'), 'sha256'), 'hex');
 
   select * into v_existing
   from orders
@@ -103,28 +90,23 @@ begin
   v_order_id := gen_random_uuid();
   v_order_number := 'AGH-' || nextval('order_number_seq')::text;
 
-  insert into orders (
-    id, organization_id, customer_id, branch_id, warehouse_id,
-    order_number, status, subtotal, total, idempotency_key,
-    idempotency_fingerprint, version
-  ) values (
-    v_order_id, v_customer.organization_id, v_customer.id, p_branch_id, p_warehouse_id,
-    v_order_number, 'pending', 0, 0, p_idempotency_key,
-    v_fingerprint, 1
-  );
+  insert into orders (id, organization_id, customer_id, branch_id, warehouse_id, order_number, status, subtotal, total, idempotency_key, idempotency_fingerprint, version)
+  values (v_order_id, v_customer.organization_id, v_customer.id, p_branch_id, p_warehouse_id, v_order_number, 'pending', 0, 0, p_idempotency_key, v_fingerprint, 1);
 
   for v_line in select value from jsonb_array_elements(p_lines)
   loop
-    v_product_id := (v_line->>'product_id')::uuid;
-    v_quantity := (v_line->>'quantity')::numeric;
+    begin
+      v_product_id := (v_line->>'product_id')::uuid;
+      v_quantity := (v_line->>'quantity')::numeric;
+    exception when invalid_text_representation then
+      raise exception using errcode = '22023', message = 'VALIDATION_FAILED: invalid order line identifier or quantity';
+    end;
+
     if v_product_id is null or v_quantity is null or v_quantity <= 0 then
       raise exception using errcode = '22023', message = 'VALIDATION_FAILED: invalid order line';
     end if;
 
-    if not exists (
-      select 1 from products
-      where id = v_product_id and organization_id = v_customer.organization_id and status = 'active'
-    ) then
+    if not exists (select 1 from products where id = v_product_id and organization_id = v_customer.organization_id and status = 'active') then
       raise exception using errcode = '23503', message = 'NOT_FOUND: product';
     end if;
 
@@ -145,56 +127,30 @@ begin
     v_subtotal := v_subtotal + v_line_total;
 
     insert into order_items(order_id, product_id, quantity, unit_price, line_total, pricing_context)
-    values (
-      v_order_id, v_product_id, v_quantity, v_price, v_line_total,
-      jsonb_build_object('price_list_id', v_price_list_id, 'customer_tier_id', v_customer.tier_id)
-    );
+    values (v_order_id, v_product_id, v_quantity, v_price, v_line_total, jsonb_build_object('price_list_id', v_price_list_id, 'customer_tier_id', v_customer.tier_id));
 
     update inventory_balances
-    set available = available - v_quantity,
-        reserved = reserved + v_quantity,
-        version = version + 1,
-        updated_at = now()
-    where warehouse_id = p_warehouse_id
-      and product_id = v_product_id
-      and available >= v_quantity;
-
+    set available = available - v_quantity, reserved = reserved + v_quantity, version = version + 1, updated_at = now()
+    where warehouse_id = p_warehouse_id and product_id = v_product_id and available >= v_quantity;
     if not found then
       raise exception using errcode = '23514', message = 'INSUFFICIENT_STOCK: product inventory unavailable';
     end if;
 
-    insert into inventory_movements (
-      organization_id, warehouse_id, product_id, movement_type, quantity,
-      source_type, source_id, actor_id, correlation_id, idempotency_key
-    ) values (
-      v_customer.organization_id, p_warehouse_id, v_product_id, 'reservation', v_quantity,
-      'order', v_order_id::text, v_actor_id, p_correlation_id,
-      'order:' || v_order_id::text || ':' || v_product_id::text
-    );
+    insert into inventory_movements (organization_id, warehouse_id, product_id, movement_type, quantity, source_type, source_id, actor_id, correlation_id, idempotency_key)
+    values (v_customer.organization_id, p_warehouse_id, v_product_id, 'reservation', v_quantity, 'order', v_order_id::text, v_actor_id, p_correlation_id, 'order:' || v_order_id::text || ':' || v_product_id::text);
   end loop;
 
   update orders set subtotal = v_subtotal, total = v_subtotal, updated_at = now() where id = v_order_id;
-
   insert into order_status_history(order_id, from_status, to_status, actor_id, correlation_id)
   values (v_order_id, null, 'pending', v_actor_id, p_correlation_id);
-
-  insert into outbox_events (
-    organization_id, event_type, event_version, aggregate_type, aggregate_id,
-    correlation_id, payload
-  ) values (
-    v_customer.organization_id, 'order.created', 1, 'order', v_order_id,
-    p_correlation_id,
-    jsonb_build_object('order_id', v_order_id, 'order_number', v_order_number, 'customer_id', v_customer.id)
-  );
-
-  insert into audit_events (
-    organization_id, actor_id, action, target_type, target_id,
-    correlation_id, result, metadata
-  ) values (
-    v_customer.organization_id, v_actor_id, 'order.created', 'order', v_order_id,
-    p_correlation_id, 'success', jsonb_build_object('order_number', v_order_number, 'total', v_subtotal)
-  );
+  insert into outbox_events (organization_id, event_type, event_version, aggregate_type, aggregate_id, correlation_id, payload)
+  values (v_customer.organization_id, 'order.created', 1, 'order', v_order_id, p_correlation_id, jsonb_build_object('order_id', v_order_id, 'order_number', v_order_number, 'customer_id', v_customer.id));
+  insert into audit_events (organization_id, actor_id, action, target_type, target_id, correlation_id, result, metadata)
+  values (v_customer.organization_id, v_actor_id, 'order.created', 'order', v_order_id, p_correlation_id, 'success', jsonb_build_object('order_number', v_order_number, 'total', v_subtotal));
 
   return query select v_order_id, v_order_number, v_subtotal;
 end;
 $$;
+
+revoke all on function public.create_order(uuid, uuid, jsonb, text, text) from public;
+grant execute on function public.create_order(uuid, uuid, jsonb, text, text) to authenticated;
