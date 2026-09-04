@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { validateImageFile, validateProductImageTarget } from './imagePipeline';
+import { validateDecodedImageDimensions, validateImageFile, validateProductImageTarget } from './imagePipeline';
 
 describe('product image pipeline validation', () => {
   it('accepts supported image MIME types within the source size limit', () => {
@@ -17,6 +17,12 @@ describe('product image pipeline validation', () => {
   it('rejects an oversized source image before processing', () => {
     const oversized = new File([new Uint8Array(10 * 1024 * 1024 + 1)], 'large.jpg', { type: 'image/jpeg' });
     expect(() => validateImageFile(oversized)).toThrow('10 MB');
+  });
+
+  it('rejects decompression-bomb dimensions before canvas allocation', () => {
+    expect(() => validateDecodedImageDimensions(5000, 5000)).toThrow('الحد الآمن');
+    expect(() => validateDecodedImageDimensions(0, 100)).toThrow('غير صالحة');
+    expect(() => validateDecodedImageDimensions(1600, 1600)).not.toThrow();
   });
 
   it('accepts UUID product targets and rejects path-like identifiers', () => {
