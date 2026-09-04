@@ -2,6 +2,7 @@
 create role authenticated login;
 \i supabase/migrations/0001_core_foundation.sql
 \i supabase/migrations/0002_auth_scope_hardening.sql
+\i supabase/migrations/0003_order_state_machine.sql
 
 insert into app.organizations(id,name) values ('00000000-0000-0000-0000-0000000000a1','Tenant A'),('00000000-0000-0000-0000-0000000000b1','Tenant B');
 insert into app.roles(id,code) values('00000000-0000-0000-0000-000000000001','customer');
@@ -23,18 +24,22 @@ set request.jwt.claim.sub = '00000000-0000-0000-0000-0000000000aa';
 set request.jwt.claim.org_id = '00000000-0000-0000-0000-0000000000a1';
 set request.jwt.claim.customer_id = '00000000-0000-0000-0000-0000000000ca';
 
--- Tenant isolation: B is invisible to A even with a guessed identifier.
 do $$ begin if (select count(*) from app.products where id='00000000-0000-0000-0000-0000000000fb') <> 0 then raise exception 'cross-tenant product leak'; end if; end $$;
--- Authorized price is Tier 1 only.
 do $$ begin if (select unit_price from app.resolve_price('00000000-0000-0000-0000-0000000000fa')) <> 100 then raise exception 'wrong authorized price'; end if; end $$;
 
 select * from app.create_order('00000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-0000000000fa',2,'00000000-0000-0000-0000-0000000000a3');
 do $$ begin
-  if (select quantity from app.inventory_balances where warehouse_id='00000000-0000-0000-0000-0000000000a3' and product_id='00000000-0000-0000-0000-0000000000fa') <> 1 then raise exception 'inventory mutation incorrect'; end if;
+  if (select quantity from app.inventory_balances where warehouse_id='00000000-0000-0000-0000-0000000000a3' and product_id='00000000-0000-0000-0000-0000000000fa') <> 1 then raise exception 'inventory reservation incorrect'; end if;
   if (select total from app.orders where operation_id='00000000-0000-0000-0000-000000000001') <> 200 then raise exception 'server total incorrect'; end if;
   if (select count(*) from app.order_items where order_id=(select id from app.orders where operation_id='00000000-0000-0000-0000-000000000001')) <> 1 then raise exception 'order item missing'; end if;
   if (select count(*) from app.audit_events where event_type='order.created') <> 1 then raise exception 'audit missing'; end if;
   if (select count(*) from app.outbox_events where event_type='order.created.v1') <> 1 then raise exception 'outbox missing'; end if;
+end $$;
+
+-- Customer cannot escalate a pending order into confirmation.
+do $$ begin
+  begin perform app.transition_order_status((select id from app.orders where operation_id='00000000-0000-0000-0000-000000000001'),'confirmed'); raise exception 'unauthorized transition accepted';
+  exception when insufficient_privilege then null; end;
 end $$;
 
 -- Exact replay is one business effect.
@@ -47,13 +52,21 @@ do $$ begin
   exception when unique_violation then null; end;
 end $$;
 
--- Insufficient inventory must not partially create an order.
+-- Cancellation restores the reserved quantity atomically.
+select app.transition_order_status((select id from app.orders where operation_id='00000000-0000-0000-0000-000000000001'),'cancelled');
 do $$ begin
-  begin perform app.create_order('00000000-0000-0000-0000-000000000002','00000000-0000-0000-0000-0000000000fa',2,'00000000-0000-0000-0000-0000000000a3'); raise exception 'oversell accepted';
+  if (select quantity from app.inventory_balances where warehouse_id='00000000-0000-0000-0000-0000000000a3' and product_id='00000000-0000-0000-0000-0000000000fa') <> 3 then raise exception 'reservation release incorrect'; end if;
+  if (select count(*) from app.inventory_movements where movement_type='release') <> 1 then raise exception 'release movement missing'; end if;
+end $$;
+
+-- Insufficient inventory must not partially create an order.
+select * from app.create_order('00000000-0000-0000-0000-000000000002','00000000-0000-0000-0000-0000000000fa',3,'00000000-0000-0000-0000-0000000000a3');
+do $$ begin
+  begin perform app.create_order('00000000-0000-0000-0000-000000000003','00000000-0000-0000-0000-0000000000fa',1,'00000000-0000-0000-0000-0000000000a3'); raise exception 'oversell accepted';
   exception when sqlstate 'P0001' then null; end;
-  if (select count(*) from app.orders where operation_id='00000000-0000-0000-0000-000000000002') <> 0 then raise exception 'failed order partially committed'; end if;
-  if (select quantity from app.inventory_balances where warehouse_id='00000000-0000-0000-0000-0000000000a3' and product_id='00000000-0000-0000-0000-0000000000fa') <> 1 then raise exception 'failed order changed inventory'; end if;
+  if (select count(*) from app.orders where operation_id='00000000-0000-0000-0000-000000000003') <> 0 then raise exception 'failed order partially committed'; end if;
+  if (select quantity from app.inventory_balances where warehouse_id='00000000-0000-0000-0000-0000000000a3' and product_id='00000000-0000-0000-0000-0000000000fa') <> 0 then raise exception 'failed order changed inventory'; end if;
 end $$;
 
 reset role;
-select 'R1 FOUNDATION PROOF PASS' as result;
+select 'R1 FOUNDATION + ORDER STATE PROOF PASS' as result;
