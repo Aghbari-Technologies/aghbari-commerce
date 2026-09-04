@@ -6,6 +6,12 @@ export interface CatalogItem {
   id: string; sku: string; name: string; unit: string; category_id: string | null; description: string | null;
   status: string; available_quantity: number; image_path: string | null; authorized_price: number | null; currency: string;
 }
+
+type RawCatalogItem = Omit<CatalogItem, 'available_quantity' | 'authorized_price'> & {
+  available_quantity: unknown;
+  authorized_price: unknown;
+};
+
 const SIGNED_URL_TTL_SECONDS = 3600;
 const SIGNED_URL_REUSE_MS = 50 * 60 * 1000;
 const imageUrlCache = new Map<string, { url: string; expiresAt: number }>();
@@ -13,7 +19,7 @@ function finiteNumber(value: unknown, fallback = 0): number { const parsed = typ
 export async function getCatalog(search = '', categoryId: string | null = null, limit = 24, offset = 0) {
   const query = normalizeCatalogQuery(search, limit, offset);
   const { data } = await retryRead(() => requireSupabase().rpc('get_catalog', { p_search: query.search || null, p_category_id: categoryId, p_limit: query.limit, p_offset: query.offset }).then((result) => { if (result.error) throw result.error; return result; }));
-  return (data ?? []).map((item) => ({ ...(item as Omit<CatalogItem, 'available_quantity' | 'authorized_price'>), available_quantity: finiteNumber(item.available_quantity), authorized_price: item.authorized_price == null ? null : finiteNumber(item.authorized_price, 0) })) as CatalogItem[];
+  return (data as RawCatalogItem[] | null ?? []).map((item: RawCatalogItem) => ({ ...(item as Omit<CatalogItem, 'available_quantity' | 'authorized_price'>), available_quantity: finiteNumber(item.available_quantity), authorized_price: item.authorized_price == null ? null : finiteNumber(item.authorized_price, 0) })) as CatalogItem[];
 }
 export async function getProductImageUrls(paths: Array<string | null>) {
   const client = requireSupabase(); const uniquePaths = [...new Set(paths.filter((path): path is string => Boolean(path)))];
