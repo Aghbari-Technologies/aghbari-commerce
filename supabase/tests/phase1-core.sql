@@ -20,7 +20,17 @@ insert into inventory_balances(warehouse_id, product_id, available, reserved) va
 set role authenticated;
 select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-000000000031', false);
 
--- Price is resolved server-side and inventory is reserved atomically.
+select case when count(*) = 1 and max(unit_price) = 12.50 then 'PASS: authorized catalog price projection' else 'FAIL: authorized catalog price projection' end
+from public.get_customer_catalog(null, 50, null);
+
+do $$
+begin
+  perform price_list_id from product_prices limit 1;
+  raise exception 'FAIL: direct product price read was allowed';
+exception when insufficient_privilege then
+  raise notice 'PASS: direct product price read blocked';
+end $$;
+
 select * from public.create_order(
   '00000000-0000-0000-0000-000000000011',
   '00000000-0000-0000-0000-000000000021',
@@ -39,7 +49,6 @@ select order_id, order_number, total from public.create_order(
 
 select case when :'order_order_id' = :'replay_order_id' and :'order_order_number' = :'replay_order_number' and :'order_total' = :'replay_total' then 'PASS: idempotent replay' else 'FAIL: idempotent replay' end;
 
--- Ledger verification is performed with the database owner; customer-facing inventory reads remain denied by RLS.
 set role postgres;
 select case when available = 3 and reserved = 2 and version = 2 then 'PASS: atomic inventory reservation' else 'FAIL: atomic inventory reservation' end
 from inventory_balances where warehouse_id = '00000000-0000-0000-0000-000000000021' and product_id = '00000000-0000-0000-0000-000000000071';
@@ -47,7 +56,6 @@ set role authenticated;
 select case when count(*) = 1 then 'PASS: customer sees own order' else 'FAIL: customer sees own order' end from orders where customer_id = '00000000-0000-0000-0000-000000000051';
 select case when count(*) = 0 then 'PASS: cross-customer order blocked' else 'FAIL: cross-customer order blocked' end from orders where customer_id = '00000000-0000-0000-0000-000000000052';
 
--- Reusing the same key with a different payload must fail rather than create a second business mutation.
 do $$
 begin
   perform public.create_order(
@@ -62,7 +70,6 @@ exception when unique_violation then
   raise notice 'PASS: idempotency payload conflict blocked';
 end $$;
 
--- Oversell attempt must fail and the failed transaction must not consume stock.
 do $$
 begin
   perform public.create_order(
