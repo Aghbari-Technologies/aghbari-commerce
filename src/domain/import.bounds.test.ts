@@ -15,7 +15,7 @@ describe('import safety bounds', () => {
     const diagnostics = validateImportRows(rows);
     expect(diagnostics).toHaveLength(1);
     expect(diagnostics[0].field).toBe('file');
-    expect(diagnostics[0].message).toContain('50,000');
+    expect(diagnostics[0].message).toContain('50000');
   });
 
   it('rejects missing categories instead of silently creating uncategorized rows', () => {
