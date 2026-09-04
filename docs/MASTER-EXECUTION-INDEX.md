@@ -3,14 +3,12 @@
 **Canonical status ledger.** This file is updated after every meaningful execution boundary.
 
 ## Identity
-
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Default branch: `main`
-- Current exact HEAD: `aba98fa8a2522d4395ea3f47f4a868fc1b2d314c`
+- Current exact HEAD: `3d70cebf8efa58a4c078915bbde3fb0e4d5c26d5`
 
 ## Certification model
-
 | Stage | Meaning | Current state |
 |---|---|---|
 | BUILT | Code/artifact exists | NOT STARTED — implementation has not begun |
@@ -20,29 +18,23 @@
 | PRODUCTION CERTIFIED | Release boundary independently proven | NOT STARTED |
 
 ## Current phase
-
 ### PHASE 0 — Architecture & Requirements Forensics
-
-**Status: IN PROGRESS**
+**Status: IN PROGRESS — FULL RE-ENGINEERING MODE**
 
 Completed:
-- Repository and write access baseline verified.
-- Product identity fixed as الأغبري.
-- Operational-vs-analytics boundary documented.
-- Owner-Level / Evidence-First protocol established in-repo.
-- Architecture boundary baseline documented.
-- Master Execution Index established.
-- Existing architecture/tree retained as the starting knowledge base and explicitly marked for evolution.
-- First-pass legacy requirements extraction from Batch 1 and Batch 2 completed.
-- Provisional domain/bounded-context map created.
-- Provisional architecture decision log created.
-- Batch 1/2 requirements classification matrix created.
-- Provisional evidence-based testing/certification matrix created.
+- Repository/write baseline and product identity.
+- Operational-vs-analytics boundary.
+- Owner-Level / Evidence-First protocol.
+- Architecture boundary and master index.
+- Legacy Batch 1/2 extraction and classification.
+- Provisional domain map, ADR log, and certification matrix.
+- **Full system re-engineering mandate:** historical specifications are business evidence, not implementation blueprints.
+- **Engineering transformation contract:** `Historical wording → Business capability → Engineering requirement → Acceptance criteria → Verification evidence`.
+- Engineering quality gates for invariant, authorization, data ownership, contracts, failure modes, idempotency/concurrency, observability, testing, and runtime evidence.
 
 Pending:
-- Incorporate legacy Batch 3 when supplied.
-- Reconcile Batch 3 against the current matrix and architecture candidate.
-- Final technology selection and ADRs.
+- Batch 3 incorporation and reconciliation.
+- Final technology ADRs.
 - Final database/data ownership model.
 - Final API/integration contracts.
 - Final admin/navigation model.
@@ -51,30 +43,27 @@ Pending:
 - Architecture Candidate freeze.
 
 ## Non-negotiable boundaries
-
 1. No fake PASS.
-2. Every PASS must identify its exact evidence and exact HEAD.
+2. Every PASS identifies exact evidence and exact HEAD.
 3. `NOT PROVEN` remains `NOT PROVEN` until runtime evidence exists.
-4. Do not duplicate Report-Advisor analytics/BI/forecasting/decision intelligence inside الأغبري.
-5. Do not treat old العامري implementation or technology choices as binding.
-6. No production mutation as a substitute for proof.
-7. External blockers are recorded explicitly and do not stop unaffected engineering work.
-8. Architecture/protocol may be revised when evidence proves a better approach.
+4. No duplicate Report-Advisor analytics/BI/forecasting/decision intelligence in الأغبري.
+5. Old العامري implementation/technology is not binding.
+6. Historical requirements must become measurable/testable engineering requirements before implementation.
+7. Preserve business capability, not obsolete implementation mechanisms.
+8. No production mutation as a substitute for proof.
+9. External blockers are explicit and do not stop unaffected work.
+10. Architecture/protocol may evolve when evidence proves a better approach.
 
 ## Decision record format
-
-Every material execution update records:
-
 `ACTION → RESULT → EVIDENCE → BLOCKER (if any) → NEXT`
 
 ## Latest boundary
+**ACTION:** Upgrade Phase 0 from legacy-specification interpretation to explicit full-system re-engineering and modernization mode.
 
-**ACTION:** Execute a high-intensity Phase-0 forensic synthesis without waiting for routine owner decisions.
+**RESULT:** Updated the forensic synthesis, architecture decision log, and Batch 1/2 requirements matrix. Historical requirements are now explicitly treated as business evidence and converted into modern engineering requirements rather than copied into implementation.
 
-**RESULT:** Added provisional forensic synthesis, architecture decision log, Batch 1/2 requirements matrix, and evidence-bound test/certification matrix. Corrected the ledger provenance before continuing and bound this boundary to the newest exact `main` HEAD.
+**EVIDENCE:** `docs/PHASE-0-FORENSIC-SYNTHESIS.md`, `docs/ARCHITECTURE-DECISION-LOG.md`, and `docs/REQUIREMENTS-MATRIX-BATCH1-BATCH2.md` were updated. Exact HEAD after this boundary: `3d70cebf8efa58a4c078915bbde3fb0e4d5c26d5`.
 
-**EVIDENCE:** New canonical artifacts are present under `docs/`: `PHASE-0-FORENSIC-SYNTHESIS.md`, `ARCHITECTURE-DECISION-LOG.md`, `REQUIREMENTS-MATRIX-BATCH1-BATCH2.md`, and `TEST-CERTIFICATION-MATRIX.md`. Exact HEAD after this boundary: `aba98fa8a2522d4395ea3f47f4a868fc1b2d314c`.
+**BLOCKER:** Batch 3 is still absent. Final architecture freeze remains intentionally withheld. No implementation or certification PASS is claimed.
 
-**BLOCKER:** Batch 3 is still absent. Final architecture freeze is therefore intentionally withheld. No implementation/certification claim is made.
-
-**NEXT:** Incorporate Batch 3 immediately when available, then perform conflict resolution, final ADRs, schema/data ownership, API contracts, security model, UX command-center IA, and architecture freeze. Implementation waves begin only against the frozen candidate.
+**NEXT:** Continue Phase-0 synthesis: deepen data ownership/invariants, API/integration contracts, security/RBAC/RLS, offline/sync semantics, admin command-center IA, technology evaluation, and certification mapping. Reconcile Batch 3 against this baseline when it arrives, then freeze the architecture.
