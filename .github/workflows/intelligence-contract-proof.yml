@@ -2,7 +2,7 @@ name: Intelligence Contract Proof
 
 on:
   push:
-    branches: [main]
+    branches: ['**']
     paths:
       - 'contracts/intelligence-analytics-dataset.v1.schema.json'
       - 'poc/intelligence-gateway/**'
@@ -21,8 +21,15 @@ permissions:
 jobs:
   contract-proof:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      - name: Exact-head binding
+        if: ${{ github.event_name == 'pull_request' }}
+        run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha }}"
       - uses: actions/setup-node@v4
         with:
           node-version: 20

@@ -1,0 +1,47 @@
+name: supabase-migration-proof
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: ['**']
+
+permissions:
+  contents: read
+
+jobs:
+  migration-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+      - name: Exact-head binding
+        if: ${{ github.event_name == 'pull_request' }}
+        run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha }}"
+      - name: Fail fast on duplicate migration versions
+        shell: bash
+        run: |
+          versions="$(find supabase/migrations -maxdepth 1 -type f -name '*.sql' -printf '%f\n' | sed -E 's/^([0-9]+)_.*/\1/' | sort)"
+          duplicates="$(printf '%s\n' "$versions" | uniq -d)"
+          if [[ -n "$duplicates" ]]; then
+            echo "Duplicate migration versions detected:"
+            printf '%s\n' "$duplicates"
+            exit 1
+          fi
+          echo "Migration version uniqueness: PASS"
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - run: supabase start
+      - name: Apply migrations from empty database
+        run: supabase db reset --local
+      - name: Run database pgTAP proofs
+        run: supabase test db --local
+      - name: Verify local migration inventory
+        run: supabase migration list --local
+      - name: Stop local Supabase
+        if: always()
+        run: supabase stop --no-backup

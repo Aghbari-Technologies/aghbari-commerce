@@ -1,4 +1,4 @@
-name: Order Workflow Proof
+name: application-quality
 
 on:
   push:
@@ -10,8 +10,9 @@ permissions:
   contents: read
 
 jobs:
-  order-workflow-proof:
+  quality:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
@@ -22,6 +23,9 @@ jobs:
         run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha }}"
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-      - name: Run deterministic order state-machine proof
-        run: node --test poc/order-workflow/invariants.mjs
+          node-version: 22
+      # No lockfile is committed yet; avoid setup-node cache's hard requirement for one.
+      - run: npm install
+      - run: npm run test
+      - run: npm run lint
+      - run: npm run build

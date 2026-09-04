@@ -1,0 +1,93 @@
+name: release-gate
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: aghbari-release-gate-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  release-gate:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+
+      - name: Exact-head binding
+        run: |
+          expected='${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}'
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$expected"
+          echo "EXACT_HEAD=$actual"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install application dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Production build
+        run: npm run build
+
+      - name: Order invariant contract
+        run: node scripts/check-order-invariants.mjs
+
+      - name: Database security contract
+        run: node scripts/check-database-security-contract.mjs
+
+      - name: Domain invariant proof
+        run: node --test poc/transactional-core/invariants.mjs
+
+      - name: Order workflow proof
+        run: node --test poc/order-workflow/invariants.mjs
+
+      - name: Intelligence contract proof
+        run: node poc/intelligence-gateway/contract-proof.mjs
+
+      - name: Browser secret boundary
+        shell: bash
+        run: |
+          if git grep -n -E 'SUPABASE_SERVICE_ROLE_KEY|VITE_SUPABASE_SERVICE_ROLE|sb_secret_' -- src public index.html; then
+            echo 'Server-only Supabase secrets must never appear in browser-delivered sources.'
+            exit 1
+          fi
+          echo 'Browser secret boundary: PASS'
+
+      - name: Supabase CLI setup
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Fresh local database migration proof
+        run: |
+          versions="$(find supabase/migrations -maxdepth 1 -type f -name '*.sql' -printf '%f\n' | sed -E 's/^([0-9]+)_.*/\1/' | sort)"
+          duplicates="$(printf '%s\n' "$versions" | uniq -d)"
+          if [[ -n "$duplicates" ]]; then
+            echo "Duplicate migration versions detected:"
+            printf '%s\n' "$duplicates"
+            exit 1
+          fi
+          supabase start
+          trap 'supabase stop --no-backup' EXIT
+          supabase db reset --local
+          supabase test db --local
+          supabase migration list --local
