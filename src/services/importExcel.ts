@@ -3,11 +3,15 @@ import { fingerprintImport, normalizeSku, validateImportRows, type ImportRow } f
 import { requireSupabase } from '../lib/supabase';
 
 const REQUIRED_HEADERS = ['SKU','Name','Unit','Category','Quantity','Retail Price','Wholesale Price','Distributor Price'];
+const MAX_WORKBOOK_BYTES = 20 * 1024 * 1024;
+const MAX_DATA_ROWS = 50_000;
 
 export async function parseProductWorkbook(file: File) {
   if (!file.name.toLowerCase().endsWith('.xlsx')) throw new Error('يجب رفع ملف XLSX');
+  if (file.size < 1 || file.size > MAX_WORKBOOK_BYTES) throw new Error('حجم ملف XLSX يجب ألا يتجاوز 20 MB.');
   const rows = await readSheet(file);
   const [header = [], ...data] = rows;
+  if (data.length > MAX_DATA_ROWS) throw new Error('ملف الاستيراد يتجاوز الحد الأقصى وهو 50,000 صف.');
   const normalizedHeaders = header.map((cell) => String(cell ?? '').trim());
   const missing = REQUIRED_HEADERS.filter((name) => !normalizedHeaders.includes(name));
   if (missing.length) throw new Error(`أعمدة ناقصة: ${missing.join(', ')}`);
