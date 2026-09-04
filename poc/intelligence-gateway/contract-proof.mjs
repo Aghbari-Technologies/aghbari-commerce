@@ -23,7 +23,13 @@ function validateEnvelope(value) {
   for (const key of ['record_count', 'accepted_record_count', 'rejected_record_count']) {
     assert.ok(Number.isInteger(value[key]) && value[key] >= 0, `invalid count: ${key}`);
   }
-  assert.ok(value.data_quality_score >= 0 && value.data_quality_score <= 100);
+  assert.equal(
+    value.record_count,
+    value.accepted_record_count + value.rejected_record_count,
+    'record counts must reconcile'
+  );
+  assert.ok(value.data_period_start <= value.data_period_end, 'invalid data period');
+  assert.ok(Number.isFinite(value.data_quality_score) && value.data_quality_score >= 0 && value.data_quality_score <= 100);
   assert.ok(VALID_STATES.has(value.processing_status));
   assert.ok(VALID_ACTIVATION.has(value.activation_status));
   if (value.processing_status === 'ACTIVE') assert.equal(value.activation_status, 'ACTIVE');
@@ -62,9 +68,14 @@ const tests = [
   }],
   ['rejects invalid quality scores', () => {
     assert.throws(() => validateEnvelope({ ...base, data_quality_score: 101 }));
+    assert.throws(() => validateEnvelope({ ...base, data_quality_score: Number.NaN }));
   }],
-  ['rejects negative record counts', () => {
+  ['rejects negative or unreconciled record counts', () => {
     assert.throws(() => validateEnvelope({ ...base, record_count: -1 }));
+    assert.throws(() => validateEnvelope({ ...base, rejected_record_count: 3 }));
+  }],
+  ['rejects reversed data periods', () => {
+    assert.throws(() => validateEnvelope({ ...base, data_period_start: '2026-09-01' }));
   }],
   ['requires tenant binding and provenance', () => {
     assert.throws(() => validateEnvelope({ ...base, tenant_id: '' }));
