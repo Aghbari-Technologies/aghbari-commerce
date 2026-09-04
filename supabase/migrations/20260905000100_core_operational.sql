@@ -14,6 +14,7 @@ create table public.organizations (
   id uuid primary key default gen_random_uuid(),
   name text not null,
   active boolean not null default true,
+  next_order_number bigint not null default 1 check (next_order_number > 0),
   created_at timestamptz not null default now()
 );
 
@@ -166,6 +167,7 @@ create index product_prices_resolution_idx on public.product_prices(
 );
 
 create table public.inventory_balances (
+  organization_id uuid not null references public.organizations(id),
   warehouse_id uuid not null references public.warehouses(id) on delete cascade,
   product_id uuid not null references public.products(id),
   quantity integer not null default 0 check (quantity >= 0),
@@ -174,6 +176,8 @@ create table public.inventory_balances (
   updated_at timestamptz not null default now(),
   primary key (warehouse_id, product_id)
 );
+
+create index inventory_balances_org_product_idx on public.inventory_balances(organization_id, product_id, warehouse_id);
 
 create table public.inventory_movements (
   id uuid primary key default gen_random_uuid(),
@@ -224,6 +228,7 @@ create table public.orders (
   warehouse_id uuid not null references public.warehouses(id),
   order_number text not null,
   operation_id uuid not null,
+  payload_hash text not null,
   status public.order_status not null default 'NEW',
   subtotal numeric(14,2) not null default 0 check (subtotal >= 0),
   total numeric(14,2) not null default 0 check (total >= 0),
