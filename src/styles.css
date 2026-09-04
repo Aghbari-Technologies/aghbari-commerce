@@ -20,7 +20,7 @@ button:disabled { cursor: not-allowed; opacity: .55; }
 nav { display: flex; gap: 18px; }
 nav a { color: #697386; text-decoration: none; padding: 8px 2px; }
 nav a.active { color: #172033; font-weight: 700; }
-.cart-button, .product-footer button, .checkout, .signout { border: 0; border-radius: 11px; background: #172033; color: white; padding: 10px 16px; font-weight: 700; }
+.cart-button, .product-footer button, .checkout, .signout { border: 0; border-radius: 11px; background: #172033; color: white; padding: 10px 16px; font-weight: 700; min-height: 42px; }
 .signout { background: #eef1f6; color: #172033; }
 .cart-button b { display: inline-grid; place-items: center; min-width: 22px; height: 22px; margin-inline-start: 5px; border-radius: 50%; background: white; color: #172033; }
 main { width: min(1180px, calc(100% - 32px)); margin: auto; }
@@ -36,11 +36,12 @@ h1 { margin: 12px 0; font-size: clamp(38px, 6vw, 66px); line-height: 1.08; lette
 .search input { width: 100%; border: 0; outline: 0; background: transparent; }
 .search span { font-size: 24px; color: #7b8495; }
 .chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
-.chip { white-space: nowrap; border: 1px solid #e0e4ec; background: white; border-radius: 999px; padding: 8px 14px; color: #697386; }
+.chip { white-space: nowrap; border: 1px solid #e0e4ec; background: white; border-radius: 999px; padding: 8px 14px; color: #697386; min-height: 40px; }
 .chip.selected { background: #172033; border-color: #172033; color: white; }
 .catalog-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 .product-card { background: white; border: 1px solid #e7eaf0; border-radius: 18px; padding: 16px; }
-.product-image { display: grid; place-items: center; aspect-ratio: 1.35; border-radius: 13px; background: #eef1f6; color: #9aa3b2; font-size: 54px; font-weight: 800; }
+.product-image { display: grid; place-items: center; aspect-ratio: 1.35; overflow: hidden; border-radius: 13px; background: #eef1f6; color: #9aa3b2; font-size: 54px; font-weight: 800; }
+.product-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .product-meta { display: flex; justify-content: space-between; margin-top: 14px; color: #8a93a3; font-size: 12px; }
 .product-meta code { direction: ltr; }
 .product-card h2 { font-size: 18px; margin: 8px 0; }
@@ -57,8 +58,8 @@ h1 { margin: 12px 0; font-size: clamp(38px, 6vw, 66px); line-height: 1.08; lette
 .cart-line { display: grid; grid-template-columns: 1fr auto auto; gap: 16px; align-items: center; padding: 14px 0; border-bottom: 1px solid #edf0f4; }
 .cart-line small { display: block; color: #8b93a1; margin-top: 4px; }
 .quantity { display: flex; align-items: center; border: 1px solid #e0e4ec; border-radius: 10px; overflow: hidden; }
-.quantity button { width: 34px; height: 34px; border: 0; background: #f7f8fa; }
-.quantity span { width: 34px; text-align: center; }
+.quantity button { width: 40px; height: 40px; border: 0; background: #f7f8fa; }
+.quantity span { width: 40px; text-align: center; }
 .cart-total { display: flex; justify-content: space-between; padding: 20px 0; font-size: 18px; }
 .checkout { width: 100%; padding: 14px; }
 .success { margin-top: 12px; padding: 12px 14px; border-radius: 10px; background: #ecfdf5; color: #047857; line-height: 1.7; font-size: 13px; }
