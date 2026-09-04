@@ -37,13 +37,17 @@ describe('import domain', () => {
     ]));
   });
 
-  it('produces the same fingerprint for equivalent normalized rows', () => {
+  it('produces the same SHA-256 fingerprint for equivalent normalized rows', async () => {
     const a = [validRow()];
     const b = [validRow({ sku: 'ABC-001', name: ' منتج تجريبي ', unit: 'كرتون', category: 'إلكترونيات' })];
-    expect(fingerprintImport(a)).toBe(fingerprintImport(b));
+    expect(await fingerprintImport(a)).toBe(await fingerprintImport(b));
   });
 
-  it('changes the fingerprint when authoritative import data changes', () => {
-    expect(fingerprintImport([validRow()])).not.toBe(fingerprintImport([validRow({ quantity: 11 })]));
+  it('changes the fingerprint when authoritative import data changes', async () => {
+    expect(await fingerprintImport([validRow()])).not.toBe(await fingerprintImport([validRow({ quantity: 11 })]));
+  });
+
+  it('produces a SHA-256 hexadecimal digest', async () => {
+    expect(await fingerprintImport([validRow()])).toMatch(/^[a-f0-9]{64}$/);
   });
 });
