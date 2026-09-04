@@ -43,20 +43,22 @@
 - Candidate Migration Skeleton V1.
 - Domain/API Contract Map V1.
 - Adversarial Architecture Review V1.
+- Candidate RBAC/RLS Policy Matrix V1.
+- Technology Proof Gates V1.
 
 ## This wave
-- Built a dependency-ordered candidate migration skeleton covering scope, identity, catalog, pricing, inventory, sales, purchasing, asynchronous side effects, imports/exports, and audit.
-- Defined migration gates for clean install, upgrade, determinism, constraints, RLS, concurrency, and schema evidence.
-- Converted bounded contexts into a domain/API contract map with actor, authorization, transaction, idempotency, concurrency, error, audit, and evidence requirements.
-- Executed an adversarial architecture review against cross-scope access, price-tier leakage, replay, concurrent inventory/order operations, illegal state transitions, import poisoning, offline conflicts, integration retries, soft-delete bypasses, enumeration, audit evasion, secret leakage, and rate abuse.
-- Confirmed the documented architecture remains coherent under these challenges, while correctly keeping all implementation/runtime claims unproven.
+- Added a deny-by-default RBAC/RLS matrix covering customer, sales, warehouse, accounting, moderation, administration, and scope boundaries.
+- Added field-level exposure rules for tier pricing, security material, private customer data, and integration credentials.
+- Added adversarial authorization cases that must fail through direct API requests, not only through UI restrictions.
+- Added technology proof gates covering transactional correctness, authorization, typed contracts, background delivery, weak-network/PWA behavior, bulk import/export, performance, observability, deployment/recovery, and deterministic testing.
+- Kept technology and architecture freeze explicitly evidence-gated; no runtime or implementation PASS is claimed.
 
 ## Pending gates
 1. Batch 3 reconciliation when supplied.
-2. Technology proof-of-concept gates.
+2. Execute technology proof-of-concept gates.
 3. Exact physical schema/migrations after Batch-3 reconciliation.
 4. Final API schemas/versioning.
-5. Final RBAC/RLS policy matrix.
+5. Final RBAC/RLS policy matrix (candidate now exists; final freeze pending schema/Batch 3).
 6. Final offline/sync implementation contract.
 7. Architecture freeze.
 8. Implementation vertical slices.
@@ -66,16 +68,15 @@
 Documentation PASS means only that the documented design check passed. It does **not** mean implementation PASS, runtime PASS, or certification PASS.
 
 ## Latest boundary
-**ACTION:** Autonomous `1` — execute the next architecture-hardening wave without inventing Batch 3.
+**ACTION:** Autonomous `1` — harden authorization and make technology selection evidence-driven without inventing Batch 3.
 
-**RESULT:** Added `CANDIDATE-MIGRATION-SKELETON-V1.md`, `DOMAIN-API-CONTRACT-MAP-V1.md`, and `ADVERSARIAL-ARCHITECTURE-REVIEW-V1.md`. The candidate design is now mapped from logical model → physical migration sequence → domain/API contracts → adversarial controls.
+**RESULT:** Added `RBAC-RLS-POLICY-MATRIX-V1.md` and `TECHNOLOGY-POC-GATES-V1.md`. Authorization is now mapped to explicit roles/scopes/actions with direct-request negative tests; technology choices are mapped to executable proof gates rather than preference.
 
 **EVIDENCE:**
-- `fb00a12f02811b3cd04b035aaf9adf673b0738ac` — candidate migration skeleton.
-- `8301b47d8ed65d1d5cf0b7300c919d839fb193f2` — domain/API contract map.
-- `e16723ba5413abc3f12eb675097d959d441b3f06` — adversarial architecture review.
+- `ef1facd75011fe047f450bc5fe62374d2f831c6a` — candidate RBAC/RLS policy matrix.
+- `bf93ffbdbc5be7297ecd08e481b1845460712e69` — technology proof gates.
 - This index update's returned commit SHA is the final exact HEAD for this boundary.
 
 **BLOCKER:** Batch 3 remains absent. Architecture is intentionally not frozen/certified.
 
-**NEXT:** Reconcile Batch 3 when supplied; otherwise proceed with technology proof gates, candidate migration implementation design, final authorization matrix, and vertical-slice execution preparation. Continue challenging all contracts for bypasses and hidden coupling.
+**NEXT:** Execute the highest-value technology/architecture gates that can be completed without Batch 3, then begin the first implementation vertical slice only when its contract is sufficiently frozen. Continue adversarial testing and evidence capture.
