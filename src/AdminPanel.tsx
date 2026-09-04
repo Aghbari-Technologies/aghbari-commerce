@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { CustomerTier, OrderStatus } from './domain/types';
+import { formatMoney } from './domain/pricing';
 import { adjustInventory, createCategory, setProductPrice, upsertProduct } from './services/admin';
 import { commitProductImport, stageProductImport } from './services/importExcel';
 import { getCategories, type CategoryOption } from './services/categories';
