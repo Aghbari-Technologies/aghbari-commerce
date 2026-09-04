@@ -44,21 +44,24 @@ export function validateImportRows(rows: ImportRow[]): ImportDiagnostic[] {
 }
 
 function canonicalize(rows: ImportRow[]): string {
-  return JSON.stringify(rows.map((row) => ({
-    sku: normalizeSku(row.sku),
-    name: String(row.name ?? '').trim(),
-    unit: String(row.unit ?? '').trim(),
-    category: String(row.category ?? '').trim(),
-    quantity: row.quantity,
-    prices: {
-      retail: row.prices.retail,
-      wholesale: row.prices.wholesale,
-      distributor: row.prices.distributor
-    }
-  })));
+  // Row number and spreadsheet order are transport details, not product identity.
+  return JSON.stringify([...rows]
+    .map((row) => ({
+      sku: normalizeSku(row.sku),
+      name: String(row.name ?? '').trim(),
+      unit: String(row.unit ?? '').trim(),
+      category: String(row.category ?? '').trim(),
+      quantity: row.quantity,
+      prices: {
+        retail: row.prices.retail,
+        wholesale: row.prices.wholesale,
+        distributor: row.prices.distributor
+      }
+    }))
+    .sort((a, b) => a.sku.localeCompare(b.sku)));
 }
 
-/** SHA-256 over canonical import content; stable across equivalent formatting. */
+/** SHA-256 over canonical import content; stable across equivalent formatting and row order. */
 export async function fingerprintImport(rows: ImportRow[]): Promise<string> {
   const bytes = new TextEncoder().encode(canonicalize(rows));
   const digest = await globalThis.crypto.subtle.digest('SHA-256', bytes);
