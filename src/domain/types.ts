@@ -30,8 +30,9 @@ export interface CartLine {
 }
 
 export interface OrderDraft {
-  // Customer identity is intentionally absent from the client command.
-  // The authenticated server context is the sole authority for customer binding.
+  // Deprecated compatibility field. It is intentionally ignored by validation and the RPC.
+  // The authenticated server context remains the sole authority for customer binding.
+  customerId?: string;
   idempotencyKey: string;
   lines: Array<{ productId: string; quantity: number }>;
 }
