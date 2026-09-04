@@ -18,6 +18,7 @@ CREATE TABLE g1_poc.inventory (
 CREATE TABLE g1_poc.orders (
   order_id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   operation_id uuid NOT NULL UNIQUE,
+  payload_hash text NOT NULL,
   product_id integer NOT NULL REFERENCES g1_poc.products(product_id),
   quantity integer NOT NULL CHECK (quantity > 0),
   unit_price numeric(12,2) NOT NULL,
@@ -36,6 +37,7 @@ AS $$
 DECLARE
   v_price numeric(12,2);
   v_stock integer;
+  v_payload_hash text := md5(format('%s|%s|%s', p_product_id, p_quantity, p_client_price));
   v_existing g1_poc.orders%ROWTYPE;
 BEGIN
   IF p_quantity <= 0 THEN
@@ -47,9 +49,7 @@ BEGIN
   WHERE operation_id = p_operation_id;
 
   IF FOUND THEN
-    IF v_existing.product_id <> p_product_id
-       OR v_existing.quantity <> p_quantity
-       OR v_existing.unit_price <> v_existing.unit_price THEN
+    IF v_existing.payload_hash <> v_payload_hash THEN
       RAISE EXCEPTION 'operation_id replay payload conflict' USING ERRCODE = '23505';
     END IF;
     RETURN QUERY SELECT v_existing.order_id, v_existing.total, true;
@@ -77,12 +77,15 @@ BEGIN
     RAISE EXCEPTION 'insufficient inventory' USING ERRCODE = 'P0001';
   END IF;
 
+  -- Make concurrent tests deterministic: the second transaction must wait here.
+  PERFORM pg_sleep(1);
+
   UPDATE g1_poc.inventory
   SET quantity = quantity - p_quantity
   WHERE product_id = p_product_id;
 
-  INSERT INTO g1_poc.orders(operation_id, product_id, quantity, unit_price, total)
-  VALUES (p_operation_id, p_product_id, p_quantity, v_price, p_quantity * v_price)
+  INSERT INTO g1_poc.orders(operation_id, payload_hash, product_id, quantity, unit_price, total)
+  VALUES (p_operation_id, v_payload_hash, p_product_id, p_quantity, v_price, p_quantity * v_price)
   RETURNING g1_poc.orders.order_id, g1_poc.orders.total INTO order_id, total;
 
   replayed := false;
@@ -91,7 +94,7 @@ EXCEPTION
   WHEN unique_violation THEN
     -- A concurrent request may win the idempotency insert. Return its exact result.
     SELECT * INTO v_existing FROM g1_poc.orders WHERE operation_id = p_operation_id;
-    IF FOUND THEN
+    IF FOUND AND v_existing.payload_hash = v_payload_hash THEN
       RETURN QUERY SELECT v_existing.order_id, v_existing.total, true;
       RETURN;
     END IF;
@@ -100,4 +103,4 @@ END;
 $$;
 
 INSERT INTO g1_poc.products(product_id, canonical_price) VALUES (1, 10.00);
-INSERT INTO g1_poc/inventory(product_id, quantity) VALUES (1, 1);
+INSERT INTO g1_poc.inventory(product_id, quantity) VALUES (1, 1);
