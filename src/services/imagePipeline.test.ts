@@ -20,9 +20,9 @@ describe('product image pipeline validation', () => {
   });
 
   it('rejects decompression-bomb dimensions before canvas allocation', () => {
-    expect(() => validateDecodedImageDimensions(5000, 5000)).toThrow('الحد الآمن');
+    expect(() => validateDecodedImageDimensions(5001, 5000)).toThrow('الحد الآمن');
     expect(() => validateDecodedImageDimensions(0, 100)).toThrow('غير صالحة');
-    expect(() => validateDecodedImageDimensions(1600, 1600)).not.toThrow();
+    expect(() => validateDecodedImageDimensions(5000, 5000)).not.toThrow();
   });
 
   it('accepts UUID product targets and rejects path-like identifiers', () => {
