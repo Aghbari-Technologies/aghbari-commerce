@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { CustomerTier } from './domain/types';
 import { adjustInventory, createCategory, setProductPrice, upsertProduct } from './services/admin';
+import { commitProductImport, stageProductImport } from './services/importExcel';
 import { supabase } from './lib/supabase';
 
 interface StaffProduct { id: string; sku: string; name: string; unit: string; }
@@ -19,6 +20,9 @@ export default function AdminPanel({ role }: { role: UserRole }) {
   const [warehouseId, setWarehouseId] = useState('');
   const [delta, setDelta] = useState('');
   const [reason, setReason] = useState('');
+  const [importFile, setImportFile] = useState<File | null>(null);
+  const [importJobId, setImportJobId] = useState<string | null>(null);
+  const [importPreview, setImportPreview] = useState<{ rows: number; invalid: number } | null>(null);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -46,6 +50,27 @@ export default function AdminPanel({ role }: { role: UserRole }) {
     finally { setBusy(false); }
   }
 
+  async function stageImport() {
+    if (!importFile) return;
+    setBusy(true); setError(null); setMessage(null); setImportJobId(null); setImportPreview(null);
+    try {
+      const result = await stageProductImport(importFile);
+      setImportPreview({ rows: result.rows.length, invalid: result.diagnostics.length });
+      if (result.jobId) { setImportJobId(result.jobId); setMessage('تمت المعاينة والتحقق على الخادم. يمكنك اعتماد الاستيراد الذري.'); }
+      else setError('الملف يحتوي أخطاء ويجب إصلاحها قبل الاستيراد.');
+    } catch (e) { setError(e instanceof Error ? e.message : 'تعذر تجهيز ملف الاستيراد.'); }
+    finally { setBusy(false); }
+  }
+
+  async function commitImport() {
+    if (!importJobId || !warehouseId) return;
+    await run(async () => {
+      const result = await commitProductImport(importJobId, warehouseId);
+      setImportJobId(null); setImportFile(null); setImportPreview(null);
+      return result;
+    }, 'تم اعتماد الاستيراد بالكامل وتسجيل أثر المخزون والتدقيق.');
+  }
+
   const canCatalog = role === 'owner' || role === 'admin' || role === 'sales';
   const canCategory = role === 'owner' || role === 'admin';
   const canInventory = role === 'owner' || role === 'admin' || role === 'warehouse';
@@ -68,6 +93,12 @@ export default function AdminPanel({ role }: { role: UserRole }) {
         <h3>تسعير حسب الفئة</h3><select aria-label="المنتج" value={selectedProduct} onChange={(e) => setSelectedProduct(e.target.value)} required><option value="">اختر منتجًا</option>{products.map((p) => <option key={p.id} value={p.id}>{p.name} · {p.sku}</option>)}</select>
         <select aria-label="تصنيف العميل" value={tier} onChange={(e) => setTier(e.target.value as CustomerTier)}>{tiers.map((item) => <option key={item} value={item}>{item}</option>)}</select>
         <input aria-label="السعر" type="number" min="0" step="0.01" placeholder="السعر" value={price} onChange={(e) => setPrice(e.target.value)} required /><button disabled={busy}>اعتماد السعر</button>
+      </form>}
+
+      {canCatalog && <form className="admin-card" onSubmit={(e) => { e.preventDefault(); void stageImport(); }}>
+        <h3>استيراد Excel آمن</h3><input aria-label="ملف المنتجات" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onChange={(e) => { setImportFile(e.target.files?.[0] ?? null); setImportJobId(null); setImportPreview(null); }} required />
+        {importPreview && <small>الصفوف: {importPreview.rows} · الأخطاء: {importPreview.invalid}</small>}
+        {!importJobId ? <button disabled={busy || !importFile}>رفع ومعاينة</button> : <button disabled={busy || !warehouseId} onClick={(e) => { e.preventDefault(); void commitImport(); }}>اعتماد الاستيراد الذري</button>}
       </form>}
 
       {canInventory && <form className="admin-card" onSubmit={(e) => { e.preventDefault(); if (!selectedProduct || !warehouseId || !delta) return; void run(() => adjustInventory(warehouseId, selectedProduct, Number(delta), reason), 'تم تعديل المخزون وتسجيل الحركة.'); }}>
