@@ -43,10 +43,12 @@ psql -v ON_ERROR_STOP=1 -c "SELECT * FROM g1_poc.create_order('00000000-0000-000
 pid_a=$!
 psql -v ON_ERROR_STOP=1 -c "SELECT * FROM g1_poc.create_order('00000000-0000-0000-0000-000000000011', 1, 1, 10.00);" >/tmp/g1-concurrency-b.out 2>&1 &
 pid_b=$!
-wait "$pid_a"; rc_a=$?
-wait "$pid_b"; rc_b=$?
+rc_a=0
+wait "$pid_a" || rc_a=$?
+rc_b=0
+wait "$pid_b" || rc_b=$?
 set -e
-(( rc_a == 0 && rc_b != 0 ) || ( rc_a != 0 && rc_b == 0 ))
+(( (rc_a == 0 && rc_b != 0) || (rc_a != 0 && rc_b == 0) ))
 [[ "$(psql -At -c 'SELECT quantity FROM g1_poc.inventory WHERE product_id = 1')" == "0" ]]
 [[ "$(psql -At -c 'SELECT count(*) FROM g1_poc.orders')" == "1" ]]
 
