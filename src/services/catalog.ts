@@ -19,6 +19,11 @@ const SIGNED_URL_TTL_SECONDS = 3600;
 const SIGNED_URL_REUSE_MS = 50 * 60 * 1000;
 const imageUrlCache = new Map<string, { url: string; expiresAt: number }>();
 
+function finiteNumber(value: unknown, fallback = 0): number {
+  const parsed = typeof value === 'number' ? value : Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
 export async function getCatalog(search = '', categoryId: string | null = null, limit = 24, offset = 0) {
   const client = requireSupabase();
   const query = normalizeCatalogQuery(search, limit, offset);
@@ -29,7 +34,11 @@ export async function getCatalog(search = '', categoryId: string | null = null, 
     p_offset: query.offset
   });
   if (error) throw error;
-  return (data ?? []) as CatalogItem[];
+  return (data ?? []).map((item) => ({
+    ...(item as Omit<CatalogItem, 'available_quantity' | 'authorized_price'>),
+    available_quantity: finiteNumber(item.available_quantity),
+    authorized_price: item.authorized_price == null ? null : finiteNumber(item.authorized_price, 0)
+  })) as CatalogItem[];
 }
 
 export async function getProductImageUrls(paths: Array<string | null>) {
