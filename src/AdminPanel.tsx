@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import type { CustomerTier } from './domain/types';
 import { adjustInventory, createCategory, setProductPrice, upsertProduct } from './services/admin';
 import { commitProductImport, stageProductImport } from './services/importExcel';
+import { uploadProductImage } from './services/imagePipeline';
 import { supabase } from './lib/supabase';
 
 interface StaffProduct { id: string; sku: string; name: string; unit: string; }
@@ -20,6 +21,7 @@ export default function AdminPanel({ role }: { role: UserRole }) {
   const [warehouseId, setWarehouseId] = useState('');
   const [delta, setDelta] = useState('');
   const [reason, setReason] = useState('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [importFile, setImportFile] = useState<File | null>(null);
   const [importJobId, setImportJobId] = useState<string | null>(null);
   const [importPreview, setImportPreview] = useState<{ rows: number; invalid: number } | null>(null);
@@ -48,6 +50,14 @@ export default function AdminPanel({ role }: { role: UserRole }) {
     try { await action(); setMessage(success); await reload(); }
     catch (e) { setError(e instanceof Error ? e.message : 'تعذر تنفيذ العملية.'); }
     finally { setBusy(false); }
+  }
+
+  async function uploadImage() {
+    if (!selectedProduct || !imageFile) return;
+    await run(async () => {
+      await uploadProductImage(selectedProduct, imageFile);
+      setImageFile(null);
+    }, 'تم رفع الصورة ومعالجتها وتسجيلها بأمان.');
   }
 
   async function stageImport() {
@@ -93,6 +103,12 @@ export default function AdminPanel({ role }: { role: UserRole }) {
         <h3>تسعير حسب الفئة</h3><select aria-label="المنتج" value={selectedProduct} onChange={(e) => setSelectedProduct(e.target.value)} required><option value="">اختر منتجًا</option>{products.map((p) => <option key={p.id} value={p.id}>{p.name} · {p.sku}</option>)}</select>
         <select aria-label="تصنيف العميل" value={tier} onChange={(e) => setTier(e.target.value as CustomerTier)}>{tiers.map((item) => <option key={item} value={item}>{item}</option>)}</select>
         <input aria-label="السعر" type="number" min="0" step="0.01" placeholder="السعر" value={price} onChange={(e) => setPrice(e.target.value)} required /><button disabled={busy}>اعتماد السعر</button>
+      </form>}
+
+      {canCatalog && <form className="admin-card" onSubmit={(e) => { e.preventDefault(); void uploadImage(); }}>
+        <h3>صورة المنتج</h3><select aria-label="منتج الصورة" value={selectedProduct} onChange={(e) => setSelectedProduct(e.target.value)} required><option value="">اختر منتجًا</option>{products.map((p) => <option key={p.id} value={p.id}>{p.name} · {p.sku}</option>)}</select>
+        <input aria-label="صورة المنتج" type="file" accept="image/jpeg,image/png,image/webp" onChange={(e) => setImageFile(e.target.files?.[0] ?? null)} required />
+        <small>يتم التحويل إلى WebP وضغط الصورة قبل التخزين.</small><button disabled={busy || !selectedProduct || !imageFile}>رفع الصورة</button>
       </form>}
 
       {canCatalog && <form className="admin-card" onSubmit={(e) => { e.preventDefault(); void stageImport(); }}>
