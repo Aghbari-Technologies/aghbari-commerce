@@ -5,6 +5,7 @@ create role authenticated login;
 \i supabase/migrations/0003_order_state_machine.sql
 \i supabase/migrations/0004_import_media_reliability.sql
 \i supabase/migrations/0005_outbox_delivery.sql
+\i supabase/migrations/0006_customer_catalog_boundary.sql
 
 insert into app.organizations(id,name) values ('00000000-0000-0000-0000-0000000000a1','Tenant A'),('00000000-0000-0000-0000-0000000000b1','Tenant B');
 insert into app.roles(id,code) values('00000000-0000-0000-0000-000000000001','customer'),('00000000-0000-0000-0000-000000000002','integration_worker');
@@ -22,14 +23,16 @@ insert into app.product_prices(organization_id,price_list_id,product_id,unit_pri
 insert into app.inventory_balances(organization_id,warehouse_id,product_id,quantity) values('00000000-0000-0000-0000-0000000000a1','00000000-0000-0000-0000-0000000000a3','00000000-0000-0000-0000-0000000000fa',3),('00000000-0000-0000-0000-0000000000b1','00000000-0000-0000-0000-0000000000b3','00000000-0000-0000-0000-0000000000fb',3);
 
 set role authenticated;
-set request.jwt.claim.sub = '00000000-0000-0000-0000-0000000000aa';
-set request.jwt.claim.org_id = '00000000-0000-0000-0000-0000000000a1';
-set request.jwt.claim.customer_id = '00000000-0000-0000-0000-0000000000ca';
-
+set request.jwt.claim.sub='00000000-0000-0000-0000-0000000000aa';
+set request.jwt.claim.org_id='00000000-0000-0000-0000-0000000000a1';
+set request.jwt.claim.customer_id='00000000-0000-0000-0000-0000000000ca';
 do $$ begin if (select count(*) from app.products where id='00000000-0000-0000-0000-0000000000fb') <> 0 then raise exception 'cross-tenant product leak'; end if; end $$;
-do $$ begin if (select unit_price from app.resolve_price('00000000-0000-0000-0000-0000000000fa')) <> 100 then raise exception 'wrong authorized price'; end if; end $$;
+do $$ begin if (select count(*) from app.product_prices) <> 0 then raise exception 'raw tier price leakage'; end if; end $$;
+do $$ begin if (select count(*) from app.inventory_balances) <> 0 then raise exception 'raw warehouse inventory leakage'; end if; end $$;
+do $$ begin if (select unit_price from app.get_product_catalog(null,100) where sku='SKU-A') <> 100 then raise exception 'catalog price projection incorrect'; end if; end $$;
 
 select * from app.create_order('00000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-0000000000fa',2,'00000000-0000-0000-0000-0000000000a3');
+reset role;
 do $$ begin
   if (select quantity from app.inventory_balances where warehouse_id='00000000-0000-0000-0000-0000000000a3' and product_id='00000000-0000-0000-0000-0000000000fa') <> 1 then raise exception 'inventory reservation incorrect'; end if;
   if (select total from app.orders where operation_id='00000000-0000-0000-0000-000000000001') <> 200 then raise exception 'server total incorrect'; end if;
@@ -38,46 +41,45 @@ do $$ begin
   if (select count(*) from app.outbox_events where event_type='order.created.v1') <> 1 then raise exception 'outbox missing'; end if;
 end $$;
 
--- Customer cannot escalate a pending order into confirmation.
-do $$ begin
-  begin perform app.transition_order_status((select id from app.orders where operation_id='00000000-0000-0000-0000-000000000001'),'confirmed'); raise exception 'unauthorized transition accepted';
-  exception when insufficient_privilege then null; end;
-end $$;
-
--- Exact replay is one business effect.
+set role authenticated;
+set request.jwt.claim.sub='00000000-0000-0000-0000-0000000000aa';
+set request.jwt.claim.org_id='00000000-0000-0000-0000-0000000000a1';
+set request.jwt.claim.customer_id='00000000-0000-0000-0000-0000000000ca';
+do $$ begin begin perform app.transition_order_status((select id from app.orders where operation_id='00000000-0000-0000-0000-000000000001'),'confirmed'); raise exception 'unauthorized transition accepted'; exception when insufficient_privilege then null; end; end $$;
 select * from app.create_order('00000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-0000000000fa',2,'00000000-0000-0000-0000-0000000000a3');
+reset role;
 do $$ begin if (select count(*) from app.orders where operation_id='00000000-0000-0000-0000-000000000001') <> 1 then raise exception 'idempotency duplicated order'; end if; end $$;
 
--- Same operation key with different payload must be rejected.
-do $$ begin
-  begin perform app.create_order('00000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-0000000000fa',1,'00000000-0000-0000-0000-0000000000a3'); raise exception 'payload tampering was accepted';
-  exception when unique_violation then null; end;
-end $$;
-
--- Cancellation restores the reserved quantity atomically.
+set role authenticated;
+set request.jwt.claim.sub='00000000-0000-0000-0000-0000000000aa';
+set request.jwt.claim.org_id='00000000-0000-0000-0000-0000000000a1';
+set request.jwt.claim.customer_id='00000000-0000-0000-0000-0000000000ca';
+do $$ begin begin perform app.create_order('00000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-0000000000fa',1,'00000000-0000-0000-0000-0000000000a3'); raise exception 'payload tampering was accepted'; exception when unique_violation then null; end; end $$;
 select app.transition_order_status((select id from app.orders where operation_id='00000000-0000-0000-0000-000000000001'),'cancelled');
+reset role;
 do $$ begin
   if (select quantity from app.inventory_balances where warehouse_id='00000000-0000-0000-0000-0000000000a3' and product_id='00000000-0000-0000-0000-0000000000fa') <> 3 then raise exception 'reservation release incorrect'; end if;
   if (select count(*) from app.inventory_movements where movement_type='release') <> 1 then raise exception 'release movement missing'; end if;
 end $$;
 
--- Worker authorization is separate from customer access and remains tenant-scoped.
-set request.jwt.claim.sub = '00000000-0000-0000-0000-0000000000cc';
-set request.jwt.claim.customer_id = '';
+set role authenticated;
+set request.jwt.claim.sub='00000000-0000-0000-0000-0000000000cc';
+set request.jwt.claim.org_id='00000000-0000-0000-0000-0000000000a1';
+set request.jwt.claim.customer_id='';
 select count(*) from app.claim_outbox_batch(10);
 select app.mark_outbox_delivered((select id from app.outbox_events order by created_at limit 1));
+reset role;
 do $$ begin if (select count(*) from app.outbox_events where published_at is not null) <> 1 then raise exception 'outbox delivery acknowledgement failed'; end if; end $$;
 
--- Insufficient inventory must not partially create an order.
-set request.jwt.claim.sub = '00000000-0000-0000-0000-0000000000aa';
-set request.jwt.claim.customer_id = '00000000-0000-0000-0000-0000000000ca';
+set role authenticated;
+set request.jwt.claim.sub='00000000-0000-0000-0000-0000000000aa';
+set request.jwt.claim.org_id='00000000-0000-0000-0000-0000000000a1';
+set request.jwt.claim.customer_id='00000000-0000-0000-0000-0000000000ca';
 select * from app.create_order('00000000-0000-0000-0000-000000000002','00000000-0000-0000-0000-0000000000fa',3,'00000000-0000-0000-0000-0000000000a3');
+do $$ begin begin perform app.create_order('00000000-0000-0000-0000-000000000003','00000000-0000-0000-0000-0000000000fa',1,'00000000-0000-0000-0000-0000000000a3'); raise exception 'oversell accepted'; exception when sqlstate 'P0001' then null; end; end $$;
+reset role;
 do $$ begin
-  begin perform app.create_order('00000000-0000-0000-0000-000000000003','00000000-0000-0000-0000-0000000000fa',1,'00000000-0000-0000-0000-0000000000a3'); raise exception 'oversell accepted';
-  exception when sqlstate 'P0001' then null; end;
   if (select count(*) from app.orders where operation_id='00000000-0000-0000-0000-000000000003') <> 0 then raise exception 'failed order partially committed'; end if;
   if (select quantity from app.inventory_balances where warehouse_id='00000000-0000-0000-0000-0000000000a3' and product_id='00000000-0000-0000-0000-0000000000fa') <> 0 then raise exception 'failed order changed inventory'; end if;
 end $$;
-
-reset role;
-select 'R1 FOUNDATION + ORDER + IMPORT/OUTBOX PRIMITIVES PROOF PASS' as result;
+select 'R1 FOUNDATION + ORDER + SECURITY + OUTBOX PROOF PASS' as result;
