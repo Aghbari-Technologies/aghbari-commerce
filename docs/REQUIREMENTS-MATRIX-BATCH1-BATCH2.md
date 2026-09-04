@@ -2,6 +2,14 @@
 
 Status: **PROVISIONAL — Batch 3 pending**
 
+## Re-engineering rule
+
+These historical requirements are **not copied into implementation**. Each item is converted into a modern engineering requirement while preserving its business intent. Technology, architecture, UX, and integration mechanisms may be replaced when a stronger solution is justified.
+
+Transformation contract:
+
+`Historical wording → Business capability → Engineering requirement → Acceptance criteria → Verification evidence`
+
 Legend: **KEEP** = retain intent; **STRENGTHEN** = retain with stronger engineering; **REDESIGN** = retain business intent but change implementation/UX; **REJECT** = intentionally exclude; **DEFER** = later phase.
 
 | Capability | Decision | Engineering interpretation |
@@ -55,6 +63,20 @@ Legend: **KEEP** = retain intent; **STRENGTHEN** = retain with stronger engineer
 | REST API | REDESIGN | Use typed contracts/OpenAPI where external API surface warrants it |
 | JWT as mandatory auth architecture | REJECT AS BINDING | Select secure session model based on final client/deployment architecture |
 | Flutter/Laravel as mandatory stack | REJECT AS BINDING | Technology follows requirements and evidence |
+
+## Engineering quality gates applied to every capability
+
+Every capability must define, before implementation where practical:
+
+- business invariant
+- authorization boundary
+- data owner
+- API/service contract
+- failure modes
+- idempotency/concurrency behavior where relevant
+- observability/audit events
+- test strategy
+- runtime evidence required for certification
 
 ## High-risk conflict rules
 
