@@ -2,8 +2,10 @@ export interface ImagePolicy { maxBytes: number; maxWidth: number; maxHeight: nu
 
 export const defaultImagePolicy: ImagePolicy = { maxBytes: 8 * 1024 * 1024, maxWidth: 1600, maxHeight: 1600, quality: 0.82 };
 
+const SAFE_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
+
 export function validateImageFile(file: File, policy = defaultImagePolicy): string | undefined {
-  if (!file.type.startsWith('image/')) return 'الملف ليس صورة صالحة';
+  if (!SAFE_IMAGE_TYPES.has(file.type.toLowerCase())) return 'صيغة الصورة غير مدعومة؛ استخدم JPG أو PNG أو WebP';
   if (file.size > policy.maxBytes) return 'حجم الصورة يتجاوز الحد المسموح';
   return undefined;
 }
