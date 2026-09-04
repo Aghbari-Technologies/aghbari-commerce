@@ -1,4 +1,5 @@
 import { requireSupabase } from '../lib/supabase';
+import { MAX_ORDER_QUANTITY_PER_LINE } from '../domain/order';
 
 export interface CartItem {
   product_id: string;
@@ -17,6 +18,10 @@ export async function getCart() {
 }
 
 export async function setCartItem(productId: string, quantity: number) {
+  if (!productId) throw new Error('المنتج مطلوب.');
+  if (!Number.isInteger(quantity) || quantity < 1 || quantity > MAX_ORDER_QUANTITY_PER_LINE) {
+    throw new Error(`الكمية يجب أن تكون بين 1 و${MAX_ORDER_QUANTITY_PER_LINE}.`);
+  }
   const { error } = await requireSupabase().rpc('set_cart_item', {
     p_product_id: productId,
     p_quantity: quantity
@@ -25,6 +30,7 @@ export async function setCartItem(productId: string, quantity: number) {
 }
 
 export async function removeCartItem(productId: string) {
+  if (!productId) throw new Error('المنتج مطلوب.');
   const { error } = await requireSupabase().rpc('remove_cart_item', { p_product_id: productId });
   if (error) throw error;
 }
