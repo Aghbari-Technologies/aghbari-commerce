@@ -30,7 +30,8 @@ export interface CartLine {
 }
 
 export interface OrderDraft {
-  customerId: string;
+  // Customer identity is intentionally absent from the client command.
+  // The authenticated server context is the sole authority for customer binding.
   idempotencyKey: string;
   lines: Array<{ productId: string; quantity: number }>;
 }
