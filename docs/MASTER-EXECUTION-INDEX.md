@@ -6,7 +6,7 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Default branch: `main`
-- Current exact HEAD: `3d70cebf8efa58a4c078915bbde3fb0e4d5c26d5`
+- Current exact HEAD: `e671cbfd1a27cb05e648ef91c733dcb858ce5594`
 
 ## Certification model
 | Stage | Meaning | Current state |
@@ -31,11 +31,12 @@ Completed:
 - **Full system re-engineering mandate:** historical specifications are business evidence, not implementation blueprints.
 - **Engineering transformation contract:** `Historical wording → Business capability → Engineering requirement → Acceptance criteria → Verification evidence`.
 - Engineering quality gates for invariant, authorization, data ownership, contracts, failure modes, idempotency/concurrency, observability, testing, and runtime evidence.
+- **Engineering Requirements Baseline** covering P0 transactional/security/integration requirements and P1 resilience/UX requirements.
+- **Data Ownership & Transactional Invariants** defining canonical domain owners and high-risk concurrency boundaries.
 
 Pending:
 - Batch 3 incorporation and reconciliation.
 - Final technology ADRs.
-- Final database/data ownership model.
 - Final API/integration contracts.
 - Final admin/navigation model.
 - Final security/RBAC/RLS model.
@@ -58,12 +59,12 @@ Pending:
 `ACTION → RESULT → EVIDENCE → BLOCKER (if any) → NEXT`
 
 ## Latest boundary
-**ACTION:** Upgrade Phase 0 from legacy-specification interpretation to explicit full-system re-engineering and modernization mode.
+**ACTION:** Continue Phase 0 autonomously under the upgraded full-system re-engineering mandate, without waiting for routine owner decisions.
 
-**RESULT:** Updated the forensic synthesis, architecture decision log, and Batch 1/2 requirements matrix. Historical requirements are now explicitly treated as business evidence and converted into modern engineering requirements rather than copied into implementation.
+**RESULT:** Added the engineering requirements baseline and canonical data ownership/invariants baseline. These convert legacy business intent into measurable engineering constraints and establish authoritative ownership plus concurrency/security boundaries before implementation.
 
-**EVIDENCE:** `docs/PHASE-0-FORENSIC-SYNTHESIS.md`, `docs/ARCHITECTURE-DECISION-LOG.md`, and `docs/REQUIREMENTS-MATRIX-BATCH1-BATCH2.md` were updated. Exact HEAD after this boundary: `3d70cebf8efa58a4c078915bbde3fb0e4d5c26d5`.
+**EVIDENCE:** `docs/ENGINEERING-REQUIREMENTS-BASELINE.md` and `docs/DATA-OWNERSHIP-AND-INVARIANTS.md` are present on `main`. Exact HEAD after this boundary: `e671cbfd1a27cb05e648ef91c733dcb858ce5594`.
 
 **BLOCKER:** Batch 3 is still absent. Final architecture freeze remains intentionally withheld. No implementation or certification PASS is claimed.
 
-**NEXT:** Continue Phase-0 synthesis: deepen data ownership/invariants, API/integration contracts, security/RBAC/RLS, offline/sync semantics, admin command-center IA, technology evaluation, and certification mapping. Reconcile Batch 3 against this baseline when it arrives, then freeze the architecture.
+**NEXT:** Continue autonomous Phase-0 work on API/service contracts, integration contracts, security/RBAC/RLS, offline/sync semantics, admin command-center IA, technology evaluation, and certification mapping. Batch 3 will be reconciled when available before architecture freeze.
