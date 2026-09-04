@@ -19,7 +19,7 @@ export function isTransientReadFailure(error: unknown): boolean {
     || status === 408 || status === 425 || status === 429 || (status !== undefined && status >= 500 && status <= 599);
 }
 
-export async function retryRead<T>(operation: () => Promise<T>, options: RetryOptions = {}): Promise<T> {
+export async function retryRead<T>(operation: () => PromiseLike<T>, options: RetryOptions = {}): Promise<T> {
   const attempts = Math.min(Math.max(Math.trunc(options.attempts ?? 3), 1), 4);
   const baseDelayMs = Math.min(Math.max(Math.trunc(options.baseDelayMs ?? 250), 25), 5000);
   const maxDelayMs = Math.min(Math.max(Math.trunc(options.maxDelayMs ?? 2000), baseDelayMs), 10000);
