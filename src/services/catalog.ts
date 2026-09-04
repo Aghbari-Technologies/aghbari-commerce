@@ -15,6 +15,10 @@ export interface CatalogItem {
   currency: string;
 }
 
+const SIGNED_URL_TTL_SECONDS = 3600;
+const SIGNED_URL_REUSE_MS = 50 * 60 * 1000;
+const imageUrlCache = new Map<string, { url: string; expiresAt: number }>();
+
 export async function getCatalog(search = '', categoryId: string | null = null, limit = 24, offset = 0) {
   const client = requireSupabase();
   const query = normalizeCatalogQuery(search, limit, offset);
@@ -32,7 +36,26 @@ export async function getProductImageUrls(paths: Array<string | null>) {
   const client = requireSupabase();
   const uniquePaths = [...new Set(paths.filter((path): path is string => Boolean(path)))];
   if (!uniquePaths.length) return new Map<string, string>();
-  const { data, error } = await client.storage.from('product-media').createSignedUrls(uniquePaths, 3600);
-  if (error) throw error;
-  return new Map((data ?? []).flatMap((item, index) => item.signedUrl ? [[uniquePaths[index], item.signedUrl] as const] : []));
+
+  const now = Date.now();
+  const result = new Map<string, string>();
+  const missing: string[] = [];
+  for (const path of uniquePaths) {
+    const cached = imageUrlCache.get(path);
+    if (cached && cached.expiresAt > now) result.set(path, cached.url);
+    else missing.push(path);
+  }
+
+  if (missing.length) {
+    const { data, error } = await client.storage.from('product-media').createSignedUrls(missing, SIGNED_URL_TTL_SECONDS);
+    if (error) throw error;
+    for (const [index, item] of (data ?? []).entries()) {
+      const path = missing[index];
+      if (!path || !item.signedUrl) continue;
+      imageUrlCache.set(path, { url: item.signedUrl, expiresAt: now + SIGNED_URL_REUSE_MS });
+      result.set(path, item.signedUrl);
+    }
+  }
+
+  return result;
 }
