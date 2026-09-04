@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import type { CustomerTier } from './domain/types';
 import { adjustInventory, createCategory, setProductPrice, upsertProduct } from './services/admin';
 import { commitProductImport, stageProductImport } from './services/importExcel';
+import { getCategories, type CategoryOption } from './services/categories';
 import { uploadProductImage } from './services/imagePipeline';
 import { supabase } from './lib/supabase';
 
@@ -13,8 +14,9 @@ const tiers: CustomerTier[] = ['retail', 'wholesale', 'distributor'];
 export default function AdminPanel({ role }: { role: UserRole }) {
   const [products, setProducts] = useState<StaffProduct[]>([]);
   const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
-  const [product, setProduct] = useState({ sku: '', name: '', unit: 'كرتون' });
-  const [category, setCategory] = useState({ name: '', slug: '' });
+  const [categories, setCategories] = useState<CategoryOption[]>([]);
+  const [product, setProduct] = useState({ sku: '', name: '', unit: 'كرتون', categoryId: '', description: '' });
+  const [category, setCategory] = useState({ name: '', slug: '', parentId: '' });
   const [selectedProduct, setSelectedProduct] = useState('');
   const [tier, setTier] = useState<CustomerTier>('wholesale');
   const [price, setPrice] = useState('');
@@ -31,13 +33,15 @@ export default function AdminPanel({ role }: { role: UserRole }) {
 
   const reload = useCallback(async () => {
     if (!supabase) return;
-    const [{ data: productRows, error: productError }, { data: warehouseRows, error: warehouseError }] = await Promise.all([
+    const [{ data: productRows, error: productError }, { data: warehouseRows, error: warehouseError }, categoryRows] = await Promise.all([
       supabase.from('products').select('id,sku,name,unit').eq('status', 'active').order('name').limit(200),
-      supabase.from('warehouses').select('id,name').eq('is_active', true).order('created_at')
+      supabase.from('warehouses').select('id,name').eq('is_active', true).order('created_at'),
+      getCategories()
     ]);
     if (productError) throw productError;
     if (warehouseError) throw warehouseError;
     setProducts((productRows ?? []) as StaffProduct[]);
+    setCategories(categoryRows);
     const nextWarehouses = (warehouseRows ?? []) as Warehouse[];
     setWarehouses(nextWarehouses);
     if (!warehouseId && nextWarehouses[0]) setWarehouseId(nextWarehouses[0].id);
@@ -54,10 +58,7 @@ export default function AdminPanel({ role }: { role: UserRole }) {
 
   async function uploadImage() {
     if (!selectedProduct || !imageFile) return;
-    await run(async () => {
-      await uploadProductImage(selectedProduct, imageFile);
-      setImageFile(null);
-    }, 'تم رفع الصورة ومعالجتها وتسجيلها بأمان.');
+    await run(async () => { await uploadProductImage(selectedProduct, imageFile); setImageFile(null); }, 'تم رفع الصورة ومعالجتها وتسجيلها بأمان.');
   }
 
   async function stageImport() {
@@ -74,11 +75,7 @@ export default function AdminPanel({ role }: { role: UserRole }) {
 
   async function commitImport() {
     if (!importJobId || !warehouseId) return;
-    await run(async () => {
-      const result = await commitProductImport(importJobId, warehouseId);
-      setImportJobId(null); setImportFile(null); setImportPreview(null);
-      return result;
-    }, 'تم اعتماد الاستيراد بالكامل وتسجيل أثر المخزون والتدقيق.');
+    await run(async () => { const result = await commitProductImport(importJobId, warehouseId); setImportJobId(null); setImportFile(null); setImportPreview(null); return result; }, 'تم اعتماد الاستيراد بالكامل وتسجيل أثر المخزون والتدقيق.');
   }
 
   const canCatalog = role === 'owner' || role === 'admin' || role === 'sales';
@@ -88,15 +85,22 @@ export default function AdminPanel({ role }: { role: UserRole }) {
   return <section className="admin-panel" id="account">
     <div className="section-heading"><div><span className="eyebrow">إدارة التشغيل</span><h2>مركز التحكم</h2></div><span>الصلاحيات تُفرض على الخادم أيضًا</span></div>
     <div className="admin-grid">
-      {canCatalog && <form className="admin-card" onSubmit={(e) => { e.preventDefault(); void run(() => upsertProduct({ sku: product.sku, name: product.name, unit: product.unit }), 'تم حفظ المنتج.'); }}>
+      {canCatalog && <form className="admin-card" onSubmit={(e) => { e.preventDefault(); void run(() => upsertProduct({ sku: product.sku, name: product.name, unit: product.unit, categoryId: product.categoryId || null, description: product.description || null }), 'تم حفظ المنتج.'); }}>
         <h3>منتج جديد</h3><input aria-label="SKU" placeholder="SKU" value={product.sku} onChange={(e) => setProduct({ ...product, sku: e.target.value })} required />
         <input aria-label="اسم المنتج" placeholder="اسم المنتج" value={product.name} onChange={(e) => setProduct({ ...product, name: e.target.value })} required />
-        <input aria-label="الوحدة" placeholder="الوحدة" value={product.unit} onChange={(e) => setProduct({ ...product, unit: e.target.value })} required /><button disabled={busy}>حفظ المنتج</button>
+        <input aria-label="الوحدة" placeholder="الوحدة" value={product.unit} onChange={(e) => setProduct({ ...product, unit: e.target.value })} required />
+        <select aria-label="تصنيف المنتج" value={product.categoryId} onChange={(e) => setProduct({ ...product, categoryId: e.target.value })}>
+          <option value="">بدون تصنيف</option>{categories.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
+        </select>
+        <textarea aria-label="وصف المنتج" placeholder="وصف المنتج (اختياري)" value={product.description} onChange={(e) => setProduct({ ...product, description: e.target.value })} rows={3} />
+        <button disabled={busy}>حفظ المنتج</button>
       </form>}
 
-      {canCategory && <form className="admin-card" onSubmit={(e) => { e.preventDefault(); void run(() => createCategory(category.name, category.slug), 'تم إنشاء التصنيف.'); }}>
+      {canCategory && <form className="admin-card" onSubmit={(e) => { e.preventDefault(); void run(() => createCategory(category.name.trim(), category.slug.trim(), category.parentId || null), 'تم إنشاء التصنيف.'); }}>
         <h3>تصنيف جديد</h3><input aria-label="اسم التصنيف" placeholder="اسم التصنيف" value={category.name} onChange={(e) => setCategory({ ...category, name: e.target.value })} required />
-        <input aria-label="معرف التصنيف" placeholder="slug مثل rice" value={category.slug} onChange={(e) => setCategory({ ...category, slug: e.target.value })} required pattern="[a-z0-9]+(?:-[a-z0-9]+)*" /><button disabled={busy}>حفظ التصنيف</button>
+        <input aria-label="معرف التصنيف" placeholder="slug مثل rice" value={category.slug} onChange={(e) => setCategory({ ...category, slug: e.target.value })} required pattern="[a-z0-9]+(?:-[a-z0-9]+)*" />
+        <select aria-label="التصنيف الأب" value={category.parentId} onChange={(e) => setCategory({ ...category, parentId: e.target.value })}><option value="">تصنيف رئيسي</option>{categories.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select>
+        <button disabled={busy}>حفظ التصنيف</button>
       </form>}
 
       {canCatalog && <form className="admin-card" onSubmit={(e) => { e.preventDefault(); if (!selectedProduct || !price) return; void run(() => setProductPrice(selectedProduct, tier, Number(price)), 'تم تحديث السعر الفعّال.'); }}>
@@ -117,7 +121,7 @@ export default function AdminPanel({ role }: { role: UserRole }) {
         {!importJobId ? <button disabled={busy || !importFile}>رفع ومعاينة</button> : <button disabled={busy || !warehouseId} onClick={(e) => { e.preventDefault(); void commitImport(); }}>اعتماد الاستيراد الذري</button>}
       </form>}
 
-      {canInventory && <form className="admin-card" onSubmit={(e) => { e.preventDefault(); if (!selectedProduct || !warehouseId || !delta) return; void run(() => adjustInventory(warehouseId, selectedProduct, Number(delta), reason), 'تم تعديل المخزون وتسجيل الحركة.'); }}>
+      {canInventory && <form className="admin-card" onSubmit={(e) => { e.preventDefault(); if (!selectedProduct || !warehouseId || !delta) return; void run(() => adjustInventory(warehouseId, selectedProduct, Number(delta), reason.trim()), 'تم تعديل المخزون وتسجيل الحركة.'); }}>
         <h3>تعديل المخزون</h3><select aria-label="المستودع" value={warehouseId} onChange={(e) => setWarehouseId(e.target.value)} required><option value="">اختر المستودع</option>{warehouses.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}</select>
         <select aria-label="المنتج" value={selectedProduct} onChange={(e) => setSelectedProduct(e.target.value)} required><option value="">اختر منتجًا</option>{products.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select>
         <input aria-label="التغيير" type="number" step="1" placeholder="+ أو - الكمية" value={delta} onChange={(e) => setDelta(e.target.value)} required /><input aria-label="سبب التعديل" placeholder="سبب التعديل" value={reason} onChange={(e) => setReason(e.target.value)} required /><button disabled={busy}>تسجيل الحركة</button>
