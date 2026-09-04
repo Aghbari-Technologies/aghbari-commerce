@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { MAX_CATALOG_LIMIT, MAX_CATALOG_SEARCH_LENGTH, normalizeCatalogQuery } from './catalog';
+import { MAX_CATALOG_LIMIT, MAX_CATALOG_OFFSET, MAX_CATALOG_SEARCH_LENGTH, normalizeCatalogQuery } from './catalog';
 
 describe('catalog query policy', () => {
   it('bounds limit and offset', () => {
     expect(normalizeCatalogQuery('  rice  ', 999, -10)).toEqual({ search: 'rice', limit: MAX_CATALOG_LIMIT, offset: 0 });
+    expect(normalizeCatalogQuery('', 24, MAX_CATALOG_OFFSET + 5000).offset).toBe(MAX_CATALOG_OFFSET);
   });
 
   it('trims and caps search input', () => {
