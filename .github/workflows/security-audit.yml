@@ -1,0 +1,32 @@
+name: security-audit
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install pinned dependencies without lifecycle scripts
+        run: npm install --ignore-scripts
+      - name: Audit production dependency graph
+        run: npm audit --omit=dev --audit-level=high
+      - name: Reject server secrets from browser sources
+        shell: bash
+        run: |
+          if git grep -n -E 'SUPABASE_SERVICE_ROLE_KEY|VITE_SUPABASE_SERVICE_ROLE|sb_secret_' -- src public index.html; then
+            echo 'Server-only Supabase secrets must never appear in browser-delivered sources.'
+            exit 1
+          fi
+          echo 'Browser secret boundary: PASS'
