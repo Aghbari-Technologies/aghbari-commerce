@@ -21,6 +21,8 @@ alter table public.roles
 
 -- Branch/warehouse are intentionally nullable for organization-wide role assignments.
 alter table public.user_roles drop constraint user_roles_pkey;
+alter table public.user_roles alter column branch_id drop not null;
+alter table public.user_roles alter column warehouse_id drop not null;
 alter table public.user_roles add column if not exists id uuid default gen_random_uuid();
 update public.user_roles set id = gen_random_uuid() where id is null;
 alter table public.user_roles alter column id set not null;
