@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import type { CartLine, Product, OrderStatus } from './domain/types';
 import { calculateClientPreviewTotal } from './domain/order';
 import { formatMoney } from './domain/pricing';
@@ -30,6 +30,7 @@ export default function App() {
   const [cart, setCart] = useState<CartLine[]>([]); const [checkoutKey, setCheckoutKey] = useState<string | null>(null); const [warehouseId, setWarehouseId] = useState<string | null>(null); const [customerId, setCustomerId] = useState<string | null>(null);
   const [orders, setOrders] = useState<CustomerOrderSummary[]>([]); const [ordersLoading, setOrdersLoading] = useState(false); const [ordersError, setOrdersError] = useState<string | null>(null);
   const [runtimeError, setRuntimeError] = useState<string | null>(null); const [orderBusy, setOrderBusy] = useState(false); const [orderResult, setOrderResult] = useState<string | null>(null);
+  const cartHydratedRef = useRef(false);
 
   async function loadIdentity(userId: string) {
     if (!supabase) return;
@@ -60,7 +61,7 @@ export default function App() {
         setAuthError(null);
         if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') void loadIdentity(nextSession.user.id).catch((error) => setAuthError(error instanceof Error ? error.message : 'تعذر تحميل هوية الحساب.'));
       } else {
-        setCustomerId(null); setRole('viewer'); setOrders([]); setWarehouseId(null); setProducts([]); setCart([]); setServerPrices({}); setCheckoutKey(null);
+        setCustomerId(null); setRole('viewer'); setOrders([]); setWarehouseId(null); setProducts([]); setCart([]); setServerPrices({}); setCheckoutKey(null); cartHydratedRef.current = false;
       }
     });
     return () => { cancelled = true; listener?.data.subscription.unsubscribe(); };
@@ -90,7 +91,12 @@ export default function App() {
         setWarehouseId(warehouse.id); setCategoryOptions(categories);
         const mapped = items.map((item) => mapCatalogItem(item, categoryMap.get(item.category_id ?? '') ?? 'أصناف', item.image_path ? imageUrls.get(item.image_path) : undefined));
         setProducts(mapped); setServerPrices(Object.fromEntries(items.map((item) => [item.id, item.authorized_price ?? 0])));
-        setCart(savedCart.map((item) => ({ product: mapped.find((product) => product.id === item.product_id) ?? { id: item.product_id, sku: item.sku, name: item.name, unit: item.unit, category: 'أصناف', availableQuantity: 0, status: 'active' }, quantity: item.quantity, unitPrice: item.authorized_price ?? 0 })));
+        // Catalog search/category refreshes must never overwrite a cart that the user has already edited.
+        // Hydrate the persisted cart exactly once per authenticated session instead.
+        if (!cartHydratedRef.current) {
+          setCart(savedCart.map((item) => ({ product: mapped.find((product) => product.id === item.product_id) ?? { id: item.product_id, sku: item.sku, name: item.name, unit: item.unit, category: 'أصناف', availableQuantity: 0, status: 'active' }, quantity: item.quantity, unitPrice: item.authorized_price ?? 0 })));
+          cartHydratedRef.current = true;
+        }
       } catch (error) { if (!cancelled) setRuntimeError(error instanceof Error ? error.message : 'تعذر تحميل بيانات المتجر.'); }
       finally { if (!cancelled) setCatalogLoading(false); }
     }
@@ -117,7 +123,7 @@ export default function App() {
 
   async function handleSignOut() {
     try { await signOut(); }
-    finally { setProducts([]); setCart([]); setOrders([]); setCustomerId(null); setWarehouseId(null); setRole('viewer'); setCheckoutKey(null); setOrderResult(null); }
+    finally { cartHydratedRef.current = false; setProducts([]); setCart([]); setOrders([]); setCustomerId(null); setWarehouseId(null); setRole('viewer'); setCheckoutKey(null); setOrderResult(null); }
   }
 
   async function addToCart(product: Product) {
