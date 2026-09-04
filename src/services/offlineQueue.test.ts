@@ -43,15 +43,28 @@ describe('offline operation queue', () => {
 
   it('tracks attempts without losing operation identity', () => {
     const operation = enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: 1 });
-    markOfflineOperationAttempt(operation.operationId);
+    markOfflineOperationAttempt(operation.operationId, 1_000);
     expect(pendingOfflineOperations(USER_A)[0]).toMatchObject({ operationId: operation.operationId, userId: USER_A, attempts: 1, type: OFFLINE_CART_SET_ITEM });
+    expect(Date.parse(pendingOfflineOperations(USER_A)[0].nextAttemptAt!)).toBe(3_000);
+  });
+
+  it('uses bounded exponential retry backoff and does not retry early', async () => {
+    const operation = enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: 1 });
+    markOfflineOperationAttempt(operation.operationId, 10_000);
+    const processor = async () => { throw new Error('transient'); };
+    const early = await drainOfflineOperations(processor, USER_A, 11_999);
+    expect(early).toEqual({ processed: 0, failed: 0 });
+    const due = await drainOfflineOperations(processor, USER_A, 12_000);
+    expect(due).toEqual({ processed: 0, failed: 1 });
+    expect(pendingOfflineOperations(USER_A)[0].attempts).toBe(2);
+    expect(Date.parse(pendingOfflineOperations(USER_A)[0].nextAttemptAt!)).toBe(16_000);
   });
 
   it('caps retry attempts instead of allowing an endless local retry loop', () => {
     const operation = enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: 1 });
-    for (let index = 0; index < MAX_OFFLINE_ATTEMPTS; index += 1) markOfflineOperationAttempt(operation.operationId);
+    for (let index = 0; index < MAX_OFFLINE_ATTEMPTS; index += 1) markOfflineOperationAttempt(operation.operationId, 1_000 + index);
     expect(pendingOfflineOperations(USER_A)[0].attempts).toBe(MAX_OFFLINE_ATTEMPTS);
-    expect(() => markOfflineOperationAttempt(operation.operationId)).toThrow(/الحد الأقصى/);
+    expect(() => markOfflineOperationAttempt(operation.operationId, 2_000)).toThrow(/الحد الأقصى/);
   });
 
   it('drops legacy or malformed persisted records rather than replaying them', () => {
@@ -97,7 +110,7 @@ describe('offline operation queue', () => {
     const result = await drainOfflineOperations(async (operation) => {
       seen.push(operation.operationId);
       if (operation.operationId === failed.operationId) throw new Error('transient');
-    }, USER_A);
+    }, USER_A, Date.now());
     expect(result).toEqual({ processed: 1, failed: 1 });
     expect(seen).toEqual([success.operationId, failed.operationId]);
     expect(pendingOfflineOperations(USER_A)).toHaveLength(1);
