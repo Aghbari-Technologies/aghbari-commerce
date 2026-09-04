@@ -77,6 +77,20 @@ test('G1: repeated operation_id returns the original result exactly once', () =>
   assert.equal(state.products.get('SKU-1').stock, 8);
 });
 
+test('G1: reused operation_id cannot change the committed command', () => {
+  const state = freshState();
+  const first = createOrder(state, {
+    operationId: 'op-replay-tamper', customerId: 'c1', productId: 'SKU-1', quantity: 2, unitPrice: 25,
+  });
+  const replay = createOrder(state, {
+    operationId: 'op-replay-tamper', customerId: 'c2', productId: 'SKU-1', quantity: 9, unitPrice: 25,
+  });
+
+  assert.deepEqual(replay, first);
+  assert.equal(state.orders.length, 1);
+  assert.equal(state.products.get('SKU-1').stock, 8);
+});
+
 test('G1: committed order total is server-calculated', () => {
   const state = freshState();
   const order = createOrder(state, {
