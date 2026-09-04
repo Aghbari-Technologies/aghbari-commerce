@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { CustomerTier } from './domain/types';
 import { adjustInventory, createCategory, setProductPrice, upsertProduct } from './services/admin';
 import { commitProductImport, stageProductImport } from './services/importExcel';
@@ -27,7 +27,7 @@ export default function AdminPanel({ role }: { role: UserRole }) {
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  async function reload() {
+  const reload = useCallback(async () => {
     if (!supabase) return;
     const [{ data: productRows, error: productError }, { data: warehouseRows, error: warehouseError }] = await Promise.all([
       supabase.from('products').select('id,sku,name,unit').eq('status', 'active').order('name').limit(200),
@@ -39,9 +39,9 @@ export default function AdminPanel({ role }: { role: UserRole }) {
     const nextWarehouses = (warehouseRows ?? []) as Warehouse[];
     setWarehouses(nextWarehouses);
     if (!warehouseId && nextWarehouses[0]) setWarehouseId(nextWarehouses[0].id);
-  }
+  }, [warehouseId]);
 
-  useEffect(() => { void reload().catch((e) => setError(e instanceof Error ? e.message : 'تعذر تحميل مركز التحكم.')); }, []);
+  useEffect(() => { void reload().catch((e) => setError(e instanceof Error ? e.message : 'تعذر تحميل مركز التحكم.')); }, [reload]);
 
   async function run(action: () => Promise<unknown>, success: string) {
     setBusy(true); setError(null); setMessage(null);
