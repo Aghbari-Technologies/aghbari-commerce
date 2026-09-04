@@ -4,7 +4,32 @@ Status: **PROVISIONAL / NOT FROZEN**
 
 This document converts the currently available requirements into an engineering decision surface. It is intentionally provisional until Legacy Batch 3 is incorporated.
 
-## 1. Product boundary
+## 1. Re-engineering mandate
+
+Aghbari is not a legacy-specification implementation exercise. Historical requirements are evidence of business intent, workflows, constraints, and failure history.
+
+**Engineering mandate:** Convert historical requirements into **modern, measurable, testable engineering requirements**, then re-engineer the system architecture, data model, workflows, interfaces, integrations, security, performance, reliability, and operational experience using current engineering standards and proven modern practices.
+
+The objective is to preserve the required **business capability**, not to preserve obsolete implementation decisions.
+
+Every historical requirement is therefore classified through:
+
+`UNDERSTAND → EXTRACT BUSINESS INTENT → ENGINEER → VALIDATE → IMPLEMENT`
+
+Never:
+
+`COPY LEGACY SPEC → COPY LEGACY ARCHITECTURE → PATCH FOR COMPATIBILITY`
+
+### Re-engineering principles
+
+1. **Legacy Requirements → Engineering Requirements** — convert vague or implementation-shaped requests into explicit acceptance criteria, invariants, interfaces, and testable behavior.
+2. **Legacy Architecture → Modern Architecture** — independently reassess technology and structure against security, performance, reliability, maintainability, scalability, and operational cost.
+3. **Feature Preservation → Capability Evolution** — preserve business outcomes while redesigning weak workflows and failure-prone mechanisms.
+4. **Security by construction** — authorization, data isolation, validation, auditability, and secret handling are architectural properties, not UI add-ons.
+5. **Evidence-driven completion** — every material capability advances through implementation and verification gates; no inferred PASS.
+6. **No technology nostalgia** — old framework/library choices are historical evidence only unless independently revalidated.
+
+## 2. Product boundary
 
 Aghbari is the operational system of record for wholesale food commerce. It owns transactional truth and operational workflows.
 
@@ -12,7 +37,7 @@ Report-Advisor owns analytical truth, BI, advanced reporting, forecasting, decis
 
 The boundary is architectural, not merely UI-level: Aghbari emits reliable operational/canonical data; Report-Advisor consumes it through controlled contracts.
 
-## 2. Core bounded-context candidates
+## 3. Core bounded-context candidates
 
 | Context | Owns | Must not own |
 |---|---|---|
@@ -32,7 +57,7 @@ The boundary is architectural, not merely UI-level: Aghbari emits reliable opera
 | Media | product/order documents, optimized assets, references | BI |
 | Platform Operations | health, jobs, observability, configuration | business records |
 
-## 3. Critical transactional invariants
+## 4. Critical transactional invariants
 
 1. A customer can see only data authorized for that customer and commercial context.
 2. A tier price is resolved server-side; other tier prices are never returned to the customer client.
@@ -47,7 +72,7 @@ The boundary is architectural, not merely UI-level: Aghbari emits reliable opera
 11. Soft deletion is never used to silently bypass uniqueness, authorization, or audit rules.
 12. Every tenant/branch/warehouse boundary is enforced at the data-access layer, not only in UI code.
 
-## 4. Re-engineering decisions from legacy requirements
+## 5. Re-engineering decisions from legacy requirements
 
 ### Keep and strengthen
 - Tiered pricing with strict server-side privacy.
@@ -69,6 +94,7 @@ The boundary is architectural, not merely UI-level: Aghbari emits reliable opera
 - Treat old Flutter/Laravel/JWT choices as historical, not requirements.
 - Replace direct spreadsheet/WhatsApp coupling with durable integration jobs and explicit delivery state.
 - Separate domain logic from framework/UI concerns so future mobile clients do not require domain rewrites.
+- Replace implementation-shaped legacy requirements with explicit contracts, invariants, acceptance criteria, and evidence requirements.
 
 ### Reject as binding
 - Old branding using “العامري”.
@@ -78,7 +104,7 @@ The boundary is architectural, not merely UI-level: Aghbari emits reliable opera
 - Any assumption that WhatsApp deep links constitute server-side delivery.
 - Duplicated analytics/forecasting/decision intelligence inside Aghbari.
 
-## 5. Admin command-center principle
+## 6. Admin command-center principle
 
 The administrator should enter one coherent operational workspace, not navigate a maze of technical modules.
 
@@ -100,7 +126,7 @@ Primary navigation candidate:
 
 Cross-cutting search, global command actions, saved filters, bulk actions, and contextual actions should reduce navigation depth.
 
-## 6. Architecture candidate
+## 7. Architecture candidate
 
 Provisional recommendation: a **modular monolith** with strict domain boundaries, PostgreSQL as transactional source of truth, typed server contracts, background jobs/outbox for integrations, and a responsive web/PWA client.
 
@@ -113,7 +139,7 @@ Why:
 
 The exact framework/runtime remains an explicit ADR decision and must be finalized after Batch 3 and current ecosystem verification.
 
-## 7. Integration architecture
+## 8. Integration architecture
 
 All external side effects should follow this shape:
 
@@ -134,7 +160,7 @@ Targets:
 - Report-Advisor
 - email/push/SMS providers if later required
 
-## 8. Offline / weak-network model
+## 9. Offline / weak-network model
 
 Offline support is not permission to invent local transactional truth.
 
@@ -146,7 +172,7 @@ Candidate model:
 - server remains authoritative for final stock, price, authorization, and order acceptance
 - surface conflicts explicitly rather than silently overwriting
 
-## 9. Security model
+## 10. Security model
 
 Security must be enforced in layers:
 
@@ -166,7 +192,7 @@ Minimum controls:
 - no sensitive data leakage in client payloads/logs
 - direct endpoint authorization tests
 
-## 10. Certification strategy
+## 11. Certification strategy
 
 Every major capability progresses through:
 
@@ -187,7 +213,7 @@ High-risk certification suites must include:
 - weak-network synchronization conflicts
 - audit completeness
 
-## 11. Current risks
+## 12. Current risks
 
 | Risk | Severity | Treatment |
 |---|---|---|
@@ -202,7 +228,7 @@ High-risk certification suites must include:
 | External API availability | Medium/High | asynchronous adapters and retries |
 | Premature framework lock-in | Medium | finalize stack only after requirements synthesis |
 
-## 12. Freeze gate
+## 13. Freeze gate
 
 Architecture Candidate may be frozen only when:
 
