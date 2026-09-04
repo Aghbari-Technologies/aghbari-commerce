@@ -1,5 +1,8 @@
 import type { CartLine, OrderDraft } from './types';
 
+export const MAX_ORDER_LINES = 100;
+export const MAX_ORDER_QUANTITY_PER_LINE = 10000;
+
 export class OrderValidationError extends Error {
   constructor(message: string) {
     super(message);
@@ -13,6 +16,7 @@ export function validateOrderDraft(draft: OrderDraft, inventory: Map<string, num
     throw new OrderValidationError('idempotencyKey must be at least 16 characters');
   }
   if (draft.lines.length === 0) throw new OrderValidationError('order must contain at least one line');
+  if (draft.lines.length > MAX_ORDER_LINES) throw new OrderValidationError(`order cannot contain more than ${MAX_ORDER_LINES} lines`);
 
   const seen = new Set<string>();
   for (const line of draft.lines) {
@@ -20,6 +24,9 @@ export function validateOrderDraft(draft: OrderDraft, inventory: Map<string, num
     seen.add(line.productId);
     if (!Number.isInteger(line.quantity) || line.quantity <= 0) {
       throw new OrderValidationError('quantity must be a positive integer');
+    }
+    if (line.quantity > MAX_ORDER_QUANTITY_PER_LINE) {
+      throw new OrderValidationError(`quantity cannot exceed ${MAX_ORDER_QUANTITY_PER_LINE}`);
     }
     const available = inventory.get(line.productId) ?? 0;
     if (line.quantity > available) throw new OrderValidationError('insufficient stock');
