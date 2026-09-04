@@ -1,101 +1,105 @@
 # Aghbari — Master Execution Index
 
-**Canonical status ledger.** Updated after every meaningful execution boundary.
+**Canonical status ledger. Updated after every meaningful execution boundary.**
 
 ## Identity
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
-- Branch: `main`
-- Current exact HEAD: **`f7be8d752049e503e9e6aed650aacab3d9db65b4`**
-- Latest independently verified G1 domain-proof boundary: **`f7be8d752049e503e9e6aed650aacab3d9db65b4`**
-- Latest PostgreSQL G1: **PROVEN** at `f7be8d752049e503e9e6aed650aacab3d9db65b4`; run `33890357708`, job `101080239898`
-- Latest order-workflow proof: **PASS** at `f7be8d752049e503e9e6aed650aacab3d9db65b4`; run `33890357757`, job `101080240441`
-- Latest intelligence-contract implementation/proof boundary: **`486ee2940193b36a1a57d152b9c9fa53654c9b6b`**; run `33890297796`, job `101080048316` **PASS**; this is prior to current HEAD and must not be treated as exact-head evidence until rerun.
+- Stable baseline (`main`): **`f7be8d752049e503e9e6aed650aacab3d9db65b4`**
+- Active execution branch: `execution/maximum-parallel-2026-09-04`
+- Active execution exact HEAD: **`7caab5779ee49c2f225e3779e8f24984cce96116`**
+- Main has not been mutated by the execution track.
 
 ## Standing execution command
 **`1` = CONTINUE / EXECUTE AUTONOMOUSLY / DEEPEN / TEST / VERIFY / DOCUMENT / SELF-IMPROVE.**
 
-## Certification stages
-| Stage | State |
+## Completion stages
+| Stage | Current evidence-bound state |
 |---|---|
-| BUILT | FOUNDATION / IMPLEMENTATION NOT YET PRESENT IN THIS REPOSITORY |
-| INTEGRATED | NOT PROVEN |
-| VERIFIED | G1 domain + PostgreSQL G1 + order workflow proven; intelligence contract proven at prior exact boundary |
-| RUNTIME PROVEN | BLOCKED — no application/runtime implementation or connected Supabase project in this repository/session |
-| PRODUCTION CERTIFIED | NOT PROVEN |
+| BUILT | Executable application, operational migrations/RPCs, import, offline queue, security headers, and proof gates are present on the execution branch |
+| INTEGRATED | Not yet proven on `main`; active implementation is isolated on the execution branch pending evidence-gated merge |
+| VERIFIED | Previous exact-head evidence: G1 domain 5/5, PostgreSQL G1, order workflow 4/4; current-head verification is in progress after subsequent implementation and CI mutations |
+| RUNTIME PROVEN | Not proven; real authenticated application/Supabase runtime evidence remains required |
+| PRODUCTION CERTIFIED | Not proven |
 
 ## Current phase
-**PHASE 0 → PHASE 1 TRANSITION — executable proof foundation complete for current POC boundaries; implementation and real-runtime work remain open.**
+**PHASE 1 — EXECUTABLE COMMERCE & RELEASE HARDENING.**
 
-## Completed foundations
-- Product identity and strict Report-Advisor/Aghbari ownership boundary.
-- Owner-Level Protocol and autonomous `1` shorthand.
-- Batch 1/2 forensic extraction and full re-engineering mandate.
-- Engineering Requirements Baseline.
-- Data Ownership & Transactional Invariants.
-- API & Integration Contracts baseline.
-- Security/RBAC/RLS baseline.
-- Offline/Cache/Sync baseline.
-- Operational Command Center IA.
-- Canonical Operational Data Model V1.
-- Certification Traceability Matrix V1.
-- Technology Evaluation V1.
-- Database & Migration Strategy V1.
-- Consolidated Architecture Decision Log.
-- Physical Schema Contract V1.
-- Phase-0 Consistency Audit V1.
-- Candidate Migration Skeleton V1.
-- Domain/API Contract Map V1.
-- Adversarial Architecture Review V1.
-- Candidate RBAC/RLS Policy Matrix V1.
-- Technology Proof Gates V1.
-- Final Offline / Weak-Network Sync Contract V1.
-- Architecture Enhancements V2: food-grade lot/expiry traceability, FEFO policy support, explicit order workflow state machine, consumer-side idempotency, deterministic cursor sync, scan-first warehouse UX, operational exception center, and release-gated infrastructure complexity.
-- Intelligence Integration V1: one-way gateway boundary, canonical analytical dataset envelope, dataset lifecycle, server-bound tenant binding, provenance, idempotency, schema/contract versioning, data-quality gate, failure isolation, and least-privilege analytical credentials.
+The repository now contains a concrete React/Vite/TypeScript application, Supabase migration/RPC implementation, operational services, import parser/staging/commit path, offline queue primitives, security boundaries, PWA assets, and executable CI/proof gates. Work is now driven by real findings and evidence rather than by rebuilding foundations.
+
+## Completed implementation foundations
+- Product identity and operational ownership boundary.
+- Owner-Level / Evidence-First execution protocol.
+- Engineering requirements and transactional invariants.
+- Operational data model and physical migration set.
+- API/integration contracts.
+- RBAC/RLS foundation and cross-tenant relational guards.
+- Catalog, pricing, customer, warehouse, inventory, cart, and order services.
+- Atomic server-authoritative checkout.
+- Order state machine.
+- Import validation, fingerprinting, staging, and atomic commit.
+- Private product-media storage boundary.
+- Offline cart operation queue with user scoping, bounded retries, payload ceiling, and queue ceiling.
+- Outbox claim/recovery primitives.
+- PWA manifest/service worker/offline fallback.
+- Browser security headers and secret-boundary audit.
+- Deterministic domain and order proof harnesses.
+
+## Current hardening completed on execution branch
+- Fixed checkout migration supersession so `create_order` retains atomic active-cart conversion while adding same-key advisory serialization and exact replay binding.
+- Added a focused order invariant regression gate.
+- Repaired the order invariant PR harness to check out the actual PR head rather than GitHub's synthetic merge commit.
+- Applied exact-head checkout/binding to application quality, security, G1 domain, order workflow, intelligence contract, and Supabase migration proof workflows.
+- Fixed strict TypeScript result typing in catalog/customer-order service paths.
+- Fixed the offline cart identity path so offline cart writes use the locally persisted session identity instead of requiring a network-backed user lookup.
+- Added a targeted regression test proving an offline cart write is user-scoped without calling the network-backed user lookup.
+- Updated README release-phase documentation to match the executable repository state.
 
 ## Executable evidence
-- G1 deterministic domain proof: **PASS** — 5/5 tests at `f7be8d752049e503e9e6aed650aacab3d9db65b4`; run `33890357708`, job `101080239898`.
-- G1 PostgreSQL real-engine proof: **PASS** — PostgreSQL 18.6 service, atomic order mutation, canonical price, server total, replay idempotency, payload conflict, and concurrent oversell protection. Same run/job as above.
-- Order workflow state-machine proof: **PASS** — 4/4 tests at `f7be8d752049e503e9e6aed650aacab3d9db65b4`; run `33890357757`, job `101080240441`.
-- Intelligence contract proof: **PASS** — 7/7 deterministic checks at `486ee2940193b36a1a57d152b9c9fa53654c9b6b`; run `33890297796`, job `101080048316`. This evidence is not current-head evidence because the proof workflow did not trigger on the later documentation-only commit.
+- Historical G1 deterministic domain proof: **PROVEN** — 5/5 at baseline `f7be8d752049e503e9e6aed650aacab3d9db65b4`.
+- Historical PostgreSQL G1: **PROVEN** — real PostgreSQL service with atomic order mutation, canonical price, server total, replay idempotency, payload conflict, and concurrent oversell protection at the baseline exact head.
+- Historical order workflow proof: **PROVEN** — 4/4 at baseline exact head.
+- Current security audit run reached **SUCCESS** with exact-head binding on the execution branch before the latest cart-test commit.
+- Current branch has triggered fresh application-quality, Supabase migration, G1, order-workflow, and security runs for the latest execution head; final conclusions must be read from the corresponding exact-head runs before any PASS claim.
 
-## Important forensic discovery
-The current `main` repository is still an architecture/requirements/proof-foundation repository: its tracked implementation surface is documentation, contracts, POCs, and CI proof workflows; there is no production React/Vite application, Supabase migration tree, operational API/service implementation, worker implementation, import/OCR pipeline, realtime/storage runtime, or production deployment implementation present in the repository at the current boundary. This is recorded as a repository-state fact, not as permission to invent runtime PASS.
+## Active CI boundary
+Latest implementation test evidence before the latest CI-only/doc changes:
+- Unit tests: **63/63**.
+- Lint: repaired after four unused-binding failures.
+- Build: previously blocked by strict TypeScript result typing; the affected catalog/customer-order paths were repaired and a fresh exact-head build is now required.
+- Supabase migration proof: running against an empty local database through Supabase CLI.
+- Security audit: successful on the preceding exact execution boundary.
 
-## Pending gates — execution order
-1. G2 direct-request authorization + RLS negative tests against a real Supabase/PostgreSQL environment.
-2. G3 typed API contract proof.
-3. G4 durable outbox/worker/delivery/retry + consumer idempotency proof.
-4. G5 offline/sync implementation and executable evidence.
-5. G6 import/export proof.
-6. G7 performance budgets and p50/p95/p99 evidence.
-7. G8 observability proof.
-8. G9 deployment/recovery proof.
-9. G10 deterministic full-suite proof.
-10. Intelligence gateway runtime proof: tenant isolation, least privilege, version rejection, quality gate, non-destructive activation, provenance, replay safety, failure isolation.
-11. Food-grade lot/expiry/FEFO implementation proof where business data supports it.
-12. Exact physical schema/migrations after Batch-3 reconciliation and technology evidence.
-13. Final API schemas/versioning.
-14. Final RBAC/RLS freeze.
-15. Architecture freeze.
-16. Implementation vertical slices.
-17. Authenticated product runtime.
-18. Production runtime and certification.
-
-## Product boundary — non-negotiable
-Aghbari owns operational truth. Report-Advisor owns analytics/intelligence. The allowed direction is:
-
-`Aghbari → Intelligence Integration Gateway → Canonical Analytical Dataset → Report-Advisor`.
-
-Report-Advisor has no operational write path into Aghbari. Intelligence recommendations are never operational commands. Aghbari does not depend on Report-Advisor availability for orders, inventory, pricing, customers, purchasing, or other core operations.
+## Real remaining gates
+1. Fresh exact-head full quality proof: test + lint + build + order invariants.
+2. Fresh exact-head migration reset + pgTAP proof.
+3. Fresh exact-head G1 and order workflow proofs.
+4. G2 direct-request authorization + RLS negative tests in real PostgreSQL/Supabase execution.
+5. Authenticated browser runtime: login, session refresh/logout/re-login, tenant identity, catalog, cart, checkout, orders.
+6. Tenant A/B adversarial runtime: A cannot read/mutate B and B cannot read/mutate A.
+7. Semantic business E2E: create/update/delete, child operations, import, calculations, recovery, and authorization boundaries.
+8. Outbox worker delivery/retry/DLQ runtime proof.
+9. Offline/sync runtime proof under real connectivity transitions.
+10. Import/export runtime proof including atomicity and dedupe/retry/recovery.
+11. Performance budgets and measured p50/p95/p99 evidence.
+12. Observability/runtime evidence.
+13. Deployment, rollback, backup/recovery and production proof.
+14. Final deterministic full-suite proof at one frozen exact HEAD.
+15. Final security/RLS/RBAC freeze and release certification.
 
 ## No-false-closure
-Documentation PASS means design consistency only. A domain-harness PASS does not prove database, runtime, security, deployment, or production. A contract schema existing does not prove runtime enforcement. A successful publisher does not prove consumer-side exactly-once effects. A recommendation does not prove operational execution.
+Code presence is not runtime proof. A test file is not a passing test. CI success is not runtime certification. Local PostgreSQL proof is not production proof. Staging success is not production certification. Every final claim must be tied to an exact immutable HEAD and its evidence.
+
+## Owner / environment boundary
+Only the following classes are currently outside repository-only execution:
+- a real connected Supabase target for authenticated multi-tenant runtime proof;
+- production deployment credentials/authorization where required;
+- production-only backup/restore or release operations;
+- a real Windows host if native Windows packaging/runtime proof is required.
+
+No secrets should be sent through chat. When an external gate is reached, request the smallest environment action required and continue all independent repository work first.
 
 ## Latest execution result
-- PostgreSQL G1 is **PROVEN at the current exact HEAD** after the harness repair and real PostgreSQL execution.
-- Order workflow is **PROVEN at the current exact HEAD** with 4/4 deterministic tests.
-- Intelligence contract remains **PROVEN only at its prior exact implementation boundary**; current-head evidence is intentionally not overstated.
-- No operational BI/AI duplication was introduced into Aghbari.
+**ACTIVE — NOT CERTIFIED.** The execution branch contains the latest hardening and proof-gate repairs at exact HEAD `7caab5779ee49c2f225e3779e8f24984cce96116`. The branch remains isolated from `main` until the fresh exact-head verification gates complete.
 
-**NEXT:** advance to the highest-value real implementation/runtime boundary. G2 cannot be honestly marked PASS until a real Supabase/PostgreSQL target exists and direct-request/RLS negative tests execute against it. Until then, continue independent implementation/proof work without converting design into runtime evidence.
+**NEXT:** consume the fresh CI results at the exact HEAD, repair the first real failure only, then continue directly into the highest-value independent P0/runtime-proof gap. Update this index again at the next evidence boundary.
