@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { validateImportRows } from './import';
 import { nextRetryAt, isTerminalAttempt } from './outbox';
-import { validateOrderDraft } from './order';
+import { calculateClientPreviewTotal, validateOrderDraft } from './order';
 import { resolveDisplayPrice } from './pricing';
+import { validateImageFile } from './image';
 
 describe('commerce domain invariants', () => {
   it('rejects duplicate SKUs and invalid prices during import validation', () => {
@@ -14,9 +15,10 @@ describe('commerce domain invariants', () => {
     expect(diagnostics.some((d) => d.message === 'Duplicate SKU in file')).toBe(true);
   });
 
-  it('validates positive quantities and stock limits', () => {
+  it('validates positive quantities, integer quantities, and stock limits', () => {
     const inventory = new Map([['p1', 3]]);
     expect(() => validateOrderDraft({ customerId: 'c1', idempotencyKey: '1234567890123456', lines: [{ productId: 'p1', quantity: 4 }] }, inventory)).toThrow('insufficient stock');
+    expect(() => validateOrderDraft({ customerId: 'c1', idempotencyKey: '1234567890123456', lines: [{ productId: 'p1', quantity: 1.5 }] }, inventory)).toThrow('positive integer');
     expect(() => validateOrderDraft({ customerId: 'c1', idempotencyKey: '1234567890123456', lines: [{ productId: 'p1', quantity: 2 }] }, inventory)).not.toThrow();
   });
 
@@ -28,6 +30,19 @@ describe('commerce domain invariants', () => {
     ], 'wholesale', new Date('2026-09-01T00:00:00Z'));
     expect(price?.amount).toBe(9);
     expect(price?.tier).toBe('wholesale');
+  });
+
+  it('keeps the client total as a display-only calculation', () => {
+    expect(calculateClientPreviewTotal([
+      { product: { id: 'p1', sku: 'A', name: 'A', unit: 'box', category: 'x', availableQuantity: 10, status: 'active' }, quantity: 2, unitPrice: 100 },
+      { product: { id: 'p2', sku: 'B', name: 'B', unit: 'box', category: 'x', availableQuantity: 10, status: 'active' }, quantity: 3, unitPrice: 50 }
+    ])).toBe(350);
+  });
+
+  it('rejects unsafe image formats and oversized uploads', () => {
+    expect(validateImageFile(new File(['x'], 'vector.svg', { type: 'image/svg+xml' }))).toContain('JPG');
+    expect(validateImageFile(new File(['x'], 'photo.jpg', { type: 'image/jpeg' }), { maxBytes: 0, maxWidth: 1600, maxHeight: 1600, quality: 0.82 })).toContain('حجم');
+    expect(validateImageFile(new File(['x'], 'photo.webp', { type: 'image/webp' }))).toBeUndefined();
   });
 
   it('bounds retry backoff and identifies terminal attempts', () => {
