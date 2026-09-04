@@ -1,7 +1,7 @@
 name: order-invariant-contract
 on:
   pull_request:
-    branches: [main]
+    branches: [main, execution/maximum-parallel-2026-09-04]
     paths:
       - 'supabase/migrations/0025_idempotency_race_authority_hardening.sql'
       - 'scripts/check-order-invariants.mjs'
