@@ -13,8 +13,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-      - run: npm ci
+      - run: npm install
       - run: npm run typecheck
       - run: npm test
 
@@ -35,14 +34,15 @@ jobs:
           --health-retries 20
     steps:
       - uses: actions/checkout@v4
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
       - name: Wait for PostgreSQL
         run: |
           for i in {1..30}; do
-            pg_isready -h 127.0.0.1 -p 5432 -U postgres -d aghbari && break
+            pg_isready -h 127.0.0.1 -p 5432 -U postgres -d aghbari && exit 0
             sleep 1
           done
-      - name: Install PostgreSQL client
-        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+          exit 1
       - name: Install migrations
         env:
           PGPASSWORD: postgres
@@ -56,5 +56,5 @@ jobs:
         env:
           PGPASSWORD: postgres
         run: |
-          psql -h 127.0.0.1 -U postgres -d aghbari -v ON_ERROR_STOP=1 -c "select count(*) from information_schema.tables where table_schema='public' and table_name in ('organizations','branches','warehouses','customers','products','product_prices','inventory_balances','inventory_movements','carts','cart_items','orders','order_items','order_status_history','outbox_events','audit_events');"
+          test "$(psql -h 127.0.0.1 -U postgres -d aghbari -Atc "select count(*) from information_schema.tables where table_schema='public' and table_name in ('organizations','branches','warehouses','customers','products','product_prices','inventory_balances','inventory_movements','carts','cart_items','orders','order_items','order_status_history','outbox_events','audit_events');")" = "15"
           psql -h 127.0.0.1 -U postgres -d aghbari -v ON_ERROR_STOP=1 -c "select 1 from orders where false; select 1 from inventory_balances where false;"
