@@ -1,0 +1,20 @@
+{
+  "name": "aghbari-commerce",
+  "version": "0.1.0",
+  "private": true,
+  "description": "بوابة الأغبري للمواد الغذائية — operational B2B commerce platform",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test:domain": "node --test --import tsx src/domain/*.test.ts",
+    "verify": "npm run typecheck && npm run test:domain"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}
