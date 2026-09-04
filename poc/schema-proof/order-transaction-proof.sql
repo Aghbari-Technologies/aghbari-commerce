@@ -3,6 +3,7 @@
 \i supabase/migrations/20260905000100_core_operational.sql
 \i supabase/migrations/20260905000200_create_order_transaction.sql
 \i supabase/migrations/20260905000300_harden_order_idempotency.sql
+\i supabase/migrations/20260905000400_enforce_scope_integrity.sql
 
 DO $$
 declare
@@ -13,6 +14,7 @@ declare
   price_list_id uuid;
   customer_id uuid;
   product_id uuid;
+  operation_id uuid := gen_random_uuid();
   result record;
   replay record;
 begin
@@ -25,10 +27,11 @@ begin
   insert into public.products(organization_id, sku, name) values (org_id, 'CI-ORDER-1', 'CI Product') returning id into product_id;
   insert into public.product_prices(organization_id, price_list_id, product_id, unit_price, effective_from)
     values (org_id, price_list_id, product_id, 25.00, now() - interval '1 day');
-  insert into public.inventory_balances(warehouse_id, product_id, quantity) values (warehouse_id, product_id, 3);
+  insert into public.inventory_balances(organization_id, warehouse_id, product_id, quantity)
+    values (org_id, warehouse_id, product_id, 3);
 
   select * into result from public.create_order_transaction(
-    gen_random_uuid(), customer_id, branch_id, warehouse_id,
+    operation_id, customer_id, branch_id, warehouse_id,
     jsonb_build_array(jsonb_build_object('product_id', product_id, 'quantity', 2)),
     999.00
   );
@@ -41,7 +44,6 @@ begin
       where ib.warehouse_id = warehouse_id and ib.product_id = product_id) <> 1 then
     raise exception 'inventory was not decremented atomically';
   end if;
-
   if (select count(*) from public.order_items where order_id = result.order_id) <> 1 then
     raise exception 'order item was not persisted';
   end if;
@@ -57,8 +59,7 @@ begin
 
   -- Same operation/payload returns the original result and does not consume more stock.
   select * into replay from public.create_order_transaction(
-    (select operation_id from public.orders where id = result.order_id),
-    customer_id, branch_id, warehouse_id,
+    operation_id, customer_id, branch_id, warehouse_id,
     jsonb_build_array(jsonb_build_object('product_id', product_id, 'quantity', 2)),
     1.00
   );
@@ -69,8 +70,7 @@ begin
   -- Same operation with a changed payload must be rejected.
   begin
     perform public.create_order_transaction(
-      (select operation_id from public.orders where id = result.order_id),
-      customer_id, branch_id, warehouse_id,
+      operation_id, customer_id, branch_id, warehouse_id,
       jsonb_build_array(jsonb_build_object('product_id', product_id, 'quantity', 1)),
       null
     );
