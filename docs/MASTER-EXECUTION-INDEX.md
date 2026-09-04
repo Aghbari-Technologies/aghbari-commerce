@@ -7,7 +7,7 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Default branch: `main`
-- Current baseline HEAD: `33295a2cfe157729b7578666835612559dbfe021`
+- Current exact HEAD: `130c1947c78215dac2c2dd12071d485f9a22fda1`
 
 ## Certification model
 
@@ -26,15 +26,21 @@
 **Status: IN PROGRESS**
 
 Completed in this boundary:
-- Repository existence and ownership/access verified.
-- New repository confirmed empty before initialization.
+- Repository existence, organization ownership, private visibility, default branch, and write access verified.
+- Repository was confirmed empty before initialization.
 - Product identity fixed as الأغبري.
 - Operational-vs-analytics boundary documented.
-- Evidence-first execution protocol established in-repo.
+- Owner-Level / Evidence-First protocol established in-repo.
+- Architecture boundary baseline documented.
 - Existing architecture is preserved as the starting knowledge base and will be evolved, not blindly recreated.
 
+Requirements corpus currently available to the engineering process:
+- Existing الأغبري architecture/tree from prior design work.
+- Legacy العامري Batch 1.
+- Legacy العامري Batch 2.
+
 Pending:
-- Incorporate the third legacy requirement batch when supplied.
+- Incorporate legacy Batch 3 when it is supplied.
 - Full cross-batch requirements matrix.
 - Conflict/duplication/risk classification.
 - Final domain map and bounded contexts.
@@ -45,6 +51,7 @@ Pending:
 - Final security/RBAC/RLS model.
 - Final offline/cache/sync model.
 - Final testing and certification matrix.
+- Architecture Candidate freeze.
 
 ## Non-negotiable boundaries
 
@@ -63,6 +70,14 @@ Every material execution update records:
 
 `ACTION → RESULT → EVIDENCE → BLOCKER (if any) → NEXT`
 
-## Next execution boundary
+## Latest boundary
 
-Complete the architecture/requirements forensic pass as soon as the full input set is available, then freeze the first **Architecture Candidate** and begin implementation in small, independently verifiable vertical slices.
+**ACTION:** Initialize the empty Aghbari repository with the engineering governance baseline.
+
+**RESULT:** README, Master Execution Index, Owner-Level Protocol, and Architecture Boundaries are now committed to `main`.
+
+**EVIDENCE:** Exact HEAD `130c1947c78215dac2c2dd12071d485f9a22fda1` contains the architecture-boundary baseline commit. The preceding governance commits are part of the same canonical history.
+
+**BLOCKER:** Final architecture remains intentionally unfrozen until the complete requirements corpus, including Batch 3, has been incorporated.
+
+**NEXT:** Continue Phase 0 forensic synthesis immediately; once the remaining input is available, produce the final Architecture Candidate and then execute implementation waves without requiring routine owner decisions.
