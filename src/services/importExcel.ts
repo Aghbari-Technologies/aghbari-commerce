@@ -2,13 +2,26 @@ import { readSheet } from 'read-excel-file/browser';
 import { fingerprintImport, normalizeSku, validateImportRows, type ImportRow } from '../domain/import';
 import { requireSupabase } from '../lib/supabase';
 
-const REQUIRED_HEADERS = ['SKU','Name','Unit','Category','Quantity','Retail Price','Wholesale Price','Distributor Price'];
+const REQUIRED_HEADERS = ['SKU', 'Name', 'Unit', 'Category', 'Quantity', 'Retail Price', 'Wholesale Price', 'Distributor Price'];
 const MAX_WORKBOOK_BYTES = 20 * 1024 * 1024;
 const MAX_DATA_ROWS = 50_000;
+const MAX_SOURCE_NAME_LENGTH = 180;
+const XLSX_MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+const ZIP_SIGNATURES = ['504b0304', '504b0506', '504b0708'];
+
+async function assertXlsxContainer(file: File): Promise<void> {
+  const header = new Uint8Array(await file.slice(0, 4).arrayBuffer());
+  const signature = Array.from(header, (byte) => byte.toString(16).padStart(2, '0')).join('');
+  if (!ZIP_SIGNATURES.includes(signature)) throw new Error('الملف لا يبدو كحاوية XLSX صالحة.');
+}
 
 export async function parseProductWorkbook(file: File) {
-  if (!file.name.toLowerCase().endsWith('.xlsx')) throw new Error('يجب رفع ملف XLSX');
+  if (!file.name.toLowerCase().endsWith('.xlsx') || (file.type && file.type !== XLSX_MIME && file.type !== 'application/zip')) {
+    throw new Error('يجب رفع ملف XLSX');
+  }
   if (file.size < 1 || file.size > MAX_WORKBOOK_BYTES) throw new Error('حجم ملف XLSX يجب ألا يتجاوز 20 MB.');
+  await assertXlsxContainer(file);
+
   const rows = await readSheet(file);
   const [header = [], ...data] = rows;
   if (data.length > MAX_DATA_ROWS) throw new Error('ملف الاستيراد يتجاوز الحد الأقصى وهو 50,000 صف.');
@@ -38,8 +51,9 @@ export async function parseProductWorkbook(file: File) {
 export async function stageProductImport(file: File) {
   const parsed = await parseProductWorkbook(file);
   if (parsed.diagnostics.length) return { ...parsed, jobId: null };
+  const sourceName = file.name.trim().slice(0, MAX_SOURCE_NAME_LENGTH) || 'products.xlsx';
   const { data, error } = await requireSupabase().rpc('stage_product_import', {
-    p_source_name: file.name,
+    p_source_name: sourceName,
     p_source_fingerprint: parsed.fingerprint,
     p_rows: parsed.rows
   });
