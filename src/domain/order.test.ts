@@ -17,6 +17,12 @@ describe('validateOrderDraft', () => {
     expect(() => validateOrderDraft(draft([{ productId: 'product-1', quantity: 1 }, { productId: 'product-1', quantity: 2 }]), new Map([product('product-1')]))).toThrow(OrderValidationError);
   });
 
+  it('rejects blank identity fields at the client boundary', () => {
+    expect(() => validateOrderDraft({ ...draft([{ productId: 'product-1', quantity: 1 }]), customerId: '   ' }, new Map([product('product-1')]))).toThrow(/customerId/);
+    expect(() => validateOrderDraft({ ...draft([{ productId: '   ', quantity: 1 }]) }, new Map([product('product-1')]))).toThrow(/productId/);
+    expect(() => validateOrderDraft({ ...draft([{ productId: 'product-1', quantity: 1 }]), idempotencyKey: '                ' }, new Map([product('product-1')]))).toThrow(/idempotencyKey/);
+  });
+
   it('rejects quantities above the domain limit', () => {
     expect(() => validateOrderDraft(draft([{ productId: 'product-1', quantity: MAX_ORDER_QUANTITY_PER_LINE + 1 }]), new Map([product('product-1', MAX_ORDER_QUANTITY_PER_LINE + 1)]))).toThrow(/cannot exceed/);
   });
@@ -29,5 +35,9 @@ describe('validateOrderDraft', () => {
 
   it('rejects a quantity greater than available stock', () => {
     expect(() => validateOrderDraft(draft([{ productId: 'product-1', quantity: 11 }]), new Map([product('product-1', 10)]))).toThrow(/insufficient stock/);
+  });
+
+  it('rejects invalid negative inventory instead of treating it as usable stock', () => {
+    expect(() => validateOrderDraft(draft([{ productId: 'product-1', quantity: 1 }]), new Map([product('product-1', -1)]))).toThrow(/invalid inventory/);
   });
 });
