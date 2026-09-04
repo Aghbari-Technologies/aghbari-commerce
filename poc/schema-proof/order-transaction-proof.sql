@@ -37,7 +37,8 @@ begin
     raise exception 'canonical order result mismatch';
   end if;
 
-  if (select quantity from public.inventory_balances where warehouse_id = warehouse_id and product_id = product_id) <> 1 then
+  if (select ib.quantity from public.inventory_balances ib
+      where ib.warehouse_id = warehouse_id and ib.product_id = product_id) <> 1 then
     raise exception 'inventory was not decremented atomically';
   end if;
 
@@ -78,7 +79,8 @@ begin
     null;
   end;
 
-  if (select quantity from public.inventory_balances where warehouse_id = warehouse_id and product_id = product_id) <> 1 then
+  if (select ib.quantity from public.inventory_balances ib
+      where ib.warehouse_id = warehouse_id and ib.product_id = product_id) <> 1 then
     raise exception 'replay mutated inventory';
   end if;
 end $$;
