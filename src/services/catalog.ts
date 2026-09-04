@@ -14,13 +14,19 @@ export interface CatalogItem {
   currency: string;
 }
 
-export async function getCatalog(search = '', categoryId: string | null = null, limit = 24, offset = 0) {
+const DEFAULT_LIMIT = 24;
+const MAX_LIMIT = 100;
+
+export async function getCatalog(search = '', categoryId: string | null = null, limit = DEFAULT_LIMIT, offset = 0) {
   const client = requireSupabase();
+  const safeSearch = search.trim().slice(0, 120);
+  const safeLimit = Number.isInteger(limit) ? Math.min(Math.max(limit, 1), MAX_LIMIT) : DEFAULT_LIMIT;
+  const safeOffset = Number.isInteger(offset) ? Math.max(offset, 0) : 0;
   const { data, error } = await client.rpc('get_catalog', {
-    p_search: search || null,
+    p_search: safeSearch || null,
     p_category_id: categoryId,
-    p_limit: limit,
-    p_offset: offset
+    p_limit: safeLimit,
+    p_offset: safeOffset
   });
   if (error) throw error;
   return (data ?? []) as CatalogItem[];
