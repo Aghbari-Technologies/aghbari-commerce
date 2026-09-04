@@ -1,6 +1,6 @@
 # Aghbari — Final Offline / Weak-Network Sync Contract V1
 
-**Status:** PROVISIONAL CONTRACT — implementation and runtime evidence required before certification.
+**Status:** PROVISIONAL CONTRACT — implementation and runtime evidence required before certification. V2 synchronization hardening is incorporated below.
 
 ## 1. Purpose
 
@@ -49,7 +49,22 @@ The server MUST treat `operation_id` as an idempotency key for retryable mutatio
 7. Client marks the operation `ACKED`, `CONFLICTED`, or `TERMINAL_FAILED`.
 8. Retries MUST reuse the same `operation_id` and MUST NOT create a second business mutation.
 
-## 5. Conflict classes
+## 5. Deterministic incremental pull
+
+Where server infrastructure supports it, synchronization MUST use a server-issued monotonic cursor.
+
+A pull response contains:
+- authorized changed records/projections;
+- tombstones for deletions where required;
+- `next_cursor`;
+- schema/version metadata;
+- scope metadata sufficient for client cache validation.
+
+The client MUST advance its cursor only after the complete page has been applied atomically. A failed page application leaves the previous cursor intact so the page can be retried safely.
+
+A device receives a scoped projection, not a database dump. Authorization filtering happens before serialization.
+
+## 6. Conflict classes
 
 ### PRICE_CHANGED
 The authoritative price changed after the draft was created. Client must refresh and obtain explicit confirmation before submission.
@@ -66,7 +81,7 @@ The referenced product/customer/order changed incompatibly. Client must refresh 
 ### DUPLICATE_REPLAY
 The same operation was already committed. Server returns the original result rather than creating another mutation.
 
-## 6. Ordering and dependencies
+## 7. Ordering and dependencies
 
 Queued operations MUST NOT be assumed globally commutative.
 
@@ -78,7 +93,7 @@ Examples:
 
 When dependency ordering cannot be proven, the client must stop the dependent operation and surface a recoverable conflict.
 
-## 7. Cache rules
+## 8. Cache rules
 
 Cached data MUST include:
 
@@ -92,7 +107,7 @@ Sensitive or privileged data MUST NOT be placed in an unrestricted offline cache
 
 Cached inventory MUST be visually and semantically distinguished from authoritative availability.
 
-## 8. Security invariants
+## 9. Security invariants
 
 Offline mode MUST NOT become an authorization bypass.
 
@@ -100,7 +115,7 @@ Every server replay is re-authenticated and re-authorized. Client-supplied organ
 
 A previously authorized cached response does not grant continuing authorization after the server revokes access.
 
-## 9. Failure handling
+## 10. Failure handling
 
 | Failure | Client action |
 |---|---|
@@ -114,7 +129,7 @@ A previously authorized cached response does not grant continuing authorization 
 | Duplicate replay | Accept original server result |
 | Unknown failure | Retry within bounded policy, then dead-letter for investigation |
 
-## 10. Queue safety
+## 11. Queue safety
 
 The queue MUST be bounded and observable.
 
@@ -129,7 +144,7 @@ The implementation MUST prevent:
 
 Account/session changes MUST isolate or invalidate pending operations according to the security policy.
 
-## 11. Server authority
+## 12. Server authority
 
 The following are never client-authoritative:
 
@@ -143,7 +158,7 @@ The following are never client-authoritative:
 - authorization scope,
 - integration delivery status.
 
-## 12. Evidence gates
+## 13. Evidence gates
 
 Implementation cannot claim this contract as PASS until executable evidence proves at minimum:
 
@@ -157,14 +172,16 @@ Implementation cannot claim this contract as PASS until executable evidence prov
 8. conflict classification,
 9. bounded retry/dead-letter behavior,
 10. account/session isolation,
-11. deterministic recovery after reconnect.
+11. deterministic recovery after reconnect,
+12. monotonic cursor advancement,
+13. tombstone application and replay safety.
 
-## 13. Relationship to other systems
+## 14. Relationship to other systems
 
 Aghbari remains the operational system of record. Offline synchronization does not move transactional truth into Report-Advisor.
 
 Report-Advisor remains responsible for analytics, BI, forecasting, Decision Intelligence, and analytical recommendations.
 
-## 14. No-false-closure
+## 15. No-false-closure
 
 This document is a contract, not runtime evidence. No offline capability is considered certified until the implementation passes the corresponding executable and runtime tests.
