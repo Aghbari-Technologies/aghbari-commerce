@@ -1,0 +1,28 @@
+name: supabase-migration-proof
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: ['**']
+
+permissions:
+  contents: read
+
+jobs:
+  migration-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - run: supabase start
+      - name: Apply migrations from empty database
+        run: supabase db reset --local
+      - name: Verify migration inventory
+        run: supabase migration list
+      - name: Stop local Supabase
+        if: always()
+        run: supabase stop --no-backup
