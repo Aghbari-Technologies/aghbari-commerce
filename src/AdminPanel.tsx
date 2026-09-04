@@ -51,8 +51,7 @@ export default function AdminPanel({ role }: { role: UserRole }) {
       const [{ data: productRows, error: productError }, { data: warehouseRows, error: warehouseError }, categoryRows, orderRows] = await Promise.all([
         supabase.from('products').select('id,sku,name,unit').eq('status', 'active').order('name').limit(200),
         supabase.from('warehouses').select('id,name').eq('is_active', true).order('created_at'),
-        getCategories(),
-        getStaffOrders(50)
+        getCategories(), getStaffOrders(50)
       ]);
       if (productError) throw productError;
       if (warehouseError) throw warehouseError;
@@ -145,7 +144,7 @@ export default function AdminPanel({ role }: { role: UserRole }) {
         <input aria-label="التغيير" type="number" step="1" placeholder="+ أو - الكمية" value={delta} onChange={(e) => setDelta(e.target.value)} required /><input aria-label="سبب التعديل" placeholder="سبب التعديل" value={reason} onChange={(e) => setReason(e.target.value)} required /><button disabled={busy}>تسجيل الحركة</button>
       </form>}
     </div>
-    {canOrderWorkflow && <div className="cart-panel"><div className="section-heading"><div><span className="eyebrow">التشغيل</span><h2>إدارة الطلبات</h2></div><span>{orders.length} طلبات</span></div>{ordersLoading ? <div className="cart-empty">جارٍ تحميل الطلبات…</div> : !orders.length ? <div className="cart-empty">لا توجد طلبات تشغيلية بعد.</div> : <div className="cart-lines">{orders.map((order) => <article className="cart-line" key={order.id}><div><strong>طلب #{order.order_number}</strong><small>العميل: {order.customer_id} · {new Date(order.created_at).toLocaleString('ar-YE')}</small></div><div><strong>{formatMoney(order.total)} {order.currency}</strong><small>الحالة: {STATUS_LABELS[order.status]}</small></div><div className="quantity">{allowedNextStatuses(order.status, role).map((next) => <button key={next} disabled={busy} onClick={() => void changeOrderStatus(order.id, next)} aria-label={`تحويل الطلب ${order.order_number} إلى ${STATUS_LABELS[next]}`}>{STATUS_LABELS[next]}</button>)}</div></article>)}</div>}</div>}
+    {canOrderWorkflow && <div className="cart-panel"><div className="section-heading"><div><span className="eyebrow">التشغيل</span><h2>إدارة الطلبات</h2></div><span>{orders.length} طلبات</span></div>{ordersLoading ? <div className="cart-empty">جارٍ تحميل الطلبات…</div> : !orders.length ? <div className="cart-empty">لا توجد طلبات تشغيلية بعد.</div> : <div className="cart-lines">{orders.map((order) => <article className="cart-line" key={order.id}><div><strong>طلب #{order.order_number}</strong><small>العميل: {order.customer_name}</small></div><div><strong>{formatMoney(order.total)} {order.currency}</strong><small>الحالة: {STATUS_LABELS[order.status]}</small></div><div className="status-actions">{allowedNextStatuses(order.status, role).map((next) => <button key={next} disabled={busy} onClick={() => void changeOrderStatus(order.id, next)} aria-label={`تحويل الطلب ${order.order_number} إلى ${STATUS_LABELS[next]}`}>{STATUS_LABELS[next]}</button>)}</div></article>)}</div>}</div>}
     {error && <div className="error-banner" role="alert">{error}</div>}{message && <div className="success" role="status">{message}</div>}
   </section>;
 }
