@@ -12,7 +12,7 @@ permissions:
 jobs:
   migration-proof:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - name: Fail fast on duplicate migration versions
@@ -32,6 +32,8 @@ jobs:
       - run: supabase start
       - name: Apply migrations from empty database
         run: supabase db reset --local
+      - name: Run database pgTAP proofs
+        run: supabase test db --local
       - name: Verify local migration inventory
         run: supabase migration list --local
       - name: Stop local Supabase
