@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(9);
+select plan(12);
 
 -- Isolated identities and tenant data. The test transaction rolls everything back.
 insert into auth.users (id, email)
@@ -60,16 +60,14 @@ select lives_ok(
 select throws_ok(
   $$insert into storage.objects (bucket_id,name,owner_id,metadata)
     values ('product-media','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbb11/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa32.webp','11111111-1111-4111-8111-111111111111','{"mimetype":"image/webp","size":2048}'::jsonb)$$,
-  '42501',
-  null,
+  '42501', null,
   'Tenant A cannot upload media under a Tenant B product'
 );
 
 select throws_ok(
   $$insert into storage.objects (bucket_id,name,owner_id,metadata)
     values ('product-media','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11/not-a-uuid.webp','11111111-1111-4111-8111-111111111111','{"mimetype":"image/webp","size":2048}'::jsonb)$$,
-  '42501',
-  null,
+  '42501', null,
   'Media filenames must be UUID-based WebP objects'
 );
 
@@ -82,17 +80,44 @@ select results_eq(
 select throws_ok(
   $$insert into storage.objects (bucket_id,name,owner_id,metadata)
     values ('product-media','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbb11/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa33.webp','11111111-1111-4111-8111-111111111111','{"mimetype":"image/webp","size":2048}'::jsonb)$$,
-  '42501',
-  null,
+  '42501', null,
   'Tenant A cannot upload into Tenant B organization prefix'
 );
 
 select throws_ok(
   $$update storage.objects set name='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa34.webp'
     where name='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa21.webp'$$,
-  '42501',
-  null,
+  '42501', null,
   'Direct storage object UPDATE is not an application capability'
+);
+
+select lives_ok(
+  $$select public.register_product_media(
+    'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11'::uuid,
+    'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa31.webp',
+    'image/webp', 1200, 900, 2048
+  )$$,
+  'Server registers a valid owned WebP object'
+);
+
+select throws_ok(
+  $$select public.register_product_media(
+    'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11'::uuid,
+    'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa31/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa35.webp',
+    'image/webp', 1200, 900, 2048
+  )$$,
+  '42501', null,
+  'Server rejects a product ID from another tenant'
+);
+
+select throws_ok(
+  $$select public.register_product_media(
+    'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11'::uuid,
+    'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa21.webp',
+    'image/png', 1200, 900, 1024
+  )$$,
+  '22023', null,
+  'Server registration accepts only the canonical WebP format'
 );
 
 set local request.jwt.claim.sub = '22222222-2222-4222-8222-222222222222';
