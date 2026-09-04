@@ -15,7 +15,8 @@ function statusOf(error: unknown): number | undefined {
 /** Retry only transient reads. Never use this helper around a business mutation. */
 export function isTransientReadFailure(error: unknown): boolean {
   const status = statusOf(error);
-  return status === 408 || status === 425 || status === 429 || (status !== undefined && status >= 500 && status <= 599);
+  return error instanceof TypeError
+    || status === 408 || status === 425 || status === 429 || (status !== undefined && status >= 500 && status <= 599);
 }
 
 export async function retryRead<T>(operation: () => Promise<T>, options: RetryOptions = {}): Promise<T> {
