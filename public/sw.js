@@ -1,5 +1,6 @@
-const CACHE = 'aghbari-shell-v2';
+const CACHE = 'aghbari-shell-v3';
 const APP_SHELL = ['/', '/index.html', '/manifest.webmanifest'];
+const STATIC_DESTINATIONS = new Set(['script', 'style', 'font', 'worker']);
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(APP_SHELL)));
@@ -18,8 +19,12 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
 
-  // API/auth calls must remain network-authoritative. Never serve cached operational data offline.
+  // Network-authoritative operational/auth traffic must never be cached.
   if (url.pathname.startsWith('/api/') || url.pathname.includes('/auth/')) return;
+
+  const isNavigation = event.request.mode === 'navigate' || event.request.destination === 'document';
+  const isStaticAsset = STATIC_DESTINATIONS.has(event.request.destination);
+  if (!isNavigation && !isStaticAsset) return;
 
   event.respondWith(
     fetch(event.request).then((response) => {
