@@ -20,9 +20,11 @@ if (/grant\s+execute\s+on\s+function\s+[^;]+\s+to\s+anon\s*;/i.test(sql)) {
   throw new Error('Anonymous EXECUTE grant detected on a database function.');
 }
 
-const securityDefinerFunctions = [...sql.matchAll(/create\s+(?:or\s+replace\s+)?function\s+public\.[\s\S]*?security\s+definer[\s\S]*?as\s+\$\$/gi)];
-for (const match of securityDefinerFunctions) {
-  if (!/set\s+search_path\s*=\s*public/i.test(match[0])) {
+const functionChunks = sql.split(/(?=^create\s+(?:or\s+replace\s+)?function\s+public\.)/gim);
+for (const chunk of functionChunks) {
+  if (!/security\s+definer/i.test(chunk)) continue;
+  const definition = chunk.slice(0, chunk.indexOf('$$') === -1 ? chunk.length : chunk.indexOf('$$'));
+  if (!/set\s+search_path\s*=\s*public/i.test(definition)) {
     throw new Error('SECURITY DEFINER function without explicit SET search_path = public detected.');
   }
 }
