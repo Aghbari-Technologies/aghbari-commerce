@@ -6,7 +6,7 @@ Operational B2B commerce platform for **بوابة الأغبري للمواد �
 
 **الأغبري is the operational system of record.** It owns operational commerce workflows and reliable canonical data: catalog, pricing, customers, suppliers, orders, inventory, branches/warehouses, offers, users/permissions, imports/exports, operational notifications, auditability, and integrations.
 
-**Report-Advisor is the analytics and decision layer.** Analytics, BI, advanced reporting, forecasting, decision intelligence, analytical alerts, and recommendations belong there and must not be duplicated inside الأغبري.
+**Analytics and decision intelligence are intentionally external to this operational application.** Aghbari must not duplicate analytical/reporting workloads that belong to the dedicated reporting layer.
 
 ## Engineering standard
 
@@ -22,14 +22,12 @@ The architecture is a living artifact: when evidence exposes a better boundary, 
 
 ## Current phase
 
-**PHASE 0 — Architecture & Requirements Forensics**
+**PHASE 1 — Executable Commerce & Release Hardening.** The repository now contains the executable React/Vite/TypeScript application, operational Supabase migrations/RPCs, import and offline primitives, security boundaries, and executable proof gates. The remaining work is evidence-driven hardening and real-runtime verification; implementation presence is not treated as runtime certification.
 
-The existing الأغبري architecture is being evolved, not discarded. The old العامري application is reference material only. Its useful business requirements are mined, challenged, and re-engineered; its branding, implementation limitations, unnecessary AI/reporting duplication, and legacy technical assumptions are not binding.
-
-The final architecture is intentionally not frozen until all supplied requirement batches have been incorporated.
+The existing architecture is being evolved, not discarded. Business requirements are mined, challenged, and re-engineered rather than copied blindly from legacy assumptions. The final release boundary remains evidence-gated until runtime and production gates are proven.
 
 ## Source-of-truth documents
 
 - `docs/MASTER-EXECUTION-INDEX.md` — canonical progress ledger
 - `docs/OWNER-LEVEL-PROTOCOL.md` — execution, evidence, and certification protocol
-- `docs/ARCHITECTURE-BOUNDARIES.md` — operational/analytical and integration boundaries
+- `docs/ARCHITECTURE-BOUNDARIES.md` — operational and integration boundaries
