@@ -7,7 +7,7 @@
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Stable baseline (`main`): **`f7be8d752049e503e9e6aed650aacab3d9db65b4`**
 - Active execution branch: `execution/maximum-parallel-2026-09-04`
-- Active execution exact HEAD: **`ad6313b4b82dbd9b7c5561fdf59cb0e1783faac5`**
+- Active execution exact HEAD: **`33442f06ff2291ba79fd394d87571619ffb01282`**
 - Main has not been mutated by the execution track.
 
 ## Standing execution command
@@ -18,7 +18,7 @@
 |---|---|
 | BUILT | Executable application, operational migrations/RPCs, import, offline queue, security headers, PWA assets, and proof gates are present on the execution branch |
 | INTEGRATED | Not yet proven on `main`; active implementation is isolated on the execution branch pending evidence-gated merge |
-| VERIFIED | Historical exact-head evidence exists for G1 domain 5/5, PostgreSQL G1, and order workflow 4/4; current-head verification is not yet executable because current Actions jobs terminate before steps |
+| VERIFIED | Historical exact-head evidence exists for G1 domain 5/5, PostgreSQL G1, and order workflow 4/4; current-head verification is not yet executable because current Actions jobs terminate before runner steps |
 | RUNTIME PROVEN | Not proven; real authenticated application/Supabase runtime evidence remains required |
 | PRODUCTION CERTIFIED | Not proven |
 
@@ -54,7 +54,8 @@ The repository now contains a concrete React/Vite/TypeScript application, Supaba
 - Removed the duplicate module-level offline-cart online listener so the application has a single synchronization trigger.
 - Aligned browser import money validation with the authoritative server two-decimal precision rule and added a regression test for three-decimal input.
 - Added a database security contract gate covering RLS enablement, anonymous function execute grants, SECURITY DEFINER search_path hardening, and product-media storage policies.
-- Added exact-head evidence boundary documentation.
+- Hardened browser image CSP to trusted application/Supabase origins only.
+- Added exact-head evidence-boundary documentation.
 
 ## Executable evidence
 - Historical G1 deterministic domain proof: **PROVEN** — 5/5 at baseline `f7be8d752049e503e9e6aed650aacab3d9db65b4`.
@@ -64,13 +65,13 @@ The repository now contains a concrete React/Vite/TypeScript application, Supaba
 - Current execution-boundary GitHub Actions runs terminate before runner steps/logs, so their failures are not usable as product-code evidence.
 
 ## Active CI boundary
-- Exact HEAD: **`ad6313b4b82dbd9b7c5561fdf59cb0e1783faac5`**.
+- Exact HEAD: **`33442f06ff2291ba79fd394d87571619ffb01282`**.
 - Unit tests previously verified: **63/63** before the latest import-validation and security-gate mutations.
 - Lint previously repaired after four unused-binding failures.
 - Build previously blocked by strict TypeScript result typing; the affected paths were repaired and require fresh executable CI evidence.
-- Current import precision fix is covered by a focused regression case.
-- Current database security contract gate scans the migration set before database execution.
-- Fresh CI remains pending a runner that actually starts jobs.
+- Import precision fix is covered by a focused regression case.
+- Database security contract gate scans the migration set before database execution.
+- Current GitHub Actions execution is unavailable at the runner/job-step boundary; no code PASS is inferred from that condition.
 
 ## Real remaining gates
 1. Fresh exact-head full quality proof: test + lint + build + order invariants + database security contract.
@@ -103,6 +104,6 @@ Only the following classes are currently outside repository-only execution:
 No secrets should be sent through chat. When an external gate is reached, request the smallest environment action required and continue all independent repository work first.
 
 ## Latest execution result
-**ACTIVE — NOT CERTIFIED.** The execution branch contains the latest hardening and proof-gate work at exact HEAD `ad6313b4b82dbd9b7c5561fdf59cb0e1783faac5`. The branch remains isolated from `main` until fresh exact-head verification gates complete.
+**ACTIVE — NOT CERTIFIED.** The execution branch contains the latest hardening and proof-gate work at exact HEAD `33442f06ff2291ba79fd394d87571619ffb01282`. The branch remains isolated from `main` until fresh exact-head verification gates complete.
 
-**NEXT:** when a runner executes jobs normally, consume the fresh exact-head results and repair the first real failure only. Until then, continue repository-only forensic review and contract hardening without fabricating runtime evidence.
+**NEXT:** when GitHub runner execution is available, consume the fresh exact-head results and repair the first real failure only. Until then, continue repository-only forensic review and contract hardening without fabricating runtime evidence.
