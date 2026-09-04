@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
-import type { CartLine, CustomerTier, Product } from './domain/types';
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import type { CartLine, Product } from './domain/types';
 import { calculateClientPreviewTotal } from './domain/order';
 import { formatMoney } from './domain/pricing';
 import { getCatalog, type CatalogItem } from './services/catalog';
@@ -11,16 +11,10 @@ import './styles.css';
 
 function mapCatalogItem(item: CatalogItem): Product & { authorizedPrice?: number } {
   return {
-    id: item.id,
-    sku: item.sku,
-    name: item.name,
-    unit: item.unit,
-    category: item.category_id ?? 'أصناف',
-    description: item.description ?? undefined,
-    availableQuantity: item.available_quantity,
-    status: item.status === 'active' ? 'active' : 'inactive',
-    imageUrl: item.image_path ?? undefined,
-    authorizedPrice: item.authorized_price ?? undefined
+    id: item.id, sku: item.sku, name: item.name, unit: item.unit,
+    category: item.category_id ?? 'أصناف', description: item.description ?? undefined,
+    availableQuantity: item.available_quantity, status: item.status === 'active' ? 'active' : 'inactive',
+    imageUrl: item.image_path ?? undefined, authorizedPrice: item.authorized_price ?? undefined
   };
 }
 
@@ -46,26 +40,16 @@ export default function App() {
     let cancelled = false;
     void getSession().then(async (currentSession) => {
       if (cancelled) return;
-      setSignedIn(Boolean(currentSession));
-      setSessionReady(true);
+      setSignedIn(Boolean(currentSession)); setSessionReady(true);
       if (!currentSession || !supabase) return;
       const { data: profile, error } = await supabase.from('profiles').select('customer_id').eq('id', currentSession.user.id).single();
-      if (error) {
-        setAuthError('تعذر ربط الحساب بملف العميل.');
-        return;
-      }
+      if (error) { setAuthError('تعذر ربط الحساب بملف العميل.'); return; }
       setCustomerId(profile.customer_id);
     }).catch((error) => {
-      if (!cancelled) {
-        setSessionReady(true);
-        setAuthError(error instanceof Error ? error.message : 'تعذر قراءة جلسة الدخول.');
-      }
+      if (!cancelled) { setSessionReady(true); setAuthError(error instanceof Error ? error.message : 'تعذر قراءة جلسة الدخول.'); }
     });
     const listener = supabase?.auth.onAuthStateChange((_event, nextSession) => setSignedIn(Boolean(nextSession)));
-    return () => {
-      cancelled = true;
-      listener?.data.subscription.unsubscribe();
-    };
+    return () => { cancelled = true; listener?.data.subscription.unsubscribe(); };
   }, []);
 
   useEffect(() => {
@@ -75,7 +59,7 @@ export default function App() {
       setRuntimeError(null);
       try {
         const [{ data: warehouse, error: warehouseError }, items, savedCart] = await Promise.all([
-          supabase!.from('warehouses').select('id').eq('is_active', true).order('created_at').limit(1).maybeSingle(),
+          supabase.from('warehouses').select('id').eq('is_active', true).order('created_at').limit(1).maybeSingle(),
           getCatalog(query, null, 100, 0),
           getCart()
         ]);
@@ -89,9 +73,7 @@ export default function App() {
         setCart(savedCart.map((item) => ({
           product: mapped.find((product) => product.id === item.product_id) ?? {
             id: item.product_id, sku: item.sku, name: item.name, unit: item.unit, category: 'أصناف', availableQuantity: 0, status: 'active'
-          },
-          quantity: item.quantity,
-          unitPrice: item.authorized_price ?? 0
+          }, quantity: item.quantity, unitPrice: item.authorized_price ?? 0
         })));
       } catch (error) {
         if (!cancelled) setRuntimeError(error instanceof Error ? error.message : 'تعذر تحميل بيانات المتجر.');
@@ -109,17 +91,17 @@ export default function App() {
   const priceFor = (product: Product) => serverPrices[product.id] ?? 0;
   const total = calculateClientPreviewTotal(cart);
 
-  async function handleLogin(event: React.FormEvent) {
-    event.preventDefault();
-    setAuthBusy(true); setAuthError(null);
+  async function handleLogin(event: FormEvent) {
+    event.preventDefault(); setAuthBusy(true); setAuthError(null);
     try {
-      await signIn(email, password);
-      setPassword('');
+      await signIn(email, password); setPassword('');
       const current = await getSession();
-      setCustomerId(current && supabase ? (await supabase.from('profiles').select('customer_id').eq('id', current.user.id).single()).data?.customer_id ?? null : null);
-    } catch (error) {
-      setAuthError(error instanceof Error ? error.message : 'تعذر تسجيل الدخول.');
-    } finally { setAuthBusy(false); }
+      if (current && supabase) {
+        const { data: profile } = await supabase.from('profiles').select('customer_id').eq('id', current.user.id).single();
+        setCustomerId(profile?.customer_id ?? null);
+      }
+    } catch (error) { setAuthError(error instanceof Error ? error.message : 'تعذر تسجيل الدخول.'); }
+    finally { setAuthBusy(false); }
   }
 
   async function handleSignOut() {
@@ -160,21 +142,14 @@ export default function App() {
     if (!customerId || !warehouseId || !cart.length || orderBusy) return;
     setOrderBusy(true); setOrderResult(null); setRuntimeError(null);
     try {
-      const result = await createOrder({
-        customerId,
-        idempotencyKey: crypto.randomUUID(),
-        lines: cart.map((line) => ({ productId: line.product.id, quantity: line.quantity }))
-      }, warehouseId);
-      await clearCart();
-      setCart([]);
+      const result = await createOrder({ customerId, idempotencyKey: crypto.randomUUID(), lines: cart.map((line) => ({ productId: line.product.id, quantity: line.quantity })) }, warehouseId);
+      await clearCart(); setCart([]);
       setOrderResult(result ? `تم إرسال الطلب رقم ${result.order_number} بنجاح.` : 'تم إرسال الطلب بنجاح.');
-    } catch (error) {
-      setRuntimeError(error instanceof Error ? error.message : 'تعذر إرسال الطلب. لم يتم اعتماد أي سعر من العميل.');
-    } finally { setOrderBusy(false); }
+    } catch (error) { setRuntimeError(error instanceof Error ? error.message : 'تعذر إرسال الطلب. لم يتم اعتماد أي سعر من العميل.'); }
+    finally { setOrderBusy(false); }
   }
 
   if (!sessionReady) return <div className="auth-shell"><div className="auth-card"><span className="eyebrow">الأغبري</span><h1>جارٍ التحقق من الجلسة</h1><p>يتم التحقق من الهوية قبل عرض بيانات المتجر.</p></div></div>;
-
   if (!signedIn) return <div className="auth-shell"><form className="auth-card" onSubmit={handleLogin}>
     <span className="eyebrow">بوابة الأغبري التجارية</span><h1>تسجيل الدخول</h1><p>ادخل بحسابك للوصول إلى الكتالوج والأسعار المصرح بها.</p>
     <label>البريد الإلكتروني<input type="email" value={email} onChange={(event) => setEmail(event.target.value)} required autoComplete="email" /></label>
