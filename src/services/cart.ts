@@ -22,6 +22,11 @@ const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3
 
 type OfflineCartPayload = { productId: string; quantity?: number };
 
+function finiteNumber(value: unknown, fallback = 0): number {
+  const parsed = typeof value === 'number' ? value : Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
 function isOfflineCartPayload(payload: unknown): payload is OfflineCartPayload {
   if (!payload || typeof payload !== 'object') return false;
   const value = payload as OfflineCartPayload;
@@ -57,7 +62,11 @@ if (typeof window !== 'undefined') {
 export async function getCart() {
   const { data, error } = await requireSupabase().rpc('get_cart');
   if (error) throw error;
-  return (data ?? []) as CartItem[];
+  return (data ?? []).map((item) => ({
+    ...(item as Omit<CartItem, 'quantity' | 'authorized_price'>),
+    quantity: finiteNumber(item.quantity),
+    authorized_price: item.authorized_price == null ? null : finiteNumber(item.authorized_price, 0)
+  })) as CartItem[];
 }
 
 export async function setCartItem(productId: string, quantity: number) {
@@ -66,7 +75,7 @@ export async function setCartItem(productId: string, quantity: number) {
   if (!Number.isInteger(quantity) || quantity < 1 || quantity > MAX_ORDER_QUANTITY_PER_LINE) {
     throw new Error(`الكمية يجب أن تكون بين 1 و${MAX_ORDER_QUANTITY_PER_LINE}.`);
   }
-  if (typeof navigator !== 'undefined' && !navigator.onLine) {
+  if (typeof navigator !== 'undefined' && navigator.onLine === false) {
     enqueueOfflineOperation(OFFLINE_CART_SET_ITEM, { productId: productId.trim(), quantity });
     return;
   }
@@ -80,7 +89,7 @@ export async function setCartItem(productId: string, quantity: number) {
 export async function removeCartItem(productId: string) {
   if (!productId) throw new Error('المنتج مطلوب.');
   if (!UUID_PATTERN.test(productId.trim())) throw new Error('معرّف المنتج غير صالح.');
-  if (typeof navigator !== 'undefined' && !navigator.onLine) {
+  if (typeof navigator !== 'undefined' && navigator.onLine === false) {
     enqueueOfflineOperation(OFFLINE_CART_REMOVE_ITEM, { productId: productId.trim() });
     return;
   }
