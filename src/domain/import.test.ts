@@ -43,6 +43,12 @@ describe('import domain', () => {
     expect(await fingerprintImport(a)).toBe(await fingerprintImport(b));
   });
 
+  it('is invariant to spreadsheet row order', async () => {
+    const a = [validRow({ sku: 'ABC-001' }), validRow({ sku: 'ABC-002', rowNumber: 3 })];
+    const b = [validRow({ sku: 'ABC-002', rowNumber: 99 }), validRow({ sku: 'ABC-001', rowNumber: 100 })];
+    expect(await fingerprintImport(a)).toBe(await fingerprintImport(b));
+  });
+
   it('changes the fingerprint when authoritative import data changes', async () => {
     expect(await fingerprintImport([validRow()])).not.toBe(await fingerprintImport([validRow({ quantity: 11 })]));
   });
