@@ -1,10 +1,10 @@
 import { readSheet } from 'read-excel-file/browser';
-import { fingerprintImport, normalizeSku, validateImportRows, type ImportRow } from '../domain/import';
+import { fingerprintImport, MAX_IMPORT_ROWS, normalizeSku, validateImportRows, type ImportRow } from '../domain/import';
 import { requireSupabase } from '../lib/supabase';
 
 const REQUIRED_HEADERS = ['SKU', 'Name', 'Unit', 'Category', 'Quantity', 'Retail Price', 'Wholesale Price', 'Distributor Price'];
 const MAX_WORKBOOK_BYTES = 20 * 1024 * 1024;
-const MAX_DATA_ROWS = 50_000;
+const MAX_DATA_ROWS = MAX_IMPORT_ROWS;
 const MAX_SOURCE_NAME_LENGTH = 180;
 const XLSX_MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 const ZIP_SIGNATURES = ['504b0304', '504b0506', '504b0708'];
@@ -24,7 +24,7 @@ export async function parseProductWorkbook(file: File) {
 
   const rows = await readSheet(file);
   const [header = [], ...data] = rows;
-  if (data.length > MAX_DATA_ROWS) throw new Error('ملف الاستيراد يتجاوز الحد الأقصى وهو 50,000 صف.');
+  if (data.length > MAX_DATA_ROWS) throw new Error(`ملف الاستيراد يتجاوز الحد الأقصى وهو ${MAX_DATA_ROWS.toLocaleString('ar-YE')} صف.`);
   const normalizedHeaders = header.map((cell) => String(cell ?? '').trim());
   const missing = REQUIRED_HEADERS.filter((name) => !normalizedHeaders.includes(name));
   if (missing.length) throw new Error(`أعمدة ناقصة: ${missing.join(', ')}`);
