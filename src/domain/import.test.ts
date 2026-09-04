@@ -67,6 +67,11 @@ describe('import domain', () => {
       field: 'price.retail',
       message: expect.stringContaining('safe cent precision')
     });
+    expect(validateImportRows([validRow({ prices: { retail: 1.001, wholesale: 90, distributor: 80 } })])).toContainEqual({
+      rowNumber: 2,
+      field: 'price.retail',
+      message: expect.stringContaining('safe cent precision')
+    });
     expect(validateImportRows([validRow({ prices: { retail: Number.NaN, wholesale: Number.POSITIVE_INFINITY, distributor: 80 } })])).toEqual(expect.arrayContaining([
       { rowNumber: 2, field: 'price.retail', message: expect.any(String) },
       { rowNumber: 2, field: 'price.wholesale', message: expect.any(String) }
