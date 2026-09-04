@@ -1,5 +1,6 @@
 import { requireSupabase } from '../lib/supabase';
 import type { OrderStatus } from '../domain/types';
+import { retryRead } from '../lib/retry';
 
 export interface CustomerOrderSummary {
   id: string;
@@ -18,12 +19,15 @@ function finiteNumber(value: unknown): number {
 
 export async function getCustomerOrders(limit = 20): Promise<CustomerOrderSummary[]> {
   const safeLimit = Math.min(Math.max(Math.trunc(limit), 1), 50);
-  const { data, error } = await requireSupabase()
+  const { data, error } = await retryRead(() => requireSupabase()
     .from('orders')
     .select('id,order_number,status,total,currency,created_at')
     .order('created_at', { ascending: false })
-    .limit(safeLimit);
-  if (error) throw error;
+    .limit(safeLimit)
+    .then((result) => {
+      if (result.error) throw result.error;
+      return result;
+    }));
   return (data ?? []).map((item) => ({
     ...(item as Omit<CustomerOrderSummary, 'order_number' | 'total'>),
     order_number: Number(item.order_number),
