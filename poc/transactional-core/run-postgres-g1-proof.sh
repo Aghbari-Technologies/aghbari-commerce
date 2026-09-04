@@ -25,7 +25,7 @@ fail_expected psql -v ON_ERROR_STOP=1 -c "SELECT * FROM g1_poc.create_order('000
 # 2. Successful order uses canonical price and server-calculated total.
 psql -v ON_ERROR_STOP=1 -c "SELECT * FROM g1_poc.create_order('00000000-0000-0000-0000-000000000002', 1, 1, 10.00);"
 [[ "$(psql -At -c 'SELECT quantity FROM g1_poc.inventory WHERE product_id = 1')" == "0" ]]
-[[ "$(psql -At -c 'SELECT unit_price || ":" || total FROM g1_poc.orders WHERE operation_id = '\''00000000-0000-0000-0000-000000000002'\''')" == "10.00:10.00" ]]
+[[ "$(psql -At -c 'SELECT unit_price || '\''':'\'' || total FROM g1_poc.orders WHERE operation_id = '\''00000000-0000-0000-0000-000000000002'\''')" == "10.00:10.00" ]]
 
 # 3. Replaying the exact operation returns the original order without mutation.
 [[ "$(psql -At -c "SELECT replayed FROM g1_poc.create_order('00000000-0000-0000-0000-000000000002', 1, 1, 10.00)")" == "t" ]]
@@ -59,6 +59,7 @@ wait "$pid_c"
 wait "$pid_d"
 [[ "$(psql -At -c 'SELECT quantity FROM g1_poc.inventory WHERE product_id = 1')" == "0" ]]
 [[ "$(psql -At -c 'SELECT count(*) FROM g1_poc.orders')" == "1" ]]
-[[ "$(grep -h -c '^.*t$' /tmp/g1-replay-a.out /tmp/g1-replay-b.out | awk '{s+=$1} END {print s+0}')" == "1" ]]
+replay_count=$(cat /tmp/g1-replay-a.out /tmp/g1-replay-b.out | grep -E '^[[:space:]]*[0-9]+[[:space:]]*\|[[:space:]]*[0-9]+\.[0-9]{2}[[:space:]]*\|[[:space:]]*[tf][[:space:]]*$' | awk -F'|' '$3 ~ /t/ {count++} END {print count+0}')
+[[ "$replay_count" == "1" ]]
 
 echo "G1 PostgreSQL proof: PASS — atomicity, canonical pricing, server totals, idempotent replay, payload conflict, and concurrent oversell protection verified."
