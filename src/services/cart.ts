@@ -22,6 +22,11 @@ const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3
 
 type OfflineCartPayload = { productId: string; quantity?: number };
 
+type RawCartItem = Omit<CartItem, 'quantity' | 'authorized_price'> & {
+  quantity: unknown;
+  authorized_price: unknown;
+};
+
 function finiteNumber(value: unknown, fallback = 0): number {
   const parsed = typeof value === 'number' ? value : Number(value);
   return Number.isFinite(parsed) ? parsed : fallback;
@@ -32,6 +37,13 @@ function isOfflineCartPayload(payload: unknown): payload is OfflineCartPayload {
   const value = payload as OfflineCartPayload;
   if (typeof value.productId !== 'string' || !UUID_PATTERN.test(value.productId)) return false;
   return value.quantity === undefined || (Number.isInteger(value.quantity) && value.quantity >= 1 && value.quantity <= MAX_ORDER_QUANTITY_PER_LINE);
+}
+
+async function currentUserId(): Promise<string> {
+  const { data, error } = await requireSupabase().auth.getUser();
+  if (error) throw error;
+  if (!data.user) throw new Error('يجب تسجيل الدخول لمزامنة سلة المشتري.');
+  return data.user.id;
 }
 
 async function replayCartOperation(operation: OfflineOperation): Promise<void> {
@@ -52,7 +64,7 @@ async function replayCartOperation(operation: OfflineOperation): Promise<void> {
 }
 
 export async function syncOfflineCart() {
-  return drainOfflineOperations(replayCartOperation);
+  return drainOfflineOperations(replayCartOperation, await currentUserId());
 }
 
 if (typeof window !== 'undefined') {
@@ -62,7 +74,7 @@ if (typeof window !== 'undefined') {
 export async function getCart() {
   const { data, error } = await requireSupabase().rpc('get_cart');
   if (error) throw error;
-  return (data ?? []).map((item) => ({
+  return (data as RawCartItem[] | null ?? []).map((item: RawCartItem) => ({
     ...(item as Omit<CartItem, 'quantity' | 'authorized_price'>),
     quantity: finiteNumber(item.quantity),
     authorized_price: item.authorized_price == null ? null : finiteNumber(item.authorized_price, 0)
@@ -76,7 +88,7 @@ export async function setCartItem(productId: string, quantity: number) {
     throw new Error(`الكمية يجب أن تكون بين 1 و${MAX_ORDER_QUANTITY_PER_LINE}.`);
   }
   if (typeof navigator !== 'undefined' && navigator.onLine === false) {
-    enqueueOfflineOperation(OFFLINE_CART_SET_ITEM, { productId: productId.trim(), quantity });
+    enqueueOfflineOperation(await currentUserId(), OFFLINE_CART_SET_ITEM, { productId: productId.trim(), quantity });
     return;
   }
   const { error } = await requireSupabase().rpc('set_cart_item', {
@@ -90,7 +102,7 @@ export async function removeCartItem(productId: string) {
   if (!productId) throw new Error('المنتج مطلوب.');
   if (!UUID_PATTERN.test(productId.trim())) throw new Error('معرّف المنتج غير صالح.');
   if (typeof navigator !== 'undefined' && navigator.onLine === false) {
-    enqueueOfflineOperation(OFFLINE_CART_REMOVE_ITEM, { productId: productId.trim() });
+    enqueueOfflineOperation(await currentUserId(), OFFLINE_CART_REMOVE_ITEM, { productId: productId.trim() });
     return;
   }
   const { error } = await requireSupabase().rpc('remove_cart_item', { p_product_id: productId.trim() });
