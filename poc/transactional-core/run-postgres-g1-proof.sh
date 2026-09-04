@@ -28,7 +28,7 @@ psql -v ON_ERROR_STOP=1 -c "SELECT * FROM g1_poc.create_order('00000000-0000-000
 [[ "$(psql -At -c 'SELECT quantity FROM g1_poc.inventory WHERE product_id = 1')" == "0" ]]
 
 # 3. Replaying the exact operation returns the original order without mutation.
-[[ "$(psql -At -c "SELECT replayed FROM g1_poc.create_order('00000000-0000-0000-0000-000000000002', 1, 1, 10.00)")" == "t" ]]
+[[ "$(psql -At -c "SELECT replayed FROM g1_poc.create_order('00000000-0000-0000-0000-000000000002', 1, 1, 10.00);" )" == "t" ]]
 [[ "$(psql -At -c 'SELECT count(*) FROM g1_poc.orders')" == "1" ]]
 
 # 4. Reusing an operation_id with a changed payload must be rejected.
