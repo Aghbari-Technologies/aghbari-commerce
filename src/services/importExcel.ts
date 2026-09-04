@@ -28,7 +28,7 @@ export async function parseProductWorkbook(file: File) {
     }
   }));
 
-  return { rows: parsed, diagnostics: validateImportRows(parsed), fingerprint: fingerprintImport(parsed) };
+  return { rows: parsed, diagnostics: validateImportRows(parsed), fingerprint: await fingerprintImport(parsed) };
 }
 
 export async function stageProductImport(file: File) {
