@@ -46,7 +46,9 @@ begin
     raise exception using errcode='42501', message='active customer required';
   end if;
 
-  select * into v_existing from public.orders where organization_id=v_org and idempotency_key=p_idempotency_key;
+  -- Serialize competing requests for the same business idempotency key.
+  perform pg_advisory_xact_lock(hashtextextended(v_org::text || ':' || trim(p_idempotency_key), 0));
+  select * into v_existing from public.orders where organization_id=v_org and idempotency_key=trim(p_idempotency_key);
   if found then
     if v_existing.customer_id <> v_customer or v_existing.warehouse_id <> p_warehouse_id then
       raise exception using errcode='40001', message='idempotency key payload conflict';
@@ -104,7 +106,7 @@ begin
   end loop;
 
   insert into public.orders(organization_id, customer_id, warehouse_id, status, currency, subtotal, total, idempotency_key, created_by)
-  values(v_org, v_customer, p_warehouse_id, 'pending', coalesce(v_currency,'YER'), v_subtotal, v_subtotal, p_idempotency_key, auth.uid())
+  values(v_org, v_customer, p_warehouse_id, 'pending', coalesce(v_currency,'YER'), v_subtotal, v_subtotal, trim(p_idempotency_key), auth.uid())
   returning * into v_order;
 
   for v_line in
@@ -143,7 +145,7 @@ begin
 
   return query select v_order.id, v_order.order_number, v_order.status, v_order.total;
 exception when unique_violation then
-  select * into v_existing from public.orders where organization_id=v_org and idempotency_key=p_idempotency_key;
+  select * into v_existing from public.orders where organization_id=v_org and idempotency_key=trim(p_idempotency_key);
   if found then
     return query select v_existing.id, v_existing.order_number, v_existing.status, v_existing.total;
   else
