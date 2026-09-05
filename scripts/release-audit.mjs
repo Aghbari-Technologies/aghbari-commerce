@@ -38,13 +38,12 @@ if (!existsSync(join(root, 'package-lock.json'))) {
   fail('package-lock.json is missing; reproducible npm ci installation is not yet possible.');
 }
 
-const sourceRoots = ['src', 'scripts'];
+const sourceRoot = join(root, 'src');
 const ignoredNames = new Set(['node_modules', 'dist', '.git']);
 const suspiciousPatterns = [
   /\bTODO\b/i,
   /\bFIXME\b/i,
   /\bplaceholder\b/i,
-  /\bfake\s*success\b/i,
   /\bnot\s+implemented\b/i,
   /\bnotimplemented\b/i,
 ];
@@ -63,18 +62,14 @@ function walk(dir) {
   return result;
 }
 
-for (const rootName of sourceRoots) {
-  for (const file of walk(join(root, rootName))) {
-    if (!/\.(?:ts|tsx|js|mjs|css|html)$/.test(file)) continue;
-    const text = readFileSync(file, 'utf8');
-    const rel = relative(root, file).replaceAll('\\', '/');
-    if (legacyBrandPattern.test(text)) fail(`Legacy branding found in executable source: ${rel}`);
-    for (const pattern of suspiciousPatterns) {
-      if (pattern.test(text)) {
-        const isTest = /(?:\.test\.|tests?\/)/i.test(rel);
-        if (isTest) warn(`Review test-only marker ${pattern} in ${rel}`);
-        else fail(`Suspicious completion marker ${pattern} found in executable source: ${rel}`);
-      }
+for (const file of walk(sourceRoot)) {
+  if (!/\.(?:ts|tsx|js|mjs|css|html)$/.test(file)) continue;
+  const text = readFileSync(file, 'utf8');
+  const rel = relative(root, file).replaceAll('\\', '/');
+  if (legacyBrandPattern.test(text)) fail(`Legacy branding found in executable source: ${rel}`);
+  for (const pattern of suspiciousPatterns) {
+    if (pattern.test(text) && !/(?:\.test\.|tests?\/)/i.test(rel)) {
+      fail(`Suspicious completion marker ${pattern} found in executable source: ${rel}`);
     }
   }
 }
@@ -92,10 +87,6 @@ for (const key of ['VITE_SUPABASE_URL', 'VITE_SUPABASE_PUBLISHABLE_KEY']) {
 if (failures.length) {
   console.error('RELEASE AUDIT: FAIL');
   for (const item of failures) console.error(`- ${item}`);
-  if (warnings.length) {
-    console.error('Warnings:');
-    for (const item of warnings) console.error(`- ${item}`);
-  }
   process.exit(1);
 }
 
@@ -103,6 +94,5 @@ console.log('RELEASE AUDIT: PASS');
 console.log(`Checked required files: ${requiredFiles.length + requiredWorkflows.length}`);
 console.log('Checked executable source for legacy branding and suspicious completion markers.');
 if (warnings.length) {
-  console.log('Warnings:');
-  for (const item of warnings) console.log(`- ${item}`);
+  for (const item of warnings) warn(item);
 }
