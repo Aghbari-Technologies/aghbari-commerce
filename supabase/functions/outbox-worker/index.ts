@@ -25,20 +25,29 @@ function jsonResponse(body: unknown, status = 200) {
 
 async function deliver(event: OutboxEvent) {
   if (!webhookUrl) throw new Error('OUTBOX_WEBHOOK_URL is not configured');
-  const response = await fetch(webhookUrl, {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-      'x-aghbari-event-id': event.id,
-      'x-aghbari-organization-id': event.organization_id,
-      'idempotency-key': event.id,
-      ...(webhookToken ? { authorization: `Bearer ${webhookToken}` } : {})
-    },
-    body: JSON.stringify({ id: event.id, organizationId: event.organization_id, aggregateType: event.aggregate_type, aggregateId: event.aggregate_id, eventType: event.event_type, payload: event.payload, attempts: event.attempts })
-  });
-  if (response.ok || response.status === 409) return;
-  const detail = (await response.text()).slice(0, 1000);
-  throw new Error(`outbox delivery failed (${response.status}): ${detail}`);
+  if (!webhookToken) throw new Error('OUTBOX_WEBHOOK_TOKEN is not configured');
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10_000);
+  try {
+    const response = await fetch(webhookUrl, {
+      method: 'POST',
+      signal: controller.signal,
+      headers: {
+        'content-type': 'application/json',
+        'x-aghbari-event-id': event.id,
+        'x-aghbari-organization-id': event.organization_id,
+        'idempotency-key': event.id,
+        authorization: `Bearer ${webhookToken}`
+      },
+      body: JSON.stringify({ id: event.id, organizationId: event.organization_id, aggregateType: event.aggregate_type, aggregateId: event.aggregate_id, eventType: event.event_type, payload: event.payload, attempts: event.attempts })
+    });
+    if (response.ok || response.status === 409) return;
+    const detail = (await response.text()).slice(0, 1000);
+    throw new Error(`outbox delivery failed (${response.status}): ${detail}`);
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 Deno.serve(async (request) => {
@@ -63,8 +72,8 @@ Deno.serve(async (request) => {
       results.push({ id: event.id, status: 'delivered' });
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      await supabase.rpc('fail_outbox_event', { p_event_id: event.id, p_error: message });
-      results.push({ id: event.id, status: 'failed' });
+      const { error: failureError } = await supabase.rpc('fail_outbox_event', { p_event_id: event.id, p_error: message });
+      results.push({ id: event.id, status: failureError ? 'failed' : 'failed' });
     }
   }
   return jsonResponse({ claimed: events?.length ?? 0, results });
