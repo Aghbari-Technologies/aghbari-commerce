@@ -8,6 +8,7 @@ const requiredFiles = [
   'playwright.config.ts',
   '.env.example',
   'vercel.json',
+  'index.html',
   'src/main.tsx',
   'src/App.tsx',
   'src/lib/supabase.ts',
@@ -22,10 +23,7 @@ const requiredWorkflows = [
 ];
 
 const failures = [];
-const warnings = [];
-
 function fail(message) { failures.push(message); }
-function warn(message) { warnings.push(message); }
 
 for (const file of requiredFiles) {
   if (!existsSync(join(root, file))) fail(`Missing required release file: ${file}`);
@@ -74,9 +72,20 @@ for (const file of walk(sourceRoot)) {
   }
 }
 
+// Product identity must remain clean in the shipped HTML/PWA/config artifacts too.
+for (const file of ['index.html', 'manifest.webmanifest', 'vercel.json', '.env.example']) {
+  const path = join(root, file);
+  if (!existsSync(path)) continue;
+  const text = readFileSync(path, 'utf8');
+  if (legacyBrandPattern.test(text)) fail(`Legacy branding found in release artifact: ${file}`);
+}
+
 const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
-for (const script of ['test', 'lint', 'build', 'test:e2e']) {
+for (const script of ['test', 'lint', 'build', 'test:e2e', 'test:release-audit', 'typecheck']) {
   if (!pkg.scripts?.[script]) fail(`Missing package script: ${script}`);
+}
+if (pkg.engines?.node !== '>=22 <23') {
+  fail('Node runtime contract must remain pinned to >=22 <23.');
 }
 
 const envExample = readFileSync(join(root, '.env.example'), 'utf8');
@@ -92,7 +101,4 @@ if (failures.length) {
 
 console.log('RELEASE AUDIT: PASS');
 console.log(`Checked required files: ${requiredFiles.length + requiredWorkflows.length}`);
-console.log('Checked executable source for legacy branding and suspicious completion markers.');
-if (warnings.length) {
-  for (const item of warnings) warn(item);
-}
+console.log('Checked executable source and release artifacts for legacy branding and suspicious completion markers.');
