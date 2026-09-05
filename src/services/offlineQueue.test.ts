@@ -60,18 +60,16 @@ describe('offline operation queue', () => {
     expect(Date.parse(pendingOfflineOperations(USER_A)[0].nextAttemptAt!)).toBe(16_000);
   });
 
-  it('caps retry attempts without aborting the entire queue', async () => {
+  it('marks exhausted operations terminal without blocking following work', async () => {
     const exhausted = enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: 1 });
     const following = enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_B, quantity: 1 });
     for (let index = 0; index < MAX_OFFLINE_ATTEMPTS; index += 1) markOfflineOperationAttempt(exhausted.operationId, 1_000 + index);
-    const result = await drainOfflineOperations(async (operation) => {
-      if (operation.operationId === following.operationId) return;
-      throw new Error('terminal');
-    }, USER_A, Date.now() + 1_000_000);
-    expect(result).toEqual({ processed: 1, failed: 1 });
+    const seen: string[] = [];
+    const result = await drainOfflineOperations(async (operation) => { seen.push(operation.operationId); }, USER_A, Date.now() + 1_000_000);
+    expect(result).toEqual({ processed: 1, failed: 0 });
+    expect(seen).toEqual([following.operationId]);
     expect(pendingOfflineOperations(USER_A)).toHaveLength(1);
-    expect(pendingOfflineOperations(USER_A)[0].operationId).toBe(exhausted.operationId);
-    expect(pendingOfflineOperations(USER_A)[0].attempts).toBe(MAX_OFFLINE_ATTEMPTS);
+    expect(pendingOfflineOperations(USER_A)[0]).toMatchObject({ operationId: exhausted.operationId, attempts: MAX_OFFLINE_ATTEMPTS, terminal: true });
   });
 
   it('returns no records for an invalid user filter instead of exposing the full queue', () => {
