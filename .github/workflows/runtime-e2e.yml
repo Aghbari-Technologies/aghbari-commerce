@@ -1,0 +1,49 @@
+name: Runtime E2E Certification
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: 'Deployed Aghbari URL for runtime verification'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  runtime-e2e:
+    name: Authenticated browser critical path
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      E2E_BASE_URL: ${{ inputs.base_url }}
+      E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
+      E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+    steps:
+      - name: Checkout exact requested ref
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm install
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Require runtime credentials
+        run: |
+          test -n "$E2E_BASE_URL"
+          test -n "$E2E_EMAIL"
+          test -n "$E2E_PASSWORD"
+      - name: Execute authenticated E2E
+        run: npm run test:e2e -- --reporter=list
+      - name: Upload Playwright evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: aghbari-runtime-e2e-evidence
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
