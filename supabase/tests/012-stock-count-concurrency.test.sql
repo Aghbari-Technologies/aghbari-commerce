@@ -6,7 +6,7 @@ select plan(3);
 insert into auth.users (id, email) values ('21212121-2121-4121-8121-212121212121', 'stock-count-concurrency@test.local');
 insert into public.organizations (id, name) values ('22222222-2222-4222-8222-222222222222', 'Stock Count Concurrency Tenant');
 insert into public.branches (id, organization_id, name) values ('23232323-2323-4232-8232-232323232323', '22222222-2222-4222-8222-222222222222', 'Main');
-insert into public.warehouses (id, organization_id, branch_id, name) values ('24242424-2424-4242-8242-242424242424', '22222222-2222-4222-8222-222222222222', 'Warehouse');
+insert into public.warehouses (id, organization_id, branch_id, name) values ('24242424-2424-4242-8242-242424242424', '22222222-2222-4222-8222-222222222222', '23232323-2323-4232-8232-232323232323', 'Warehouse');
 insert into public.products (id, organization_id, sku, name, unit) values ('25252525-2525-4252-8252-252525252525', '22222222-2222-4222-8222-222222222222', 'COUNT-001', 'Count Product', 'carton');
 insert into public.inventory_balances(organization_id, warehouse_id, product_id, quantity)
 values ('22222222-2222-4222-8222-222222222222','24242424-2424-4242-8242-242424242424','25252525-2525-4252-8252-252525252525',10);
