@@ -6,8 +6,8 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Branch: `main`
-- Current exact implementation HEAD: **`23ef2b25355b40f5a42c6892e7a97b7a3c7e7237`**
-- Latest execution boundary: warehouse-aware catalog truth + stock-count/offline/outbox/security hardening, followed by release-audit hardening.
+- Current exact implementation HEAD: **`e97f0c7bad9ca1f86076510079e6e5edae31fe48`**
+- Latest execution boundary: release-hardening audit, explicit typecheck/Node runtime contract, and shipped-artifact branding checks.
 
 ## Standing execution command
 **`1` = CONTINUE / EXECUTE AUTONOMOUSLY / DEEPEN / TEST / VERIFY / DOCUMENT / SELF-IMPROVE.**
@@ -16,18 +16,18 @@
 | Stage | State |
 |---|---|
 | BUILT | **ADVANCED IMPLEMENTED** — executable commerce shell + catalog/pricing/orders/cart, staff operations, customers, inventory transfer/adjustment/thresholds/low-stock/stock count, purchasing/receiving, finance, import/export, outbox worker, PWA/offline primitives and browser/security hardening |
-| INTEGRATED | **PASS at implementation level — exact current HEAD `23ef2b25355b40f5a42c6892e7a97b7a3c7e7237`** |
-| VERIFIED | **NOT PROVEN** — fresh executable CI remains blocked by workflow startup/infrastructure failures with no job steps/logs exposed |
-| RUNTIME PROVEN | **NOT PROVEN** — no connected Supabase target and no authenticated deployment credentials available through current integrations |
+| INTEGRATED | **PASS at implementation level — exact current HEAD `e97f0c7bad9ca1f86076510079e6e5edae31fe48`** |
+| VERIFIED | **NOT PROVEN** — no executable workflow run or step-level CI evidence has been surfaced for the latest SHA |
+| RUNTIME PROVEN | **NOT PROVEN** — no connected Supabase target and no authenticated deployment runtime evidence available through current integrations |
 | PRODUCTION CERTIFIED | **NOT PROVEN** |
 
 ## Current baseline
 - Default branch: `main`.
 - Repository is private and the connected GitHub integration has admin/maintain/push capability.
-- Active feature branches are historical `feat/finance-operational-slice-20260906` and `feat/inventory-ops-slice-20260906`; they are not ahead of the current `main` boundary and do not contain unmerged implementation that should be blindly merged.
-- Evidence branches include earlier verification attempts and the current evidence PRs. PR #33 (`execution/release-hardening-audit-20260906`) was created from the exact current `main` boundary and adds executable release-audit checks plus a one-shot lockfile bootstrap workflow.
-- PRs #1–#25 are historical execution waves; the material operational waves were merged into `main` (order core, cart hardening, import/media, export, customer lifecycle, inventory, purchasing/receiving, finance, outbox security and runtime gate).
-- No current PR is authorized to become certification evidence unless its tested SHA is the exact frozen release SHA.
+- PR #33 (`execution/release-hardening-audit-20260906`) was merged into `main` at squash commit `bb2cc53b7a81d8bdad952f6881d731c8ba6aa6ff`.
+- Subsequent direct release-hardening commits advanced `main` to `e97f0c7bad9ca1f86076510079e6e5edae31fe48`.
+- Historical feature branches are not treated as release evidence unless their exact tested SHA is selected as the release boundary.
+- No historical CI result is reused as evidence for a later SHA.
 
 ## Completed implementation surface
 - React/Vite/TypeScript Arabic RTL operational application shell and command center.
@@ -62,10 +62,12 @@
 - Production CSP was added to `vercel.json`.
 - Outbox worker now requires an outbound webhook secret and times out delivery attempts after 10 seconds.
 - Frontend environment example no longer disagrees with the runtime key name.
-- **Executable release-audit gate added to detect missing release files, missing workflows, missing lockfile, legacy branding and suspicious completion markers.**
+- **Executable release-audit gate is part of the application quality gate and scans shipped HTML/PWA/config artifacts as well as executable source.**
+- **Node 22 runtime contract is explicitly pinned in `package.json`.**
+- **Typecheck is exposed as an explicit package/CI gate rather than being implicit only inside the production build.**
 
 ## Evidence boundary
-- Fresh exact-head CI was attempted repeatedly. Current verification attempts terminate within seconds with `failure` and no executable steps/logs available through the connector. This is classified as an **external CI runner/startup evidence blocker** rather than a code PASS/FAIL determination.
+- Latest SHA `e97f0c7bad9ca1f86076510079e6e5edae31fe48` currently has no surfaced GitHub workflow runs/statuses through the authorized connector; therefore CI is **NOT PROVEN**, not PASS.
 - Historical domain/G1/PostgreSQL/order evidence is retained but is **not** reused as proof for later SHAs.
 - Runtime browser E2E is implemented but **NOT RUNTIME-PROVEN**.
 - No Supabase project is currently connected to the authorized Supabase integration (`list_projects` returned no connected projects), so live DB/Auth/RLS/advisor/runtime proof cannot honestly be claimed.
