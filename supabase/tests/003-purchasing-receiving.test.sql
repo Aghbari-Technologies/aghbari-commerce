@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(12);
+select plan(13);
 
 insert into auth.users (id, email)
 values ('44444444-4444-4444-8444-444444444444', 'purchasing-admin@test.local');
@@ -21,17 +21,20 @@ values ('eeeeeeee-eeee-4eee-8eee-eeeeeeeeee03', 'eeeeeeee-eeee-4eee-8eee-eeeeeee
 insert into public.customers (id, organization_id, name, tier)
 values ('eeeeeeee-eeee-4eee-8eee-eeeeeeeeee04', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', 'Buyer', 'wholesale');
 
+insert into public.suppliers (id, organization_id, name)
+values ('eeeeeeee-eeee-4eee-8eee-eeeeeeeeee05', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', 'Supplier A');
+
 insert into public.profiles (id, organization_id, customer_id, role)
 values ('44444444-4444-4444-8444-444444444444', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee04', 'admin');
 
 set local role authenticated;
 set local request.jwt.claim.sub = '44444444-4444-4444-8444-444444444444';
 
-select ok((select count(*) = 1 from public.create_supplier('Supplier A', '700000000', null, 'Yemen'), 'Supplier creation is tenant-scoped and audited');
+select ok((select count(*) = 1 from public.create_supplier('Supplier B', '700000001', null, 'Yemen')), 'Supplier creation is tenant-scoped and audited');
 
 select results_eq(
   $$select purchase_order_number from public.create_purchase_order(
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee05'::uuid,
     'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee02'::uuid,
     'r5-purchase-key-000001',
     jsonb_build_array(jsonb_build_object('product_id','eeeeeeee-eeee-4eee-8eee-eeeeeeeeee03','quantity',10,'unit_cost',1250)),
@@ -49,7 +52,7 @@ select results_eq(
 
 select results_eq(
   $$select total from public.create_purchase_order(
-    '00000000-0000-0000-0000-000000000000'::uuid,
+    'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee05'::uuid,
     'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee02'::uuid,
     'r5-purchase-key-000001',
     jsonb_build_array(jsonb_build_object('product_id','eeeeeeee-eeee-4eee-8eee-eeeeeeeeee03','quantity',10,'unit_cost',1250)),
@@ -60,7 +63,7 @@ select results_eq(
 );
 
 select throws_ok(
-  $$select * from public.create_purchase_order('00000000-0000-0000-0000-000000000000'::uuid,'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee02'::uuid,'r5-purchase-key-000001',jsonb_build_array(jsonb_build_object('product_id','eeeeeeee-eeee-4eee-8eee-eeeeeeeeee03','quantity',11,'unit_cost',1250)),'YER')$$,
+  $$select * from public.create_purchase_order('eeeeeeee-eeee-4eee-8eee-eeeeeeeeee05'::uuid,'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee02'::uuid,'r5-purchase-key-000001',jsonb_build_array(jsonb_build_object('product_id','eeeeeeee-eeee-4eee-8eee-eeeeeeeeee03','quantity',11,'unit_cost',1250)),'YER')$$,
   '40001',
   'idempotency key payload conflict',
   'Changed purchase payload under the same key is rejected'
