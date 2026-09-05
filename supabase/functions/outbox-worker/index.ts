@@ -3,7 +3,8 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.112.4';
 const supabaseUrl = Deno.env.get('SUPABASE_URL');
 const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 const webhookUrl = Deno.env.get('OUTBOX_WEBHOOK_URL');
-const workerToken = Deno.env.get('OUTBOX_WEBHOOK_TOKEN');
+const webhookToken = Deno.env.get('OUTBOX_WEBHOOK_TOKEN');
+const inboundWorkerToken = Deno.env.get('OUTBOX_WORKER_TOKEN');
 
 if (!supabaseUrl || !serviceRoleKey) throw new Error('SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required');
 const supabase = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false, autoRefreshToken: false } });
@@ -31,17 +32,9 @@ async function deliver(event: OutboxEvent) {
       'x-aghbari-event-id': event.id,
       'x-aghbari-organization-id': event.organization_id,
       'idempotency-key': event.id,
-      ...(workerToken ? { authorization: `Bearer ${workerToken}` } : {})
+      ...(webhookToken ? { authorization: `Bearer ${webhookToken}` } : {})
     },
-    body: JSON.stringify({
-      id: event.id,
-      organizationId: event.organization_id,
-      aggregateType: event.aggregate_type,
-      aggregateId: event.aggregate_id,
-      eventType: event.event_type,
-      payload: event.payload,
-      attempts: event.attempts
-    })
+    body: JSON.stringify({ id: event.id, organizationId: event.organization_id, aggregateType: event.aggregate_type, aggregateId: event.aggregate_id, eventType: event.event_type, payload: event.payload, attempts: event.attempts })
   });
   if (response.ok || response.status === 409) return;
   const detail = (await response.text()).slice(0, 1000);
@@ -50,6 +43,9 @@ async function deliver(event: OutboxEvent) {
 
 Deno.serve(async (request) => {
   if (request.method !== 'POST') return jsonResponse({ error: 'method_not_allowed' }, 405);
+  if (!inboundWorkerToken || request.headers.get('authorization') !== `Bearer ${inboundWorkerToken}`) {
+    return jsonResponse({ error: 'unauthorized' }, 401);
+  }
 
   const limitHeader = request.headers.get('x-outbox-limit');
   const requestedLimit = Number(limitHeader ?? '20');
@@ -71,6 +67,5 @@ Deno.serve(async (request) => {
       results.push({ id: event.id, status: 'failed' });
     }
   }
-
   return jsonResponse({ claimed: events?.length ?? 0, results });
 });
