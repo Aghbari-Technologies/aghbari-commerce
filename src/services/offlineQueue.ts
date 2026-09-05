@@ -32,22 +32,31 @@ function read<T>(): OfflineOperation<T>[] {
   try {
     const parsed: unknown = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]');
     if (!Array.isArray(parsed)) return [];
-    return parsed.filter((item): item is OfflineOperation<T> => Boolean(
-      item && typeof item === 'object' &&
-      typeof (item as OfflineOperation).operationId === 'string' &&
-      UUID_PATTERN.test((item as OfflineOperation).operationId) &&
-      typeof (item as OfflineOperation).type === 'string' &&
-      OFFLINE_SAFE_OPERATION_TYPES.has((item as OfflineOperation).type) &&
-      typeof (item as OfflineOperation).createdAt === 'string' &&
-      Number.isFinite(Date.parse((item as OfflineOperation).createdAt)) &&
-      Number.isInteger((item as OfflineOperation).attempts) &&
-      (item as OfflineOperation).attempts >= 0 &&
-      (item as OfflineOperation).attempts <= MAX_OFFLINE_ATTEMPTS &&
-      typeof (item as OfflineOperation).userId === 'string' &&
-      UUID_PATTERN.test((item as OfflineOperation).userId) &&
-      ((item as OfflineOperation).nextAttemptAt === undefined || Number.isFinite(Date.parse((item as OfflineOperation).nextAttemptAt!))) &&
-      payloadBytes((item as OfflineOperation).payload) <= MAX_OFFLINE_PAYLOAD_BYTES
-    ));
+    const valid: OfflineOperation<T>[] = [];
+    for (const item of parsed) {
+      try {
+        if (!(
+          item && typeof item === 'object' &&
+          typeof (item as OfflineOperation).operationId === 'string' &&
+          UUID_PATTERN.test((item as OfflineOperation).operationId) &&
+          typeof (item as OfflineOperation).type === 'string' &&
+          OFFLINE_SAFE_OPERATION_TYPES.has((item as OfflineOperation).type) &&
+          typeof (item as OfflineOperation).createdAt === 'string' &&
+          Number.isFinite(Date.parse((item as OfflineOperation).createdAt)) &&
+          Number.isInteger((item as OfflineOperation).attempts) &&
+          (item as OfflineOperation).attempts >= 0 &&
+          (item as OfflineOperation).attempts <= MAX_OFFLINE_ATTEMPTS &&
+          typeof (item as OfflineOperation).userId === 'string' &&
+          UUID_PATTERN.test((item as OfflineOperation).userId) &&
+          ((item as OfflineOperation).nextAttemptAt === undefined || Number.isFinite(Date.parse((item as OfflineOperation).nextAttemptAt!))) &&
+          payloadBytes((item as OfflineOperation).payload) <= MAX_OFFLINE_PAYLOAD_BYTES
+        )) continue;
+        valid.push(item as OfflineOperation<T>);
+      } catch {
+        // A single corrupted record must not discard otherwise recoverable operations.
+      }
+    }
+    return valid;
   } catch {
     return [];
   }
@@ -82,7 +91,10 @@ export function enqueueOfflineOperation<T>(userId: string, type: string, payload
 
 export function pendingOfflineOperations<T = unknown>(userId?: string): OfflineOperation<T>[] {
   const queue = read<T>();
-  return userId && UUID_PATTERN.test(userId.trim()) ? queue.filter((item) => item.userId === userId.trim()) : queue;
+  if (userId === undefined) return queue;
+  const normalized = userId.trim();
+  if (!UUID_PATTERN.test(normalized)) return [];
+  return queue.filter((item) => item.userId === normalized);
 }
 
 export function removeOfflineOperation(operationId: string): void {
@@ -120,7 +132,9 @@ export async function drainOfflineOperations(
       removeOfflineOperation(operation.operationId);
       processed += 1;
     } catch {
-      markOfflineOperationAttempt(operation.operationId, now);
+      if (operation.attempts < MAX_OFFLINE_ATTEMPTS) {
+        markOfflineOperationAttempt(operation.operationId, now);
+      }
       failed += 1;
     }
   }
