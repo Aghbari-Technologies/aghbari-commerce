@@ -6,7 +6,7 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Integration branch: `execution/final-hardening-20260904`
-- Current exact implementation HEAD: **`a71ac34eebf4b05629f149b6e2ab243448becac5`**
+- Current exact implementation HEAD: **the current `head_sha` of PR #15**
 - Main/base HEAD: **`f7be8d752049e503e9e6aed650aacab3d9db65b4`**
 - Integration PR: **#15 — OPEN**
 
@@ -18,7 +18,7 @@
 |---|---|
 | BUILT | IMPLEMENTED — operational frontend, domain services, Supabase migrations/RPCs, PWA/offline, import/export, outbox foundation, R5 purchasing/receiving |
 | INTEGRATED | PR #15 OPEN — implementation is not yet in `main` |
-| VERIFIED | PRIOR POC gates proven; current-head CI checks exist but failed before executing steps |
+| VERIFIED | PRIOR POC gates proven; latest current-head CI checks failed before executing steps |
 | RUNTIME PROVEN | BLOCKED — real staging Auth/RLS/browser environment not connected |
 | PRODUCTION CERTIFIED | NOT PROVEN |
 
@@ -61,7 +61,7 @@
 - G1 PostgreSQL real-engine proof: **PASS** at prior exact boundary `f7be8d752049e503e9e6aed650aacab3d9db65b4`; this is regression evidence, not current-head evidence.
 - Order workflow state-machine proof: **PASS** at prior exact boundary `f7be8d752049e503e9e6aed650aacab3d9db65b4`.
 - Intelligence contract proof: **PASS** at prior exact boundary `486ee2940193b36a1a57d152b9c9fa53654c9b6b`.
-- Current PR-head checks at `a71ac34eebf4b05629f149b6e2ab243448becac5`: `quality`, `security`, and `migration-proof` all completed with **failure before workflow steps executed**. No current-head PASS is asserted.
+- Latest observed current-head checks at PR #15 head `a71ac34eebf4b05629f149b6e2ab243448becac5`: `quality`, `security`, and `migration-proof` all completed with **failure before workflow steps executed**. No current-head PASS is asserted for later commits until the checks execute again.
 - New R5 pgTAP suite: added to the migration test tree; execution remains pending a runner/local Supabase environment.
 
 ## Current implementation boundary
@@ -97,11 +97,11 @@ Report-Advisor has no operational write path into Aghbari. Intelligence recommen
 Documentation PASS means design consistency only. A domain-harness PASS does not prove database, runtime, security, deployment, or production. A migration file is not migration execution evidence. A UI restriction is not authorization evidence. A queued outbox event is not successful external delivery evidence. A green CI run on an earlier SHA is not exact-HEAD evidence.
 
 ## Latest execution result
-- Current implementation HEAD: **`a71ac34eebf4b05629f149b6e2ab243448becac5`**.
 - PR #15 remains the controlled integration boundary into `main`.
 - R5 purchasing/receiving has been materially implemented and connected to the command center.
 - Outbox worker delivery runtime has been added as an executable Edge Function boundary.
-- Current-head automated checks are **NOT PROVEN** because the available GitHub Actions executions failed before executing steps.
+- Current implementation changes are present on the PR branch; the exact frozen certification SHA is intentionally resolved only when the implementation work is stopped for certification.
+- Current automated verification is **NOT PROVEN** until checks execute on that frozen SHA.
 - No production certification has been issued.
 
 **NEXT:** continue independent implementation while preserving evidence discipline: execute the R5 database suite, harden remaining runtime edges, then establish real Supabase/Auth/RLS/browser infrastructure and certify only one frozen exact HEAD after all gates pass.
