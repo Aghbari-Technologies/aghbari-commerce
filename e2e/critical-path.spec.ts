@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test('authenticated customer critical path reaches real catalog and cart', async ({ page }) => {
+test('authenticated customer completes real catalog → cart → order → refresh path', async ({ page }) => {
   const email = process.env.E2E_EMAIL;
   const password = process.env.E2E_PASSWORD;
   if (!email || !password) throw new Error('E2E_EMAIL and E2E_PASSWORD are required; runtime tests must never silently skip.');
@@ -23,6 +23,19 @@ test('authenticated customer critical path reaches real catalog and cart', async
   await expect(addButton).toBeVisible();
   await addButton.click();
   await expect(page.getByRole('button', { name: /السلة، 1 أصناف/ })).toBeVisible();
+
+  const checkout = page.getByRole('button', { name: 'إرسال الطلب' });
+  await expect(checkout).toBeEnabled();
+  await checkout.click();
+
+  const success = page.getByRole('status').filter({ hasText: 'تم إرسال الطلب رقم' }).last();
+  await expect(success).toBeVisible();
+  await expect(page.getByText('طلباتي')).toBeVisible();
+  await expect(page.locator('#orders').getByText(/طلب #/).first()).toBeVisible();
+
+  await page.reload();
+  await expect(page.getByRole('link', { name: 'المنتجات' })).toBeVisible();
+  await expect(page.locator('#orders').getByText(/طلب #/).first()).toBeVisible();
 
   expect(pageErrors, `Uncaught browser errors: ${pageErrors.join(' | ')}`).toEqual([]);
 });
