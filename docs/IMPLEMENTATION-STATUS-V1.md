@@ -37,10 +37,10 @@ R5 now covers:
 - staff command-center controls for supplier creation, purchase creation, approval and receiving.
 
 ## Verification boundary
-Current PR #15 head is `a71ac34eebf4b05629f149b6e2ab243448becac5`. The three available current-head GitHub Actions checks (`quality`, `security`, `migration-proof`) were created for this exact SHA but completed in approximately two seconds with failure before any workflow step executed. Therefore this is recorded as **verification infrastructure failure**, not a code PASS and not a certification PASS.
+The current integration branch is tracked by PR #15; its `head_sha` is the only valid current implementation/certification boundary. The latest observed current-head GitHub Actions checks (`quality`, `security`, `migration-proof`) were created for an earlier PR head and completed before executing workflow steps. This is recorded as verification infrastructure failure, not a code PASS and not a certification PASS. Any later implementation commit invalidates earlier exact-head evidence.
 
 ## Immediate execution order
-1. Re-run/repair the GitHub Actions runner/check execution so the current exact HEAD can receive executable CI evidence.
+1. Re-run/repair the GitHub Actions runner/check execution so the final exact HEAD can receive executable CI evidence.
 2. Provision/connect a staging Supabase project and run direct-request authorization + RLS negative tests.
 3. Execute the new purchasing/receiving pgTAP suite against an empty database and verify upgrade migration behavior.
 4. Complete durable outbox delivery/retry/consumer-idempotency proof against a real endpoint.
