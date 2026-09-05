@@ -4,6 +4,11 @@
 
 CREATE TYPE public.stock_count_status AS ENUM ('open','completed','cancelled');
 
+-- The composite product reference is tenant-safe and requires a matching key.
+-- Products already have a globally unique UUID, so this constraint is purely for the
+-- composite tenant foreign key and does not change product identity semantics.
+ALTER TABLE public.products ADD CONSTRAINT products_id_organization_key UNIQUE (id, organization_id);
+
 CREATE TABLE public.stock_count_sessions (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   organization_id uuid NOT NULL REFERENCES public.organizations(id) ON DELETE RESTRICT,
@@ -34,7 +39,6 @@ CREATE TABLE public.stock_count_lines (
   created_at timestamptz NOT NULL DEFAULT now(),
   UNIQUE (session_id,product_id),
   UNIQUE (id,organization_id),
-  UNIQUE (product_id,organization_id),
   FOREIGN KEY (session_id,organization_id) REFERENCES public.stock_count_sessions(id,organization_id) ON DELETE CASCADE,
   FOREIGN KEY (product_id,organization_id) REFERENCES public.products(id,organization_id) ON DELETE RESTRICT
 );
