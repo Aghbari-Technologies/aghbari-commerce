@@ -4,7 +4,9 @@ import { supabase } from './lib/supabase';
 type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer';
 
 function escapeCsv(value: unknown) {
-  const text = String(value ?? '');
+  let text = String(value ?? '');
+  // Prevent spreadsheet formula injection when operational exports are opened in Excel-compatible software.
+  if (typeof value === 'string' && /^[=+\-@]/.test(text)) text = `'${text}`;
   return /[",\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
 }
 
