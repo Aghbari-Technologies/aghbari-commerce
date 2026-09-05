@@ -8,6 +8,7 @@ import { uploadProductImage } from './services/imagePipeline';
 import { getStaffOrders, transitionOrder, type StaffOrderSummary } from './services/staffOrders';
 import { supabase } from './lib/supabase';
 import PurchasingPanel from './PurchasingPanel';
+import ExportPanel from './ExportPanel';
 
 interface StaffProduct { id: string; sku: string; name: string; unit: string; }
 interface Warehouse { id: string; name: string; }
@@ -114,32 +115,25 @@ export default function AdminPanel({ role }: { role: UserRole }) {
         <textarea aria-label="وصف المنتج" placeholder="وصف المنتج (اختياري)" value={product.description} onChange={(e) => setProduct({ ...product, description: e.target.value })} rows={3} />
         <button disabled={busy}>حفظ المنتج</button>
       </form>}
-
       {canCategory && <form className="admin-card" onSubmit={(e) => { e.preventDefault(); void run(() => createCategory(category.name.trim(), category.slug.trim(), category.parentId || null), 'تم إنشاء التصنيف.'); }}>
         <h3>تصنيف جديد</h3><input aria-label="اسم التصنيف" placeholder="اسم التصنيف" value={category.name} onChange={(e) => setCategory({ ...category, name: e.target.value })} required />
         <input aria-label="معرف التصنيف" placeholder="slug مثل rice" value={category.slug} onChange={(e) => setCategory({ ...category, slug: e.target.value })} required pattern="[a-z0-9]+(?:-[a-z0-9]+)*" />
         <select aria-label="التصنيف الأب" value={category.parentId} onChange={(e) => setCategory({ ...category, parentId: e.target.value })}><option value="">تصنيف رئيسي</option>{categories.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select>
         <button disabled={busy}>حفظ التصنيف</button>
       </form>}
-
       {canCatalog && <form className="admin-card" onSubmit={(e) => { e.preventDefault(); if (!selectedProduct || !price) return; void run(() => setProductPrice(selectedProduct, tier, Number(price)), 'تم تحديث السعر الفعّال.'); }}>
         <h3>تسعير حسب الفئة</h3><select aria-label="المنتج" value={selectedProduct} onChange={(e) => setSelectedProduct(e.target.value)} required><option value="">اختر منتجًا</option>{products.map((p) => <option key={p.id} value={p.id}>{p.name} · {p.sku}</option>)}</select>
         <select aria-label="تصنيف العميل" value={tier} onChange={(e) => setTier(e.target.value as CustomerTier)}>{tiers.map((item) => <option key={item} value={item}>{item}</option>)}</select>
         <input aria-label="السعر" type="number" min="0" step="0.01" placeholder="السعر" value={price} onChange={(e) => setPrice(e.target.value)} required /><button disabled={busy}>اعتماد السعر</button>
       </form>}
-
       {canCatalog && <form className="admin-card" onSubmit={(e) => { e.preventDefault(); void uploadImage(); }}>
         <h3>صورة المنتج</h3><select aria-label="منتج الصورة" value={selectedProduct} onChange={(e) => setSelectedProduct(e.target.value)} required><option value="">اختر منتجًا</option>{products.map((p) => <option key={p.id} value={p.id}>{p.name} · {p.sku}</option>)}</select>
-        <input aria-label="صورة المنتج" type="file" accept="image/jpeg,image/png,image/webp" onChange={(e) => setImageFile(e.target.files?.[0] ?? null)} required />
-        <small>يتم التحويل إلى WebP وضغط الصورة قبل التخزين.</small><button disabled={busy || !selectedProduct || !imageFile}>رفع الصورة</button>
+        <input aria-label="صورة المنتج" type="file" accept="image/jpeg,image/png,image/webp" onChange={(e) => setImageFile(e.target.files?.[0] ?? null)} required /><small>يتم التحويل إلى WebP وضغط الصورة قبل التخزين.</small><button disabled={busy || !selectedProduct || !imageFile}>رفع الصورة</button>
       </form>}
-
       {canCatalog && <form className="admin-card" onSubmit={(e) => { e.preventDefault(); void stageImport(); }}>
         <h3>استيراد Excel آمن</h3><input aria-label="ملف المنتجات" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onChange={(e) => { setImportFile(e.target.files?.[0] ?? null); setImportJobId(null); setImportPreview(null); }} required />
-        {importPreview && <small>الصفوف: {importPreview.rows} · الأخطاء: {importPreview.invalid}</small>}
-        {!importJobId ? <button disabled={busy || !importFile}>رفع ومعاينة</button> : <button disabled={busy || !warehouseId} onClick={(e) => { e.preventDefault(); void commitImport(); }}>اعتماد الاستيراد الذري</button>}
+        {importPreview && <small>الصفوف: {importPreview.rows} · الأخطاء: {importPreview.invalid}</small>}{!importJobId ? <button disabled={busy || !importFile}>رفع ومعاينة</button> : <button disabled={busy || !warehouseId} onClick={(e) => { e.preventDefault(); void commitImport(); }}>اعتماد الاستيراد الذري</button>}
       </form>}
-
       {canInventory && <form className="admin-card" onSubmit={(e) => { e.preventDefault(); if (!selectedProduct || !warehouseId || !delta) return; void run(() => adjustInventory(warehouseId, selectedProduct, Number(delta), reason.trim()), 'تم تعديل المخزون وتسجيل الحركة.'); }}>
         <h3>تعديل المخزون</h3><select aria-label="المستودع" value={warehouseId} onChange={(e) => setWarehouseId(e.target.value)} required><option value="">اختر المستودع</option>{warehouses.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}</select>
         <select aria-label="المنتج" value={selectedProduct} onChange={(e) => setSelectedProduct(e.target.value)} required><option value="">اختر منتجًا</option>{products.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select>
@@ -149,5 +143,6 @@ export default function AdminPanel({ role }: { role: UserRole }) {
     {canOrderWorkflow && <div className="cart-panel"><div className="section-heading"><div><span className="eyebrow">التشغيل</span><h2>إدارة الطلبات</h2></div><span>{orders.length} طلبات</span></div>{ordersLoading ? <div className="cart-empty">جارٍ تحميل الطلبات…</div> : !orders.length ? <div className="cart-empty">لا توجد طلبات تشغيلية بعد.</div> : <div className="cart-lines">{orders.map((order) => <article className="cart-line" key={order.id}><div><strong>طلب #{order.order_number}</strong><small>العميل: {order.customer_name}</small></div><div><strong>{formatMoney(order.total)} {order.currency}</strong><small>الحالة: {STATUS_LABELS[order.status]}</small></div><div className="status-actions">{allowedNextStatuses(order.status, role).map((next) => <button key={next} disabled={busy} onClick={() => void changeOrderStatus(order.id, next)} aria-label={`تحويل الطلب ${order.order_number} إلى ${STATUS_LABELS[next]}`}>{STATUS_LABELS[next]}</button>)}</div></article>)}</div>}</div>}
     {error && <div className="error-banner" role="alert">{error}</div>}{message && <div className="success" role="status">{message}</div>}
     {canInventory && <PurchasingPanel role={role} />}
+    {canInventory && <ExportPanel role={role} />}
   </section>;
 }
