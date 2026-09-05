@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(13);
+select plan(14);
 
 insert into auth.users (id, email)
 values ('44444444-4444-4444-8444-444444444444', 'purchasing-admin@test.local');
@@ -13,7 +13,7 @@ insert into public.branches (id, organization_id, name)
 values ('eeeeeeee-eeee-4eee-8eee-eeeeeeeeee01', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', 'Main Branch');
 
 insert into public.warehouses (id, organization_id, branch_id, name)
-values ('eeeeeeee-eeee-4eee-8eee-eeeeeeeeee02', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee01', 'Main Warehouse');
+values ('eeeeeeee-eeee-4eee-8eee-eeeeeeeeee02', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee01', 'Main Warehouse');
 
 insert into public.products (id, organization_id, sku, name, unit)
 values ('eeeeeeee-eeee-4eee-8eee-eeeeeeeeee03', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', 'R5-001', 'Rice', 'carton');
@@ -86,6 +86,13 @@ select is((select quantity from public.inventory_balances where warehouse_id='ee
 select is((select count(*) from public.inventory_movements where source_type='purchase_receipt'),1::bigint,'Receiving creates one auditable inventory movement');
 
 select is((select count(*) from public.outbox_events where event_type='purchase.received'),1::bigint,'Receiving emits one durable outbox event');
+
+select throws_ok(
+  $$select * from public.receive_purchase_order((select id from public.purchase_orders where idempotency_key='r5-purchase-key-000001'),'r5-receipt-key-000001',jsonb_build_array(jsonb_build_object('purchase_order_item_id',(select id from public.purchase_order_items limit 1),'product_id','eeeeeeee-eeee-4eee-8eee-eeeeeeeeee03','quantity',9)))$$,
+  '40001',
+  'idempotency key payload conflict',
+  'Changed receipt payload under the same key is rejected'
+);
 
 select results_eq(
   $$select received_total from public.receive_purchase_order(
