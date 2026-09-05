@@ -1,0 +1,25 @@
+name: Application Foundation Quality
+
+on: [pull_request, push]
+
+permissions:
+  contents: read
+
+jobs:
+  app-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Print exact checked-out HEAD
+        run: git rev-parse HEAD
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install
+        run: npm install --no-audit --no-fund
+      - name: Typecheck + build
+        run: npm run build
+      - name: Domain unit tests
+        run: npm test

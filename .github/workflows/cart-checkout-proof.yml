@@ -1,0 +1,38 @@
+name: Cart Checkout Proof
+
+on: [pull_request, push]
+
+permissions:
+  contents: read
+
+jobs:
+  cart-checkout:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 30
+    env:
+      PGHOST: localhost
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: postgres
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Print exact checked-out HEAD
+        run: git rev-parse HEAD
+      - name: Execute multi-line checkout proof
+        run: psql -v ON_ERROR_STOP=1 -f tests/sql/cart-checkout.sql
