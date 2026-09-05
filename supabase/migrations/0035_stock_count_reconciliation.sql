@@ -47,12 +47,12 @@ CREATE INDEX stock_count_lines_session_idx ON public.stock_count_lines(organizat
 ALTER TABLE public.stock_count_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.stock_count_lines ENABLE ROW LEVEL SECURITY;
 CREATE POLICY stock_count_sessions_staff_read ON public.stock_count_sessions FOR SELECT TO authenticated
-  USING (organization_id=public.current_organization_id() AND public.current_role() IN ('owner','admin','warehouse'));
+  USING (organization_id=(select public.current_organization_id()) AND (select public.current_role()) IN ('owner','admin','warehouse'));
 CREATE POLICY stock_count_lines_staff_read ON public.stock_count_lines FOR SELECT TO authenticated
-  USING (organization_id=public.current_organization_id() AND public.current_role() IN ('owner','admin','warehouse'));
+  USING (organization_id=(select public.current_organization_id()) AND (select public.current_role()) IN ('owner','admin','warehouse'));
 
 CREATE OR REPLACE FUNCTION public.start_stock_count(p_warehouse_id uuid,p_idempotency_key text,p_notes text DEFAULT NULL)
-RETURNS public.stock_count_sessions LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$
+RETURNS public.stock_count_sessions LANGUAGE plpgsql SECURITY DEFINER SET search_path='' AS $$
 DECLARE
   v_org uuid:=public.current_organization_id(); v_role public.user_role:=public.current_role(); v_session public.stock_count_sessions%rowtype; v_existing public.stock_count_sessions%rowtype;
 BEGIN
@@ -82,7 +82,7 @@ BEGIN
 END; $$;
 
 CREATE OR REPLACE FUNCTION public.set_stock_count_line(p_session_id uuid,p_product_id uuid,p_counted_quantity integer)
-RETURNS public.stock_count_lines LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$
+RETURNS public.stock_count_lines LANGUAGE plpgsql SECURITY DEFINER SET search_path='' AS $$
 DECLARE
   v_org uuid:=public.current_organization_id(); v_role public.user_role:=public.current_role(); v_line public.stock_count_lines%rowtype;
 BEGIN
@@ -97,7 +97,7 @@ BEGIN
 END; $$;
 
 CREATE OR REPLACE FUNCTION public.complete_stock_count(p_session_id uuid)
-RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$
+RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path='' AS $$
 DECLARE
   v_org uuid:=public.current_organization_id(); v_role public.user_role:=public.current_role(); v_session public.stock_count_sessions%rowtype; v_line public.stock_count_lines%rowtype; v_balance public.inventory_balances%rowtype; v_variance integer; v_adjusted integer:=0;
 BEGIN
