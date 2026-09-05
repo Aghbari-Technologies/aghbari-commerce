@@ -1,0 +1,25 @@
+name: application-quality
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # No lockfile is committed yet; avoid setup-node cache's hard requirement for one.
+      - run: npm install
+      - run: npm run test
+      - run: npm run lint
+      - run: npm run build

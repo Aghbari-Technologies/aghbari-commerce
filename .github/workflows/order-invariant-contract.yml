@@ -1,0 +1,29 @@
+name: order-invariant-contract
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'supabase/migrations/0025_idempotency_race_authority_hardening.sql'
+      - 'scripts/check-order-invariants.mjs'
+      - '.github/workflows/order-invariant-contract.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Exact-head binding
+        run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha }}"
+      - name: Order invariant contract
+        run: node scripts/check-order-invariants.mjs
