@@ -77,6 +77,12 @@ describe('offline operation queue', () => {
     expect(pendingOfflineOperations('not-a-user')).toHaveLength(0);
   });
 
+  it('does not clear another user scope when the supplied user id is invalid', () => {
+    enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: 1 });
+    clearOfflineQueue('not-a-user');
+    expect(pendingOfflineOperations(USER_A)).toHaveLength(1);
+  });
+
   it('drops legacy or malformed persisted records rather than replaying them', () => {
     storage.set('aghbari.offline.operations.v1', JSON.stringify([
       { operationId: 'not-a-uuid', userId: USER_A, type: OFFLINE_CART_SET_ITEM, createdAt: new Date().toISOString(), attempts: 0, payload: {} },
