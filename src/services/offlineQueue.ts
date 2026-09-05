@@ -147,10 +147,11 @@ export async function drainOfflineOperations(
 }
 
 export function clearOfflineQueue(userId?: string): void {
-  if (!userId || !UUID_PATTERN.test(userId.trim())) {
+  if (userId === undefined) {
     localStorage.removeItem(STORAGE_KEY);
     return;
   }
   const normalized = userId.trim();
+  if (!UUID_PATTERN.test(normalized)) return;
   persist(read<unknown>().filter((item) => item.userId !== normalized));
 }
