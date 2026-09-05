@@ -25,13 +25,14 @@ function finiteNumber(value: unknown, fallback = 0): number {
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
-export async function getCatalog(search = '', categoryId: string | null = null, limit = 24, offset = 0) {
+export async function getCatalog(search = '', categoryId: string | null = null, limit = 24, offset = 0, warehouseId: string) {
   const query = normalizeCatalogQuery(search, limit, offset);
   const { data, error } = await retryRead(() => requireSupabase().rpc('get_catalog', {
     p_search: query.search || null,
     p_category_id: categoryId,
     p_limit: query.limit,
-    p_offset: query.offset
+    p_offset: query.offset,
+    p_warehouse_id: warehouseId
   }).then((result) => {
     if (result.error) throw result.error;
     return result;
