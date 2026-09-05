@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { supabase } from './lib/supabase';
-import { transferInventory, setStockThreshold, getLowStock, type LowStockRow } from './services/inventory';
+import { completeStockCount, getLowStock, getOpenStockCount, getStockCountLines, setStockCountLine, setStockThreshold, startStockCount, transferInventory, type LowStockRow, type StockCountLine, type StockCountSession } from './services/inventory';
 
 type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer';
 interface Product { id: string; sku: string; name: string; }
@@ -11,6 +11,10 @@ export default function InventoryPanel({ role }: { role: UserRole }) {
   const [products, setProducts] = useState<Product[]>([]);
   const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
   const [lowStock, setLowStock] = useState<LowStockRow[]>([]);
+  const [stockCount, setStockCount] = useState<StockCountSession | null>(null);
+  const [stockLines, setStockLines] = useState<StockCountLine[]>([]);
+  const [countWarehouse, setCountWarehouse] = useState('');
+  const [countNotes, setCountNotes] = useState('');
   const [source, setSource] = useState('');
   const [destination, setDestination] = useState('');
   const [productId, setProductId] = useState('');
@@ -26,25 +30,27 @@ export default function InventoryPanel({ role }: { role: UserRole }) {
 
   const reload = useCallback(async () => {
     if (!supabase || !canUse) return;
-    const [productResult, warehouseResult, lowRows] = await Promise.all([
+    const [productResult, warehouseResult, lowRows, openCount] = await Promise.all([
       supabase.from('products').select('id,sku,name').eq('status','active').order('name').limit(500),
       supabase.from('warehouses').select('id,name').eq('is_active',true).order('created_at'),
-      getLowStock()
+      getLowStock(),
+      getOpenStockCount()
     ]);
     const { data: productRows, error: productError } = productResult;
     const { data: warehouseRows, error: warehouseError } = warehouseResult;
     if (productError) throw productError;
     if (warehouseError) throw warehouseError;
-    setProducts((productRows ?? []) as Product[]);
     const nextWarehouses = (warehouseRows ?? []) as Warehouse[];
-    setWarehouses(nextWarehouses);
-    setLowStock(lowRows);
+    setProducts((productRows ?? []) as Product[]); setWarehouses(nextWarehouses); setLowStock(lowRows); setStockCount(openCount);
+    if (openCount) setStockLines(await getStockCountLines(openCount.id));
+    else setStockLines([]);
     if (!source && nextWarehouses[0]) setSource(nextWarehouses[0].id);
     if (!destination && nextWarehouses[1]) setDestination(nextWarehouses[1].id);
+    if (!countWarehouse && nextWarehouses[0]) setCountWarehouse(nextWarehouses[0].id);
     if (!thresholdWarehouse && nextWarehouses[0]) setThresholdWarehouse(nextWarehouses[0].id);
     if (!productId && productRows?.[0]) setProductId(productRows[0].id);
     if (!thresholdProduct && productRows?.[0]) setThresholdProduct(productRows[0].id);
-  }, [canUse, destination, productId, source, thresholdProduct, thresholdWarehouse]);
+  }, [canUse, countWarehouse, destination, productId, source, thresholdWarehouse, thresholdProduct]);
 
   useEffect(() => { void reload().catch((e) => setError(e instanceof Error ? e.message : 'تعذر تحميل المخزون.')); }, [reload]);
 
@@ -57,9 +63,11 @@ export default function InventoryPanel({ role }: { role: UserRole }) {
 
   if (!canUse) return null;
   const makeKey = (prefix: string) => `agh-${prefix}-${crypto.randomUUID()}`;
+  const productName = new Map(products.map((p) => [p.id, `${p.name} · ${p.sku}`]));
+  const countCompleted = stockLines.filter((line) => line.counted_quantity !== null).length;
 
   return <div className="cart-panel" id="inventory">
-    <div className="section-heading"><div><span className="eyebrow">المخزون</span><h2>النقل والتنبيهات التشغيلية</h2></div><span>{lowStock.length} أصناف منخفضة</span></div>
+    <div className="section-heading"><div><span className="eyebrow">المخزون</span><h2>النقل والجرد والتنبيهات التشغيلية</h2></div><span>{lowStock.length} أصناف منخفضة</span></div>
     <div className="admin-grid">
       <form className="admin-card" onSubmit={(e) => { e.preventDefault(); void run(() => transferInventory(source,destination,makeKey('transfer'),[{productId,quantity:Number(quantity)}],notes), 'تم نقل المخزون ذريًا وتسجيل الحركتين.'); }}>
         <h3>تحويل بين المستودعات</h3>
@@ -79,6 +87,20 @@ export default function InventoryPanel({ role }: { role: UserRole }) {
         <input aria-label="كمية إعادة الطلب" type="number" min="1" step="1" value={reorderQuantity} onChange={(e) => setReorderQuantity(e.target.value)} required />
         <button disabled={busy}>حفظ الحد</button>
       </form>
+
+      <div className="admin-card">
+        <h3>جرد مخزون فعلي</h3>
+        {!stockCount ? <form onSubmit={(e) => { e.preventDefault(); void run(() => startStockCount(countWarehouse,makeKey('stock-count'),countNotes), 'بدأت جلسة الجرد وتم أخذ لقطة الكميات المتوقعة.'); }}>
+          <select aria-label="مستودع الجرد" value={countWarehouse} onChange={(e) => setCountWarehouse(e.target.value)} required><option value="">اختر المستودع</option>{warehouses.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}</select>
+          <input aria-label="ملاحظات الجرد" placeholder="ملاحظة الجرد (اختياري)" value={countNotes} onChange={(e) => setCountNotes(e.target.value)} />
+          <small>لا يتم تعديل الرصيد عند البدء؛ التسوية تحدث فقط بعد اكتمال العد واعتماده.</small>
+          <button disabled={busy || !countWarehouse}>بدء الجرد</button>
+        </form> : <div>
+          <div className="section-heading"><span>{countCompleted} / {stockLines.length} تم عدّه</span><button disabled={busy || countCompleted !== stockLines.length} onClick={() => void run(() => completeStockCount(stockCount.id), 'اكتمل الجرد وتمت تسوية الفروقات وتسجيلها.')} >اعتماد الجرد</button></div>
+          <div className="cart-lines">{stockLines.slice(0,50).map((line) => <label className="cart-line" key={line.id}><div><strong>{productName.get(line.product_id) ?? line.product_id}</strong><small>المتوقع عند بدء الجرد: {line.expected_quantity}</small></div><input aria-label={`الكمية المعدودة ${productName.get(line.product_id) ?? line.product_id}`} type="number" min="0" step="1" value={line.counted_quantity ?? ''} onChange={(e) => { const value = e.target.value; setStockLines((current) => current.map((item) => item.id === line.id ? { ...item, counted_quantity: value === '' ? null : Number(value) } : item)); }} onBlur={() => { if (line.counted_quantity !== null) void run(() => setStockCountLine(stockCount.id,line.product_id,line.counted_quantity!), 'تم حفظ العد.'); }} /></label>)}</div>
+          {stockLines.length > 50 && <small>يتم عرض أول 50 سطرًا في شاشة الجرد؛ يمكن متابعة البقية من خلال نفس جلسة الجرد.</small>}
+        </div>}
+      </div>
 
       <div className="admin-card"><h3>الأصناف التي تحتاج إجراء</h3>{!lowStock.length ? <small>لا توجد أصناف تحت حدود إعادة الطلب.</small> : <div className="cart-lines">{lowStock.slice(0,20).map((row) => <article className="cart-line" key={`${row.warehouse_id}:${row.product_id}`}><div><strong>{row.product_name}</strong><small>{row.sku} · {row.warehouse_name}</small></div><div><strong>{row.current_quantity}</strong><small>الحد {row.min_quantity} · إعادة {row.reorder_quantity}</small></div></article>)}</div>}</div>
     </div>
