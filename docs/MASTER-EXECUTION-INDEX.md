@@ -6,9 +6,9 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Branch: `main`
-- Current exact implementation HEAD: **`4ff7425bf5c70e83106c0af3e786575efe8e1b4b`**
-- Latest integrated PR: **#24 — MERGED**
-- Integrated execution batches: operational implementation (#16), offline cart security (#17), export/RLS hardening (#18), release documentation (#19), customer/inventory/finance hardening (#20/#21/#22), outbox worker security (#23), browser E2E gate (#24).
+- Latest code implementation HEAD: **`a22026fb40917b979c0686810c3ce2fe30712c04`**
+- This ledger update is documentation-only and creates the next exact repository HEAD; the code boundary above is the SHA that must be used when judging implementation evidence.
+- Latest integrated execution batches: operational implementation (#16), offline cart security (#17), export/RLS hardening (#18), release documentation (#19), customer/inventory/finance hardening (#20/#21/#22), outbox worker security (#23), browser E2E gate (#24), inventory loader type repair (#25).
 
 ## Standing execution command
 **`1` = CONTINUE / EXECUTE AUTONOMOUSLY / DEEPEN / TEST / VERIFY / DOCUMENT / SELF-IMPROVE.**
@@ -17,8 +17,8 @@
 | Stage | State |
 |---|---|
 | BUILT | **ADVANCED IMPLEMENTED** — executable commerce shell + catalog/pricing/orders/cart, staff operations, customers, inventory transfers/thresholds, purchasing/receiving, finance/invoices/payments/cash/expenses, import/export, outbox worker, PWA/offline primitives, security hardening |
-| INTEGRATED | **PASS — current `main` HEAD `4ff7425bf5c70e83106c0af3e786575efe8e1b4b`** |
-| VERIFIED | **PENDING fresh executable CI on current HEAD** |
+| INTEGRATED | **PASS — code boundary `a22026fb40917b979c0686810c3ce2fe30712c04`** |
+| VERIFIED | **PENDING fresh executable CI on the current code boundary** |
 | RUNTIME PROVEN | **NOT PROVEN** — authenticated staging/browser runtime and external delivery evidence still required |
 | PRODUCTION CERTIFIED | **NOT PROVEN** |
 
@@ -44,13 +44,15 @@
 - PWA manifest/service worker/offline fallback.
 - Security headers/CSP and browser secret-boundary checks.
 - Playwright authenticated browser critical-path gate and manual deployment-target runtime workflow.
+- Workspace ignore rules and non-secret environment-variable example.
 
 ## Current executable evidence
 - Historical G1/domain/PostgreSQL/order-workflow evidence remains **prior-boundary regression evidence** only.
 - Historical intelligence contract proof remains prior-boundary evidence only.
-- Recent GitHub Actions jobs were created for current execution branches, but observed jobs failed at runner/job startup before actionable test steps were exposed. Therefore no green current-head CI result is claimed.
-- Runtime E2E is implemented but not executed against a real deployed target in this session because it requires the target URL and dedicated authenticated E2E credentials.
+- Recent GitHub Actions jobs for execution branches were observed failing at runner/job startup before actionable test steps were exposed. Therefore no green current-head CI result is claimed.
+- Runtime E2E is implemented but not executed against a real deployed target because it requires the target URL and dedicated authenticated E2E credentials.
 - Outbox delivery is implemented but external webhook delivery/retry/idempotency is not runtime-proven.
+- No connected Supabase project is currently available through the authorized Supabase connection, so live database/Auth/RLS execution cannot be claimed.
 
 ## Forensic defects discovered and repaired
 1. Offline cart enqueue calls used the wrong `enqueueOfflineOperation` argument shape; repaired.
@@ -64,6 +66,8 @@
 9. Outbox worker accepted unauthenticated privileged invocation; it now fails closed behind `OUTBOX_WORKER_TOKEN`.
 10. Browser E2E infrastructure was missing; Playwright gate and deployment-target workflow were added.
 11. README contained stale prototype-phase claims; reconciled with the current executable phase.
+12. InventoryPanel incorrectly treated `getLowStock()` as a Supabase `{data,error}` response; repaired.
+13. Repository lacked `.gitignore` and a non-secret `.env.example`; added.
 
 ## Remaining product gaps / gates
 1. **Fresh current-HEAD CI:** application quality, lint, typecheck, production build, unit tests, security and migration proof.
@@ -92,9 +96,9 @@ Report-Advisor has no operational write path into Aghbari. Intelligence recommen
 Documentation PASS means design consistency only. A domain-harness PASS does not prove database, runtime, security, deployment, or production. A migration file is not migration execution evidence. A UI restriction is not authorization evidence. A queued outbox event is not successful external delivery evidence. A green CI run on an earlier SHA is not exact-HEAD evidence.
 
 ## Latest execution result
-- **Current exact `main` HEAD:** `4ff7425bf5c70e83106c0af3e786575efe8e1b4b`.
+- **Latest implementation code boundary:** `a22026fb40917b979c0686810c3ce2fe30712c04`.
 - Customer, inventory, finance, export, offline-cart and outbox security hardening are integrated.
 - Playwright runtime certification gate is integrated.
 - **No production certification is claimed.**
 
-**NEXT EXECUTION LOOP:** establish fresh current-head CI evidence; repair every genuine failure; execute real Supabase/Auth/RLS/browser/integration/runtime/deployment evidence; complete only the remaining operational modules required by the canonical scope; then freeze one exact final certification SHA.
+**NEXT EXECUTION LOOP:** establish fresh executable CI on the implementation boundary; repair every genuine failure; obtain a connected Supabase staging target for Auth/RLS/DB proof; execute deployed browser and integration evidence; complete only the remaining operational modules required by the canonical scope; then freeze one exact final certification SHA.
