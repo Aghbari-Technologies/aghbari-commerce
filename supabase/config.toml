@@ -22,3 +22,6 @@ enabled = true
 
 [analytics]
 enabled = false
+
+[functions.outbox-worker]
+verify_jwt = false
