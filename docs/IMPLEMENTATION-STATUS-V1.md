@@ -1,6 +1,6 @@
 # Aghbari — Implementation Status V1
 
-**Boundary:** current operational implementation through stock-count reconciliation; verification and runtime certification remain evidence gates.
+**Boundary:** current operational implementation through stock-count reconciliation and warehouse-specific catalog truth; verification and runtime certification remain evidence gates.
 
 ## Status
 
@@ -13,61 +13,59 @@
 - Operational domain/services: IMPLEMENTED and integrated
 - Supabase operational migrations/RLS/RPC layer: IMPLEMENTED in migration tree
 - Catalog, cart, orders, import, image pipeline and offline queue: IMPLEMENTED
+- Catalog availability: HARDENED — availability is now resolved for the selected/active checkout warehouse instead of the most recently updated warehouse balance
 - Purchasing + receiving vertical slice: IMPLEMENTED — migrations `0026`/`0027`, typed service, adversarial pgTAP coverage, operational command-center UI
 - Customer lifecycle: IMPLEMENTED — create, tier, activation state, RBAC, audit and UI
 - Inventory transfer + thresholds/low-stock: IMPLEMENTED — transactional RPCs, audit/outbox and UI
 - Stock count/reconciliation: IMPLEMENTED — migration `0035`, typed service, command-center UI and adversarial pgTAP test
 - Finance: IMPLEMENTED — invoices, payments, cash accounts, expenses and non-negative cash protection
 - Catalog export: AVAILABLE through the existing operational export panel
-- Outbox: durable claim/recovery contract implemented; deployable webhook worker now present; production delivery proof remains open
+- Outbox: durable claim/recovery contract implemented; deployable webhook worker now present; production delivery proof remains open; outbound delivery now fails closed without `OUTBOX_WEBHOOK_TOKEN` and uses a 10-second request timeout
+- Offline cart: HARDENED — invalid user filters no longer expose the whole local queue; retry exhaustion is terminal and cannot block later operations; duplicate online-event replay trigger removed
 - Real Auth/RLS E2E: BLOCKED pending connected staging Supabase target
-- Browser E2E: IMPLEMENTED as an executable Playwright gate; runtime execution remains pending target + dedicated credentials
+- Browser E2E: IMPLEMENTED as an executable Playwright gate; now covers authenticated catalog → cart → real order → refresh verification; runtime execution remains pending target + dedicated credentials
 - Production deployment: OPEN — runtime target and deployment proof not yet established
 - Production certification: NOT CERTIFIED
 
 ## Current implementation boundary
-**Exact current `main` HEAD:** `8c65436fce586b9f9d61a8ef7fc72029adbf7f00` (documentation-only reconciliation after code boundary `dbddc90877ee067b60af6a18169e4cac6e0e6eb2`).
+**Latest current `main` implementation HEAD:** `c2623cfad1d6e15f42693bc8ee58c754991c856d`.
 
-The repository contains a real React/Vite operational application, Supabase migration/RPC implementation, domain services/tests, offline/PWA assets, import pipeline, catalog export, order/cart hardening, purchasing/receiving, customer lifecycle, inventory reconciliation and operational finance.
+The repository contains a real React/Vite operational application, Supabase migration/RPC implementation, domain services/tests, offline/PWA assets, import pipeline, catalog export, order/cart hardening, purchasing/receiving, customer lifecycle, warehouse-aware catalog availability, inventory reconciliation and operational finance.
 
-## R5 purchasing/receiving
-- tenant-bound suppliers;
-- purchase-order creation with server-side validation;
-- submit → approve workflow;
-- atomic receiving into warehouse inventory;
-- inventory movement evidence;
-- audit/outbox evidence;
-- operation-level idempotency;
-- rejection of same-key/different-payload replay;
-- adversarial pgTAP coverage;
-- staff command-center controls for supplier creation, purchase creation, approval and receiving.
+## Self-audit repairs completed in this boundary
+1. Stock-count migration composite foreign-key target was corrected by adding the required `(id, organization_id)` unique key to `products`; PostgreSQL requires referenced composite columns to be covered by a unique/primary key constraint. citeturn6search3turn6search11
+2. Stock-count idempotency now rejects reuse of the same key against a different warehouse.
+3. Stock-count `SECURITY DEFINER` functions use an empty search path with explicit schema qualification, following the current Supabase security guidance. citeturn3search0turn3search1
+4. Stock-count UI no longer truncates the active count to the first 50 lines, so a started count cannot be silently impossible to finish for products after row 50.
+5. Catalog availability is now warehouse-specific through migration `0036_catalog_warehouse_truth.sql`, with a regression test proving different warehouse balances are returned for the same product.
+6. Offline queue retry exhaustion is explicitly terminal and later operations continue processing.
+7. Offline queue invalid user filters return no records instead of falling back to the complete local queue.
+8. Duplicate `online` event synchronization was removed from the cart service so the App remains the single runtime sync owner.
+9. Production Vercel response headers now include a restrictive CSP in addition to the existing browser hardening.
+10. Frontend `.env.example` was corrected to use `VITE_SUPABASE_PUBLISHABLE_KEY`, matching the actual client code and eliminating a configuration-name drift that could produce a false missing-environment failure.
 
-## R3 stock count
-- stock-count session is tenant/warehouse bound;
-- only owner/admin/warehouse may operate it;
-- start operation is idempotent;
-- expected quantity is captured without mutating inventory;
-- every line must be counted before completion;
-- completion locks the session and current inventory row;
-- reconciliation targets the physical counted quantity rather than blindly overwriting from a stale snapshot;
-- non-zero variance becomes an inventory movement tied to the count session;
-- audit + outbox evidence is emitted;
-- pgTAP covers the critical invariants and idempotent replay.
+## Current executable evidence
+- Fresh current-head GitHub Actions verification was attempted through exact-head PR #28. All surfaced checks (`quality`, `migration-proof`, `security`, `g1-domain-invariants`, `order-workflow-proof`, and additional quality/security/migration runs) terminated within seconds with failure and no executable job steps/logs exposed by the connector. This is classified as a **CI infrastructure/startup evidence blocker**, not a code PASS and not a code defect without logs.
+- Historical G1/domain/PostgreSQL/order evidence remains prior-boundary regression evidence only.
+- Current post-repair implementation has **NOT PROVEN** CI until a workflow actually executes its steps successfully.
+- Runtime E2E remains **NOT PROVEN** against a real deployment.
+- Live Supabase Auth/RLS/DB execution remains unavailable through the current authorized Supabase connection because no Supabase projects are connected; no live PASS is claimed.
+- Outbox external delivery remains **NOT PROVEN**.
 
-## Verification boundary
-Historical G1/domain/PostgreSQL/order evidence is prior-boundary regression evidence only. The current post-stock-count code has not received a fresh executable CI PASS. Recent GitHub Actions infrastructure failures are recorded as verification infrastructure failures rather than code PASS. Any new implementation commit invalidates earlier exact-HEAD evidence.
-
-## Immediate execution order
-1. Execute fresh current-head application quality and migration proof; repair every actionable failure.
-2. Connect/provision staging Supabase and execute Auth/RLS Tenant A/B negative tests.
-3. Execute all current pgTAP suites against empty/reset and upgrade paths.
-4. Execute authenticated Playwright browser proof on the deployed target.
-5. Complete offline cache/replay/conflict/recovery runtime proof.
-6. Complete outbox delivery/retry/backoff/DLQ/consumer-idempotency runtime proof.
-7. Complete import/export runtime proof.
-8. Close remaining Sales/Inventory/Notifications/Integration Hub requirements that are confirmed by the canonical scope.
-9. Add performance, observability, backup/recovery and deployment rollback evidence.
-10. Freeze one exact final HEAD and certify only after every gate has evidence.
+## Remaining closure work
+1. Restore executable GitHub Actions runner/check execution and obtain step-level evidence for the exact current SHA.
+2. Generate and commit a deterministic npm lockfile, then switch CI from floating `npm install` to `npm ci` where appropriate.
+3. Execute all current pgTAP suites against reset and upgrade paths, including the new catalog/stock-count tests.
+4. Connect/provision staging Supabase with Tenant A/B identities and execute Auth/RLS role-negative tests.
+5. Execute authenticated browser proof against the deployment target: login → catalog → cart → order → refresh → verify.
+6. Complete offline runtime proof: offline mutation, reload, reconnect, replay, terminal retry and tenant isolation.
+7. Complete outbox runtime proof: claim, delivery, retry/backoff, terminal failure/DLQ, consumer idempotency and secret rejection.
+8. Complete import/export runtime proof: malformed input, quarantine/staging, atomic commit, authorization and export isolation.
+9. Confirm and close any remaining Sales/Inventory requirements from the canonical business scope; do not invent non-required modules.
+10. Add representative performance/load evidence and inspect database advisor findings once a real Supabase environment exists. Supabase recommends Security Advisor and Performance Advisor as production-readiness checks. citeturn5search2turn5search6
+11. Add production observability, audit completeness, backup/recovery and rollback evidence.
+12. Execute production deployment smoke tests and verify the deployed artifact matches the frozen SHA.
+13. Final audit → final regression → exact final HEAD verification → release candidate → certification.
 
 ## Product boundary — non-negotiable
 Aghbari owns operational truth. Report-Advisor owns analytics/intelligence. The allowed direction remains:
@@ -77,4 +75,4 @@ Aghbari owns operational truth. Report-Advisor owns analytics/intelligence. The 
 No duplicate BI/analytics dashboard or operational write path is introduced into Aghbari.
 
 ## Evidence rule
-Every future PASS claim must name the exact HEAD, execution environment, test path, and evidence artifact. A commit alone is never a runtime PASS.
+Every future PASS claim must name the exact HEAD, execution environment, test path, and evidence artifact. A commit alone is never a runtime PASS. Supabase's migration guidance likewise treats migration execution/testing as a separate deployment concern. citeturn2search1
