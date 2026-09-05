@@ -1,6 +1,12 @@
 -- Customer operational lifecycle: create, tier management, activation state.
 -- All mutations derive organization and actor role from authenticated server-side identity.
 
+ALTER TABLE public.customers
+  ADD COLUMN IF NOT EXISTS updated_at timestamptz NOT NULL DEFAULT now();
+
+CREATE INDEX IF NOT EXISTS customers_org_active_idx
+  ON public.customers(organization_id,is_active,name);
+
 CREATE OR REPLACE FUNCTION public.create_customer(
   p_name text,
   p_phone text DEFAULT NULL,
@@ -49,8 +55,7 @@ BEGIN
   IF v_org IS NULL OR v_role NOT IN ('owner','admin') THEN
     RAISE EXCEPTION USING errcode='42501',message='customer tier management access required';
   END IF;
-  SELECT * INTO v_customer FROM public.customers
-  WHERE id=p_customer_id AND organization_id=v_org FOR UPDATE;
+  SELECT * INTO v_customer FROM public.customers WHERE id=p_customer_id AND organization_id=v_org FOR UPDATE;
   IF NOT FOUND THEN RAISE EXCEPTION USING errcode='P0002',message='customer not found'; END IF;
   IF p_tier IS NULL THEN RAISE EXCEPTION USING errcode='22023',message='customer tier required'; END IF;
   UPDATE public.customers SET tier=p_tier,updated_at=now() WHERE id=v_customer.id RETURNING * INTO v_customer;
@@ -76,8 +81,7 @@ BEGIN
   IF v_org IS NULL OR v_role NOT IN ('owner','admin') THEN
     RAISE EXCEPTION USING errcode='42501',message='customer state management access required';
   END IF;
-  SELECT * INTO v_customer FROM public.customers
-  WHERE id=p_customer_id AND organization_id=v_org FOR UPDATE;
+  SELECT * INTO v_customer FROM public.customers WHERE id=p_customer_id AND organization_id=v_org FOR UPDATE;
   IF NOT FOUND THEN RAISE EXCEPTION USING errcode='P0002',message='customer not found'; END IF;
   UPDATE public.customers SET is_active=coalesce(p_is_active,false),updated_at=now() WHERE id=v_customer.id RETURNING * INTO v_customer;
   INSERT INTO public.audit_events(organization_id,actor_id,action,target_type,target_id,result,metadata)
