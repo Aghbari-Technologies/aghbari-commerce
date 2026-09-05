@@ -10,7 +10,7 @@ values ('67676767-6767-4676-8676-676767676767','Finance Tenant');
 insert into public.branches (id,organization_id,name)
 values ('67676767-6767-4676-8676-676767676768','67676767-6767-4676-8676-676767676767','Main');
 insert into public.warehouses (id,organization_id,branch_id,name)
-values ('67676767-6767-4676-8676-676767676769','67676767-6767-4676-8676-676767676767','67676767-6767-4676-8676-676767676768','Warehouse');
+values ('67676767-6767-4676-8676-676767676769','67676767-6767-4676-8676-676767676768','Warehouse');
 insert into public.customers (id,organization_id,name,tier)
 values ('67676767-6767-4676-8676-676767676770','67676767-6767-4676-8676-676767676767','Finance Customer','wholesale');
 insert into public.products (id,organization_id,sku,name,unit)
@@ -29,10 +29,10 @@ set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
 
 select is((select total from public.create_invoice_from_order('67676767-6767-4676-8676-676767676772')),200::numeric,'Completed order can be invoiced');
 select is((select count(*) from public.operational_invoices where order_id='67676767-6767-4676-8676-676767676772'),1::bigint,'Invoice creation is idempotent per order');
-select is((select status from public.operational_invoices where order_id='67676767-6767-4676-8676-676767676772'),'partially_paid'::public.invoice_status)
-FROM public.record_payment((select id from public.operational_invoices where order_id='67676767-6767-4676-8676-676767676772'),50,'cash','67676767-6767-4676-8676-676767676773','RCPT-1');
-select is((select status from public.operational_invoices where order_id='67676767-6767-4676-8676-676767676772'),'paid'::public.invoice_status)
-FROM public.record_payment((select id from public.operational_invoices where order_id='67676767-6767-4676-8676-676767676772'),150,'cash','67676767-6767-4676-8676-676767676773','RCPT-2');
+select * from public.record_payment((select id from public.operational_invoices where order_id='67676767-6767-4676-8676-676767676772'),50,'cash','67676767-6767-4676-8676-676767676773','RCPT-1');
+select is((select status from public.operational_invoices where order_id='67676767-6767-4676-8676-676767676772'),'partially_paid'::public.invoice_status,'Partial payment updates invoice status');
+select * from public.record_payment((select id from public.operational_invoices where order_id='67676767-6767-4676-8676-676767676772'),150,'cash','67676767-6767-4676-8676-676767676773','RCPT-2');
+select is((select status from public.operational_invoices where order_id='67676767-6767-4676-8676-676767676772'),'paid'::public.invoice_status,'Final payment marks invoice paid');
 select throws_ok(
   $$select public.record_payment((select id from public.operational_invoices where order_id='67676767-6767-4676-8676-676767676772'),1,'cash','67676767-6767-4676-8676-676767676773','OVER')$$,
   '22003','payment exceeds invoice balance','Overpayment is rejected'
