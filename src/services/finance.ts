@@ -14,6 +14,11 @@ export async function getCashBalances() {
   if (error) throw error;
   return (data ?? []) as CashBalance[];
 }
+export async function createCashAccount(branchId: string, name: string, currency: string, openingBalance: number) {
+  const { data, error } = await requireSupabase().rpc('create_cash_account',{p_branch_id:branchId,p_name:name,p_currency:currency,p_opening_balance:openingBalance});
+  if (error) throw error;
+  return data as CashBalance;
+}
 export async function createInvoiceFromOrder(orderId: string) {
   const { data, error } = await requireSupabase().rpc('create_invoice_from_order',{p_order_id:orderId});
   if (error) throw error;
