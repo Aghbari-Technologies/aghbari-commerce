@@ -64,10 +64,6 @@ export async function syncOfflineCart() {
   return drainOfflineOperations(replayCartOperation, userId);
 }
 
-if (typeof window !== 'undefined') {
-  window.addEventListener('online', () => { void syncOfflineCart(); });
-}
-
 export async function getCart() {
   const { data, error } = await requireSupabase().rpc('get_cart');
   if (error) throw error;
