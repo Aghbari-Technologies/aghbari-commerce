@@ -73,13 +73,15 @@ select is((select status from public.submit_purchase_order((select id from publi
 
 select is((select status from public.approve_purchase_order((select id from public.purchase_orders where idempotency_key='r5-purchase-key-000001'))),'approved'::public.purchase_order_status,'Submitted purchase order requires explicit approval');
 
-select is((select quantity from public.inventory_balances where warehouse_id='eeeeeeee-eeee-4eee-8eee-eeeeeeeeee02'::uuid and product_id='eeeeeeee-eeee-4eee-8eee-eeeeeeeeee03'::uuid),10,'Receiving adds exactly the received quantity to inventory');
+select is((select coalesce(quantity,0) from public.inventory_balances where warehouse_id='eeeeeeee-eeee-4eee-8eee-eeeeeeeeee02'::uuid and product_id='eeeeeeee-eeee-4eee-8eee-eeeeeeeeee03'::uuid),0,'Approval alone does not mutate inventory');
 
 select is((select purchase_order_status from public.receive_purchase_order(
   (select id from public.purchase_orders where idempotency_key='r5-purchase-key-000001'),
   'r5-receipt-key-000001',
   jsonb_build_array(jsonb_build_object('purchase_order_item_id',(select id from public.purchase_order_items limit 1),'product_id','eeeeeeee-eeee-4eee-8eee-eeeeeeeeee03','quantity',10))
 )), 'received'::public.purchase_order_status, 'Full receipt closes the purchase order');
+
+select is((select quantity from public.inventory_balances where warehouse_id='eeeeeeee-eeee-4eee-8eee-eeeeeeeeee02'::uuid and product_id='eeeeeeee-eeee-4eee-8eee-eeeeeeeeee03'::uuid),10,'Receiving adds exactly the received quantity to inventory');
 
 select is((select count(*) from public.inventory_movements where source_type='purchase_receipt'),1::bigint,'Receiving creates one auditable inventory movement');
 
