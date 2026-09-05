@@ -34,6 +34,7 @@ CREATE TABLE public.stock_count_lines (
   created_at timestamptz NOT NULL DEFAULT now(),
   UNIQUE (session_id,product_id),
   UNIQUE (id,organization_id),
+  UNIQUE (product_id,organization_id),
   FOREIGN KEY (session_id,organization_id) REFERENCES public.stock_count_sessions(id,organization_id) ON DELETE CASCADE,
   FOREIGN KEY (product_id,organization_id) REFERENCES public.products(id,organization_id) ON DELETE RESTRICT
 );
@@ -55,7 +56,12 @@ BEGIN
   IF nullif(trim(p_idempotency_key),'') IS NULL THEN RAISE EXCEPTION USING errcode='22023',message='idempotency key required'; END IF;
   IF NOT EXISTS(SELECT 1 FROM public.warehouses WHERE id=p_warehouse_id AND organization_id=v_org AND is_active) THEN RAISE EXCEPTION USING errcode='P0002',message='warehouse not found'; END IF;
   SELECT * INTO v_existing FROM public.stock_count_sessions WHERE organization_id=v_org AND idempotency_key=trim(p_idempotency_key);
-  IF FOUND THEN RETURN v_existing; END IF;
+  IF FOUND THEN
+    IF v_existing.warehouse_id <> p_warehouse_id THEN
+      RAISE EXCEPTION USING errcode='23505',message='idempotency key is already bound to another warehouse';
+    END IF;
+    RETURN v_existing;
+  END IF;
   IF EXISTS(SELECT 1 FROM public.stock_count_sessions WHERE organization_id=v_org AND warehouse_id=p_warehouse_id AND status='open') THEN
     RAISE EXCEPTION USING errcode='55006',message='an open stock count already exists for this warehouse';
   END IF;
