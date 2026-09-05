@@ -11,6 +11,7 @@ import PurchasingPanel from './PurchasingPanel';
 import ExportPanel from './ExportPanel';
 import CustomerPanel from './CustomerPanel';
 import InventoryPanel from './InventoryPanel';
+import FinancePanel from './FinancePanel';
 
 interface StaffProduct { id: string; sku: string; name: string; unit: string; }
 interface Warehouse { id: string; name: string; }
@@ -147,6 +148,7 @@ export default function AdminPanel({ role }: { role: UserRole }) {
     {canCatalog && <CustomerPanel role={role} />}
     {canInventory && <InventoryPanel role={role} />}
     {canInventory && <PurchasingPanel role={role} />}
+    {canInvoice && <FinancePanel role={role} />}
     {canInventory && <ExportPanel role={role} />}
   </section>;
 }
