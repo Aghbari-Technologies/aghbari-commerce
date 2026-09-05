@@ -80,7 +80,7 @@ BEGIN
   IF p_counted_quantity IS NULL OR p_counted_quantity<0 THEN RAISE EXCEPTION USING errcode='22023',message='counted quantity must be zero or greater'; END IF;
   UPDATE public.stock_count_lines l SET counted_quantity=p_counted_quantity,counted_at=now()
   FROM public.stock_count_sessions s
-  WHERE l.id=p_session_id AND l.session_id=s.id AND l.organization_id=v_org AND s.organization_id=v_org AND s.status='open' AND l.product_id=p_product_id
+  WHERE l.session_id=p_session_id AND l.session_id=s.id AND l.organization_id=v_org AND s.organization_id=v_org AND s.status='open' AND l.product_id=p_product_id
   RETURNING l.* INTO v_line;
   IF NOT FOUND THEN RAISE EXCEPTION USING errcode='P0002',message='open stock count line not found'; END IF;
   RETURN v_line;
@@ -109,7 +109,7 @@ BEGIN
       VALUES(v_org,v_session.warehouse_id,v_line.product_id,v_variance,'stock_count',v_session.id,auth.uid());
       v_adjusted:=v_adjusted+1;
     END IF;
-    UPDATE public.stock_count_lines SET completed_quantity=v_balance.quantity+v_variance,variance=v_variance WHERE id=v_line.id;
+    UPDATE public.stock_count_lines SET completed_quantity=v_line.counted_quantity,variance=v_variance WHERE id=v_line.id;
   END LOOP;
   UPDATE public.stock_count_sessions SET status='completed',completed_at=now() WHERE id=v_session.id;
   INSERT INTO public.audit_events(organization_id,actor_id,action,target_type,target_id,result,metadata)
