@@ -10,6 +10,7 @@ export interface OfflineOperation<T = unknown> {
   attempts: number;
   userId: string;
   nextAttemptAt?: string;
+  terminal?: boolean;
 }
 
 const STORAGE_KEY = 'aghbari.offline.operations.v1';
@@ -49,6 +50,7 @@ function read<T>(): OfflineOperation<T>[] {
           typeof (item as OfflineOperation).userId === 'string' &&
           UUID_PATTERN.test((item as OfflineOperation).userId) &&
           ((item as OfflineOperation).nextAttemptAt === undefined || Number.isFinite(Date.parse((item as OfflineOperation).nextAttemptAt!))) &&
+          ((item as OfflineOperation).terminal === undefined || typeof (item as OfflineOperation).terminal === 'boolean') &&
           payloadBytes((item as OfflineOperation).payload) <= MAX_OFFLINE_PAYLOAD_BYTES
         )) continue;
         valid.push(item as OfflineOperation<T>);
@@ -106,13 +108,13 @@ export function markOfflineOperationAttempt(operationId: string, now = Date.now(
   const queue = read<unknown>();
   const existing = queue.find((item) => item.operationId === operationId);
   if (!existing) return;
-  if (existing.attempts >= MAX_OFFLINE_ATTEMPTS) {
+  if (existing.attempts >= MAX_OFFLINE_ATTEMPTS || existing.terminal) {
     throw new Error(`تجاوزت العملية الحد الأقصى لإعادة المحاولة (${MAX_OFFLINE_ATTEMPTS}).`);
   }
   const attempts = existing.attempts + 1;
   const delay = Math.min(MAX_RETRY_DELAY_MS, INITIAL_RETRY_DELAY_MS * 2 ** (attempts - 1));
   persist(queue.map((item) => item.operationId === operationId
-    ? { ...item, attempts, nextAttemptAt: new Date(now + delay).toISOString() }
+    ? { ...item, attempts, terminal: attempts >= MAX_OFFLINE_ATTEMPTS, nextAttemptAt: new Date(now + delay).toISOString() }
     : item));
 }
 
@@ -126,6 +128,7 @@ export async function drainOfflineOperations(
   let processed = 0;
   let failed = 0;
   for (const operation of operations) {
+    if (operation.terminal) continue;
     if (operation.nextAttemptAt && Date.parse(operation.nextAttemptAt) > now) continue;
     try {
       await processor(operation);
@@ -134,6 +137,8 @@ export async function drainOfflineOperations(
     } catch {
       if (operation.attempts < MAX_OFFLINE_ATTEMPTS) {
         markOfflineOperationAttempt(operation.operationId, now);
+      } else {
+        persist(read<unknown>().map((item) => item.operationId === operation.operationId ? { ...item, terminal: true } : item));
       }
       failed += 1;
     }
