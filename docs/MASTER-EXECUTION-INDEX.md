@@ -6,9 +6,9 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Branch: `main`
-- Current exact integration HEAD: **`bf52f170846c6f7534217ff4534ea0f7b2be0d32`**
-- Integrated PR: **#16 — MERGED**
-- Source implementation boundary: PR #15 (`d9397480307a8f32808a7c2f1b3f7ea3e81e0a45`), reconciled with the three latest main operational additions.
+- Current exact implementation HEAD: **`4ff7425bf5c70e83106c0af3e786575efe8e1b4b`**
+- Latest integrated PR: **#24 — MERGED**
+- Integrated execution batches: operational implementation (#16), offline cart security (#17), export/RLS hardening (#18), release documentation (#19), customer/inventory/finance hardening (#20/#21/#22), outbox worker security (#23), browser E2E gate (#24).
 
 ## Standing execution command
 **`1` = CONTINUE / EXECUTE AUTONOMOUSLY / DEEPEN / TEST / VERIFY / DOCUMENT / SELF-IMPROVE.**
@@ -16,14 +16,14 @@
 ## Certification stages
 | Stage | State |
 |---|---|
-| BUILT | IMPLEMENTED — operational frontend, domain services, Supabase migrations/RPCs, PWA/offline, import/export, outbox worker, purchasing/receiving |
-| INTEGRATED | **PASS — merged into `main` at `bf52f170846c6f7534217ff4534ea0f7b2be0d32`** |
-| VERIFIED | **PENDING current-HEAD executable CI** |
-| RUNTIME PROVEN | BLOCKED — real authenticated staging/browser runtime evidence not yet established |
-| PRODUCTION CERTIFIED | NOT PROVEN |
+| BUILT | **ADVANCED IMPLEMENTED** — executable commerce shell + catalog/pricing/orders/cart, staff operations, customers, inventory transfers/thresholds, purchasing/receiving, finance/invoices/payments/cash/expenses, import/export, outbox worker, PWA/offline primitives, security hardening |
+| INTEGRATED | **PASS — current `main` HEAD `4ff7425bf5c70e83106c0af3e786575efe8e1b4b`** |
+| VERIFIED | **PENDING fresh executable CI on current HEAD** |
+| RUNTIME PROVEN | **NOT PROVEN** — authenticated staging/browser runtime and external delivery evidence still required |
+| PRODUCTION CERTIFIED | **NOT PROVEN** |
 
 ## Current phase
-**PHASE 1 — executable operational implementation + reliability hardening.** The repository has crossed the documentation-only boundary and now contains the executable operational application. Work proceeds through real runtime and evidence gates; prior POC evidence is regression evidence only until rerun on the frozen certification HEAD.
+**PHASE 2 — operational product completion + evidence closure.** Multiple real operational vertical slices are now implemented and integrated. Remaining work is evidence-driven verification, the still-missing operational modules in the canonical roadmap, runtime/deployment proof, and final exact-HEAD certification.
 
 ## Completed implementation surface
 - React/Vite/TypeScript Arabic RTL operational application shell and command center.
@@ -34,49 +34,52 @@
 - Product/category management, price management, inventory adjustment.
 - Product image processing/storage boundary.
 - XLSX staged validation and atomic commit path.
-- Offline cart/queue primitives with bounded retry behavior.
-- Purchasing/receiving vertical: suppliers, purchase orders, submit/approve, atomic receiving and inventory movement evidence.
-- Catalog/price CSV export.
-- Durable outbox claim/ack/failure database boundary and deployable webhook worker.
+- Offline cart queue with authenticated user scoping and bounded retry behavior.
+- Customer lifecycle: create, tier change, activation state, server-side RBAC, audit evidence and UI.
+- Inventory: atomic warehouse transfer, deterministic balance locking, idempotent replay, audit/outbox evidence, stock thresholds and low-stock detection/UI.
+- Purchasing/receiving: suppliers, purchase orders, submit/approve, atomic receiving and inventory movement evidence.
+- Operational catalog/price CSV export with spreadsheet formula-injection hardening and tenant-scoped staff price visibility.
+- Operational finance: invoices from completed/ready orders, partial/full payments, audited cash-account provisioning, cash ledger entries, expenses, balance calculation and overdraft protection.
+- Durable outbox claim/ack/failure database boundary and deployable webhook worker with fail-closed inbound worker authentication.
 - PWA manifest/service worker/offline fallback.
 - Security headers/CSP and browser secret-boundary checks.
-- Supabase migrations through purchasing/idempotency hardening (`0001`–`0027`, with intentional version gap where documented).
-- pgTAP coverage for storage, outbox and purchasing/receiving; deterministic domain and order invariants.
+- Playwright authenticated browser critical-path gate and manual deployment-target runtime workflow.
 
 ## Current executable evidence
-- Historical G1 domain/PostgreSQL/order-workflow evidence remains valid as **prior-boundary regression evidence**, not current-head certification evidence.
-- Historical intelligence contract proof remains prior-boundary evidence.
-- PR #15 current-head checks were not executable evidence because the observed jobs failed before workflow steps ran.
-- PR #16 is now merged; the next mutation below will create the first fresh current-main evidence boundary.
+- Historical G1/domain/PostgreSQL/order-workflow evidence remains **prior-boundary regression evidence** only.
+- Historical intelligence contract proof remains prior-boundary evidence only.
+- Recent GitHub Actions jobs were created for current execution branches, but observed jobs failed at runner/job startup before actionable test steps were exposed. Therefore no green current-head CI result is claimed.
+- Runtime E2E is implemented but not executed against a real deployed target in this session because it requires the target URL and dedicated authenticated E2E credentials.
+- Outbox delivery is implemented but external webhook delivery/retry/idempotency is not runtime-proven.
 
-## Baseline findings requiring execution
-1. Current `main` has executable implementation, but exact-head CI evidence has not yet been observed after integration.
-2. Real Supabase Auth/RLS negative tests require a connected staging target and two isolated tenants.
-3. Browser E2E requires an authenticated executable browser runtime.
-4. Outbox worker needs real endpoint delivery/retry/idempotency proof.
-5. Offline replay/conflict/isolation needs runtime proof, not only unit tests.
-6. Import/export needs runtime authorization, validation and rollback proof.
-7. Performance/observability/deployment/recovery evidence remains open.
-8. Food-grade lot/expiry/FEFO support is architectural scope and requires implementation evidence where applicable business data is present.
-9. The source repository currently has no committed dependency lockfile; CI uses `npm install`, so dependency reproducibility remains a release-hardening item.
+## Forensic defects discovered and repaired
+1. Offline cart enqueue calls used the wrong `enqueueOfflineOperation` argument shape; repaired.
+2. Offline cart replay was not authenticated-user scoped; repaired.
+3. Staff price export lacked explicit tenant-scoped RLS access; migration 0028 added it.
+4. CSV export was hardened against spreadsheet formula injection.
+5. Purchase idempotency omitted currency/notes from payload binding; migration 0029 added conflict rejection.
+6. Customer lifecycle commands/UI were missing; migration 0030 + service + UI + pgTAP added them.
+7. Inventory transfer and actionable low-stock thresholds were missing; migration 0031 + service + UI + pgTAP added them.
+8. Operational invoice/payment/cash/expense layer was missing; migrations 0032–0034 + service + UI + pgTAP added it.
+9. Outbox worker accepted unauthenticated privileged invocation; it now fails closed behind `OUTBOX_WORKER_TOKEN`.
+10. Browser E2E infrastructure was missing; Playwright gate and deployment-target workflow were added.
+11. README contained stale prototype-phase claims; reconciled with the current executable phase.
 
-## Pending gates — execution order
-1. Fresh current-HEAD application quality: test, lint, production build.
-2. Fresh current-HEAD security audit and browser-secret boundary.
-3. Fresh current-HEAD migration reset + pgTAP + migration inventory.
-4. Repair any code/workflow failure found by these gates, then rerun on the resulting exact HEAD.
-5. G2 direct-request authorization + RLS negative tests against real Supabase/PostgreSQL.
-6. G3 typed API contract proof against actual runtime.
-7. G4 durable outbox delivery/retry + consumer idempotency proof against a real endpoint.
-8. G5 offline/sync replay, conflict and tenant-isolation runtime proof.
-9. G6 import/export runtime proof, including failure/rollback paths.
-10. G7 performance budgets and p50/p95/p99 evidence.
-11. G8 observability and operational recovery proof.
-12. G9 deployment/recovery/rollback proof.
-13. G10 deterministic full-suite certification against one frozen exact HEAD.
-14. Intelligence gateway runtime proof: tenant isolation, least privilege, version rejection, quality gate, provenance, replay safety and failure isolation.
-15. Food-grade lot/expiry/FEFO implementation proof where business data supports it.
-16. Final API schemas/versioning, RBAC/RLS freeze, architecture freeze, final regression and production certification.
+## Remaining product gaps / gates
+1. **Fresh current-HEAD CI:** application quality, lint, typecheck, production build, unit tests, security and migration proof.
+2. **Real Supabase staging:** authenticated multi-tenant identities and database execution for RLS/authorization negative tests.
+3. **Runtime E2E:** execute Playwright against the deployed target with a dedicated test account and real seeded operational data.
+4. **Offline runtime:** prove catalog/cart cache after refresh, replay, conflict handling, recovery and tenant isolation; the queue is implemented but full offline UX/cache behavior still requires runtime proof and deeper cache work if required.
+5. **Outbox runtime:** configure worker secret + real consumer endpoint, then prove claim → delivery → ack, failure/retry and consumer idempotency.
+6. **Import/export runtime:** prove authorized export, malformed-file rejection, staged validation, atomic commit and failure/rollback behavior on real Supabase.
+7. **Inventory completion:** add/verify stock count workflow, reservations where required, product identifiers/units and lot/expiry/FEFO if confirmed in canonical business scope.
+8. **Sales completion:** verify invoice/collection/returns/refunds and order-to-cash lifecycle against actual business rules; invoice/payment foundation is now present.
+9. **Finance completion:** verify cash opening/closing/transfer procedures and ledger reconciliation against real business data.
+10. **Notifications/integrations:** implement and runtime-prove in-app notifications and the approved integration gateway/consumer contracts; no external credentials are committed.
+11. **Performance:** establish real p50/p95/p99 budgets and evidence on representative catalog/order/inventory loads.
+12. **Observability/recovery:** prove audit completeness, failure visibility, backups/recovery and deployment rollback.
+13. **Dependency reproducibility:** repository has no committed lockfile and CI uses `npm install`; generate/commit a valid lockfile once dependency resolution is available in the build environment.
+14. **Final certification:** deterministic full-suite regression, exact final HEAD verification, freeze and production certification.
 
 ## Product boundary — non-negotiable
 Aghbari owns operational truth. Report-Advisor owns analytics/intelligence. The allowed direction is:
@@ -89,9 +92,9 @@ Report-Advisor has no operational write path into Aghbari. Intelligence recommen
 Documentation PASS means design consistency only. A domain-harness PASS does not prove database, runtime, security, deployment, or production. A migration file is not migration execution evidence. A UI restriction is not authorization evidence. A queued outbox event is not successful external delivery evidence. A green CI run on an earlier SHA is not exact-HEAD evidence.
 
 ## Latest execution result
-- **Integration completed:** PR #16 merged to `main`.
-- **Current implementation HEAD before this ledger mutation:** `bf52f170846c6f7534217ff4534ea0f7b2be0d32`.
-- This ledger update intentionally establishes a new exact-head boundary so the complete CI stack can execute against the integrated source.
-- No runtime or production certification is claimed.
+- **Current exact `main` HEAD:** `4ff7425bf5c70e83106c0af3e786575efe8e1b4b`.
+- Customer, inventory, finance, export, offline-cart and outbox security hardening are integrated.
+- Playwright runtime certification gate is integrated.
+- **No production certification is claimed.**
 
-**NEXT:** execute the fresh current-main CI gates, repair every genuine failure discovered, and repeat until the exact-head implementation is verified. Then establish real Supabase/Auth/RLS/browser/integration/deployment evidence and freeze one final certification HEAD.
+**NEXT EXECUTION LOOP:** establish fresh current-head CI evidence; repair every genuine failure; execute real Supabase/Auth/RLS/browser/integration/runtime/deployment evidence; complete only the remaining operational modules required by the canonical scope; then freeze one exact final certification SHA.
