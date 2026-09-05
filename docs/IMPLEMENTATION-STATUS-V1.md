@@ -26,7 +26,7 @@
 - Production certification: NOT CERTIFIED
 
 ## Current implementation boundary
-**Exact current `main` HEAD:** `6fa2c4fa164dec30dd1f87a1cbdad71a5b4bec34` (documentation update after implementation boundary `dbddc90877ee067b60af6a18169e4cac6e0e6eb2`).
+**Exact current `main` HEAD:** `8c65436fce586b9f9d61a8ef7fc72029adbf7f00` (documentation-only reconciliation after code boundary `dbddc90877ee067b60af6a18169e4cac6e0e6eb2`).
 
 The repository contains a real React/Vite operational application, Supabase migration/RPC implementation, domain services/tests, offline/PWA assets, import pipeline, catalog export, order/cart hardening, purchasing/receiving, customer lifecycle, inventory reconciliation and operational finance.
 
