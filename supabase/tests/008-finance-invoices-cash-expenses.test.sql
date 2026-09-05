@@ -10,7 +10,7 @@ values ('67676767-6767-4676-8676-676767676767','Finance Tenant');
 insert into public.branches (id,organization_id,name)
 values ('67676767-6767-4676-8676-676767676768','67676767-6767-4676-8676-676767676767','Main');
 insert into public.warehouses (id,organization_id,branch_id,name)
-values ('67676767-6767-4676-8676-676767676769','67676767-6767-4676-8676-676767676768','Warehouse');
+values ('67676767-6767-4676-8676-676767676769','67676767-6767-4676-8676-676767676767','67676767-6767-4676-8676-676767676768','Warehouse');
 insert into public.customers (id,organization_id,name,tier)
 values ('67676767-6767-4676-8676-676767676770','67676767-6767-4676-8676-676767676767','Finance Customer','wholesale');
 insert into public.products (id,organization_id,sku,name,unit)
