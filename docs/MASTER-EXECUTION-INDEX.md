@@ -6,7 +6,7 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Branch: `main`
-- Current exact implementation HEAD: **`0e48a8eb2798e90e6d9d7bf1ae285919b6819043`**
+- Current exact implementation HEAD: **`32736612729211b3e83af7208c23f3de532dd78b`**
 - Latest execution boundary: warehouse-aware catalog truth + stock-count/offline/outbox/security hardening.
 
 ## Standing execution command
@@ -16,7 +16,7 @@
 | Stage | State |
 |---|---|
 | BUILT | **ADVANCED IMPLEMENTED** — executable commerce shell + catalog/pricing/orders/cart, staff operations, customers, inventory transfer/adjustment/thresholds/low-stock/stock count, purchasing/receiving, finance, import/export, outbox worker, PWA/offline primitives and browser/security hardening |
-| INTEGRATED | **PASS at implementation level — exact current HEAD `0e48a8eb2798e90e6d9d7bf1ae285919b6819043`** |
+| INTEGRATED | **PASS at implementation level — exact current HEAD `32736612729211b3e83af7208c23f3de532dd78b`** |
 | VERIFIED | **NOT PROVEN** — fresh executable CI is blocked by workflow startup/infrastructure failures with no job steps/logs exposed |
 | RUNTIME PROVEN | **NOT PROVEN** — no connected Supabase target and no authenticated deployment credentials available through current integrations |
 | PRODUCTION CERTIFIED | **NOT PROVEN** |
@@ -25,7 +25,7 @@
 - Default branch: `main`.
 - Repository is private and the connected GitHub integration has admin/maintain/push capability.
 - Active feature branches are historical `feat/finance-operational-slice-20260906` and `feat/inventory-ops-slice-20260906`; they are not ahead of the current `main` boundary and do not contain unmerged implementation that should be blindly merged.
-- Active execution/evidence branches include the closed earlier verification attempts and open PR #28 (`execution/current-head-quality-20260906-v3`), which was created from the then-current implementation boundary and is evidence-only.
+- Active execution/evidence branches include closed earlier verification attempts and open PR #29 (`execution/current-head-quality-20260906-v4`), which is evidence-only.
 - PRs #1–#25 are historical execution waves; the material operational waves were merged into `main` (order core, cart hardening, import/media, export, customer lifecycle, inventory, purchasing/receiving, finance, outbox security and runtime gate).
 - No current PR is authorized to become certification evidence unless its tested SHA is the exact frozen release SHA.
 
@@ -63,7 +63,7 @@
 - Frontend environment example no longer disagrees with the runtime key name.
 
 ## Evidence boundary
-- Fresh exact-head CI was attempted repeatedly. Current PR #28 produced eight check runs; the surfaced current-head checks all terminated within seconds with `failure` and no executable steps/logs available through the connector. This is classified as an **external CI runner/startup evidence blocker** rather than a code PASS/FAIL determination.
+- Fresh exact-head CI was attempted repeatedly. Current PR #29 produced repeated `quality`, `migration-proof`, and `security` check runs; the surfaced runs terminate within seconds with `failure` and no executable steps/logs available through the connector. This is classified as an **external CI runner/startup evidence blocker** rather than a code PASS/FAIL determination.
 - Historical domain/G1/PostgreSQL/order evidence is retained but is **not** reused as proof for later SHAs.
 - Runtime browser E2E is implemented but **NOT RUNTIME-PROVEN**.
 - No Supabase project is currently connected to the authorized Supabase integration (`list_projects` returned no connected projects), so live DB/Auth/RLS/advisor/runtime proof cannot honestly be claimed.
