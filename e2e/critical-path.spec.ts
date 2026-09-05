@@ -6,7 +6,19 @@ test('authenticated customer completes real catalog → cart → order → refre
   if (!email || !password) throw new Error('E2E_EMAIL and E2E_PASSWORD are required; runtime tests must never silently skip.');
 
   const pageErrors: string[] = [];
+  const consoleErrors: string[] = [];
+  const failedResponses: string[] = [];
   page.on('pageerror', (error) => pageErrors.push(error.message));
+  page.on('console', (message) => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  page.on('response', (response) => {
+    const status = response.status();
+    if (status >= 400 && !response.url().endsWith('/favicon.ico')) {
+      failedResponses.push(`${status} ${response.request().method()} ${response.url()}`);
+    }
+  });
+
   await page.goto('/');
   await expect(page.getByText('بوابة الأغبري', { exact: false }).first()).toBeVisible();
 
@@ -21,6 +33,7 @@ test('authenticated customer completes real catalog → cart → order → refre
 
   const addButton = page.getByRole('button', { name: /إضافة|أضف/ }).first();
   await expect(addButton).toBeVisible();
+  await expect(addButton).toBeEnabled();
   await addButton.click();
   await expect(page.getByRole('button', { name: /السلة، 1 أصناف/ })).toBeVisible();
 
@@ -38,4 +51,6 @@ test('authenticated customer completes real catalog → cart → order → refre
   await expect(page.locator('#orders').getByText(/طلب #/).first()).toBeVisible();
 
   expect(pageErrors, `Uncaught browser errors: ${pageErrors.join(' | ')}`).toEqual([]);
+  expect(consoleErrors, `Browser console errors: ${consoleErrors.join(' | ')}`).toEqual([]);
+  expect(failedResponses, `HTTP responses >= 400: ${failedResponses.join(' | ')}`).toEqual([]);
 });
