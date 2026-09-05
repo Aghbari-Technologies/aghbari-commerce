@@ -6,6 +6,7 @@ type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer';
 type PaymentMethod = 'cash' | 'bank_transfer' | 'card' | 'other';
 interface Order { id: string; order_number: number; customer_name: string; status: string; total: number; currency: string; }
 interface Branch { id: string; name: string; }
+interface OrderRow { id: string; order_number: number; status: string; total: number; currency: string; customers: { name: string } | null; }
 const methodLabels: Record<PaymentMethod,string> = { cash:'نقدي', bank_transfer:'تحويل بنكي', card:'بطاقة', other:'أخرى' };
 
 export default function FinancePanel({ role }: { role: UserRole }) {
@@ -37,7 +38,8 @@ export default function FinancePanel({ role }: { role: UserRole }) {
       getInvoices(100),getCashBalances()
     ]);
     if(orderError) throw orderError;if(branchError) throw branchError;
-    setOrders((orderRows??[]).map((o:any)=>({id:o.id,order_number:o.order_number,customer_name:o.customers?.name??'عميل',status:o.status,total:Number(o.total),currency:o.currency})));
+    const typedOrders=(orderRows??[]) as unknown as OrderRow[];
+    setOrders(typedOrders.map(o=>({id:o.id,order_number:o.order_number,customer_name:o.customers?.name??'عميل',status:o.status,total:Number(o.total),currency:o.currency})));
     setBranches((branchRows??[]) as Branch[]);setInvoices(invoiceRows);setCash(cashRows);
     if(!invoiceId && invoiceRows[0]) setInvoiceId(invoiceRows[0].id);
     if(!cashAccountId && cashRows[0]) setCashAccountId(cashRows[0].id);
@@ -48,7 +50,6 @@ export default function FinancePanel({ role }: { role: UserRole }) {
 
   async function run(action:()=>Promise<unknown>,success:string){setBusy(true);setError(null);setMessage(null);try{await action();setMessage(success);await reload();}catch(e){setError(e instanceof Error?e.message:'تعذر تنفيذ العملية.');}finally{setBusy(false);}}
   if(!canInvoice&&!canExpense)return null;
-  const invoiceBalance=(invoice:OperationalInvoice)=>invoice.total-0; // payment totals are server-authoritative; UI only uses invoice total for selection.
 
   return <div className="cart-panel" id="finance">
     <div className="section-heading"><div><span className="eyebrow">المالية التشغيلية</span><h2>الفواتير والتحصيل والمصروفات</h2></div><span>{cash.length} حسابات نقدية</span></div>
