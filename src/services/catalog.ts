@@ -30,7 +30,25 @@ export async function getCatalog(search = '', categoryId: string | null = null, 
   const client = requireSupabase();
   let resolvedWarehouseId = warehouseId;
   if (!resolvedWarehouseId) {
-    const { data, error } = await client.from('warehouses').select('id').eq('is_active', true).order('created_at').limit(1).maybeSingle();
+    const { data: userData, error: userError } = await client.auth.getUser();
+    if (userError) throw userError;
+    if (!userData.user) throw new Error('يجب تسجيل الدخول لاختيار المستودع التشغيلي.');
+
+    const { data: profile, error: profileError } = await client
+      .from('profiles')
+      .select('organization_id')
+      .eq('id', userData.user.id)
+      .single();
+    if (profileError) throw profileError;
+
+    const { data, error } = await client
+      .from('warehouses')
+      .select('id')
+      .eq('organization_id', profile.organization_id)
+      .eq('is_active', true)
+      .order('created_at')
+      .limit(1)
+      .maybeSingle();
     if (error) throw error;
     if (!data?.id) throw new Error('لا يوجد مستودع تشغيلي نشط.');
     resolvedWarehouseId = data.id;
