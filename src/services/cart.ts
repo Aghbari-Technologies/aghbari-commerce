@@ -34,6 +34,14 @@ function isOfflineCartPayload(payload: unknown): payload is OfflineCartPayload {
   return value.quantity === undefined || (Number.isInteger(value.quantity) && value.quantity >= 1 && value.quantity <= MAX_ORDER_QUANTITY_PER_LINE);
 }
 
+async function currentUserId(): Promise<string> {
+  const { data, error } = await requireSupabase().auth.getSession();
+  if (error) throw error;
+  const userId = data.session?.user.id;
+  if (!userId || !UUID_PATTERN.test(userId)) throw new Error('هوية المستخدم مطلوبة للعملية غير المتصلة.');
+  return userId;
+}
+
 async function replayCartOperation(operation: OfflineOperation): Promise<void> {
   if (!isOfflineCartPayload(operation.payload)) throw new Error('بيانات عملية السلة غير المتصلة غير صالحة.');
   const client = requireSupabase();
@@ -52,7 +60,8 @@ async function replayCartOperation(operation: OfflineOperation): Promise<void> {
 }
 
 export async function syncOfflineCart() {
-  return drainOfflineOperations(replayCartOperation);
+  const userId = await currentUserId();
+  return drainOfflineOperations(replayCartOperation, userId);
 }
 
 if (typeof window !== 'undefined') {
@@ -76,7 +85,7 @@ export async function setCartItem(productId: string, quantity: number) {
     throw new Error(`الكمية يجب أن تكون بين 1 و${MAX_ORDER_QUANTITY_PER_LINE}.`);
   }
   if (typeof navigator !== 'undefined' && navigator.onLine === false) {
-    enqueueOfflineOperation(OFFLINE_CART_SET_ITEM, { productId: productId.trim(), quantity });
+    await enqueueOfflineOperation(await currentUserId(), OFFLINE_CART_SET_ITEM, { productId: productId.trim(), quantity });
     return;
   }
   const { error } = await requireSupabase().rpc('set_cart_item', {
@@ -90,7 +99,7 @@ export async function removeCartItem(productId: string) {
   if (!productId) throw new Error('المنتج مطلوب.');
   if (!UUID_PATTERN.test(productId.trim())) throw new Error('معرّف المنتج غير صالح.');
   if (typeof navigator !== 'undefined' && navigator.onLine === false) {
-    enqueueOfflineOperation(OFFLINE_CART_REMOVE_ITEM, { productId: productId.trim() });
+    await enqueueOfflineOperation(await currentUserId(), OFFLINE_CART_REMOVE_ITEM, { productId: productId.trim() });
     return;
   }
   const { error } = await requireSupabase().rpc('remove_cart_item', { p_product_id: productId.trim() });
