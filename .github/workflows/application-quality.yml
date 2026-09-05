@@ -18,8 +18,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      # No lockfile is committed yet; avoid setup-node cache's hard requirement for one.
+      # Reproducibility remains a release gate: npm ci becomes mandatory once the lockfile is committed.
       - run: npm install
       - run: npm run test
       - run: npm run lint
       - run: npm run build
+      - run: npm run test:release-audit
