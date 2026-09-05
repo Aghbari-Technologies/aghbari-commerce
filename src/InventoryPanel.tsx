@@ -26,14 +26,15 @@ export default function InventoryPanel({ role }: { role: UserRole }) {
 
   const reload = useCallback(async () => {
     if (!supabase || !canUse) return;
-    const [{ data: productRows, error: productError }, { data: warehouseRows, error: warehouseError }, { data: lowRows, error: lowError }] = await Promise.all([
+    const [productResult, warehouseResult, lowRows] = await Promise.all([
       supabase.from('products').select('id,sku,name').eq('status','active').order('name').limit(500),
       supabase.from('warehouses').select('id,name').eq('is_active',true).order('created_at'),
       getLowStock()
     ]);
+    const { data: productRows, error: productError } = productResult;
+    const { data: warehouseRows, error: warehouseError } = warehouseResult;
     if (productError) throw productError;
     if (warehouseError) throw warehouseError;
-    if (lowError) throw lowError;
     setProducts((productRows ?? []) as Product[]);
     const nextWarehouses = (warehouseRows ?? []) as Warehouse[];
     setWarehouses(nextWarehouses);
