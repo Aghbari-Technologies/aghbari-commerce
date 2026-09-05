@@ -28,7 +28,7 @@
 - Production certification: NOT CERTIFIED
 
 ## Current implementation boundary
-**Latest current `main` implementation HEAD:** `c2623cfad1d6e15f42693bc8ee58c754991c856d`.
+**Latest current `main` implementation HEAD:** `2e7d63c7368837439c59bb1e5842a82d4f82ccdc`.
 
 The repository contains a real React/Vite operational application, Supabase migration/RPC implementation, domain services/tests, offline/PWA assets, import pipeline, catalog export, order/cart hardening, purchasing/receiving, customer lifecycle, warehouse-aware catalog availability, inventory reconciliation and operational finance.
 
@@ -45,7 +45,7 @@ The repository contains a real React/Vite operational application, Supabase migr
 10. Frontend `.env.example` was corrected to use `VITE_SUPABASE_PUBLISHABLE_KEY`, matching the actual client code and eliminating a configuration-name drift that could produce a false missing-environment failure.
 
 ## Current executable evidence
-- Fresh current-head GitHub Actions verification was attempted through exact-head PR #28. All surfaced checks (`quality`, `migration-proof`, `security`, `g1-domain-invariants`, `order-workflow-proof`, and additional quality/security/migration runs) terminated within seconds with failure and no executable job steps/logs exposed by the connector. This is classified as a **CI infrastructure/startup evidence blocker**, not a code PASS and not a code defect without logs.
+- Fresh current-head GitHub Actions verification was attempted through exact-head PR #29. All surfaced checks (`quality`, `migration-proof`, and `security`, with repeated attempts) terminate within seconds with `failure` and no executable job steps/logs exposed by the connector. This is classified as a **CI infrastructure/startup evidence blocker**, not a code PASS and not a code defect without logs.
 - Historical G1/domain/PostgreSQL/order evidence remains prior-boundary regression evidence only.
 - Current post-repair implementation has **NOT PROVEN** CI until a workflow actually executes its steps successfully.
 - Runtime E2E remains **NOT PROVEN** against a real deployment.
