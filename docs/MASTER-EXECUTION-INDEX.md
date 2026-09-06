@@ -6,8 +6,8 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Branch: `main`
-- Current exact implementation HEAD: **`0048b1485b16904f5b1e36698282381271adf7b7`**
-- Latest execution boundary: release-hardening audit, explicit typecheck/Node runtime contract, shipped-artifact branding checks, and strengthened browser persistence evidence.
+- Current exact implementation HEAD: **`6955f1f6e20443a9fb92923e9c12e31fb2f55813`**
+- Latest execution boundary: exact-SHA-bound runtime E2E workflow + executable RPC contract/mock-marker audit.
 
 ## Standing execution command
 **`1` = CONTINUE / EXECUTE AUTONOMOUSLY / DEEPEN / TEST / VERIFY / DOCUMENT / SELF-IMPROVE.**
@@ -16,17 +16,15 @@
 | Stage | State |
 |---|---|
 | BUILT | **ADVANCED IMPLEMENTED** — executable commerce shell + catalog/pricing/orders/cart, staff operations, customers, inventory transfer/adjustment/thresholds/low-stock/stock count, purchasing/receiving, finance, import/export, outbox worker, PWA/offline primitives and browser/security hardening |
-| INTEGRATED | **PASS at implementation level — exact current HEAD `0048b1485b16904f5b1e36698282381271adf7b7`** |
-| VERIFIED | **NOT PROVEN** — no executable workflow run or step-level CI evidence has been surfaced for the latest SHA |
+| INTEGRATED | **PASS at implementation level — exact current HEAD `6955f1f6e20443a9fb92923e9c12e31fb2f55813`** |
+| VERIFIED | **NOT PROVEN** — current GitHub Actions execution evidence is not yet surfaced for this exact SHA |
 | RUNTIME PROVEN | **NOT PROVEN** — no connected Supabase target and no authenticated deployment runtime evidence available through current integrations |
 | PRODUCTION CERTIFIED | **NOT PROVEN** |
 
 ## Current baseline
 - Default branch: `main`.
 - Repository is private and the connected GitHub integration has admin/maintain/push capability.
-- PR #33 (`execution/release-hardening-audit-20260906`) was merged into `main` at squash commit `bb2cc53b7a81d8bdad952f6881d731c8ba6aa6ff`.
-- Subsequent direct release-hardening commits advanced `main` to `e97f0c7bad9ca1f86076510079e6e5edae31fe48`.
-- PR #34 (`execution/e2e-persistence-hardening-20260906`) was merged into `main` at squash commit `0048b1485b16904f5b1e36698282381271adf7b7`.
+- Scope is permanently locked to **Aghbari Commerce only**; Report-Advisor and every other project are out of scope.
 - Historical feature branches are not treated as release evidence unless their exact tested SHA is selected as the release boundary.
 - No historical CI result is reused as evidence for a later SHA.
 
@@ -34,7 +32,7 @@
 - React/Vite/TypeScript Arabic RTL operational application shell and command center.
 - Authentication/session integration through Supabase Auth.
 - Catalog/category reads with server-authoritative authorized pricing.
-- **Warehouse-specific catalog availability**: catalog now resolves stock for the checkout warehouse rather than whichever inventory balance was updated most recently.
+- **Warehouse-specific catalog availability**: catalog resolves stock for the checkout warehouse rather than whichever inventory balance was updated most recently.
 - Customer cart and order submission through server-side RPC commands.
 - Staff order workflow and server-side status transition enforcement.
 - Product/category management, price management, inventory adjustment.
@@ -50,45 +48,50 @@
 - PWA manifest/service worker/offline fallback.
 - Security headers including CSP and browser secret-boundary checks.
 - Playwright authenticated browser critical-path gate, strengthened to cover real catalog → cart → order → exact-created-order persistence after refresh.
-- Workspace ignore rules and corrected non-secret environment-variable example using `VITE_SUPABASE_PUBLISHABLE_KEY`.
 
-## Forensic repairs in current boundary
+## Forensic repairs and release hardening
 - Stock-count composite product tenant FK now has a valid referenced unique key.
 - Stock-count idempotency cannot silently bind one key to another warehouse.
 - Stock-count definer functions use `search_path=''` and schema-qualified references.
 - Stock-count UI renders all active count lines instead of truncating at 50.
 - Catalog RPC now requires/validates an active warehouse and returns that warehouse's balance.
 - Offline invalid-user filters fail closed; terminal retry state prevents repeated exhausted processing.
-- **Offline queue clear now fails closed for an invalid supplied user scope instead of clearing the entire queue.**
+- **Offline queue clear fails closed for an invalid supplied user scope instead of clearing the entire queue.**
 - Production CSP was added to `vercel.json`.
-- Outbox worker now requires an outbound webhook secret and times out delivery attempts after 10 seconds.
-- Frontend environment example no longer disagrees with the runtime key name.
-- **Executable release-audit gate is part of the application quality gate and scans shipped HTML/PWA/config artifacts as well as executable source.**
+- Outbox worker requires an outbound webhook secret and times out delivery attempts after 10 seconds.
+- Frontend environment example uses `VITE_SUPABASE_PUBLISHABLE_KEY` consistently.
 - **Node 22 runtime contract is explicitly pinned in `package.json`.**
-- **Typecheck is exposed as an explicit package/CI gate rather than being implicit only inside the production build.**
-- **E2E persistence assertion was hardened so the post-checkout verification extracts the exact created order number and requires that same order to be present after a full browser refresh; a pre-existing order can no longer falsely satisfy the critical-path proof.**
+- **Typecheck is an explicit package/CI gate.**
+- **Release audit scans shipped HTML/PWA/config artifacts and executable source for legacy branding and suspicious completion/mock markers.**
+- **Release audit now discovers literal frontend Supabase RPC calls and verifies each has a matching PostgreSQL function definition in migration history.**
+- **Runtime E2E workflow now requires an explicit `exact_sha`, checks out that exact commit, verifies `git rev-parse HEAD`, and names uploaded evidence with the certified SHA.**
 
 ## Evidence boundary
-- Latest SHA `0048b1485b16904f5b1e36698282381271adf7b7` currently has no surfaced GitHub workflow runs/statuses through the authorized connector; therefore CI is **NOT PROVEN**, not PASS.
-- Historical domain/G1/PostgreSQL/order evidence is retained but is **not** reused as proof for later SHAs.
-- Runtime browser E2E is implemented and strengthened, but **NOT RUNTIME-PROVEN** until executed against a real deployment with real credentials.
-- No Supabase project is currently connected to the authorized Supabase integration (`list_projects` returned no connected projects), so live DB/Auth/RLS/advisor/runtime proof cannot honestly be claimed.
+- Current exact SHA `6955f1f6e20443a9fb92923e9c12e31fb2f55813` has not yet produced a surfaced GitHub workflow run/status through the authorized connector; therefore CI is **NOT PROVEN**, not PASS.
+- Runtime browser E2E is executable and now exact-SHA-bound, but **NOT RUNTIME-PROVEN** until executed against a real deployment with real credentials.
+- No Supabase project is currently connected to the authorized Supabase integration, so live DB/Auth/RLS proof cannot honestly be claimed.
 - Production deployment/runtime is therefore **NOT CERTIFIED**.
 
-## Remaining closure work — execution order
-1. Restore executable GitHub Actions runner/check execution and capture step-level evidence on the exact current SHA.
-2. Generate and commit a deterministic `package-lock.json`; then switch CI from floating `npm install` to `npm ci` where appropriate.
-3. Run all pgTAP suites, including `010-stock-count-reconciliation.test.sql`, `011-catalog-warehouse-truth.test.sql`, and `012-stock-count-concurrency.test.sql`, on reset and upgrade paths.
-4. Provision/connect a staging Supabase target and execute Tenant A/B Auth + RLS + role-negative tests.
-5. Execute authenticated browser E2E on the actual deployment target.
-6. Prove offline refresh/cache/reconnect/replay/conflict/recovery and tenant isolation in runtime.
-7. Prove outbox claim/delivery/retry/backoff/terminal failure/DLQ/consumer-idempotency and secret rejection in runtime.
-8. Prove import/export with malformed files, validation/quarantine, atomic commit, authorization and cross-tenant isolation.
-9. Confirm any remaining Sales/Inventory operational requirements from the approved product scope and close only those actually required.
-10. Run Supabase Security Advisor + Performance Advisor, query-plan review and representative load tests once a real Supabase environment exists.
-11. Complete observability, audit completeness, backup/recovery and rollback evidence.
-12. Production deployment smoke test + deployed artifact/SHA verification.
-13. Final regression → exact final HEAD freeze → release candidate → certification.
+## Remaining closure work — bounded priority order
+### P0 — Unblock and prove the core vertical slice
+1. Restore executable GitHub Actions runner/check execution and capture step-level evidence on exact current HEAD.
+2. Generate and commit deterministic `package-lock.json`; switch CI from floating `npm install` to `npm ci` where appropriate.
+3. Provision/connect a dedicated staging Supabase target.
+4. Execute real Auth/session/role/Tenant A-B/RLS negative tests.
+5. Execute authenticated browser E2E on the deployed Aghbari target, with exact SHA evidence.
+
+### P1 — Prove operational reliability and data safety
+6. Run all pgTAP suites on reset/upgrade/repeat paths.
+7. Prove offline refresh/cache/reconnect/replay/conflict/recovery and tenant isolation in runtime.
+8. Prove outbox claim/delivery/retry/backoff/terminal failure/DLQ and consumer idempotency in runtime.
+9. Prove import/export malformed-input, quarantine, atomic-commit, authorization and cross-tenant cases.
+10. Confirm remaining in-scope Sales/Inventory operational requirements and close only verified gaps.
+
+### P2 — Production hardening
+11. Run Supabase Security Advisor + Performance Advisor, query-plan review and representative load tests once a real Supabase environment exists.
+12. Complete observability, audit completeness, backup/recovery and rollback evidence.
+13. Production deployment smoke test + deployed artifact/SHA verification.
+14. Final regression → exact final HEAD freeze → release candidate → certification.
 
 ## Product boundary — non-negotiable
 Aghbari owns operational truth. Report-Advisor owns analytics/intelligence. The allowed direction is:
@@ -100,4 +103,4 @@ No duplicate BI/analytics dashboard or operational write path is introduced into
 ## No-false-closure
 A migration file is not migration execution evidence. A UI restriction is not authorization evidence. A queued outbox event is not successful external delivery evidence. A green run on an earlier SHA is not exact-HEAD evidence. A documentation PASS is not a runtime PASS. A successful local build is not production runtime proof.
 
-**NEXT EXECUTION LOOP:** continue code-level hardening and evidence strengthening on the current baseline while treating CI/Supabase/deployment access as explicit external gates; every new fix must be tested and recorded against its exact SHA before closure.
+**NEXT EXECUTION LOOP:** continue code-level hardening and evidence strengthening on the current Aghbari-only baseline while treating CI/Supabase/deployment access as explicit external gates; every new fix must be tested and recorded against its exact SHA before closure.
