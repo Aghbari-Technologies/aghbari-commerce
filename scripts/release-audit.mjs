@@ -44,6 +44,7 @@ const suspiciousPatterns = [
   /\bplaceholder\b/i,
   /\bnot\s+implemented\b/i,
   /\bnotimplemented\b/i,
+  /\b(?:mock|fake|sample)\s+(?:data|api|response|success)\b/i,
 ];
 const legacyBrandPattern = /العامري|\bAlamri\b|\bAl-Amri\b/i;
 
@@ -60,14 +61,14 @@ function walk(dir) {
   return result;
 }
 
-for (const file of walk(sourceRoot)) {
-  if (!/\.(?:ts|tsx|js|mjs|css|html)$/.test(file)) continue;
+const sourceFiles = walk(sourceRoot).filter((file) => /\.(?:ts|tsx|js|mjs|css|html)$/.test(file));
+for (const file of sourceFiles) {
   const text = readFileSync(file, 'utf8');
   const rel = relative(root, file).replaceAll('\\', '/');
   if (legacyBrandPattern.test(text)) fail(`Legacy branding found in executable source: ${rel}`);
   for (const pattern of suspiciousPatterns) {
     if (pattern.test(text) && !/(?:\.test\.|tests?\/)/i.test(rel)) {
-      fail(`Suspicious completion marker ${pattern} found in executable source: ${rel}`);
+      fail(`Suspicious completion/mock marker ${pattern} found in executable source: ${rel}`);
     }
   }
 }
@@ -93,6 +94,24 @@ for (const key of ['VITE_SUPABASE_URL', 'VITE_SUPABASE_PUBLISHABLE_KEY']) {
   if (!new RegExp(`^${key}=`, 'm').test(envExample)) fail(`Missing environment key in .env.example: ${key}`);
 }
 
+// Contract audit: every literal Supabase RPC invoked by executable source must
+// have a corresponding PostgreSQL function definition in the migration history.
+const migrationRoot = join(root, 'supabase', 'migrations');
+const migrationText = walk(migrationRoot)
+  .filter((file) => file.endsWith('.sql'))
+  .map((file) => readFileSync(file, 'utf8'))
+  .join('\n');
+const rpcCalls = new Set();
+for (const file of sourceFiles.filter((path) => /\.(?:ts|tsx|js|mjs)$/.test(path))) {
+  const text = readFileSync(file, 'utf8');
+  for (const match of text.matchAll(/\.rpc\(\s*['"]([a-z0-9_]+)['"]/gi)) rpcCalls.add(match[1]);
+}
+const missingRpcs = [...rpcCalls].filter((name) => {
+  const functionPattern = new RegExp(`(?:create|replace)\\s+function\\s+(?:public\\.)?${name}\\s*\\(`, 'i');
+  return !functionPattern.test(migrationText);
+});
+for (const name of missingRpcs) fail(`RPC contract missing from migration history: ${name}`);
+
 if (failures.length) {
   console.error('RELEASE AUDIT: FAIL');
   for (const item of failures) console.error(`- ${item}`);
@@ -101,4 +120,5 @@ if (failures.length) {
 
 console.log('RELEASE AUDIT: PASS');
 console.log(`Checked required files: ${requiredFiles.length + requiredWorkflows.length}`);
-console.log('Checked executable source and release artifacts for legacy branding and suspicious completion markers.');
+console.log(`Checked ${rpcCalls.size} literal frontend RPC contracts against migration history.`);
+console.log('Checked executable source and release artifacts for legacy branding and suspicious completion/mock markers.');
