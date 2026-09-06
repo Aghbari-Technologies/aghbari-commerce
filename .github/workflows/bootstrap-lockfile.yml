@@ -23,7 +23,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
       - name: Verify npm inputs
         run: |
           node --version
@@ -52,6 +51,10 @@ jobs:
         run: |
           echo "Deterministic lockfile generation failed with exit code ${{ steps.lockfile.outputs.exit_code }}"
           exit 1
+      - name: Verify generated lockfile
+        run: |
+          test -s package-lock.json
+          node -e "const p=require('./package-lock.json'); if (!p.lockfileVersion) process.exit(1); console.log('lockfileVersion=' + p.lockfileVersion)"
       - name: Commit lockfile
         if: github.event_name == 'push'
         run: |
