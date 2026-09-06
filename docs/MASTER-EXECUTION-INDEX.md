@@ -6,8 +6,8 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Branch: `main`
-- Current exact implementation HEAD: **`bd32f0e2f317430e728cc3e2a7d79bfde87a150e`**
-- Latest execution boundary: CI cache dependency hardening + deterministic lockfile bootstrap execution path + exact-SHA quality/security/migration proof hardening + Tenant A/B isolation E2E + RPC/mock-marker audit + outbox SECURITY DEFINER search_path hardening.
+- Current exact implementation HEAD: **`2ab730f951650eb07631b278727823178cb6054e`**
+- Latest execution boundary: order false-success hardening + core SECURITY DEFINER search_path hardening + exact-head verification/test coverage.
 
 ## Standing execution command
 **`1` = CONTINUE / EXECUTE AUTONOMOUSLY / DEEPEN / TEST / VERIFY / DOCUMENT / SELF-IMPROVE.**
@@ -19,7 +19,7 @@
 | Stage | State |
 |---|---|
 | BUILT | **ADVANCED IMPLEMENTED** — executable commerce shell + catalog/pricing/orders/cart, staff operations, customers, inventory transfer/adjustment/thresholds/low-stock/stock count, purchasing/receiving, finance, import/export, outbox worker, PWA/offline primitives and browser/security hardening |
-| INTEGRATED | **PASS at implementation level — exact current HEAD `bd32f0e2f317430e728cc3e2a7d79bfde87a150e`** |
+| INTEGRATED | **PASS at implementation level — exact current HEAD `2ab730f951650eb07631b278727823178cb6054e`** |
 | VERIFIED | **NOT PROVEN** — fresh exact-head GitHub Actions evidence must be obtained from executable runners |
 | RUNTIME PROVEN | **NOT PROVEN** — no connected Supabase target and no authenticated deployment runtime evidence available through current integrations |
 | PRODUCTION CERTIFIED | **NOT PROVEN** |
@@ -29,7 +29,7 @@
 - Repository is private and the connected GitHub integration has admin/maintain/push capability.
 - Historical feature branches are not release evidence unless their exact tested SHA is selected as the release boundary.
 - No historical CI result is reused as evidence for a later SHA.
-- `package-lock.json` is still not present on `main`; a dedicated bootstrap branch `execution/bootstrap-lockfile-20260906` now has an executable workflow trigger that generates and commits it automatically on a runner.
+- `package-lock.json` is still not present on `main`; a dedicated bootstrap branch `execution/bootstrap-lockfile-20260906` has an executable workflow trigger that generates and commits it automatically on a runner.
 
 ## Completed implementation surface
 - React/Vite/TypeScript Arabic RTL operational application shell and command center.
@@ -43,7 +43,7 @@
 - XLSX staged validation and atomic commit path.
 - Offline cart queue with authenticated user scoping and bounded retry behavior; retry exhaustion is terminal and duplicate online sync listeners have been removed.
 - Customer lifecycle: create, tier change, activation state, server-side RBAC, audit evidence and UI.
-- Inventory: atomic warehouse transfer, deterministic balance locking, idempotent replay, stock thresholds, low-stock detection and transactional stock-count reconciliation.
+- Inventory: atomic warehouse transfer, deterministic balance locking, stock thresholds, low-stock detection and transactional stock-count reconciliation.
 - Purchasing/receiving: suppliers, purchase orders, submit/approve, atomic receiving and inventory movement evidence.
 - Operational catalog/price CSV export with spreadsheet formula-injection hardening and tenant-scoped staff price visibility.
 - Operational finance: invoices, partial/full payments, audited cash-account provisioning, cash ledger entries, expenses, balance calculation and overdraft protection.
@@ -75,9 +75,13 @@
 - **pgTAP test `013-outbox-definer-search_path.test.sql` checks all four outbox worker functions for the hardened search_path contract.**
 - **Application-quality no longer requests npm dependency caching while `package-lock.json` is absent; this removes a known lockfile-dependent CI setup failure path.**
 - **Deterministic lockfile bootstrap is executable on a dedicated branch and is designed to commit the generated lockfile automatically when a GitHub runner is available.**
+- **Order creation now fails closed when the RPC returns no trustworthy persisted order reference; the UI cannot clear the cart or display a success message from an empty/malformed response.**
+- **Focused order response-contract regression tests cover valid, empty, malformed, zero and unsafe order-number responses.**
+- **Core SECURITY DEFINER command functions across order, catalog/admin, customer, inventory, purchasing and finance/cash operations now have `search_path=''` via migration `0039`; historical migrations were not rewritten.**
+- **pgTAP test `014-core-definer-search_path.test.sql` verifies the hardened configuration for all 20 targeted functions.**
 
 ## Evidence boundary
-- Current exact SHA `bd32f0e2f317430e728cc3e2a7d79bfde87a150e` contains the latest CI hardening and prior implementation/security/test work.
+- Current exact SHA `2ab730f951650eb07631b278727823178cb6054e` contains the latest order-response and security hardening plus prior implementation/test work.
 - Fresh exact-head CI execution is **NOT PROVEN** until a runner produces step-level evidence; missing surfaced evidence is never converted to PASS.
 - Runtime browser E2E is executable and exact-SHA-bound, but **NOT RUNTIME-PROVEN** until executed against a real deployment with real credentials for both tenant contexts.
 - The authorized Supabase integration currently returns **zero connected projects**, so live DB/Auth/RLS proof cannot honestly be claimed.
