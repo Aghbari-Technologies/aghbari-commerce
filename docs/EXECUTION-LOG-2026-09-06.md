@@ -39,10 +39,16 @@
 - Git history, immutable migrations, certification evidence and completed work are protected from unsafe mutation.
 - Scope is permanently locked to `Aghbari-Technologies/aghbari-commerce`.
 
+## 2026-09-07 continuation — CI reproducibility hardening
+- `main` was updated with commit `0054836bdfa4d8a8ddbd920554088dc9d0d07f37`.
+- Application Quality installation was changed from dependency-resolving `npm install` to lockfile-enforcing `npm ci`, with npm caching enabled through `actions/setup-node`.
+- This intentionally makes CI fail closed until a valid synchronized `package-lock.json` is present; no dependency drift is silently accepted.
+- The existing bootstrap workflow remains responsible for generating the lockfile on its dedicated branch; it was not treated as a certification result.
+- Current CI state remains **NOT PROVEN** until the runner exposes successful executable steps on the exact resulting HEAD.
+
 ## Current authoritative boundary
-- Latest documentation synchronization commit: `7cd26a7d26e799da25ba7fccc5a54a66cea7da36`.
-- Latest product-code boundary before documentation: `96fc46bf0b68e245165a07f5c7cb6b39cb217220`.
-- The documentation commit contains no product-code mutation; it binds the current state and evidence ledger.
+- Latest product-code/CI-hardening commit: `0054836bdfa4d8a8ddbd920554088dc9d0d07f37`.
+- The documentation ledger must be re-synchronized after the next verified executable result; this commit records the current continuation action.
 - CI, runtime, Supabase, and production certification remain **NOT PROVEN** until direct evidence exists.
 
-**Next loop:** continue Aghbari-only execution from exact `main` HEAD `7cd26a7d26e799da25ba7fccc5a54a66cea7da36`, rescan all independent executable fronts, fix the next real defect, test it, verify it, document the resulting exact SHA, and continue. Never convert missing evidence into PASS.
+**Next loop:** continue Aghbari-only execution from exact `main` HEAD `0054836bdfa4d8a8ddbd920554088dc9d0d07f37`, rescan all independent executable fronts, fix the next real defect, test it, verify it, document the resulting exact SHA, and continue. Never convert missing evidence into PASS.
