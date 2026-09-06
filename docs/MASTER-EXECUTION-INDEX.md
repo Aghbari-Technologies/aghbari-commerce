@@ -6,8 +6,8 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Branch: `main`
-- Current exact implementation HEAD: **`f3266eefaba19d641340bd6eef05b435aaded922`**
-- Latest execution boundary: exact-SHA quality/migration proof hardening + real Tenant A/B isolation E2E + executable RPC/mock-marker audit.
+- Current exact implementation HEAD: **`8408882ee3e29e77504f3bc8133cebaa39035dc0`**
+- Latest execution boundary: exact-SHA quality/migration proof hardening + real Tenant A/B isolation E2E + executable RPC/mock-marker audit + outbox SECURITY DEFINER search_path hardening with pgTAP coverage.
 
 ## Standing execution command
 **`1` = CONTINUE / EXECUTE AUTONOMOUSLY / DEEPEN / TEST / VERIFY / DOCUMENT / SELF-IMPROVE.**
@@ -16,7 +16,7 @@
 | Stage | State |
 |---|---|
 | BUILT | **ADVANCED IMPLEMENTED** — executable commerce shell + catalog/pricing/orders/cart, staff operations, customers, inventory transfer/adjustment/thresholds/low-stock/stock count, purchasing/receiving, finance, import/export, outbox worker, PWA/offline primitives and browser/security hardening |
-| INTEGRATED | **PASS at implementation level — exact current HEAD `f3266eefaba19d641340bd6eef05b435aaded922`** |
+| INTEGRATED | **PASS at implementation level — exact current HEAD `8408882ee3e29e77504f3bc8133cebaa39035dc0`** |
 | VERIFIED | **NOT PROVEN** — exact-head GitHub Actions runs are currently failing before step evidence is surfaced |
 | RUNTIME PROVEN | **NOT PROVEN** — no connected Supabase target and no authenticated deployment runtime evidence available through current integrations |
 | PRODUCTION CERTIFIED | **NOT PROVEN** |
@@ -68,16 +68,18 @@
 - **Runtime E2E workflow requires an explicit `exact_sha`, checks out that exact commit, verifies `git rev-parse HEAD`, and names uploaded evidence with the certified SHA.**
 - **Runtime E2E requires distinct Tenant B credentials instead of silently reducing isolation proof to a single-user test.**
 - **Quality and migration-proof workflows now support explicit exact-SHA dispatch and verify the checked-out HEAD before executing gates.**
+- **Outbox SECURITY DEFINER functions are now redefined in migration `0038` with an empty `search_path`, while the original `0022` migration history remains unchanged.**
+- **pgTAP test `013-outbox-definer-search-path.test.sql` checks all four outbox worker functions for the hardened search_path contract.**
 
 ## Evidence boundary
-- Current exact SHA `f3266eefaba19d641340bd6eef05b435aaded922` has fresh GitHub Actions runs, but the connector currently surfaces them as immediate job failures with zero step evidence; they are therefore **FAILED / NOT PROVEN**, not PASS.
+- Current exact SHA `8408882ee3e29e77504f3bc8133cebaa39035dc0` contains the new implementation and deterministic database test coverage, but CI execution evidence is not yet a surfaced PASS; recent workflow jobs are failing immediately with zero step evidence.
 - Runtime browser E2E is executable and exact-SHA-bound, but **NOT RUNTIME-PROVEN** until executed against a real deployment with real credentials for both tenant contexts.
 - No Supabase project is currently connected to the authorized Supabase integration, so live DB/Auth/RLS proof cannot honestly be claimed.
 - Production deployment/runtime is therefore **NOT CERTIFIED**.
 
 ## Remaining closure work — bounded priority order
 ### P0 — Unblock and prove the core vertical slice
-1. Diagnose/restore executable GitHub Actions runner/check execution and capture step-level evidence on exact current HEAD.
+1. Restore executable GitHub Actions runner/check execution and capture step-level evidence on exact current HEAD.
 2. Generate and commit deterministic `package-lock.json`; switch CI from floating `npm install` to `npm ci` where appropriate.
 3. Provision/connect a dedicated staging Supabase target.
 4. Execute real Auth/session/role/Tenant A-B/RLS negative tests.
