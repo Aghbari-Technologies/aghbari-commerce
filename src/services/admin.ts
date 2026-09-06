@@ -3,7 +3,7 @@ import type { CustomerTier } from '../domain/types';
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
-function assertEntityId(value: unknown, operation: string) {
+export function assertEntityId(value: unknown, operation: string) {
   const id = value && typeof value === 'object' ? (value as { id?: unknown }).id : undefined;
   if (typeof id !== 'string' || !UUID_PATTERN.test(id)) {
     throw new Error(`استجابة ${operation} غير صالحة. لم يتم إثبات نجاح العملية.`);
@@ -11,14 +11,14 @@ function assertEntityId(value: unknown, operation: string) {
   return value;
 }
 
-function assertMoney(value: unknown): number {
+export function assertMoney(value: unknown): number {
   if (typeof value !== 'number' || !Number.isFinite(value) || value < 0) {
     throw new Error('استجابة تحديث السعر غير صالحة. لم يتم إثبات نجاح العملية.');
   }
   return value;
 }
 
-function assertInventoryQuantity(value: unknown): number {
+export function assertInventoryQuantity(value: unknown): number {
   if (typeof value !== 'number' || !Number.isSafeInteger(value) || value < 0) {
     throw new Error('استجابة تعديل المخزون غير صالحة. لم يتم إثبات نجاح العملية.');
   }
