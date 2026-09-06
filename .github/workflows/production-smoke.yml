@@ -1,0 +1,57 @@
+name: Production Smoke / Exact Artifact
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: 'Deployed Aghbari URL to smoke-test'
+        required: true
+        type: string
+      exact_sha:
+        description: 'Exact Git SHA expected in the deployed build artifact'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  production-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      BASE_URL: ${{ inputs.base_url }}
+      EXPECTED_SHA: ${{ inputs.exact_sha }}
+    steps:
+      - name: Validate inputs
+        run: |
+          test -n "$BASE_URL"
+          test -n "$EXPECTED_SHA"
+          case "$BASE_URL" in
+            https://*) ;;
+            *) echo 'BASE_URL must use HTTPS'; exit 1 ;;
+          esac
+          echo "$EXPECTED_SHA" | grep -Eq '^[0-9a-f]{40}$'
+      - name: Verify deployed artifact SHA
+        run: |
+          curl --fail --silent --show-error --location --max-time 15 "$BASE_URL/build-meta.json" -o build-meta.json
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const meta = JSON.parse(fs.readFileSync('build-meta.json', 'utf8'));
+          if (meta.product !== 'aghbari-commerce') throw new Error(`Unexpected product: ${meta.product}`);
+          if (meta.git_sha !== process.env.EXPECTED_SHA) {
+            throw new Error(`DEPLOYED SHA MISMATCH: expected=${process.env.EXPECTED_SHA} actual=${meta.git_sha}`);
+          }
+          console.log(`EXACT DEPLOYED SHA: ${meta.git_sha}`);
+          NODE
+      - name: Verify security headers
+        run: |
+          curl --fail --silent --show-error --location --max-time 15 -D headers.txt -o /dev/null "$BASE_URL/"
+          grep -qi '^content-security-policy:' headers.txt
+          grep -qi '^x-content-type-options:' headers.txt
+          grep -qi '^x-frame-options:' headers.txt
+          grep -qi '^strict-transport-security:' headers.txt
+      - name: Verify application response
+        run: |
+          curl --fail --silent --show-error --location --max-time 15 "$BASE_URL/" -o index.html
+          grep -qi '<html' index.html
