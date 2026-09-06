@@ -6,27 +6,30 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Branch: `main`
-- Current exact implementation HEAD: **`468831cc814319e38a090bd9818739faf8988be2`**
-- Latest execution boundary: exact-SHA quality/migration/security proof hardening + real Tenant A/B isolation E2E + executable RPC/mock-marker audit + outbox SECURITY DEFINER search_path hardening with pgTAP coverage.
+- Current exact implementation HEAD: **`36063d2c5f395a46d996775d9df041b270cb05d6`**
+- Latest execution boundary: CI dependency-cache hardening + deterministic lockfile bootstrap execution path + exact-SHA quality/security/migration proof hardening + Tenant A/B isolation E2E + RPC/mock-marker audit + outbox SECURITY DEFINER search_path hardening.
 
 ## Standing execution command
 **`1` = CONTINUE / EXECUTE AUTONOMOUSLY / DEEPEN / TEST / VERIFY / DOCUMENT / SELF-IMPROVE.**
+
+## Scope lock
+**Aghbari Commerce only.** `Report-Advisor` and every other project are permanently out of scope for this execution stream.
 
 ## Certification stages
 | Stage | State |
 |---|---|
 | BUILT | **ADVANCED IMPLEMENTED** — executable commerce shell + catalog/pricing/orders/cart, staff operations, customers, inventory transfer/adjustment/thresholds/low-stock/stock count, purchasing/receiving, finance, import/export, outbox worker, PWA/offline primitives and browser/security hardening |
-| INTEGRATED | **PASS at implementation level — exact current HEAD `468831cc814319e38a090bd9818739faf8988be2`** |
-| VERIFIED | **NOT PROVEN** — exact-head GitHub Actions runs are currently failing before step evidence is surfaced |
+| INTEGRATED | **PASS at implementation level — exact current HEAD `36063d2c5f395a46d996775d9df041b270cb05d6`** |
+| VERIFIED | **NOT PROVEN** — fresh exact-head GitHub Actions evidence must be obtained from executable runners |
 | RUNTIME PROVEN | **NOT PROVEN** — no connected Supabase target and no authenticated deployment runtime evidence available through current integrations |
 | PRODUCTION CERTIFIED | **NOT PROVEN** |
 
 ## Current baseline
 - Default branch: `main`.
 - Repository is private and the connected GitHub integration has admin/maintain/push capability.
-- Scope is permanently locked to **Aghbari Commerce only**; Report-Advisor and every other project are out of scope.
-- Historical feature branches are not treated as release evidence unless their exact tested SHA is selected as the release boundary.
+- Historical feature branches are not release evidence unless their exact tested SHA is selected as the release boundary.
 - No historical CI result is reused as evidence for a later SHA.
+- `package-lock.json` is still not present on `main`; a dedicated bootstrap branch `execution/bootstrap-lockfile-20260906` now has an executable workflow trigger that generates and commits it automatically on a runner.
 
 ## Completed implementation surface
 - React/Vite/TypeScript Arabic RTL operational application shell and command center.
@@ -64,29 +67,31 @@
 - **Node 22 runtime contract is explicitly pinned in `package.json`.**
 - **Typecheck is an explicit package/CI gate.**
 - **Release audit scans shipped HTML/PWA/config artifacts and executable source for legacy branding and suspicious completion/mock markers.**
-- **Release audit now discovers literal frontend Supabase RPC calls and verifies each has a matching PostgreSQL function definition in migration history.**
+- **Release audit discovers literal frontend Supabase RPC calls and verifies each has a matching PostgreSQL function definition in migration history.**
 - **Runtime E2E workflow requires an explicit `exact_sha`, checks out that exact commit, verifies `git rev-parse HEAD`, and names uploaded evidence with the certified SHA.**
 - **Runtime E2E requires distinct Tenant B credentials instead of silently reducing isolation proof to a single-user test.**
-- **Quality and migration-proof workflows now support explicit exact-SHA dispatch and verify the checked-out HEAD before executing gates.**
-- **Security audit now supports exact-SHA dispatch and verifies the checked-out HEAD before dependency/security checks.**
-- **Outbox SECURITY DEFINER functions are now redefined in migration `0038` with an empty `search_path`, while the original `0022` migration history remains unchanged.**
+- **Quality, migration-proof and security-audit workflows support explicit exact-SHA dispatch and verify the checked-out HEAD before executing gates.**
+- **Outbox SECURITY DEFINER functions are redefined in migration `0038` with an empty `search_path`, while original migration history remains unchanged.**
 - **pgTAP test `013-outbox-definer-search_path.test.sql` checks all four outbox worker functions for the hardened search_path contract.**
+- **Application-quality no longer requests npm dependency caching while `package-lock.json` is absent; this removes a known lockfile-dependent CI setup failure path.**
+- **Deterministic lockfile bootstrap is now executable on a dedicated branch and is designed to commit the generated lockfile automatically when a GitHub runner is available.**
 
 ## Evidence boundary
-- Current exact SHA `468831cc814319e38a090bd9818739faf8988be2` contains the new implementation and deterministic database test coverage, but fresh GitHub Actions execution evidence remains **FAILED / NOT PROVEN** because the connector is surfacing immediate job failures with zero step evidence.
+- Current exact SHA `36063d2c5f395a46d996775d9df041b270cb05d6` contains the latest CI hardening and prior implementation/security/test work.
+- Fresh exact-head CI execution is still **NOT PROVEN** until a runner produces step-level evidence; absence of surfaced evidence is not converted to PASS.
 - Runtime browser E2E is executable and exact-SHA-bound, but **NOT RUNTIME-PROVEN** until executed against a real deployment with real credentials for both tenant contexts.
 - The authorized Supabase integration currently returns **zero connected projects**, so live DB/Auth/RLS proof cannot honestly be claimed.
 - Production deployment/runtime is therefore **NOT CERTIFIED**.
 
 ## Remaining closure work — bounded priority order
-### P0 — Unblock and prove the core vertical slice
-1. Restore executable GitHub Actions runner/check execution and capture step-level evidence on exact current HEAD.
-2. Generate and commit deterministic `package-lock.json`; switch CI from floating `npm install` to `npm ci` where appropriate.
+### P0 — Core vertical slice
+1. Obtain executable runner step evidence for exact current HEAD.
+2. Generate and commit deterministic `package-lock.json`; then switch quality/security installation to `npm ci` where appropriate.
 3. Connect/provision a dedicated staging Supabase target when the required Supabase organization/access is available.
 4. Execute real Auth/session/role/Tenant A-B/RLS negative tests.
-5. Execute authenticated browser E2E on the deployed Aghbari target, with exact SHA evidence.
+5. Execute authenticated browser E2E on the deployed Aghbari target with exact-SHA evidence.
 
-### P1 — Prove operational reliability and data safety
+### P1 — Reliability and data safety
 6. Run all pgTAP suites on reset/upgrade/repeat paths.
 7. Prove offline refresh/cache/reconnect/replay/conflict/recovery and tenant isolation in runtime.
 8. Prove outbox claim/delivery/retry/backoff/terminal failure/DLQ and consumer idempotency in runtime.
@@ -99,14 +104,7 @@
 13. Production deployment smoke test + deployed artifact/SHA verification.
 14. Final regression → exact final HEAD freeze → release candidate → certification.
 
-## Product boundary — non-negotiable
-Aghbari owns operational truth. Report-Advisor owns analytics/intelligence. The allowed direction is:
-
-`Aghbari → Intelligence Integration Gateway → Report-Advisor`.
-
-No duplicate BI/analytics dashboard or operational write path is introduced into Aghbari.
-
 ## No-false-closure
 A migration file is not migration execution evidence. A UI restriction is not authorization evidence. A queued outbox event is not successful external delivery evidence. A green run on an earlier SHA is not exact-HEAD evidence. A documentation PASS is not a runtime PASS. A successful local build is not production runtime proof.
 
-**NEXT EXECUTION LOOP:** continue code-level hardening and evidence strengthening on the current Aghbari-only baseline while treating CI/Supabase/deployment access as explicit external gates; every new fix must be tested and recorded against its exact SHA before closure.
+**NEXT EXECUTION LOOP:** continue Aghbari-only code hardening and evidence strengthening on the current exact HEAD, while treating runner/Supabase/deployment access as explicit external gates. Every new fix must be tested and recorded against its exact SHA before closure.
