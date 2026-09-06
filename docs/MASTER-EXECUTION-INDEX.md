@@ -7,7 +7,7 @@
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Branch: `main`
 - Current exact implementation HEAD: **`e97f0c7bad9ca1f86076510079e6e5edae31fe48`**
-- Latest execution boundary: release-hardening audit, explicit typecheck/Node runtime contract, and shipped-artifact branding checks.
+- Latest execution boundary: release-hardening audit, explicit typecheck/Node runtime contract, shipped-artifact branding checks, and strengthened browser persistence evidence.
 
 ## Standing execution command
 **`1` = CONTINUE / EXECUTE AUTONOMOUSLY / DEEPEN / TEST / VERIFY / DOCUMENT / SELF-IMPROVE.**
@@ -48,7 +48,7 @@
 - Durable outbox claim/ack/failure database boundary and deployable webhook worker with fail-closed inbound worker authentication, required outbound webhook token and delivery timeout.
 - PWA manifest/service worker/offline fallback.
 - Security headers including CSP and browser secret-boundary checks.
-- Playwright authenticated browser critical-path gate, strengthened to cover real catalog → cart → order → refresh verification.
+- Playwright authenticated browser critical-path gate, strengthened to cover real catalog → cart → order → exact-created-order persistence after refresh.
 - Workspace ignore rules and corrected non-secret environment-variable example using `VITE_SUPABASE_PUBLISHABLE_KEY`.
 
 ## Forensic repairs in current boundary
@@ -65,11 +65,12 @@
 - **Executable release-audit gate is part of the application quality gate and scans shipped HTML/PWA/config artifacts as well as executable source.**
 - **Node 22 runtime contract is explicitly pinned in `package.json`.**
 - **Typecheck is exposed as an explicit package/CI gate rather than being implicit only inside the production build.**
+- **E2E persistence assertion was hardened so the post-checkout verification extracts the exact created order number and requires that same order to be present after a full browser refresh; a pre-existing order can no longer falsely satisfy the critical-path proof.**
 
 ## Evidence boundary
 - Latest SHA `e97f0c7bad9ca1f86076510079e6e5edae31fe48` currently has no surfaced GitHub workflow runs/statuses through the authorized connector; therefore CI is **NOT PROVEN**, not PASS.
 - Historical domain/G1/PostgreSQL/order evidence is retained but is **not** reused as proof for later SHAs.
-- Runtime browser E2E is implemented but **NOT RUNTIME-PROVEN**.
+- Runtime browser E2E is implemented and strengthened, but **NOT RUNTIME-PROVEN** until executed against a real deployment with real credentials.
 - No Supabase project is currently connected to the authorized Supabase integration (`list_projects` returned no connected projects), so live DB/Auth/RLS/advisor/runtime proof cannot honestly be claimed.
 - Production deployment/runtime is therefore **NOT CERTIFIED**.
 
@@ -98,4 +99,4 @@ No duplicate BI/analytics dashboard or operational write path is introduced into
 ## No-false-closure
 A migration file is not migration execution evidence. A UI restriction is not authorization evidence. A queued outbox event is not successful external delivery evidence. A green run on an earlier SHA is not exact-HEAD evidence. A documentation PASS is not a runtime PASS. A successful local build is not production runtime proof.
 
-**NEXT EXECUTION LOOP:** execute the remaining code-independent release fronts, obtain a functioning CI runner, then provision the real Supabase/deployment environment and convert every remaining gate to evidence-bound PASS.
+**NEXT EXECUTION LOOP:** continue code-level hardening and evidence strengthening on the current baseline while treating CI/Supabase/deployment access as explicit external gates; every new fix must be tested and recorded against its exact SHA before closure.
