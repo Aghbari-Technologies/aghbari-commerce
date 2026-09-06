@@ -5,6 +5,12 @@ on:
     branches: [main]
   push:
     branches: ['**']
+  workflow_dispatch:
+    inputs:
+      exact_sha:
+        description: 'Exact Git commit SHA to verify'
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -13,8 +19,23 @@ jobs:
   migration-proof:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      TARGET_SHA: ${{ inputs.exact_sha || github.sha }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout exact target SHA
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.exact_sha || github.sha }}
+          fetch-depth: 1
+      - name: Verify exact target HEAD
+        shell: bash
+        run: |
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$TARGET_SHA" || {
+            echo "EXACT HEAD MISMATCH: expected=$TARGET_SHA actual=$actual"
+            exit 1
+          }
+          echo "EXACT MIGRATION PROOF HEAD: $actual"
       - name: Fail fast on duplicate migration versions
         shell: bash
         run: |
@@ -29,7 +50,8 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           version: latest
-      - run: supabase start
+      - name: Start local Supabase
+        run: supabase start
       - name: Apply migrations from empty database
         run: supabase db reset --local
       - name: Run database pgTAP proofs
