@@ -28,7 +28,7 @@
 
 ## Current authoritative implementation boundary
 
-**Actual current `main` HEAD:** `19d193ac3b36f99894b181c9623c299a765dc155`
+**Actual current `main` HEAD:** `aa6b571ea0b1a64c21ad9169894ea06708d81a60`
 
 This exact SHA is the authoritative source boundary for the current execution cycle. Earlier notes that name a different SHA are not authoritative unless independently re-read from GitHub and confirmed.
 
@@ -44,15 +44,21 @@ This exact SHA is the authoritative source boundary for the current execution cy
 8. Lockfile bootstrap workflow with fail-closed `npm ci` verification.
 9. Release audit covering manifest, workflows, migrations, RPC references, security headers and runtime hazards.
 10. Production smoke checks covering build provenance, security headers, PWA manifest and Service Worker boundaries.
-11. Order draft boundary regression coverage for empty/non-array line collections.
-12. Order draft whitespace-normalization acceptance coverage.
-13. Order quantity zero/negative/fractional rejection coverage.
-14. Order inventory fractional/non-finite rejection coverage.
-15. Client preview overflow/non-finite/negative-value containment coverage.
+11. Runtime rejection of null/non-object order drafts.
+12. Runtime rejection of missing/non-string idempotency keys.
+13. Runtime rejection of null/non-object order lines.
+14. Runtime rejection of non-string product identifiers.
+15. Runtime validation of the inventory container boundary.
+16. Preview handling for non-array runtime input.
+17. Preview handling for malformed/null line objects.
+18. Preview protection against line multiplication overflow.
+19. Preview protection against accumulated-total overflow.
+20. Preview regression coverage for zero quantity and negative price containment.
 
 ## Latest execution batch
 
-- `19d193ac3b36f99894b181c9623c299a765dc155` — expanded deterministic order-domain regression coverage with ten new adversarial/edge-case assertions. The implementation itself was unchanged because the rescan found the validation boundary already correctly rejects these cases; the new tests lock the behavior against regression.
+- `b10b23b197034eaae1744bf437557f18dd9db159` — hardened the order domain against malformed runtime objects and preview arithmetic overflow without changing server-side pricing authority.
+- `aa6b571ea0b1a64c21ad9169894ea06708d81a60` — added deterministic adversarial regression coverage for the new runtime and arithmetic boundaries.
 
 ## Evidence state
 
