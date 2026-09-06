@@ -32,9 +32,11 @@ jobs:
       E2E_PASSWORD_B: ${{ secrets.E2E_PASSWORD_B }}
       E2E_EXACT_SHA: ${{ inputs.exact_sha }}
     steps:
-      - name: Validate exact SHA input
+      - name: Validate exact release inputs
         shell: bash
-        run: echo "$E2E_EXACT_SHA" | grep -Eq '^[0-9a-f]{40}$'
+        run: |
+          echo "$E2E_EXACT_SHA" | grep -Eq '^[0-9a-f]{40}$'
+          node -e "const u=new URL(process.env.E2E_BASE_URL); if(u.protocol !== 'https:') throw new Error('E2E_BASE_URL must use HTTPS'); if(u.username || u.password) throw new Error('E2E_BASE_URL must not contain credentials'); console.log('Runtime URL origin:', u.origin)"
       - name: Checkout exact certification SHA
         uses: actions/checkout@v4
         with:
@@ -49,7 +51,7 @@ jobs:
             exit 1
           }
           echo "EXACT CERTIFICATION HEAD: $actual"
-      - name: Setup Node
+      - name: Setup Node 22
         uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -59,6 +61,7 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Require runtime credentials
+        shell: bash
         run: |
           test -n "$E2E_BASE_URL"
           test -n "$E2E_EMAIL"
