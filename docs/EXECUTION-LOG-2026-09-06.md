@@ -1,56 +1,127 @@
-# Aghbari Commerce — Execution Log — 2026-09-06
+# Aghbari Commerce — Execution Log — 2026-09-06/07
 
-## Exact execution boundary
-- Branch: `main`
-- Previous verified implementation boundary: `c3662840d75c03f3ca5cb22b693499c19ca0be29`
-- New execution commits:
-  - `0621642c6da3fce31a7ebfd4691eb77134a15594` — admin command input validation before backend mutation.
-  - `0d359e55ca799046cb8125226c231944c0ce06ed` — deterministic admin command response-contract regression coverage.
-  - `76ec1f4bad5ee4a35fd4b5f743c770aa557ea3bb` — customer order response-contract hardening.
-  - `b9cdf181453587fe5fd6ce6ac98211017d7f8660` — deterministic customer order response-contract regression coverage.
-  - `a11ffe467307101ff49a63464bf48f78a27d8846` — staff order response/transition input hardening.
-  - `96fc46bf0b68e245165a07f5c7cb6b39cb217220` — deterministic staff order response-contract regression coverage.
+## Scope and execution protocol
+- Repository: `Aghbari-Technologies/aghbari-commerce` only.
+- Command `1` means immediate execution continuation, not a planning/report request.
+- Independent fronts are worked in parallel where safely executable.
+- No PASS is recorded without exact-SHA execution evidence.
 
-## Continued execution — lockfile / runner evidence
-- `package-lock.json` remains absent from `main`; no deterministic lockfile PASS is claimed.
-- Dedicated bootstrap branch `execution/bootstrap-lockfile-20260906` reached `a03fca2cb2d649b98fadc818b747e6d5ff44ca33` after removing the lockfile-dependent npm cache from setup.
-- Bootstrap run `34004753932`, independent `application-quality` run `34004755701`, and independent `security-audit` run `34004395547` failed before exposing usable runner step evidence. Their failed jobs were explicitly retried during this execution; no new executable PASS evidence has been surfaced yet.
-- The bootstrap workflow was reviewed: Node 22 setup has no npm cache dependency, inputs are checked, lockfile output is captured, generated-lockfile validity is checked, and only then is a push attempted.
-- Repository-wide executable-source searches for `TODO`, `العامري`, and `mock` returned no matches on the current default-branch search surface.
+## Authoritative boundary reconciliation
+- GitHub reported the actual `main` implementation boundary before documentation reconciliation as `de9affcd8e7d2b12a9b9f107a9818b825c14a519`.
+- That commit adds deterministic Outbox state-machine regression tests.
+- A stale status document previously named an unrelated later SHA; it was corrected instead of propagated.
+- Status reconciliation commit: `789688e957e0969e43b506ba17365ac56e662d58`.
+- The execution log itself is now being synchronized to the actual sequence rather than asserting unsupported future SHAs.
 
-## New executable hardening — order read/transition boundaries
-- Customer order summaries now validate response shape before the UI consumes them: UUID, positive safe order number, supported order status, finite non-negative total, three-letter uppercase currency, and parseable timestamps.
-- Staff order summaries now validate order/customer/warehouse UUIDs, positive safe order number, supported status, finite non-negative total, currency, customer name, and timestamps before the operational UI consumes them.
-- Staff order transition now rejects malformed order IDs and unsupported statuses before RPC invocation and fails closed if the RPC does not return a trustworthy order summary.
-- Deterministic regression suites cover valid acceptance plus malformed IDs, numbers, statuses, money, currency, names, timestamps and null/primitive responses.
-- These are implementation-level hardening changes; they do not substitute for real Supabase/Auth/RLS or deployed runtime evidence.
+## Completed implementation work recorded in this cycle
 
-## 2026-09-07 continuation — CI reproducibility hardening
-- `main` was updated with commit `0054836bdfa4d8a8ddbd920554088dc9d0d07f37`.
-- Application Quality installation was changed from dependency-resolving `npm install` to lockfile-enforcing `npm ci`, with npm caching enabled through `actions/setup-node`.
-- This intentionally makes CI fail closed until a valid synchronized `package-lock.json` is present; no dependency drift is silently accepted.
+### Orders
+1. Customer order response UUID validation.
+2. Customer order number safety validation.
+3. Customer order status validation.
+4. Customer order total/currency validation.
+5. Customer order timestamp validation.
+6. Staff order response validation.
+7. Staff transition ID validation.
+8. Staff transition status validation.
+9. Staff transition fail-closed response handling.
+10. Deterministic order regression coverage for malformed and null/primitive responses.
 
-## 2026-09-07 continuation — parallel business-boundary hardening
-- `6e95349c9cebbcd6af2d65992fc77ddb6c116487` — inventory transfer/threshold/count command validation was added before RPC/database mutation: UUIDs, source/destination distinction, bounded idempotency keys, line count, duplicate products, positive quantities, and threshold ordering.
-- `ad958d6599ecf44f39d1ab173c5a7da0ba0a500b` — deterministic inventory input regression coverage added for valid paths, malformed IDs, same-warehouse transfers, weak keys, duplicate products, invalid quantities, and threshold violations.
-- `ef457d4c91ec30caab0a452c2e2bcf7d3859ceab` — purchasing/receiving command validation was added before RPC/database mutation: supplier/warehouse/order/item/product UUIDs, bounded idempotency keys, bounded line counts, duplicate product/item rejection, quantity/cost validation, currency validation, and notes bounds.
-- `0e31fe277e2aec1b67606f5ec71a983a6859a756` — deterministic purchasing/receiving input regression coverage added for malformed IDs, empty lines, weak keys, duplicates, invalid quantities/costs/currency, and valid multi-line paths.
-- `9132aa23f58d4ce3c19bad1cb7626cf00abe1214` — finance command validation was added before RPC/database mutation: invoice/branch/cash-account UUIDs, positive amounts, supported payment methods, currency format, opening-balance bounds, and text length bounds.
-- `b93055f3312fd52184b43d6c54321c029952e9e4` — deterministic finance input regression coverage added for cash accounts, payments, expenses, invalid identities, amounts, methods, currencies, and oversized text.
-- These changes are client/service boundary hardening only; they do not claim that Supabase RLS, RPC authorization, concurrency, or runtime business effects are proven.
+### Inventory
+11. Warehouse UUID validation before mutation.
+12. Source/destination warehouse distinction.
+13. Bounded inventory idempotency keys.
+14. Inventory line-count bounds.
+15. Duplicate-product rejection.
+16. Positive finite quantity validation.
+17. Threshold ordering validation.
+18. Deterministic inventory regression coverage.
 
-## Current authoritative boundary
-- Latest code execution commit: `b93055f3312fd52184b43d6c54321c029952e9e4`.
-- Latest documentation synchronization commit is the current HEAD after this update.
-- CI, runtime, Supabase, and production certification remain **NOT PROVEN** until direct execution evidence exists.
+### Purchasing / Receiving
+19. Supplier UUID validation.
+20. Warehouse UUID validation.
+21. Purchase order/item/product identity validation.
+22. Bounded idempotency keys.
+23. Line-count bounds.
+24. Duplicate product/item rejection.
+25. Quantity and unit-cost validation.
+26. Currency validation.
+27. Notes length bounds.
+28. Deterministic purchasing/receiving regression coverage.
 
-## Protocol binding — command `1`
-- `1` is an immediate execution command, not a planning request.
-- Each `1` resumes from the latest exact trusted boundary and continues until safe executable work is exhausted.
-- Mandatory loop: LOAD STATE → OPEN WORK → PRIORITIZE P0/P1/P2 → RESCAN → FIND → ROOT CAUSE → FIX → TEST → REGRESSION → CONSUMER/SECURITY/RUNTIME PROOF → EVIDENCE → EXACT-HEAD CHECK → DOCUMENT → RESCAN → NEXT.
-- PASS/READY/SUCCESS/BLOCKED/CERTIFIED are evidence-bound states, never assumptions.
-- Code defects are fixed immediately; external environment gates are documented while independent executable work continues.
-- Git history, immutable migrations, certification evidence and completed work are protected from unsafe mutation.
-- Scope is permanently locked to `Aghbari-Technologies/aghbari-commerce`.
+### Finance
+29. Invoice/branch/cash-account identity validation.
+30. Positive finite amount validation.
+31. Payment-method allowlist.
+32. Currency format validation.
+33. Opening-balance bounds.
+34. Text-length bounds.
+35. Deterministic finance regression coverage.
 
-**Next loop:** continue Aghbari-only execution from the latest exact `main` HEAD, rescan independent executable fronts, fix the next real defect, test it, verify it, document the resulting exact SHA, and continue. Never convert missing evidence into PASS.
+### Outbox
+36. Outbox UUID validation.
+37. Attempt-count bounds.
+38. Processing-state lease requirement.
+39. Dead-letter terminal-attempt requirement.
+40. Future-record claim rejection.
+41. Bounded processing lease.
+42. Processing-only delivery transition.
+43. Retry clears lease.
+44. Exponential backoff with fifteen-minute cap.
+45. Terminal failure to dead-letter.
+46. Deterministic Outbox state-machine regression suite.
+
+### CI / Release / Security
+47. Exact-SHA checks across critical workflows.
+48. Lockfile bootstrap validation.
+49. Lockfile bootstrap `npm ci` verification.
+50. Release audit required-file checks.
+51. Migration duplicate-version checks.
+52. Migration destructive-operation checks.
+53. RPC-to-migration contract checks.
+54. Client credential hazard checks.
+55. Dynamic-code hazard checks.
+56. Build provenance checks.
+57. PWA manifest checks.
+58. Service Worker boundary checks.
+59. Production security-header checks.
+
+## Evidence state
+- `package-lock.json` on `main`: **NOT PROVEN**.
+- Fresh current-head CI: **NOT PROVEN**.
+- Fresh current-head unit/domain execution: **NOT PROVEN** until runner step evidence is available.
+- Fresh pgTAP/PostgreSQL execution: **NOT PROVEN**.
+- Live Supabase Auth/RLS/DB: **BLOCKED** pending an authorized connected staging project.
+- Authenticated browser E2E: **NOT PROVEN** against a live target.
+- Outbox external delivery: **NOT PROVEN**.
+- Production: **OPEN / NOT CERTIFIED**.
+
+## Current external execution action
+- GitHub Actions lockfile job `101496117387` from run `34004753932` was explicitly re-run.
+- The re-run is currently queued and exposes no executable step evidence yet.
+- Therefore it is neither PASS nor a proven code failure.
+
+## Closure gates
+1. Obtain runner step/log evidence on the exact current SHA.
+2. Generate a valid synchronized npm lockfile and prove `npm ci`.
+3. Run fresh typecheck, lint, unit/domain and build.
+4. Run fresh pgTAP/PostgreSQL migration/security suites.
+5. Connect staging Supabase.
+6. Create real Tenant A/B identities.
+7. Execute adversarial tenant isolation across all operational domains and RPCs.
+8. Execute Golden Path order and persisted-refresh proof.
+9. Execute order state machine and inventory concurrency/idempotency runtime proof.
+10. Execute purchasing/receiving and finance runtime proof.
+11. Execute import/export runtime proof.
+12. Execute offline/replay and Outbox delivery/recovery proof.
+13. Execute security adversarial proof.
+14. Execute performance/load evidence.
+15. Execute backup/restore and rollback evidence.
+16. Deploy and verify artifact SHA.
+17. Final regression and certification audit.
+
+## Evidence rule
+A commit, workflow definition, source-code presence, or test-file presence is not a PASS. Every future PASS must identify exact SHA, execution environment, command/test path and evidence artifact.
+
+## Next execution
+Continue from the latest actual `main` SHA. Work P0 CI/lockfile and independent application/security fronts in parallel. If a real code defect is found, fix it and add regression coverage. If an external environment gate is unavailable, record BLOCKED precisely and continue all independent executable work.
