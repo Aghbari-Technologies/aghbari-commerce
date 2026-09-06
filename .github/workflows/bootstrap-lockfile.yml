@@ -20,8 +20,35 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
+      - name: Verify npm inputs
+        run: |
+          node --version
+          npm --version
+          test -f package.json
+          npm pkg get name version engines dependencies devDependencies
       - name: Generate deterministic npm lockfile
-        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+        id: lockfile
+        shell: bash
+        run: |
+          set +e
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund >npm-lockfile.log 2>&1
+          status=$?
+          cat npm-lockfile.log
+          echo "exit_code=$status" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Upload lockfile diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bootstrap-lockfile-diagnostics-${{ github.run_id }}
+          path: npm-lockfile.log
+          if-no-files-found: warn
+      - name: Fail if lockfile generation failed
+        if: steps.lockfile.outputs.exit_code != '0'
+        run: |
+          echo "Deterministic lockfile generation failed with exit code ${{ steps.lockfile.outputs.exit_code }}"
+          exit 1
       - name: Commit lockfile
         run: |
           if git diff --quiet -- package-lock.json; then
