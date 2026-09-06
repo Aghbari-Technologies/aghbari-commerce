@@ -6,13 +6,6 @@
 - Independent fronts are worked in parallel where safely executable.
 - No PASS is recorded without exact-SHA execution evidence.
 
-## Authoritative boundary reconciliation
-- GitHub reported the actual `main` implementation boundary before documentation reconciliation as `de9affcd8e7d2b12a9b9f107a9818b825c14a519`.
-- That commit adds deterministic Outbox state-machine regression tests.
-- A stale status document previously named an unrelated later SHA; it was corrected instead of propagated.
-- Status reconciliation commit: `789688e957e0969e43b506ba17365ac56e662d58`.
-- The execution log itself is synchronized to the actual sequence rather than asserting unsupported future SHAs.
-
 ## Completed implementation work recorded in this cycle
 
 ### Orders
@@ -26,75 +19,81 @@
 8. Staff transition status validation.
 9. Staff transition fail-closed response handling.
 10. Deterministic order regression coverage for malformed and null/primitive responses.
+11. Runtime rejection of non-object order drafts.
+12. Runtime rejection of missing/non-string idempotency keys.
+13. Runtime rejection of malformed/non-object order lines.
+14. Runtime rejection of non-string product identifiers.
+15. Runtime validation of the inventory container boundary.
+16. Preview handling for non-array runtime input.
+17. Preview handling for malformed/null line objects.
+18. Preview protection against line multiplication overflow.
+19. Preview protection against accumulated-total overflow.
+20. Preview regression coverage for zero quantity and negative price containment.
 
 ### Inventory
-11. Warehouse UUID validation before mutation.
-12. Source/destination warehouse distinction.
-13. Bounded inventory idempotency keys.
-14. Inventory line-count bounds.
-15. Duplicate-product rejection.
-16. Positive finite quantity validation.
-17. Threshold ordering validation.
-18. Deterministic inventory regression coverage.
+21. Warehouse UUID validation before mutation.
+22. Source/destination warehouse distinction.
+23. Bounded inventory idempotency keys.
+24. Inventory line-count bounds.
+25. Duplicate-product rejection.
+26. Positive finite quantity validation.
+27. Threshold ordering validation.
+28. Deterministic inventory regression coverage.
 
 ### Purchasing / Receiving
-19. Supplier UUID validation.
-20. Warehouse UUID validation.
-21. Purchase order/item/product identity validation.
-22. Bounded idempotency keys.
-23. Line-count bounds.
-24. Duplicate product/item rejection.
-25. Quantity and unit-cost validation.
-26. Currency validation.
-27. Notes length bounds.
-28. Deterministic purchasing/receiving regression coverage.
+29. Supplier UUID validation.
+30. Warehouse UUID validation.
+31. Purchase order/item/product identity validation.
+32. Bounded idempotency keys.
+33. Line-count bounds.
+34. Duplicate product/item rejection.
+35. Quantity and unit-cost validation.
+36. Currency validation.
+37. Notes length bounds.
+38. Deterministic purchasing/receiving regression coverage.
 
 ### Finance
-29. Invoice/branch/cash-account identity validation.
-30. Positive finite amount validation.
-31. Payment-method allowlist.
-32. Currency format validation.
-33. Opening-balance bounds.
-34. Text-length bounds.
-35. Deterministic finance regression coverage.
+39. Invoice/branch/cash-account identity validation.
+40. Positive finite amount validation.
+41. Payment-method allowlist.
+42. Currency format validation.
+43. Opening-balance bounds.
+44. Text-length bounds.
+45. Deterministic finance regression coverage.
 
 ### Outbox
-36. Outbox UUID validation.
-37. Attempt-count bounds.
-38. Processing-state lease requirement.
-39. Dead-letter terminal-attempt requirement.
-40. Future-record claim rejection.
-41. Bounded processing lease.
-42. Processing-only delivery transition.
-43. Retry clears lease.
-44. Exponential backoff with fifteen-minute cap.
-45. Terminal failure to dead-letter.
-46. Deterministic Outbox state-machine regression suite.
+46. Outbox UUID validation.
+47. Attempt-count bounds.
+48. Processing-state lease requirement.
+49. Dead-letter terminal-attempt requirement.
+50. Future-record claim rejection.
+51. Bounded processing lease.
+52. Processing-only delivery transition.
+53. Retry clears lease.
+54. Exponential backoff with fifteen-minute cap.
+55. Terminal failure to dead-letter.
+56. Deterministic Outbox state-machine regression suite.
 
 ### CI / Release / Security
-47. Exact-SHA checks across critical workflows.
-48. Lockfile bootstrap validation.
-49. Lockfile bootstrap `npm ci` verification.
-50. Release audit required-file checks.
-51. Migration duplicate-version checks.
-52. Migration destructive-operation checks.
-53. RPC-to-migration contract checks.
-54. Client credential hazard checks.
-55. Dynamic-code hazard checks.
-56. Build provenance checks.
-57. PWA manifest checks.
-58. Service Worker boundary checks.
-59. Production security-header checks.
+57. Exact-SHA checks across critical workflows.
+58. Lockfile bootstrap validation.
+59. Lockfile bootstrap `npm ci` verification.
+60. Release audit required-file checks.
+61. Migration duplicate-version checks.
+62. Migration destructive-operation checks.
+63. RPC-to-migration contract checks.
+64. Client credential hazard checks.
+65. Dynamic-code hazard checks.
+66. Build provenance checks.
+67. PWA manifest checks.
+68. Service Worker boundary checks.
+69. Production security-header checks.
 
-## Current execution batch — order-domain adversarial regression lock
-- `19d193ac3b36f99894b181c9623c299a765dc155` added ten new deterministic order-domain regression assertions.
-- New coverage explicitly locks: normalized product identifiers, non-array line collections, empty orders, zero quantities, negative quantities, fractional quantities, fractional inventory, non-finite inventory, non-finite preview inputs, preview multiplication overflow, and negative preview quantities.
-- Rescan result: no production-code change was required because the existing validation boundary already fails closed for these cases; the new executable tests prevent regression of those guarantees.
-- This batch is implementation/regression work, not a runtime PASS.
-
-## Documentation synchronization
-- `20687d278b4df3966910587bf0c539cd6e855932` updated `IMPLEMENTATION-STATUS-V1.md` with the new authoritative implementation boundary and the ten new order regression protections.
-- The execution log is updated by the present documentation synchronization commit.
+## Latest execution batch — order runtime boundary hardening
+- `b10b23b197034eaae1744bf437557f18dd9db159` hardened `validateOrderDraft` against malformed runtime objects, non-string identity fields, invalid inventory containers, malformed lines, and preview arithmetic overflow.
+- `aa6b571ea0b1a64c21ad9169894ea06708d81a60` added deterministic adversarial regression coverage for the new runtime and arithmetic boundaries.
+- `e8aa11260675d6e802b0bf843a28b396e2c42a19` synchronized the implementation-status boundary to the executed batch.
+- These are implementation/regression changes. They are not runtime PASS evidence.
 
 ## Evidence state
 - `package-lock.json` on `main`: **NOT PROVEN**.
@@ -106,10 +105,10 @@
 - Outbox external delivery: **NOT PROVEN**.
 - Production: **OPEN / NOT CERTIFIED**.
 
-## Current external execution action
-- GitHub Actions lockfile job `101496117387` from run `34004753932` was explicitly re-run.
-- The re-run is queued and has not exposed executable step evidence.
-- Therefore it is neither PASS nor a proven code failure.
+## Current authoritative documentation boundary
+- The documentation synchronization commit produced after the latest code batch is the current `main` tip.
+- Exact SHA: `e8aa11260675d6e802b0bf843a28b396e2c42a19`.
+- The immediately preceding code/test commits are retained above and are the evidence chain for the batch.
 
 ## Closure gates
 1. Obtain runner step/log evidence on the exact current SHA.
