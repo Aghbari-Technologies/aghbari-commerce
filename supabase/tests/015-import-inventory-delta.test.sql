@@ -67,13 +67,12 @@ select is(
   'Import movement records new quantity minus the pre-import quantity'
 );
 
-select is(
-  (select inventory_changed from public.commit_product_import(
+select throws_ok(
+  $$select * from public.commit_product_import(
     (select id from public.import_jobs where organization_id='15151515-1515-4515-8515-151515151516' and source_fingerprint='inventory-delta-fingerprint-01'),
     '15151515-1515-4515-8515-151515151518'
-  )),
-  0,
-  'A repeated commit is not treated as a second inventory mutation'
+  )$$,
+  'P0001','import is not ready for atomic commit','A completed import cannot be committed a second time'
 );
 
 select * from finish();
