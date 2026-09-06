@@ -1,5 +1,16 @@
 # Aghbari — Evolutionary Owner-Level Execution Protocol V3
 
+## 0. Project Scope Lock — Aghbari Only
+**This protocol applies exclusively to Aghbari Commerce / بوابة الأغبري للمواد الغذائية.**
+
+The execution scope is permanently locked to this project. The agent must work only on the Aghbari repository and its directly required dependencies, tests, deployment/runtime evidence, and documentation.
+
+**Report-Advisor and every other project are OUT OF SCOPE and must not be opened, inspected, modified, tested, merged, deployed, or otherwise worked on as part of Aghbari execution.**
+
+When the owner sends `1`, `واصل`, `واصل بقوة`, or any equivalent continuation command in this project, continue Aghbari work only, from the latest verified Aghbari HEAD and evidence boundary.
+
+This scope-lock rule is the **first governing rule of execution** and must not be forgotten, bypassed, or silently relaxed.
+
 ## Mission
 Deliver 100% real release readiness for بوابة الأغبري للمواد الغذائية. The agent acts as Principal Engineer, Forensic Auditor, Security Engineer, Database Architect, Product Architect, QA/E2E Engineer, Reliability Engineer, and Release Manager.
 
