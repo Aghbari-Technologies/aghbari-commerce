@@ -1,10 +1,17 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 
-test('authenticated customer completes real catalog → cart → order → refresh persistence path', async ({ page }) => {
-  const email = process.env.E2E_EMAIL;
-  const password = process.env.E2E_PASSWORD;
-  if (!email || !password) throw new Error('E2E_EMAIL and E2E_PASSWORD are required; runtime tests must never silently skip.');
+async function login(page: Page, email: string, password: string) {
+  await page.goto('/');
+  await expect(page.getByText('بوابة الأغبري', { exact: false }).first()).toBeVisible();
+  const loginForm = page.locator('form').filter({ has: page.locator('input[type="password"]') }).first();
+  await loginForm.locator('input[type="email"]').fill(email);
+  await loginForm.locator('input[type="password"]').fill(password);
+  await loginForm.getByRole('button', { name: 'دخول آمن' }).click();
+  await expect(page.getByRole('link', { name: 'المنتجات' })).toBeVisible();
+  await expect(page.getByRole('button', { name: /السلة/ })).toBeVisible();
+}
 
+function captureBrowserFailures(page: Page) {
   const pageErrors: string[] = [];
   const consoleErrors: string[] = [];
   const failedResponses: string[] = [];
@@ -18,17 +25,16 @@ test('authenticated customer completes real catalog → cart → order → refre
       failedResponses.push(`${status} ${response.request().method()} ${response.url()}`);
     }
   });
+  return { pageErrors, consoleErrors, failedResponses };
+}
 
-  await page.goto('/');
-  await expect(page.getByText('بوابة الأغبري', { exact: false }).first()).toBeVisible();
+test('authenticated customer completes real catalog → cart → order → refresh persistence path', async ({ page }) => {
+  const email = process.env.E2E_EMAIL;
+  const password = process.env.E2E_PASSWORD;
+  if (!email || !password) throw new Error('E2E_EMAIL and E2E_PASSWORD are required; runtime tests must never silently skip.');
 
-  const loginForm = page.locator('form').filter({ has: page.locator('input[type="password"]') }).first();
-  await loginForm.locator('input[type="email"]').fill(email);
-  await loginForm.locator('input[type="password"]').fill(password);
-  await loginForm.getByRole('button', { name: 'دخول آمن' }).click();
-
-  await expect(page.getByRole('link', { name: 'المنتجات' })).toBeVisible();
-  await expect(page.getByRole('button', { name: /السلة/ })).toBeVisible();
+  const failures = captureBrowserFailures(page);
+  await login(page, email, password);
   await expect(page.getByText('الكتالوج')).toBeVisible();
 
   const addButton = page.getByRole('button', { name: /إضافة|أضف/ }).first();
@@ -56,7 +62,48 @@ test('authenticated customer completes real catalog → cart → order → refre
   await expect(page.getByText('طلباتي')).toBeVisible();
   await expect(page.getByText(`طلب #${orderNumber}`, { exact: true })).toBeVisible();
 
-  expect(pageErrors, `Uncaught browser errors: ${pageErrors.join(' | ')}`).toEqual([]);
-  expect(consoleErrors, `Browser console errors: ${consoleErrors.join(' | ')}`).toEqual([]);
-  expect(failedResponses, `HTTP responses >= 400: ${failedResponses.join(' | ')}`).toEqual([]);
+  expect(failures.pageErrors, `Uncaught browser errors: ${failures.pageErrors.join(' | ')}`).toEqual([]);
+  expect(failures.consoleErrors, `Browser console errors: ${failures.consoleErrors.join(' | ')}`).toEqual([]);
+  expect(failures.failedResponses, `HTTP responses >= 400: ${failures.failedResponses.join(' | ')}`).toEqual([]);
+});
+
+test('tenant isolation: Tenant B cannot read Tenant A order through the real UI session', async ({ browser }) => {
+  const emailA = process.env.E2E_EMAIL;
+  const passwordA = process.env.E2E_PASSWORD;
+  const emailB = process.env.E2E_EMAIL_B;
+  const passwordB = process.env.E2E_PASSWORD_B;
+  if (!emailA || !passwordA || !emailB || !passwordB) {
+    throw new Error('E2E_EMAIL/E2E_PASSWORD and E2E_EMAIL_B/E2E_PASSWORD_B are required for tenant-isolation runtime proof.');
+  }
+
+  const contextA = await browser.newContext();
+  const pageA = await contextA.newPage();
+  const failuresA = captureBrowserFailures(pageA);
+  await login(pageA, emailA, passwordA);
+  const addButton = pageA.getByRole('button', { name: /إضافة|أضف/ }).first();
+  await expect(addButton).toBeEnabled();
+  await addButton.click();
+  await pageA.getByRole('button', { name: 'إرسال الطلب' }).click();
+  const success = pageA.getByRole('status').filter({ hasText: 'تم إرسال الطلب رقم' }).last();
+  await expect(success).toBeVisible();
+  const match = (await success.innerText()).match(/طلب رقم\s+(\d+)/);
+  expect(match, 'Tenant A order number must be captured from the real persisted response.').not.toBeNull();
+  const orderNumberA = match![1];
+
+  const contextB = await browser.newContext();
+  const pageB = await contextB.newPage();
+  const failuresB = captureBrowserFailures(pageB);
+  await login(pageB, emailB, passwordB);
+  await expect(pageB.getByText('طلباتي')).toBeVisible();
+  await expect(pageB.getByText(`طلب #${orderNumberA}`, { exact: true })).toHaveCount(0);
+
+  expect(failuresA.pageErrors, `Tenant A browser errors: ${failuresA.pageErrors.join(' | ')}`).toEqual([]);
+  expect(failuresA.consoleErrors, `Tenant A console errors: ${failuresA.consoleErrors.join(' | ')}`).toEqual([]);
+  expect(failuresA.failedResponses, `Tenant A HTTP >=400: ${failuresA.failedResponses.join(' | ')}`).toEqual([]);
+  expect(failuresB.pageErrors, `Tenant B browser errors: ${failuresB.pageErrors.join(' | ')}`).toEqual([]);
+  expect(failuresB.consoleErrors, `Tenant B console errors: ${failuresB.consoleErrors.join(' | ')}`).toEqual([]);
+  expect(failuresB.failedResponses, `Tenant B HTTP >=400: ${failuresB.failedResponses.join(' | ')}`).toEqual([]);
+
+  await contextB.close();
+  await contextA.close();
 });
