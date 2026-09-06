@@ -6,8 +6,8 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Branch: `main`
-- Current exact implementation HEAD: **`130117ae64006963fd2e3f1dc1c7c8c4a85c2608`**
-- Latest execution boundary: exact-head documentation synchronization + deterministic lockfile bootstrap investigation.
+- Current exact implementation HEAD: **`a0dc16aded1a3454c9b803e81ec01889e2db7589`**
+- Latest execution boundary: execution protocol binding + runner/lockfile evidence synchronization.
 
 ## Standing execution command
 **`1` = CONTINUE / EXECUTE AUTONOMOUSLY / DEEPEN / TEST / VERIFY / DOCUMENT / SELF-IMPROVE.**
@@ -19,8 +19,8 @@
 | Stage | State |
 |---|---|
 | BUILT | **ADVANCED IMPLEMENTED** — executable commerce shell + catalog/pricing/orders/cart, staff operations, customers, inventory transfer/adjustment/thresholds/low-stock/stock count, purchasing/receiving, finance, import/export, outbox worker, PWA/offline primitives and browser/security hardening |
-| INTEGRATED | **PASS at implementation level — exact current HEAD `130117ae64006963fd2e3f1dc1c7c8c4a85c2608`** |
-| VERIFIED | **NOT PROVEN** — fresh exact-head GitHub Actions evidence is not available as PASS; recent jobs are failing before step evidence is exposed |
+| INTEGRATED | **PASS at implementation level — exact current HEAD `a0dc16aded1a3454c9b803e81ec01889e2db7589`** |
+| VERIFIED | **NOT PROVEN** — fresh exact-head GitHub Actions evidence is not available as PASS; recent Actions jobs fail before exposing runner steps |
 | RUNTIME PROVEN | **NOT PROVEN** — no connected Supabase target and no authenticated deployment runtime evidence available through current integrations |
 | PRODUCTION CERTIFIED | **NOT PROVEN** |
 
@@ -30,8 +30,7 @@
 - Historical feature branches are not release evidence unless their exact tested SHA is selected as the release boundary.
 - No historical CI result is reused as evidence for a later SHA.
 - `package-lock.json` is still not present on `main`.
-- Deterministic lockfile bootstrap is executable on `execution/bootstrap-lockfile-20260906`; its latest triggered run against `a03fca2cb2d649b98fadc818b747e6d5ff44ca33` failed without producing a lockfile. The failure was retried, and the job is currently queued; no lockfile PASS is claimed.
-- Recent independent `security-audit` and `application-quality` jobs also failed with empty step evidence and no assigned runner details, indicating an execution-environment/runner gate rather than a proven product failure.
+- Deterministic lockfile bootstrap was executed on `execution/bootstrap-lockfile-20260906`; it failed before producing a lockfile and without surfaced step/artifact evidence.
 
 ## Completed implementation surface
 - React/Vite/TypeScript Arabic RTL operational application shell and command center.
@@ -63,9 +62,9 @@
 - Exact-SHA CI/runtime workflow protections remain in force; no earlier SHA is reused as current evidence.
 
 ## Evidence boundary
-- Current exact SHA `130117ae64006963fd2e3f1dc1c7c8c4a85c2608` contains the latest hardening plus the synchronized execution index.
-- GitHub combined-status query for the current exact HEAD exposes `statuses: []`; therefore **no CI PASS is claimed**.
-- A deterministic lockfile bootstrap run was triggered and failed; a rerun is queued. `package-lock.json` has not been produced.
+- Current exact SHA `a0dc16aded1a3454c9b803e81ec01889e2db7589` contains the latest hardening and execution documentation.
+- Recent GitHub Actions runs fail without surfaced runner step evidence; therefore **no CI PASS is claimed**.
+- `package-lock.json` has not been generated/committed; therefore npm-ci release hardening remains open.
 - Runtime browser E2E is executable and exact-SHA-bound, but **NOT RUNTIME-PROVEN** until executed against a real deployment with real credentials for both tenant contexts.
 - The authorized Supabase integration currently returns zero connected projects, so live DB/Auth/RLS proof cannot honestly be claimed.
 - Production deployment/runtime is therefore **NOT CERTIFIED**.
@@ -92,7 +91,16 @@
 14. Production deployment smoke test + deployed artifact/SHA verification.
 15. Final regression → exact final HEAD freeze → release candidate → certification.
 
+## Protocol binding — command `1`
+- `1` is an immediate execution command, not a planning request.
+- Each `1` resumes from the latest exact trusted boundary and continues until safe executable work is exhausted.
+- Mandatory loop: LOAD STATE → OPEN WORK → PRIORITIZE P0/P1/P2 → RESCAN → FIND → ROOT CAUSE → FIX → TEST → REGRESSION → CONSUMER/SECURITY/RUNTIME PROOF → EVIDENCE → EXACT-HEAD CHECK → DOCUMENT → RESCAN → NEXT.
+- PASS/READY/SUCCESS/BLOCKED/CERTIFIED are evidence-bound states, never assumptions.
+- Code defects are fixed immediately; external environment gates are documented while independent work continues.
+- Git history, immutable migrations, certification evidence and completed work are protected from unsafe mutation.
+- Scope is permanently locked to `Aghbari-Technologies/aghbari-commerce`.
+
 ## No-false-closure
 A migration file is not migration execution evidence. A UI restriction is not authorization evidence. A queued outbox event is not successful external delivery evidence. A green run on an earlier SHA is not exact-HEAD evidence. A documentation PASS is not a runtime PASS. A successful local build is not production runtime proof.
 
-**NEXT EXECUTION LOOP:** continue Aghbari-only code hardening and evidence strengthening from exact HEAD `130117ae64006963fd2e3f1dc1c7c8c4a85c2608`, while treating runner/Supabase/deployment access as explicit external gates. Every new fix must be tested and recorded against its exact SHA before closure.
+**NEXT EXECUTION LOOP:** continue Aghbari-only code hardening and evidence strengthening from exact HEAD `a0dc16aded1a3454c9b803e81ec01889e2db7589`, while treating runner/Supabase/deployment access as explicit external gates. Every new fix must be tested and recorded against its exact SHA before closure.
