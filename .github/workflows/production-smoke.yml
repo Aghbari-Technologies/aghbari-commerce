@@ -55,3 +55,11 @@ jobs:
         run: |
           curl --fail --silent --show-error --location --max-time 15 "$BASE_URL/" -o index.html
           grep -qi '<html' index.html
+      - name: Verify PWA manifest and service worker
+        run: |
+          curl --fail --silent --show-error --location --max-time 15 "$BASE_URL/manifest.webmanifest" -o manifest.webmanifest
+          node -e "const p=require('./manifest.webmanifest'); if(!p.name || !p.start_url) process.exit(1); console.log('PWA manifest: PASS')"
+          curl --fail --silent --show-error --location --max-time 15 "$BASE_URL/sw.js" -o sw.js
+          test -s sw.js
+          grep -q 'self.addEventListener' sw.js
+          echo 'Service worker: PASS'
