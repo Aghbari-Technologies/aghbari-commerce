@@ -4,6 +4,7 @@ import { join, relative } from 'node:path';
 const root = process.cwd();
 const requiredFiles = [
   'package.json',
+  'package-lock.json',
   'vite.config.ts',
   'playwright.config.ts',
   '.env.example',
@@ -32,8 +33,25 @@ for (const file of requiredWorkflows) {
   if (!existsSync(join(root, file))) fail(`Missing required workflow: ${file}`);
 }
 
-if (!existsSync(join(root, 'package-lock.json'))) {
-  fail('package-lock.json is missing; reproducible npm ci installation is not yet possible.');
+const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
+const lockPath = join(root, 'package-lock.json');
+if (existsSync(lockPath)) {
+  try {
+    const lock = JSON.parse(readFileSync(lockPath, 'utf8'));
+    if (lock.lockfileVersion !== 3) fail(`package-lock.json must use lockfileVersion 3 (found ${lock.lockfileVersion}).`);
+    const rootPackage = lock.packages?.[''];
+    if (!rootPackage) fail('package-lock.json is missing its root package entry.');
+    if (rootPackage?.name !== pkg.name) fail(`Lockfile root name mismatch: ${rootPackage?.name} !== ${pkg.name}`);
+    if (rootPackage?.version !== pkg.version) fail(`Lockfile root version mismatch: ${rootPackage?.version} !== ${pkg.version}`);
+    for (const section of ['dependencies', 'devDependencies']) {
+      for (const [name, version] of Object.entries(pkg[section] ?? {})) {
+        const locked = rootPackage?.[section]?.[name];
+        if (locked !== version) fail(`Lockfile ${section} mismatch for ${name}: ${locked} !== ${version}`);
+      }
+    }
+  } catch (error) {
+    fail(`package-lock.json is not valid JSON: ${error.message}`);
+  }
 }
 
 const sourceRoot = join(root, 'src');
@@ -73,7 +91,6 @@ for (const file of sourceFiles) {
   }
 }
 
-// Product identity must remain clean in the shipped HTML/PWA/config artifacts too.
 for (const file of ['index.html', 'manifest.webmanifest', 'vercel.json', '.env.example']) {
   const path = join(root, file);
   if (!existsSync(path)) continue;
@@ -81,7 +98,6 @@ for (const file of ['index.html', 'manifest.webmanifest', 'vercel.json', '.env.e
   if (legacyBrandPattern.test(text)) fail(`Legacy branding found in release artifact: ${file}`);
 }
 
-const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
 for (const script of ['test', 'lint', 'build', 'test:e2e', 'test:release-audit', 'typecheck']) {
   if (!pkg.scripts?.[script]) fail(`Missing package script: ${script}`);
 }
@@ -94,8 +110,6 @@ for (const key of ['VITE_SUPABASE_URL', 'VITE_SUPABASE_PUBLISHABLE_KEY']) {
   if (!new RegExp(`^${key}=`, 'm').test(envExample)) fail(`Missing environment key in .env.example: ${key}`);
 }
 
-// Contract audit: every literal Supabase RPC invoked by executable source must
-// have a corresponding PostgreSQL function definition in the migration history.
 const migrationRoot = join(root, 'supabase', 'migrations');
 const migrationText = walk(migrationRoot)
   .filter((file) => file.endsWith('.sql'))
@@ -121,4 +135,5 @@ if (failures.length) {
 console.log('RELEASE AUDIT: PASS');
 console.log(`Checked required files: ${requiredFiles.length + requiredWorkflows.length}`);
 console.log(`Checked ${rpcCalls.size} literal frontend RPC contracts against migration history.`);
+console.log('Checked lockfile/package manifest synchronization.');
 console.log('Checked executable source and release artifacts for legacy branding and suspicious completion/mock markers.');
