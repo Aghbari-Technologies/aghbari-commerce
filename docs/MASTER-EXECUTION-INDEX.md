@@ -6,8 +6,8 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Branch: `main`
-- Current exact implementation HEAD: **`e6d10d09d7fc51ded8e7faeebc97b1b02367d6b8`**
-- Latest execution boundary: AdminPanel finance-gate build repair + import inventory-delta correction + import RPC response hardening + import SECURITY DEFINER search_path hardening + pgTAP coverage.
+- Current exact implementation HEAD: **`88a0139c57eb4b25490f34fdf98c371b30712dc8`**
+- Latest execution boundary: AdminPanel finance-gate build repair + import inventory-delta correction + import RPC response hardening + import SECURITY DEFINER search_path hardening + admin response-contract tests.
 
 ## Standing execution command
 **`1` = CONTINUE / EXECUTE AUTONOMOUSLY / DEEPEN / TEST / VERIFY / DOCUMENT / SELF-IMPROVE.**
@@ -19,7 +19,7 @@
 | Stage | State |
 |---|---|
 | BUILT | **ADVANCED IMPLEMENTED** — executable commerce shell + catalog/pricing/orders/cart, staff operations, customers, inventory transfer/adjustment/thresholds/low-stock/stock count, purchasing/receiving, finance, import/export, outbox worker, PWA/offline primitives and browser/security hardening |
-| INTEGRATED | **PASS at implementation level — exact current HEAD `e6d10d09d7fc51ded8e7faeebc97b1b02367d6b8`** |
+| INTEGRATED | **PASS at implementation level — exact current HEAD `88a0139c57eb4b25490f34fdf98c371b30712dc8`** |
 | VERIFIED | **NOT PROVEN** — fresh exact-head GitHub Actions evidence must be obtained from executable runners |
 | RUNTIME PROVEN | **NOT PROVEN** — no connected Supabase target and no authenticated deployment runtime evidence available through current integrations |
 | PRODUCTION CERTIFIED | **NOT PROVEN** |
@@ -84,9 +84,10 @@
 - **Import staging and commit SECURITY DEFINER boundaries are hardened with empty `search_path` in migration `0040`; historical migrations remain unchanged.**
 - **Import frontend service now fails closed on malformed staging/commit RPC responses instead of allowing an untrusted response to drive a success UI.**
 - **pgTAP test `015-import-inventory-delta.test.sql` proves imported balance, auditable delta movement, and rejection of a second commit of an already completed import.**
+- **Admin service command responses now fail closed unless entity IDs, prices, and inventory quantities match their expected safe types; deterministic unit coverage added in `admin.contract.test.ts`.**
 
 ## Evidence boundary
-- Current exact SHA `e6d10d09d7fc51ded8e7faeebc97b1b02367d6b8` contains the latest import/build/security hardening plus prior implementation/test work.
+- Current exact SHA `88a0139c57eb4b25490f34fdf98c371b30712dc8` contains the latest import/build/security hardening plus prior implementation/test work.
 - Fresh exact-head CI execution is **NOT PROVEN** until a runner produces step-level evidence; missing surfaced evidence is never converted to PASS.
 - Runtime browser E2E is executable and exact-SHA-bound, but **NOT RUNTIME-PROVEN** until executed against a real deployment with real credentials for both tenant contexts.
 - The authorized Supabase integration currently returns **zero connected projects**, so live DB/Auth/RLS proof cannot honestly be claimed.
