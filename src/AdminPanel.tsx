@@ -106,6 +106,7 @@ export default function AdminPanel({ role }: { role: UserRole }) {
   const canCategory = role === 'owner' || role === 'admin';
   const canInventory = role === 'owner' || role === 'admin' || role === 'warehouse';
   const canOrderWorkflow = STAFF_ROLES.has(role);
+  const canFinance = ['owner', 'admin', 'sales'].includes(role);
 
   return <section className="admin-panel" id="account">
     <div className="section-heading"><div><span className="eyebrow">إدارة التشغيل</span><h2>مركز التحكم</h2></div><span>الصلاحيات تُفرض على الخادم أيضًا</span></div>
@@ -148,7 +149,7 @@ export default function AdminPanel({ role }: { role: UserRole }) {
     {canCatalog && <CustomerPanel role={role} />}
     {canInventory && <InventoryPanel role={role} />}
     {canInventory && <PurchasingPanel role={role} />}
-    {canInvoice && <FinancePanel role={role} />}
+    {canFinance && <FinancePanel role={role} />}
     {canInventory && <ExportPanel role={role} />}
   </section>;
 }
