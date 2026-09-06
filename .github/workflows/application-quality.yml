@@ -39,8 +39,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-      # package-lock.json is not yet present; keep npm install until the deterministic lockfile gate is closed.
       - name: Install dependencies
         run: npm install --no-audit --no-fund
       - name: Typecheck
