@@ -6,7 +6,7 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Branch: `main`
-- Current exact implementation HEAD: **`e97f0c7bad9ca1f86076510079e6e5edae31fe48`**
+- Current exact implementation HEAD: **`0048b1485b16904f5b1e36698282381271adf7b7`**
 - Latest execution boundary: release-hardening audit, explicit typecheck/Node runtime contract, shipped-artifact branding checks, and strengthened browser persistence evidence.
 
 ## Standing execution command
@@ -16,7 +16,7 @@
 | Stage | State |
 |---|---|
 | BUILT | **ADVANCED IMPLEMENTED** — executable commerce shell + catalog/pricing/orders/cart, staff operations, customers, inventory transfer/adjustment/thresholds/low-stock/stock count, purchasing/receiving, finance, import/export, outbox worker, PWA/offline primitives and browser/security hardening |
-| INTEGRATED | **PASS at implementation level — exact current HEAD `e97f0c7bad9ca1f86076510079e6e5edae31fe48`** |
+| INTEGRATED | **PASS at implementation level — exact current HEAD `0048b1485b16904f5b1e36698282381271adf7b7`** |
 | VERIFIED | **NOT PROVEN** — no executable workflow run or step-level CI evidence has been surfaced for the latest SHA |
 | RUNTIME PROVEN | **NOT PROVEN** — no connected Supabase target and no authenticated deployment runtime evidence available through current integrations |
 | PRODUCTION CERTIFIED | **NOT PROVEN** |
@@ -26,6 +26,7 @@
 - Repository is private and the connected GitHub integration has admin/maintain/push capability.
 - PR #33 (`execution/release-hardening-audit-20260906`) was merged into `main` at squash commit `bb2cc53b7a81d8bdad952f6881d731c8ba6aa6ff`.
 - Subsequent direct release-hardening commits advanced `main` to `e97f0c7bad9ca1f86076510079e6e5edae31fe48`.
+- PR #34 (`execution/e2e-persistence-hardening-20260906`) was merged into `main` at squash commit `0048b1485b16904f5b1e36698282381271adf7b7`.
 - Historical feature branches are not treated as release evidence unless their exact tested SHA is selected as the release boundary.
 - No historical CI result is reused as evidence for a later SHA.
 
@@ -68,7 +69,7 @@
 - **E2E persistence assertion was hardened so the post-checkout verification extracts the exact created order number and requires that same order to be present after a full browser refresh; a pre-existing order can no longer falsely satisfy the critical-path proof.**
 
 ## Evidence boundary
-- Latest SHA `e97f0c7bad9ca1f86076510079e6e5edae31fe48` currently has no surfaced GitHub workflow runs/statuses through the authorized connector; therefore CI is **NOT PROVEN**, not PASS.
+- Latest SHA `0048b1485b16904f5b1e36698282381271adf7b7` currently has no surfaced GitHub workflow runs/statuses through the authorized connector; therefore CI is **NOT PROVEN**, not PASS.
 - Historical domain/G1/PostgreSQL/order evidence is retained but is **not** reused as proof for later SHAs.
 - Runtime browser E2E is implemented and strengthened, but **NOT RUNTIME-PROVEN** until executed against a real deployment with real credentials.
 - No Supabase project is currently connected to the authorized Supabase integration (`list_projects` returned no connected projects), so live DB/Auth/RLS/advisor/runtime proof cannot honestly be claimed.
