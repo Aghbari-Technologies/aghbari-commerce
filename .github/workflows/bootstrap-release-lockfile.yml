@@ -3,6 +3,7 @@ name: bootstrap-release-lockfile
 on:
   push:
     branches:
+      - main
       - execution/close-lockfile-20260907
   pull_request:
     branches:
