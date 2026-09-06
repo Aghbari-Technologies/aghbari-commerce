@@ -82,6 +82,12 @@ const suspiciousPatterns = [
   /\b(?:mock|fake|sample)\s+(?:data|api|response|success)\b/i,
 ];
 const legacyBrandPattern = /العامري|\bAlamri\b|\bAl-Amri\b/i;
+const forbiddenRuntimePatterns = [
+  { pattern: /VITE_SUPABASE_SERVICE_ROLE|SUPABASE_SERVICE_ROLE|service_role/i, label: 'service-role credential reference' },
+  { pattern: /\beval\s*\(/i, label: 'eval()' },
+  { pattern: /new\s+Function\s*\(/i, label: 'dynamic Function constructor' },
+  { pattern: /dangerouslySetInnerHTML/i, label: 'dangerouslySetInnerHTML' },
+];
 
 function walk(dir) {
   if (!existsSync(dir)) return [];
@@ -106,6 +112,12 @@ for (const file of sourceFiles) {
       fail(`Suspicious completion/mock marker ${pattern} found in executable source: ${rel}`);
     }
   }
+  for (const { pattern, label } of forbiddenRuntimePatterns) {
+    if (pattern.test(text)) fail(`Forbidden runtime construct ${label} found in executable source: ${rel}`);
+  }
+  if (/https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?\b/i.test(text)) {
+    fail(`Hard-coded local runtime URL found in executable source: ${rel}`);
+  }
 }
 
 for (const file of ['index.html', 'public/manifest.webmanifest', 'vercel.json', '.env.example']) {
@@ -113,6 +125,43 @@ for (const file of ['index.html', 'public/manifest.webmanifest', 'vercel.json', 
   if (!existsSync(path)) continue;
   const text = readFileSync(path, 'utf8');
   if (legacyBrandPattern.test(text)) fail(`Legacy branding found in release artifact: ${file}`);
+  for (const { pattern, label } of forbiddenRuntimePatterns) {
+    if (pattern.test(text)) fail(`Forbidden runtime construct ${label} found in release artifact: ${file}`);
+  }
+}
+
+const vitePath = join(root, 'vite.config.ts');
+if (existsSync(vitePath)) {
+  const viteText = readFileSync(vitePath, 'utf8');
+  if (!viteText.includes("product: 'aghbari-commerce'")) fail('Build metadata must identify aghbari-commerce.');
+  if (!viteText.includes('git_sha: gitSha')) fail('Build metadata must carry the exact Git SHA.');
+  if (!viteText.includes("build: { sourcemap: true }")) fail('Production builds must retain source maps for release diagnostics.');
+}
+
+const swPath = join(root, 'public/sw.js');
+if (existsSync(swPath)) {
+  const swText = readFileSync(swPath, 'utf8');
+  if (!swText.includes("event.request.method !== 'GET'")) fail('Service worker must not intercept non-GET requests.');
+  if (!swText.includes("url.origin !== self.location.origin")) fail('Service worker must not intercept cross-origin requests.');
+  if (!swText.includes("url.pathname.startsWith('/api/')")) fail('Service worker must bypass API traffic.');
+  if (!swText.includes("url.pathname.includes('/auth/')")) fail('Service worker must bypass auth traffic.');
+}
+
+const manifestPath = join(root, 'public/manifest.webmanifest');
+if (existsSync(manifestPath)) {
+  try {
+    const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+    if (manifest.lang !== 'ar') fail('PWA manifest language must remain Arabic.');
+    if (manifest.dir !== 'rtl') fail('PWA manifest direction must remain RTL.');
+    if (manifest.display !== 'standalone') fail('PWA manifest must use standalone display.');
+    if (manifest.start_url !== '/') fail('PWA manifest start_url must remain /.');
+    if (manifest.scope !== '/') fail('PWA manifest scope must remain /.');
+    if (!Array.isArray(manifest.icons) || manifest.icons.length < 2) fail('PWA manifest must provide at least two icon declarations.');
+    if (!manifest.icons.some((icon) => icon.sizes === '192x192')) fail('PWA manifest is missing a 192x192 icon.');
+    if (!manifest.icons.some((icon) => icon.sizes === '512x512')) fail('PWA manifest is missing a 512x512 icon.');
+  } catch (error) {
+    fail(`PWA manifest is not valid JSON: ${error.message}`);
+  }
 }
 
 for (const script of ['test', 'lint', 'build', 'test:e2e', 'test:release-audit', 'typecheck']) {
@@ -121,11 +170,15 @@ for (const script of ['test', 'lint', 'build', 'test:e2e', 'test:release-audit',
 if (pkg.engines?.node !== '>=22 <23') {
   fail('Node runtime contract must remain pinned to >=22 <23.');
 }
+if (pkg.private !== true) fail('Application package must remain private.');
+if (pkg.type !== 'module') fail('Application package must remain ESM.');
+if (typeof pkg.version !== 'string' || !/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(pkg.version)) fail(`Invalid application version: ${pkg.version}`);
 
 const envExample = readFileSync(join(root, '.env.example'), 'utf8');
 for (const key of ['VITE_SUPABASE_URL', 'VITE_SUPABASE_PUBLISHABLE_KEY']) {
   if (!new RegExp(`^${key}=`, 'm').test(envExample)) fail(`Missing environment key in .env.example: ${key}`);
 }
+if (/SERVICE_ROLE|ANON_KEY\s*=\s*sk_/i.test(envExample)) fail('Environment example must not advertise privileged Supabase credentials.');
 
 const migrationRoot = join(root, 'supabase', 'migrations');
 if (!existsSync(migrationRoot)) {
@@ -172,4 +225,4 @@ console.log(`Checked required files: ${requiredFiles.length + requiredWorkflows.
 console.log(`Checked ${rpcCalls.size} literal frontend RPC contracts against migration history.`);
 console.log(`Checked ${migrationFiles.length} SQL migrations for release topology safety.`);
 console.log('Checked lockfile/package manifest synchronization.');
-console.log('Checked release workflows, executable source, release artifacts, production security headers, and legacy branding.');
+console.log('Checked release workflows, executable source, release artifacts, production security headers, PWA, service-worker boundaries, package identity, and credential-safety contracts.');
