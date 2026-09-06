@@ -67,6 +67,4 @@ jobs:
         run: supabase migration list --local
       - name: Stop local Supabase
         if: always()
-        uses: nick-invision/assert-action@v1
-        with:
-          expected: success
+        run: supabase stop --no-backup
