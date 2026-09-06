@@ -11,7 +11,7 @@
 - That commit adds deterministic Outbox state-machine regression tests.
 - A stale status document previously named an unrelated later SHA; it was corrected instead of propagated.
 - Status reconciliation commit: `789688e957e0969e43b506ba17365ac56e662d58`.
-- The execution log itself is now being synchronized to the actual sequence rather than asserting unsupported future SHAs.
+- The execution log itself is synchronized to the actual sequence rather than asserting unsupported future SHAs.
 
 ## Completed implementation work recorded in this cycle
 
@@ -86,6 +86,16 @@
 58. Service Worker boundary checks.
 59. Production security-header checks.
 
+## Current execution batch — order-domain adversarial regression lock
+- `19d193ac3b36f99894b181c9623c299a765dc155` added ten new deterministic order-domain regression assertions.
+- New coverage explicitly locks: normalized product identifiers, non-array line collections, empty orders, zero quantities, negative quantities, fractional quantities, fractional inventory, non-finite inventory, non-finite preview inputs, preview multiplication overflow, and negative preview quantities.
+- Rescan result: no production-code change was required because the existing validation boundary already fails closed for these cases; the new executable tests prevent regression of those guarantees.
+- This batch is implementation/regression work, not a runtime PASS.
+
+## Documentation synchronization
+- `20687d278b4df3966910587bf0c539cd6e855932` updated `IMPLEMENTATION-STATUS-V1.md` with the new authoritative implementation boundary and the ten new order regression protections.
+- The execution log is updated by the present documentation synchronization commit.
+
 ## Evidence state
 - `package-lock.json` on `main`: **NOT PROVEN**.
 - Fresh current-head CI: **NOT PROVEN**.
@@ -98,7 +108,7 @@
 
 ## Current external execution action
 - GitHub Actions lockfile job `101496117387` from run `34004753932` was explicitly re-run.
-- The re-run is currently queued and exposes no executable step evidence yet.
+- The re-run is queued and has not exposed executable step evidence.
 - Therefore it is neither PASS nor a proven code failure.
 
 ## Closure gates
