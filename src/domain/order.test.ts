@@ -21,6 +21,10 @@ describe('validateOrderDraft', () => {
     expect(() => validateOrderDraft(draft([{ productId: ' product-1 ', quantity: 1 }, { productId: 'product-1', quantity: 2 }]), new Map([product('product-1')]))).toThrow(/duplicate/);
   });
 
+  it('accepts a whitespace-normalized product identifier when inventory is keyed by the normalized value', () => {
+    validateOrderDraft(draft([{ productId: '  product-1  ', quantity: 1 }]), new Map([product('product-1')]));
+  });
+
   it('does not require client-supplied customer identity', () => {
     const order = draft([{ productId: 'product-1', quantity: 1 }]);
     expect(order).not.toHaveProperty('customerId');
@@ -32,12 +36,29 @@ describe('validateOrderDraft', () => {
     expect(() => validateOrderDraft({ ...draft([{ productId: 'product-1', quantity: 1 }]), idempotencyKey: '                ' }, new Map([product('product-1')]))).toThrow(/idempotencyKey/);
   });
 
+  it('rejects a non-array line collection', () => {
+    expect(() => validateOrderDraft({ ...draft([{ productId: 'product-1', quantity: 1 }]), lines: null as never }, new Map([product('product-1')]))).toThrow(/at least one line/);
+  });
+
+  it('rejects an empty order', () => {
+    expect(() => validateOrderDraft(draft([]), new Map())).toThrow(/at least one line/);
+  });
+
   it('rejects an idempotency key above the boundary limit', () => {
     expect(() => validateOrderDraft({ ...draft([{ productId: 'product-1', quantity: 1 }]), idempotencyKey: 'x'.repeat(MAX_IDEMPOTENCY_KEY_LENGTH + 1) }, new Map([product('product-1')]))).toThrow(/cannot exceed/);
   });
 
   it('rejects quantities above the domain limit', () => {
     expect(() => validateOrderDraft(draft([{ productId: 'product-1', quantity: MAX_ORDER_QUANTITY_PER_LINE + 1 }]), new Map([product('product-1', MAX_ORDER_QUANTITY_PER_LINE + 1)]))).toThrow(/cannot exceed/);
+  });
+
+  it('rejects zero and negative quantities', () => {
+    expect(() => validateOrderDraft(draft([{ productId: 'product-1', quantity: 0 }]), new Map([product('product-1')]))).toThrow(/positive safe integer/);
+    expect(() => validateOrderDraft(draft([{ productId: 'product-1', quantity: -1 }]), new Map([product('product-1')]))).toThrow(/positive safe integer/);
+  });
+
+  it('rejects fractional quantities', () => {
+    expect(() => validateOrderDraft(draft([{ productId: 'product-1', quantity: 1.5 }]), new Map([product('product-1')]))).toThrow(/safe integer/);
   });
 
   it('rejects unsafe integer quantities', () => {
@@ -58,6 +79,11 @@ describe('validateOrderDraft', () => {
     expect(() => validateOrderDraft(draft([{ productId: 'product-1', quantity: 1 }]), new Map([product('product-1', -1)]))).toThrow(/invalid inventory/);
     expect(() => validateOrderDraft(draft([{ productId: 'product-1', quantity: 1 }]), new Map([product('product-1', Number.NaN)]))).toThrow(/invalid inventory/);
   });
+
+  it('rejects non-integer and non-finite inventory quantities', () => {
+    expect(() => validateOrderDraft(draft([{ productId: 'product-1', quantity: 1 }]), new Map([product('product-1', 1.5)]))).toThrow(/invalid inventory/);
+    expect(() => validateOrderDraft(draft([{ productId: 'product-1', quantity: 1 }]), new Map([product('product-1', Number.POSITIVE_INFINITY)]))).toThrow(/invalid inventory/);
+  });
 });
 
 describe('calculateClientPreviewTotal', () => {
@@ -77,5 +103,27 @@ describe('calculateClientPreviewTotal', () => {
       { product: productValue, quantity: Number.MAX_SAFE_INTEGER + 1, unitPrice: 5 },
       { product: productValue, quantity: 1, unitPrice: 4 },
     ])).toBe(4);
+  });
+
+  it('ignores non-finite quantity and price values without poisoning the preview', () => {
+    const productValue = { id: '1', sku: '1', name: 'A', unit: 'قطعة', category: 'أ', availableQuantity: 10, status: 'active' as const };
+    expect(calculateClientPreviewTotal([
+      { product: productValue, quantity: Number.NaN, unitPrice: 5 },
+      { product: productValue, quantity: 2, unitPrice: Number.NaN },
+      { product: productValue, quantity: 1, unitPrice: 3 },
+    ])).toBe(3);
+  });
+
+  it('does not return Infinity when a line multiplication overflows', () => {
+    const productValue = { id: '1', sku: '1', name: 'A', unit: 'قطعة', category: 'أ', availableQuantity: 10, status: 'active' as const };
+    expect(calculateClientPreviewTotal([
+      { product: productValue, quantity: Number.MAX_SAFE_INTEGER, unitPrice: Number.MAX_SAFE_INTEGER },
+      { product: productValue, quantity: 2, unitPrice: 3 },
+    ])).toBe(6);
+  });
+
+  it('does not accept negative quantities in a preview', () => {
+    const productValue = { id: '1', sku: '1', name: 'A', unit: 'قطعة', category: 'أ', availableQuantity: 10, status: 'active' as const };
+    expect(calculateClientPreviewTotal([{ product: productValue, quantity: -1, unitPrice: 100 }])).toBe(0);
   });
 });
