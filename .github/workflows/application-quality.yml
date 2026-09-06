@@ -5,6 +5,12 @@ on:
     branches: ['**']
   pull_request:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      exact_sha:
+        description: 'Exact Git commit SHA to verify'
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -13,13 +19,30 @@ jobs:
   quality:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      TARGET_SHA: ${{ inputs.exact_sha || github.sha }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout exact target SHA
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.exact_sha || github.sha }}
+          fetch-depth: 1
+      - name: Verify exact target HEAD
+        shell: bash
+        run: |
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$TARGET_SHA" || {
+            echo "EXACT HEAD MISMATCH: expected=$TARGET_SHA actual=$actual"
+            exit 1
+          }
+          echo "EXACT QUALITY HEAD: $actual"
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      # Reproducibility remains a release gate: npm ci becomes mandatory once the lockfile is committed.
-      - run: npm install
+          cache: npm
+      # package-lock.json is not yet present; keep npm install until the deterministic lockfile gate is closed.
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
       - name: Typecheck
         run: npm run typecheck
       - name: Unit and integration tests
