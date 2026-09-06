@@ -135,6 +135,7 @@ if (existsSync(vitePath)) {
   const viteText = readFileSync(vitePath, 'utf8');
   if (!viteText.includes("product: 'aghbari-commerce'")) fail('Build metadata must identify aghbari-commerce.');
   if (!viteText.includes('git_sha: gitSha')) fail('Build metadata must carry the exact Git SHA.');
+  if (!viteText.includes('built_at: builtAt')) fail('Build metadata must carry an immutable build timestamp.');
   if (!viteText.includes("build: { sourcemap: true }")) fail('Production builds must retain source maps for release diagnostics.');
 }
 
