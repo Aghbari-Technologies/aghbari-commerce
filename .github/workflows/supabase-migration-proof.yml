@@ -22,6 +22,9 @@ jobs:
     env:
       TARGET_SHA: ${{ inputs.exact_sha || github.sha }}
     steps:
+      - name: Validate exact SHA input
+        shell: bash
+        run: echo "$TARGET_SHA" | grep -Eq '^[0-9a-f]{40}$'
       - name: Checkout exact target SHA
         uses: actions/checkout@v4
         with:
