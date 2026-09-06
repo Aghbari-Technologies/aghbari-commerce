@@ -5,7 +5,7 @@ CREATE OR REPLACE FUNCTION public.claim_outbox_events(p_limit integer DEFAULT 20
 RETURNS SETOF public.outbox_events
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = public
+SET search_path = ''
 AS $$
 DECLARE
   v_limit integer := LEAST(GREATEST(COALESCE(p_limit, 20), 1), 100);
@@ -47,7 +47,7 @@ CREATE OR REPLACE FUNCTION public.ack_outbox_event(p_event_id uuid)
 RETURNS boolean
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = public
+SET search_path = ''
 AS $$
 DECLARE
   v_org uuid := public.current_organization_id();
@@ -75,7 +75,7 @@ CREATE OR REPLACE FUNCTION public.fail_outbox_event(
 RETURNS public.outbox_events
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = public
+SET search_path = ''
 AS $$
 DECLARE
   v_org uuid := public.current_organization_id();
@@ -117,7 +117,7 @@ CREATE OR REPLACE FUNCTION public.recover_expired_outbox_events(p_limit integer 
 RETURNS integer
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = public
+SET search_path = ''
 AS $$
 DECLARE
   v_limit integer := LEAST(GREATEST(COALESCE(p_limit, 100), 1), 500);
