@@ -28,9 +28,9 @@
 
 ## Current authoritative implementation boundary
 
-**Actual current `main` HEAD:** `de9affcd8e7d2b12a9b9f107a9818b825c14a519`
+**Actual current `main` HEAD:** `19d193ac3b36f99894b181c9623c299a765dc155`
 
-This exact SHA is the authoritative source boundary for the current execution cycle. Earlier notes that name a later SHA are not authoritative unless independently re-read from GitHub and confirmed.
+This exact SHA is the authoritative source boundary for the current execution cycle. Earlier notes that name a different SHA are not authoritative unless independently re-read from GitHub and confirmed.
 
 ## Verified implementation fronts present in the repository
 
@@ -44,6 +44,15 @@ This exact SHA is the authoritative source boundary for the current execution cy
 8. Lockfile bootstrap workflow with fail-closed `npm ci` verification.
 9. Release audit covering manifest, workflows, migrations, RPC references, security headers and runtime hazards.
 10. Production smoke checks covering build provenance, security headers, PWA manifest and Service Worker boundaries.
+11. Order draft boundary regression coverage for empty/non-array line collections.
+12. Order draft whitespace-normalization acceptance coverage.
+13. Order quantity zero/negative/fractional rejection coverage.
+14. Order inventory fractional/non-finite rejection coverage.
+15. Client preview overflow/non-finite/negative-value containment coverage.
+
+## Latest execution batch
+
+- `19d193ac3b36f99894b181c9623c299a765dc155` — expanded deterministic order-domain regression coverage with ten new adversarial/edge-case assertions. The implementation itself was unchanged because the rescan found the validation boundary already correctly rejects these cases; the new tests lock the behavior against regression.
 
 ## Evidence state
 
