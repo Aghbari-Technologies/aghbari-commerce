@@ -6,6 +6,7 @@ const buildMetadataPlugin = (): Plugin => ({
   generateBundle() {
     const gitSha = process.env.VERCEL_GIT_COMMIT_SHA || process.env.GITHUB_SHA || process.env.VITE_BUILD_SHA || 'unknown';
     const version = process.env.npm_package_version || '0.1.0';
+    const builtAt = new Date().toISOString();
     this.emitFile({
       type: 'asset',
       fileName: 'build-meta.json',
@@ -13,6 +14,7 @@ const buildMetadataPlugin = (): Plugin => ({
         product: 'aghbari-commerce',
         version,
         git_sha: gitSha,
+        built_at: builtAt,
       }, null, 2) + '\n',
     });
   },
