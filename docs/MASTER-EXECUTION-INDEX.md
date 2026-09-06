@@ -6,8 +6,8 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Branch: `main`
-- Current exact implementation HEAD: **`6955f1f6e20443a9fb92923e9c12e31fb2f55813`**
-- Latest execution boundary: exact-SHA-bound runtime E2E workflow + executable RPC contract/mock-marker audit.
+- Current exact implementation HEAD: **`654910da9ac614bc39bfc9f25f4b0983af10539d`**
+- Latest execution boundary: exact-SHA runtime E2E enforcement + real Tenant A/B isolation test + executable RPC/mock-marker audit.
 
 ## Standing execution command
 **`1` = CONTINUE / EXECUTE AUTONOMOUSLY / DEEPEN / TEST / VERIFY / DOCUMENT / SELF-IMPROVE.**
@@ -16,7 +16,7 @@
 | Stage | State |
 |---|---|
 | BUILT | **ADVANCED IMPLEMENTED** — executable commerce shell + catalog/pricing/orders/cart, staff operations, customers, inventory transfer/adjustment/thresholds/low-stock/stock count, purchasing/receiving, finance, import/export, outbox worker, PWA/offline primitives and browser/security hardening |
-| INTEGRATED | **PASS at implementation level — exact current HEAD `6955f1f6e20443a9fb92923e9c12e31fb2f55813`** |
+| INTEGRATED | **PASS at implementation level — exact current HEAD `654910da9ac614bc39bfc9f25f4b0983af10539d`** |
 | VERIFIED | **NOT PROVEN** — current GitHub Actions execution evidence is not yet surfaced for this exact SHA |
 | RUNTIME PROVEN | **NOT PROVEN** — no connected Supabase target and no authenticated deployment runtime evidence available through current integrations |
 | PRODUCTION CERTIFIED | **NOT PROVEN** |
@@ -48,6 +48,7 @@
 - PWA manifest/service worker/offline fallback.
 - Security headers including CSP and browser secret-boundary checks.
 - Playwright authenticated browser critical-path gate, strengthened to cover real catalog → cart → order → exact-created-order persistence after refresh.
+- **Tenant-isolation E2E now creates a real Tenant A order and verifies that a separately authenticated Tenant B session cannot read that exact order through the UI.**
 
 ## Forensic repairs and release hardening
 - Stock-count composite product tenant FK now has a valid referenced unique key.
@@ -64,11 +65,12 @@
 - **Typecheck is an explicit package/CI gate.**
 - **Release audit scans shipped HTML/PWA/config artifacts and executable source for legacy branding and suspicious completion/mock markers.**
 - **Release audit now discovers literal frontend Supabase RPC calls and verifies each has a matching PostgreSQL function definition in migration history.**
-- **Runtime E2E workflow now requires an explicit `exact_sha`, checks out that exact commit, verifies `git rev-parse HEAD`, and names uploaded evidence with the certified SHA.**
+- **Runtime E2E workflow requires an explicit `exact_sha`, checks out that exact commit, verifies `git rev-parse HEAD`, and names uploaded evidence with the certified SHA.**
+- **Runtime E2E requires distinct Tenant B credentials instead of silently reducing isolation proof to a single-user test.**
 
 ## Evidence boundary
-- Current exact SHA `6955f1f6e20443a9fb92923e9c12e31fb2f55813` has not yet produced a surfaced GitHub workflow run/status through the authorized connector; therefore CI is **NOT PROVEN**, not PASS.
-- Runtime browser E2E is executable and now exact-SHA-bound, but **NOT RUNTIME-PROVEN** until executed against a real deployment with real credentials.
+- Current exact SHA `654910da9ac614bc39bfc9f25f4b0983af10539d` has not yet produced a surfaced GitHub workflow run/status through the authorized connector; therefore CI is **NOT PROVEN**, not PASS.
+- Runtime browser E2E is executable and exact-SHA-bound, but **NOT RUNTIME-PROVEN** until executed against a real deployment with real credentials for both tenant contexts.
 - No Supabase project is currently connected to the authorized Supabase integration, so live DB/Auth/RLS proof cannot honestly be claimed.
 - Production deployment/runtime is therefore **NOT CERTIFIED**.
 
@@ -96,7 +98,7 @@
 ## Product boundary — non-negotiable
 Aghbari owns operational truth. Report-Advisor owns analytics/intelligence. The allowed direction is:
 
-`Aghbari → Intelligence Integration Gateway → Canonical Analytical Dataset → Report-Advisor`.
+`Aghbari → Intelligence Integration Gateway → Report-Advisor`.
 
 No duplicate BI/analytics dashboard or operational write path is introduced into Aghbari.
 
