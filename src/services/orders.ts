@@ -9,7 +9,15 @@ export async function createOrder(draft: OrderDraft, warehouseId: string) {
     p_lines: draft.lines
   });
   if (error) throw error;
-  return data?.[0] ?? null;
+
+  // A successful RPC call with no returned order is not a successful checkout.
+  // Fail closed so the UI cannot display a false success message or clear the cart.
+  const order = data?.[0] ?? null;
+  if (!order) {
+    throw new Error('تم تنفيذ طلب الخادم دون إرجاع رقم الطلب. لم يتم اعتماد الطلب محليًا.');
+  }
+
+  return order;
 }
 
 export async function transitionOrder(orderId: string, status: string) {
