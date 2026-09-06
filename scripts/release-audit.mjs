@@ -21,6 +21,7 @@ const requiredWorkflows = [
   '.github/workflows/runtime-e2e.yml',
   '.github/workflows/security-audit.yml',
   '.github/workflows/supabase-migration-proof.yml',
+  '.github/workflows/bootstrap-release-lockfile.yml',
 ];
 
 const failures = [];
@@ -51,6 +52,22 @@ if (existsSync(lockPath)) {
     }
   } catch (error) {
     fail(`package-lock.json is not valid JSON: ${error.message}`);
+  }
+}
+
+const workflowChecks = {
+  '.github/workflows/application-quality.yml': ['npm ci', 'TARGET_SHA', 'workflow_dispatch'],
+  '.github/workflows/runtime-e2e.yml': ['npm ci', 'E2E_EXACT_SHA', 'workflow_dispatch'],
+  '.github/workflows/security-audit.yml': ['npm ci', 'TARGET_SHA', 'workflow_dispatch'],
+  '.github/workflows/supabase-migration-proof.yml': ['TARGET_SHA', 'workflow_dispatch', 'supabase test db'],
+  '.github/workflows/bootstrap-release-lockfile.yml': ['package-lock.json', 'npm ci', 'lockfileVersion'],
+};
+for (const [file, needles] of Object.entries(workflowChecks)) {
+  const path = join(root, file);
+  if (!existsSync(path)) continue;
+  const text = readFileSync(path, 'utf8');
+  for (const needle of needles) {
+    if (!text.includes(needle)) fail(`Release workflow contract missing '${needle}': ${file}`);
   }
 }
 
@@ -91,7 +108,7 @@ for (const file of sourceFiles) {
   }
 }
 
-for (const file of ['index.html', 'manifest.webmanifest', 'vercel.json', '.env.example']) {
+for (const file of ['index.html', 'public/manifest.webmanifest', 'vercel.json', '.env.example']) {
   const path = join(root, file);
   if (!existsSync(path)) continue;
   const text = readFileSync(path, 'utf8');
@@ -111,10 +128,23 @@ for (const key of ['VITE_SUPABASE_URL', 'VITE_SUPABASE_PUBLISHABLE_KEY']) {
 }
 
 const migrationRoot = join(root, 'supabase', 'migrations');
-const migrationText = walk(migrationRoot)
-  .filter((file) => file.endsWith('.sql'))
-  .map((file) => readFileSync(file, 'utf8'))
-  .join('\n');
+if (!existsSync(migrationRoot)) {
+  fail('Missing Supabase migration directory.');
+}
+const migrationFiles = walk(migrationRoot).filter((file) => file.endsWith('.sql')).sort();
+const migrationVersions = migrationFiles.map((file) => {
+  const name = file.split(/[/\\]/).pop() ?? '';
+  const match = name.match(/^(\d+)_/);
+  if (!match) fail(`Migration filename must begin with a numeric version: ${relative(root, file)}`);
+  return match?.[1] ?? '';
+}).filter(Boolean);
+const duplicateVersions = migrationVersions.filter((version, index) => migrationVersions.indexOf(version) !== index);
+for (const version of [...new Set(duplicateVersions)]) fail(`Duplicate migration version detected: ${version}`);
+
+const migrationText = migrationFiles.map((file) => readFileSync(file, 'utf8')).join('\n');
+if (/\bDROP\s+SCHEMA\s+public\b/i.test(migrationText)) fail('Release migrations must not drop the public schema.');
+if (/\bDROP\s+DATABASE\b/i.test(migrationText)) fail('Release migrations must not contain DROP DATABASE.');
+
 const rpcCalls = new Set();
 for (const file of sourceFiles.filter((path) => /\.(?:ts|tsx|js|mjs)$/.test(path))) {
   const text = readFileSync(file, 'utf8');
@@ -126,6 +156,11 @@ const missingRpcs = [...rpcCalls].filter((name) => {
 });
 for (const name of missingRpcs) fail(`RPC contract missing from migration history: ${name}`);
 
+const vercelText = readFileSync(join(root, 'vercel.json'), 'utf8');
+for (const header of ['Content-Security-Policy', 'X-Content-Type-Options', 'X-Frame-Options', 'Strict-Transport-Security']) {
+  if (!vercelText.includes(`\"key\": \"${header}\"`)) fail(`Required production security header missing from vercel.json: ${header}`);
+}
+
 if (failures.length) {
   console.error('RELEASE AUDIT: FAIL');
   for (const item of failures) console.error(`- ${item}`);
@@ -135,5 +170,6 @@ if (failures.length) {
 console.log('RELEASE AUDIT: PASS');
 console.log(`Checked required files: ${requiredFiles.length + requiredWorkflows.length}`);
 console.log(`Checked ${rpcCalls.size} literal frontend RPC contracts against migration history.`);
+console.log(`Checked ${migrationFiles.length} SQL migrations for release topology safety.`);
 console.log('Checked lockfile/package manifest synchronization.');
-console.log('Checked executable source and release artifacts for legacy branding and suspicious completion/mock markers.');
+console.log('Checked release workflows, executable source, release artifacts, production security headers, and legacy branding.');
