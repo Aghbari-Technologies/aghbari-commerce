@@ -34,21 +34,74 @@ export interface StockCountLine {
   counted_at: string | null;
 }
 
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const MAX_LINES = 200;
+
+function requireUuid(value: string, field: string): string {
+  const normalized = value.trim();
+  if (!UUID_PATTERN.test(normalized)) throw new Error(`${field} غير صالح.`);
+  return normalized;
+}
+
+function requireIdempotencyKey(value: string): string {
+  const normalized = value.trim();
+  if (normalized.length < 16 || normalized.length > 200) throw new Error('مفتاح منع التكرار يجب أن يكون بين 16 و200 حرف.');
+  return normalized;
+}
+
+function requireFiniteNonNegative(value: number, field: string): number {
+  if (!Number.isFinite(value) || value < 0) throw new Error(`${field} يجب أن يكون رقمًا غير سالب.`);
+  return value;
+}
+
+function requirePositiveQuantity(value: number): number {
+  if (!Number.isFinite(value) || value <= 0) throw new Error('كمية المخزون يجب أن تكون أكبر من صفر.');
+  return value;
+}
+
+export function validateInventoryTransferInput(sourceWarehouseId: string, destinationWarehouseId: string, idempotencyKey: string, lines: Array<{ productId: string; quantity: number }>): void {
+  requireUuid(sourceWarehouseId, 'المخزن المصدر');
+  requireUuid(destinationWarehouseId, 'المخزن الوجهة');
+  if (sourceWarehouseId.trim() === destinationWarehouseId.trim()) throw new Error('لا يمكن نقل المخزون إلى نفس المخزن.');
+  requireIdempotencyKey(idempotencyKey);
+  if (!Array.isArray(lines) || lines.length < 1 || lines.length > MAX_LINES) throw new Error(`يجب أن يحتوي التحويل على 1 إلى ${MAX_LINES} أصناف.`);
+  const products = new Set<string>();
+  for (const line of lines) {
+    const productId = requireUuid(line.productId, 'المنتج');
+    if (products.has(productId)) throw new Error('لا يمكن تكرار المنتج في تحويل المخزون.');
+    products.add(productId);
+    requirePositiveQuantity(line.quantity);
+  }
+}
+
+export function validateStockThresholdInput(warehouseId: string, productId: string, minQuantity: number, reorderQuantity: number, maxQuantity?: number | null): void {
+  requireUuid(warehouseId, 'المخزن');
+  requireUuid(productId, 'المنتج');
+  requireFiniteNonNegative(minQuantity, 'الحد الأدنى');
+  requirePositiveQuantity(reorderQuantity);
+  if (maxQuantity !== undefined && maxQuantity !== null) {
+    requireFiniteNonNegative(maxQuantity, 'الحد الأقصى');
+    if (maxQuantity < minQuantity) throw new Error('الحد الأقصى لا يمكن أن يكون أقل من الحد الأدنى.');
+  }
+}
+
 export async function transferInventory(sourceWarehouseId: string, destinationWarehouseId: string, idempotencyKey: string, lines: Array<{ productId: string; quantity: number }>, notes?: string) {
+  validateInventoryTransferInput(sourceWarehouseId, destinationWarehouseId, idempotencyKey, lines);
   const { data, error } = await requireSupabase().rpc('transfer_inventory', {
-    p_source_warehouse_id: sourceWarehouseId,
-    p_destination_warehouse_id: destinationWarehouseId,
-    p_idempotency_key: idempotencyKey,
-    p_lines: lines.map((line) => ({ product_id: line.productId, quantity: line.quantity })),
-    p_notes: notes || null
+    p_source_warehouse_id: sourceWarehouseId.trim(),
+    p_destination_warehouse_id: destinationWarehouseId.trim(),
+    p_idempotency_key: idempotencyKey.trim(),
+    p_lines: lines.map((line) => ({ product_id: line.productId.trim(), quantity: line.quantity })),
+    p_notes: notes?.trim() || null
   });
   if (error) throw error;
   return data;
 }
 
 export async function setStockThreshold(warehouseId: string, productId: string, minQuantity: number, reorderQuantity: number, maxQuantity?: number | null) {
+  validateStockThresholdInput(warehouseId, productId, minQuantity, reorderQuantity, maxQuantity);
   const { data, error } = await requireSupabase().rpc('set_stock_threshold', {
-    p_warehouse_id: warehouseId, p_product_id: productId, p_min_quantity: minQuantity,
+    p_warehouse_id: warehouseId.trim(), p_product_id: productId.trim(), p_min_quantity: minQuantity,
     p_reorder_quantity: reorderQuantity, p_max_quantity: maxQuantity ?? null
   });
   if (error) throw error;
@@ -62,8 +115,10 @@ export async function getLowStock() {
 }
 
 export async function startStockCount(warehouseId: string, idempotencyKey: string, notes?: string) {
+  requireUuid(warehouseId, 'المخزن');
+  requireIdempotencyKey(idempotencyKey);
   const { data, error } = await requireSupabase().rpc('start_stock_count', {
-    p_warehouse_id: warehouseId, p_idempotency_key: idempotencyKey, p_notes: notes || null
+    p_warehouse_id: warehouseId.trim(), p_idempotency_key: idempotencyKey.trim(), p_notes: notes?.trim() || null
   });
   if (error) throw error;
   return data as StockCountSession;
@@ -76,19 +131,24 @@ export async function getOpenStockCount() {
 }
 
 export async function getStockCountLines(sessionId: string) {
-  const { data, error } = await requireSupabase().from('stock_count_lines').select('id,session_id,product_id,expected_quantity,counted_quantity,completed_quantity,variance,counted_at').eq('session_id', sessionId).order('product_id');
+  requireUuid(sessionId, 'جلسة الجرد');
+  const { data, error } = await requireSupabase().from('stock_count_lines').select('id,session_id,product_id,expected_quantity,counted_quantity,completed_quantity,variance,counted_at').eq('session_id', sessionId.trim()).order('product_id');
   if (error) throw error;
   return (data ?? []) as StockCountLine[];
 }
 
 export async function setStockCountLine(sessionId: string, productId: string, countedQuantity: number) {
-  const { data, error } = await requireSupabase().rpc('set_stock_count_line', { p_session_id: sessionId, p_product_id: productId, p_counted_quantity: countedQuantity });
+  requireUuid(sessionId, 'جلسة الجرد');
+  requireUuid(productId, 'المنتج');
+  requireFiniteNonNegative(countedQuantity, 'الكمية المعدودة');
+  const { data, error } = await requireSupabase().rpc('set_stock_count_line', { p_session_id: sessionId.trim(), p_product_id: productId.trim(), p_counted_quantity: countedQuantity });
   if (error) throw error;
   return data as StockCountLine;
 }
 
 export async function completeStockCount(sessionId: string) {
-  const { data, error } = await requireSupabase().rpc('complete_stock_count', { p_session_id: sessionId });
+  requireUuid(sessionId, 'جلسة الجرد');
+  const { data, error } = await requireSupabase().rpc('complete_stock_count', { p_session_id: sessionId.trim() });
   if (error) throw error;
   return data as { status: string; session_id: string; adjusted_lines: number };
 }
