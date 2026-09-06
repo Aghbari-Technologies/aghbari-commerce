@@ -22,6 +22,9 @@ jobs:
     env:
       TARGET_SHA: ${{ inputs.exact_sha || github.sha }}
     steps:
+      - name: Validate exact SHA input
+        shell: bash
+        run: echo "$TARGET_SHA" | grep -Eq '^[0-9a-f]{40}$'
       - name: Checkout exact target SHA
         uses: actions/checkout@v4
         with:
@@ -39,8 +42,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
       - name: Install pinned dependencies without lifecycle scripts
-        run: npm install --ignore-scripts --no-audit --no-fund
+        run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Audit production dependency graph
         run: npm audit --omit=dev --audit-level=high
       - name: Reject server secrets from browser sources
