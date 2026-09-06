@@ -12,19 +12,28 @@ export class OrderValidationError extends Error {
 }
 
 export function validateOrderDraft(draft: OrderDraft, inventory: Map<string, number>): void {
-  const idempotencyKey = draft.idempotencyKey?.trim() ?? '';
+  if (!draft || typeof draft !== 'object') throw new OrderValidationError('order draft is required');
+  if (!inventory || typeof inventory.get !== 'function') throw new OrderValidationError('inventory map is required');
+
+  if (typeof draft.idempotencyKey !== 'string') {
+    throw new OrderValidationError('idempotencyKey is required');
+  }
+  const idempotencyKey = draft.idempotencyKey.trim();
   if (idempotencyKey.length < 16) {
     throw new OrderValidationError('idempotencyKey must be at least 16 characters');
   }
   if (idempotencyKey.length > MAX_IDEMPOTENCY_KEY_LENGTH) {
     throw new OrderValidationError(`idempotencyKey cannot exceed ${MAX_IDEMPOTENCY_KEY_LENGTH} characters`);
   }
+
   if (!Array.isArray(draft.lines) || draft.lines.length === 0) throw new OrderValidationError('order must contain at least one line');
   if (draft.lines.length > MAX_ORDER_LINES) throw new OrderValidationError(`order cannot contain more than ${MAX_ORDER_LINES} lines`);
 
   const seen = new Set<string>();
   for (const line of draft.lines) {
-    const productId = line.productId?.trim() ?? '';
+    if (!line || typeof line !== 'object') throw new OrderValidationError('order line is required');
+    if (typeof line.productId !== 'string') throw new OrderValidationError('productId is required');
+    const productId = line.productId.trim();
     if (!productId) throw new OrderValidationError('productId is required');
     if (seen.has(productId)) throw new OrderValidationError('duplicate product line');
     seen.add(productId);
@@ -42,9 +51,13 @@ export function validateOrderDraft(draft: OrderDraft, inventory: Map<string, num
 
 export function calculateClientPreviewTotal(lines: CartLine[]): number {
   // Preview only. The canonical order total must be recalculated server-side.
+  if (!Array.isArray(lines)) return 0;
   return lines.reduce((sum, line) => {
+    if (!line || typeof line !== 'object') return sum;
     if (!Number.isFinite(line.unitPrice) || line.unitPrice < 0 || !Number.isSafeInteger(line.quantity) || line.quantity < 0) return sum;
     const lineTotal = line.unitPrice * line.quantity;
-    return Number.isFinite(lineTotal) ? sum + lineTotal : sum;
+    if (!Number.isFinite(lineTotal)) return sum;
+    const nextTotal = sum + lineTotal;
+    return Number.isFinite(nextTotal) ? nextTotal : sum;
   }, 0);
 }
