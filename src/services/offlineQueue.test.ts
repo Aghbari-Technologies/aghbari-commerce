@@ -181,11 +181,13 @@ describe('offline operation queue', () => {
     expect(pendingOfflineOperations(USER_A)).toHaveLength(0);
   });
 
-  it('caps exponential retry delay at the configured maximum', () => {
+  it('keeps retry delay deterministic through the maximum retry boundary', () => {
     const operation = enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: 1 });
-    for (let index = 0; index < 7; index += 1) markOfflineOperationAttempt(operation.operationId, 1_000);
-    const next = pendingOfflineOperations(USER_A)[0].nextAttemptAt!;
-    expect(Date.parse(next)).toBe(1_000 + 15 * 60_000);
+    for (let index = 0; index < MAX_OFFLINE_ATTEMPTS - 1; index += 1) markOfflineOperationAttempt(operation.operationId, 1_000);
+    markOfflineOperationAttempt(operation.operationId, 1_000);
+    expect(Date.parse(pendingOfflineOperations(USER_A)[0].nextAttemptAt!)).toBe(1_000 + 256_000);
+    expect(pendingOfflineOperations(USER_A)[0].attempts).toBe(MAX_OFFLINE_ATTEMPTS);
+    expect(pendingOfflineOperations(USER_A)[0].terminal).toBe(true);
   });
 
   it('normalizes user and operation type whitespace before persistence', () => {
@@ -195,7 +197,7 @@ describe('offline operation queue', () => {
     expect(pendingOfflineOperations(` ${USER_A} `)[0]).toMatchObject({ userId: USER_A, type: OFFLINE_CART_REMOVE_ITEM });
   });
 
-  it('does not expose the global queue when no valid user filter is supplied', () => {
+  it('does not expose the global queue when an invalid explicit user filter is supplied', () => {
     enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: 1 });
     enqueueOfflineOperation(USER_B, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_B, quantity: 1 });
     expect(pendingOfflineOperations()).toHaveLength(2);
