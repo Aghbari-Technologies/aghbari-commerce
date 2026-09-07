@@ -2,16 +2,16 @@ name: bootstrap-release-lockfile
 
 on:
   push:
-    branches:
-      - main
-      - execution/close-lockfile-20260907
-      - security/rpc-surface-final6
+    branches: ['**']
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 permissions:
   contents: write
+
+concurrency:
+  group: aghbari-lockfile-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   lockfile:
