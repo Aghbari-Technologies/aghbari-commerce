@@ -4,46 +4,43 @@
 
 ## Batch: parallel tenant boundaries + import correctness + migration reconciliation
 
-### Evidence-bound findings
-- Supabase project `mrcyqezbhpncuvaehwgf` is active.
-- All 23 public tables have RLS enabled; current table policies are authenticated-only.
-- Anonymous execution remains blocked for the intended authenticated application RPC surface.
-- Catalog warehouse isolation, RPC negative authorization, and Tenant A/B mutation isolation are already proven transactionally and are not being rebuilt.
-
-### New tests committed
-- `supabase/tests/014-cart-tenant-boundary.test.sql`: 8 assertions for customer-scoped carts, cross-tenant product rejection, Tenant A/B cart visibility, and non-mutation of the other tenant's cart.
-- `supabase/tests/015-order-tenant-transition-boundary.test.sql`: 8 assertions for viewer denial, cross-tenant order targeting denial, same-tenant admin transition, order history, audit, and outbox evidence. Fixture corrected to satisfy the required `pricing_tier` column contract.
-- `supabase/tests/016-import-tenant-boundary.test.sql`: 10 assertions for staff-only staging, tenant-scoped fingerprints, duplicate fingerprint rejection within a tenant, warehouse boundary, cross-tenant job rejection, and tenant-scoped rows.
-- `supabase/tests/017-import-inventory-delta.test.sql`: 6 assertions for exact successive inventory deltas.
+### Completed implementation evidence
+- Added cart tenant-boundary regression (`014`): 8 assertions.
+- Added order transition tenant-boundary regression (`015`): 8 assertions; fixture contract corrected with required `pricing_tier`.
+- Added import tenant-boundary regression (`016`): 10 assertions.
+- Added import inventory-delta regression (`017`): 6 assertions.
+- Added live import runtime-equivalent proof covering `0→4` delta `4` and `4→7` delta `3`; fixture data rolled back.
 
 ### Real defects found and fixed
-1. **Import inventory delta:** previous implementation captured the post-upsert quantity as the old quantity. Corrected to lock/read the pre-commit balance before upsert.
-2. **Import price timestamp collision:** successive imports in one PostgreSQL transaction could reuse stable `now()` and violate the unique price-version key. Corrected to use `clock_timestamp()` as the effective price-version timestamp.
-3. **Migration-prefix collision:** repository scan found duplicate numeric migration prefixes across baseline and later hardening files. The corrective files were renumbered to `0041`–`0052` and the superseded duplicate corrective filenames were removed. Existing baseline migrations were preserved. Migration-proof's fail-fast duplicate-version gate is now satisfied at the source-tree level.
+1. `commit_product_import` previously captured post-upsert inventory as the old quantity. Corrected to lock/read the pre-commit balance before upsert.
+2. Successive imports inside one PostgreSQL transaction could reuse stable `now()` for price versioning and hit the unique `(organization_id, price_list_id, product_id, valid_from)` constraint. Corrected with `clock_timestamp()`.
+3. Repository migration files contained duplicate numeric prefixes caused by parallel baseline/hardening lines. Corrective migrations were renumbered above the existing `0040` baseline; duplicate corrective filenames were removed while preserving the baseline migrations.
+4. A superseded order ambiguity migration was found to reference an undeclared `v_tier`; it was removed because the later canonical `0025_idempotency_race_authority_hardening.sql` already contains the required order-id/status fixes.
 
-### Live proof
-- An initial two-import runtime-equivalent proof exposed the price timestamp collision; it failed for that concrete reason and was fixed.
-- The re-run completed without exception and verified import inventory transitions `0→4` with delta `4`, then `4→7` with delta `3`. Fixture data was rolled back.
+### Migration source state
+- Repository migration numeric prefixes are now unique from `0001` through `0052` where present; no duplicate numeric-prefix blocker remains in the scanned migration tree.
+- Current corrective files are `0041`–`0046`, with `0046` containing the combined import delta + timestamp correctness fix.
+- Live Supabase already contains the corresponding import fixes under its own applied migration timestamps.
 
-### Current source migration boundary
-- Existing repository baseline ends at `0040_import_definer_search_path_hardening.sql`.
-- New corrective sequence is now `0041`–`0052`, with unique numeric prefixes.
-- Live Supabase has the corresponding security/import fixes already applied under its own migration timestamps.
+### CI / runner boundary
+- A fresh `supabase-migration-proof` run was triggered for exact HEAD `803e73f0aeacb97db54f50421885d95de66585c5` and failed in approximately 2 seconds with `runner_id=0`, empty `steps`, and no usable logs. This is not sufficient evidence of a migration/code failure.
+- The same pattern persists across other workflows: completed failure with no step/log payload. Therefore CI remains **NOT PROVEN / RUNNER-BOUNDARY BLOCKED**, not falsely classified as a test failure.
+- `package-lock.json` is still absent/unproven; `npm ci` certification remains blocked until the lockfile is actually generated and a fresh quality run executes.
 
-### CI evidence
-- CI jobs were re-run, but GitHub still exposes `steps=[]` and no usable logs for the failed jobs. Therefore those failures remain **NOT DIAGNOSTICALLY PROVEN** as code failures.
-- `package-lock.json` remains unproven and must be established before `npm ci` can be certified.
+### Live RPC privilege verification
+- Current live privilege matrix confirms anonymous execution is false for the application RPC surface, including the legacy 4-argument catalog function.
+- Current authenticated surface is the intended application boundary; context helpers are authenticated-executable because RLS policies depend on them.
 
 ### Current branch
 - Branch: `security/rpc-surface-final6`
-- Latest branch HEAD: `ed36294cb50d28c80d2febf6340cf5e36d876396`
+- Latest branch HEAD: `251a03a22ea23d87c40f073e8b716e392523999f`
 - PR: `#42`
 - PR remains open and unmerged.
 
 ### Certification boundary
-- Tenant/RPC/catalog/import security and runtime-equivalent proof: materially strengthened.
-- Import correctness: fixed and re-proven.
-- Migration duplicate-prefix source blocker: fixed.
-- CI/lockfile/authenticated browser E2E/production runtime proof: still not certified.
+- Tenant/RPC/catalog/import hardening: materially strengthened and transactionally exercised.
+- Import correctness: fixed and live re-proven.
+- Migration numeric-prefix blocker: removed at source level.
+- CI runner evidence, lockfile/npm-ci, authenticated browser E2E, and production runtime proof: **NOT CERTIFIED**.
 
 **No production certification is claimed by this log.**
