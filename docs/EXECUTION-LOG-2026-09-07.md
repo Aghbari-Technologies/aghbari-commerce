@@ -29,7 +29,7 @@
 
 ### Current branch
 - Branch: `security/rpc-surface-final6`
-- Latest branch HEAD: `4136fd0a47b1d06cca699e5e2b9f45e4508a41df`
+- Exact latest execution commit: `d5a7b925278c662f2283d2263a06e03968482c19`
 - PR: `#42`
 - PR remains open and unmerged.
 
