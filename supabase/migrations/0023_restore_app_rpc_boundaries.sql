@@ -1,0 +1,27 @@
+-- Restore authenticated execution for application RPCs invoked directly by the frontend.
+-- Each SECURITY DEFINER implementation enforces tenant/customer/staff authorization internally.
+-- Anonymous and PUBLIC execution remains revoked.
+
+grant execute on function public.adjust_inventory(uuid, uuid, integer, text) to authenticated;
+grant execute on function public.commit_product_import(uuid, uuid) to authenticated;
+grant execute on function public.create_category(text, text, uuid) to authenticated;
+grant execute on function public.get_cart() to authenticated;
+grant execute on function public.get_or_create_cart() to authenticated;
+grant execute on function public.remove_cart_item(uuid) to authenticated;
+grant execute on function public.set_cart_item(uuid, integer) to authenticated;
+grant execute on function public.set_product_price(uuid, public.customer_tier, numeric, text) to authenticated;
+grant execute on function public.stage_product_import(text, text, jsonb) to authenticated;
+grant execute on function public.transition_order(uuid, public.order_status) to authenticated;
+grant execute on function public.upsert_product(uuid, text, text, text, uuid, text, text) to authenticated;
+
+revoke execute on function public.adjust_inventory(uuid, uuid, integer, text) from anon, public;
+revoke execute on function public.commit_product_import(uuid, uuid) from anon, public;
+revoke execute on function public.create_category(text, text, uuid) from anon, public;
+revoke execute on function public.get_cart() from anon, public;
+revoke execute on function public.get_or_create_cart() from anon, public;
+revoke execute on function public.remove_cart_item(uuid) from anon, public;
+revoke execute on function public.set_cart_item(uuid, integer) from anon, public;
+revoke execute on function public.set_product_price(uuid, public.customer_tier, numeric, text) from anon, public;
+revoke execute on function public.stage_product_import(text, text, jsonb) from anon, public;
+revoke execute on function public.transition_order(uuid, public.order_status) from anon, public;
+revoke execute on function public.upsert_product(uuid, text, text, text, uuid, text, text) from anon, public;
