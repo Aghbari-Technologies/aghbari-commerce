@@ -1,0 +1,1 @@
+Review boundary: `execution/live-runtime-reconciliation-20260907`. Do not merge as certified until exact-HEAD CI, migration/pgTAP, npm-ci and runtime E2E evidence exist.
