@@ -1,0 +1,1 @@
+Batch complete marker. Dedicated runtime reconciliation branch contains live/source operational RPC privilege hardening, RLS regression coverage, lockfile bootstrap trigger hardening, and certification boundary documentation. Exact current HEAD: `f91a918d4c60e438e6924966c2999132463bf122`.
