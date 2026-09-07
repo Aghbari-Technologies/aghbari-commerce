@@ -1,0 +1,1 @@
+Reconciliation checksum boundary: `1c5f8025de460ad30023497ea3ce121d222c6ac9`. Branch: `execution/live-runtime-reconciliation-20260907`. Live operational privilege and RLS reconciliation has been recorded; certification remains pending executable CI evidence.
