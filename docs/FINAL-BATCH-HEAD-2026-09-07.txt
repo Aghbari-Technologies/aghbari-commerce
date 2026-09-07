@@ -1,0 +1,1 @@
+Exact current execution HEAD: `41d6e22fc4960287f4e761c52dd9c946ad08b5dc` on `execution/live-runtime-reconciliation-20260907`. This is an execution evidence boundary, not production certification.
