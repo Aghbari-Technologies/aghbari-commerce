@@ -17,12 +17,13 @@
 - Hardened `src/services/purchasing.ts` so purchase and receiving quantities are safe integers bounded to 1..10,000; expanded adversarial quantity regressions.
 - Hardened `src/services/customers.ts` with normalized/bounded customer fields, runtime tier validation, UUID validation for mutations, boolean validation, and safe pagination; added customer input regressions.
 - Hardened `src/services/finance.ts` with safe monetary magnitude limits and safe pagination; expanded precision/overflow regressions.
+- Hardened `src/services/cart.ts` to fail closed on malformed `get_cart` RPC responses instead of coercing invalid quantities/prices to fallback values; validates product UUID, nonblank identity fields, quantity bounds, currency, and nonnegative finite authorized price before returning data to the UI.
 
 ### Live/source evidence retained
 - Live privilege aggregation independently re-checked: `anon_exposed=0`, `authenticated_exposed=18`, `public_functions=19`.
 - Live public table audit re-checked: `23/23` public tables have RLS enabled; no forced-RLS claim is made.
 - Legacy 4-argument catalog remains denied to authenticated/anon/PUBLIC according to the retained privilege proof.
-- `src/services/cart.ts` calls the authenticated customer RPC surface and validates product UUIDs and quantity bounds before online calls/offline queueing.
+- `src/services/cart.ts` calls the authenticated customer RPC surface and validates product UUIDs and quantity bounds before online calls/offline queueing; malformed server response data now fails closed.
 - `src/services/catalog.ts` calls only the mandatory 5-argument warehouse-aware `get_catalog` and preserves finite-number guards.
 - `transition_order` canonical source locks by order id plus authenticated organization, then applies explicit role/state authorization and records history/audit.
 - Tenant A/B cart/order runtime-equivalent isolation remains proven: foreign product, foreign warehouse, and foreign order transition are rejected; opposite-tenant orders are hidden; own order creation succeeds.
@@ -49,6 +50,7 @@
 - Client order-transition input boundary: hardened and regression-covered at source level.
 - Offline queue: adversarial source regression expanded; runtime/CI execution not yet proven.
 - Admin/purchasing/customer/finance input boundaries: hardened and regression-covered at source level; CI execution not yet proven.
+- Cart response boundary: hardened fail-closed at source level; CI execution not yet proven.
 - Tenant/RPC/catalog/cart/order/import hardening: materially strengthened and transactionally exercised.
 - CI runner evidence, lockfile/npm-ci, authenticated browser E2E, and production runtime proof: **NOT CERTIFIED**.
 
