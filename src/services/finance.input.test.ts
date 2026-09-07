@@ -5,7 +5,6 @@ const branch = '11111111-1111-4111-8111-111111111111';
 const cash = '22222222-2222-4222-8222-222222222222';
 const invoice = '33333333-3333-4333-8333-333333333333';
 
-
 describe('finance input boundaries', () => {
   it('accepts a valid cash account', () => expect(() => validateCashAccountInput(branch, 'الخزينة الرئيسية', 'YER', 1000)).not.toThrow());
   it('rejects malformed branch and empty account name', () => {
@@ -15,6 +14,10 @@ describe('finance input boundaries', () => {
   it('rejects invalid currency and negative opening balance', () => {
     expect(() => validateCashAccountInput(branch, 'Cash', 'Y', 0)).toThrow();
     expect(() => validateCashAccountInput(branch, 'Cash', 'YER', -1)).toThrow();
+  });
+  it('rejects non-finite and unsafe opening balances', () => {
+    expect(() => validateCashAccountInput(branch, 'Cash', 'YER', Infinity)).toThrow();
+    expect(() => validateCashAccountInput(branch, 'Cash', 'YER', Number.MAX_SAFE_INTEGER + 1)).toThrow();
   });
   it('accepts valid payment methods', () => {
     for (const method of ['cash', 'bank_transfer', 'card', 'other']) {
@@ -26,8 +29,9 @@ describe('finance input boundaries', () => {
     expect(() => validatePaymentInput(invoice, 0, 'cash', cash, 'ref')).toThrow();
     expect(() => validatePaymentInput(invoice, 100, 'crypto', cash, 'ref')).toThrow();
   });
-  it('rejects non-finite payment amounts and malformed cash account', () => {
+  it('rejects non-finite and unsafe payment amounts and malformed cash account', () => {
     expect(() => validatePaymentInput(invoice, Infinity, 'cash', cash, 'ref')).toThrow();
+    expect(() => validatePaymentInput(invoice, Number.MAX_SAFE_INTEGER + 1, 'cash', cash, 'ref')).toThrow();
     expect(() => validatePaymentInput(invoice, 100, 'cash', 'bad', 'ref')).toThrow();
   });
   it('rejects overlong payment references', () => expect(() => validatePaymentInput(invoice, 100, 'cash', cash, 'x'.repeat(201))).toThrow());
@@ -40,4 +44,5 @@ describe('finance input boundaries', () => {
     expect(() => validateExpenseInput(branch, cash, 'تشغيل', 250, 'Y', '')).toThrow();
   });
   it('rejects overlong expense description', () => expect(() => validateExpenseInput(branch, cash, 'تشغيل', 250, 'YER', 'x'.repeat(2001))).toThrow());
+  it('rejects unsafe expense amounts', () => expect(() => validateExpenseInput(branch, cash, 'تشغيل', Number.MAX_SAFE_INTEGER + 1, 'YER', '')).toThrow());
 });
