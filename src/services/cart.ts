@@ -27,6 +27,32 @@ function finiteNumber(value: unknown, fallback = 0): number {
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
+function assertCartItem(value: unknown): CartItem {
+  if (!value || typeof value !== 'object') throw new Error('استجابة السلة غير صالحة.');
+  const item = value as Partial<CartItem>;
+  if (
+    typeof item.product_id !== 'string' || !UUID_PATTERN.test(item.product_id) ||
+    typeof item.sku !== 'string' || item.sku.trim() === '' ||
+    typeof item.name !== 'string' || item.name.trim() === '' ||
+    typeof item.unit !== 'string' || item.unit.trim() === '' ||
+    typeof item.currency !== 'string' || item.currency.trim() === '' ||
+    !Number.isSafeInteger(item.quantity) || item.quantity < 1 || item.quantity > MAX_ORDER_QUANTITY_PER_LINE ||
+    (item.authorized_price !== null && item.authorized_price !== undefined &&
+      (typeof item.authorized_price !== 'number' || !Number.isFinite(item.authorized_price) || item.authorized_price < 0))
+  ) {
+    throw new Error('استجابة السلة تحتوي بيانات غير صالحة.');
+  }
+  return {
+    product_id: item.product_id,
+    sku: item.sku,
+    name: item.name,
+    unit: item.unit,
+    quantity: item.quantity,
+    authorized_price: item.authorized_price == null ? null : item.authorized_price,
+    currency: item.currency
+  };
+}
+
 function isOfflineCartPayload(payload: unknown): payload is OfflineCartPayload {
   if (!payload || typeof payload !== 'object') return false;
   const value = payload as OfflineCartPayload;
@@ -67,11 +93,8 @@ export async function syncOfflineCart() {
 export async function getCart() {
   const { data, error } = await requireSupabase().rpc('get_cart');
   if (error) throw error;
-  return (data ?? []).map((item) => ({
-    ...(item as Omit<CartItem, 'quantity' | 'authorized_price'>),
-    quantity: finiteNumber(item.quantity),
-    authorized_price: item.authorized_price == null ? null : finiteNumber(item.authorized_price, 0)
-  })) as CartItem[];
+  if (!Array.isArray(data)) throw new Error('استجابة السلة غير صالحة.');
+  return data.map(assertCartItem);
 }
 
 export async function setCartItem(productId: string, quantity: number) {

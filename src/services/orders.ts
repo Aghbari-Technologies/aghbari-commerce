@@ -2,6 +2,7 @@ import { requireSupabase } from '../lib/supabase';
 import type { OrderDraft } from '../domain/types';
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const ORDER_STATUSES = new Set(['draft', 'pending', 'confirmed', 'preparing', 'ready', 'completed', 'cancelled']);
 
 export interface CreatedOrderReference {
   id: string;
@@ -26,6 +27,14 @@ export function assertCreatedOrderReference(value: unknown): CreatedOrderReferen
   return { id: candidate.id, order_number: candidate.order_number };
 }
 
+export function assertOrderTransitionInput(orderId: string, status: string): { orderId: string; status: string } {
+  const normalizedOrderId = orderId.trim();
+  const normalizedStatus = status.trim();
+  if (!UUID_PATTERN.test(normalizedOrderId)) throw new Error('معرّف الطلب غير صالح.');
+  if (!ORDER_STATUSES.has(normalizedStatus)) throw new Error('حالة الطلب غير صالحة.');
+  return { orderId: normalizedOrderId, status: normalizedStatus };
+}
+
 export async function createOrder(draft: OrderDraft, warehouseId: string) {
   const client = requireSupabase();
   const { data, error } = await client.rpc('create_order', {
@@ -41,8 +50,9 @@ export async function createOrder(draft: OrderDraft, warehouseId: string) {
 }
 
 export async function transitionOrder(orderId: string, status: string) {
+  const input = assertOrderTransitionInput(orderId, status);
   const client = requireSupabase();
-  const { data, error } = await client.rpc('transition_order', { p_order_id: orderId, p_to_status: status });
+  const { data, error } = await client.rpc('transition_order', { p_order_id: input.orderId, p_to_status: input.status });
   if (error) throw error;
   return data;
 }

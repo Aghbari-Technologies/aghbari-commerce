@@ -1,5 +1,3 @@
--- Lock canonical RPC execution to authenticated callers only.
--- PUBLIC grants are removed first; authenticated access is then explicitly retained.
 revoke execute on function public.adjust_inventory(uuid,uuid,integer,text) from public;
 revoke execute on function public.clear_cart() from public;
 revoke execute on function public.commit_product_import(uuid,uuid) from public;
@@ -18,7 +16,6 @@ revoke execute on function public.set_product_price(uuid,public.customer_tier,nu
 revoke execute on function public.stage_product_import(text,text,jsonb) from public;
 revoke execute on function public.transition_order(uuid,public.order_status) from public;
 revoke execute on function public.upsert_product(uuid,text,text,text,uuid,text,text) from public;
-
 grant execute on function public.adjust_inventory(uuid,uuid,integer,text) to authenticated;
 grant execute on function public.clear_cart() to authenticated;
 grant execute on function public.commit_product_import(uuid,uuid) to authenticated;

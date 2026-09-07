@@ -1,5 +1,3 @@
--- Explicitly revoke direct RPC execution from anon.
--- Kept as a separate migration so the runtime hardening is evidence-bound and reviewable.
 revoke execute on function public.adjust_inventory(uuid,uuid,integer,text) from anon;
 revoke execute on function public.clear_cart() from anon;
 revoke execute on function public.commit_product_import(uuid,uuid) from anon;

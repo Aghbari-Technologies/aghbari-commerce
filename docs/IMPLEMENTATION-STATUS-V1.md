@@ -7,11 +7,11 @@
 - Architecture: RECONCILED
 - Canonical ownership: ACCEPTED
 - Physical relation families: IMPLEMENTED IN MIGRATION TREE
-- Transactional domain invariants: prior evidence exists; fresh current-head execution evidence remains required
-- Order workflow: prior evidence exists; fresh current-head execution evidence remains required
+- Transactional domain invariants: prior evidence exists; fresh current-head CI execution evidence remains required
+- Order workflow: prior evidence exists; fresh current-head CI execution evidence remains required
 - Operational frontend/PWA: IMPLEMENTED and integrated
 - Operational domain/services: IMPLEMENTED and integrated
-- Supabase operational migrations/RLS/RPC layer: IMPLEMENTED in migration tree; live verification remains open
+- Supabase operational migrations/RLS/RPC layer: IMPLEMENTED through migration 0023; live security/runtime checks are proven for the current database state
 - Catalog, cart, orders, import, image pipeline and offline queue: IMPLEMENTED
 - Purchasing + receiving: IMPLEMENTED
 - Customer lifecycle: IMPLEMENTED
@@ -21,16 +21,28 @@
 - Catalog export: AVAILABLE
 - Outbox: durable claim/recovery contract implemented; deployable worker present; production delivery proof remains open
 - Offline cart/queue: hardened for user scoping, retry exhaustion and duplicate online-event replay
-- Real Auth/RLS E2E: BLOCKED pending connected staging Supabase target
+- Real Auth/RLS/E2E: staging/browser proof remains open
 - Browser E2E: IMPLEMENTED as an executable Playwright gate; authenticated runtime execution remains pending target + credentials
 - Production deployment: OPEN
 - Production certification: NOT CERTIFIED
 
 ## Current authoritative implementation boundary
 
-**Actual current `main` HEAD:** `aa6b571ea0b1a64c21ad9169894ea06708d81a60`
+**Current candidate branch:** `security/rpc-surface-final6`
 
-This exact SHA is the authoritative source boundary for the current execution cycle. Earlier notes that name a different SHA are not authoritative unless independently re-read from GitHub and confirmed.
+**Current candidate HEAD:** `960ef9c29a4404f7194db79a41698cab9fda298e`
+
+PR #42 remains open and unmerged. The candidate HEAD includes the security/RPC reconciliation through migration `0023_restore_app_rpc_boundaries` plus the current execution documentation update.
+
+## Verified current Supabase boundary
+
+- Migration history is complete through `0023_restore_app_rpc_boundaries`.
+- 23/23 public tables have RLS enabled.
+- 23/23 public RLS policies are authenticated-only; no public-role RLS policies remain.
+- Current live privilege audit: 19 public functions; 14 executable by `authenticated`; 0 executable by `anon`.
+- The 14 exposed SECURITY DEFINER RPCs inspected use fixed `search_path = public` and enforce tenant/customer or staff-role guards appropriate to their boundary.
+- Catalog uses the mandatory 5-argument warehouse-aware RPC; the legacy 4-argument RPC is not executable by `authenticated` or `anon`.
+- Live temporary fixtures were cleaned: 0 organizations and 0 auth users remain.
 
 ## Verified implementation fronts present in the repository
 
@@ -54,26 +66,32 @@ This exact SHA is the authoritative source boundary for the current execution cy
 18. Preview protection against line multiplication overflow.
 19. Preview protection against accumulated-total overflow.
 20. Preview regression coverage for zero quantity and negative price containment.
+21. Warehouse-aware catalog boundary with explicit tenant/warehouse validation.
+22. Legacy catalog RPC execution removed from authenticated/anonymous/public access.
+23. Frontend-invoked application RPCs restored to authenticated execution without restoring anonymous/PUBLIC execution.
+24. Live RPC privilege audit and SECURITY DEFINER guard inspection.
 
 ## Latest execution batch
 
 - `b10b23b197034eaae1744bf437557f18dd9db159` — hardened the order domain against malformed runtime objects and preview arithmetic overflow without changing server-side pricing authority.
 - `aa6b571ea0b1a64c21ad9169894ea06708d81a60` — added deterministic adversarial regression coverage for the new runtime and arithmetic boundaries.
+- `906884c9b8934df52a939222d6fe4380bc2b847f` — restored authenticated execution for frontend-invoked RPCs while retaining anon/PUBLIC denial (`0023_restore_app_rpc_boundaries`).
+- `960ef9c29a4404f7194db79a41698cab9fda298e` — synchronized the execution log/status boundary with the latest candidate and CI evidence state.
 
 ## Evidence state
 
-- `package-lock.json`: NOT PROVEN present on current `main`.
-- Fresh CI: NOT PROVEN. Previous workflow attempts failed without usable step-level evidence through the authorized connector.
-- Fresh unit/domain execution: NOT PROVEN on current HEAD until a runner exposes execution evidence.
-- Fresh pgTAP/PostgreSQL execution: NOT PROVEN on current HEAD.
-- Live Supabase Auth/RLS/DB: BLOCKED because no connected Supabase project is available through the current authorized connection.
+- `package-lock.json`: NOT PROVEN present on candidate; GitHub source lookup confirms it is absent.
+- Fresh CI: NOT PROVEN. Current workflow attempts report `failure` but expose `steps=null`; direct job-log retrieval returns `BlobNotFound`, so no code-level failure is inferred.
+- Fresh unit/domain execution: NOT PROVEN on current candidate until a runner exposes execution evidence.
+- Fresh pgTAP/PostgreSQL CI execution: NOT PROVEN on current candidate; targeted live database transaction checks have passed for the catalog/security boundary.
+- Live Supabase schema/security boundary: VERIFIED for current database state.
 - Authenticated Browser E2E: NOT PROVEN against a real target.
 - Outbox external delivery: NOT PROVEN.
 - Production deployment: OPEN.
 
 ## Remaining closure gates
 
-1. Obtain executable GitHub Runner step/log evidence on the exact current HEAD.
+1. Obtain usable GitHub Runner step/log evidence on the exact candidate HEAD.
 2. Generate and commit a valid synchronized `package-lock.json` and prove `npm ci`.
 3. Run fresh typecheck, lint, unit/domain, migration/pgTAP, security, regression and build gates.
 4. Provision/connect staging Supabase with real Tenant A/B identities.

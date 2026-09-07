@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - execution/close-lockfile-20260907
+      - security/rpc-surface-final6
   pull_request:
     branches:
       - main

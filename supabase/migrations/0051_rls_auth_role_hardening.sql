@@ -1,6 +1,3 @@
--- RLS hardening: exposed table policies are for authenticated application users only.
--- Keep SECURITY DEFINER RPCs as the controlled command/query boundary.
-
 alter policy branches_read on public.branches to authenticated;
 alter policy categories_read on public.categories to authenticated;
 alter policy tiers_read on public.customer_tiers to authenticated;
@@ -24,7 +21,4 @@ alter policy import_rows_staff_read on public.import_rows to authenticated;
 alter policy inventory_read_staff on public.inventory_balances to authenticated;
 alter policy inventory_movements_read_staff on public.inventory_movements to authenticated;
 alter policy outbox_staff_read on public.outbox_events to authenticated;
-
--- Avoid per-row auth.uid() re-evaluation in the profile policy.
-alter policy profiles_self_read on public.profiles
-  using ((select auth.uid()) = id);
+alter policy profiles_self_read on public.profiles using ((select auth.uid()) = id);

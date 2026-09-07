@@ -2,8 +2,14 @@ name: G1 Domain Proof
 
 on:
   push:
-    branches: [main]
+    branches: ['**']
   pull_request:
+  workflow_dispatch:
+    inputs:
+      exact_sha:
+        description: 'Exact Git commit SHA to verify'
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -26,18 +32,30 @@ jobs:
           --health-timeout 5s
           --health-retries 20
     env:
+      TARGET_SHA: ${{ inputs.exact_sha || github.sha }}
       PGHOST: localhost
       PGPORT: 5432
       PGUSER: postgres
       PGPASSWORD: postgres
       PGDATABASE: postgres
     steps:
-      - name: Checkout
+      - name: Validate exact SHA input
+        shell: bash
+        run: echo "$TARGET_SHA" | grep -Eq '^[0-9a-f]{40}$'
+      - name: Checkout exact target SHA
         uses: actions/checkout@v4
-      - name: Setup Node
-        uses: actions/setup-node@v4
         with:
-          node-version: 22
+          ref: ${{ inputs.exact_sha || github.sha }}
+          fetch-depth: 1
+      - name: Verify exact target HEAD
+        shell: bash
+        run: |
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$TARGET_SHA" || {
+            echo "EXACT HEAD MISMATCH: expected=$TARGET_SHA actual=$actual"
+            exit 1
+          }
+          echo "EXACT G1 DOMAIN PROOF HEAD: $actual"
       - name: Run deterministic G1 domain proof
         run: node --test poc/transactional-core/invariants.mjs
       - name: Run PostgreSQL transactional G1 proof

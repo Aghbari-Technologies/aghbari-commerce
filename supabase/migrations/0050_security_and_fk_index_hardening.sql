@@ -1,9 +1,4 @@
--- Security and relational-performance hardening discovered by Supabase advisors.
--- product_prices is intentionally not directly customer-readable; catalog access is through get_catalog().
-create policy product_prices_staff_read on public.product_prices
-  for select to public
-  using (public.is_staff());
-
+create policy product_prices_staff_read on public.product_prices for select to public using (public.is_staff());
 create index if not exists audit_events_actor_idx on public.audit_events(actor_id);
 create index if not exists cart_items_organization_idx on public.cart_items(organization_id);
 create index if not exists cart_items_product_idx on public.cart_items(product_id);
@@ -26,5 +21,4 @@ create index if not exists product_prices_price_list_idx on public.product_price
 create index if not exists product_prices_product_idx on public.product_prices(product_id);
 create index if not exists products_category_idx_fk on public.products(category_id);
 create index if not exists warehouses_branch_idx_fk on public.warehouses(branch_id);
-
 comment on policy product_prices_staff_read on public.product_prices is 'Restricts direct product price reads to staff; customer catalog pricing remains server-authoritative through get_catalog/create_order.';

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { assertEntityId, assertInventoryQuantity, assertMoney } from './admin';
+import { assertCustomerTier, assertEntityId, assertInventoryQuantity, assertMoney, assertProductStatus } from './admin';
 
-describe('admin command response contracts', () => {
+describe('admin command response and input contracts', () => {
   it('rejects malformed entity responses instead of allowing false success', () => {
     expect(() => assertEntityId({ id: 'not-a-uuid' }, 'حفظ المنتج')).toThrow(/لم يتم إثبات نجاح العملية/);
     expect(() => assertEntityId({}, 'حفظ المنتج')).toThrow();
@@ -22,5 +22,22 @@ describe('admin command response contracts', () => {
     expect(() => assertInventoryQuantity(1.5)).toThrow();
     expect(() => assertInventoryQuantity(Number.MAX_SAFE_INTEGER + 1)).toThrow();
     expect(assertInventoryQuantity(12)).toBe(12);
+  });
+
+  it('accepts only canonical customer tiers', () => {
+    expect(assertCustomerTier('retail')).toBe('retail');
+    expect(assertCustomerTier('wholesale')).toBe('wholesale');
+    expect(assertCustomerTier('distributor')).toBe('distributor');
+    expect(() => assertCustomerTier('admin')).toThrow();
+    expect(() => assertCustomerTier('')).toThrow();
+    expect(() => assertCustomerTier(null)).toThrow();
+  });
+
+  it('accepts only canonical product statuses', () => {
+    expect(assertProductStatus('active')).toBe('active');
+    expect(assertProductStatus('inactive')).toBe('inactive');
+    expect(() => assertProductStatus('deleted')).toThrow();
+    expect(() => assertProductStatus(' ACTIVE ')).toThrow();
+    expect(() => assertProductStatus(null)).toThrow();
   });
 });

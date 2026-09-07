@@ -16,6 +16,7 @@ export interface ReceiveLineInput { purchaseOrderItemId: string; productId: stri
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const CURRENCY_PATTERN = /^[A-Z]{3}$/;
 const MAX_LINES = 200;
+const MAX_QUANTITY = 10_000;
 
 function requireUuid(value: string, field: string): string {
   const normalized = value.trim();
@@ -27,6 +28,13 @@ function requireIdempotencyKey(value: string): string {
   const normalized = value.trim();
   if (normalized.length < 16 || normalized.length > 200) throw new Error('مفتاح منع التكرار يجب أن يكون بين 16 و200 حرف.');
   return normalized;
+}
+
+function requirePositiveQuantity(value: number, field: string): number {
+  if (!Number.isSafeInteger(value) || value < 1 || value > MAX_QUANTITY) {
+    throw new Error(`${field} يجب أن يكون عددًا صحيحًا بين 1 و${MAX_QUANTITY}.`);
+  }
+  return value;
 }
 
 function requirePositiveNumber(value: number, field: string): number {
@@ -50,7 +58,7 @@ export function validatePurchaseOrderInput(input: PurchaseOrderInput): void {
     const productId = requireUuid(line.productId, 'المنتج');
     if (products.has(productId)) throw new Error('لا يمكن تكرار المنتج في أمر الشراء.');
     products.add(productId);
-    requirePositiveNumber(line.quantity, 'الكمية');
+    requirePositiveQuantity(line.quantity, 'الكمية');
     if (line.unitCost < 0 || !Number.isFinite(line.unitCost)) throw new Error('تكلفة الوحدة يجب أن تكون رقمًا غير سالب.');
   }
   if (input.currency !== undefined) requireCurrency(input.currency);
@@ -67,7 +75,7 @@ export function validateReceiveInput(input: { purchaseOrderId: string; idempoten
     requireUuid(line.productId, 'المنتج');
     if (items.has(itemId)) throw new Error('لا يمكن تكرار بند أمر الشراء في الاستلام.');
     items.add(itemId);
-    requirePositiveNumber(line.quantity, 'كمية الاستلام');
+    requirePositiveQuantity(line.quantity, 'كمية الاستلام');
   }
   if (input.notes !== undefined && input.notes.length > 2000) throw new Error('ملاحظات الاستلام طويلة جدًا.');
 }
