@@ -1,6 +1,6 @@
 begin;
 
-select plan(54);
+select plan(57);
 
 -- Every application RPC must be authenticated-only: no PUBLIC or anonymous EXECUTE.
 -- The context helpers are included because RLS policies invoke them under the caller role.
