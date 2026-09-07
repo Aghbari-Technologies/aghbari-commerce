@@ -11,10 +11,10 @@ insert into public.organizations(id,name) values
   ('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb','Catalog Tenant B');
 insert into public.customers(id,organization_id,name,tier) values
   ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa01','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa','Customer A','wholesale'),
-  ('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb01','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb','Customer B','wholesale');
+  ('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb1','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb','Customer B','wholesale');
 insert into public.profiles(id,organization_id,customer_id,role) values
   ('11111111-1111-4111-8111-111111111111','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa01','admin'),
-  ('22222222-2222-4222-8222-222222222222','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb01','admin');
+  ('22222222-2222-4222-8222-222222222222','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb1','admin');
 insert into public.branches(id,organization_id,name) values
   ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa02','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa','A Main'),
   ('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb02','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb','B Main');
@@ -36,7 +36,7 @@ select is((select available_quantity from public.get_catalog(null,null,24,0,'aaa
 select is((select count(*) from public.get_catalog(null,null,24,0,'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa03') where sku='B-001'),0::bigint,'Tenant A cannot see Tenant B products');
 select throws_ok($$select * from public.get_catalog(null,null,24,0,'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb03')$$,'42501',null,'Tenant A cannot select Tenant B warehouse');
 select throws_ok($$select * from public.get_catalog(null,null,24,0,'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa04')$$,'42501',null,'Inactive warehouse is rejected');
-select throws_ok($$select * from public.get_catalog(null,null,24,0)$$,'42501',null,'Legacy four-argument catalog execution is denied');
+select throws_ok($$select * from public.get_catalog(null,null,24,0)$$,'42883',null,'Legacy four-argument catalog call is unavailable');
 select throws_ok($$select * from public.get_catalog(null,null,0,0,'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa03')$$,'22023',null,'Invalid pagination is rejected');
 
 set local request.jwt.claim.sub='22222222-2222-4222-8222-222222222222';
