@@ -1,0 +1,1 @@
+Status: live operational reconciliation APPLIED; anon exposure 0; authenticated operational surface 13; 11/11 reconciled tables RLS-enabled; CI/browser/production NOT PROVEN.
