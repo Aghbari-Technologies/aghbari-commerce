@@ -20,6 +20,12 @@
 - The Supabase performance advisor's previous unindexed-FK findings were eliminated by adding 25 covering indexes for the affected composite and organization foreign keys.
 - The performance advisor now reports only unused-index informational notices; with the database empty, these are not treated as defects and no indexes were removed solely because they have not yet been used.
 
+## Execution continuation — 2026-09-08
+- The repository was rescanned at current `main` HEAD `c6e698ed07e9d7f91c76253a26e6cf65db3d1cb2`.
+- The product source remains mutation-focused on the Aghbari Commerce application; no Report-Advisor source or Vercel project was modified.
+- The next gate is to obtain fresh executable CI evidence and, where the runner permits, generate the missing `package-lock.json` from the authoritative `package.json` rather than hand-authoring dependency integrity data.
+- Exact-head verification remains mandatory after every mutation.
+
 ## Important remaining certification gates
 
 1. `package-lock.json` still needs to be generated and committed by a successful runner; source inspection confirms it was absent before the bootstrap workflow repair.
