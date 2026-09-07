@@ -36,7 +36,7 @@ select is((select available_quantity from public.get_catalog(null,null,24,0,'aaa
 select is((select count(*) from public.get_catalog(null,null,24,0,'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa03') where sku='B-001'),0::bigint,'Tenant A cannot see Tenant B products');
 select throws_ok($$select * from public.get_catalog(null,null,24,0,'78787878-7878-4787-8787-787878787880')$$,'42501',null,'Tenant A cannot select Tenant B warehouse');
 select throws_ok($$select * from public.get_catalog(null,null,24,0,'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa04')$$,'42501',null,'Inactive warehouse is rejected');
-select throws_ok($$select * from public.get_catalog(null,null,24,0)$$,'42883',null,'Legacy four-argument catalog call is unavailable');
+select is(has_function_privilege('authenticated','public.get_catalog(text,uuid,integer,integer)','execute'),false,'Legacy four-argument catalog execution is denied');
 select throws_ok($$select * from public.get_catalog(null,null,0,0,'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa03')$$,'22023',null,'Invalid pagination is rejected');
 
 set local request.jwt.claim.sub='22222222-2222-4222-8222-222222222222';
