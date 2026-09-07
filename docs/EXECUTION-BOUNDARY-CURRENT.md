@@ -1,0 +1,1 @@
+Current execution branch is `execution/live-runtime-reconciliation-20260907`. The latest commit is the durable execution boundary for this batch. Certification remains blocked until runner evidence, lockfile/npm-ci, browser runtime proof and production verification are available.
