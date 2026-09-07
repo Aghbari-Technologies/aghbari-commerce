@@ -1,0 +1,1 @@
+Operational runtime reconciliation branch boundary: `execution/live-runtime-reconciliation-20260907`. Current exact execution HEAD is `f0fde49ceb98e809aaad077bb83fee5d58b5eff7`. Live reconciliation evidence is applied, but CI/browser/production certification remains open.
