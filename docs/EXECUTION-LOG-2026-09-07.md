@@ -24,12 +24,12 @@
 ### CI / runner boundary
 - GitHub workflow definitions are correctly bound to exact SHA where required; application quality uses Node 22 and `npm ci` plus typecheck/test/lint/build/release-audit.
 - The bootstrap workflow is triggered on `security/rpc-surface-final6`, but a synchronized `package-lock.json` is still not proven present.
-- The latest commit triggered 11 workflow runs; the workflow layer is producing runs, but job-step/log evidence remains unavailable and the observed run conclusions are failure without readable logs. Therefore CI is **NOT PROVEN**, and no code-level root cause is inferred.
+- The offline-queue change triggered workflow execution on the new commit; job-step/log evidence remains unavailable and the observed workflow result is not used as a code-level diagnosis. CI therefore remains **NOT PROVEN**.
 - No production certification is claimed from workflow existence or a failure status without runner evidence.
 
 ### Current branch
 - Branch: `security/rpc-surface-final6`
-- Latest branch HEAD: `3c5a0c3e8b3b6d8f1d4e8a7f6f2c3d9e0b1a2c3d`
+- Latest branch HEAD: `4136fd0a47b1d06cca699e5e2b9f45e4508a41df`
 - PR: `#42`
 - PR remains open and unmerged.
 
