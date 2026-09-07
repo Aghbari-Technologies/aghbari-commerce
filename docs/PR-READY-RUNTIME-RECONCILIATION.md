@@ -1,0 +1,1 @@
+This branch is ready for review as a runtime-reconciliation change set. It must not be merged as production-certified until CI, migration tests, npm lockfile/npm-ci, browser E2E and production artifact verification are proven on an exact HEAD.
