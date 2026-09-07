@@ -23,6 +23,9 @@ describe('purchasing input boundaries', () => {
   it('rejects duplicate products and invalid quantities', () => {
     expect(() => validatePurchaseOrderInput({ ...validPurchase, lines: [{ productId: product, quantity: 1, unitCost: 10 }, { productId: product, quantity: 2, unitCost: 20 }] })).toThrow();
     expect(() => validatePurchaseOrderInput({ ...validPurchase, lines: [{ productId: product, quantity: 0, unitCost: 10 }] })).toThrow();
+    expect(() => validatePurchaseOrderInput({ ...validPurchase, lines: [{ productId: product, quantity: 1.5, unitCost: 10 }] })).toThrow();
+    expect(() => validatePurchaseOrderInput({ ...validPurchase, lines: [{ productId: product, quantity: 10_001, unitCost: 10 }] })).toThrow();
+    expect(() => validatePurchaseOrderInput({ ...validPurchase, lines: [{ productId: product, quantity: Number.MAX_SAFE_INTEGER + 1, unitCost: 10 }] })).toThrow();
   });
   it('rejects negative or non-finite costs and invalid currency', () => {
     expect(() => validatePurchaseOrderInput({ ...validPurchase, lines: [{ productId: product, quantity: 1, unitCost: -1 }] })).toThrow();
@@ -39,5 +42,7 @@ describe('purchasing input boundaries', () => {
   it('rejects duplicate receipt items and invalid quantities', () => {
     expect(() => validateReceiveInput({ purchaseOrderId: supplier, idempotencyKey: key, lines: [{ purchaseOrderItemId: item, productId: product, quantity: 1 }, { purchaseOrderItemId: item, productId: product2, quantity: 2 }] })).toThrow();
     expect(() => validateReceiveInput({ purchaseOrderId: supplier, idempotencyKey: key, lines: [{ purchaseOrderItemId: item, productId: product, quantity: 0 }] })).toThrow();
+    expect(() => validateReceiveInput({ purchaseOrderId: supplier, idempotencyKey: key, lines: [{ purchaseOrderItemId: item, productId: product, quantity: 1.25 }] })).toThrow();
+    expect(() => validateReceiveInput({ purchaseOrderId: supplier, idempotencyKey: key, lines: [{ purchaseOrderItemId: item, productId: product, quantity: 10_001 }] })).toThrow();
   });
 });
