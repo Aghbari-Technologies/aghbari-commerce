@@ -7,6 +7,7 @@ export interface CashBalance { id: string; name: string; currency: string; openi
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const CURRENCY_PATTERN = /^[A-Z]{3}$/;
 const PAYMENT_METHODS = new Set(['cash', 'bank_transfer', 'card', 'other']);
+const MAX_MONEY = Number.MAX_SAFE_INTEGER;
 
 function requireUuid(value: string, field: string): string {
   const normalized = value.trim();
@@ -15,7 +16,7 @@ function requireUuid(value: string, field: string): string {
 }
 
 function requirePositiveAmount(value: number, field: string): number {
-  if (!Number.isFinite(value) || value <= 0) throw new Error(`${field} يجب أن يكون رقمًا أكبر من صفر.`);
+  if (!Number.isFinite(value) || value <= 0 || value > MAX_MONEY) throw new Error(`${field} يجب أن يكون رقمًا أكبر من صفر وضمن الدقة الآمنة.`);
   return value;
 }
 
@@ -29,8 +30,7 @@ export function validatePaymentInput(invoiceId: string, amount: number, method: 
   requireUuid(invoiceId, 'الفاتورة');
   requirePositiveAmount(amount, 'مبلغ الدفع');
   if (!PAYMENT_METHODS.has(method)) throw new Error('طريقة الدفع غير مسموحة.');
-  if (method === 'cash' && cashAccountId !== null) requireUuid(cashAccountId, 'حساب النقدية');
-  if (method !== 'cash' && cashAccountId !== null) requireUuid(cashAccountId, 'حساب النقدية');
+  if (cashAccountId !== null) requireUuid(cashAccountId, 'حساب النقدية');
   if (reference.length > 200) throw new Error('مرجع الدفع طويل جدًا.');
 }
 
@@ -47,11 +47,12 @@ export function validateCashAccountInput(branchId: string, name: string, currenc
   requireUuid(branchId, 'الفرع');
   if (!name.trim() || name.trim().length > 200) throw new Error('اسم حساب النقدية مطلوب وبحد أقصى 200 حرف.');
   requireCurrency(currency);
-  if (!Number.isFinite(openingBalance) || openingBalance < 0) throw new Error('الرصيد الافتتاحي يجب أن يكون رقمًا غير سالب.');
+  if (!Number.isFinite(openingBalance) || openingBalance < 0 || openingBalance > MAX_MONEY) throw new Error('الرصيد الافتتاحي يجب أن يكون رقمًا غير سالب وضمن الدقة الآمنة.');
 }
 
 export async function getInvoices(limit = 100) {
-  const { data, error } = await requireSupabase().from('operational_invoices').select('id,order_id,customer_id,invoice_number,status,currency,subtotal,total,due_at,created_at').order('created_at',{ascending:false}).limit(Math.min(Math.max(limit,1),500));
+  const normalizedLimit = Number.isSafeInteger(limit) ? Math.min(Math.max(limit,1),500) : 100;
+  const { data, error } = await requireSupabase().from('operational_invoices').select('id,order_id,customer_id,invoice_number,status,currency,subtotal,total,due_at,created_at').order('created_at',{ascending:false}).limit(normalizedLimit);
   if (error) throw error;
   return (data ?? []) as OperationalInvoice[];
 }
