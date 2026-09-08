@@ -6,7 +6,7 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Branch: `main`
-- Current exact implementation HEAD before this index update: **`959fc4f3dcce85ee5afadb81bf6e0707afb87ee5`**
+- Current exact implementation HEAD before this index update: **`88f5384e1af2de197f6aec99907654a4ece8b526`**
 - Scope: **Aghbari Commerce only.** `Report-Advisor` and every other project are out of scope.
 
 ## Certification stages
@@ -20,9 +20,9 @@
 
 ## Latest execution boundary
 - Vercel install contract was hardened from `npm install` to `npm ci --no-audit --no-fund`, making deployment dependency installation honor the repository lockfile deterministically.
-- Commit: `959fc4f3dcce85ee5afadb81bf6e0707afb87ee5`.
-- Exact current `main` HEAD after this index update will be recorded by the resulting commit.
-- GitHub reports no workflow runs/status checks for the latest implementation commit yet; therefore no current-head PASS is claimed.
+- Hardening commit: `959fc4f3dcce85ee5afadb81bf6e0707afb87ee5`.
+- Execution evidence commit: `88f5384e1af2de197f6aec99907654a4ece8b526`.
+- Current-head CI still has no usable PASS evidence; therefore no current-head verification is claimed.
 
 ## Batch 7 execution evidence
 - Full live inventory of public `SECURITY DEFINER` functions was reviewed.
