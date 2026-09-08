@@ -6,7 +6,7 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Branch: `main`
-- Current exact implementation HEAD after this execution boundary: **`2aa9fff217682a3c01bc767b796cf1faec907c7e`**.
+- Current exact implementation HEAD after this execution boundary: **`2614dee4696d0e840c48ae1a456e00da6353bc9f`**.
 - Scope: **Aghbari Commerce only.** `Report-Advisor` and every other project are out of scope.
 - Benchmark reference: **`https://alamri.app/` (بوابة العامري الذكية)** is treated only as an external UX/product benchmark; Aghbari identity, naming and implementation remain independent.
 
@@ -14,32 +14,29 @@
 | Stage | Current state |
 |---|---|
 | BUILT | **ADVANCED IMPLEMENTED** — commerce shell, catalog/pricing, cart/orders, staff operations, customers, inventory, purchasing/receiving, finance, import/export, outbox, PWA/offline and security hardening are present. |
-| INTEGRATED | **IMPLEMENTATION PASS** — checkout, invoice RLS, finance runtime validation, transaction-boundary hardening, identity-helper ACL hardening, deterministic Vercel install contract, responsive navigation hardening, and Product/UI Excellence interaction-state hardening are implemented on `main`. |
+| INTEGRATED | **IMPLEMENTATION PASS** — checkout, invoice RLS, finance runtime validation, transaction-boundary hardening, identity-helper ACL hardening, deterministic Vercel install contract, responsive navigation hardening, Product/UI Excellence interaction-state hardening, and export completeness/current-price handling are implemented on `main`. |
 | VERIFIED | **NOT PROVEN** — exact-head CI currently has no workflow run evidence. |
 | RUNTIME PROVEN | **NOT PROVEN** — authenticated browser/deployment proof still required. |
 | PRODUCTION CERTIFIED | **NOT PROVEN** — certification gate remains open until runtime evidence is green. |
 
 ## Latest execution boundary
-- Product/UI Excellence Pass advanced with interaction-state hardening in `src/product-excellence.css`.
-- Improved keyboard-visible focus treatment for status surfaces, explicit disabled-state affordances, focus-within elevation for product cards, safer quantity-control disabled styling, minimum empty-state height, tighter mobile cart spacing, and preserved reduced-motion behavior.
-- A focused source audit also found no `localStorage` usage outside the dedicated offline queue, no `dangerouslySetInnerHTML`, and no `TODO`/`FIXME` markers through repository code search at this boundary.
-- Offline queue implementation remains explicitly user-scoped, operation-type allowlisted, size/attempt bounded, corruption-tolerant, and retry-backoff controlled; runtime delivery is still NOT PROVEN until executable evidence exists.
-- Changes remain additive at the presentation layer and do not alter business logic, pricing authority, authorization or tenant boundaries.
-- Current-head CI has no usable PASS evidence; therefore no current-head verification is claimed.
-
-## Batch 7 execution evidence
-- Full live inventory of public `SECURITY DEFINER` functions was reviewed.
-- Identity-context helpers `current_organization_id()`, `current_customer_id()`, and `current_role()` were found unnecessarily executable by `anon`.
-- Migration `batch7_security_definer_runtime_hardening` was applied successfully to live Supabase project `mrcyqezbhpncuvaehwgf`.
-- `EXECUTE` was revoked from `anon` and retained only for `authenticated` and `service_role` (plus owner `postgres`) for the three helpers.
-- Post-migration ACL query confirmed the restricted grants.
+- Export reliability hardening completed in `src/ExportPanel.tsx`.
+- Product export now paginates the catalog instead of silently truncating at the first 5,000 rows.
+- Exported prices are restricted to currently valid price records (`valid_from <= now` and `valid_to IS NULL OR valid_to >= now`) before selecting the newest authorized tier value.
+- Safe upper bounds were added for product and price export volume to prevent unbounded browser-side export work.
+- Spreadsheet formula-injection escaping remains enabled.
+- No business authorization, pricing authority, tenant boundary or order behavior was changed.
+- Exact-head CI remains **NOT PROVEN** because no usable current-head workflow evidence is available.
 
 ## Previous execution evidence
+- Product/UI Excellence interaction-state hardening improved keyboard-visible focus treatment, disabled-state affordances, focus-within elevation, quantity-control states, empty-state sizing, mobile cart spacing and reduced-motion behavior.
+- Source audit found no `localStorage` usage outside the dedicated offline queue, no `dangerouslySetInnerHTML`, and no `TODO`/`FIXME` markers at the previous boundary.
+- Offline queue remains user-scoped, operation-type allowlisted, size/attempt bounded, corruption-tolerant, and retry-backoff controlled; runtime delivery is still NOT PROVEN.
+- Batch 7 restricted `current_organization_id()`, `current_customer_id()`, and `current_role()` execution from `anon` to authenticated/service_role.
 - Batch 6 hardened order runtime boundaries and expanded adversarial order input tests.
 - Batch 5 hardened finance, purchasing/receiving transaction boundaries and cart quantity limits.
 - All 34 public RLS-enabled tables have at least one policy; previous invoice-table policy gaps were restored.
 - Deployment install contract uses `npm ci --no-audit --no-fund`.
-- Responsive navigation hardening was previously implemented in `src/styles.css`.
 
 ## Remaining closure work — priority order
 ### P0 — Release blockers
