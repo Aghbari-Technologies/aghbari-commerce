@@ -55,5 +55,5 @@ describe('finance input boundaries', () => {
     expect(() => validateExpenseInput(branch, cash, 'تشغيل', 250, 'Y', '')).toThrow();
   });
   it('rejects overlong expense description', () => expect(() => validateExpenseInput(branch, cash, 'تشغيل', 250, 'YER', 'x'.repeat(2001))).toThrow());
-  it('rejects unsafe expense amounts', () => expect(() => validateExpenseInput(branch, cash, 'تشغيل', 250, 'YER', '')).not.toThrow());
+  it('rejects unsafe expense amounts', () => expect(() => validateExpenseInput(branch, cash, 'تشغيل', Number.MAX_SAFE_INTEGER + 1, 'YER', '')).toThrow());
 });
