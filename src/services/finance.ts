@@ -9,8 +9,13 @@ const CURRENCY_PATTERN = /^[A-Z]{3}$/;
 const PAYMENT_METHODS = new Set(['cash', 'bank_transfer', 'card', 'other']);
 const MAX_MONEY = Number.MAX_SAFE_INTEGER;
 
-function requireUuid(value: string, field: string): string {
-  const normalized = value.trim();
+function requireString(value: unknown, field: string): string {
+  if (typeof value !== 'string') throw new Error(`${field} يجب أن يكون نصًا.`);
+  return value;
+}
+
+function requireUuid(value: unknown, field: string): string {
+  const normalized = requireString(value, field).trim();
   if (!UUID_PATTERN.test(normalized)) throw new Error(`${field} غير صالح.`);
   return normalized;
 }
@@ -20,8 +25,8 @@ function requirePositiveAmount(value: number, field: string): number {
   return value;
 }
 
-function requireCurrency(value: string): string {
-  const normalized = value.trim().toUpperCase();
+function requireCurrency(value: unknown): string {
+  const normalized = requireString(value, 'العملة').trim().toUpperCase();
   if (!CURRENCY_PATTERN.test(normalized)) throw new Error('العملة يجب أن تكون رمزًا من ثلاثة أحرف.');
   return normalized;
 }
@@ -29,23 +34,28 @@ function requireCurrency(value: string): string {
 export function validatePaymentInput(invoiceId: string, amount: number, method: string, cashAccountId: string | null, reference: string): void {
   requireUuid(invoiceId, 'الفاتورة');
   requirePositiveAmount(amount, 'مبلغ الدفع');
-  if (!PAYMENT_METHODS.has(method)) throw new Error('طريقة الدفع غير مسموحة.');
+  const normalizedMethod = requireString(method, 'طريقة الدفع').trim();
+  if (!PAYMENT_METHODS.has(normalizedMethod)) throw new Error('طريقة الدفع غير مسموحة.');
   if (cashAccountId !== null) requireUuid(cashAccountId, 'حساب النقدية');
-  if (reference.length > 200) throw new Error('مرجع الدفع طويل جدًا.');
+  const normalizedReference = requireString(reference, 'مرجع الدفع');
+  if (normalizedReference.length > 200) throw new Error('مرجع الدفع طويل جدًا.');
 }
 
 export function validateExpenseInput(branchId: string, cashAccountId: string, category: string, amount: number, currency: string, description: string): void {
   requireUuid(branchId, 'الفرع');
   requireUuid(cashAccountId, 'حساب النقدية');
-  if (!category.trim() || category.trim().length > 200) throw new Error('تصنيف المصروف مطلوب وبحد أقصى 200 حرف.');
+  const normalizedCategory = requireString(category, 'تصنيف المصروف').trim();
+  if (!normalizedCategory || normalizedCategory.length > 200) throw new Error('تصنيف المصروف مطلوب وبحد أقصى 200 حرف.');
   requirePositiveAmount(amount, 'مبلغ المصروف');
   requireCurrency(currency);
-  if (description.length > 2000) throw new Error('وصف المصروف طويل جدًا.');
+  const normalizedDescription = requireString(description, 'وصف المصروف');
+  if (normalizedDescription.length > 2000) throw new Error('وصف المصروف طويل جدًا.');
 }
 
 export function validateCashAccountInput(branchId: string, name: string, currency: string, openingBalance: number): void {
   requireUuid(branchId, 'الفرع');
-  if (!name.trim() || name.trim().length > 200) throw new Error('اسم حساب النقدية مطلوب وبحد أقصى 200 حرف.');
+  const normalizedName = requireString(name, 'اسم حساب النقدية').trim();
+  if (!normalizedName || normalizedName.length > 200) throw new Error('اسم حساب النقدية مطلوب وبحد أقصى 200 حرف.');
   requireCurrency(currency);
   if (!Number.isFinite(openingBalance) || openingBalance < 0 || openingBalance > MAX_MONEY) throw new Error('الرصيد الافتتاحي يجب أن يكون رقمًا غير سالب وضمن الدقة الآمنة.');
 }
