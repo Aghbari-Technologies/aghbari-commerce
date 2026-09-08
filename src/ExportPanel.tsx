@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { supabase } from './lib/supabase';
 
 type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer';
+const PAGE_SIZE = 1000;
+const MAX_EXPORT_ROWS = 10000;
+const MAX_PRICE_ROWS = 30000;
 
 function escapeCsv(value: unknown) {
   let text = String(value ?? '');
@@ -21,6 +24,22 @@ function downloadCsv(filename: string, headers: string[], rows: Array<Record<str
   URL.revokeObjectURL(url);
 }
 
+async function fetchAllProducts() {
+  const rows: Array<{ id: string; sku: string; name: string; unit: string; status: string; created_at: string }> = [];
+  for (let from = 0; from < MAX_EXPORT_ROWS; from += PAGE_SIZE) {
+    const { data, error } = await supabase!
+      .from('products')
+      .select('id,sku,name,unit,status,created_at')
+      .order('name')
+      .range(from, Math.min(from + PAGE_SIZE - 1, MAX_EXPORT_ROWS - 1));
+    if (error) throw error;
+    rows.push(...(data ?? []));
+    if (!data || data.length < PAGE_SIZE) break;
+  }
+  if (rows.length >= MAX_EXPORT_ROWS) throw new Error(`تصدير أكثر من ${MAX_EXPORT_ROWS.toLocaleString('ar-YE')} منتج غير مدعوم في عملية واحدة.`);
+  return rows;
+}
+
 export default function ExportPanel({ role }: { role: UserRole }) {
   const canExport = role === 'owner' || role === 'admin' || role === 'sales' || role === 'warehouse';
   const [busy, setBusy] = useState(false);
@@ -32,14 +51,21 @@ export default function ExportPanel({ role }: { role: UserRole }) {
   async function exportProducts() {
     setBusy(true); setError(null); setMessage(null);
     try {
-      const [{ data: products, error: productError }, { data: prices, error: priceError }] = await Promise.all([
-        supabase.from('products').select('id,sku,name,unit,status,created_at').order('name').limit(5000),
-        supabase.from('product_prices').select('product_id,amount,valid_from,valid_to,price_lists!inner(tier,currency)').order('valid_from', { ascending: false }).limit(15000)
+      const now = new Date().toISOString();
+      const [products, priceResult] = await Promise.all([
+        fetchAllProducts(),
+        supabase.from('product_prices')
+          .select('product_id,amount,valid_from,valid_to,price_lists!inner(tier,currency)')
+          .lte('valid_from', now)
+          .or(`valid_to.is.null,valid_to.gte.${now}`)
+          .order('valid_from', { ascending: false })
+          .limit(MAX_PRICE_ROWS)
       ]);
-      if (productError) throw productError;
-      if (priceError) throw priceError;
+      if (priceResult.error) throw priceResult.error;
+      if ((priceResult.data?.length ?? 0) >= MAX_PRICE_ROWS) throw new Error(`بيانات الأسعار تتجاوز الحد الآمن وهو ${MAX_PRICE_ROWS.toLocaleString('ar-YE')} سجل.`);
+
       const priceByProduct = new Map<string, { retail?: number; wholesale?: number; distributor?: number; currency?: string }>();
-      for (const row of prices ?? []) {
+      for (const row of priceResult.data ?? []) {
         const tier = (row.price_lists as { tier?: string; currency?: string } | null)?.tier;
         if (!tier || !['retail', 'wholesale', 'distributor'].includes(tier)) continue;
         const current = priceByProduct.get(row.product_id) ?? {};
@@ -47,7 +73,7 @@ export default function ExportPanel({ role }: { role: UserRole }) {
         current.currency ??= (row.price_lists as { currency?: string } | null)?.currency;
         priceByProduct.set(row.product_id, current);
       }
-      const rows = (products ?? []).map((product) => ({
+      const rows = products.map((product) => ({
         SKU: product.sku, Name: product.name, Unit: product.unit, Status: product.status,
         'Retail Price': priceByProduct.get(product.id)?.retail ?? '',
         'Wholesale Price': priceByProduct.get(product.id)?.wholesale ?? '',
