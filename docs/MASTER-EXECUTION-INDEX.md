@@ -6,33 +6,25 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Branch: `main`
-- Current exact implementation HEAD: **`c6e698ed07e9d7f91c76253a26e6cf65db3d1cb2`**
+- Current exact implementation HEAD: **`d0124d1acf6fdff0c72e0ff049c8b65704c2625a`**
 - Scope: **Aghbari Commerce only.** `Report-Advisor` and every other project are out of scope.
 
 ## Certification stages
 | Stage | Current state |
 |---|---|
 | BUILT | **ADVANCED IMPLEMENTED** — commerce shell, catalog/pricing, cart/orders, staff operations, customers, inventory, purchasing/receiving, finance, import/export, outbox, PWA/offline and security hardening are present. |
-| INTEGRATED | **IMPLEMENTATION PASS** — current `main` contains the latest merged security/runtime hardening plus today's FK-index hardening. |
+| INTEGRATED | **IMPLEMENTATION PASS** — current `main` contains the latest merged security/runtime hardening, FK-index hardening, readiness register, and deployment-payload hardening. |
 | VERIFIED | **NOT PROVEN** — fresh exact-head CI evidence still required. |
 | RUNTIME PROVEN | **NOT PROVEN** — authenticated browser/deployment proof still required. |
 | PRODUCTION CERTIFIED | **NOT PROVEN** — certification gate remains open until runtime evidence is green. |
 
-## Completed today
-- Merged PR #42 (`security/rpc-surface-final6`) into `main` after exact-head review.
-- Hardened the lockfile bootstrap workflow with deterministic npm diagnostic capture and artifact upload.
-- Added 25 missing operational foreign-key/tenant coverage indexes identified by the live database performance advisor.
-- Added pgTAP coverage for all 25 new indexes.
-- Applied the same index migration to the connected Aghbari Commerce Supabase project and re-ran the Performance Advisor: the previous unindexed-FK findings are cleared; only unused-index informational notices remain.
-- Verified the live Aghbari database currently has 34 public tables with RLS enabled.
-- Verified the live RPC privilege surface and executed negative authenticated-role smoke checks; anonymous/unauthorized catalog/order paths were rejected as expected.
-- Verified no temporary test data was left behind in the live target for organizations/customers/products/orders/purchases/invoices/outbox/audit events.
-- Closed stale PRs #14, #32 and #39 after their work was already superseded/integrated.
-
-## Live Supabase evidence
-- Target project: `mrcyqezbhpncuvaehwgf` (Aghbari Commerce).
-- Live migration history is ahead of the repository's older migration numbering and currently reaches the operational `0062_fix_receive_purchase_order_status_enum` change set. This source/live migration-history divergence is an explicit release-readiness item and must be reconciled before claiming fresh-environment certification.
-- Direct catalog inspection is authoritative for current database state; no PASS is inferred solely from an advisor cache.
+## Current execution evidence
+- Added `docs/IMPLEMENTATION-READINESS-REGISTER-V1.md` as the explicit source-to-runtime closure register.
+- Re-verified the connected Aghbari Commerce Supabase target: 34 public tables exist and all 34 have RLS enabled.
+- Re-verified the anonymous RPC execution surface: 0 public routines currently grant `EXECUTE` to `anon`.
+- Checked core operational row counts; the checked orders/products/customers/inventory/purchases/outbox/audit tables are empty after negative smoke work.
+- Added `.vercelignore` to keep the Vercel deployment payload focused on runtime/build inputs and exclude repository documentation, contracts, CI metadata, reports and test artifacts. No application source or public runtime assets are excluded.
+- Retried the exact-head security workflow job; the latest attempt is queued. No opaque pre-step failure is being converted into a product-code diagnosis.
 
 ## Remaining closure work — priority order
 ### P0 — Release blockers
@@ -56,4 +48,4 @@
 ## No-false-closure
 A migration file is not migration execution evidence. A UI restriction is not authorization evidence. A queued outbox event is not successful delivery evidence. A green run on an earlier SHA is not exact-current-HEAD evidence. A documentation PASS is not a runtime PASS.
 
-**NEXT EXECUTION LOOP:** continue Aghbari-only execution from exact `main` HEAD **`c6e698ed07e9d7f91c76253a26e6cf65db3d1cb2`**. Code defects are fixed immediately; external runner/deployment/auth gates remain explicitly blocked until executable evidence is obtained.
+**NEXT EXECUTION LOOP:** continue Aghbari-only execution from exact `main` HEAD **`d0124d1acf6fdff0c72e0ff049c8b65704c2625a`**. Code defects are fixed immediately; external runner/deployment/auth gates remain explicitly blocked until executable evidence is obtained.
