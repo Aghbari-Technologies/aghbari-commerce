@@ -6,25 +6,25 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Branch: `main`
-- Current exact implementation HEAD: **`d0124d1acf6fdff0c72e0ff049c8b65704c2625a`**
+- Current exact implementation HEAD before this index update: **`c73f1551bfdb1ebdfb993d959b2e16e9255f47a0`**
 - Scope: **Aghbari Commerce only.** `Report-Advisor` and every other project are out of scope.
 
 ## Certification stages
 | Stage | Current state |
 |---|---|
 | BUILT | **ADVANCED IMPLEMENTED** — commerce shell, catalog/pricing, cart/orders, staff operations, customers, inventory, purchasing/receiving, finance, import/export, outbox, PWA/offline and security hardening are present. |
-| INTEGRATED | **IMPLEMENTATION PASS** — current `main` contains the latest merged security/runtime hardening, FK-index hardening, readiness register, and deployment-payload hardening. |
+| INTEGRATED | **IMPLEMENTATION PASS** — current `main` contains the latest merged security/runtime hardening, FK-index hardening, readiness register, deployment-payload hardening, and checkout input hardening. |
 | VERIFIED | **NOT PROVEN** — fresh exact-head CI evidence still required. |
 | RUNTIME PROVEN | **NOT PROVEN** — authenticated browser/deployment proof still required. |
 | PRODUCTION CERTIFIED | **NOT PROVEN** — certification gate remains open until runtime evidence is green. |
 
 ## Current execution evidence
-- Added `docs/IMPLEMENTATION-READINESS-REGISTER-V1.md` as the explicit source-to-runtime closure register.
-- Re-verified the connected Aghbari Commerce Supabase target: 34 public tables exist and all 34 have RLS enabled.
-- Re-verified the anonymous RPC execution surface: 0 public routines currently grant `EXECUTE` to `anon`.
-- Checked core operational row counts; the checked orders/products/customers/inventory/purchases/outbox/audit tables are empty after negative smoke work.
-- Added `.vercelignore` to keep the Vercel deployment payload focused on runtime/build inputs and exclude repository documentation, contracts, CI metadata, reports and test artifacts. No application source or public runtime assets are excluded.
-- Retried the exact-head security workflow job; the latest attempt is queued. No opaque pre-step failure is being converted into a product-code diagnosis.
+- `docs/IMPLEMENTATION-READINESS-REGISTER-V1.md` remains the source-to-runtime closure register.
+- The latest checkout hardening batch validates warehouse UUIDs, bounds idempotency keys, limits checkout lines, validates product UUIDs, rejects duplicate products, requires safe positive integer quantities, and fails closed on an untrustworthy create-order response.
+- Regression coverage for checkout input boundaries and false-success guards exists in `src/services/orders.input.test.ts`; execution evidence is still runner-gated.
+- The latest source review covers catalog, customers/suppliers, cart/orders, inventory/purchasing, pricing/finance, auth/RLS, idempotency/concurrency, import/export, outbox/workers, PWA/offline, security/build and production boundaries. Implementations are present where recorded; remaining closure is executable proof.
+- Connected Supabase evidence previously established 34/34 public tables with RLS enabled and 0 public routines granting `EXECUTE` to `anon`.
+- `.vercelignore` keeps deployment payload focused on runtime/build inputs; no application source or public runtime assets are excluded.
 
 ## Remaining closure work — priority order
 ### P0 — Release blockers
@@ -48,4 +48,4 @@
 ## No-false-closure
 A migration file is not migration execution evidence. A UI restriction is not authorization evidence. A queued outbox event is not successful delivery evidence. A green run on an earlier SHA is not exact-current-HEAD evidence. A documentation PASS is not a runtime PASS.
 
-**NEXT EXECUTION LOOP:** continue Aghbari-only execution from exact `main` HEAD **`d0124d1acf6fdff0c72e0ff049c8b65704c2625a`**. Code defects are fixed immediately; external runner/deployment/auth gates remain explicitly blocked until executable evidence is obtained.
+**NEXT EXECUTION LOOP:** continue Aghbari-only execution from exact `main` HEAD after this index commit. Code defects are fixed immediately; external runner/deployment/auth gates remain explicitly blocked until executable evidence is obtained.
