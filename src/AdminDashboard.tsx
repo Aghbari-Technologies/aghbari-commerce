@@ -1,0 +1,53 @@
+import { useState } from 'react';
+import AdminPanel from './AdminPanel';
+
+type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer';
+
+const sections = [
+  { id: 'admin-orders', label: 'لوحة الطلبات', icon: '01' },
+  { id: 'customers', label: 'العملاء والحسابات', icon: '02' },
+  { id: 'inventory', label: 'المخزون والمستودعات', icon: '03' },
+  { id: 'purchasing', label: 'المشتريات والتوريد', icon: '04' },
+  { id: 'finance', label: 'المالية', icon: '05' },
+  { id: 'exports', label: 'التقارير والتصدير', icon: '06' },
+];
+
+export default function AdminDashboard({ role }: { role: UserRole }) {
+  const [active, setActive] = useState('admin-orders');
+
+  function go(id: string) {
+    setActive(id);
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  return (
+    <section className="admin-dashboard" id="admin-dashboard">
+      <div className="admin-dashboard-head">
+        <div>
+          <span className="eyebrow">بوابة الإدارة</span>
+          <h2>مركز تشغيل الأغبري</h2>
+          <p>إدارة الطلبات، العملاء، المنتجات، المخزون، المشتريات والمالية من مساحة تشغيل واحدة.</p>
+        </div>
+        <div className="admin-role"><span>الدور الحالي</span><strong>{role}</strong></div>
+      </div>
+
+      <div className="admin-section-nav" aria-label="أقسام لوحة التحكم">
+        {sections.map((section) => (
+          <button key={section.id} className={active === section.id ? 'admin-nav-item active' : 'admin-nav-item'} onClick={() => go(section.id)}>
+            <span>{section.icon}</span>
+            <strong>{section.label}</strong>
+          </button>
+        ))}
+      </div>
+
+      <div className="admin-command-grid">
+        <button onClick={() => go('admin-orders')}><span>طلبات اليوم</span><strong>إدارة دورة الطلب</strong><small>مراجعة وتحويل الحالات</small></button>
+        <button onClick={() => go('customers')}><span>علاقات العملاء</span><strong>الحسابات والأسعار</strong><small>فئات العملاء والصلاحيات التجارية</small></button>
+        <button onClick={() => go('inventory')}><span>التشغيل</span><strong>المخزون والمستودعات</strong><small>حركات المخزون والتوفر</small></button>
+        <button onClick={() => go('finance')}><span>الرؤية المالية</span><strong>المالية والتصدير</strong><small>أدوات المتابعة والبيانات</small></button>
+      </div>
+
+      <AdminPanel role={role} />
+    </section>
+  );
+}
