@@ -6,23 +6,24 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Branch: `main`
-- Current exact implementation HEAD after this execution boundary: **`55d25002ef0d3c3caae76cd6e2052c04fb5900ac`**.
+- Current exact implementation HEAD after this execution boundary: **`0300479e34c5d9bae0b2dc6a28fc5279e397d6e7`**.
 - Scope: **Aghbari Commerce only.** `Report-Advisor` and every other project are out of scope.
+- Benchmark reference: **`https://alamri.app/` (بوابة العامري الذكية)** is treated only as an external UX/product benchmark; Aghbari identity, naming and implementation remain independent.
 
 ## Certification stages
 | Stage | Current state |
 |---|---|
 | BUILT | **ADVANCED IMPLEMENTED** — commerce shell, catalog/pricing, cart/orders, staff operations, customers, inventory, purchasing/receiving, finance, import/export, outbox, PWA/offline and security hardening are present. |
-| INTEGRATED | **IMPLEMENTATION PASS** — checkout, invoice RLS, finance runtime validation, transaction-boundary hardening, identity-helper ACL hardening, deterministic Vercel install contract, responsive navigation hardening, and additive Product/UI Excellence polish are implemented on `main`. |
+| INTEGRATED | **IMPLEMENTATION PASS** — checkout, invoice RLS, finance runtime validation, transaction-boundary hardening, identity-helper ACL hardening, deterministic Vercel install contract, responsive navigation hardening, and Product/UI Excellence polish are implemented on `main`. |
 | VERIFIED | **NOT PROVEN** — fresh exact-head CI evidence still required. |
 | RUNTIME PROVEN | **NOT PROVEN** — authenticated browser/deployment proof still required. |
 | PRODUCTION CERTIFIED | **NOT PROVEN** — certification gate remains open until runtime evidence is green. |
 
 ## Latest execution boundary
-- Product/UI Excellence Pass advanced with a dedicated additive polish layer in `src/product-excellence.css`.
-- Added consistent touch-sized controls, stronger keyboard focus treatment, reduced-motion preservation, mobile-safe navigation sizing, sticky offline status behavior, improved card/media sizing, and interaction feedback without changing business logic or authorization boundaries.
-- Loaded the new layer after existing offline/accessibility styles so the polish layer is deterministic in the application bundle.
-- Implementation commits: `3c567192b0a4289059f7467254c5800ba13c737c` and `55d25002ef0d3c3caae76cd6e2052c04fb5900ac`.
+- Product/UI Excellence Pass advanced with a stronger premium commerce presentation layer in `src/product-excellence.css`.
+- Improved product-card hierarchy and hover/focus behavior, search focus treatment, category-chip interaction, image presentation, cart controls, checkout emphasis, responsive spacing, touch targets, keyboard focus, reduced-motion behavior and mobile ergonomics.
+- Changes remain additive at the presentation layer and do not alter business logic, pricing authority, authorization or tenant boundaries.
+- Benchmark rule: use the public `alamri.app` experience to identify opportunities, but do not copy its identity or treat it as the target ceiling. The Aghbari target is materially higher clarity, polish, responsiveness and operational UX.
 - Current-head CI still has no usable PASS evidence; therefore no current-head verification is claimed.
 
 ## Batch 7 execution evidence
