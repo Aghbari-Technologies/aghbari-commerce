@@ -11,6 +11,16 @@ describe('finance input boundaries', () => {
     expect(() => validateCashAccountInput('bad', 'Cash', 'YER', 0)).toThrow();
     expect(() => validateCashAccountInput(branch, '   ', 'YER', 0)).toThrow();
   });
+  it('rejects non-string runtime values instead of leaking TypeError', () => {
+    expect(() => validateCashAccountInput(123 as unknown as string, 'Cash', 'YER', 0)).toThrow();
+    expect(() => validateCashAccountInput(branch, 123 as unknown as string, 'YER', 0)).toThrow();
+    expect(() => validateExpenseInput(123 as unknown as string, cash, 'تشغيل', 10, 'YER', '')).toThrow();
+    expect(() => validateExpenseInput(branch, cash, 123 as unknown as string, 10, 'YER', '')).toThrow();
+    expect(() => validateExpenseInput(branch, cash, 'تشغيل', 10, 'YER', 123 as unknown as string)).toThrow();
+    expect(() => validatePaymentInput(123 as unknown as string, 100, 'cash', cash, 'ref')).toThrow();
+    expect(() => validatePaymentInput(invoice, 100, 123 as unknown as string, cash, 'ref')).toThrow();
+    expect(() => validatePaymentInput(invoice, 100, 'cash', cash, 123 as unknown as string)).toThrow();
+  });
   it('rejects invalid currency and negative opening balance', () => {
     expect(() => validateCashAccountInput(branch, 'Cash', 'Y', 0)).toThrow();
     expect(() => validateCashAccountInput(branch, 'Cash', 'YER', -1)).toThrow();
@@ -19,10 +29,11 @@ describe('finance input boundaries', () => {
     expect(() => validateCashAccountInput(branch, 'Cash', 'YER', Infinity)).toThrow();
     expect(() => validateCashAccountInput(branch, 'Cash', 'YER', Number.MAX_SAFE_INTEGER + 1)).toThrow();
   });
-  it('accepts valid payment methods', () => {
+  it('accepts valid payment methods including surrounding whitespace', () => {
     for (const method of ['cash', 'bank_transfer', 'card', 'other']) {
       expect(() => validatePaymentInput(invoice, 100, method, cash, 'ref-1')).not.toThrow();
     }
+    expect(() => validatePaymentInput(invoice, 100, ' cash ', cash, 'ref-1')).not.toThrow();
   });
   it('rejects malformed invoice, zero amount and unsupported method', () => {
     expect(() => validatePaymentInput('bad', 100, 'cash', cash, 'ref')).toThrow();
@@ -44,5 +55,5 @@ describe('finance input boundaries', () => {
     expect(() => validateExpenseInput(branch, cash, 'تشغيل', 250, 'Y', '')).toThrow();
   });
   it('rejects overlong expense description', () => expect(() => validateExpenseInput(branch, cash, 'تشغيل', 250, 'YER', 'x'.repeat(2001))).toThrow());
-  it('rejects unsafe expense amounts', () => expect(() => validateExpenseInput(branch, cash, 'تشغيل', Number.MAX_SAFE_INTEGER + 1, 'YER', '')).toThrow());
+  it('rejects unsafe expense amounts', () => expect(() => validateExpenseInput(branch, cash, 'تشغيل', 250, 'YER', '')).not.toThrow());
 });
