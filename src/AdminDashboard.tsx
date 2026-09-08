@@ -4,7 +4,7 @@ import AdminPanel from './AdminPanel';
 type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer';
 
 const sections = [
-  { id: 'admin-orders', label: 'لوحة الطلبات', icon: '01' },
+  { id: 'account', label: 'لوحة الطلبات', icon: '01' },
   { id: 'customers', label: 'العملاء والحسابات', icon: '02' },
   { id: 'inventory', label: 'المخزون والمستودعات', icon: '03' },
   { id: 'purchasing', label: 'المشتريات والتوريد', icon: '04' },
@@ -13,7 +13,7 @@ const sections = [
 ];
 
 export default function AdminDashboard({ role }: { role: UserRole }) {
-  const [active, setActive] = useState('admin-orders');
+  const [active, setActive] = useState('account');
 
   function go(id: string) {
     setActive(id);
@@ -26,7 +26,7 @@ export default function AdminDashboard({ role }: { role: UserRole }) {
         <div>
           <span className="eyebrow">بوابة الإدارة</span>
           <h2>مركز تشغيل الأغبري</h2>
-          <p>إدارة الطلبات، العملاء، المنتجات، المخزون، المشتريات والمالية من مساحة تشغيل واحدة.</p>
+          <p>مساحة تشغيل احترافية لإدارة دورة الطلب، العملاء، المنتجات، المخزون، التوريد والمالية.</p>
         </div>
         <div className="admin-role"><span>الدور الحالي</span><strong>{role}</strong></div>
       </div>
@@ -41,10 +41,10 @@ export default function AdminDashboard({ role }: { role: UserRole }) {
       </div>
 
       <div className="admin-command-grid">
-        <button onClick={() => go('admin-orders')}><span>طلبات اليوم</span><strong>إدارة دورة الطلب</strong><small>مراجعة وتحويل الحالات</small></button>
-        <button onClick={() => go('customers')}><span>علاقات العملاء</span><strong>الحسابات والأسعار</strong><small>فئات العملاء والصلاحيات التجارية</small></button>
-        <button onClick={() => go('inventory')}><span>التشغيل</span><strong>المخزون والمستودعات</strong><small>حركات المخزون والتوفر</small></button>
-        <button onClick={() => go('finance')}><span>الرؤية المالية</span><strong>المالية والتصدير</strong><small>أدوات المتابعة والبيانات</small></button>
+        <button onClick={() => go('account')}><span>01 · الطلبات</span><strong>إدارة دورة الطلب</strong><small>مراجعة وتحويل حالات الطلبات</small></button>
+        <button onClick={() => go('customers')}><span>02 · العملاء</span><strong>الحسابات والأسعار</strong><small>فئات العملاء وإدارة الحسابات</small></button>
+        <button onClick={() => go('inventory')}><span>03 · المخزون</span><strong>المستودعات والتوفر</strong><small>نقل وجرد وتنبيهات إعادة الطلب</small></button>
+        <button onClick={() => go('finance')}><span>04 · المالية</span><strong>الفواتير والتحصيل</strong><small>النقدية والمصروفات والتصدير</small></button>
       </div>
 
       <AdminPanel role={role} />
