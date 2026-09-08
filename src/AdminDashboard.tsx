@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import AdminPanel from './AdminPanel';
 import SecurityCenter from './SecurityCenter';
+import NotificationCenter from './NotificationCenter';
 import { supabase } from './lib/supabase';
 import './admin-dashboard.css';
 
@@ -16,6 +17,7 @@ const sections = [
   { id: 'finance', label: 'المالية', short: 'المالية', icon: '◇' },
   { id: 'exports', label: 'التقارير والتصدير', short: 'التقارير', icon: '▤' },
   { id: 'security', label: 'الأمان والأجهزة', short: 'الأمان', icon: '⌁' },
+  { id: 'notifications', label: 'الإشعارات', short: 'التنبيهات', icon: '◉' },
 ];
 
 const advanced = [
@@ -67,7 +69,7 @@ export default function AdminDashboard({ role }: { role: UserRole }) {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, () => { setLive(true); void loadStats(); })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'customers' }, () => { setLive(true); void loadStats(); })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'inventory' }, () => { setLive(true); void loadStats(); })
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, () => setLive(true))
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, () => { setLive(true); })
       .subscribe((status) => setLive(status === 'SUBSCRIBED'));
     return () => { void supabase.removeChannel(channel); };
   }, [loadStats, loadActivity]);
@@ -87,7 +89,7 @@ export default function AdminDashboard({ role }: { role: UserRole }) {
         </aside>
 
         <div className="admin-dashboard-main">
-          <header className="admin-dashboard-head"><div><span className="eyebrow">لوحة التشغيل التنفيذية</span><h2>مركز إدارة الأغبري</h2><p>الطلبات والعملاء والأصناف والمخزون والتوريد والمالية والأمان في مساحة تشغيل واحدة.</p></div><div className="admin-role"><span>الحساب الحالي</span><strong>{role}</strong><small>{live ? '● مباشر' : '○ في انتظار الاتصال'}</small></div></header>
+          <header className="admin-dashboard-head"><div><span className="eyebrow">لوحة التشغيل التنفيذية</span><h2>مركز إدارة الأغبري</h2><p>الطلبات والعملاء والأصناف والمخزون والتوريد والمالية والأمان والإشعارات في مساحة تشغيل واحدة.</p></div><div className="admin-role"><span>الحساب الحالي</span><strong>{role}</strong><small>{live ? '● مباشر' : '○ في انتظار الاتصال'}</small></div></header>
           <div className="admin-kpi-grid" aria-label="مؤشرات التشغيل">
             <article><span>الطلبات</span><strong>{stats.orders}</strong><small>إجمالي السجلات</small></article>
             <article><span>العملاء</span><strong>{stats.customers}</strong><small>حسابات مسجلة</small></article>
@@ -104,12 +106,14 @@ export default function AdminDashboard({ role }: { role: UserRole }) {
             <button onClick={() => go('finance')}><span>05 · المالية</span><strong>المالية والتحصيل</strong><small>العمليات المتاحة للدور</small></button>
             <button onClick={() => go('exports')}><span>06 · البيانات</span><strong>التقارير والتصدير</strong><small>إخراج البيانات التشغيلية</small></button>
             <button onClick={() => go('security')}><span>07 · الأمان</span><strong>أجهزة العملاء</strong><small>طلبات تغيير الجهاز والمراجعة</small></button>
+            <button onClick={() => go('notifications')}><span>08 · الإشعارات</span><strong>مركز التنبيهات</strong><small>متابعة الإشعارات وتأكيد قراءتها</small></button>
           </div>
           <div className="admin-capability-strip" aria-label="قدرات النظام"><div><b>Realtime</b><span>الطلبات والمخزون والبيانات الأساسية تتحدث دون Refresh.</span></div><div><b>RBAC</b><span>صلاحيات الدور تُطبق في الواجهة ويُعاد فرضها خادميًا.</span></div><div><b>Security</b><span>ربط جهاز واحد للعميل مع مسار تغيير خاضع للموافقة.</span></div></div>
           <div className="admin-live-grid">
             <section className="admin-live-card"><div className="section-heading"><div><span className="eyebrow">مباشر</span><h3>آخر نشاط للطلبات</h3></div><span>{activity.length} عمليات</span></div>{activity.length ? activity.map((item) => <article key={item.id}><div><strong>{item.title}</strong><small>{item.detail}</small></div><time dateTime={item.time}>{new Date(item.time).toLocaleTimeString('ar-YE', { hour: '2-digit', minute: '2-digit' })}</time></article>) : <p>لا توجد حركة حديثة.</p>}</section>
             <section className="admin-live-card"><div className="section-heading"><div><span className="eyebrow">تنبيه</span><h3>مخاطر المخزون</h3></div><span>{lowStock} سجلات</span></div><p>{lowStock ? 'هناك أصناف تحتاج مراجعة المخزون والتوريد.' : 'لا توجد سجلات منخفضة حسب حد التنبيه الحالي.'}</p><button onClick={() => go('inventory')}>فتح المخزون</button></section>
           </div>
+          <NotificationCenter role={role} />
           <SecurityCenter role={role} />
           <AdminPanel role={role} />
         </div>
