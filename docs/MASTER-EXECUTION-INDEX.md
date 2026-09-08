@@ -6,7 +6,7 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Branch: `main`
-- Current exact implementation HEAD after this execution boundary: **`510e0d35fff385b90104407454b0466832b0eddc`**.
+- Current exact implementation HEAD after this execution boundary: **`939c9e0ff24ced66dddb28d2dcac189f6616ab59`**.
 - Scope: **Aghbari Commerce only.** `Report-Advisor` and every other project are out of scope.
 - Benchmark reference: **`https://alamri.app/` (بوابة العامري الذكية)** is treated only as an external UX/product benchmark; Aghbari identity, naming and implementation remain independent.
 
@@ -20,8 +20,8 @@
 | PRODUCTION CERTIFIED | **NOT PROVEN** — certification gate remains open until all runtime and release evidence is green. |
 
 ## Latest execution boundary
-- Added `.github/workflows/bootstrap-lockfile.yml` so a real GitHub runner generates `package-lock.json` with Node 22, validates it with `npm ci`, and commits only the generated lockfile back to `main`; the workflow is guarded against bot recursion and does not store credentials.
-- This closes the repository-side mechanism for the deterministic-lockfile blocker, but **does not claim completion until the runner actually executes and the resulting lockfile is present and verified**.
+- Exact `main` HEAD was re-verified as **`939c9e0ff24ced66dddb28d2dcac189f6616ab59`**; this document is now synchronized to that exact boundary.
+- The runner-backed lockfile workflow exists, but no execution evidence or committed `package-lock.json` has yet been obtained; therefore the lockfile gate remains BLOCKED/NOT PROVEN.
 - Two dedicated non-production Supabase Auth identities for the Tenant A/B runtime path were provisioned and verified.
 - Live Supabase fixture linkage is present for both identities: each has its own organization, branch, warehouse, customer, profile, category, product, wholesale price and positive inventory fixture. The fixtures use fixed E2E-only identifiers and contain no credentials.
 - Fixture verification returned one isolated fixture per tenant in each core fixture table, including `inventory_balances` with quantity 100.
