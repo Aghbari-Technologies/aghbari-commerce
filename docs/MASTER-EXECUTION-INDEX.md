@@ -6,31 +6,28 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Branch: `main`
-- Current exact implementation HEAD before this index update: **`484590b6c6fa4b8750aeeaebaebe326cadbbe72c`**
+- Current exact implementation HEAD before this index update: **`f4d914a8e06f17778f14da2c4319be7fdaa5b42b`**
 - Scope: **Aghbari Commerce only.** `Report-Advisor` and every other project are out of scope.
 
 ## Certification stages
 | Stage | Current state |
 |---|---|
 | BUILT | **ADVANCED IMPLEMENTED** — commerce shell, catalog/pricing, cart/orders, staff operations, customers, inventory, purchasing/receiving, finance, import/export, outbox, PWA/offline and security hardening are present. |
-| INTEGRATED | **IMPLEMENTATION PASS** — checkout, invoice RLS, finance runtime validation and transaction-boundary hardening are implemented on `main`. |
+| INTEGRATED | **IMPLEMENTATION PASS** — checkout, invoice RLS, finance runtime validation, transaction-boundary hardening and identity-helper ACL hardening are implemented on `main`. |
 | VERIFIED | **NOT PROVEN** — fresh exact-head CI evidence still required. |
 | RUNTIME PROVEN | **NOT PROVEN** — authenticated browser/deployment proof still required. |
 | PRODUCTION CERTIFIED | **NOT PROVEN** — certification gate remains open until runtime evidence is green. |
 
-## Batch 6 execution evidence
-- Hardened `src/services/orders.ts` runtime boundaries so malformed non-string IDs, idempotency keys, draft payloads, line arrays and quantities fail closed with deterministic validation errors before RPC use.
-- Expanded `src/services/orders.input.test.ts` with adversarial runtime-type coverage for transition input, malformed checkout drafts, product/warehouse IDs and empty line sets.
-- No credentials, Auth internals or unrelated projects were mutated.
-- Live Supabase authorization review confirms public SECURITY DEFINER functions are executable by `authenticated`/`service_role` rather than `anon`; authorization is enforced by `auth.uid()`/profile-derived organization, customer and role context where applicable.
-- Live RLS review confirms public RLS-enabled business tables have authenticated policies scoped by organization/customer/staff context; customer tiers are intentionally global reference data.
+## Batch 7 execution evidence
+- Full live inventory of public `SECURITY DEFINER` functions was reviewed.
+- Identity-context helpers `current_organization_id()`, `current_customer_id()`, and `current_role()` were found unnecessarily executable by `anon`.
+- Migration `batch7_security_definer_runtime_hardening` was applied successfully to live Supabase project `mrcyqezbhpncuvaehwgf`.
+- `EXECUTE` was revoked from `anon` and retained only for `authenticated` and `service_role` (plus owner `postgres`) for the three helpers.
+- Post-migration ACL query confirmed the restricted grants.
 
 ## Previous execution evidence
-- Batch 5 live migration `batch5_transaction_boundary_hardening` applied to Supabase project `mrcyqezbhpncuvaehwgf` before source commit.
-- `record_expense` rejects cross-tenant/inactive branches, unsafe amounts, invalid currency, oversized category/description values.
-- `create_purchase_order` has transaction-scoped idempotency locking, bounded keys/notes, currency validation, duplicate-line rejection, runtime parsing guards and total overflow protection.
-- `receive_purchase_order` has transaction-scoped idempotency locking, bounded inputs, duplicate-line rejection, safe parsing and deterministic idempotent replay.
-- `set_cart_item` database quantity bound is explicitly 1..10000.
+- Batch 6 hardened order runtime boundaries and expanded adversarial order input tests.
+- Batch 5 hardened finance, purchasing/receiving transaction boundaries and cart quantity limits.
 - All 34 public RLS-enabled tables have at least one policy; previous invoice-table policy gaps were restored.
 
 ## Remaining closure work — priority order
