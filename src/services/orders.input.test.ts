@@ -9,8 +9,10 @@ describe('order input boundaries', () => {
     expect(assertOrderTransitionInput(`  ${UUID}  `, ' confirmed ')).toEqual({ orderId: UUID, status: 'confirmed' });
   });
 
-  it('rejects malformed transition identifiers and statuses', () => {
+  it('rejects malformed transition identifiers, runtime types, and statuses', () => {
     expect(() => assertOrderTransitionInput('not-a-uuid', 'confirmed')).toThrow();
+    expect(() => assertOrderTransitionInput(123 as unknown as string, 'confirmed')).toThrow('معرّف الطلب غير صالح');
+    expect(() => assertOrderTransitionInput(UUID, 123 as unknown as string)).toThrow('حالة الطلب غير صالحة');
     expect(() => assertOrderTransitionInput(UUID, 'unknown')).toThrow();
   });
 
@@ -25,11 +27,18 @@ describe('order input boundaries', () => {
     await expect(createOrder(draft, UUID)).rejects.toThrow('لا يمكن تكرار المنتج');
   });
 
+  it('rejects malformed runtime values before network use', async () => {
+    await expect(createOrder(null as unknown as never, UUID)).rejects.toThrow('بيانات الطلب غير صالحة');
+    await expect(createOrder({ idempotencyKey: 123 as unknown as string, lines: [{ productId: UUID, quantity: 1 }] }, UUID)).rejects.toThrow('مفتاح العملية غير صالح');
+    await expect(createOrder({ idempotencyKey: 'checkout-2', lines: [{ productId: 123 as unknown as string, quantity: 1 }] }, UUID)).rejects.toThrow('معرّف المنتج غير صالح');
+    await expect(createOrder({ idempotencyKey: 'checkout-3', lines: [{ productId: UUID, quantity: 0 }] }, UUID)).rejects.toThrow();
+    await expect(createOrder({ idempotencyKey: 'checkout-4', lines: [{ productId: UUID, quantity: 1 }] }, 123 as unknown as string)).rejects.toThrow('معرّف المستودع غير صالح');
+  });
+
   it('rejects empty, oversized, and malformed checkout inputs before network use', async () => {
     await expect(createOrder({ idempotencyKey: '   ', lines: [{ productId: UUID, quantity: 1 }] }, UUID)).rejects.toThrow();
     await expect(createOrder({ idempotencyKey: 'x'.repeat(129), lines: [{ productId: UUID, quantity: 1 }] }, UUID)).rejects.toThrow();
-    await expect(createOrder({ idempotencyKey: 'checkout-2', lines: [{ productId: 'bad', quantity: 1 }] }, UUID)).rejects.toThrow();
-    await expect(createOrder({ idempotencyKey: 'checkout-3', lines: [{ productId: UUID, quantity: 0 }] }, UUID)).rejects.toThrow();
+    await expect(createOrder({ idempotencyKey: 'checkout-5', lines: [] }, UUID)).rejects.toThrow();
   });
 
   it('keeps the false-success guard strict', () => {
