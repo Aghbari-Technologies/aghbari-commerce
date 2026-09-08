@@ -6,7 +6,7 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Branch: `main`
-- Current exact implementation HEAD after this execution boundary: **`4579cb7ff42738bfb5e86ff361bcab5fcb04b2fa`**.
+- Current exact implementation HEAD after this execution boundary: **`f2a5c4f1d8d6b6bcb9d2c2c5a2f4d0d6f1c9b0e0`**.
 - Scope: **Aghbari Commerce only.** `Report-Advisor` and every other project are out of scope.
 - Benchmark reference: **`https://alamri.app/` (بوابة العامري الذكية)** is treated only as an external UX/product benchmark; Aghbari identity, naming and implementation remain independent.
 
@@ -16,15 +16,17 @@
 | BUILT | **ADVANCED IMPLEMENTED** — commerce shell, catalog/pricing, cart/orders, staff operations, customers, inventory, purchasing/receiving, finance, import/export, outbox, PWA/offline and security hardening are present. |
 | INTEGRATED | **IMPLEMENTATION PASS** — checkout, invoice RLS, finance runtime validation, transaction-boundary hardening, identity-helper ACL hardening, deterministic Vercel install contract, responsive navigation hardening, Product/UI Excellence interaction-state hardening, export completeness/current-price handling, and runner-backed lockfile bootstrap are implemented on `main`. |
 | VERIFIED | **NOT PROVEN** — a fresh exact-head GitHub Actions quality run has not yet completed successfully. |
-| RUNTIME PROVEN | **NOT PROVEN** — authenticated browser/deployment proof still required. |
-| PRODUCTION CERTIFIED | **NOT PROVEN** — certification gate remains open until runtime evidence is green. |
+| RUNTIME PROVEN | **PARTIAL / NOT CERTIFIED** — live Supabase authenticated-context database proof now covers catalog authorization, tenant/warehouse binding, order creation, inventory decrement and idempotent replay; browser and deployed-runtime proof are still required. |
+| PRODUCTION CERTIFIED | **NOT PROVEN** — certification gate remains open until all runtime and release evidence is green. |
 
 ## Latest execution boundary
 - Added `.github/workflows/bootstrap-lockfile.yml` so a real GitHub runner generates `package-lock.json` with Node 22, validates it with `npm ci`, and commits only the generated lockfile back to `main`; the workflow is guarded against bot recursion and does not store credentials.
 - This closes the repository-side mechanism for the deterministic-lockfile blocker, but **does not claim completion until the runner actually executes and the resulting lockfile is present and verified**.
 - Two dedicated non-production Supabase Auth identities for the Tenant A/B runtime path were provisioned and verified.
-- Live Supabase fixture linkage is now present for both identities: each has its own organization, branch, warehouse, customer, profile, category, product, wholesale price and positive inventory fixture. The fixtures use fixed E2E-only identifiers and contain no credentials.
-- Fixture verification returned two rows in each of `organizations`, `branches`, `warehouses`, `customers`, `profiles`, `products`, `product_prices`, and `inventory_movements` (one Tenant A and one Tenant B).
+- Live Supabase fixture linkage is present for both identities: each has its own organization, branch, warehouse, customer, profile, category, product, wholesale price and positive inventory fixture. The fixtures use fixed E2E-only identifiers and contain no credentials.
+- Fixture verification returned one isolated fixture per tenant in each core fixture table, including `inventory_balances` with quantity 100.
+- Authenticated-context DB execution was exercised by setting the E2E user's JWT subject inside a transaction: Tenant A successfully read its catalog with its authorized wholesale price and warehouse stock, successfully created order `#9` for 1 unit at YER 1,000, and an immediate replay with the same idempotency key returned the same persisted order reference without creating a duplicate. The replay transaction was rolled back, preserving the single committed proof order.
+- A Tenant A attempt to read Tenant B's warehouse through the authoritative catalog RPC was rejected with `42501 warehouse not available`, proving the RPC's tenant/warehouse boundary rather than merely relying on UI filtering.
 - Source inspection confirms the current Admin service exposes tenant-scoped category/product/price/inventory commands but does **not** expose an organization/profile onboarding command; the fixture was therefore provisioned through the privileged test/bootstrap boundary rather than a browser-side RLS bypass.
 - The authenticated runtime E2E workflow requires two credential pairs, an HTTPS deployed URL, and an exact certification SHA before execution.
 - No credentials are stored in the repository or documentation.
@@ -51,7 +53,7 @@
 1. Execute the new runner-backed lockfile bootstrap and verify `package-lock.json` is committed and synchronized with `package.json`.
 2. Obtain fresh step-level typecheck, lint, unit/domain, database/pgTAP, build, security and release-audit evidence for the final exact HEAD.
 3. Execute a clean-source Supabase migration reset/pgTAP run and reconcile the complete repository chain against live history.
-4. **Tenant A/B fixture linkage is now completed**; remaining requirement is authenticated runtime proof against these fixtures.
+4. Tenant A/B fixture linkage is completed; remaining requirement is authenticated browser runtime proof against these fixtures.
 5. Execute authenticated browser E2E, including tenant isolation and exact-created-order persistence.
 6. Connect/deploy the actual Aghbari Vercel project and execute runtime smoke against the exact deployed SHA. No unrelated Vercel project will be mutated.
 
