@@ -69,10 +69,10 @@ export function assertOrderTransitionInput(orderId: string, status: string): { o
 }
 
 export async function createOrder(draft: OrderDraft, warehouseId: string) {
-  const client = requireSupabase();
   const idempotencyKey = assertIdempotencyKey(draft.idempotencyKey);
   const normalizedWarehouseId = assertUuid(warehouseId, 'المستودع');
   const lines = assertOrderLines(draft.lines);
+  const client = requireSupabase();
   const { data, error } = await client.rpc('create_order', {
     p_idempotency_key: idempotencyKey,
     p_warehouse_id: normalizedWarehouseId,
