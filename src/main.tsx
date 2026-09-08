@@ -4,9 +4,10 @@ import App from './App';
 import AppErrorBoundary from './AppErrorBoundary';
 import './offline.css';
 import './accessibility.css';
+import './product-excellence.css';
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode><AppErrorBoundary><App /></AppErrorBoundary></StrictMode>
+  <StrictMode><AppErrorBoundary><App /></StrictMode>
 );
 
 if ('serviceWorker' in navigator) {
