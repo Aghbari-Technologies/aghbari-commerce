@@ -6,187 +6,51 @@ import { getCatalog, getProductImageUrls, type CatalogItem } from './services/ca
 import { getCategories, type CategoryOption } from './services/categories';
 import { getCart, removeCartItem, setCartItem, syncOfflineCart } from './services/cart';
 import { createOrder } from './services/orders';
-import { getCustomerOrders, type CustomerOrderSummary } from './services/customerOrders';
+import { getCustomerOrders, getCustomerOrderDetail, type CustomerOrderDetail, type CustomerOrderSummary } from './services/customerOrders';
 import { getSession, signIn, signOut } from './services/auth';
 import { supabase } from './lib/supabase';
 import AdminDashboard from './AdminDashboard';
+import NotificationCenter from './NotificationCenter';
+import { bindCurrentCustomerDevice, requestDeviceChange } from './services/security';
 import './styles.css';
 
 type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer';
-const STAFF_ROLES = new Set<UserRole>(['owner', 'admin', 'sales', 'warehouse']);
-const STATUS_LABELS: Record<OrderStatus, string> = {
-  draft: 'مسودة', pending: 'قيد المراجعة', confirmed: 'مؤكد', preparing: 'قيد التجهيز', ready: 'جاهز', completed: 'مكتمل', cancelled: 'ملغي'
-};
-
-function mapCatalogItem(item: CatalogItem, categoryName: string, imageUrl?: string): Product & { authorizedPrice?: number } {
-  return { id: item.id, sku: item.sku, name: item.name, unit: item.unit, category: categoryName, description: item.description ?? undefined, availableQuantity: item.available_quantity, status: item.status === 'active' ? 'active' : 'inactive', imageUrl, authorizedPrice: item.authorized_price ?? undefined };
-}
-
-export default function App() {
-  const [email, setEmail] = useState(''); const [password, setPassword] = useState('');
-  const [sessionReady, setSessionReady] = useState(false); const [signedIn, setSignedIn] = useState(false); const [role, setRole] = useState<UserRole>('viewer');
-  const [authBusy, setAuthBusy] = useState(false); const [authError, setAuthError] = useState<string | null>(null);
-  const [query, setQuery] = useState(''); const [catalogSearch, setCatalogSearch] = useState(''); const [categoryId, setCategoryId] = useState<string | null>(null);
-  const [categoryOptions, setCategoryOptions] = useState<CategoryOption[]>([]); const [products, setProducts] = useState<Product[]>([]); const [serverPrices, setServerPrices] = useState<Record<string, number>>({});
-  const [catalogLoading, setCatalogLoading] = useState(false);
-  const [cart, setCart] = useState<CartLine[]>([]); const [checkoutKey, setCheckoutKey] = useState<string | null>(null); const [warehouseId, setWarehouseId] = useState<string | null>(null); const [customerId, setCustomerId] = useState<string | null>(null);
-  const [orders, setOrders] = useState<CustomerOrderSummary[]>([]); const [ordersLoading, setOrdersLoading] = useState(false); const [ordersError, setOrdersError] = useState<string | null>(null);
-  const [runtimeError, setRuntimeError] = useState<string | null>(null); const [orderBusy, setOrderBusy] = useState(false); const [orderResult, setOrderResult] = useState<string | null>(null);
-  const [isOnline, setIsOnline] = useState(() => typeof navigator === 'undefined' ? true : navigator.onLine);
-
-  async function loadIdentity(userId: string) {
-    if (!supabase) return;
-    const { data: profile, error } = await supabase.from('profiles').select('customer_id, role').eq('id', userId).single();
-    if (error) throw error;
-    setCustomerId(profile.customer_id); setRole((profile.role as UserRole) ?? 'viewer');
-  }
-
-  useEffect(() => {
-    let cancelled = false;
-    void getSession().then(async (currentSession) => {
-      if (cancelled) return;
-      setSignedIn(Boolean(currentSession)); setSessionReady(true);
-      if (currentSession) await loadIdentity(currentSession.user.id);
-    }).catch((error) => {
-      if (!cancelled) { setSessionReady(true); setAuthError(error instanceof Error ? error.message : 'تعذر قراءة جلسة الدخول.'); }
-    });
-    const listener = supabase?.auth.onAuthStateChange((event, nextSession) => {
-      if (cancelled) return;
-      setSignedIn(Boolean(nextSession));
-      if (nextSession) {
-        setAuthError(null);
-        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-          void loadIdentity(nextSession.user.id).catch((error) => setAuthError(error instanceof Error ? error.message : 'تعذر تحميل هوية الحساب.'));
-        }
-      } else {
-        setCustomerId(null); setRole('viewer'); setOrders([]); setWarehouseId(null); setProducts([]); setCart([]); setServerPrices({}); setCheckoutKey(null);
-      }
-    });
-    return () => { cancelled = true; listener?.data.subscription.unsubscribe(); };
-  }, []);
-
-  useEffect(() => {
-    const handleOnline = () => {
-      setIsOnline(true);
-      void syncOfflineCart().then(({ failed }) => {
-        if (failed) setRuntimeError('تمت استعادة الاتصال، لكن بعض تحديثات السلة تحتاج إعادة المحاولة.');
-      }).catch(() => setRuntimeError('تعذر مزامنة السلة بعد استعادة الاتصال.'));
-    };
-    const handleOffline = () => setIsOnline(false);
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-    return () => { window.removeEventListener('online', handleOnline); window.removeEventListener('offline', handleOffline); };
-  }, []);
-
-  useEffect(() => {
-    if (!signedIn) return;
-    const timer = window.setTimeout(() => setCatalogSearch(query.trim()), 250);
-    return () => window.clearTimeout(timer);
-  }, [query, signedIn]);
-
-  useEffect(() => {
-    if (!signedIn || !supabase || !isOnline) return; let cancelled = false;
-    async function loadRuntime() {
-      setCatalogLoading(true); setRuntimeError(null);
-      try {
-        const [{ data: warehouse, error: warehouseError }, items, savedCart, categories] = await Promise.all([
-          supabase!.from('warehouses').select('id').eq('is_active', true).order('created_at').limit(1).maybeSingle(),
-          getCatalog(catalogSearch, categoryId, 100, 0), getCart(), getCategories()
-        ]);
-        if (warehouseError) throw warehouseError;
-        if (!warehouse?.id) throw new Error('لا يوجد مستودع تشغيلي نشط.');
-        if (cancelled) return;
-        const categoryMap = new Map(categories.map((item) => [item.id, item.name]));
-        const imageUrls = await getProductImageUrls(items.map((item) => item.image_path));
-        if (cancelled) return;
-        setWarehouseId(warehouse.id); setCategoryOptions(categories);
-        const mapped = items.map((item) => mapCatalogItem(item, categoryMap.get(item.category_id ?? '') ?? 'أصناف', item.image_path ? imageUrls.get(item.image_path) : undefined));
-        setProducts(mapped); setServerPrices(Object.fromEntries(items.map((item) => [item.id, item.authorized_price ?? 0])));
-        setCart(savedCart.map((item) => ({ product: mapped.find((product) => product.id === item.product_id) ?? { id: item.product_id, sku: item.sku, name: item.name, unit: item.unit, category: 'أصناف', availableQuantity: 0, status: 'active' }, quantity: item.quantity, unitPrice: item.authorized_price ?? 0 })));
-      } catch (error) {
-        if (!cancelled) setRuntimeError(error instanceof Error ? error.message : 'تعذر تحميل بيانات المتجر.');
-      } finally { if (!cancelled) setCatalogLoading(false); }
-    }
-    void loadRuntime(); return () => { cancelled = true; };
-  }, [catalogSearch, categoryId, signedIn, isOnline]);
-
-  useEffect(() => {
-    if (!signedIn || !isOnline) return; let cancelled = false;
-    setOrdersLoading(true); setOrdersError(null);
-    void getCustomerOrders(20).then((items) => { if (!cancelled) setOrders(items); }).catch((error) => { if (!cancelled) setOrdersError(error instanceof Error ? error.message : 'تعذر تحميل الطلبات.'); }).finally(() => { if (!cancelled) setOrdersLoading(false); });
-    return () => { cancelled = true; };
-  }, [signedIn, orderResult, isOnline]);
-
-  const categories = useMemo(() => [{ id: null, name: 'الكل' }, ...categoryOptions], [categoryOptions]);
-  const priceFor = (product: Product) => serverPrices[product.id] ?? 0;
-  const total = calculateClientPreviewTotal(cart);
-
-  async function handleLogin(event: FormEvent) {
-    event.preventDefault(); setAuthBusy(true); setAuthError(null);
-    try { const session = await signIn(email.trim(), password); if (session) await loadIdentity(session.user.id); setPassword(''); }
-    catch (error) { setAuthError(error instanceof Error ? error.message : 'تعذر تسجيل الدخول.'); }
-    finally { setAuthBusy(false); }
-  }
-
-  async function handleSignOut() {
-    try { await signOut(); }
-    finally { setProducts([]); setCart([]); setOrders([]); setCustomerId(null); setWarehouseId(null); setRole('viewer'); setCheckoutKey(null); setOrderResult(null); }
-  }
-
-  async function addToCart(product: Product) {
-    const price = priceFor(product);
-    if (price <= 0 || product.availableQuantity < 1) return;
-    const existing = cart.find((line) => line.product.id === product.id);
-    const quantity = Math.min((existing?.quantity ?? 0) + 1, product.availableQuantity);
-    try {
-      await setCartItem(product.id, quantity);
-      setCart((current) => existing ? current.map((line) => line.product.id === product.id ? { ...line, quantity } : line) : [...current, { product, quantity, unitPrice: price }]);
-      setCheckoutKey(null); setOrderResult(null); setRuntimeError(null);
-    } catch (error) { setRuntimeError(error instanceof Error ? error.message : 'تعذر تحديث السلة.'); }
-  }
-
-  async function updateQuantity(id: string, quantity: number) {
-    const line = cart.find((item) => item.product.id === id); if (!line) return;
-    const next = Math.max(0, Math.min(quantity, line.product.availableQuantity));
-    try {
-      if (next === 0) { await removeCartItem(id); setCart((current) => current.filter((item) => item.product.id !== id)); }
-      else { await setCartItem(id, next); setCart((current) => current.map((item) => item.product.id === id ? { ...item, quantity: next } : item)); }
-      setCheckoutKey(null); setRuntimeError(null);
-    } catch (error) { setRuntimeError(error instanceof Error ? error.message : 'تعذر تحديث الكمية.'); }
-  }
-
-  async function submitOrder() {
-    if (!isOnline) { setRuntimeError('إرسال الطلب يحتاج اتصالًا بالإنترنت. تم حفظ تغييرات السلة فقط.'); return; }
-    if (!customerId || !warehouseId || !cart.length || orderBusy) return;
-    setOrderBusy(true); setOrderResult(null); setRuntimeError(null);
-    const idempotencyKey = checkoutKey ?? crypto.randomUUID(); setCheckoutKey(idempotencyKey);
-    try {
-      const result = await createOrder({ customerId, idempotencyKey, lines: cart.map((line) => ({ productId: line.product.id, quantity: line.quantity })) }, warehouseId);
-      setCart([]); setCheckoutKey(null); setOrderResult(result ? `تم إرسال الطلب رقم ${result.order_number} بنجاح.` : 'تم إرسال الطلب بنجاح.');
-    } catch (error) { setRuntimeError(error instanceof Error ? error.message : 'تعذر إرسال الطلب. لم يتم اعتماد أي سعر من العميل.'); }
-    finally { setOrderBusy(false); }
-  }
-
-  if (!sessionReady) return <div className="auth-shell"><div className="auth-card auth-card-loading"><span className="brand-mark">أ</span><span className="eyebrow">بوابة الأغبري</span><h1>جارٍ تجهيز حسابك</h1><p>يتم التحقق من الهوية قبل عرض الأسعار والمخزون.</p><div className="loading-bar" /></div></div>;
-  if (!signedIn) return <div className="auth-shell"><div className="auth-branding"><span className="brand-mark large">أ</span><span className="eyebrow">بوابة الأغبري التجارية</span><h1>توريد متجرك يبدأ من هنا.</h1><p>كتالوج جملة، أسعار مصرح بها، ومتابعة للطلبات في تجربة واحدة.</p></div><form className="auth-card" onSubmit={handleLogin}><span className="eyebrow">حساب العميل</span><h2>تسجيل الدخول</h2><p>استخدم حسابك المعتمد للوصول إلى الكتالوج الخاص بك.</p><label>البريد الإلكتروني<input type="email" value={email} onChange={(event) => setEmail(event.target.value)} required autoComplete="email" /></label><label>كلمة المرور<input type="password" value={password} onChange={(event) => setPassword(event.target.value)} required autoComplete="current-password" /></label>{authError && <div className="error-banner" role="alert">{authError}</div>}<button className="checkout" disabled={authBusy}>{authBusy ? 'جارٍ التحقق…' : 'دخول إلى البوابة'}</button><small className="auth-note">الوصول والأسعار والمخزون خاضعة لصلاحيات الحساب.</small></form></div>;
-
-  return <div className="app-shell">
-    <header className="topbar">
-      <a className="brand" href="#catalog" aria-label="بوابة الأغبري - الكتالوج"><span className="brand-mark">أ</span><div><strong>الأغبري</strong><small>التجارة والجملة</small></div></a>
-      <nav aria-label="التنقل الرئيسي"><a className="active" href="#catalog">الكتالوج</a><a href="#cart">السلة</a><a href="#orders">طلباتي</a>{STAFF_ROLES.has(role) && <a href="#admin-dashboard">الإدارة</a>}</nav>
-      <div className="topbar-actions"><span className="account-pill">{role === 'viewer' ? 'عميل' : role}</span><button className="cart-button" aria-label={`السلة، ${cart.length} أصناف`} onClick={() => document.getElementById('cart')?.scrollIntoView({ behavior: 'smooth' })}>السلة <b>{cart.length}</b></button><button className="signout" onClick={() => void handleSignOut()}>خروج</button></div>
-    </header>
-    {!isOnline && <div className="offline-banner" role="status" aria-live="polite">وضع دون اتصال · يمكن تعديل السلة، لكن إرسال الطلب يحتاج اتصالًا.</div>}
-    <main>
-      <section className="hero" id="catalog"><div className="hero-copy"><span className="eyebrow">تجارة جملة أسرع</span><h1>كل احتياج متجرك<br/><em>في مكان واحد.</em></h1><p>تصفح الأصناف المتاحة لحسابك، شاهد سعرك المصرح به، وابنِ طلبك بثقة.</p><div className="hero-actions"><a className="primary-link" href="#catalog-grid">ابدأ التسوق</a><a className="secondary-link" href="#orders">تابع طلباتك</a></div></div><div className="hero-card"><div className="service-status"><span className="status-dot" />{runtimeError ? 'يحتاج انتباهًا' : isOnline ? 'الخدمة متصلة' : 'دون اتصال'}</div><strong>{products.length}</strong><span>صنف ظاهر لحسابك</span><div className="hero-divider" /><small>الأسعار والمخزون المعروضَان مرتبطان بصلاحيات حسابك.</small></div></section>
-      <section className="customer-strip" aria-label="ملخص الحساب"><div><span>الكتالوج</span><strong>{products.length}</strong><small>أصناف متاحة</small></div><div><span>السلة</span><strong>{cart.length}</strong><small>أصناف مختارة</small></div><div><span>الطلبات</span><strong>{orders.length}</strong><small>طلبات حديثة</small></div><div><span>الحساب</span><strong>{role === 'viewer' ? 'عميل' : role}</strong><small>صلاحية الدخول</small></div></section>
-      {runtimeError && <div className="error-banner" role="alert">{runtimeError}</div>}
-      <section className="toolbar"><div className="toolbar-title"><span className="eyebrow">كتالوجك</span><h2>الأصناف المتاحة</h2></div><label className="search"><span aria-hidden="true">⌕</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="ابحث باسم المنتج أو SKU..." aria-label="بحث المنتجات" /></label><div className="chips" aria-label="تصنيف المنتجات">{categories.map((item) => <button key={item.id ?? 'all'} className={item.id === categoryId ? 'chip selected' : 'chip'} onClick={() => setCategoryId(item.id)}>{item.name}</button>)}</div></section>
-      <section className="catalog-grid" id="catalog-grid" aria-busy={catalogLoading}>{catalogLoading && <div className="empty">جارٍ تجهيز الكتالوج…</div>}{!catalogLoading && products.map((product) => <article className="product-card" key={product.id}><div className="product-image">{product.imageUrl ? <img src={product.imageUrl} alt={product.name} loading="lazy" /> : <span aria-hidden="true">{product.name.slice(0, 1)}</span>}<span className="stock-badge">{product.availableQuantity > 0 ? `متاح ${product.availableQuantity}` : 'نفد المخزون'}</span></div><div className="product-meta"><span>{product.category}</span><code>{product.sku}</code></div><h2>{product.name}</h2><p className="unit">يباع بـ {product.unit}</p><div className="product-footer"><div><small>سعرك</small><strong>{priceFor(product) ? formatMoney(priceFor(product)) : 'غير متاح'}</strong></div><button disabled={!priceFor(product) || product.availableQuantity < 1 || !isOnline} onClick={() => void addToCart(product)}>{cart.some((line) => line.product.id === product.id) ? 'أضف المزيد' : 'أضف للطلب'}</button></div></article>)}{!catalogLoading && !products.length && <div className="empty"><strong>لا توجد أصناف مطابقة.</strong><span>جرّب تغيير البحث أو التصنيف.</span></div>}</section>
-      <section className="cart-panel" id="cart"><div className="section-heading"><div><span className="eyebrow">طلبك الحالي</span><h2>سلة المشتريات</h2></div><span>{cart.length} أصناف</span></div>{!cart.length ? <div className="cart-empty"><div className="empty-icon">＋</div><strong>ابدأ ببناء طلبك</strong><span>أضف الأصناف التي يحتاجها متجرك وستظهر هنا.</span><a href="#catalog-grid">تصفح الكتالوج</a></div> : <><div className="cart-lines">{cart.map((line) => <div className="cart-line" key={line.product.id}><div className="mini-product"><div className="mini-product-image">{line.product.imageUrl ? <img src={line.product.imageUrl} alt="" /> : line.product.name.slice(0, 1)}</div><div><strong>{line.product.name}</strong><small>{formatMoney(line.unitPrice)} / {line.product.unit}</small></div></div><div className="quantity"><button onClick={() => void updateQuantity(line.product.id, line.quantity - 1)} aria-label={`إنقاص ${line.product.name}`}>−</button><span aria-live="polite">{line.quantity}</span><button onClick={() => void updateQuantity(line.product.id, line.quantity + 1)} aria-label={`زيادة ${line.product.name}`}>+</button></div><strong>{formatMoney(line.unitPrice * line.quantity)}</strong></div>)}</div><div className="cart-total"><div><span>الإجمالي التقديري</span><small>يُعاد التحقق منه عند الاعتماد</small></div><strong>{formatMoney(total)}</strong></div><button className="checkout" disabled={orderBusy || !warehouseId || !customerId || !isOnline} onClick={() => void submitOrder()}>{orderBusy ? 'جارٍ اعتماد الطلب…' : !isOnline ? 'الاتصال مطلوب لإرسال الطلب' : 'إرسال الطلب إلى الأغبري'}</button>{orderResult && <div className="success" role="status">{orderResult}</div>}</>}</section>
-      <section className="cart-panel orders-panel" id="orders"><div className="section-heading"><div><span className="eyebrow">المتابعة</span><h2>طلباتي</h2></div><span>{orders.length} طلبات حديثة</span></div>{ordersLoading ? <div className="cart-empty">جارٍ تحميل الطلبات…</div> : ordersError ? <div className="error-banner" role="alert">{ordersError}</div> : !orders.length ? <div className="cart-empty"><strong>لا توجد طلبات سابقة بعد.</strong><span>بعد إرسال أول طلب ستظهر حالته وتفاصيله هنا.</span></div> : <div className="order-cards">{orders.map((order) => <article className="order-card" key={order.id}><div><span>طلب #{order.order_number}</span><strong>{formatMoney(order.total)} {order.currency}</strong><small>{new Date(order.created_at).toLocaleString('ar-YE')}</small></div><span className={`order-status status-${order.status}`}>{STATUS_LABELS[order.status]}</span></article>)}</div>}</section>
-      {STAFF_ROLES.has(role) && <AdminDashboard role={role} />}
-    </main>
-    <footer><strong>الأغبري</strong> · بوابة التجارة والجملة · النظام التشغيلي</footer>
-  </div>;
+const STAFF_ROLES = new Set<UserRole>(['owner','admin','sales','warehouse']);
+const STATUS_LABELS: Record<OrderStatus,string>={draft:'مسودة',pending:'قيد المراجعة',confirmed:'مؤكد',preparing:'قيد التجهيز',ready:'جاهز',completed:'مكتمل',cancelled:'ملغي'};
+const TIMELINE_STATUSES: OrderStatus[]=['pending','confirmed','preparing','ready','completed'];
+function mapCatalogItem(item:CatalogItem,categoryName:string,imageUrl?:string):Product&{authorizedPrice?:number}{return{id:item.id,sku:item.sku,name:item.name,unit:item.unit,category:categoryName,description:item.description??undefined,availableQuantity:item.available_quantity,status:item.status==='active'?'active':'inactive',imageUrl,authorizedPrice:item.authorized_price??undefined};}
+export default function App(){
+ const[email,setEmail]=useState('');const[password,setPassword]=useState('');const[sessionReady,setSessionReady]=useState(false);const[signedIn,setSignedIn]=useState(false);const[role,setRole]=useState<UserRole>('viewer');const[authBusy,setAuthBusy]=useState(false);const[authError,setAuthError]=useState<string|null>(null);
+ const[query,setQuery]=useState('');const[catalogSearch,setCatalogSearch]=useState('');const[categoryId,setCategoryId]=useState<string|null>(null);const[categoryOptions,setCategoryOptions]=useState<CategoryOption[]>([]);const[products,setProducts]=useState<Product[]>([]);const[serverPrices,setServerPrices]=useState<Record<string,number>>({});const[catalogLoading,setCatalogLoading]=useState(false);
+ const[cart,setCart]=useState<CartLine[]>([]);const[checkoutKey,setCheckoutKey]=useState<string|null>(null);const[warehouseId,setWarehouseId]=useState<string|null>(null);const[customerId,setCustomerId]=useState<string|null>(null);const[orders,setOrders]=useState<CustomerOrderSummary[]>([]);const[ordersLoading,setOrdersLoading]=useState(false);const[ordersError,setOrdersError]=useState<string|null>(null);const[selectedOrder,setSelectedOrder]=useState<CustomerOrderDetail|null>(null);const[orderDetailBusy,setOrderDetailBusy]=useState(false);const[securityBusy,setSecurityBusy]=useState(false);const[securityMessage,setSecurityMessage]=useState<string|null>(null);
+ const[runtimeError,setRuntimeError]=useState<string|null>(null);const[orderBusy,setOrderBusy]=useState(false);const[orderResult,setOrderResult]=useState<string|null>(null);const[isOnline,setIsOnline]=useState(()=>typeof navigator==='undefined'?true:navigator.onLine);
+ async function loadIdentity(userId:string){if(!supabase)return;const{data:profile,error}=await supabase.from('profiles').select('customer_id, role').eq('id',userId).single();if(error)throw error;setCustomerId(profile.customer_id);setRole((profile.role as UserRole)??'viewer');}
+ useEffect(()=>{let cancelled=false;void getSession().then(async s=>{if(cancelled)return;setSignedIn(Boolean(s));setSessionReady(true);if(s)await loadIdentity(s.user.id);}).catch(e=>{if(!cancelled){setSessionReady(true);setAuthError(e instanceof Error?e.message:'تعذر قراءة جلسة الدخول.');}});const listener=supabase?.auth.onAuthStateChange((event,s)=>{if(cancelled)return;setSignedIn(Boolean(s));if(s){setAuthError(null);if(event==='SIGNED_IN'||event==='TOKEN_REFRESHED')void loadIdentity(s.user.id).catch(e=>setAuthError(e instanceof Error?e.message:'تعذر تحميل هوية الحساب.'));}else{setCustomerId(null);setRole('viewer');setOrders([]);setSelectedOrder(null);setWarehouseId(null);setProducts([]);setCart([]);setServerPrices({});setCheckoutKey(null);}});return()=>{cancelled=true;listener?.data.subscription.unsubscribe();};},[]);
+ useEffect(()=>{const on=()=>{setIsOnline(true);void syncOfflineCart().catch(()=>setRuntimeError('تعذر مزامنة السلة بعد استعادة الاتصال.'));};const off=()=>setIsOnline(false);window.addEventListener('online',on);window.addEventListener('offline',off);return()=>{window.removeEventListener('online',on);window.removeEventListener('offline',off);};},[]);
+ useEffect(()=>{if(!signedIn)return;const t=window.setTimeout(()=>setCatalogSearch(query.trim()),250);return()=>window.clearTimeout(t);},[query,signedIn]);
+ useEffect(()=>{if(!signedIn||!supabase||!isOnline)return;let cancelled=false;async function load(){setCatalogLoading(true);setRuntimeError(null);try{const[{data:warehouse,error:warehouseError},items,savedCart,categories]=await Promise.all([supabase!.from('warehouses').select('id').eq('is_active',true).order('created_at').limit(1).maybeSingle(),getCatalog(catalogSearch,categoryId,100,0),getCart(),getCategories()]);if(warehouseError)throw warehouseError;if(!warehouse?.id)throw new Error('لا يوجد مستودع تشغيلي نشط.');if(cancelled)return;const map=new Map(categories.map(x=>[x.id,x.name]));const urls=await getProductImageUrls(items.map(x=>x.image_path));if(cancelled)return;setWarehouseId(warehouse.id);setCategoryOptions(categories);const mapped=items.map(x=>mapCatalogItem(x,map.get(x.category_id??'')??'أصناف',x.image_path?urls.get(x.image_path):undefined));setProducts(mapped);setServerPrices(Object.fromEntries(items.map(x=>[x.id,x.authorized_price??0])));setCart(savedCart.map(x=>({product:mapped.find(p=>p.id===x.product_id)??{id:x.product_id,sku:x.sku,name:x.name,unit:x.unit,category:'أصناف',availableQuantity:0,status:'active'},quantity:x.quantity,unitPrice:x.authorized_price??0})));}catch(e){if(!cancelled)setRuntimeError(e instanceof Error?e.message:'تعذر تحميل بيانات المتجر.');}finally{if(!cancelled)setCatalogLoading(false);}}void load();return()=>{cancelled=true;};},[catalogSearch,categoryId,signedIn,isOnline]);
+ useEffect(()=>{if(!signedIn||!isOnline)return;let cancelled=false;setOrdersLoading(true);setOrdersError(null);void getCustomerOrders(20).then(x=>{if(!cancelled)setOrders(x);}).catch(e=>{if(!cancelled)setOrdersError(e instanceof Error?e.message:'تعذر تحميل الطلبات.');}).finally(()=>{if(!cancelled)setOrdersLoading(false);});return()=>{cancelled=true;};},[signedIn,orderResult,isOnline]);
+ const categories=useMemo(()=>[{id:null,name:'الكل'},...categoryOptions],[categoryOptions]);const priceFor=(p:Product)=>serverPrices[p.id]??0;const total=calculateClientPreviewTotal(cart);
+ async function handleLogin(e:FormEvent){e.preventDefault();setAuthBusy(true);setAuthError(null);try{const s=await signIn(email.trim(),password);if(s)await loadIdentity(s.user.id);setPassword('');}catch(x){setAuthError(x instanceof Error?x.message:'تعذر تسجيل الدخول.');}finally{setAuthBusy(false);}}
+ async function handleSignOut(){try{await signOut();}finally{setProducts([]);setCart([]);setOrders([]);setSelectedOrder(null);setCustomerId(null);setWarehouseId(null);setRole('viewer');setCheckoutKey(null);setOrderResult(null);}}
+ async function addToCart(p:Product){const price=priceFor(p);if(price<=0||p.availableQuantity<1)return;const existing=cart.find(x=>x.product.id===p.id);const quantity=Math.min((existing?.quantity??0)+1,p.availableQuantity);try{await setCartItem(p.id,quantity);setCart(c=>existing?c.map(x=>x.product.id===p.id?{...x,quantity}:x):[...c,{product:p,quantity,unitPrice:price}]);setCheckoutKey(null);setOrderResult(null);setRuntimeError(null);}catch(e){setRuntimeError(e instanceof Error?e.message:'تعذر تحديث السلة.');}}
+ async function updateQuantity(id:string,quantity:number){const line=cart.find(x=>x.product.id===id);if(!line)return;const next=Math.max(0,Math.min(quantity,line.product.availableQuantity));try{if(next===0){await removeCartItem(id);setCart(c=>c.filter(x=>x.product.id!==id));}else{await setCartItem(id,next);setCart(c=>c.map(x=>x.product.id===id?{...x,quantity:next}:x));}setCheckoutKey(null);setRuntimeError(null);}catch(e){setRuntimeError(e instanceof Error?e.message:'تعذر تحديث الكمية.');}}
+ async function submitOrder(){if(!isOnline){setRuntimeError('إرسال الطلب يحتاج اتصالًا بالإنترنت.');return;}if(!customerId||!warehouseId||!cart.length||orderBusy)return;setOrderBusy(true);setOrderResult(null);setRuntimeError(null);const idempotencyKey=checkoutKey??crypto.randomUUID();setCheckoutKey(idempotencyKey);try{const result=await createOrder({customerId,idempotencyKey,lines:cart.map(x=>({productId:x.product.id,quantity:x.quantity}))},warehouseId);setCart([]);setCheckoutKey(null);setOrderResult(result?`تم إرسال الطلب رقم ${result.order_number} بنجاح.`:'تم إرسال الطلب بنجاح.');}catch(e){setRuntimeError(e instanceof Error?e.message:'تعذر إرسال الطلب. لم يتم اعتماد أي سعر من العميل.');}finally{setOrderBusy(false);}}
+ async function openOrder(id:string){setOrderDetailBusy(true);setOrdersError(null);try{setSelectedOrder(await getCustomerOrderDetail(id));document.getElementById('order-detail')?.scrollIntoView({behavior:'smooth',block:'center'});}catch(e){setOrdersError(e instanceof Error?e.message:'تعذر تحميل تفاصيل الطلب.');}finally{setOrderDetailBusy(false);}}
+ async function bindDevice(){setSecurityBusy(true);setSecurityMessage(null);try{await bindCurrentCustomerDevice();setSecurityMessage('تم ربط هذا الجهاز بحسابك.');}catch(e){setSecurityMessage(e instanceof Error?e.message:'تعذر ربط الجهاز.');}finally{setSecurityBusy(false);}}
+ async function changeDevice(){setSecurityBusy(true);setSecurityMessage(null);try{await requestDeviceChange();setSecurityMessage('تم إرسال طلب تغيير الجهاز للمراجعة.');}catch(e){setSecurityMessage(e instanceof Error?e.message:'تعذر إرسال طلب تغيير الجهاز.');}finally{setSecurityBusy(false);}}
+ if(!sessionReady)return <div className="auth-shell"><div className="auth-card auth-card-loading"><span className="brand-mark">أ</span><span className="eyebrow">بوابة الأغبري</span><h1>جارٍ تجهيز حسابك</h1><p>يتم التحقق من الهوية قبل عرض الأسعار والمخزون.</p><div className="loading-bar"/></div></div>;
+ if(!signedIn)return <div className="auth-shell"><div className="auth-branding"><span className="brand-mark large">أ</span><span className="eyebrow">بوابة الأغبري التجارية</span><h1>توريد متجرك يبدأ من هنا.</h1><p>كتالوج جملة، أسعار مصرح بها، ومتابعة للطلبات في تجربة واحدة.</p></div><form className="auth-card" onSubmit={handleLogin}><span className="eyebrow">حساب العميل</span><h2>تسجيل الدخول</h2><p>استخدم حسابك المعتمد للوصول إلى الكتالوج الخاص بك.</p><label>البريد الإلكتروني<input type="email" value={email} onChange={e=>setEmail(e.target.value)} required autoComplete="email"/></label><label>كلمة المرور<input type="password" value={password} onChange={e=>setPassword(e.target.value)} required autoComplete="current-password"/></label>{authError&&<div className="error-banner" role="alert">{authError}</div>}<button className="checkout" disabled={authBusy}>{authBusy?'جارٍ التحقق…':'دخول إلى البوابة'}</button><small className="auth-note">الوصول والأسعار والمخزون خاضعة لصلاحيات الحساب.</small></form></div>;
+ return <div className="app-shell"><header className="topbar"><a className="brand" href="#catalog" aria-label="بوابة الأغبري - الكتالوج"><span className="brand-mark">أ</span><div><strong>الأغبري</strong><small>التجارة والجملة</small></div></a><nav aria-label="التنقل الرئيسي"><a className="active" href="#catalog">الكتالوج</a><a href="#cart">السلة</a><a href="#orders">طلباتي</a>{STAFF_ROLES.has(role)&&<a href="#admin-dashboard">الإدارة</a>}</nav><div className="topbar-actions"><span className="account-pill">{role==='viewer'?'عميل':role}</span><a className="cart-button" href="#notifications">الإشعارات</a><button className="cart-button" aria-label={`السلة، ${cart.length} أصناف`} onClick={()=>document.getElementById('cart')?.scrollIntoView({behavior:'smooth'})}>السلة <b>{cart.length}</b></button><button className="signout" onClick={()=>void handleSignOut()}>خروج</button></div></header>{!isOnline&&<div className="offline-banner" role="status">وضع دون اتصال · يمكن تعديل السلة، لكن إرسال الطلب يحتاج اتصالًا.</div>}<main>
+ <section className="hero" id="catalog"><div className="hero-copy"><span className="eyebrow">تجارة جملة أسرع</span><h1>كل احتياج متجرك<br/><em>في مكان واحد.</em></h1><p>تصفح الأصناف المتاحة لحسابك، شاهد سعرك المصرح به، وابنِ طلبك بثقة.</p><div className="hero-actions"><a className="primary-link" href="#catalog-grid">ابدأ التسوق</a><a className="secondary-link" href="#orders">تابع طلباتك</a></div></div><div className="hero-card"><div className="service-status"><span className="status-dot"/>{runtimeError?'يحتاج انتباهًا':isOnline?'الخدمة متصلة':'دون اتصال'}</div><strong>{products.length}</strong><span>صنف ظاهر لحسابك</span><div className="hero-divider"/><small>الأسعار والمخزون المعروضَان مرتبطان بصلاحيات حسابك.</small></div></section>
+ <section className="customer-strip"><div><span>الكتالوج</span><strong>{products.length}</strong><small>أصناف متاحة</small></div><div><span>السلة</span><strong>{cart.length}</strong><small>أصناف مختارة</small></div><div><span>الطلبات</span><strong>{orders.length}</strong><small>طلبات حديثة</small></div><div><span>الحساب</span><strong>{role==='viewer'?'عميل':role}</strong><small>صلاحية الدخول</small></div></section>
+ {runtimeError&&<div className="error-banner" role="alert">{runtimeError}</div>}
+ <section className="toolbar"><div className="toolbar-title"><span className="eyebrow">كتالوجك</span><h2>الأصناف المتاحة</h2></div><label className="search"><span aria-hidden="true">⌕</span><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="ابحث باسم المنتج أو SKU..." aria-label="بحث المنتجات"/></label><div className="chips">{categories.map(x=><button key={x.id??'all'} className={x.id===categoryId?'chip selected':'chip'} onClick={()=>setCategoryId(x.id)}>{x.name}</button>)}</div></section>
+ <section className="catalog-grid" id="catalog-grid" aria-busy={catalogLoading}>{catalogLoading&&<div className="empty">جارٍ تجهيز الكتالوج…</div>}{!catalogLoading&&products.map(p=><article className="product-card" key={p.id}><div className="product-image">{p.imageUrl?<img src={p.imageUrl} alt={p.name} loading="lazy"/>:<span>{p.name.slice(0,1)}</span>}<span className="stock-badge">{p.availableQuantity>0?`متاح ${p.availableQuantity}`:'نفد المخزون'}</span></div><div className="product-meta"><span>{p.category}</span><code>{p.sku}</code></div><h2>{p.name}</h2><p className="unit">يباع بـ {p.unit}</p><div className="product-footer"><div><small>سعرك</small><strong>{priceFor(p)?formatMoney(priceFor(p)):'غير متاح'}</strong></div><button disabled={!priceFor(p)||p.availableQuantity<1||!isOnline} onClick={()=>void addToCart(p)}>{cart.some(x=>x.product.id===p.id)?'أضف المزيد':'أضف للطلب'}</button></div></article>)}{!catalogLoading&&!products.length&&<div className="empty"><strong>لا توجد أصناف مطابقة.</strong><span>جرّب تغيير البحث أو التصنيف.</span></div>}</section>
+ <section className="cart-panel" id="cart"><div className="section-heading"><div><span className="eyebrow">طلبك الحالي</span><h2>سلة المشتريات</h2></div><span>{cart.length} أصناف</span></div>{!cart.length?<div className="cart-empty"><div className="empty-icon">＋</div><strong>ابدأ ببناء طلبك</strong><span>أضف الأصناف التي يحتاجها متجرك وستظهر هنا.</span><a href="#catalog-grid">تصفح الكتالوج</a></div>:<><div className="cart-lines">{cart.map(line=><div className="cart-line" key={line.product.id}><div className="mini-product"><div className="mini-product-image">{line.product.imageUrl?<img src={line.product.imageUrl} alt=""/>:line.product.name.slice(0,1)}</div><div><strong>{line.product.name}</strong><small>{formatMoney(line.unitPrice)} / {line.product.unit}</small></div></div><div className="quantity"><button onClick={()=>void updateQuantity(line.product.id,line.quantity-1)}>−</button><span>{line.quantity}</span><button onClick={()=>void updateQuantity(line.product.id,line.quantity+1)}>+</button></div><strong>{formatMoney(line.unitPrice*line.quantity)}</strong></div>)}</div><div className="cart-total"><div><span>الإجمالي التقديري</span><small>يُعاد التحقق منه عند الاعتماد</small></div><strong>{formatMoney(total)}</strong></div><button className="checkout" disabled={orderBusy||!warehouseId||!customerId||!isOnline} onClick={()=>void submitOrder()}>{orderBusy?'جارٍ اعتماد الطلب…':!isOnline?'الاتصال مطلوب لإرسال الطلب':'إرسال الطلب إلى الأغبري'}</button>{orderResult&&<div className="success" role="status">{orderResult}</div>}</>}</section>
+ <section className="cart-panel orders-panel" id="orders"><div className="section-heading"><div><span className="eyebrow">المتابعة</span><h2>طلباتي</h2></div><span>{orders.length} طلبات حديثة</span></div>{ordersLoading?<div className="cart-empty">جارٍ تحميل الطلبات…</div>:ordersError?<div className="error-banner" role="alert">{ordersError}</div>:!orders.length?<div className="cart-empty"><strong>لا توجد طلبات سابقة بعد.</strong><span>بعد إرسال أول طلب ستظهر حالته وتفاصيله هنا.</span></div>:<div className="order-cards">{orders.map(o=><article className="order-card" key={o.id}><div><span>طلب #{o.order_number}</span><strong>{formatMoney(o.total)} {o.currency}</strong><small>{new Date(o.created_at).toLocaleString('ar-YE')}</small></div><div className="order-actions"><span className={`order-status status-${o.status}`}>{STATUS_LABELS[o.status]}</span><button onClick={()=>void openOrder(o.id)} disabled={orderDetailBusy}>التفاصيل</button></div></article>)}</div>}</section>
+ <section className="cart-panel" id="order-detail"><div className="section-heading"><div><span className="eyebrow">تفاصيل الطلب</span><h2>{selectedOrder?`طلب #${selectedOrder.order_number}`:'اختر طلبًا'}</h2></div>{selectedOrder&&<span>{formatMoney(selectedOrder.total)} {selectedOrder.currency}</span>}</div>{!selectedOrder?<div className="cart-empty"><span>اختر «التفاصيل» من أي طلب لعرض المسار الكامل.</span></div>:<><div className="order-detail-summary"><div><small>الحالة الحالية</small><strong>{STATUS_LABELS[selectedOrder.status]}</strong></div><div><small>أنشئ في</small><strong>{new Date(selectedOrder.created_at).toLocaleString('ar-YE')}</strong></div><div><small>آخر تحديث</small><strong>{new Date(selectedOrder.updated_at).toLocaleString('ar-YE')}</strong></div></div><div className="order-timeline" aria-label="المسار الزمني للطلب">{TIMELINE_STATUSES.map((status,index)=>{const historyIndex=selectedOrder.history.findIndex(x=>x.to_status===status);const active=historyIndex>=0||selectedOrder.status===status;return <div className={`timeline-step ${active?'done':''}`} key={status}><span>{active?'✓':index+1}</span><strong>{STATUS_LABELS[status]}</strong><small>{historyIndex>=0?new Date(selectedOrder.history[historyIndex].created_at).toLocaleString('ar-YE'):'بانتظار الانتقال'}</small></div>})}</div>{selectedOrder.status==='cancelled'&&<div className="error-banner">تم إلغاء هذا الطلب.</div>}</>}</section>
+ <section className="cart-panel" id="notifications"><div className="section-heading"><div><span className="eyebrow">مركز التواصل</span><h2>إشعارات الحساب</h2></div></div><NotificationCenter role={role}/></section>
+ <section className="cart-panel" id="security"><div className="section-heading"><div><span className="eyebrow">حماية الحساب</span><h2>أمان الجهاز</h2></div><span>جهاز واحد معتمد</span></div><div className="security-actions"><div><strong>هذا الجهاز</strong><p>اربط جهازك الحالي بحسابك لتقليل مخاطر الوصول غير المصرح به.</p></div><button disabled={securityBusy} onClick={()=>void bindDevice()}>ربط الجهاز الحالي</button><button className="secondary-link-button" disabled={securityBusy} onClick={()=>void changeDevice()}>طلب تغيير الجهاز</button></div>{securityMessage&&<div className="success" role="status">{securityMessage}</div>}</section>
+ {STAFF_ROLES.has(role)&&<AdminDashboard role={role}/>}</main><footer><strong>الأغبري</strong> · بوابة التجارة والجملة · النظام التشغيلي</footer></div>;
 }
