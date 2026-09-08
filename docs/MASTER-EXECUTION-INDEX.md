@@ -6,23 +6,23 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Branch: `main`
-- Current exact implementation HEAD before this index update: **`87c5eea972f0540ecd1a45bfd5a98b791fa37044`**
+- Current exact implementation HEAD after this execution boundary: **`55d25002ef0d3c3caae76cd6e2052c04fb5900ac`**.
 - Scope: **Aghbari Commerce only.** `Report-Advisor` and every other project are out of scope.
 
 ## Certification stages
 | Stage | Current state |
 |---|---|
 | BUILT | **ADVANCED IMPLEMENTED** — commerce shell, catalog/pricing, cart/orders, staff operations, customers, inventory, purchasing/receiving, finance, import/export, outbox, PWA/offline and security hardening are present. |
-| INTEGRATED | **IMPLEMENTATION PASS** — checkout, invoice RLS, finance runtime validation, transaction-boundary hardening, identity-helper ACL hardening, deterministic Vercel install contract, and responsive navigation hardening are implemented on `main`. |
+| INTEGRATED | **IMPLEMENTATION PASS** — checkout, invoice RLS, finance runtime validation, transaction-boundary hardening, identity-helper ACL hardening, deterministic Vercel install contract, responsive navigation hardening, and additive Product/UI Excellence polish are implemented on `main`. |
 | VERIFIED | **NOT PROVEN** — fresh exact-head CI evidence still required. |
 | RUNTIME PROVEN | **NOT PROVEN** — authenticated browser/deployment proof still required. |
 | PRODUCTION CERTIFIED | **NOT PROVEN** — certification gate remains open until runtime evidence is green. |
 
 ## Latest execution boundary
-- Responsive UX hardening completed in `src/styles.css`.
-- Added an explicit `.topbar-actions` layout contract and preserved usable primary navigation on tablet/mobile widths by wrapping the top bar and making navigation horizontally scrollable instead of removing it.
-- Retained keyboard focus visibility and reduced-motion behavior.
-- Implementation commit: `87c5eea972f0540ecd1a45bfd5a98b791fa37044`.
+- Product/UI Excellence Pass advanced with a dedicated additive polish layer in `src/product-excellence.css`.
+- Added consistent touch-sized controls, stronger keyboard focus treatment, reduced-motion preservation, mobile-safe navigation sizing, sticky offline status behavior, improved card/media sizing, and interaction feedback without changing business logic or authorization boundaries.
+- Loaded the new layer after existing offline/accessibility styles so the polish layer is deterministic in the application bundle.
+- Implementation commits: `3c567192b0a4289059f7467254c5800ba13c737c` and `55d25002ef0d3c3caae76cd6e2052c04fb5900ac`.
 - Current-head CI still has no usable PASS evidence; therefore no current-head verification is claimed.
 
 ## Batch 7 execution evidence
@@ -37,6 +37,7 @@
 - Batch 5 hardened finance, purchasing/receiving transaction boundaries and cart quantity limits.
 - All 34 public RLS-enabled tables have at least one policy; previous invoice-table policy gaps were restored.
 - Deployment install contract uses `npm ci --no-audit --no-fund`.
+- Responsive navigation hardening was previously implemented in `src/styles.css`.
 
 ## Remaining closure work — priority order
 ### P0 — Release blockers
