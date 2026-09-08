@@ -6,7 +6,7 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Branch: `main`
-- Current exact implementation HEAD after this execution boundary: **`0300479e34c5d9bae0b2dc6a28fc5279e397d6e7`**.
+- Current exact implementation HEAD after this execution boundary: **`1e83ef17cc8169bf66faa1b355072dd0bf97119a`**.
 - Scope: **Aghbari Commerce only.** `Report-Advisor` and every other project are out of scope.
 - Benchmark reference: **`https://alamri.app/` (بوابة العامري الذكية)** is treated only as an external UX/product benchmark; Aghbari identity, naming and implementation remain independent.
 
@@ -20,8 +20,8 @@
 | PRODUCTION CERTIFIED | **NOT PROVEN** — certification gate remains open until runtime evidence is green. |
 
 ## Latest execution boundary
-- Product/UI Excellence Pass advanced with a stronger premium commerce presentation layer in `src/product-excellence.css`.
-- Improved product-card hierarchy and hover/focus behavior, search focus treatment, category-chip interaction, image presentation, cart controls, checkout emphasis, responsive spacing, touch targets, keyboard focus, reduced-motion behavior and mobile ergonomics.
+- Product/UI Excellence Pass advanced again with interaction-state hardening in `src/product-excellence.css`.
+- Added stronger keyboard-visible focus treatment for status surfaces, explicit disabled-state affordances, focus-within elevation for product cards, safer quantity-control disabled styling, minimum empty-state height, tighter mobile cart spacing, and preserved reduced-motion behavior.
 - Changes remain additive at the presentation layer and do not alter business logic, pricing authority, authorization or tenant boundaries.
 - Benchmark rule: use the public `alamri.app` experience to identify opportunities, but do not copy its identity or treat it as the target ceiling. The Aghbari target is materially higher clarity, polish, responsiveness and operational UX.
 - Current-head CI still has no usable PASS evidence; therefore no current-head verification is claimed.
