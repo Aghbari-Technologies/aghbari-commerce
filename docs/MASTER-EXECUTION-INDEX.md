@@ -6,7 +6,7 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Branch: `main`
-- Current exact implementation HEAD after this execution boundary: **`2614dee4696d0e840c48ae1a456e00da6353bc9f`**.
+- Current exact implementation HEAD after this execution boundary: **`ed45010cf8d0fb388f949322f3099632a24602ae`**.
 - Scope: **Aghbari Commerce only.** `Report-Advisor` and every other project are out of scope.
 - Benchmark reference: **`https://alamri.app/` (بوابة العامري الذكية)** is treated only as an external UX/product benchmark; Aghbari identity, naming and implementation remain independent.
 
