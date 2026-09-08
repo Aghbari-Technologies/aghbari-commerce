@@ -6,7 +6,7 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Branch: `main`
-- Current exact implementation HEAD before this index update: **`5507cee1cbd98fb2130f3408804479d7376e9250`**
+- Current exact implementation HEAD: **`17930735e3fd0f9aa25702dba76f15d783ee7f30`**
 - Scope: **Aghbari Commerce only.** `Report-Advisor` and every other project are out of scope.
 
 ## Certification stages
