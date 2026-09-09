@@ -13,7 +13,11 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "read-excel-file/browser": ["src/lib/read-excel-file-browser.ts"]
+    }
   },
   "include": ["src"]
 }
