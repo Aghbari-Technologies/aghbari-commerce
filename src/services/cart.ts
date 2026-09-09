@@ -19,35 +19,28 @@ export interface CartItem {
 }
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-
 type OfflineCartPayload = { productId: string; quantity?: number };
-
-function finiteNumber(value: unknown, fallback = 0): number {
-  const parsed = typeof value === 'number' ? value : Number(value);
-  return Number.isFinite(parsed) ? parsed : fallback;
-}
 
 function assertCartItem(value: unknown): CartItem {
   if (!value || typeof value !== 'object') throw new Error('استجابة السلة غير صالحة.');
   const item = value as Partial<CartItem>;
+  const quantity = item.quantity;
   if (
     typeof item.product_id !== 'string' || !UUID_PATTERN.test(item.product_id) ||
     typeof item.sku !== 'string' || item.sku.trim() === '' ||
     typeof item.name !== 'string' || item.name.trim() === '' ||
     typeof item.unit !== 'string' || item.unit.trim() === '' ||
     typeof item.currency !== 'string' || item.currency.trim() === '' ||
-    !Number.isSafeInteger(item.quantity) || item.quantity < 1 || item.quantity > MAX_ORDER_QUANTITY_PER_LINE ||
+    !Number.isSafeInteger(quantity) || quantity < 1 || quantity > MAX_ORDER_QUANTITY_PER_LINE ||
     (item.authorized_price !== null && item.authorized_price !== undefined &&
       (typeof item.authorized_price !== 'number' || !Number.isFinite(item.authorized_price) || item.authorized_price < 0))
-  ) {
-    throw new Error('استجابة السلة تحتوي بيانات غير صالحة.');
-  }
+  ) throw new Error('استجابة السلة تحتوي بيانات غير صالحة.');
   return {
     product_id: item.product_id,
     sku: item.sku,
     name: item.name,
     unit: item.unit,
-    quantity: item.quantity,
+    quantity,
     authorized_price: item.authorized_price == null ? null : item.authorized_price,
     currency: item.currency
   };
@@ -100,17 +93,12 @@ export async function getCart() {
 export async function setCartItem(productId: string, quantity: number) {
   if (!productId) throw new Error('المنتج مطلوب.');
   if (!UUID_PATTERN.test(productId.trim())) throw new Error('معرّف المنتج غير صالح.');
-  if (!Number.isInteger(quantity) || quantity < 1 || quantity > MAX_ORDER_QUANTITY_PER_LINE) {
-    throw new Error(`الكمية يجب أن تكون بين 1 و${MAX_ORDER_QUANTITY_PER_LINE}.`);
-  }
+  if (!Number.isInteger(quantity) || quantity < 1 || quantity > MAX_ORDER_QUANTITY_PER_LINE) throw new Error(`الكمية يجب أن تكون بين 1 و${MAX_ORDER_QUANTITY_PER_LINE}.`);
   if (typeof navigator !== 'undefined' && navigator.onLine === false) {
     await enqueueOfflineOperation(await currentUserId(), OFFLINE_CART_SET_ITEM, { productId: productId.trim(), quantity });
     return;
   }
-  const { error } = await requireSupabase().rpc('set_cart_item', {
-    p_product_id: productId.trim(),
-    p_quantity: quantity
-  });
+  const { error } = await requireSupabase().rpc('set_cart_item', { p_product_id: productId.trim(), p_quantity: quantity });
   if (error) throw error;
 }
 
