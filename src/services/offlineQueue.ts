@@ -93,11 +93,12 @@ export function enqueueOfflineOperation<T>(userId: string, type: string, payload
   if (!OFFLINE_SAFE_OPERATION_TYPES.has(normalizedType)) {
     throw new Error('هذه العملية لا يُسمح بتأجيلها دون اتصال.');
   }
-  if (!isSafePayload(normalizedType, payload)) {
-    throw new Error('بيانات العملية غير المتصلة غير صالحة.');
-  }
+  payloadBytes(payload);
   if (payloadBytes(payload) > MAX_OFFLINE_PAYLOAD_BYTES) {
     throw new Error(`حجم بيانات العملية يتجاوز ${MAX_OFFLINE_PAYLOAD_BYTES} بايت.`);
+  }
+  if (!isSafePayload(normalizedType, payload)) {
+    throw new Error('بيانات العملية غير المتصلة غير صالحة.');
   }
   const operation: OfflineOperation<T> = { operationId: crypto.randomUUID(), userId: userId.trim(), type: normalizedType, payload, createdAt: new Date().toISOString(), attempts: 0 };
   const queue = read<unknown>();
