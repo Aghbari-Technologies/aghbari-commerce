@@ -40,7 +40,7 @@ export async function getCatalog(search = '', categoryId: string | null = null, 
     if (!data?.id) throw new Error('لا يوجد مستودع تشغيلي نشط.');
     resolvedWarehouseId = data.id;
   }
-  const { data, error } = await retryRead(async () => {
+  const { data } = await retryRead(async () => {
     const result = await client.rpc('get_catalog', {
       p_search: query.search || null,
       p_category_id: categoryId,
@@ -71,7 +71,7 @@ export async function getProductImageUrls(paths: Array<string | null>) {
     else missing.push(path);
   }
   if (missing.length) {
-    const { data, error } = await retryRead(async () => {
+    const { data } = await retryRead(async () => {
       const response = await client.storage.from('product-media').createSignedUrls(missing, SIGNED_URL_TTL_SECONDS);
       if (response.error) throw response.error;
       return response;
