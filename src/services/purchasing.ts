@@ -37,8 +37,8 @@ function requirePositiveQuantity(value: number, field: string): number {
   return value;
 }
 
-function requirePositiveNumber(value: number, field: string): number {
-  if (!Number.isFinite(value) || value <= 0) throw new Error(`${field} يجب أن يكون رقمًا أكبر من صفر.`);
+function requireNonNegativeFiniteNumber(value: number, field: string): number {
+  if (!Number.isFinite(value) || value < 0) throw new Error(`${field} يجب أن يكون رقمًا غير سالب.`);
   return value;
 }
 
@@ -59,7 +59,7 @@ export function validatePurchaseOrderInput(input: PurchaseOrderInput): void {
     if (products.has(productId)) throw new Error('لا يمكن تكرار المنتج في أمر الشراء.');
     products.add(productId);
     requirePositiveQuantity(line.quantity, 'الكمية');
-    requirePositiveNumber(line.unitCost, 'تكلفة الوحدة');
+    requireNonNegativeFiniteNumber(line.unitCost, 'تكلفة الوحدة');
   }
   if (input.currency !== undefined) requireCurrency(input.currency);
   if (input.notes !== undefined && input.notes.length > 2000) throw new Error('ملاحظات أمر الشراء طويلة جدًا.');
