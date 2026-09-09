@@ -40,7 +40,7 @@ function assertCartItem(value: unknown): CartItem {
     sku: item.sku,
     name: item.name,
     unit: item.unit,
-    quantity,
+    quantity: quantity as number,
     authorized_price: item.authorized_price == null ? null : item.authorized_price,
     currency: item.currency
   };
