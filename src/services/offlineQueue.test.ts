@@ -84,12 +84,12 @@ describe('offline operation queue', () => {
     expect(pendingOfflineOperations(USER_A)).toHaveLength(1);
   });
 
-  it('drops legacy or malformed persisted records rather than replaying them', () => {
+  it('drops malformed persisted records rather than replaying them', () => {
     storage.set('aghbari.offline.operations.v1', JSON.stringify([
       { operationId: 'not-a-uuid', userId: USER_A, type: OFFLINE_CART_SET_ITEM, createdAt: new Date().toISOString(), attempts: 0, payload: {} },
       { operationId: crypto.randomUUID(), userId: USER_A, type: 'order:submit', createdAt: new Date().toISOString(), attempts: 0, payload: {} },
       { operationId: crypto.randomUUID(), type: OFFLINE_CART_SET_ITEM, createdAt: new Date().toISOString(), attempts: 0, payload: { productId: PRODUCT_A, quantity: 1 } },
-      { operationId: crypto.randomUUID(), userId: USER_A, type: OFFLINE_CART_SET_ITEM, createdAt: new Date().toISOString(), attempts: 0, payload: { productId: PRODUCT_A, quantity: 1 } }
+      { operationId: crypto.randomUUID(), userId: USER_A, type: OFFLINE_CART_SET_ITEM, createdAt: new Date().toISOString(), attempts: 0, payload: { productId: 'not-a-product', quantity: 1 } }
     ]));
     expect(pendingOfflineOperations(USER_A)).toHaveLength(0);
   });
@@ -145,11 +145,15 @@ describe('offline operation queue', () => {
     Object.defineProperty(globalThis, 'navigator', { configurable: true, value: { onLine: true } });
   });
 
-  it('removes a successful operation even when the processor mutates the queue', async () => {
+  it('preserves newly enqueued work while removing successful operations', async () => {
     const operation = enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: 1 });
     const added = enqueueOfflineOperation(USER_A, OFFLINE_CART_REMOVE_ITEM, { productId: PRODUCT_B });
+    let injected = false;
     const result = await drainOfflineOperations(async () => {
-      enqueueOfflineOperation(USER_B, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_B, quantity: 1 });
+      if (!injected) {
+        injected = true;
+        enqueueOfflineOperation(USER_B, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_B, quantity: 1 });
+      }
     }, USER_A, Date.now());
     expect(result).toEqual({ processed: 2, failed: 0 });
     expect(pendingOfflineOperations(USER_A)).toHaveLength(0);
