@@ -56,7 +56,7 @@ jobs:
           echo "Migration version uniqueness: PASS"
       - uses: supabase/setup-cli@v1
         with:
-          version: latest
+          version: 2.117.0
       - name: Start local Supabase
         run: supabase start
       - name: Apply migrations from empty database
