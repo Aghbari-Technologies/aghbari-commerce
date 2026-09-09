@@ -5,29 +5,15 @@ const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3
 const ORDER_STATUSES: ReadonlySet<string> = new Set(['draft', 'pending', 'confirmed', 'preparing', 'ready', 'completed', 'cancelled']);
 
 export interface StaffOrderSummary {
-  id: string;
-  order_number: number;
-  customer_id: string;
-  customer_name: string;
-  warehouse_id: string;
-  status: OrderStatus;
-  total: number;
-  currency: string;
-  created_at: string;
-  updated_at: string;
+  id: string; order_number: number; customer_id: string; customer_name: string; warehouse_id: string;
+  status: OrderStatus; total: number; currency: string; created_at: string; updated_at: string;
 }
 
 export function assertStaffOrderSummary(value: unknown): StaffOrderSummary {
   if (!value || typeof value !== 'object') throw new Error('استجابة الطلب التشغيلي غير صالحة. لم يتم إثبات نجاح العملية.');
   const item = value as Record<string, unknown>;
-  const uuidFields: Array<[unknown, string]> = [
-    [item.id, 'معرّف الطلب'],
-    [item.customer_id, 'معرّف العميل'],
-    [item.warehouse_id, 'معرّف المستودع']
-  ];
-  for (const [valueToCheck, label] of uuidFields) {
-    if (typeof valueToCheck !== 'string' || !UUID_PATTERN.test(valueToCheck)) throw new Error(`${label} غير صالح. لم يتم إثبات نجاح العملية.`);
-  }
+  const uuidFields: Array<[unknown, string]> = [[item.id, 'معرّف الطلب'], [item.customer_id, 'معرّف العميل'], [item.warehouse_id, 'معرّف المستودع']];
+  for (const [valueToCheck, label] of uuidFields) if (typeof valueToCheck !== 'string' || !UUID_PATTERN.test(valueToCheck)) throw new Error(`${label} غير صالح. لم يتم إثبات نجاح العملية.`);
   if (typeof item.order_number !== 'number' || !Number.isSafeInteger(item.order_number) || item.order_number <= 0) throw new Error('رقم الطلب التشغيلي غير صالح. لم يتم إثبات نجاح العملية.');
   if (typeof item.status !== 'string' || !ORDER_STATUSES.has(item.status)) throw new Error('حالة الطلب التشغيلي غير صالحة. لم يتم إثبات نجاح العملية.');
   if (typeof item.total !== 'number' || !Number.isFinite(item.total) || item.total < 0) throw new Error('إجمالي الطلب التشغيلي غير صالح. لم يتم إثبات نجاح العملية.');
@@ -35,31 +21,16 @@ export function assertStaffOrderSummary(value: unknown): StaffOrderSummary {
   if (typeof item.customer_name !== 'string' || !item.customer_name.trim()) throw new Error('اسم العميل في الطلب غير صالح. لم يتم إثبات نجاح العملية.');
   if (typeof item.created_at !== 'string' || !item.created_at.trim() || Number.isNaN(Date.parse(item.created_at))) throw new Error('تاريخ إنشاء الطلب غير صالح. لم يتم إثبات نجاح العملية.');
   if (typeof item.updated_at !== 'string' || !item.updated_at.trim() || Number.isNaN(Date.parse(item.updated_at))) throw new Error('تاريخ تحديث الطلب غير صالح. لم يتم إثبات نجاح العملية.');
-  return item as StaffOrderSummary;
+  return item as unknown as StaffOrderSummary;
 }
 
 export async function getStaffOrders(limit = 50): Promise<StaffOrderSummary[]> {
   const safeLimit = Math.min(Math.max(Math.trunc(limit), 1), 100);
-  const { data, error } = await requireSupabase()
-    .from('orders')
-    .select('id,order_number,customer_id,warehouse_id,status,total,currency,created_at,updated_at,customers(name)')
-    .order('created_at', { ascending: false })
-    .limit(safeLimit);
+  const { data, error } = await requireSupabase().from('orders').select('id,order_number,customer_id,warehouse_id,status,total,currency,created_at,updated_at,customers(name)').order('created_at', { ascending: false }).limit(safeLimit);
   if (error) throw error;
   return (data ?? []).map((row) => {
     const item = row as typeof row & { customers?: { name?: string } | null };
-    return assertStaffOrderSummary({
-      id: item.id,
-      order_number: Number(item.order_number),
-      customer_id: item.customer_id,
-      customer_name: item.customers?.name ?? 'عميل غير معروف',
-      warehouse_id: item.warehouse_id,
-      status: item.status,
-      total: typeof item.total === 'number' ? item.total : Number(item.total),
-      currency: item.currency,
-      created_at: item.created_at,
-      updated_at: item.updated_at,
-    });
+    return assertStaffOrderSummary({ id: item.id, order_number: Number(item.order_number), customer_id: item.customer_id, customer_name: item.customers?.name ?? 'عميل غير معروف', warehouse_id: item.warehouse_id, status: item.status, total: typeof item.total === 'number' ? item.total : Number(item.total), currency: item.currency, created_at: item.created_at, updated_at: item.updated_at });
   });
 }
 
@@ -68,5 +39,5 @@ export async function transitionOrder(orderId: string, toStatus: OrderStatus): P
   if (typeof toStatus !== 'string' || !ORDER_STATUSES.has(toStatus)) throw new Error('حالة انتقال الطلب غير صالحة.');
   const { data, error } = await requireSupabase().rpc('transition_order', { p_order_id: orderId, p_to_status: toStatus });
   if (error) throw error;
-  return assertStaffOrderSummary(data);
+  return assertStaffOrderSummary(data as unknown);
 }
