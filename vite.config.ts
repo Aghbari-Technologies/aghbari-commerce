@@ -25,6 +25,11 @@ const buildMetadataPlugin = (): Plugin => ({
 
 export default defineConfig({
   plugins: [react(), buildMetadataPlugin()],
+  resolve: {
+    alias: {
+      'read-excel-file/browser': '/src/lib/read-excel-file-browser.ts',
+    },
+  },
   server: { host: true, port: 5173 },
   build: { sourcemap: true },
 });
