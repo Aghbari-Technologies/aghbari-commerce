@@ -26,9 +26,16 @@ The architecture is a living artifact: when evidence exposes a better boundary, 
 
 The repository now contains the executable Arabic RTL commerce application, operational domain services, Supabase migrations/RPCs, PWA/offline primitives, import pipeline, catalog export, order/cart hardening, purchasing/receiving, audit/outbox foundations, and security hardening. The remaining work is evidence-driven runtime, integration, deployment, and release certification; no production certification is claimed yet.
 
+## Enterprise B2B v3
+
+The customer-facing experience is now being driven toward the Enterprise B2B specification: premium Arabic RTL customer portal, fast catalog/search, tiered customer pricing, interactive cart, Excel quick orders, reorder flow, reusable order templates, customer credit/ledger surface, shipment status timeline, and server-persisted dynamic client UI controls.
+
+The complete binding specification is maintained at `docs/ENTERPRISE_B2B_V3_SPEC_AR.md`.
+
 ## Source-of-truth documents
 
 - `docs/MASTER-EXECUTION-INDEX.md` — canonical progress ledger
 - `docs/OWNER-LEVEL-PROTOCOL.md` — execution, evidence, and certification protocol
 - `docs/ARCHITECTURE-BOUNDARIES.md` — operational/analytical and integration boundaries
 - `docs/RELEASE-GATES-V1.md` — release gates and final certification rule
+- `docs/ENTERPRISE_B2B_V3_SPEC_AR.md` — Enterprise B2B customer/admin requirements and architecture
