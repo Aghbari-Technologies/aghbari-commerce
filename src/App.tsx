@@ -11,7 +11,6 @@ import { getCustomerOrders, type CustomerOrderSummary } from './services/custome
 import { getSession, signIn, signOut } from './services/auth';
 import { supabase } from './lib/supabase';
 import AdminPanel from './AdminPanel';
-import ClientControlPanel from './ClientControlPanel';
 import './styles.css';
 import './customer-portal-v3.css';
 
