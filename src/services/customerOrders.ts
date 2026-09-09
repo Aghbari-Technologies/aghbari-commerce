@@ -23,27 +23,16 @@ export function assertCustomerOrderSummary(value: unknown): CustomerOrderSummary
   if (typeof item.total !== 'number' || !Number.isFinite(item.total) || item.total < 0) throw new Error('إجمالي الطلب غير صالح. لم يتم إثبات نجاح العملية.');
   if (typeof item.currency !== 'string' || !/^[A-Z]{3}$/.test(item.currency)) throw new Error('عملة الطلب غير صالحة. لم يتم إثبات نجاح العملية.');
   if (typeof item.created_at !== 'string' || !item.created_at.trim() || Number.isNaN(Date.parse(item.created_at))) throw new Error('تاريخ الطلب غير صالح. لم يتم إثبات نجاح العملية.');
-  return {
-    id: item.id,
-    order_number: item.order_number,
-    status: item.status as OrderStatus,
-    total: item.total,
-    currency: item.currency,
-    created_at: item.created_at
-  };
+  return { id: item.id, order_number: item.order_number, status: item.status as OrderStatus, total: item.total, currency: item.currency, created_at: item.created_at };
 }
 
 export async function getCustomerOrders(limit = 20): Promise<CustomerOrderSummary[]> {
   const safeLimit = Math.min(Math.max(Math.trunc(limit), 1), 50);
-  const { data, error } = await retryRead(() => requireSupabase()
-    .from('orders')
-    .select('id,order_number,status,total,currency,created_at')
-    .order('created_at', { ascending: false })
-    .limit(safeLimit)
-    .then((result) => {
-      if (result.error) throw result.error;
-      return result;
-    }));
+  const { data } = await retryRead(async () => {
+    const result = await requireSupabase().from('orders').select('id,order_number,status,total,currency,created_at').order('created_at', { ascending: false }).limit(safeLimit);
+    if (result.error) throw result.error;
+    return result;
+  });
   return (data ?? []).map((item) => assertCustomerOrderSummary({
     ...item,
     order_number: Number(item.order_number),
