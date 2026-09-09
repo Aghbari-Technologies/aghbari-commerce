@@ -1,7 +1,26 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(12);
+select plan(15);
+
+-- Server-side bucket hardening must match the canonical image pipeline.
+select results_eq(
+  $$select public from storage.buckets where id='product-media'$$,
+  $$values (false)$$,
+  'Product media bucket is private'
+);
+
+select results_eq(
+  $$select file_size_limit from storage.buckets where id='product-media'$$,
+  $$values (5242880::bigint)$$,
+  'Product media bucket enforces the 5 MiB server-side limit'
+);
+
+select results_eq(
+  $$select allowed_mime_types from storage.buckets where id='product-media'$$,
+  $$values (array['image/webp']::text[])$$,
+  'Product media bucket accepts only canonical WebP objects'
+);
 
 -- Isolated identities and tenant data. The test transaction rolls everything back.
 insert into auth.users (id, email)
@@ -27,7 +46,7 @@ values
 insert into public.products (id, organization_id, sku, name, unit, status)
 values
   ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'A-1', 'Product A', 'كرتون', 'active'),
-  ('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbb11', 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', 'B-1', 'Product B', 'كرتون', 'active');
+  ('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb11', 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', 'B-1', 'Product B', 'كرتون', 'active');
 
 -- Seed storage metadata as the database owner; application users are tested below.
 insert into storage.objects (bucket_id, name, owner_id, metadata)
