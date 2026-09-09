@@ -1,6 +1,6 @@
 {
   "buildCommand": "npm run build",
-  "installCommand": "if test -s package-lock.json; then npm ci --no-audit --no-fund; else npm install --package-lock-only --ignore-scripts --no-audit --no-fund && npm ci --no-audit --no-fund; fi",
+  "installCommand": "npm ci --no-audit --no-fund",
   "outputDirectory": "dist",
   "headers": [
     {
