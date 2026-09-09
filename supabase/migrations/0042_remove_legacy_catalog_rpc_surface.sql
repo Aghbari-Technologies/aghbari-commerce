@@ -1,7 +1,9 @@
 do $$
+declare
+  legacy_catalog regprocedure := to_regprocedure('public.get_catalog(text,uuid,integer,integer)');
 begin
-  if to_regprocedure('public.get_catalog(text,uuid,integer,integer)') is not null then
-    execute 'revoke execute on function public.get_catalog(text,uuid,integer,integer) from authenticated, anon, public';
+  if legacy_catalog is not null then
+    execute format('revoke execute on function %s from authenticated, anon, public', legacy_catalog);
   end if;
 end;
 $$;
