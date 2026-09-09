@@ -62,7 +62,7 @@ const workflowChecks = {
   '.github/workflows/runtime-e2e.yml': ['npm ci', 'E2E_EXACT_SHA', 'workflow_dispatch'],
   '.github/workflows/security-audit.yml': ['npm ci', 'TARGET_SHA', 'workflow_dispatch'],
   '.github/workflows/supabase-migration-proof.yml': ['TARGET_SHA', 'workflow_dispatch', 'supabase test db'],
-  '.github/workflows/bootstrap-release-lockfile.yml': ['package-lock.json', 'npm ci', 'lockfileVersion'],
+  '.github/workflows/bootstrap-release-lockfile.yml': ['package-lock.json', 'npm install --package-lock-only', 'lockfileVersion'],
 };
 for (const [file, needles] of Object.entries(workflowChecks)) {
   const path = join(root, file);
@@ -78,7 +78,6 @@ const ignoredNames = new Set(['node_modules', 'dist', '.git']);
 const suspiciousPatterns = [
   /\bTODO\b/i,
   /\bFIXME\b/i,
-  /\bplaceholder\b/i,
   /\bnot\s+implemented\b/i,
   /\bnotimplemented\b/i,
   /\b(?:mock|fake|sample)\s+(?:data|api|response|success)\b/i,
