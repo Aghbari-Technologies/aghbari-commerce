@@ -4,8 +4,8 @@ import react from '@vitejs/plugin-react';
 const buildMetadataPlugin = (): Plugin => ({
   name: 'aghbari-build-metadata',
   generateBundle() {
-    const gitSha = process.env.VERCEL_GIT_COMMIT_SHA || process.env.GITHUB_SHA || process.env.VITE_BUILD_SHA || 'unknown';
-    const version = process.env.npm_package_version || '0.1.0';
+    const gitSha = import.meta.env.VERCEL_GIT_COMMIT_SHA || import.meta.env.GITHUB_SHA || import.meta.env.VITE_BUILD_SHA || 'unknown';
+    const version = import.meta.env.npm_package_version || '0.1.0';
     const builtAt = new Date().toISOString();
     this.emitFile({
       type: 'asset',
