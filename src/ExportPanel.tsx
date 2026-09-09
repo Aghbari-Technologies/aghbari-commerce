@@ -8,7 +8,6 @@ const MAX_PRICE_ROWS = 30000;
 
 function escapeCsv(value: unknown) {
   let text = String(value ?? '');
-  // Prevent spreadsheet formula injection when operational exports are opened in Excel-compatible software.
   if (typeof value === 'string' && /^[=+\-@]/.test(text)) text = `'${text}`;
   return /[",\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
 }
@@ -25,9 +24,11 @@ function downloadCsv(filename: string, headers: string[], rows: Array<Record<str
 }
 
 async function fetchAllProducts() {
+  const client = supabase;
+  if (!client) throw new Error('خدمة البيانات غير متاحة.');
   const rows: Array<{ id: string; sku: string; name: string; unit: string; status: string; created_at: string }> = [];
   for (let from = 0; from < MAX_EXPORT_ROWS; from += PAGE_SIZE) {
-    const { data, error } = await supabase!
+    const { data, error } = await client
       .from('products')
       .select('id,sku,name,unit,status,created_at')
       .order('name')
@@ -49,12 +50,14 @@ export default function ExportPanel({ role }: { role: UserRole }) {
   if (!canExport || !supabase) return null;
 
   async function exportProducts() {
+    const client = supabase;
+    if (!client) return;
     setBusy(true); setError(null); setMessage(null);
     try {
       const now = new Date().toISOString();
       const [products, priceResult] = await Promise.all([
         fetchAllProducts(),
-        supabase.from('product_prices')
+        client.from('product_prices')
           .select('product_id,amount,valid_from,valid_to,price_lists!inner(tier,currency)')
           .lte('valid_from', now)
           .or(`valid_to.is.null,valid_to.gte.${now}`)
