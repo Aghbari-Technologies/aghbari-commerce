@@ -45,7 +45,7 @@ export function assertCreatedOrderReference(value: unknown): CreatedOrderReferen
   if (typeof orderId !== 'string' || !UUID_PATTERN.test(orderId) || !Number.isSafeInteger(orderNumber) || orderNumber < 1) {
     throw new Error('استجابة إنشاء الطلب ناقصة أو غير صالحة. لم يتم إثبات اعتماد الطلب.');
   }
-  return { id: orderId, order_number: orderNumber };
+  return { id: orderId, order_number: orderNumber as number };
 }
 
 export function assertOrderTransitionInput(orderId: unknown, status: unknown): { orderId: string; status: string } {
