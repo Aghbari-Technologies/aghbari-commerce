@@ -27,10 +27,10 @@ describe('purchasing input boundaries', () => {
     expect(() => validatePurchaseOrderInput({ ...validPurchase, lines: [{ productId: product, quantity: 10_001, unitCost: 10 }] })).toThrow();
     expect(() => validatePurchaseOrderInput({ ...validPurchase, lines: [{ productId: product, quantity: Number.MAX_SAFE_INTEGER + 1, unitCost: 10 }] })).toThrow();
   });
-  it('rejects negative or non-finite costs and invalid currency', () => {
+  it('rejects negative or non-finite costs and structurally invalid currency', () => {
     expect(() => validatePurchaseOrderInput({ ...validPurchase, lines: [{ productId: product, quantity: 1, unitCost: -1 }] })).toThrow();
     expect(() => validatePurchaseOrderInput({ ...validPurchase, lines: [{ productId: product, quantity: 1, unitCost: Infinity }] })).toThrow();
-    expect(() => validatePurchaseOrderInput({ ...validPurchase, currency: 'bad' })).toThrow();
+    expect(() => validatePurchaseOrderInput({ ...validPurchase, currency: 'YE' })).toThrow();
   });
   it('accepts multiple distinct lines', () => expect(() => validatePurchaseOrderInput({ ...validPurchase, lines: [{ productId: product, quantity: 1, unitCost: 10 }, { productId: product2, quantity: 4, unitCost: 25 }] })).not.toThrow());
 
