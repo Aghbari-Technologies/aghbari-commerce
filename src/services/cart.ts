@@ -35,12 +35,13 @@ function assertCartItem(value: unknown): CartItem {
     (item.authorized_price !== null && item.authorized_price !== undefined &&
       (typeof item.authorized_price !== 'number' || !Number.isFinite(item.authorized_price) || item.authorized_price < 0))
   ) throw new Error('استجابة السلة تحتوي بيانات غير صالحة.');
+  const validatedQuantity = quantity as number;
   return {
     product_id: item.product_id,
     sku: item.sku,
     name: item.name,
     unit: item.unit,
-    quantity: quantity as number,
+    quantity: validatedQuantity,
     authorized_price: item.authorized_price == null ? null : item.authorized_price,
     currency: item.currency
   };
