@@ -12,9 +12,7 @@ create table if not exists public.customer_price_tiers (
   updated_at timestamptz not null default now(),
   unique (customer_id, product_id, min_quantity)
 );
-
-create index if not exists idx_customer_price_tiers_customer_product
-  on public.customer_price_tiers(customer_id, product_id, min_quantity);
+create index if not exists idx_customer_price_tiers_customer_product on public.customer_price_tiers(customer_id, product_id, min_quantity);
 
 create table if not exists public.order_templates (
   id uuid primary key default gen_random_uuid(),
@@ -25,9 +23,7 @@ create table if not exists public.order_templates (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-
-create index if not exists idx_order_templates_customer_updated
-  on public.order_templates(customer_id, updated_at desc);
+create index if not exists idx_order_templates_customer_updated on public.order_templates(customer_id, updated_at desc);
 
 create table if not exists public.customer_credit_accounts (
   customer_id uuid primary key references public.customers(id) on delete cascade,
@@ -49,50 +45,38 @@ create table if not exists public.customer_ledger_entries (
   status text not null default 'open' check (status in ('open','paid','overdue','pending')),
   created_at timestamptz not null default now()
 );
+create index if not exists idx_customer_ledger_customer_date on public.customer_ledger_entries(customer_id, created_at desc);
 
-create index if not exists idx_customer_ledger_customer_date
-  on public.customer_ledger_entries(customer_id, created_at desc);
+create table if not exists public.client_ui_settings (
+  organization_id uuid primary key references public.organizations(id) on delete cascade,
+  config jsonb not null default '{"showSearch":true,"showCategories":true,"showExcel":true,"showCredit":true,"showTemplates":true,"showInventory":true,"showRetailPrice":false,"showQuickOrder":true}'::jsonb,
+  updated_at timestamptz not null default now()
+);
 
 alter table public.customer_price_tiers enable row level security;
 alter table public.order_templates enable row level security;
 alter table public.customer_credit_accounts enable row level security;
 alter table public.customer_ledger_entries enable row level security;
+alter table public.client_ui_settings enable row level security;
 
--- Customer reads are scoped through the authenticated profile, never by a client-supplied tenant/customer id.
+-- Customer data is scoped through the authenticated profile; clients cannot choose another customer id.
 drop policy if exists customer_price_tiers_select_own on public.customer_price_tiers;
-create policy customer_price_tiers_select_own
-  on public.customer_price_tiers for select to authenticated
-  using (customer_id = (select customer_id from public.profiles where id = auth.uid()));
-
+create policy customer_price_tiers_select_own on public.customer_price_tiers for select to authenticated using (customer_id = (select customer_id from public.profiles where id = auth.uid()));
 drop policy if exists order_templates_select_own on public.order_templates;
-create policy order_templates_select_own
-  on public.order_templates for select to authenticated
-  using (customer_id = (select customer_id from public.profiles where id = auth.uid()));
-
+create policy order_templates_select_own on public.order_templates for select to authenticated using (customer_id = (select customer_id from public.profiles where id = auth.uid()));
 drop policy if exists order_templates_insert_own on public.order_templates;
-create policy order_templates_insert_own
-  on public.order_templates for insert to authenticated
-  with check (customer_id = (select customer_id from public.profiles where id = auth.uid()));
-
+create policy order_templates_insert_own on public.order_templates for insert to authenticated with check (customer_id = (select customer_id from public.profiles where id = auth.uid()));
 drop policy if exists order_templates_update_own on public.order_templates;
-create policy order_templates_update_own
-  on public.order_templates for update to authenticated
-  using (customer_id = (select customer_id from public.profiles where id = auth.uid()))
-  with check (customer_id = (select customer_id from public.profiles where id = auth.uid()));
-
+create policy order_templates_update_own on public.order_templates for update to authenticated using (customer_id = (select customer_id from public.profiles where id = auth.uid())) with check (customer_id = (select customer_id from public.profiles where id = auth.uid()));
 drop policy if exists order_templates_delete_own on public.order_templates;
-create policy order_templates_delete_own
-  on public.order_templates for delete to authenticated
-  using (customer_id = (select customer_id from public.profiles where id = auth.uid()));
-
+create policy order_templates_delete_own on public.order_templates for delete to authenticated using (customer_id = (select customer_id from public.profiles where id = auth.uid()));
 drop policy if exists customer_credit_accounts_select_own on public.customer_credit_accounts;
-create policy customer_credit_accounts_select_own
-  on public.customer_credit_accounts for select to authenticated
-  using (customer_id = (select customer_id from public.profiles where id = auth.uid()));
-
+create policy customer_credit_accounts_select_own on public.customer_credit_accounts for select to authenticated using (customer_id = (select customer_id from public.profiles where id = auth.uid()));
 drop policy if exists customer_ledger_entries_select_own on public.customer_ledger_entries;
-create policy customer_ledger_entries_select_own
-  on public.customer_ledger_entries for select to authenticated
-  using (customer_id = (select customer_id from public.profiles where id = auth.uid()));
+create policy customer_ledger_entries_select_own on public.customer_ledger_entries for select to authenticated using (customer_id = (select customer_id from public.profiles where id = auth.uid()));
+drop policy if exists client_ui_settings_select_staff on public.client_ui_settings;
+create policy client_ui_settings_select_staff on public.client_ui_settings for select to authenticated using (organization_id = (select organization_id from public.profiles where id = auth.uid()) and public.is_staff());
+drop policy if exists client_ui_settings_write_staff on public.client_ui_settings;
+create policy client_ui_settings_write_staff on public.client_ui_settings for all to authenticated using (organization_id = (select organization_id from public.profiles where id = auth.uid()) and public.is_staff()) with check (organization_id = (select organization_id from public.profiles where id = auth.uid()) and public.is_staff());
 
--- Customers never write financial truth directly; finance/ERP synchronization owns these tables.
+-- Financial truth remains server/ERP owned; customers have read-only access.
