@@ -29,6 +29,16 @@ function payloadBytes(payload: unknown): number {
   }
 }
 
+function isSafePayload(type: string, payload: unknown): boolean {
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) return false;
+  const value = payload as Record<string, unknown>;
+  if (typeof value.productId !== 'string' || !UUID_PATTERN.test(value.productId.trim())) return false;
+  if (type === OFFLINE_CART_SET_ITEM) {
+    return Number.isSafeInteger(value.quantity) && (value.quantity as number) > 0;
+  }
+  return type === OFFLINE_CART_REMOVE_ITEM;
+}
+
 function read<T>(): OfflineOperation<T>[] {
   try {
     const parsed: unknown = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]');
@@ -51,6 +61,7 @@ function read<T>(): OfflineOperation<T>[] {
           UUID_PATTERN.test((item as OfflineOperation).userId) &&
           ((item as OfflineOperation).nextAttemptAt === undefined || Number.isFinite(Date.parse((item as OfflineOperation).nextAttemptAt!))) &&
           ((item as OfflineOperation).terminal === undefined || typeof (item as OfflineOperation).terminal === 'boolean') &&
+          isSafePayload((item as OfflineOperation).type, (item as OfflineOperation).payload) &&
           payloadBytes((item as OfflineOperation).payload) <= MAX_OFFLINE_PAYLOAD_BYTES
         )) continue;
         valid.push(item as OfflineOperation<T>);
@@ -81,6 +92,9 @@ export function enqueueOfflineOperation<T>(userId: string, type: string, payload
   if (!normalizedType) throw new Error('نوع العملية مطلوب.');
   if (!OFFLINE_SAFE_OPERATION_TYPES.has(normalizedType)) {
     throw new Error('هذه العملية لا يُسمح بتأجيلها دون اتصال.');
+  }
+  if (!isSafePayload(normalizedType, payload)) {
+    throw new Error('بيانات العملية غير المتصلة غير صالحة.');
   }
   if (payloadBytes(payload) > MAX_OFFLINE_PAYLOAD_BYTES) {
     throw new Error(`حجم بيانات العملية يتجاوز ${MAX_OFFLINE_PAYLOAD_BYTES} بايت.`);
