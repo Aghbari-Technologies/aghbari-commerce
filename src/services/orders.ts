@@ -30,8 +30,8 @@ function assertOrderLines(lines: unknown) {
     if (seen.has(productId)) throw new Error('لا يمكن تكرار المنتج داخل الطلب.');
     seen.add(productId);
     const quantity = candidate.quantity;
-    if (!Number.isSafeInteger(quantity) || (quantity as number) < 1) throw new Error('كمية الطلب يجب أن تكون عددًا صحيحًا موجبًا.');
-    return { productId, quantity: quantity as number };
+    if (typeof quantity !== 'number' || !Number.isSafeInteger(quantity) || quantity < 1) throw new Error('كمية الطلب يجب أن تكون عددًا صحيحًا موجبًا.');
+    return { productId, quantity };
   });
 }
 
@@ -42,10 +42,10 @@ export function assertCreatedOrderReference(value: unknown): CreatedOrderReferen
   const candidate = value as Partial<CreatedOrderReference>;
   const orderId = candidate.id;
   const orderNumber = candidate.order_number;
-  if (typeof orderId !== 'string' || !UUID_PATTERN.test(orderId) || !Number.isSafeInteger(orderNumber) || orderNumber < 1) {
+  if (typeof orderId !== 'string' || !UUID_PATTERN.test(orderId) || typeof orderNumber !== 'number' || !Number.isSafeInteger(orderNumber) || orderNumber < 1) {
     throw new Error('استجابة إنشاء الطلب ناقصة أو غير صالحة. لم يتم إثبات اعتماد الطلب.');
   }
-  return { id: orderId, order_number: orderNumber as number };
+  return { id: orderId, order_number: orderNumber };
 }
 
 export function assertOrderTransitionInput(orderId: unknown, status: unknown): { orderId: string; status: string } {
