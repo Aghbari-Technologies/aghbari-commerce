@@ -16,16 +16,12 @@ function assertUuid(value: unknown, operation: string) {
 function assertIdempotencyKey(value: unknown) {
   if (typeof value !== 'string') throw new Error('مفتاح العملية غير صالح.');
   const normalized = value.trim();
-  if (!normalized || normalized.length > MAX_IDEMPOTENCY_KEY_LENGTH) {
-    throw new Error('مفتاح العملية غير صالح.');
-  }
+  if (!normalized || normalized.length > MAX_IDEMPOTENCY_KEY_LENGTH) throw new Error('مفتاح العملية غير صالح.');
   return normalized;
 }
 
 function assertOrderLines(lines: unknown) {
-  if (!Array.isArray(lines) || lines.length === 0 || lines.length > MAX_ORDER_LINES) {
-    throw new Error('يجب أن يحتوي الطلب على أصناف صالحة.');
-  }
+  if (!Array.isArray(lines) || lines.length === 0 || lines.length > MAX_ORDER_LINES) throw new Error('يجب أن يحتوي الطلب على أصناف صالحة.');
   const seen = new Set<string>();
   return lines.map((line) => {
     if (!line || typeof line !== 'object') throw new Error('بيانات صنف الطلب غير صالحة.');
@@ -33,34 +29,23 @@ function assertOrderLines(lines: unknown) {
     const productId = assertUuid(candidate.productId, 'المنتج');
     if (seen.has(productId)) throw new Error('لا يمكن تكرار المنتج داخل الطلب.');
     seen.add(productId);
-    if (!Number.isSafeInteger(candidate.quantity) || (candidate.quantity as number) < 1) {
-      throw new Error('كمية الطلب يجب أن تكون عددًا صحيحًا موجبًا.');
-    }
-    return { productId, quantity: candidate.quantity as number };
+    const quantity = candidate.quantity;
+    if (!Number.isSafeInteger(quantity) || (quantity as number) < 1) throw new Error('كمية الطلب يجب أن تكون عددًا صحيحًا موجبًا.');
+    return { productId, quantity: quantity as number };
   });
 }
 
-export interface CreatedOrderReference {
-  id: string;
-  order_number: number;
-}
+export interface CreatedOrderReference { id: string; order_number: number; }
 
 export function assertCreatedOrderReference(value: unknown): CreatedOrderReference {
-  if (!value || typeof value !== 'object') {
-    throw new Error('استجابة إنشاء الطلب غير صالحة. لم يتم إثبات اعتماد الطلب.');
-  }
-
+  if (!value || typeof value !== 'object') throw new Error('استجابة إنشاء الطلب غير صالحة. لم يتم إثبات اعتماد الطلب.');
   const candidate = value as Partial<CreatedOrderReference>;
-  if (
-    typeof candidate.id !== 'string' ||
-    !UUID_PATTERN.test(candidate.id) ||
-    !Number.isSafeInteger(candidate.order_number) ||
-    candidate.order_number < 1
-  ) {
+  const orderId = candidate.id;
+  const orderNumber = candidate.order_number;
+  if (typeof orderId !== 'string' || !UUID_PATTERN.test(orderId) || !Number.isSafeInteger(orderNumber) || orderNumber < 1) {
     throw new Error('استجابة إنشاء الطلب ناقصة أو غير صالحة. لم يتم إثبات اعتماد الطلب.');
   }
-
-  return { id: candidate.id, order_number: candidate.order_number };
+  return { id: orderId, order_number: orderNumber };
 }
 
 export function assertOrderTransitionInput(orderId: unknown, status: unknown): { orderId: string; status: string } {
@@ -77,23 +62,14 @@ export async function createOrder(draft: OrderDraft, warehouseId: unknown) {
   const idempotencyKey = assertIdempotencyKey(candidate.idempotencyKey);
   const normalizedWarehouseId = assertUuid(warehouseId, 'المستودع');
   const lines = assertOrderLines(candidate.lines);
-  const client = requireSupabase();
-  const { data, error } = await client.rpc('create_order', {
-    p_idempotency_key: idempotencyKey,
-    p_warehouse_id: normalizedWarehouseId,
-    p_lines: lines
-  });
+  const { data, error } = await requireSupabase().rpc('create_order', { p_idempotency_key: idempotencyKey, p_warehouse_id: normalizedWarehouseId, p_lines: lines });
   if (error) throw error;
-
-  // A successful RPC call with no trustworthy order reference is not a successful checkout.
-  // Fail closed so the UI cannot display a false success message or clear the cart.
   return assertCreatedOrderReference(data?.[0]);
 }
 
 export async function transitionOrder(orderId: string, status: string) {
   const input = assertOrderTransitionInput(orderId, status);
-  const client = requireSupabase();
-  const { data, error } = await client.rpc('transition_order', { p_order_id: input.orderId, p_to_status: input.status });
+  const { data, error } = await requireSupabase().rpc('transition_order', { p_order_id: input.orderId, p_to_status: input.status });
   if (error) throw error;
   return data;
 }
