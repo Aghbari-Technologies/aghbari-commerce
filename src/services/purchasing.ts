@@ -59,7 +59,7 @@ export function validatePurchaseOrderInput(input: PurchaseOrderInput): void {
     if (products.has(productId)) throw new Error('لا يمكن تكرار المنتج في أمر الشراء.');
     products.add(productId);
     requirePositiveQuantity(line.quantity, 'الكمية');
-    if (line.unitCost < 0 || !Number.isFinite(line.unitCost)) throw new Error('تكلفة الوحدة يجب أن تكون رقمًا غير سالب.');
+    requirePositiveNumber(line.unitCost, 'تكلفة الوحدة');
   }
   if (input.currency !== undefined) requireCurrency(input.currency);
   if (input.notes !== undefined && input.notes.length > 2000) throw new Error('ملاحظات أمر الشراء طويلة جدًا.');
