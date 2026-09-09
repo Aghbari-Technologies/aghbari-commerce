@@ -199,6 +199,9 @@ for (const version of [...new Set(duplicateVersions)]) fail(`Duplicate migration
 const migrationText = migrationFiles.map((file) => readFileSync(file, 'utf8')).join('\n');
 if (/\bDROP\s+SCHEMA\s+public\b/i.test(migrationText)) fail('Release migrations must not drop the public schema.');
 if (/\bDROP\s+DATABASE\b/i.test(migrationText)) fail('Release migrations must not contain DROP DATABASE.');
+if (!migrationText.includes("id = 'product-media'")) fail('Product media storage contract is missing the canonical product-media bucket.');
+if (!migrationText.includes('file_size_limit = 5242880')) fail('Product media storage contract must enforce a 5 MiB server-side object limit.');
+if (!migrationText.includes("allowed_mime_types = array['image/webp']::text[]")) fail('Product media storage contract must restrict stored objects to WebP.');
 
 const rpcCalls = new Set();
 for (const file of sourceFiles.filter((path) => /\.(?:ts|tsx|js|mjs)$/.test(path))) {
@@ -227,4 +230,4 @@ console.log(`Checked required files: ${requiredFiles.length + requiredWorkflows.
 console.log(`Checked ${rpcCalls.size} literal frontend RPC contracts against migration history.`);
 console.log(`Checked ${migrationFiles.length} SQL migrations for release topology safety.`);
 console.log('Checked lockfile/package manifest synchronization.');
-console.log('Checked release workflows, executable source, release artifacts, production security headers, PWA, service-worker boundaries, package identity, and credential-safety contracts.');
+console.log('Checked release workflows, executable source, release artifacts, production security headers, PWA, service-worker boundaries, package identity, credential-safety contracts, and product-media storage hardening.');
