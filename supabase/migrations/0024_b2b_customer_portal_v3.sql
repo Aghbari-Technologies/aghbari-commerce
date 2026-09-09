@@ -74,8 +74,8 @@ drop policy if exists customer_credit_accounts_select_own on public.customer_cre
 create policy customer_credit_accounts_select_own on public.customer_credit_accounts for select to authenticated using (customer_id = (select customer_id from public.profiles where id = auth.uid()));
 drop policy if exists customer_ledger_entries_select_own on public.customer_ledger_entries;
 create policy customer_ledger_entries_select_own on public.customer_ledger_entries for select to authenticated using (customer_id = (select customer_id from public.profiles where id = auth.uid()));
-drop policy if exists client_ui_settings_select_staff on public.client_ui_settings;
-create policy client_ui_settings_select_staff on public.client_ui_settings for select to authenticated using (organization_id = (select organization_id from public.profiles where id = auth.uid()) and public.is_staff());
+drop policy if exists client_ui_settings_select_org on public.client_ui_settings;
+create policy client_ui_settings_select_org on public.client_ui_settings for select to authenticated using (organization_id = (select organization_id from public.profiles where id = auth.uid()));
 drop policy if exists client_ui_settings_write_staff on public.client_ui_settings;
 create policy client_ui_settings_write_staff on public.client_ui_settings for all to authenticated using (organization_id = (select organization_id from public.profiles where id = auth.uid()) and public.is_staff()) with check (organization_id = (select organization_id from public.profiles where id = auth.uid()) and public.is_staff());
 
