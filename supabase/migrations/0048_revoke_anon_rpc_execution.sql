@@ -7,7 +7,7 @@ revoke execute on function public.current_customer_id() from anon;
 revoke execute on function public.current_organization_id() from anon;
 revoke execute on function public.current_role() from anon;
 revoke execute on function public.get_cart() from anon;
-revoke execute on function public.get_catalog(text,uuid,integer,integer) from anon;
+-- The legacy get_catalog(text,uuid,integer,integer) RPC was intentionally removed by 0042; its anonymous/public execution was revoked there.
 revoke execute on function public.get_or_create_cart() from anon;
 revoke execute on function public.is_staff() from anon;
 revoke execute on function public.remove_cart_item(uuid) from anon;
