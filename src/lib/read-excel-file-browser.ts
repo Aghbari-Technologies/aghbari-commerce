@@ -1,8 +1,9 @@
-import readSheet from 'read-excel-file/browser';
+import { readSheet } from 'read-excel-file/universal';
 
 /**
  * Compatibility adapter for the customer Quick Order importer.
- * The package exposes the browser worksheet reader as its default export.
- * Keeping it behind this adapter prevents the UI from coupling to the package API.
+ * read-excel-file v9 exposes `readSheet` as a named export; the Vite alias
+ * keeps the existing application imports stable while this adapter provides
+ * the row-array contract expected by the customer portal.
  */
 export default readSheet;
