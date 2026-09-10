@@ -14,10 +14,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "baseUrl": ".",
-    "paths": {
-      "read-excel-file/browser": ["src/lib/read-excel-file-browser.ts"]
-    }
+    "baseUrl": "."
   },
   "include": ["src"]
 }
