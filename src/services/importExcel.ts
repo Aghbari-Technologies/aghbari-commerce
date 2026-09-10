@@ -1,4 +1,4 @@
-import { readSheet } from 'read-excel-file/browser';
+import readSheet from '../lib/read-excel-file-browser';
 import { fingerprintImport, MAX_IMPORT_ROWS, normalizeSku, validateImportRows, type ImportRow } from '../domain/import';
 import { requireSupabase } from '../lib/supabase';
 

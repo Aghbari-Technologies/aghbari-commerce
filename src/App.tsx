@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from 'react';
-import { readSheet } from 'read-excel-file/browser';
+import readXlsxFile from './lib/read-excel-file-browser';
 import type { CartLine, Product, OrderStatus } from './domain/types';
 import { calculateClientPreviewTotal } from './domain/order';
 import { formatMoney } from './domain/pricing';
