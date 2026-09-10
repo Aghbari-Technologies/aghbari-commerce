@@ -1,6 +1,6 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import App from './AppV3';
+import App from './AppV3Fixed';
 import AppErrorBoundary from './AppErrorBoundary';
 import './offline.css';
 import './accessibility.css';
