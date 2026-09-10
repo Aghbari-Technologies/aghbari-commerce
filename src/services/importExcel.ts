@@ -1,4 +1,4 @@
-import { readSheet } from 'read-excel-file/browser';
+import readSheet from 'read-excel-file/browser';
 import { fingerprintImport, MAX_IMPORT_ROWS, normalizeSku, validateImportRows, type ImportRow } from '../domain/import';
 import { requireSupabase } from '../lib/supabase';
 
@@ -55,13 +55,13 @@ export async function parseProductWorkbook(file: File) {
   const rows = await readSheet(file);
   const [header = [], ...data] = rows;
   if (data.length > MAX_DATA_ROWS) throw new Error(`ملف الاستيراد يتجاوز الحد الأقصى وهو ${MAX_DATA_ROWS.toLocaleString('ar-YE')} صف.`);
-  const normalizedHeaders = header.map((cell) => String(cell ?? '').trim());
+  const normalizedHeaders = header.map((cell: unknown) => String(cell ?? '').trim());
   const missing = REQUIRED_HEADERS.filter((name) => !normalizedHeaders.includes(name));
   if (missing.length) throw new Error(`أعمدة ناقصة: ${missing.join(', ')}`);
 
   const index = (name: string) => normalizedHeaders.indexOf(name);
   const toNumber = (value: unknown) => Number(String(value ?? '').replace(/,/g, '').trim());
-  const parsed: ImportRow[] = data.map((row, i) => ({
+  const parsed: ImportRow[] = data.map((row: unknown[], i: number) => ({
     rowNumber: i + 2,
     sku: normalizeSku(row[index('SKU')]),
     name: String(row[index('Name')] ?? '').trim(),
