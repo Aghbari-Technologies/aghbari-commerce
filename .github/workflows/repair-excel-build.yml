@@ -28,6 +28,7 @@ jobs:
               'src/App.tsx': [
                   ("import { readSheet } from 'read-excel-file/browser';", "import readXlsxFile from './lib/read-excel-file-browser';"),
                   ("import readXlsxFile from 'read-excel-file/browser';", "import readXlsxFile from './lib/read-excel-file-browser';"),
+                  ('readSheet(', 'readXlsxFile('),
               ],
               'src/services/importExcel.ts': [
                   ("import { readSheet } from 'read-excel-file/browser';", "import readSheet from '../lib/read-excel-file-browser';"),
@@ -62,5 +63,5 @@ jobs:
           git config user.name 'Report-Engainall'
           git config user.email 'ahadnanmo@gmail.com'
           git add src/App.tsx src/services/importExcel.ts
-          git commit -m 'fix: route browser Excel imports through local compatibility adapter'
+          git commit -m 'fix: align Excel browser imports with compatibility adapter'
           git push origin HEAD:main
