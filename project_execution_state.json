@@ -2,8 +2,8 @@
   "project": "Aghbari Commerce",
   "repository": "Aghbari-Technologies/aghbari-commerce",
   "scope": "Aghbari Commerce only",
-  "current_sha": "d87a3f19c0c11c282f2783916321a7ef5dc303b1",
-  "previous_sha": "a2508208d0c42852d8054920769ed3ebdd5f3291",
+  "current_sha": "811016f4c9f48f411de22dde67f4a2bef723d393",
+  "previous_sha": "1da6b5dc7aa65955dbc01cfa300d66438be28f39",
   "gate": "DAY 2 — PRODUCT GAP CLOSURE",
   "queue": {
     "P0": [
@@ -26,20 +26,20 @@
   "registries": {
     "project_map":"this file + docs/MASTER-EXECUTION-INDEX.md",
     "feature_registry":"queue above; one record per feature",
-    "file_registry":["src/AppV3Fixed.tsx","src/services/orderTemplates.ts","src/services/orderTemplates.test.ts","supabase/migrations/20260911134000_harden_order_template_persistence.sql"],
+    "file_registry":["src/AppV3Fixed.tsx","src/services/orderTemplates.ts","src/services/orderTemplates.test.ts","src/lib/read-excel-file-browser.ts","supabase/migrations/20260911134000_harden_order_template_persistence.sql","package.json","docs/MASTER-EXECUTION-INDEX.md"],
     "database_registry":["order_templates","customer_price_tiers","customer_credit_accounts","customer_ledger_entries","client_ui_settings"],
     "rpc_registry":["get_catalog","create_order","set_cart_item","remove_cart_item","transition_order"],
     "security_registry":["customer-owned order_templates RLS","anon revoked from order_templates","server-authoritative catalog/order commands"],
-    "test_registry":["orderTemplates.test.ts","existing order/import/inventory/security suites"],
+    "test_registry":["src/services/orderTemplates.test.ts","existing order/import/inventory/security suites"],
     "blocker_registry":[{"id":"VERCEL-BUILD-CAPACITY","type":"EXTERNAL","status":"OPEN","workaround":"continue local/DB/test/static/E2E preparation"}],
-    "evidence_registry":["existing exact-SHA DB/security evidence; new code requires fresh exact-head CI/runtime evidence"],
-    "decision_registry":[{"decision":"Order templates are DB-authoritative","reason":"business data must survive reload and logout/login","selected_approach":"existing order_templates table + existing RLS"}]
+    "evidence_registry":["quality run before package fix exposed Vitest collection defect; security and order workflow exact-target runs passed; fresh exact-head quality/migration evidence pending after latest commit"],
+    "decision_registry":[{"decision":"Order templates are DB-authoritative","reason":"business data must survive reload and logout/login","selected_approach":"existing order_templates table + existing RLS"},{"decision":"Vitest scope is src","reason":"Playwright specs under e2e must not be collected by unit test command","selected_approach":"npm test = vitest run --dir src"}]
   },
   "latest_batch": {
-    "completed": ["DB-backed order templates","template deletion","Excel quick-order parse/validation/review/commit path","template input tests","order-template DB hardening"],
+    "completed": ["DB-backed order templates","template deletion","Excel quick-order parse/validation/review/commit path","template input tests","order-template DB hardening","CI unit-test collection boundary"],
     "partial": ["authenticated browser E2E","production runtime certification","outbox external delivery","offline/reconnect runtime proof","performance/load evidence"],
-    "failed": [],
-    "blocked": ["Vercel build capacity only"],
+    "failed": ["quality run on merge target 794c0fd — Vitest collected e2e/invitation-journey.spec.ts; fixed in 1da6b5d"],
+    "blocked": ["Vercel build capacity/rate limit"],
     "repeated_discovery": 0
   },
   "evidence_rule": "No PASS without exact SHA + environment + command/test path + evidence artifact."
