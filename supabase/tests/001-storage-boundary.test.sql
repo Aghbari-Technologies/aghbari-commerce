@@ -46,7 +46,7 @@ values
 insert into public.products (id, organization_id, sku, name, unit, status)
 values
   ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'A-1', 'Product A', 'كرتون', 'active'),
-  ('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb11', 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', 'B-1', 'Product B', 'كرتون', 'active');
+  ('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbb11', 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', 'B-1', 'Product B', 'كرتون', 'active');
 
 -- Seed storage metadata as the database owner; application users are tested below.
 insert into storage.objects (bucket_id, name, owner_id, metadata)
@@ -78,7 +78,7 @@ select lives_ok(
 
 select throws_ok(
   $$insert into storage.objects (bucket_id,name,owner_id,metadata)
-    values ('product-media','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbb11/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa32.webp','11111111-1111-4111-8111-111111111111','{"mimetype":"image/webp","size":2048}'::jsonb)$$,
+    values ('product-media','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/bbbbbbbb-bbbb-4bbb-8aaa-bbbbbbbbbb11/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa32.webp','11111111-1111-4111-8111-111111111111','{"mimetype":"image/webp","size":2048}'::jsonb)$$,
   '42501', null,
   'Tenant A cannot upload media under a Tenant B product'
 );
