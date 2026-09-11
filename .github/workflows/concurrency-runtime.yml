@@ -1,0 +1,59 @@
+name: Runtime Concurrency Proof
+
+on:
+  workflow_dispatch:
+    inputs:
+      exact_sha:
+        description: 'Exact Git commit SHA for concurrency certification'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  concurrency-proof:
+    name: Stock 5 / Customer A 5 / Customer B 5
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      CONCURRENCY_STAFF_EMAIL: ${{ secrets.CONCURRENCY_STAFF_EMAIL }}
+      CONCURRENCY_STAFF_PASSWORD: ${{ secrets.CONCURRENCY_STAFF_PASSWORD }}
+      CONCURRENCY_EMAIL_A: ${{ secrets.CONCURRENCY_EMAIL_A }}
+      CONCURRENCY_PASSWORD_A: ${{ secrets.CONCURRENCY_PASSWORD_A }}
+      CONCURRENCY_EMAIL_B: ${{ secrets.CONCURRENCY_EMAIL_B }}
+      CONCURRENCY_PASSWORD_B: ${{ secrets.CONCURRENCY_PASSWORD_B }}
+      CONCURRENCY_EXACT_SHA: ${{ inputs.exact_sha }}
+    steps:
+      - name: Validate exact SHA
+        run: echo "$CONCURRENCY_EXACT_SHA" | grep -Eq '^[0-9a-f]{40}$'
+      - name: Checkout exact certification SHA
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.exact_sha }}
+          fetch-depth: 1
+      - name: Verify exact certification HEAD
+        shell: bash
+        run: test "$(git rev-parse HEAD)" = "$CONCURRENCY_EXACT_SHA"
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies from lockfile
+        run: npm ci --no-audit --no-fund
+      - name: Require runtime credentials
+        shell: bash
+        run: |
+          test -n "$SUPABASE_URL"
+          test -n "$SUPABASE_ANON_KEY"
+          test -n "$CONCURRENCY_STAFF_EMAIL"
+          test -n "$CONCURRENCY_STAFF_PASSWORD"
+          test -n "$CONCURRENCY_EMAIL_A"
+          test -n "$CONCURRENCY_PASSWORD_A"
+          test -n "$CONCURRENCY_EMAIL_B"
+          test -n "$CONCURRENCY_PASSWORD_B"
+      - name: Execute real concurrency proof
+        run: npm run test:concurrency
