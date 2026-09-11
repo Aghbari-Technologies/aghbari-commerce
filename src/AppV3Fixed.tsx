@@ -21,7 +21,6 @@ type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer' | 'customer
 const STAFF_ROLES = new Set<UserRole>(['owner', 'admin', 'sales', 'warehouse']);
 type PriceTier = { min_quantity: number; unit_price: number; currency: string };
 type Finance = { currency: string; creditLimit: number; outstanding: number; available: number; entries: Array<{ id: string; reference?: string; description: string; debit: number; credit: number; due_date?: string; status: string; created_at: string }> };
-type TemplateLine = { productId: string; sku: string; name: string; unit: string; quantity: number };
 type ClientUiConfig = {
   showSearch:boolean; showCategories:boolean; showExcel:boolean; showCredit:boolean; showTemplates:boolean; showInventory:boolean; showRetailPrice:boolean; showQuickOrder:boolean;
   requireQuantityConfirmation:boolean; showTieredPricing:boolean; showSavingsCalculator:boolean; showImageSearch:boolean; showVoiceSearch:boolean; showPaymentMethods:boolean;
