@@ -28,7 +28,7 @@ declare
   v_available integer;
   v_line_count integer;
   v_existing_count integer;
-  v_requested_key text := pg_catalog.trim(coalesce(p_idempotency_key,''));
+  v_requested_key text := pg_catalog.btrim(coalesce(p_idempotency_key,''));
 begin
   if v_org is null or v_customer is null then raise exception using errcode='42501',message='authenticated customer context required'; end if;
   if pg_catalog.length(v_requested_key)<16 then raise exception using errcode='22023',message='invalid idempotency key'; end if;
@@ -39,7 +39,7 @@ begin
   if v_tier is null then raise exception using errcode='42501',message='active customer required'; end if;
   perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(v_org::text||':'||v_requested_key,0));
   for v_line in select value from pg_catalog.jsonb_array_elements(p_lines) loop
-    if nullif(pg_catalog.trim(v_line->>'product_id'),'') is null then raise exception using errcode='22023',message='product_id required'; end if;
+    if pg_catalog.btrim(v_line->>'product_id') is null or pg_catalog.btrim(v_line->>'product_id')='' then raise exception using errcode='22023',message='product_id required'; end if;
     begin v_product:=(v_line->>'product_id')::uuid; exception when invalid_text_representation then raise exception using errcode='22023',message='invalid product_id'; end;
     if v_line->>'quantity' is null or v_line->>'quantity' !~ '^[0-9]+$' then raise exception using errcode='22023',message='invalid quantity'; end if;
     begin v_qty:=(v_line->>'quantity')::integer; exception when numeric_value_out_of_range then raise exception using errcode='22023',message='invalid quantity'; end;
