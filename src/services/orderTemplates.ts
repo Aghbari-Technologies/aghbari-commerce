@@ -74,6 +74,13 @@ export async function createOrderTemplate(input: { name: string; branchLabel?: s
   return mapTemplate(data as DbTemplate);
 }
 
+export async function applyOrderTemplate(id: string): Promise<void> {
+  const client = requireSupabase();
+  if (!id) throw new Error('معرف المسحة غير صالح.');
+  const { error } = await client.rpc('apply_order_template', { p_template_id: id });
+  if (error) throw error;
+}
+
 export async function deleteOrderTemplate(id: string): Promise<void> {
   const client = requireSupabase();
   if (!id) throw new Error('معرف المسحة غير صالح.');
