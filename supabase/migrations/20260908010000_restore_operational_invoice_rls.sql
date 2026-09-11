@@ -1,5 +1,7 @@
 -- Restore the intended tenant/customer/staff read boundary for operational invoices.
 -- These tables are already RLS-enabled; the live database drifted and lost both policies.
+-- Reconciliation is intentionally idempotent for a clean migration replay.
+drop policy if exists operational_invoices_read on public.operational_invoices;
 create policy operational_invoices_read
   on public.operational_invoices
   for select
@@ -9,6 +11,7 @@ create policy operational_invoices_read
     and (customer_id = public.current_customer_id() or public.is_staff())
   );
 
+drop policy if exists operational_invoice_items_read on public.operational_invoice_items;
 create policy operational_invoice_items_read
   on public.operational_invoice_items
   for select
