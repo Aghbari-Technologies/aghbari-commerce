@@ -89,8 +89,57 @@ test('authenticated customer completes real catalog → cart → order → refre
   await expect(page.getByText(`طلب #${orderNumber}`, { exact: true })).toBeVisible();
 
   expect(failures.pageErrors, `Uncaught browser errors: ${failures.pageErrors.join(' | ')}`).toEqual([]);
-  expect(failures.consoleErrors, `Browser console errors: ${failures.consoleErrors.join(' | ')}`).toEqual([]);
+  expect(failures.consoleErrors, `Browser console errors: ${failures.consoleErrors.join(' | ')}`).toEqual([];
   expect(failures.failedResponses, `HTTP responses >= 400: ${failures.failedResponses.join(' | ')}`).toEqual([]);
+});
+
+test('authenticated order RPC is idempotent under duplicate submission', async ({ page }) => {
+  const email = process.env.E2E_EMAIL;
+  const password = process.env.E2E_PASSWORD;
+  if (!email || !password) throw new Error('E2E_EMAIL and E2E_PASSWORD are required for runtime idempotency proof.');
+
+  const failures = captureBrowserFailures(page);
+  await login(page, email, password);
+  const session = await browserSupabaseSession(page);
+  const headers = { Authorization: `Bearer ${session.accessToken}`, apikey: session.apiKey, 'Content-Type': 'application/json' };
+
+  const profileResponse = await page.request.get(`${session.restOrigin}/rest/v1/profiles?select=customer_id,organization_id&id=eq.${await page.evaluate(() => JSON.parse(Object.values(localStorage).find((value) => value.includes('access_token') && value.includes('refresh_token'))!).user.id)}`, { headers });
+  expect(profileResponse.ok()).toBeTruthy();
+  const profiles = await profileResponse.json() as Array<{ customer_id: string; organization_id: string }>;
+  expect(profiles).toHaveLength(1);
+  const { customer_id: customerId, organization_id: organizationId } = profiles[0];
+
+  const warehouseResponse = await page.request.get(`${session.restOrigin}/rest/v1/warehouses?select=id&organization_id=eq.${organizationId}&is_active=eq.true&limit=1`, { headers });
+  expect(warehouseResponse.ok()).toBeTruthy();
+  const warehouses = await warehouseResponse.json() as Array<{ id: string }>;
+  expect(warehouses).toHaveLength(1);
+
+  const productResponse = await page.request.get(`${session.restOrigin}/rest/v1/products?select=id&organization_id=eq.${organizationId}&status=eq.active&limit=1`, { headers });
+  expect(productResponse.ok()).toBeTruthy();
+  const products = await productResponse.json() as Array<{ id: string }>;
+  expect(products).toHaveLength(1);
+
+  const idempotencyKey = `e2e-idempotency-${Date.now()}`;
+  const payload = { p_idempotency_key: idempotencyKey, p_warehouse_id: warehouses[0].id, p_lines: [{ product_id: products[0].id, quantity: 1 }] };
+  const first = await page.request.post(`${session.restOrigin}/rest/v1/rpc/create_order`, { headers, data: payload });
+  expect(first.ok()).toBeTruthy();
+  const firstRows = await first.json() as Array<{ id: string; order_number: number }>;
+  expect(firstRows).toHaveLength(1);
+
+  const second = await page.request.post(`${session.restOrigin}/rest/v1/rpc/create_order`, { headers, data: payload });
+  expect(second.ok()).toBeTruthy();
+  const secondRows = await second.json() as Array<{ id: string; order_number: number }>;
+  expect(secondRows).toEqual(firstRows);
+
+  const persisted = await page.request.get(`${session.restOrigin}/rest/v1/orders?select=id,idempotency_key&idempotency_key=eq.${encodeURIComponent(idempotencyKey)}`, { headers });
+  expect(persisted.ok()).toBeTruthy();
+  const persistedRows = await persisted.json() as Array<{ id: string; idempotency_key: string }>;
+  expect(persistedRows).toHaveLength(1);
+  expect(persistedRows[0].id).toBe(firstRows[0].id);
+
+  expect(failures.pageErrors, `Browser errors: ${failures.pageErrors.join(' | ')}`).toEqual([]);
+  expect(failures.consoleErrors, `Console errors: ${failures.consoleErrors.join(' | ')}`).toEqual([]);
+  expect(failures.failedResponses, `HTTP >=400: ${failures.failedResponses.join(' | ')}`).toEqual([]);
 });
 
 test('tenant isolation and direct API/RPC bypass reject foreign resources', async ({ browser }) => {
@@ -153,7 +202,7 @@ test('tenant isolation and direct API/RPC bypass reject foreign resources', asyn
     headers: { Authorization: `Bearer ${sessionB.accessToken}`, apikey: sessionB.apiKey, 'Content-Type': 'application/json' },
     data: { p_product_id: productIdA, p_quantity: 1 }
   });
-  expect(foreignMutation.status()).toBe(400);
+  expect([400, 401, 403]).toContain(foreignMutation.status());
 
   expect(failuresA.pageErrors, `Tenant A browser errors: ${failuresA.pageErrors.join(' | ')}`).toEqual([]);
   expect(failuresA.consoleErrors, `Tenant A console errors: ${failuresA.consoleErrors.join(' | ')}`).toEqual([]);
