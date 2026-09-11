@@ -120,7 +120,7 @@ BEGIN
           AND i.quantity=(x->>'quantity')::integer
       )
     ) THEN RAISE EXCEPTION USING errcode='40001',message='idempotency key payload conflict'; END IF;
-    SELECT coalesce(sum(quantity),0) INTO v_total FROM public.inventory_transfer_items WHERE organization_id=v_org AND transfer_id=v_existing.id;
+    SELECT coalesce(sum(ti.quantity),0) INTO v_total FROM public.inventory_transfer_items AS ti WHERE ti.organization_id=v_org AND ti.transfer_id=v_existing.id;
     RETURN QUERY SELECT v_existing.id,v_existing.status,v_total; RETURN;
   END IF;
 
