@@ -6,7 +6,7 @@
 - Product: **بوابة الأغبري للمواد الغذائية**
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Branch: `execution/day2-product-gap-closure`
-- Current exact implementation HEAD after this execution boundary: **`c6aed5ad07f4f398e6daae89abe878e390d8dbec`**.
+- Current exact implementation HEAD after this execution boundary: **`591c105e31c6cc9421a7a516ac2cedeb64159c48`**.
 - Scope: **Aghbari Commerce only.** `Report-Advisor` and every other project are out of scope.
 - Benchmark reference: `https://alamri.app/` only; Aghbari identity remains independent.
 
@@ -15,45 +15,49 @@
 |---|---|
 | BUILT | **ADVANCED IMPLEMENTED** — commerce shell, catalog/pricing, cart/orders, staff operations, customers, inventory, purchasing/receiving, finance, import/export, outbox, PWA/offline and security hardening are present. |
 | INTEGRATED | **IMPLEMENTATION PASS** — customer order templates are database-authoritative, and Excel Quick Order confirmation now routes through an atomic server-authoritative cart mutation with idempotency and audit. |
-| VERIFIED | **PARTIAL** — direct Supabase runtime evidence is fresh for the changed database/RPC paths; exact-head GitHub CI for `c6aed5ad...` is executing. |
+| VERIFIED | **PARTIAL** — direct Supabase runtime evidence is fresh for the changed database/RPC paths; exact-head GitHub CI for the final checkpoint is required. |
 | RUNTIME PROVEN | **PARTIAL** — authenticated browser/runtime business-flow proof remains open. |
 | PRODUCTION CERTIFIED | **NOT PROVEN** — final release gates remain open. |
 
 ## Latest execution boundary — 2026-09-11
-- Order Templates database boundary verified directly: RLS enabled, four operation-specific authenticated policies, anonymous table DML privilege removed, own-customer access allowed, cross-tenant and cross-customer reads/deletes denied, foreign-customer insert denied, and `lines` 1/100 accepted while 0/101 are rejected.
-- Added adversarial pgTAP coverage for the Order Templates security and payload boundary; the test is registered under `supabase/tests/015-order-templates-adversarial-boundary.test.sql`.
-- Added `public.apply_quick_order(text,uuid,jsonb)`: authenticated-only, customer/tenant/warehouse/product/authorized-price/inventory validation, duplicate-line rejection, atomic cart merge, idempotency, and audit event creation.
-- Direct Supabase proof exercised the new quick-order RPC: commit succeeded, identical retry returned the same cart, changed payload rejected with `40001`, duplicate rejected with `22023`, insufficient stock rejected with `P0001`, anonymous execution denied with `42501`, audit row and completed idempotency row observed, and cart persistence observed. The transaction was rolled back after evidence capture.
-- Wired Excel confirmation in `src/AppV3Fixed.tsx` to the new server-authoritative RPC through `src/services/quickOrder.ts`; browser parsing remains review-only until explicit confirmation.
-- Expanded customer template E2E to cover create → reload → logout/login → use → cart observation → delete. Runtime execution is still dependent on configured authenticated E2E credentials and environment.
-- Exact-head CI was allowed to continue rather than treating queued/blocked infrastructure as a product failure.
+- Order Templates database boundary was executed and verified directly against the live Supabase project: RLS enabled; four operation-specific authenticated policies; anonymous DML privilege removed; own-customer read/create works; cross-tenant and cross-customer reads/deletes are denied; foreign-customer insert is denied; line-count boundaries 1 and 100 are accepted while 0 and 101 are rejected.
+- Test-the-Test was executed: a deliberately permissive SELECT policy was added only inside a transaction and rolled back; the cross-tenant query then returned 1 row instead of the expected 0, proving the security test would detect a broken isolation policy.
+- Added `supabase/tests/015-order-templates-adversarial-boundary.test.sql` to preserve the adversarial boundary as executable pgTAP evidence.
+- Added `public.apply_quick_order(text,uuid,jsonb)` as the server-authoritative Excel/Quick Order mutation. It validates authenticated customer context, tenant, warehouse, active product, authorized price, quantity, duplicate lines and inventory; performs atomic cart merge; records idempotency; and writes an audit event.
+- Direct Supabase proof of `apply_quick_order` succeeded: commit, identical retry, audit row, completed idempotency record and cart persistence; changed idempotency payload, duplicate product, insufficient stock and anonymous execution were rejected with the expected server errors. The proof transaction was rolled back after capture.
+- Added `supabase/tests/016-quick-order-server-boundary.test.sql` for authenticated/anonymous execute grants, successful commit, idempotent retry, payload conflict, duplicate line, insufficient stock and foreign-warehouse denial.
+- Wired `src/AppV3Fixed.tsx` to the new RPC through `src/services/quickOrder.ts`; Excel upload remains a review step, and final cart mutation is now server-authoritative rather than a browser loop of cart writes.
+- Expanded customer template E2E to cover create → reload → logout/login → use → cart observation → delete. Runtime execution remains gated on real configured E2E credentials/environment.
+- CI continues to be used as evidence generation; no old PASS is transferred to the changed SHA.
 
 ## Exact-head evidence
-- Database/RPC evidence for the new quick-order server path was executed against Supabase project `mrcyqezbhpncuvaehwgf` after the migration was applied; the corresponding implementation checkpoint before the registry-only commit was `5cd4eb6...`.
-- `public.order_templates` remote migration inventory contains `20260911104556 / harden_order_template_persistence`; `pg_constraint` confirms the array and 1–100 line constraints.
-- Previous application-quality attempt on `04d677...`: Typecheck PASS and Unit/Integration PASS; Lint FAILED. Previous migration-proof attempt on `04d677...` failed at local Supabase startup before pgTAP execution. These are retained as failure evidence, not converted to PASS.
-- Current exact-head `c6aed5ad...` GitHub Actions are required before code-level VERIFIED status can be upgraded.
-- Vercel remains externally blocked/unevaluated in this batch; no Production PASS is inferred.
+- `public.apply_quick_order(text,uuid,jsonb)` is confirmed as SECURITY DEFINER with `search_path=''`; `anon` EXECUTE=false and `authenticated` EXECUTE=true.
+- Remote Supabase migration inventory contains `20260911104556 / harden_order_template_persistence` and `20260911105816 / atomic_quick_order_cart_merge`.
+- `order_templates` constraints verified from `pg_constraint`: JSONB must be an array and array length must be 1–100.
+- `create_order` DB proof remains valid for its exact tested implementation: server stored `unit_price=1000.00` and `total=8000.00` for quantity 8 despite client-supplied price/total fields; stock moved from 99 to 91 inside the proof transaction; identical idempotent replay returned the same order; changed payload rejected `40001`; invalid product, duplicate, zero, negative and insufficient-stock cases rejected.
+- Previous application-quality `04d677...` failure was lint-only after Typecheck and Unit/Integration passed. Previous migration-proof failure occurred at local Supabase startup before pgTAP execution. Current final checkpoint must generate fresh exact-head CI evidence.
+- Production is not certified: deployed SHA was not reverified in this batch, and authenticated browser runtime credentials/environment are not fabricated.
 
 ## Remaining closure work — priority order
 ### P0 — Release blockers
-1. Complete exact-current-head CI evidence for typecheck, lint, unit/domain tests, build and release audit.
-2. Execute clean-source migration reset + full pgTAP on the exact certification HEAD, including Order Templates and Quick Order.
-3. Execute authenticated browser E2E including tenant isolation, template persistence/use/delete, Excel upload/commit, checkout and created-order persistence.
-4. Execute deployed production smoke against the exact deployed SHA, then authenticated runtime E2E with console/network/database evidence.
-5. Resolve Auth leaked-password-protection configuration warning.
+1. Fresh exact-head CI: typecheck, lint, unit/integration, build and release audit.
+2. Clean-source migration reset + full pgTAP on the exact certification HEAD, including tests 014/015/016.
+3. Authenticated browser E2E: login, catalog/search/product, cart, templates persistence/use/delete, Excel upload/parse/review/confirm/reload, checkout, real order and merchant-side lifecycle.
+4. Authenticated cross-tenant browser proof and adversarial UI-bypass/API/RPC proof.
+5. Deploy exact certified SHA, then production smoke + console + network + DB/runtime evidence.
+6. Resolve leaked-password-protection Auth configuration before final certification.
 
 ### P1 — Reliability proof
-6. Runtime-prove offline refresh/cache/reconnect/replay/conflict/recovery and tenant scoping.
-7. Runtime-prove outbox claim/delivery/retry/backoff/terminal failure and consumer idempotency.
-8. Runtime-prove import/export malformed-input, quarantine, atomic commit, authorization and cross-tenant cases.
-9. Re-run all pgTAP suites on clean/reset/repeat paths.
-10. Complete concurrency evidence with real concurrent sessions where the environment permits it; the order/stock SQL already locks inventory rows and checks the authoritative balance, but concurrency is not certified from a single SQL session.
+7. True multi-session concurrency proof for stock/order operations; current `create_order` and quick-order paths lock authoritative inventory rows, but a single SQL session is not concurrency certification.
+8. Offline refresh/cache/reconnect/replay/conflict/recovery runtime proof.
+9. Outbox claim/delivery/retry/backoff/terminal-failure and consumer idempotency runtime proof.
+10. Import/export malformed-input, quarantine, atomic commit, authorization and cross-tenant runtime proof.
+11. Full pgTAP repeat/reset/replay suite.
 
 ### P2 — Final hardening
-11. Complete query-plan and representative-load review.
-12. Complete observability, audit, backup/recovery and rollback evidence.
-13. Release candidate → exact-SHA smoke → final regression → freeze → production certification.
+12. Query-plan and representative-load review.
+13. Observability, audit, backup/recovery and rollback evidence.
+14. Final gap scan → exact-SHA regression → release freeze → production certification.
 
 ## No-false-closure
 A migration file is not migration execution evidence. A UI restriction is not authorization evidence. An object-storage policy is not a runtime upload proof. A queued outbox event is not successful delivery evidence. A green run on an earlier SHA is not exact-current-HEAD evidence. A documentation PASS is not a runtime PASS. Test credentials must never be fabricated or committed.
