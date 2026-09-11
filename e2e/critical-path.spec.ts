@@ -33,8 +33,9 @@ async function browserSupabaseSession(page: Page) {
     const entries = Object.values(localStorage);
     const authEntry = entries.find((value) => value.includes('access_token') && value.includes('refresh_token'));
     if (!authEntry) throw new Error('Supabase browser session token was not found');
-    const parsed = JSON.parse(authEntry) as { access_token?: string };
+    const parsed = JSON.parse(authEntry) as { access_token?: string; user?: { id?: string } };
     if (!parsed.access_token) throw new Error('Supabase access token was not found');
+    if (!parsed.user?.id) throw new Error('Supabase browser user id was not found');
     const restRequest = performance.getEntriesByType('resource').find((entry) => entry.name.includes('/rest/v1/'))?.name;
     if (!restRequest) throw new Error('Supabase REST origin was not observed in browser runtime');
 
@@ -50,7 +51,7 @@ async function browserSupabaseSession(page: Page) {
       }
     }
     if (!apiKey) throw new Error('Supabase publishable API key was not found in the browser bundle');
-    return { accessToken: parsed.access_token, apiKey, restOrigin: new URL(restRequest).origin };
+    return { accessToken: parsed.access_token, userId: parsed.user.id, apiKey, restOrigin: new URL(restRequest).origin };
   });
 }
 
@@ -89,7 +90,7 @@ test('authenticated customer completes real catalog → cart → order → refre
   await expect(page.getByText(`طلب #${orderNumber}`, { exact: true })).toBeVisible();
 
   expect(failures.pageErrors, `Uncaught browser errors: ${failures.pageErrors.join(' | ')}`).toEqual([]);
-  expect(failures.consoleErrors, `Browser console errors: ${failures.consoleErrors.join(' | ')}`).toEqual([];
+  expect(failures.consoleErrors, `Browser console errors: ${failures.consoleErrors.join(' | ')}`).toEqual([]);
   expect(failures.failedResponses, `HTTP responses >= 400: ${failures.failedResponses.join(' | ')}`).toEqual([]);
 });
 
@@ -103,11 +104,12 @@ test('authenticated order RPC is idempotent under duplicate submission', async (
   const session = await browserSupabaseSession(page);
   const headers = { Authorization: `Bearer ${session.accessToken}`, apikey: session.apiKey, 'Content-Type': 'application/json' };
 
-  const profileResponse = await page.request.get(`${session.restOrigin}/rest/v1/profiles?select=customer_id,organization_id&id=eq.${await page.evaluate(() => JSON.parse(Object.values(localStorage).find((value) => value.includes('access_token') && value.includes('refresh_token'))!).user.id)}`, { headers });
+  const profileResponse = await page.request.get(`${session.restOrigin}/rest/v1/profiles?select=customer_id,organization_id&id=eq.${session.userId}`, { headers });
   expect(profileResponse.ok()).toBeTruthy();
   const profiles = await profileResponse.json() as Array<{ customer_id: string; organization_id: string }>;
   expect(profiles).toHaveLength(1);
   const { customer_id: customerId, organization_id: organizationId } = profiles[0];
+  expect(customerId).toMatch(/^[0-9a-f-]{36}$/i);
 
   const warehouseResponse = await page.request.get(`${session.restOrigin}/rest/v1/warehouses?select=id&organization_id=eq.${organizationId}&is_active=eq.true&limit=1`, { headers });
   expect(warehouseResponse.ok()).toBeTruthy();
