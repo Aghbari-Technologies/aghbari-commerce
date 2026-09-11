@@ -1,0 +1,46 @@
+{
+  "project": "Aghbari Commerce",
+  "repository": "Aghbari-Technologies/aghbari-commerce",
+  "scope": "Aghbari Commerce only",
+  "current_sha": "d87a3f19c0c11c282f2783916321a7ef5dc303b1",
+  "previous_sha": "a2508208d0c42852d8054920769ed3ebdd5f3291",
+  "gate": "DAY 2 — PRODUCT GAP CLOSURE",
+  "queue": {
+    "P0": [
+      {"id":"P0-AUTH","feature":"Authentication","status":"VERIFIED","next_action":"authenticated browser evidence"},
+      {"id":"P0-CATALOG","feature":"Catalog","status":"IMPLEMENTED","next_action":"browser E2E + load proof"},
+      {"id":"P0-CART","feature":"Cart / Checkout","status":"IMPLEMENTED","next_action":"browser E2E + adversarial replay"},
+      {"id":"P0-ORDER","feature":"Order lifecycle","status":"IMPLEMENTED","next_action":"runtime state-machine proof"},
+      {"id":"P0-INVENTORY","feature":"Inventory integrity","status":"IMPLEMENTED","next_action":"runtime concurrency proof"},
+      {"id":"P0-TENANT","feature":"Tenant isolation","status":"VERIFIED_DB","next_action":"authenticated cross-tenant browser proof"}
+    ],
+    "P1": [
+      {"id":"P1-TEMPLATES","feature":"Order Templates","status":"IMPLEMENTED","next_action":"CI + authenticated reload/logout/login proof"},
+      {"id":"P1-EXCEL-QUICK","feature":"Excel Quick Order","status":"IMPLEMENTED","next_action":"CI + malformed/duplicate/out-of-stock browser proof"},
+      {"id":"P1-FINANCE","feature":"Invoices / Account","status":"IMPLEMENTED","next_action":"runtime proof"},
+      {"id":"P1-IMPORT","feature":"Product Import","status":"IMPLEMENTED","next_action":"clean migration + runtime proof"},
+      {"id":"P1-ADMIN","feature":"Admin operations","status":"IMPLEMENTED","next_action":"role-matrix runtime proof"},
+      {"id":"P1-RBAC","feature":"Roles / Permissions","status":"IMPLEMENTED","next_action":"adversarial API/RPC proof"}
+    ]
+  },
+  "registries": {
+    "project_map":"this file + docs/MASTER-EXECUTION-INDEX.md",
+    "feature_registry":"queue above; one record per feature",
+    "file_registry":["src/AppV3Fixed.tsx","src/services/orderTemplates.ts","src/services/orderTemplates.test.ts","supabase/migrations/20260911134000_harden_order_template_persistence.sql"],
+    "database_registry":["order_templates","customer_price_tiers","customer_credit_accounts","customer_ledger_entries","client_ui_settings"],
+    "rpc_registry":["get_catalog","create_order","set_cart_item","remove_cart_item","transition_order"],
+    "security_registry":["customer-owned order_templates RLS","anon revoked from order_templates","server-authoritative catalog/order commands"],
+    "test_registry":["orderTemplates.test.ts","existing order/import/inventory/security suites"],
+    "blocker_registry":[{"id":"VERCEL-BUILD-CAPACITY","type":"EXTERNAL","status":"OPEN","workaround":"continue local/DB/test/static/E2E preparation"}],
+    "evidence_registry":["existing exact-SHA DB/security evidence; new code requires fresh exact-head CI/runtime evidence"],
+    "decision_registry":[{"decision":"Order templates are DB-authoritative","reason":"business data must survive reload and logout/login","selected_approach":"existing order_templates table + existing RLS"}]
+  },
+  "latest_batch": {
+    "completed": ["DB-backed order templates","template deletion","Excel quick-order parse/validation/review/commit path","template input tests","order-template DB hardening"],
+    "partial": ["authenticated browser E2E","production runtime certification","outbox external delivery","offline/reconnect runtime proof","performance/load evidence"],
+    "failed": [],
+    "blocked": ["Vercel build capacity only"],
+    "repeated_discovery": 0
+  },
+  "evidence_rule": "No PASS without exact SHA + environment + command/test path + evidence artifact."
+}
