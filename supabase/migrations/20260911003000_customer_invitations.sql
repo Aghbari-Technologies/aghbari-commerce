@@ -2,8 +2,8 @@
 -- Tokens are never stored in plaintext; only SHA-256 digests are persisted.
 create table public.customer_invitations (
   id uuid primary key default gen_random_uuid(),
-  organization_id uuid not null references public.organizations(id) on delete cascade,
-  customer_id uuid not null references public.customers(id) on delete cascade,
+  organization_id uuid not null,
+  customer_id uuid not null,
   recipient_email text not null check (length(trim(recipient_email)) between 3 and 320),
   token_hash text not null unique check (token_hash ~ '^[0-9a-f]{64}$'),
   expires_at timestamptz not null,
@@ -11,8 +11,14 @@ create table public.customer_invitations (
   revoked_at timestamptz,
   created_by uuid not null references auth.users(id) on delete restrict,
   created_at timestamptz not null default now(),
+  dispatch_status text not null default 'pending' check (dispatch_status in ('pending','sent','failed')),
+  dispatched_at timestamptz,
+  dispatch_provider text,
+  dispatch_error text,
+  constraint customer_invitation_customer_fk foreign key (organization_id, customer_id) references public.customers(organization_id, id) on delete cascade,
   constraint customer_invitation_expiry_ck check (expires_at > created_at),
-  constraint customer_invitation_terminal_ck check (accepted_at is null or revoked_at is null)
+  constraint customer_invitation_terminal_ck check (accepted_at is null or revoked_at is null),
+  constraint customer_invitation_dispatch_ck check ((dispatch_status = 'sent' and dispatched_at is not null and dispatch_error is null) or (dispatch_status = 'failed' and dispatch_error is not null) or (dispatch_status = 'pending'))
 );
 create index customer_invitations_customer_active_idx on public.customer_invitations(organization_id, customer_id, created_at desc) where accepted_at is null and revoked_at is null;
 create index customer_invitations_expiry_idx on public.customer_invitations(expires_at) where accepted_at is null and revoked_at is null;
@@ -24,13 +30,7 @@ create or replace function public.create_customer_invitation(p_customer_id uuid,
 returns table(invitation_id uuid, recipient_email text, expires_at timestamptz, token text)
 language plpgsql security definer set search_path=public as $$
 declare
-  v_org uuid := public.current_organization_id();
-  v_role public.user_role := public.current_role();
-  v_email text := lower(trim(p_email));
-  v_token text := encode(gen_random_bytes(32), 'hex');
-  v_hash text;
-  v_id uuid;
-  v_expires timestamptz := now() + interval '48 hours';
+  v_org uuid := public.current_organization_id(); v_role public.user_role := public.current_role(); v_email text := lower(trim(p_email)); v_token text := encode(gen_random_bytes(32), 'hex'); v_hash text; v_id uuid; v_expires timestamptz := now() + interval '48 hours';
 begin
   if v_org is null or v_role not in ('owner','admin','sales') then raise exception using errcode='42501', message='customer invitation access required'; end if;
   if p_customer_id is null or not exists (select 1 from public.customers c where c.id=p_customer_id and c.organization_id=v_org and c.is_active=true) then raise exception using errcode='P0002', message='active customer not found'; end if;
@@ -79,4 +79,4 @@ revoke all on function public.consume_customer_invitation(text,uuid) from public
 grant execute on function public.create_customer_invitation(uuid,text) to authenticated;
 grant execute on function public.get_customer_invitation_for_acceptance(text) to anon, authenticated;
 grant execute on function public.consume_customer_invitation(text,uuid) to service_role;
-comment on table public.customer_invitations is 'B2B invitations with tenant binding, recipient binding, hashed one-time tokens and expiry.';
+comment on table public.customer_invitations is 'B2B invitations with tenant binding, recipient binding, hashed one-time tokens, expiry, and dispatch state.';
