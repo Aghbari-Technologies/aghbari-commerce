@@ -1,9 +1,9 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
 type InvitationContext = { invitation_id: string; organization_id: string; customer_id: string; recipient_email: string; expires_at: string };
-
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+const anonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
 const siteUrl = (Deno.env.get('SITE_URL') ?? supabaseUrl).replace(/\/$/, '');
 const resendApiKey = Deno.env.get('RESEND_API_KEY');
 const resendFrom = Deno.env.get('RESEND_FROM');
@@ -12,32 +12,24 @@ const admin = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'Access-Control-Allow-Origin': '*' } });
 }
-
-function bearer(request: Request) {
-  const value = request.headers.get('authorization') ?? '';
-  return value.startsWith('Bearer ') ? value.slice(7).trim() : null;
-}
+function bearer(request: Request) { const value = request.headers.get('authorization') ?? ''; return value.startsWith('Bearer ') ? value.slice(7).trim() : null; }
 
 async function requireStaff(request: Request) {
   const token = bearer(request);
   if (!token) throw new Error('authentication required');
-  const client = createClient(supabaseUrl, Deno.env.get('SUPABASE_ANON_KEY') ?? '', { global: { headers: { Authorization: `Bearer ${token}` } }, auth: { persistSession: false, autoRefreshToken: false } });
+  const client = createClient(supabaseUrl, anonKey, { global: { headers: { Authorization: `Bearer ${token}` } }, auth: { persistSession: false, autoRefreshToken: false } });
   const { data: { user }, error } = await client.auth.getUser(token);
   if (error || !user) throw new Error('authentication required');
   const { data: profile, error: profileError } = await admin.from('profiles').select('organization_id,role').eq('id', user.id).single();
   if (profileError || !profile || !['owner', 'admin', 'sales'].includes(String(profile.role))) throw new Error('customer invitation access required');
-  return { user, profile };
+  return { user, profile, client };
 }
 
 async function sendInvitationEmail(email: string, invitationUrl: string, customerId: string) {
   if (!resendApiKey || !resendFrom) return { dispatched: false, reason: 'RESEND_NOT_CONFIGURED' };
-  const response = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${resendApiKey}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ from: resendFrom, to: [email], subject: 'دعوة الدخول إلى بوابة الأغبري التجارية', html: `<div dir="rtl"><h2>دعوة إلى بوابة الأغبري التجارية</h2><p>تم إنشاء دعوة لحسابك التجاري.</p><p><a href="${invitationUrl}">قبول الدعوة وتفعيل الحساب</a></p><p>تنتهي الدعوة خلال 48 ساعة.</p></div>`, tags: [{ name: 'customer_id', value: customerId }] })
-  });
+  const response = await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: `Bearer ${resendApiKey}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ from: resendFrom, to: [email], subject: 'دعوة الدخول إلى بوابة الأغبري التجارية', html: `<div dir="rtl"><h2>دعوة إلى بوابة الأغبري التجارية</h2><p>تم إنشاء دعوة لحسابك التجاري.</p><p><a href="${invitationUrl}">قبول الدعوة وتفعيل الحساب</a></p><p>تنتهي الدعوة خلال 48 ساعة.</p></div>`, tags: [{ name: 'customer_id', value: customerId }] }) });
   if (!response.ok) throw new Error(`invitation email dispatch failed: ${response.status}`);
-  return { dispatched: true };
+  return { dispatched: true, reason: undefined as string | undefined };
 }
 
 Deno.serve(async (request) => {
@@ -49,11 +41,11 @@ Deno.serve(async (request) => {
     const action = String((body as Record<string, unknown>).action ?? '');
 
     if (action === 'create') {
-      const { user } = await requireStaff(request);
+      const { user, client } = await requireStaff(request);
       const customerId = typeof body.customer_id === 'string' ? body.customer_id : '';
       const email = typeof body.email === 'string' ? body.email : '';
       if (!customerId || !email) return json({ error: 'customer_id_and_email_required' }, 422);
-      const { data, error } = await admin.rpc('create_customer_invitation', { p_customer_id: customerId, p_email: email });
+      const { data, error } = await client.rpc('create_customer_invitation', { p_customer_id: customerId, p_email: email });
       if (error) throw error;
       const invitation = (data as Array<{ invitation_id: string; recipient_email: string; expires_at: string; token: string }> | null)?.[0];
       if (!invitation) return json({ error: 'invitation_not_created' }, 500);
@@ -80,7 +72,6 @@ Deno.serve(async (request) => {
       }
       return json({ ok: true, email: invitation.recipient_email, user_id: created.user.id, customer_id: invitation.customer_id, organization_id: invitation.organization_id });
     }
-
     return json({ error: 'unknown_action' }, 400);
   } catch (error) {
     const message = error instanceof Error ? error.message : 'unexpected_error';
