@@ -3,7 +3,7 @@ begin;
 -- Adversarial contract: all checks below run as database roles, not through the UI.
 -- Every mutation is rolled back at the end; the proof leaves no business rows behind.
 
-select plan(12);
+select plan(13);
 
 set local role authenticated;
 select set_config('request.jwt.claims', json_build_object('sub','0e81be51-6102-43e7-993c-0d31fa822f5d')::text, true);
@@ -37,9 +37,10 @@ select is(
   0,
   'different tenant cannot read template'
 );
+delete from public.order_templates where id='eeeeeeee-eeee-4eee-8eee-eeeeeeeeeee8';
 select is(
-  (delete from public.order_templates where id='eeeeeeee-eeee-4eee-8eee-eeeeeeeeeee8')::text,
-  '',
+  (select count(*)::int from public.order_templates where id='eeeeeeee-eeee-4eee-8eee-eeeeeeeeeee8'),
+  0,
   'different tenant cannot delete template'
 );
 
