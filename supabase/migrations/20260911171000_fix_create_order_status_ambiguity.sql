@@ -28,7 +28,7 @@ declare
   v_available integer;
   v_line_count integer;
   v_existing_count integer;
-  v_requested_key text := pg_catalog.trim(pg_catalog.coalesce(p_idempotency_key,''));
+  v_requested_key text := pg_catalog.trim(coalesce(p_idempotency_key,''));
 begin
   if v_org is null or v_customer is null then raise exception using errcode='42501',message='authenticated customer context required'; end if;
   if pg_catalog.length(v_requested_key)<16 then raise exception using errcode='22023',message='invalid idempotency key'; end if;
@@ -39,7 +39,7 @@ begin
   if v_tier is null then raise exception using errcode='42501',message='active customer required'; end if;
   perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(v_org::text||':'||v_requested_key,0));
   for v_line in select value from pg_catalog.jsonb_array_elements(p_lines) loop
-    if pg_catalog.nullif(pg_catalog.trim(v_line->>'product_id'),'') is null then raise exception using errcode='22023',message='product_id required'; end if;
+    if nullif(pg_catalog.trim(v_line->>'product_id'),'') is null then raise exception using errcode='22023',message='product_id required'; end if;
     begin v_product:=(v_line->>'product_id')::uuid; exception when invalid_text_representation then raise exception using errcode='22023',message='invalid product_id'; end;
     if v_line->>'quantity' is null or v_line->>'quantity' !~ '^[0-9]+$' then raise exception using errcode='22023',message='invalid quantity'; end if;
     begin v_qty:=(v_line->>'quantity')::integer; exception when numeric_value_out_of_range then raise exception using errcode='22023',message='invalid quantity'; end;
@@ -63,7 +63,7 @@ begin
     if not found or v_available<v_qty then raise exception using errcode='P0001',message='insufficient stock'; end if;
     v_subtotal:=v_subtotal+(v_price*v_qty);
   end loop;
-  insert into public.orders(organization_id,customer_id,warehouse_id,status,currency,subtotal,total,idempotency_key,created_by) values(v_org,v_customer,p_warehouse_id,'pending',pg_catalog.coalesce(v_currency,'YER'),v_subtotal,v_subtotal,v_requested_key,auth.uid()) returning * into v_order;
+  insert into public.orders(organization_id,customer_id,warehouse_id,status,currency,subtotal,total,idempotency_key,created_by) values(v_org,v_customer,p_warehouse_id,'pending',coalesce(v_currency,'YER'),v_subtotal,v_subtotal,v_requested_key,auth.uid()) returning * into v_order;
   for v_line in select value from pg_catalog.jsonb_array_elements(p_lines) order by value->>'product_id' loop
     v_product:=(v_line->>'product_id')::uuid; v_qty:=(v_line->>'quantity')::integer;
     select pp.amount into v_price from public.product_prices pp join public.price_lists pl on pl.id=pp.price_list_id where pp.organization_id=v_org and pp.product_id=v_product and pl.organization_id=v_org and pl.tier=v_tier and pl.is_active and pp.valid_from<=pg_catalog.now() and(pp.valid_to is null or pp.valid_to>pg_catalog.now()) order by pp.valid_from desc limit 1;
