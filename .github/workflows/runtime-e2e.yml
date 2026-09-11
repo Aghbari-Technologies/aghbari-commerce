@@ -23,13 +23,17 @@ jobs:
   runtime-e2e:
     name: Authenticated browser critical path
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     env:
       E2E_BASE_URL: ${{ inputs.base_url }}
-      E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
-      E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
-      E2E_EMAIL_B: ${{ secrets.E2E_EMAIL_B }}
-      E2E_PASSWORD_B: ${{ secrets.E2E_PASSWORD_B }}
+      E2E_EMAIL: ${{ secrets.E2E_CUSTOMER_EMAIL }}
+      E2E_PASSWORD: ${{ secrets.E2E_CUSTOMER_PASSWORD }}
+      E2E_CUSTOMER_EMAIL: ${{ secrets.E2E_CUSTOMER_EMAIL }}
+      E2E_CUSTOMER_PASSWORD: ${{ secrets.E2E_CUSTOMER_PASSWORD }}
+      E2E_EMAIL_B: ${{ secrets.E2E_CUSTOMER_EMAIL_B }}
+      E2E_PASSWORD_B: ${{ secrets.E2E_CUSTOMER_PASSWORD_B }}
+      E2E_MERCHANT_EMAIL: ${{ secrets.E2E_MERCHANT_EMAIL }}
+      E2E_MERCHANT_PASSWORD: ${{ secrets.E2E_MERCHANT_PASSWORD }}
       E2E_EXACT_SHA: ${{ inputs.exact_sha }}
     steps:
       - name: Validate exact release inputs
@@ -58,9 +62,11 @@ jobs:
           cache: npm
       - name: Install dependencies from lockfile
         run: npm ci --no-audit --no-fund
-      - name: Install Chromium
-        run: npx playwright install --with-deps chromium
-      - name: Require runtime credentials
+      - name: Install Chromium, Firefox and WebKit
+        run: npx playwright install --with-deps chromium firefox webkit
+      - name: Install Microsoft Edge
+        run: npx playwright install msedge
+      - name: Require distinct runtime credentials
         shell: bash
         run: |
           test -n "$E2E_BASE_URL"
@@ -68,7 +74,9 @@ jobs:
           test -n "$E2E_PASSWORD"
           test -n "$E2E_EMAIL_B"
           test -n "$E2E_PASSWORD_B"
-      - name: Execute authenticated E2E
+          test -n "$E2E_MERCHANT_EMAIL"
+          test -n "$E2E_MERCHANT_PASSWORD"
+      - name: Execute authenticated E2E browser matrix
         run: npm run test:e2e -- --reporter=list
       - name: Upload Playwright evidence
         if: always()

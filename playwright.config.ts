@@ -14,8 +14,14 @@ export default defineConfig({
     baseURL,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
-    video: 'on-first-retry',
-    ...devices['Desktop Chrome']
+    video: 'on-first-retry'
   },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }]
+  projects: [
+    { name: 'chrome-desktop', use: { ...devices['Desktop Chrome'] } },
+    { name: 'edge-desktop', use: { ...devices['Desktop Edge'] } },
+    { name: 'firefox-desktop', use: { ...devices['Desktop Firefox'] } },
+    { name: 'webkit-desktop', use: { ...devices['Desktop Safari'] } },
+    { name: 'tablet', use: { ...devices['iPad (gen 7)'] } },
+    { name: 'mobile', use: { ...devices['Pixel 7'] } }
+  ]
 });

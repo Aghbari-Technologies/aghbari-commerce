@@ -106,7 +106,7 @@ BEGIN
   PERFORM pg_advisory_xact_lock(hashtextextended(v_org::text||':transfer:'||v_key,0));
   SELECT * INTO v_existing FROM public.inventory_transfers WHERE organization_id=v_org AND idempotency_key=v_key;
   IF FOUND THEN
-    SELECT count(*) INTO v_existing_count FROM public.inventory_transfer_items WHERE organization_id=v_org AND transfer_id=v_existing.id;
+    SELECT count(*) INTO v_existing_count FROM public.inventory_transfer_items AS ti WHERE ti.organization_id=v_org AND ti.transfer_id=v_existing.id;
     IF v_existing.source_warehouse_id<>p_source_warehouse_id OR v_existing.destination_warehouse_id<>p_destination_warehouse_id
        OR coalesce(v_existing.notes,'')<>coalesce(v_notes,'') OR v_existing_count<>v_count THEN
       RAISE EXCEPTION USING errcode='40001',message='idempotency key payload conflict';
@@ -120,7 +120,7 @@ BEGIN
           AND i.quantity=(x->>'quantity')::integer
       )
     ) THEN RAISE EXCEPTION USING errcode='40001',message='idempotency key payload conflict'; END IF;
-    SELECT coalesce(sum(quantity),0) INTO v_total FROM public.inventory_transfer_items WHERE organization_id=v_org AND transfer_id=v_existing.id;
+    SELECT coalesce(sum(ti.quantity),0) INTO v_total FROM public.inventory_transfer_items AS ti WHERE ti.organization_id=v_org AND ti.transfer_id=v_existing.id;
     RETURN QUERY SELECT v_existing.id,v_existing.status,v_total; RETURN;
   END IF;
 

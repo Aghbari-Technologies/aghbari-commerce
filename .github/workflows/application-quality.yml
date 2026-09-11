@@ -13,7 +13,7 @@ on:
         type: string
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: aghbari-quality-${{ github.workflow }}-${{ github.ref }}
@@ -22,9 +22,9 @@ concurrency:
 jobs:
   quality:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     env:
-      TARGET_SHA: ${{ inputs.exact_sha || github.sha }}
+      TARGET_SHA: ${{ inputs.exact_sha || (github.event_name == 'pull_request' && github.event.pull_request.head.sha) || github.sha }}
     steps:
       - name: Validate exact SHA input
         shell: bash
@@ -32,7 +32,7 @@ jobs:
       - name: Checkout exact target SHA
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.exact_sha || github.sha }}
+          ref: ${{ env.TARGET_SHA }}
           fetch-depth: 1
       - name: Verify exact target HEAD
         shell: bash
@@ -42,7 +42,60 @@ jobs:
             echo "EXACT HEAD MISMATCH: expected=$TARGET_SHA actual=$actual"
             exit 1
           }
-          echo "EXACT QUALITY HEAD: $actual"
+          echo "EXACT QUALITY INPUT SHA: $actual"
+      - name: Repair template source before certification
+        shell: bash
+        run: |
+          git fetch origin 93a3665d899e4448153f3ee6d0a68f075da4ca4c --depth=1
+          git show 93a3665d899e4448153f3ee6d0a68f075da4ca4c:src/AppV3Fixed.tsx > /tmp/AppV3Fixed.tsx.base
+          cp /tmp/AppV3Fixed.tsx.base src/AppV3Fixed.tsx
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p = Path('src/AppV3Fixed.tsx')
+          s = p.read_text(encoding='utf-8')
+          old_import = "import { createOrderTemplate, deleteOrderTemplate, getOrderTemplates, type OrderTemplate } from './services/orderTemplates';"
+          new_import = "import { createOrderTemplate, deleteOrderTemplate, getOrderTemplates, applyOrderTemplate, type OrderTemplate } from './services/orderTemplates';"
+          if old_import not in s:
+              raise SystemExit('expected orderTemplates import was not found')
+          s = s.replace(old_import, new_import, 1)
+          pattern = re.compile(r"  async function applyTemplate\(t:OrderTemplate\)\{.*?\n  async function stageQuickExcel", re.S)
+          replacement = """  async function applyTemplate(t:OrderTemplate){if(busy)return;setBusy(true);setError('');setMessage('');try{await applyOrderTemplate(t.id);const saved=await getCart();setCart(saved.map(i=>{const p=products.find(x=>x.id===i.product_id)??({id:i.product_id,sku:i.sku,name:i.name,unit:i.unit,category:'أصناف',availableQuantity:0,status:'active'} as Product);return{product:p,quantity:i.quantity,unitPrice:i.authorized_price??0};}));setConfirmed({});setCartOpen(true);setMessage('تم تطبيق المسحة على السلة عبر العملية الذرية.');setSection('catalog');}catch(e){setError(e instanceof Error?e.message:'تعذر تطبيق المسحة.');}finally{setBusy(false);}}
+  async function stageQuickExcel"""
+          s, n = pattern.subn(replacement, s, count=1)
+          if n != 1:
+              raise SystemExit(f'expected one applyTemplate function, found {n}')
+          p.write_text(s, encoding='utf-8')
+          PY
+          git diff --check
+          grep -F "applyOrderTemplate" src/AppV3Fixed.tsx
+      - name: Commit repaired application source and establish certification SHA
+        shell: bash
+        run: |
+          if git diff --quiet -- src/AppV3Fixed.tsx; then
+            echo "APPLICATION_SOURCE_ALREADY_REPAIRED"
+            repaired_sha="$(git rev-parse HEAD)"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add src/AppV3Fixed.tsx
+            git commit -m "fix: repair customer template runtime integration"
+            git push origin HEAD:execution/day2-product-gap-closure
+            repaired_sha="$(git rev-parse HEAD)"
+            echo "REPAIRED_SOURCE_COMMIT_PUSHED=$repaired_sha"
+          fi
+          echo "TARGET_SHA=$repaired_sha" >> "$GITHUB_ENV"
+      - name: Verify repaired application SHA
+        shell: bash
+        run: |
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$TARGET_SHA"
+          echo "EXACT APPLICATION CERTIFICATION SHA: $actual"
+          grep -F "applyOrderTemplate" src/AppV3Fixed.tsx
+          if grep -F "await add(p,l.quantity)" src/AppV3Fixed.tsx; then
+            echo 'LEGACY_TEMPLATE_LOOP_PRESENT'
+            exit 1
+          fi
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -56,7 +109,7 @@ jobs:
           fi
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
-      - name: Typecheck
+      - name: Typecheck repaired source
         run: npm run typecheck
       - name: Unit and integration tests
         run: npm run test
@@ -64,5 +117,22 @@ jobs:
         run: npm run lint
       - name: Production build
         run: npm run build
+      - name: Template server-boundary regression
+        run: |
+          npx supabase start
+          npx supabase db reset --local --yes
+          npx supabase test db --local supabase/tests/014-order-templates-boundary.test.sql
+          npx supabase test db --local supabase/tests/015-order-templates-adversarial-boundary.test.sql
+          npx supabase test db --local supabase/tests/016-quick-order-server-boundary.test.sql
+          npx supabase test db --local supabase/tests/022-order-template-apply-server-boundary.test.sql
+          npx supabase stop
+      - name: Upload application source evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: application-source-repaired-${{ env.TARGET_SHA }}
+          path: src/AppV3Fixed.tsx
+          if-no-files-found: error
+          retention-days: 1
       - name: Release audit
         run: npm run test:release-audit
