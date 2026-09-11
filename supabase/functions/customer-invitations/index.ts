@@ -18,7 +18,7 @@ async function requireStaff(request: Request) {
   if (error || !user) throw new Error('authentication required');
   const { data: profile, error: profileError } = await admin.from('profiles').select('organization_id,role').eq('id', user.id).single();
   if (profileError || !profile || !['owner', 'admin', 'sales'].includes(String(profile.role))) throw new Error('customer invitation access required');
-  return { user, client };
+  return { user, profile, client };
 }
 async function dispatchInvitationEmail(email: string, invitationUrl: string, customerId: string) {
   if (!resendApiKey || !resendFrom) throw new Error('invitation email dispatch is not configured');
@@ -33,7 +33,7 @@ Deno.serve(async (request) => {
     if (!body || typeof body !== 'object') return json({ error: 'invalid_payload' }, 422);
     const action = String((body as Record<string, unknown>).action ?? '');
     if (action === 'create') {
-      const { user, client } = await requireStaff(request);
+      const { user, profile, client } = await requireStaff(request);
       const customerId = typeof body.customer_id === 'string' ? body.customer_id : '';
       const email = typeof body.email === 'string' ? body.email : '';
       if (!customerId || !email) return json({ error: 'customer_id_and_email_required' }, 422);
@@ -44,12 +44,13 @@ Deno.serve(async (request) => {
       const invitationUrl = `${siteUrl}/?invite=${encodeURIComponent(invitation.token)}`;
       try {
         await dispatchInvitationEmail(invitation.recipient_email, invitationUrl, customerId);
-        const { error: markError } = await admin.from('customer_invitations').update({ dispatch_status: 'sent', dispatched_at: new Date().toISOString(), dispatch_provider: 'resend', dispatch_error: null }).eq('id', invitation.invitation_id);
+        const { error: markError } = await admin.from('customer_invitations').update({ dispatch_status: 'sent', dispatched_at: new Date().toISOString(), dispatch_provider: 'resend', dispatch_error: null }).eq('id', invitation.invitation_id).eq('organization_id', profile.organization_id);
         if (markError) throw new Error(`invitation dispatch record failed: ${markError.message}`);
+        await admin.from('audit_events').insert({ organization_id: profile.organization_id, actor_id: user.id, action: 'customer.invitation.dispatch', target_type: 'customer_invitation', target_id: invitation.invitation_id, result: 'success', metadata: { customer_id: customerId, recipient_email: invitation.recipient_email, provider: 'resend' } });
       } catch (dispatchError) {
         const dispatchMessage = dispatchError instanceof Error ? dispatchError.message : 'dispatch failed';
-        await admin.from('customer_invitations').update({ dispatch_status: 'failed', dispatch_error: dispatchMessage.slice(0, 1000) }).eq('id', invitation.invitation_id);
-        await admin.from('audit_events').insert({ organization_id: user.id, actor_id: user.id, action: 'customer.invitation.dispatch', target_type: 'customer_invitation', target_id: invitation.invitation_id, result: 'failure', metadata: { customer_id: customerId, error: dispatchMessage } }).catch(() => undefined);
+        await admin.from('customer_invitations').update({ dispatch_status: 'failed', dispatch_error: dispatchMessage.slice(0, 1000) }).eq('id', invitation.invitation_id).eq('organization_id', profile.organization_id);
+        await admin.from('audit_events').insert({ organization_id: profile.organization_id, actor_id: user.id, action: 'customer.invitation.dispatch', target_type: 'customer_invitation', target_id: invitation.invitation_id, result: 'failure', metadata: { customer_id: customerId, error: dispatchMessage } });
         return json({ error: 'invitation_dispatch_failed', invitation_id: invitation.invitation_id }, 502);
       }
       return json({ invitation_id: invitation.invitation_id, recipient_email: invitation.recipient_email, expires_at: invitation.expires_at, invitation_url: invitationUrl, dispatched: true, dispatch_provider: 'resend' });
