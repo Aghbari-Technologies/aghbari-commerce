@@ -53,15 +53,16 @@ SQL
 run_order() {
   local user_id="$1"
   local key="$2"
-  local output="$3"
+  local quantity="$3"
+  local output="$4"
   PGPASSWORD="$PGPASSWORD" PGOPTIONS="-c request.jwt.claims=$(printf '{\"sub\":\"%s\"}' "$user_id")" \
-    "${psql_cmd[@]}" -tA -c "select * from public.create_order('${key}','c0000000-0000-4000-8000-000000000011','[{\"product_id\":\"a0000000-0000-4000-8000-000000010011\",\"quantity\":8}]'::jsonb);" >"$output" 2>&1 || true
+    "${psql_cmd[@]}" -tA -c "select * from public.create_order('${key}','c0000000-0000-4000-8000-000000000011','[{\"product_id\":\"a0000000-0000-4000-8000-000000010011\",\"quantity\":${quantity}}]'::jsonb);" >"$output" 2>&1 || true
 }
 
 rm -f /tmp/aghbari-concurrency-a /tmp/aghbari-concurrency-b
-run_order '4a4d5d91-bb5c-4c8b-ae9a-100000000001' 'CONCURRENCY-PROOF-A-20260911' /tmp/aghbari-concurrency-a &
+run_order '4a4d5d91-bb5c-4c8b-ae9a-100000000001' 'CONCURRENCY-PROOF-A-20260911' 8 /tmp/aghbari-concurrency-a &
 pid_a=$!
-run_order '4a4d5d91-bb5c-4c8b-ae9a-100000000002' 'CONCURRENCY-PROOF-B-20260911' /tmp/aghbari-concurrency-b &
+run_order '4a4d5d91-bb5c-4c8b-ae9a-100000000002' 'CONCURRENCY-PROOF-B-20260911' 8 /tmp/aghbari-concurrency-b &
 pid_b=$!
 wait "$pid_a" "$pid_b"
 
@@ -77,7 +78,22 @@ if [[ "$successes" -ne 1 ]]; then
 fi
 
 remaining=$(psql -v ON_ERROR_STOP=1 -X -tA -c "select quantity from public.inventory_balances where warehouse_id='c0000000-0000-4000-8000-000000000011' and product_id='a0000000-0000-4000-8000-000000010011';")
-echo "FINAL STOCK: $remaining"
+echo "FINAL STOCK AFTER RACE: $remaining"
 test "$remaining" = '2'
 
+echo '--- Idempotency ---'
+psql -v ON_ERROR_STOP=1 -X -c "update public.inventory_balances set quantity=10, updated_at=now() where warehouse_id='c0000000-0000-4000-8000-000000000011' and product_id='a0000000-0000-4000-8000-000000010011';"
+rm -f /tmp/aghbari-idempotency-1 /tmp/aghbari-idempotency-2
+run_order '4a4d5d91-bb5c-4c8b-ae9a-100000000001' 'CONCURRENCY-IDEMPOTENCY-20260911' 1 /tmp/aghbari-idempotency-1
+run_order '4a4d5d91-bb5c-4c8b-ae9a-100000000001' 'CONCURRENCY-IDEMPOTENCY-20260911' 1 /tmp/aghbari-idempotency-2
+cat /tmp/aghbari-idempotency-1
+cat /tmp/aghbari-idempotency-2
+idempotent_orders=$(psql -v ON_ERROR_STOP=1 -X -tA -c "select count(*) from public.orders where idempotency_key='CONCURRENCY-IDEMPOTENCY-20260911';" | tr -d ' ')
+idempotent_stock=$(psql -v ON_ERROR_STOP=1 -X -tA -c "select quantity from public.inventory_balances where warehouse_id='c0000000-0000-4000-8000-000000000011' and product_id='a0000000-0000-4000-8000-000000010011';" | tr -d ' ')
+echo "IDEMPOTENCY ORDER COUNT: $idempotent_orders"
+echo "IDEMPOTENCY FINAL STOCK: $idempotent_stock"
+test "$idempotent_orders" = '1'
+test "$idempotent_stock" = '9'
+
 echo 'CONCURRENCY PROOF: PASS — one request committed 8 units, the competing request was rejected, final DB stock=2.'
+echo 'IDEMPOTENCY PROOF: PASS — duplicate submission reused one order and consumed one unit, final DB stock=9.'
