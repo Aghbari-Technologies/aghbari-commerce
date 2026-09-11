@@ -1,4 +1,4 @@
-import { supabase } from '../lib/supabase';
+import { requireSupabase } from '../lib/supabase';
 
 export type TemplateLine = {
   productId: string;
@@ -25,7 +25,7 @@ type DbTemplate = {
 };
 
 function parseLines(value: unknown): TemplateLine[] {
-  if (!Array.isArray(value)) throw new Error('بيانات المسحة غير صالحة.');
+  if (!Array.isArray(value) || value.length < 1 || value.length > 100) throw new Error('بيانات المسحة غير صالحة.');
   return value.map((line) => {
     if (!line || typeof line !== 'object') throw new Error('بيانات أصناف المسحة غير صالحة.');
     const item = line as Record<string, unknown>;
@@ -42,48 +42,41 @@ function parseLines(value: unknown): TemplateLine[] {
 }
 
 function mapTemplate(row: DbTemplate): OrderTemplate {
-  return {
-    id: row.id,
-    name: row.name,
-    branchLabel: row.branch_label ?? 'الفرع الرئيسي',
-    lines: parseLines(row.lines),
-    updatedAt: row.updated_at,
-  };
+  return { id: row.id, name: row.name, branchLabel: row.branch_label ?? 'الفرع الرئيسي', lines: parseLines(row.lines), updatedAt: row.updated_at };
+}
+
+async function currentCustomerId(): Promise<string> {
+  const client = requireSupabase();
+  const { data: userData, error: userError } = await client.auth.getUser();
+  if (userError) throw userError;
+  if (!userData.user) throw new Error('يجب تسجيل الدخول لإدارة المسحات.');
+  const { data, error } = await client.from('profiles').select('customer_id').eq('id', userData.user.id).single();
+  if (error) throw error;
+  if (!data?.customer_id) throw new Error('الحساب الحالي غير مرتبط بعميل.');
+  return data.customer_id;
 }
 
 export async function getOrderTemplates(): Promise<OrderTemplate[]> {
-  if (!supabase) return [];
-  const { data, error } = await supabase
-    .from('order_templates')
-    .select('id,name,branch_label,lines,updated_at')
-    .order('updated_at', { ascending: false })
-    .limit(100);
+  const client = requireSupabase();
+  const { data, error } = await client.from('order_templates').select('id,name,branch_label,lines,updated_at').order('updated_at', { ascending: false }).limit(100);
   if (error) throw error;
   return (data ?? []).map((row) => mapTemplate(row as DbTemplate));
 }
 
-export async function createOrderTemplate(input: {
-  name: string;
-  branchLabel?: string;
-  lines: TemplateLine[];
-}): Promise<OrderTemplate> {
-  if (!supabase) throw new Error('قاعدة البيانات غير متاحة.');
+export async function createOrderTemplate(input: { name: string; branchLabel?: string; lines: TemplateLine[] }): Promise<OrderTemplate> {
+  const client = requireSupabase();
   const name = input.name.trim();
   if (!name || name.length > 120) throw new Error('اسم المسحة يجب أن يكون بين 1 و120 حرفًا.');
-  if (!input.lines.length || input.lines.length > 100) throw new Error('المسحة يجب أن تحتوي على أصناف صحيحة.');
   const lines = parseLines(input.lines);
-  const { data, error } = await supabase
-    .from('order_templates')
-    .insert({ name, branch_label: input.branchLabel?.trim() || 'الفرع الرئيسي', lines })
-    .select('id,name,branch_label,lines,updated_at')
-    .single();
+  const customerId = await currentCustomerId();
+  const { data, error } = await client.from('order_templates').insert({ customer_id: customerId, name, branch_label: input.branchLabel?.trim() || 'الفرع الرئيسي', lines }).select('id,name,branch_label,lines,updated_at').single();
   if (error) throw error;
   return mapTemplate(data as DbTemplate);
 }
 
 export async function deleteOrderTemplate(id: string): Promise<void> {
-  if (!supabase) throw new Error('قاعدة البيانات غير متاحة.');
+  const client = requireSupabase();
   if (!id) throw new Error('معرف المسحة غير صالح.');
-  const { error } = await supabase.from('order_templates').delete().eq('id', id);
+  const { error } = await client.from('order_templates').delete().eq('id', id);
   if (error) throw error;
 }
