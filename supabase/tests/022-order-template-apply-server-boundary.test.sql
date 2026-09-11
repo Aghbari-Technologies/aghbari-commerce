@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(9);
+select plan(12);
 
 insert into auth.users (id, email)
 values ('0e81be51-6102-43e7-993c-0d31fa822f5d', 'template-apply-owner@test.local');
@@ -47,7 +47,11 @@ values
 insert into public.order_templates (id, customer_id, name, branch_label, lines)
 values
   ('eeeeeeee-eeee-4eee-8eee-eeeeeeee0021', 'a0000000-0000-4000-8000-000000003001', 'Apply Template', 'Apply Branch A',
-   '[{"productId":"a0000000-0000-4000-8000-000000003021","sku":"TPL-A-001","name":"Template Apply Product A","unit":"unit","quantity":2},{"productId":"a0000000-0000-4000-8000-000000003022","sku":"TPL-A-002","name":"Template Apply Product B","unit":"unit","quantity":3}]'::jsonb);
+   '[{"productId":"a0000000-0000-4000-8000-000000003021","sku":"TPL-A-001","name":"Template Apply Product A","unit":"unit","quantity":2},{"productId":"a0000000-0000-4000-8000-000000003022","sku":"TPL-A-002","name":"Template Apply Product B","unit":"unit","quantity":3}]'::jsonb),
+  ('eeeeeeee-eeee-4eee-8eee-eeeeeeee0022', 'b0000000-0000-4000-8000-000000003002', 'Foreign Template', 'Foreign Branch',
+   '[{"productId":"a0000000-0000-4000-8000-000000003021","sku":"TPL-A-001","name":"Template Apply Product A","unit":"unit","quantity":1}]'::jsonb),
+  ('eeeeeeee-eeee-4eee-8eee-eeeeeeee0023', 'a0000000-0000-4000-8000-000000003001', 'Broken Template', 'Apply Branch A',
+   '[{"productId":"a0000000-0000-4000-8000-000000003099","sku":"BAD","name":"Missing Product","unit":"unit","quantity":1}]'::jsonb);
 
 set local role authenticated;
 select set_config('request.jwt.claim.role', 'authenticated', true);
@@ -59,9 +63,12 @@ select lives_ok($$select public.apply_order_template('eeeeeeee-eeee-4eee-8eee-ee
 select is((select count(*)::int from public.cart_items ci join public.carts c on c.id=ci.cart_id where c.organization_id='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa' and ci.product_id in ('a0000000-0000-4000-8000-000000003021','a0000000-0000-4000-8000-000000003022')), 2, 'template application writes both expected cart lines');
 select is((select quantity::int from public.cart_items ci join public.carts c on c.id=ci.cart_id where c.organization_id='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa' and ci.product_id='a0000000-0000-4000-8000-000000003021'), 2, 'template application persists first quantity');
 select is((select quantity::int from public.cart_items ci join public.carts c on c.id=ci.cart_id where c.organization_id='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa' and ci.product_id='a0000000-0000-4000-8000-000000003022'), 3, 'template application persists second quantity');
+set local role postgres;
 select is((select count(*)::int from public.audit_events where organization_id='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa' and action='cart.template.apply'), 1, 'template application creates an audit event');
-
-select set_config('request.jwt.claim.sub', '0e81be51-6102-43e7-993c-0d31fa822f5d', true);
+set local role authenticated;
+select throws_ok($$select public.apply_order_template('eeeeeeee-eeee-4eee-8eee-eeeeeeee0022')$$, '42501', null, 'foreign tenant template is rejected');
+select throws_ok($$select public.apply_order_template('eeeeeeee-eeee-4eee-8eee-eeeeeeee0023')$$, 'P0001', null, 'broken template is rejected before cart mutation');
+select is((select count(*)::int from public.cart_items ci join public.carts c on c.id=ci.cart_id where c.organization_id='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa' and ci.product_id in ('a0000000-0000-4000-8000-000000003021','a0000000-0000-4000-8000-000000003022')), 2, 'failed template validation leaves the previous cart intact');
 select throws_ok($$select public.apply_order_template('eeeeeeee-eeee-4eee-8eee-eeeeeeee9999')$$, '42501', null, 'unknown template is rejected');
 select throws_ok($$select public.apply_order_template(null)$$, '22023', null, 'null template id is rejected');
 
