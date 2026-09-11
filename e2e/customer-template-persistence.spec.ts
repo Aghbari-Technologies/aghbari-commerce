@@ -4,15 +4,17 @@ const email = process.env.E2E_CUSTOMER_EMAIL?.trim();
 const password = process.env.E2E_CUSTOMER_PASSWORD;
 
 test('customer order template survives reload, re-login, use, and delete', async ({ page }) => {
-  test.skip(!email || !password, 'E2E_CUSTOMER_EMAIL/E2E_CUSTOMER_PASSWORD are required for customer runtime certification');
+  if (!email || !password) {
+    throw new Error('E2E_CUSTOMER_EMAIL/E2E_CUSTOMER_PASSWORD are required for customer runtime certification; test must never silently skip.');
+  }
   const failures: string[] = [];
   page.on('pageerror', (error) => failures.push(`pageerror:${error.message}`));
   page.on('console', (message) => { if (message.type() === 'error') failures.push(`console:${message.text()}`); });
-  page.on('response', (response) => { if (response.status() >= 500) failures.push(`http:${response.status()}:${response.url()}`); });
+  page.on('response', (response) => { if (response.status() >= 400 && !response.url().endsWith('/favicon.ico')) failures.push(`http:${response.status()}:${response.url()}`); });
 
   await page.goto('/');
-  await page.getByPlaceholder('البريد الإلكتروني').fill(email!);
-  await page.getByPlaceholder('كلمة المرور').fill(password!);
+  await page.getByPlaceholder('البريد الإلكتروني').fill(email);
+  await page.getByPlaceholder('كلمة المرور').fill(password);
   await page.getByRole('button', { name: 'دخول آمن' }).click();
   await expect(page.getByText('بوابة الأغبري')).toBeVisible({ timeout: 15000 });
 
@@ -23,8 +25,8 @@ test('customer order template survives reload, re-login, use, and delete', async
   await page.getByRole('button', { name: /السلة/ }).click();
 
   const templateName = `E2E مسحة ${Date.now()}`;
-  await page.getByPlaceholder('حفظ كمسحة').fill(templateName);
-  await page.getByRole('button', { name: 'حفظ', exact: true }).click();
+  await page.getByPlaceholder('اسم المسحة').fill(templateName);
+  await page.getByRole('button', { name: 'حفظ السلة كمسحة', exact: true }).click();
   await expect(page.getByText('تم حفظ المسحة في قاعدة البيانات.')).toBeVisible({ timeout: 10000 });
 
   await page.getByRole('button', { name: 'المسحات' }).click();
@@ -38,8 +40,8 @@ test('customer order template survives reload, re-login, use, and delete', async
 
   await page.getByRole('button', { name: 'خروج' }).click();
   await expect(page.getByRole('button', { name: 'دخول آمن' })).toBeVisible();
-  await page.getByPlaceholder('البريد الإلكتروني').fill(email!);
-  await page.getByPlaceholder('كلمة المرور').fill(password!);
+  await page.getByPlaceholder('البريد الإلكتروني').fill(email);
+  await page.getByPlaceholder('كلمة المرور').fill(password);
   await page.getByRole('button', { name: 'دخول آمن' }).click();
   await expect(page.getByText('بوابة الأغبري')).toBeVisible({ timeout: 15000 });
   await page.getByRole('button', { name: 'المسحات' }).click();
