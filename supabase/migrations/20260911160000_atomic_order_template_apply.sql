@@ -6,7 +6,7 @@ create or replace function public.apply_order_template(p_template_id uuid)
 returns uuid
 language plpgsql
 security definer
-set search_path = public
+set search_path = ''
 as $$
 declare
   v_org uuid := public.current_organization_id();
@@ -35,10 +35,10 @@ begin
     raise exception using errcode='42501', message='order template access denied';
   end if;
 
-  if jsonb_typeof(v_template.lines) <> 'array' then
+  if pg_catalog.jsonb_typeof(v_template.lines) <> 'array' then
     raise exception using errcode='22023', message='template lines must be an array';
   end if;
-  v_count := jsonb_array_length(v_template.lines);
+  v_count := pg_catalog.jsonb_array_length(v_template.lines);
   if v_count < 1 or v_count > 100 then
     raise exception using errcode='22023', message='template must contain between 1 and 100 lines';
   end if;
@@ -55,10 +55,10 @@ begin
   -- Validate every line before mutating the cart. Inventory rows are locked in a
   -- deterministic UUID order to reduce deadlock risk with concurrent order commands.
   for v_line in
-    select value from jsonb_array_elements(v_template.lines)
+    select value from pg_catalog.jsonb_array_elements(v_template.lines)
     order by value->>'productId'
   loop
-    if nullif(trim(v_line->>'productId'),'') is null then
+    if pg_catalog.nullif(pg_catalog.btrim(v_line->>'productId'),'') is null then
       raise exception using errcode='22023', message='template product_id required';
     end if;
     begin
@@ -69,7 +69,11 @@ begin
     if v_line->>'quantity' is null or v_line->>'quantity' !~ '^[0-9]+$' then
       raise exception using errcode='22023', message='invalid template quantity';
     end if;
-    v_qty := (v_line->>'quantity')::integer;
+    begin
+      v_qty := (v_line->>'quantity')::integer;
+    exception when numeric_value_out_of_range then
+      raise exception using errcode='22023', message='template quantity out of range';
+    end;
     if v_qty < 1 or v_qty > 10000 then
       raise exception using errcode='22023', message='template quantity must be between 1 and 10000';
     end if;
@@ -81,7 +85,7 @@ begin
       join public.price_lists pl on pl.id=pp.price_list_id
      where pp.organization_id=v_org and pp.product_id=v_product
        and pl.organization_id=v_org and pl.tier=v_tier and pl.is_active
-       and pp.valid_from<=now() and (pp.valid_to is null or pp.valid_to>now())
+       and pp.valid_from<=pg_catalog.now() and (pp.valid_to is null or pp.valid_to>pg_catalog.now())
      order by pp.valid_from desc limit 1;
     if v_price is null then
       raise exception using errcode='P0001', message='authorized price unavailable';
@@ -99,16 +103,16 @@ begin
 
   delete from public.cart_items where organization_id=v_org and cart_id=v_cart;
 
-  for v_line in select value from jsonb_array_elements(v_template.lines) loop
+  for v_line in select value from pg_catalog.jsonb_array_elements(v_template.lines) loop
     v_product := (v_line->>'productId')::uuid;
     v_qty := (v_line->>'quantity')::integer;
     insert into public.cart_items(organization_id,cart_id,product_id,quantity)
     values(v_org,v_cart,v_product,v_qty);
   end loop;
 
-  update public.carts set updated_at=now() where id=v_cart and organization_id=v_org;
+  update public.carts set updated_at=pg_catalog.now() where id=v_cart and organization_id=v_org;
   insert into public.audit_events(organization_id,actor_id,action,target_type,target_id,result,metadata)
-  values(v_org,auth.uid(),'cart.template.apply','cart',v_cart,'success',jsonb_build_object('template_id',p_template_id,'line_count',v_count));
+  values(v_org,auth.uid(),'cart.template.apply','cart',v_cart,'success',pg_catalog.jsonb_build_object('template_id',p_template_id,'line_count',v_count));
   return v_cart;
 end;
 $$;
