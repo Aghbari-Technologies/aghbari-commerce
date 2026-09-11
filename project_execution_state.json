@@ -2,8 +2,8 @@
   "project": "Aghbari Commerce",
   "repository": "Aghbari-Technologies/aghbari-commerce",
   "scope": "Aghbari Commerce only",
-  "current_sha": "811016f4c9f48f411de22dde67f4a2bef723d393",
-  "previous_sha": "1da6b5dc7aa65955dbc01cfa300d66438be28f39",
+  "current_sha": "4cfd0499af153846fd0b969eb88d8538d1ed4a52",
+  "previous_sha": "c1f8d3d16c6ca5b10c0a5dfc579745484fc481a6",
   "gate": "DAY 2 — PRODUCT GAP CLOSURE",
   "queue": {
     "P0": [
@@ -15,8 +15,8 @@
       {"id":"P0-TENANT","feature":"Tenant isolation","status":"VERIFIED_DB","next_action":"authenticated cross-tenant browser proof"}
     ],
     "P1": [
-      {"id":"P1-TEMPLATES","feature":"Order Templates","status":"IMPLEMENTED","next_action":"CI + authenticated reload/logout/login proof"},
-      {"id":"P1-EXCEL-QUICK","feature":"Excel Quick Order","status":"IMPLEMENTED","next_action":"CI + malformed/duplicate/out-of-stock browser proof"},
+      {"id":"P1-TEMPLATES","feature":"Order Templates","status":"IMPLEMENTED","next_action":"exact-head CI + authenticated reload/logout/login proof"},
+      {"id":"P1-EXCEL-QUICK","feature":"Excel Quick Order","status":"IMPLEMENTED","next_action":"exact-head CI + malformed/duplicate/out-of-stock browser proof"},
       {"id":"P1-FINANCE","feature":"Invoices / Account","status":"IMPLEMENTED","next_action":"runtime proof"},
       {"id":"P1-IMPORT","feature":"Product Import","status":"IMPLEMENTED","next_action":"clean migration + runtime proof"},
       {"id":"P1-ADMIN","feature":"Admin operations","status":"IMPLEMENTED","next_action":"role-matrix runtime proof"},
@@ -26,19 +26,19 @@
   "registries": {
     "project_map":"this file + docs/MASTER-EXECUTION-INDEX.md",
     "feature_registry":"queue above; one record per feature",
-    "file_registry":["src/AppV3Fixed.tsx","src/services/orderTemplates.ts","src/services/orderTemplates.test.ts","src/lib/read-excel-file-browser.ts","supabase/migrations/20260911134000_harden_order_template_persistence.sql","package.json","docs/MASTER-EXECUTION-INDEX.md"],
+    "file_registry":["src/AppV3Fixed.tsx","src/services/orderTemplates.ts","src/services/orderTemplates.test.ts","src/lib/read-excel-file-browser.ts","supabase/migrations/20260911134000_harden_order_template_persistence.sql","supabase/tests/014-order-templates-boundary.test.sql","package.json","docs/MASTER-EXECUTION-INDEX.md"],
     "database_registry":["order_templates","customer_price_tiers","customer_credit_accounts","customer_ledger_entries","client_ui_settings"],
     "rpc_registry":["get_catalog","create_order","set_cart_item","remove_cart_item","transition_order"],
     "security_registry":["customer-owned order_templates RLS","anon revoked from order_templates","server-authoritative catalog/order commands"],
-    "test_registry":["src/services/orderTemplates.test.ts","existing order/import/inventory/security suites"],
+    "test_registry":["src/services/orderTemplates.test.ts","supabase/tests/014-order-templates-boundary.test.sql","existing order/import/inventory/security suites"],
     "blocker_registry":[{"id":"VERCEL-BUILD-CAPACITY","type":"EXTERNAL","status":"OPEN","workaround":"continue local/DB/test/static/E2E preparation"}],
-    "evidence_registry":["quality run before package fix exposed Vitest collection defect; security and order workflow exact-target runs passed; fresh exact-head quality/migration evidence pending after latest commit"],
+    "evidence_registry":["security-audit exact target passed before latest test-only change; order workflow exact target passed; quality root cause fixed by npm test scope; latest exact-head CI is required after 4cfd"],
     "decision_registry":[{"decision":"Order templates are DB-authoritative","reason":"business data must survive reload and logout/login","selected_approach":"existing order_templates table + existing RLS"},{"decision":"Vitest scope is src","reason":"Playwright specs under e2e must not be collected by unit test command","selected_approach":"npm test = vitest run --dir src"}]
   },
   "latest_batch": {
-    "completed": ["DB-backed order templates","template deletion","Excel quick-order parse/validation/review/commit path","template input tests","order-template DB hardening","CI unit-test collection boundary"],
+    "completed": ["DB-backed order templates","template deletion","Excel quick-order parse/validation/review/commit path","template input tests","order-template DB hardening","CI unit-test collection boundary","order-template RLS/payload regression contract"],
     "partial": ["authenticated browser E2E","production runtime certification","outbox external delivery","offline/reconnect runtime proof","performance/load evidence"],
-    "failed": ["quality run on merge target 794c0fd — Vitest collected e2e/invitation-journey.spec.ts; fixed in 1da6b5d"],
+    "failed": ["quality run on merge target 794c0fd — Vitest collected e2e/invitation-journey.spec.ts; root cause fixed in 1da6b5d"],
     "blocked": ["Vercel build capacity/rate limit"],
     "repeated_discovery": 0
   },
