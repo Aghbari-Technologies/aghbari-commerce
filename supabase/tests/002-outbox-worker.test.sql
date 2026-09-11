@@ -17,10 +17,10 @@ values ('cccccccc-cccc-4ccc-8ccc-cccccccccc01', 'cccccccc-cccc-4ccc-8ccc-ccccccc
 insert into public.profiles (id, organization_id, customer_id, role)
 values ('33333333-3333-4333-8333-333333333333', 'cccccccc-cccc-4ccc-8ccc-cccccccccccc', 'cccccccc-cccc-4ccc-8ccc-cccccccccc01', 'admin');
 
-insert into public.outbox_events (organization_id, aggregate_type, aggregate_id, event_type, payload)
+insert into public.outbox_events (id, organization_id, aggregate_type, aggregate_id, event_type, payload)
 values
-  ('cccccccc-cccc-4ccc-8ccc-cccccccccccc', 'order', 'cccccccc-cccc-4ccc-8ccc-cccccccccc11', 'order.created', '{"kind":"tenant-a"}'::jsonb),
-  ('dddddddd-dddd-4ddd-8ddd-dddddddddddd', 'order', 'dddddddd-dddd-4ddd-8ddd-dddddddddd11', 'order.created', '{"kind":"tenant-b"}'::jsonb);
+  ('cccccccc-cccc-4ccc-8ccc-cccccccccc11', 'cccccccc-cccc-4ccc-8ccc-cccccccccccc', 'order', 'cccccccc-cccc-4ccc-8ccc-cccccccccc21', 'order.created', '{"kind":"tenant-a"}'::jsonb),
+  ('dddddddd-dddd-4ddd-8ddd-dddddddddd11', 'dddddddd-dddd-4ddd-8ddd-dddddddddddd', 'order', 'dddddddd-dddd-4ddd-8ddd-dddddddddd21', 'order.created', '{"kind":"tenant-b"}'::jsonb);
 
 set local role authenticated;
 set local request.jwt.claim.sub = '33333333-3333-4333-8333-333333333333';
@@ -55,8 +55,8 @@ select results_eq(
   'Acknowledged event becomes delivered'
 );
 
-insert into public.outbox_events (organization_id, aggregate_type, aggregate_id, event_type, payload, status, attempts, locked_until)
-values ('cccccccc-cccc-4ccc-8ccc-cccccccccccc', 'order', 'cccccccc-cccc-4ccc-8ccc-cccccccccc12', 'order.created', '{}'::jsonb, 'processing', 1, now() - interval '1 minute');
+insert into public.outbox_events (id, organization_id, aggregate_type, aggregate_id, event_type, payload, status, attempts, locked_until)
+values ('cccccccc-cccc-4ccc-8ccc-cccccccccc12', 'cccccccc-cccc-4ccc-8ccc-cccccccccccc', 'order', 'cccccccc-cccc-4ccc-8ccc-cccccccccc22', 'order.created', '{}'::jsonb, 'processing', 1, now() - interval '1 minute');
 
 select is(
   public.recover_expired_outbox_events(10),
