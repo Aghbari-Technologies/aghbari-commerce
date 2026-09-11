@@ -58,7 +58,7 @@ begin
     select value from pg_catalog.jsonb_array_elements(v_template.lines)
     order by value->>'productId'
   loop
-    if pg_catalog.nullif(pg_catalog.btrim(v_line->>'productId'),'') is null then
+    if nullif(pg_catalog.btrim(v_line->>'productId'),'') is null then
       raise exception using errcode='22023', message='template product_id required';
     end if;
     begin
