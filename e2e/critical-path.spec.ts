@@ -28,6 +28,19 @@ function captureBrowserFailures(page: Page) {
   return { pageErrors, consoleErrors, failedResponses };
 }
 
+async function browserSupabaseSession(page: Page) {
+  return page.evaluate(() => {
+    const entries = Object.values(localStorage);
+    const authEntry = entries.find((value) => value.includes('access_token') && value.includes('refresh_token'));
+    if (!authEntry) throw new Error('Supabase browser session token was not found');
+    const parsed = JSON.parse(authEntry) as { access_token?: string };
+    if (!parsed.access_token) throw new Error('Supabase access token was not found');
+    const supabaseRequest = performance.getEntriesByType('resource').find((entry) => entry.name.includes('/rest/v1/'))?.name;
+    if (!supabaseRequest) throw new Error('Supabase REST origin was not observed in browser runtime');
+    return { accessToken: parsed.access_token, restOrigin: new URL(supabaseRequest).origin };
+  });
+}
+
 test('authenticated customer completes real catalog → cart → order → refresh persistence path', async ({ page }) => {
   const email = process.env.E2E_EMAIL;
   const password = process.env.E2E_PASSWORD;
@@ -67,7 +80,7 @@ test('authenticated customer completes real catalog → cart → order → refre
   expect(failures.failedResponses, `HTTP responses >= 400: ${failures.failedResponses.join(' | ')}`).toEqual([]);
 });
 
-test('tenant isolation: Tenant B cannot read Tenant A order through the real UI session', async ({ browser }) => {
+test('tenant isolation and direct API/RPC bypass reject foreign resources', async ({ browser }) => {
   const emailA = process.env.E2E_EMAIL;
   const passwordA = process.env.E2E_PASSWORD;
   const emailB = process.env.E2E_EMAIL_B;
@@ -80,6 +93,8 @@ test('tenant isolation: Tenant B cannot read Tenant A order through the real UI 
   const pageA = await contextA.newPage();
   const failuresA = captureBrowserFailures(pageA);
   await login(pageA, emailA, passwordA);
+  const sessionA = await browserSupabaseSession(pageA);
+
   const addButton = pageA.getByRole('button', { name: /إضافة|أضف/ }).first();
   await expect(addButton).toBeEnabled();
   await addButton.click();
@@ -90,12 +105,34 @@ test('tenant isolation: Tenant B cannot read Tenant A order through the real UI 
   expect(match, 'Tenant A order number must be captured from the real persisted response.').not.toBeNull();
   const orderNumberA = match![1];
 
+  const orderResponseA = await pageA.request.get(`${sessionA.restOrigin}/rest/v1/orders?select=id,order_number&order_number=eq.${orderNumberA}`, {
+    headers: { Authorization: `Bearer ${sessionA.accessToken}`, apikey: sessionA.accessToken }
+  });
+  expect(orderResponseA.ok()).toBeTruthy();
+  const ordersA = await orderResponseA.json() as Array<{ id: string; order_number: number }>;
+  expect(ordersA).toHaveLength(1);
+  const orderIdA = ordersA[0].id;
+
   const contextB = await browser.newContext();
   const pageB = await contextB.newPage();
   const failuresB = captureBrowserFailures(pageB);
   await login(pageB, emailB, passwordB);
+  const sessionB = await browserSupabaseSession(pageB);
+
   await expect(pageB.getByText('طلباتي')).toBeVisible();
   await expect(pageB.getByText(`طلب #${orderNumberA}`, { exact: true })).toHaveCount(0);
+
+  const foreignRead = await pageB.request.get(`${sessionB.restOrigin}/rest/v1/orders?select=id& id=eq.${orderIdA}`.replace('?select=id& id=', '?select=id&id='), {
+    headers: { Authorization: `Bearer ${sessionB.accessToken}`, apikey: sessionB.accessToken }
+  });
+  expect(foreignRead.ok()).toBeTruthy();
+  expect(await foreignRead.json()).toEqual([]);
+
+  const foreignMutation = await pageB.request.post(`${sessionB.restOrigin}/rest/v1/rpc/set_cart_item`, {
+    headers: { Authorization: `Bearer ${sessionB.accessToken}`, apikey: sessionB.accessToken, 'Content-Type': 'application/json' },
+    data: { p_product_id: orderIdA, p_quantity: 1 }
+  });
+  expect([401, 403, 404, 409, 422]).toContain(foreignMutation.status());
 
   expect(failuresA.pageErrors, `Tenant A browser errors: ${failuresA.pageErrors.join(' | ')}`).toEqual([]);
   expect(failuresA.consoleErrors, `Tenant A console errors: ${failuresA.consoleErrors.join(' | ')}`).toEqual([]);
