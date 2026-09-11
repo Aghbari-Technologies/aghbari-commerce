@@ -18,4 +18,8 @@ describe('order template input contract', () => {
   it('rejects invalid quantities', () => expect(() => validateTemplateInput('طلب', [{ ...valid[0], quantity: 0 }])).toThrow());
   it('rejects fractional quantities', () => expect(() => validateTemplateInput('طلب', [{ ...valid[0], quantity: 1.5 }])).toThrow());
   it('rejects empty lines', () => expect(() => validateTemplateInput('طلب', [])).toThrow());
+  it('accepts the maximum template line boundary', () => expect(() => validateTemplateInput('طلب', Array.from({ length: 100 }, (_, i) => ({ ...valid[0], productId: `p${i}` })))).not.toThrow());
+  it('rejects one line beyond the maximum boundary', () => expect(() => validateTemplateInput('طلب', Array.from({ length: 101 }, (_, i) => ({ ...valid[0], productId: `p${i}` })))).toThrow());
+  it('accepts a name of exactly 120 characters', () => expect(() => validateTemplateInput('أ'.repeat(120), valid)).not.toThrow());
+  it('rejects a name of 121 characters', () => expect(() => validateTemplateInput('أ'.repeat(121), valid)).toThrow());
 });
