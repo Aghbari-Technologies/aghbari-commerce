@@ -61,12 +61,13 @@ jobs:
         run: supabase start
       - name: Apply migrations from empty database
         run: supabase db reset --local
-      - name: Run targeted pgTAP proofs 014/015/016
+      - name: Run targeted pgTAP proofs 014/015/016/022
         shell: bash
         run: |
           supabase test db --local supabase/tests/014-order-templates-boundary.test.sql
           supabase test db --local supabase/tests/015-order-templates-adversarial-boundary.test.sql
           supabase test db --local supabase/tests/016-quick-order-server-boundary.test.sql
+          supabase test db --local supabase/tests/022-order-template-apply-server-boundary.test.sql
       - name: Regression pgTAP batch 001-006
         shell: bash
         run: |
