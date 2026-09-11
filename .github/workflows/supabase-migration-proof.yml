@@ -61,7 +61,13 @@ jobs:
         run: supabase start
       - name: Apply migrations from empty database
         run: supabase db reset --local
-      - name: Run database pgTAP proofs
+      - name: Run targeted pgTAP proofs 014/015/016
+        run: >-
+          supabase test db --local
+          supabase/tests/014-order-templates-boundary.test.sql
+          supabase/tests/015-order-templates-adversarial-boundary.test.sql
+          supabase/tests/016-quick-order-server-boundary.test.sql
+      - name: Run full pgTAP regression suite
         run: supabase test db --local
       - name: Verify local migration inventory
         run: supabase migration list --local
