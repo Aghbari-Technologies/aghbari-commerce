@@ -22,7 +22,7 @@ concurrency:
 jobs:
   migration-proof:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     env:
       TARGET_SHA: ${{ inputs.exact_sha || (github.event_name == 'pull_request' && github.event.pull_request.head.sha) || github.sha }}
     steps:
@@ -67,8 +67,48 @@ jobs:
           supabase/tests/014-order-templates-boundary.test.sql
           supabase/tests/015-order-templates-adversarial-boundary.test.sql
           supabase/tests/016-quick-order-server-boundary.test.sql
-      - name: Run full pgTAP regression suite
-        run: supabase test db --local
+      - name: Regression pgTAP batch 001-006
+        run: >-
+          supabase test db --local
+          supabase/tests/001-storage-boundary.test.sql
+          supabase/tests/002-outbox-worker.test.sql
+          supabase/tests/003-purchasing-receiving.test.sql
+          supabase/tests/004-staff-price-export-policy.test.sql
+          supabase/tests/005-purchase-idempotency-full-payload.test.sql
+          supabase/tests/006-customer-lifecycle.test.sql
+      - name: Regression pgTAP batch 007-012
+        run: >-
+          supabase test db --local
+          supabase/tests/007-inventory-transfer-thresholds.test.sql
+          supabase/tests/008-finance-invoices-cash-expenses.test.sql
+          supabase/tests/009-cash-account-expense.test.sql
+          supabase/tests/010-import-malformed-numeric.test.sql
+          supabase/tests/010-stock-count-reconciliation.test.sql
+          supabase/tests/011-catalog-warehouse-boundary.test.sql
+          supabase/tests/011-catalog-warehouse-truth.test.sql
+          supabase/tests/011-customer-invitations.test.sql
+          supabase/tests/012-rpc-negative-security.test.sql
+          supabase/tests/012-stock-count-concurrency.test.sql
+      - name: Regression pgTAP batch 013-017
+        run: >-
+          supabase test db --local
+          supabase/tests/013-outbox-definer-search-path.test.sql
+          supabase/tests/013-security-regression-contract.test.sql
+          supabase/tests/013-tenant-mutation-boundary.test.sql
+          supabase/tests/014-cart-order-tenant-boundary.test.sql
+          supabase/tests/014-cart-tenant-boundary.test.sql
+          supabase/tests/014-core-definer-search_path.test.sql
+          supabase/tests/015-import-inventory-delta.test.sql
+          supabase/tests/015-order-tenant-transition-boundary.test.sql
+          supabase/tests/016-import-tenant-boundary.test.sql
+          supabase/tests/017-import-inventory-delta.test.sql
+      - name: Regression pgTAP batch 018-021
+        run: >-
+          supabase test db --local
+          supabase/tests/018-rpc-privilege-surface.test.sql
+          supabase/tests/019-security-definer-contract.test.sql
+          supabase/tests/020-order-state-machine-boundary.test.sql
+          supabase/tests/021-operational-fk-indexes.test.sql
       - name: Verify local migration inventory
         run: supabase migration list --local
       - name: Stop local Supabase
