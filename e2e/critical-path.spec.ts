@@ -41,6 +41,13 @@ async function browserSupabaseSession(page: Page) {
   });
 }
 
+async function browserSupabaseApiKey(page: Page): Promise<string> {
+  const request = await page.waitForRequest((request) => request.url().includes('/rest/v1/'), { timeout: 10000 });
+  const apikey = request.headers().apikey;
+  if (!apikey) throw new Error('Supabase publishable API key was not observed in browser request headers');
+  return apikey;
+}
+
 test('authenticated customer completes real catalog → cart → order → refresh persistence path', async ({ page }) => {
   const email = process.env.E2E_EMAIL;
   const password = process.env.E2E_PASSWORD;
@@ -94,6 +101,7 @@ test('tenant isolation and direct API/RPC bypass reject foreign resources', asyn
   const failuresA = captureBrowserFailures(pageA);
   await login(pageA, emailA, passwordA);
   const sessionA = await browserSupabaseSession(pageA);
+  const apiKeyA = await browserSupabaseApiKey(pageA);
 
   const addButton = pageA.getByRole('button', { name: /إضافة|أضف/ }).first();
   await expect(addButton).toBeEnabled();
@@ -106,33 +114,42 @@ test('tenant isolation and direct API/RPC bypass reject foreign resources', asyn
   const orderNumberA = match![1];
 
   const orderResponseA = await pageA.request.get(`${sessionA.restOrigin}/rest/v1/orders?select=id,order_number&order_number=eq.${orderNumberA}`, {
-    headers: { Authorization: `Bearer ${sessionA.accessToken}`, apikey: sessionA.accessToken }
+    headers: { Authorization: `Bearer ${sessionA.accessToken}`, apikey: apiKeyA }
   });
   expect(orderResponseA.ok()).toBeTruthy();
   const ordersA = await orderResponseA.json() as Array<{ id: string; order_number: number }>;
   expect(ordersA).toHaveLength(1);
   const orderIdA = ordersA[0].id;
 
+  const productResponseA = await pageA.request.get(`${sessionA.restOrigin}/rest/v1/products?select=id&limit=1`, {
+    headers: { Authorization: `Bearer ${sessionA.accessToken}`, apikey: apiKeyA }
+  });
+  expect(productResponseA.ok()).toBeTruthy();
+  const productsA = await productResponseA.json() as Array<{ id: string }>;
+  expect(productsA).toHaveLength(1);
+  const productIdA = productsA[0].id;
+
   const contextB = await browser.newContext();
   const pageB = await contextB.newPage();
   const failuresB = captureBrowserFailures(pageB);
   await login(pageB, emailB, passwordB);
   const sessionB = await browserSupabaseSession(pageB);
+  const apiKeyB = await browserSupabaseApiKey(pageB);
 
   await expect(pageB.getByText('طلباتي')).toBeVisible();
   await expect(pageB.getByText(`طلب #${orderNumberA}`, { exact: true })).toHaveCount(0);
 
-  const foreignRead = await pageB.request.get(`${sessionB.restOrigin}/rest/v1/orders?select=id& id=eq.${orderIdA}`.replace('?select=id& id=', '?select=id&id='), {
-    headers: { Authorization: `Bearer ${sessionB.accessToken}`, apikey: sessionB.accessToken }
+  const foreignRead = await pageB.request.get(`${sessionB.restOrigin}/rest/v1/orders?select=id&id=eq.${orderIdA}`, {
+    headers: { Authorization: `Bearer ${sessionB.accessToken}`, apikey: apiKeyB }
   });
   expect(foreignRead.ok()).toBeTruthy();
   expect(await foreignRead.json()).toEqual([]);
 
   const foreignMutation = await pageB.request.post(`${sessionB.restOrigin}/rest/v1/rpc/set_cart_item`, {
-    headers: { Authorization: `Bearer ${sessionB.accessToken}`, apikey: sessionB.accessToken, 'Content-Type': 'application/json' },
-    data: { p_product_id: orderIdA, p_quantity: 1 }
+    headers: { Authorization: `Bearer ${sessionB.accessToken}`, apikey: apiKeyB, 'Content-Type': 'application/json' },
+    data: { p_product_id: productIdA, p_quantity: 1 }
   });
-  expect([401, 403, 404, 409, 422]).toContain(foreignMutation.status());
+  expect(foreignMutation.status()).toBe(400);
 
   expect(failuresA.pageErrors, `Tenant A browser errors: ${failuresA.pageErrors.join(' | ')}`).toEqual([]);
   expect(failuresA.consoleErrors, `Tenant A console errors: ${failuresA.consoleErrors.join(' | ')}`).toEqual([]);
