@@ -1,14 +1,14 @@
 {
-  "project": "Aghbari Commerce",
-  "repository": "Aghbari-Technologies/aghbari-commerce",
-  "scope": "Aghbari Commerce only",
-  "current_sha": "8c4fc62cb7fb7b68b394fda583c0ac97ec80abed",
-  "previous_sha": "4cfd0499af153846fd0b969eb88d8538d1ed4a52",
-  "tested_sha": "5cd4eb6c60c0d11c7c51981a1718b5f3d4dc2ed2 (DB/RPC); 8c4fc62cb7fb7b68b394fda583c0ac97ec80abed (CI queued)",
-  "deployed_sha": "NOT REVERIFIED IN THIS BATCH",
-  "gate": "DAY 2 — PRODUCT GAP CLOSURE",
-  "queue": {
-    "P0": [
+  "project":"Aghbari Commerce",
+  "repository":"Aghbari-Technologies/aghbari-commerce",
+  "scope":"Aghbari Commerce only",
+  "current_sha":"ab4b18f857ce57acc8fd6c750746570309904aaf",
+  "previous_sha":"4cfd0499af153846fd0b969eb88d8538d1ed4a52",
+  "tested_sha":"5cd4eb6c60c0d11c7c51981a1718b5f3d4dc2ed2 (DB/RPC); ab4b18f857ce57acc8fd6c750746570309904aaf (CI pending)",
+  "deployed_sha":"NOT REVERIFIED IN THIS BATCH",
+  "gate":"DAY 2 — PRODUCT GAP CLOSURE",
+  "queue":{
+    "P0":[
       {"id":"P0-AUTH","feature":"Authentication","status":"VERIFIED","next_action":"authenticated browser evidence"},
       {"id":"P0-CATALOG","feature":"Catalog","status":"IMPLEMENTED","next_action":"browser E2E + load proof"},
       {"id":"P0-CART","feature":"Cart / Checkout","status":"IMPLEMENTED","next_action":"browser E2E + adversarial replay"},
@@ -16,7 +16,7 @@
       {"id":"P0-INVENTORY","feature":"Inventory integrity","status":"IMPLEMENTED","next_action":"runtime concurrency proof"},
       {"id":"P0-TENANT","feature":"Tenant isolation","status":"VERIFIED_DB","next_action":"authenticated cross-tenant browser proof"}
     ],
-    "P1": [
+    "P1":[
       {"id":"P1-TEMPLATES","feature":"Order Templates","status":"VERIFIED_DB","next_action":"exact-head CI + authenticated reload/logout/login/use/delete browser proof"},
       {"id":"P1-EXCEL-QUICK","feature":"Excel Quick Order","status":"VERIFIED_DB","next_action":"exact-head CI + real browser upload/parse/review/confirm/reload proof"},
       {"id":"P1-FINANCE","feature":"Invoices / Account","status":"IMPLEMENTED","next_action":"runtime proof"},
@@ -25,31 +25,25 @@
       {"id":"P1-RBAC","feature":"Roles / Permissions","status":"IMPLEMENTED","next_action":"adversarial API/RPC proof"}
     ]
   },
-  "registries": {
+  "registries":{
     "project_map":"this file + docs/MASTER-EXECUTION-INDEX.md",
     "feature_registry":"queue above; one record per feature",
-    "file_registry":["src/AppV3Fixed.tsx","src/services/orderTemplates.ts","src/services/orderTemplates.test.ts","src/services/quickOrder.ts","src/lib/read-excel-file-browser.ts","supabase/migrations/20260911134000_harden_order_template_persistence.sql","supabase/migrations/20260911120000_atomic_quick_order_cart_merge.sql","supabase/tests/014-order-templates-boundary.test.sql","supabase/tests/015-order-templates-adversarial-boundary.test.sql","e2e/customer-template-persistence.spec.ts","package.json","docs/MASTER-EXECUTION-INDEX.md"],
+    "file_registry":["src/AppV3Fixed.tsx","src/services/orderTemplates.ts","src/services/orderTemplates.test.ts","src/services/quickOrder.ts","src/lib/read-excel-file-browser.ts","supabase/migrations/20260911134000_harden_order_template_persistence.sql","supabase/migrations/20260911120000_atomic_quick_order_cart_merge.sql","supabase/tests/014-order-templates-boundary.test.sql","supabase/tests/015-order-templates-adversarial-boundary.test.sql","supabase/tests/016-quick-order-server-boundary.test.sql","e2e/customer-template-persistence.spec.ts","package.json","docs/MASTER-EXECUTION-INDEX.md"],
     "database_registry":["order_templates","customer_price_tiers","customer_credit_accounts","customer_ledger_entries","client_ui_settings","operation_idempotency","audit_events","carts","cart_items"],
     "rpc_registry":["get_catalog","create_order","set_cart_item","remove_cart_item","transition_order","apply_quick_order"],
     "security_registry":["customer-owned order_templates RLS","anon revoked from order_templates","order_templates 1-100 lines DB constraints","apply_quick_order authenticated-only execute","apply_quick_order server-side customer/tenant/warehouse/product/price/inventory validation","quick-order idempotency and audit boundary","server-authoritative catalog/order commands"],
-    "test_registry":["src/services/orderTemplates.test.ts","supabase/tests/014-order-templates-boundary.test.sql","supabase/tests/015-order-templates-adversarial-boundary.test.sql","e2e/customer-template-persistence.spec.ts","existing order/import/inventory/security suites"],
-    "blocker_registry":[{"id":"VERCEL-BUILD-CAPACITY","type":"EXTERNAL","status":"OPEN","workaround":"continue DB/GitHub/static/E2E preparation; deploy only when capacity returns"},{"id":"AUTH-LEAKED-PASSWORD-PROTECTION","type":"CONFIGURATION","status":"OPEN","workaround":"enable Supabase leaked-password protection with supported Auth configuration before final certification"}],
-    "evidence_registry":["DB exact runtime proof executed on Supabase project mrcyqezbhpncuvaehwgf: order_templates RLS=true, 4 operation-specific authenticated policies, anon DML privilege=false, authenticated DML=true","DB adversarial order_templates proof: own read=1, cross-tenant read=0, cross-customer read=0, foreign insert rejected 42501, anon read/insert rejected 42501, lines 0/101 rejected 23514, lines 1/100 accepted","DB create_order proof: server total=8000.00 and stored unit price=1000.00 despite client-supplied price/total fields; stock after order=91 for request of 8 from stock 99; idempotent replay returned same order; changed payload rejected 40001; invalid product/duplicate/zero/negative/insufficient-stock rejected","DB apply_quick_order proof on Supabase project mrcyqezbhpncuvaehwgf: commit succeeded, idempotent retry returned same cart, changed payload rejected 40001, duplicate rejected 22023, insufficient stock rejected P0001, anonymous execution denied 42501, audit row=1, completed idempotency row=1, cart persistence observed","migration 20260911104556_harden_order_template_persistence is present in remote migration inventory; resulting constraints verified from pg_constraint","latest application-quality run for 8c4fc62... is queued/in progress after current changes; prior 04d677... attempt failed only at lint, while typecheck and unit/integration passed","latest supabase-migration-proof for 8c4fc62... is queued; prior attempt failed at local Supabase startup before pgTAP execution"],
-    "decision_registry":[{"decision":"Order templates are DB-authoritative","reason":"business data must survive reload and logout/login","selected_approach":"existing order_templates table + existing RLS"},{"decision":"Vitest scope is src","reason":"Playwright specs under e2e must not be collected by unit test command","selected_approach":"npm test = vitest run --dir src"},{"decision":"Excel confirmation must be server-authoritative","reason":"browser parsing cannot be the trust boundary for cart mutation","selected_approach":"apply_quick_order(text,uuid,jsonb) SECURITY DEFINER with customer/tenant/warehouse/product/price/inventory validation, idempotency and audit"}]
+    "test_registry":["src/services/orderTemplates.test.ts","supabase/tests/014-order-templates-boundary.test.sql","supabase/tests/015-order-templates-adversarial-boundary.test.sql","supabase/tests/016-quick-order-server-boundary.test.sql","e2e/customer-template-persistence.spec.ts","existing order/import/inventory/security suites"],
+    "blocker_registry":[{"id":"VERCEL-BUILD-CAPACITY","type":"EXTERNAL","status":"OPEN","workaround":"continue DB/GitHub/static/E2E preparation; deploy only when capacity returns"},{"id":"AUTH-LEAKED-PASSWORD-PROTECTION","type":"CONFIGURATION","status":"OPEN","workaround":"enable Supabase leaked-password protection with supported Auth configuration before final certification"},{"id":"AUTHENTICATED-BROWSER-RUNTIME","type":"ENVIRONMENT","status":"OPEN","workaround":"use configured E2E customer credentials/environment; never fabricate credentials"}],
+    "evidence_registry":["Supabase direct evidence: order_templates RLS=true, 4 authenticated operation policies, anon DML privilege=false, authenticated DML=true","Order Templates adversarial evidence: own read=1, cross-tenant read=0, cross-customer read=0, foreign insert rejected 42501, anon read/insert rejected 42501, lines 0/101 rejected 23514, lines 1/100 accepted","Order Templates test-the-test: after temporarily adding permissive SELECT policy inside a rolled-back transaction, cross-tenant read became 1, proving the security assertion is sensitive to a broken policy","create_order DB evidence: server total=8000.00 and stored unit price=1000.00 despite client-supplied price/total fields; stock after request of 8 from 99 became 91 inside transaction; identical idempotent replay returned same order; changed payload rejected 40001; invalid product/duplicate/zero/negative/insufficient-stock rejected","apply_quick_order DB evidence on Supabase project mrcyqezbhpncuvaehwgf: commit succeeded, identical retry returned same cart, changed payload rejected 40001, duplicate rejected 22023, insufficient stock rejected P0001, anonymous execution denied 42501, audit row=1, completed idempotency row=1, cart persistence observed; transaction rolled back after evidence capture","apply_quick_order function verified: SECURITY DEFINER, search_path='', anon execute=false, authenticated execute=true","remote migrations include 20260911104556/harden_order_template_persistence and 20260911105816/atomic_quick_order_cart_merge","exact-head GitHub CI for current branch is pending after final code/test changes; previous 04d677... quality failure was lint-only after typecheck and unit/integration passed; previous migration-proof failure occurred before pgTAP due local Supabase startup"],
+    "decision_registry":[{"decision":"Order templates are DB-authoritative","reason":"business data must survive reload and logout/login","selected_approach":"existing order_templates table + existing RLS"},{"decision":"Vitest scope is src","reason":"Playwright specs under e2e must not be collected by unit test command","selected_approach":"npm test = vitest run --dir src"},{"decision":"Excel confirmation is server-authoritative","reason":"browser parsing cannot be the trust boundary for cart mutation","selected_approach":"apply_quick_order(text,uuid,jsonb) with customer/tenant/warehouse/product/price/inventory validation, idempotency and audit"}]
   },
-  "latest_batch": {
-    "completed": ["DB-backed order templates","template deletion","Excel quick-order parse/validation/review/commit path","atomic server-authoritative quick-order cart merge","template input tests","order-template DB hardening","order-template adversarial DB proof","quick-order adversarial DB proof","CI unit-test collection boundary","customer template reload/re-login/use/delete E2E specification"],
-    "partial": ["authenticated browser E2E","production runtime certification","outbox external delivery","offline/reconnect runtime proof","performance/load evidence","Excel real browser upload/parse/review/confirm/reload evidence"],
-    "failed": ["application-quality 04d677... lint step failed; typecheck and unit/integration passed","supabase-migration-proof 04d677... local Supabase startup failed before pgTAP"],
-    "blocked": ["Vercel build capacity/rate limit","authenticated browser runtime requires configured E2E customer credentials/environment"],
-    "repeated_discovery": 0
+  "latest_batch":{
+    "completed":["DB-backed order templates","template deletion","Excel quick-order parse/validation/review path","atomic server-authoritative quick-order cart merge","template input tests","order-template DB hardening","order-template adversarial DB proof","quick-order adversarial DB proof","quick-order server RPC pgTAP contract added","Excel confirmation wired to server RPC","customer template reload/re-login/use/delete E2E specification","CI unit-test collection boundary"],
+    "partial":["authenticated browser E2E","production runtime certification","outbox external delivery","offline/reconnect runtime proof","performance/load evidence","Excel real browser upload/parse/review/confirm/reload evidence","true concurrent-session stock race proof"],
+    "failed":["application-quality 04d677... lint step failed; typecheck and unit/integration passed","supabase-migration-proof 04d677... local Supabase startup failed before pgTAP"],
+    "blocked":["Vercel build capacity/rate limit","authenticated browser runtime requires configured E2E customer credentials/environment"],
+    "repeated_discovery":0
   },
-  "evidence_rule": "No PASS without exact SHA + environment + command/test path + evidence artifact.",
-  "checkpoint": {
-    "current_sha":"8c4fc62cb7fb7b68b394fda583c0ac97ec80abed",
-    "previous_sha":"4cfd0499af153846fd0b969eb88d8538d1ed4a52",
-    "tested_sha":"5cd4eb6c60c0d11c7c51981a1718b5f3d4dc2ed2 (DB/RPC); 8c4fc62cb7fb7b68b394fda583c0ac97ec80abed (CI queued)",
-    "deployed_sha":"NOT REVERIFIED IN THIS BATCH",
-    "next":"exact-head CI completion → clean migration/pgTAP → authenticated browser E2E → security test-the-test → concurrency/failure proof → final gap scan"
-  }
+  "evidence_rule":"No PASS without exact SHA + environment + command/test path + evidence artifact.",
+  "checkpoint":{"current_sha":"ab4b18f857ce57acc8fd6c750746570309904aaf","previous_sha":"4cfd0499af153846fd0b969eb88d8538d1ed4a52","tested_sha":"5cd4eb6c60c0d11c7c51981a1718b5f3d4dc2ed2 (DB/RPC); ab4b18f857ce57acc8fd6c750746570309904aaf (CI pending)","deployed_sha":"NOT REVERIFIED IN THIS BATCH","next":"exact-head CI completion → clean migration/pgTAP → authenticated browser E2E → security test-the-test → concurrency/failure proof → final gap scan"}
 }
