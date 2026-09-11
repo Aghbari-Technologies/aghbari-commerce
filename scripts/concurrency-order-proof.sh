@@ -6,6 +6,7 @@ set -euo pipefail
 : "${PGUSER:=postgres}"
 : "${PGPASSWORD:=postgres}"
 : "${PGDATABASE:=postgres}"
+export PGHOST PGPORT PGUSER PGPASSWORD PGDATABASE
 
 psql_cmd=(psql -v ON_ERROR_STOP=1 -X)
 
@@ -75,7 +76,7 @@ if [[ "$successes" -ne 1 ]]; then
   exit 1
 fi
 
-remaining=$(psql_cmd=(psql -v ON_ERROR_STOP=1 -X); "${psql_cmd[@]}" -tA -c "select quantity from public.inventory_balances where warehouse_id='c0000000-0000-4000-8000-000000000011' and product_id='a0000000-0000-4000-8000-000000010011';")
+remaining=$(psql -v ON_ERROR_STOP=1 -X -tA -c "select quantity from public.inventory_balances where warehouse_id='c0000000-0000-4000-8000-000000000011' and product_id='a0000000-0000-4000-8000-000000010011';")
 echo "FINAL STOCK: $remaining"
 test "$remaining" = '2'
 
