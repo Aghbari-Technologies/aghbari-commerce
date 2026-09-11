@@ -64,5 +64,12 @@ jobs:
         run: npm run lint
       - name: Production build
         run: npm run build
+      - name: Upload application source evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: application-source-${{ env.TARGET_SHA }}
+          path: src/AppV3Fixed.tsx
+          if-no-files-found: error
+          retention-days: 1
       - name: Release audit
         run: npm run test:release-audit
