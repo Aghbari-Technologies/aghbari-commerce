@@ -3,6 +3,7 @@
 
 create or replace function public.apply_quick_order(
   p_idempotency_key text,
+  p_warehouse_id uuid,
   p_lines jsonb
 )
 returns uuid
@@ -19,6 +20,7 @@ declare
   v_product uuid;
   v_qty integer;
   v_existing_qty integer;
+  v_available integer;
   v_price numeric(18,2);
   v_tier public.customer_tier;
   v_currency text;
@@ -33,12 +35,18 @@ begin
   if length(v_key) < 16 or length(v_key) > 200 then
     raise exception using errcode='22023', message='invalid idempotency key';
   end if;
+  if p_warehouse_id is null then
+    raise exception using errcode='22023', message='warehouse required';
+  end if;
   if p_lines is null or jsonb_typeof(p_lines) <> 'array' then
     raise exception using errcode='22023', message='order lines required';
   end if;
   v_count := jsonb_array_length(p_lines);
   if v_count < 1 or v_count > 100 then
     raise exception using errcode='22023', message='quick order must contain between 1 and 100 lines';
+  end if;
+  if not exists(select 1 from public.warehouses where id=p_warehouse_id and organization_id=v_org and is_active) then
+    raise exception using errcode='42501', message='warehouse not available';
   end if;
 
   perform pg_advisory_xact_lock(hashtextextended(v_org::text || ':quick-order:' || v_key, 0));
@@ -98,10 +106,8 @@ begin
   end loop;
 
   if exists (
-    select 1
-      from (select value->>'product_id' as product_id from jsonb_array_elements(p_lines)) lines
-     group by product_id
-    having count(*) > 1
+    select 1 from (select value->>'product_id' as product_id from jsonb_array_elements(p_lines)) lines
+    group by product_id having count(*) > 1
   ) then
     raise exception using errcode='22023', message='duplicate product line';
   end if;
@@ -110,36 +116,25 @@ begin
     v_product := (v_line->>'product_id')::uuid;
     v_qty := (v_line->>'quantity')::integer;
 
-    if not exists (
-      select 1 from public.products p
-       where p.id=v_product and p.organization_id=v_org and p.status='active'
-    ) then
+    if not exists(select 1 from public.products p where p.id=v_product and p.organization_id=v_org and p.status='active') then
       raise exception using errcode='P0001', message='product unavailable';
     end if;
 
-    select pp.amount, pl.currency into v_price, v_currency
-      from public.product_prices pp
-      join public.price_lists pl on pl.id=pp.price_list_id
-     where pp.organization_id=v_org
-       and pp.product_id=v_product
-       and pl.organization_id=v_org
-       and pl.tier=v_tier
-       and pl.is_active
-       and pp.valid_from <= now()
-       and (pp.valid_to is null or pp.valid_to > now())
-     order by pp.valid_from desc
-     limit 1;
+    select pp.amount,pl.currency into v_price,v_currency
+      from public.product_prices pp join public.price_lists pl on pl.id=pp.price_list_id
+     where pp.organization_id=v_org and pp.product_id=v_product
+       and pl.organization_id=v_org and pl.tier=v_tier and pl.is_active
+       and pp.valid_from<=now() and (pp.valid_to is null or pp.valid_to>now())
+     order by pp.valid_from desc limit 1;
     if v_price is null then
       raise exception using errcode='P0001', message='authorized price unavailable';
     end if;
 
-    select ib.quantity into v_existing_qty
+    select ib.quantity into v_available
       from public.inventory_balances ib
-     where ib.organization_id=v_org
-       and ib.warehouse_id=(select c.warehouse_id from public.carts c where c.id=v_cart)
-       and ib.product_id=v_product
+     where ib.organization_id=v_org and ib.warehouse_id=p_warehouse_id and ib.product_id=v_product
      for update;
-    if not found or v_existing_qty < v_qty then
+    if not found or v_available < v_qty then
       raise exception using errcode='P0001', message='insufficient stock';
     end if;
 
@@ -148,20 +143,18 @@ begin
      where ci.cart_id=v_cart and ci.organization_id=v_org and ci.product_id=v_product
      for update;
     v_existing_qty := coalesce(v_existing_qty,0);
-    if v_existing_qty + v_qty > (select ib.quantity from public.inventory_balances ib where ib.organization_id=v_org and ib.warehouse_id=(select c.warehouse_id from public.carts c where c.id=v_cart) and ib.product_id=v_product) then
+    if v_existing_qty + v_qty > v_available then
       raise exception using errcode='P0001', message='cart quantity exceeds current stock';
     end if;
     v_subtotal := v_subtotal + v_price * v_qty;
 
     insert into public.cart_items(organization_id,cart_id,product_id,quantity)
     values(v_org,v_cart,v_product,v_existing_qty+v_qty)
-    on conflict(cart_id,product_id) do update
-      set quantity=excluded.quantity, updated_at=now();
+    on conflict(cart_id,product_id) do update set quantity=excluded.quantity,updated_at=now();
   end loop;
 
   update public.carts set updated_at=now() where id=v_cart and organization_id=v_org;
-  update public.operation_idempotency
-     set status='completed', response_reference=v_cart
+  update public.operation_idempotency set status='completed',response_reference=v_cart
    where organization_id=v_org and idempotency_key=v_key and operation_type='quick_order_cart_merge';
   insert into public.audit_events(organization_id,actor_id,action,target_type,target_id,result,metadata)
   values(v_org,auth.uid(),'cart.quick_order.import','cart',v_cart,'success',jsonb_build_object('line_count',v_count,'subtotal',v_subtotal,'currency',coalesce(v_currency,'YER'),'idempotency_key',v_key));
@@ -169,6 +162,6 @@ begin
 end;
 $$;
 
-revoke execute on function public.apply_quick_order(text,jsonb) from public, anon;
-grant execute on function public.apply_quick_order(text,jsonb) to authenticated;
-comment on function public.apply_quick_order(text,jsonb) is 'Atomic server-authoritative merge of validated quick-order lines into the current customer cart with idempotency, price/inventory validation, and audit evidence.';
+revoke execute on function public.apply_quick_order(text,uuid,jsonb) from public, anon;
+grant execute on function public.apply_quick_order(text,uuid,jsonb) to authenticated;
+comment on function public.apply_quick_order(text,uuid,jsonb) is 'Atomic server-authoritative merge of validated quick-order lines into the current customer cart with idempotency, price/inventory validation, and audit evidence.';
