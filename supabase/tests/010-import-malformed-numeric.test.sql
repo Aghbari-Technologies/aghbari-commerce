@@ -30,7 +30,7 @@ select lives_ok(
 );
 
 select is(
-  (select invalid_rows from public.import_jobs where source_fingerprint='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'),
+  ((select invalid_rows from public.import_jobs where source_fingerprint='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')::bigint),
   1::bigint,
   'Malformed numeric row is recorded as invalid'
 );
