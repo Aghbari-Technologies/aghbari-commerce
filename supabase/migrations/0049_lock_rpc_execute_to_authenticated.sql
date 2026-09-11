@@ -7,7 +7,7 @@ revoke execute on function public.current_customer_id() from public;
 revoke execute on function public.current_organization_id() from public;
 revoke execute on function public.current_role() from public;
 revoke execute on function public.get_cart() from public;
-revoke execute on function public.get_catalog(text,uuid,integer,integer) from public;
+-- The legacy get_catalog(text,uuid,integer,integer) RPC was intentionally removed by 0042; no grant/revoke is needed here.
 revoke execute on function public.get_or_create_cart() from public;
 revoke execute on function public.is_staff() from public;
 revoke execute on function public.remove_cart_item(uuid) from public;
@@ -25,7 +25,6 @@ grant execute on function public.current_customer_id() to authenticated;
 grant execute on function public.current_organization_id() to authenticated;
 grant execute on function public.current_role() to authenticated;
 grant execute on function public.get_cart() to authenticated;
-grant execute on function public.get_catalog(text,uuid,integer,integer) to authenticated;
 grant execute on function public.get_or_create_cart() to authenticated;
 grant execute on function public.is_staff() to authenticated;
 grant execute on function public.remove_cart_item(uuid) to authenticated;

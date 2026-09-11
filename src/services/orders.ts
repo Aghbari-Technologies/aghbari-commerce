@@ -56,11 +56,25 @@ export function assertOrderTransitionInput(orderId: unknown, status: unknown): {
   return { orderId: normalizedOrderId, status: normalizedStatus };
 }
 
-export async function createOrder(draft: OrderDraft, warehouseId: unknown) {
+async function resolveOperationalWarehouse(): Promise<string> {
+  const client = requireSupabase();
+  const { data: userData, error: userError } = await client.auth.getUser();
+  if (userError) throw userError;
+  if (!userData.user) throw new Error('يجب تسجيل الدخول لإرسال الطلب.');
+  const { data: profile, error: profileError } = await client.from('profiles').select('organization_id').eq('id', userData.user.id).single();
+  if (profileError) throw profileError;
+  if (!profile?.organization_id) throw new Error('حساب العميل غير مرتبط بمؤسسة.');
+  const { data: warehouse, error: warehouseError } = await client.from('warehouses').select('id').eq('organization_id', profile.organization_id).eq('is_active', true).order('created_at').limit(1).maybeSingle();
+  if (warehouseError) throw warehouseError;
+  if (!warehouse?.id) throw new Error('لا يوجد مستودع تشغيلي نشط.');
+  return assertUuid(warehouse.id, 'المستودع');
+}
+
+export async function createOrder(draft: OrderDraft, warehouseId?: unknown) {
   if (!draft || typeof draft !== 'object') throw new Error('بيانات الطلب غير صالحة.');
   const candidate = draft as Partial<OrderDraft>;
   const idempotencyKey = assertIdempotencyKey(candidate.idempotencyKey);
-  const normalizedWarehouseId = assertUuid(warehouseId, 'المستودع');
+  const normalizedWarehouseId = warehouseId == null ? await resolveOperationalWarehouse() : assertUuid(warehouseId, 'المستودع');
   const lines = assertOrderLines(candidate.lines);
   const { data, error } = await requireSupabase().rpc('create_order', { p_idempotency_key: idempotencyKey, p_warehouse_id: normalizedWarehouseId, p_lines: lines });
   if (error) throw error;
