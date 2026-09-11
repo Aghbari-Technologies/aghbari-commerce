@@ -27,7 +27,7 @@ async function signIn(client, email, password, label) {
   return data.user;
 }
 
-const staffUser = await signIn(staff, staffEmail, staffPassword, 'staff');
+await signIn(staff, staffEmail, staffPassword, 'staff');
 const userA = await signIn(clientA, emailA, passwordA, 'customer A');
 const userB = await signIn(clientB, emailB, passwordB, 'customer B');
 
@@ -74,6 +74,7 @@ const payload = (key) => ({ p_idempotency_key: key, p_warehouse_id: warehouse.id
 
 let resultA;
 let resultB;
+let restoreError = null;
 try {
   [resultA, resultB] = await Promise.all([
     clientA.rpc('create_order', payload(keyA)),
@@ -90,9 +91,10 @@ try {
       p_delta: restoreDelta,
       p_reason: `restore concurrency fixture ${exactSha}`,
     });
-    if (error) throw new Error(`Failed to restore inventory fixture: ${error.message}`);
+    if (error) restoreError = new Error(`Failed to restore inventory fixture: ${error.message}`);
   }
 }
+if (restoreError) throw restoreError;
 
 const successes = [resultA, resultB].filter((result) => !result.error && result.data?.length === 1);
 const failures = [resultA, resultB].filter((result) => result.error);
