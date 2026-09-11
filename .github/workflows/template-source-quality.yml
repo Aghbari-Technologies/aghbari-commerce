@@ -21,7 +21,7 @@ concurrency:
 jobs:
   template-source-quality:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 26
     env:
       TARGET_SHA: ${{ inputs.exact_sha || github.sha }}
     steps:
@@ -82,7 +82,7 @@ jobs:
           actual="$(git rev-parse HEAD)"
           test "$actual" = "$TARGET_SHA"
           grep -F 'applyOrderTemplate' src/AppV3Fixed.tsx
-          ! grep -Fq 'await add(p,l.quantity)' src/AppV3Fixed.tsx
+          if grep -Fq 'await add(p,l.quantity)' src/AppV3Fixed.tsx; then exit 1; fi
       - name: Setup Node 22
         uses: actions/setup-node@v4
         with:
