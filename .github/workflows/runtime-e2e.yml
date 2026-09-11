@@ -60,8 +60,8 @@ jobs:
           cache: npm
       - name: Install dependencies from lockfile
         run: npm ci --no-audit --no-fund
-      - name: Install Chromium and Firefox
-        run: npx playwright install --with-deps chromium firefox
+      - name: Install Chromium, Firefox and WebKit
+        run: npx playwright install --with-deps chromium firefox webkit
       - name: Install Microsoft Edge
         run: npx playwright install msedge
       - name: Require runtime credentials
