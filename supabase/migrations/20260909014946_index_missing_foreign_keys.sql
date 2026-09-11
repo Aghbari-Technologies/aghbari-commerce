@@ -1,14 +1,7 @@
 -- Performance hardening identified by Supabase advisors.
--- Cover foreign-key columns used by staff/import/reconciliation workflows.
-
-create index if not exists import_profiles_created_by_idx
-  on public.import_profiles(created_by);
-
-create index if not exists import_synonyms_created_by_idx
-  on public.import_synonyms(created_by);
-
-create index if not exists intelligence_evidence_created_by_idx
-  on public.intelligence_evidence(created_by);
+-- Index only canonical tables present in the clean migration chain.
+-- Legacy advisor findings for tables that are no longer part of the source schema
+-- must not be encoded as migration dependencies, otherwise clean migration replay fails.
 
 create index if not exists inventory_reconciliations_created_by_idx
   on public.inventory_reconciliations(created_by);
