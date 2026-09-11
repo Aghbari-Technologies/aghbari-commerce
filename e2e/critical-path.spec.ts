@@ -29,23 +29,29 @@ function captureBrowserFailures(page: Page) {
 }
 
 async function browserSupabaseSession(page: Page) {
-  return page.evaluate(() => {
+  return page.evaluate(async () => {
     const entries = Object.values(localStorage);
     const authEntry = entries.find((value) => value.includes('access_token') && value.includes('refresh_token'));
     if (!authEntry) throw new Error('Supabase browser session token was not found');
     const parsed = JSON.parse(authEntry) as { access_token?: string };
     if (!parsed.access_token) throw new Error('Supabase access token was not found');
-    const supabaseRequest = performance.getEntriesByType('resource').find((entry) => entry.name.includes('/rest/v1/'))?.name;
-    if (!supabaseRequest) throw new Error('Supabase REST origin was not observed in browser runtime');
-    return { accessToken: parsed.access_token, restOrigin: new URL(supabaseRequest).origin };
-  });
-}
+    const restRequest = performance.getEntriesByType('resource').find((entry) => entry.name.includes('/rest/v1/'))?.name;
+    if (!restRequest) throw new Error('Supabase REST origin was not observed in browser runtime');
 
-async function browserSupabaseApiKey(page: Page): Promise<string> {
-  const request = await page.waitForRequest((request) => request.url().includes('/rest/v1/'), { timeout: 10000 });
-  const apikey = request.headers().apikey;
-  if (!apikey) throw new Error('Supabase publishable API key was not observed in browser request headers');
-  return apikey;
+    const scripts = performance.getEntriesByType('resource').filter((entry) => entry.name.endsWith('.js')) as PerformanceResourceTiming[];
+    let apiKey = '';
+    for (const script of scripts) {
+      try {
+        const text = await fetch(script.name).then((response) => response.text());
+        const match = text.match(/sb_publishable_[A-Za-z0-9_-]+/);
+        if (match?.[0]) { apiKey = match[0]; break; }
+      } catch {
+        // Continue; a different loaded chunk may contain the Vite public key.
+      }
+    }
+    if (!apiKey) throw new Error('Supabase publishable API key was not found in the browser bundle');
+    return { accessToken: parsed.access_token, apiKey, restOrigin: new URL(restRequest).origin };
+  });
 }
 
 test('authenticated customer completes real catalog → cart → order → refresh persistence path', async ({ page }) => {
@@ -101,7 +107,6 @@ test('tenant isolation and direct API/RPC bypass reject foreign resources', asyn
   const failuresA = captureBrowserFailures(pageA);
   await login(pageA, emailA, passwordA);
   const sessionA = await browserSupabaseSession(pageA);
-  const apiKeyA = await browserSupabaseApiKey(pageA);
 
   const addButton = pageA.getByRole('button', { name: /إضافة|أضف/ }).first();
   await expect(addButton).toBeEnabled();
@@ -114,7 +119,7 @@ test('tenant isolation and direct API/RPC bypass reject foreign resources', asyn
   const orderNumberA = match![1];
 
   const orderResponseA = await pageA.request.get(`${sessionA.restOrigin}/rest/v1/orders?select=id,order_number&order_number=eq.${orderNumberA}`, {
-    headers: { Authorization: `Bearer ${sessionA.accessToken}`, apikey: apiKeyA }
+    headers: { Authorization: `Bearer ${sessionA.accessToken}`, apikey: sessionA.apiKey }
   });
   expect(orderResponseA.ok()).toBeTruthy();
   const ordersA = await orderResponseA.json() as Array<{ id: string; order_number: number }>;
@@ -122,7 +127,7 @@ test('tenant isolation and direct API/RPC bypass reject foreign resources', asyn
   const orderIdA = ordersA[0].id;
 
   const productResponseA = await pageA.request.get(`${sessionA.restOrigin}/rest/v1/products?select=id&limit=1`, {
-    headers: { Authorization: `Bearer ${sessionA.accessToken}`, apikey: apiKeyA }
+    headers: { Authorization: `Bearer ${sessionA.accessToken}`, apikey: sessionA.apiKey }
   });
   expect(productResponseA.ok()).toBeTruthy();
   const productsA = await productResponseA.json() as Array<{ id: string }>;
@@ -134,19 +139,18 @@ test('tenant isolation and direct API/RPC bypass reject foreign resources', asyn
   const failuresB = captureBrowserFailures(pageB);
   await login(pageB, emailB, passwordB);
   const sessionB = await browserSupabaseSession(pageB);
-  const apiKeyB = await browserSupabaseApiKey(pageB);
 
   await expect(pageB.getByText('طلباتي')).toBeVisible();
   await expect(pageB.getByText(`طلب #${orderNumberA}`, { exact: true })).toHaveCount(0);
 
   const foreignRead = await pageB.request.get(`${sessionB.restOrigin}/rest/v1/orders?select=id&id=eq.${orderIdA}`, {
-    headers: { Authorization: `Bearer ${sessionB.accessToken}`, apikey: apiKeyB }
+    headers: { Authorization: `Bearer ${sessionB.accessToken}`, apikey: sessionB.apiKey }
   });
   expect(foreignRead.ok()).toBeTruthy();
   expect(await foreignRead.json()).toEqual([]);
 
   const foreignMutation = await pageB.request.post(`${sessionB.restOrigin}/rest/v1/rpc/set_cart_item`, {
-    headers: { Authorization: `Bearer ${sessionB.accessToken}`, apikey: apiKeyB, 'Content-Type': 'application/json' },
+    headers: { Authorization: `Bearer ${sessionB.accessToken}`, apikey: sessionB.apiKey, 'Content-Type': 'application/json' },
     data: { p_product_id: productIdA, p_quantity: 1 }
   });
   expect(foreignMutation.status()).toBe(400);
