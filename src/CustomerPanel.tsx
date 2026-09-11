@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { CustomerTier } from './domain/types';
-import { formatMoney } from './domain/pricing';
 import { createCustomer, getCustomers, setCustomerActive, setCustomerTier, type StaffCustomer } from './services/customers';
 import { supabase } from './lib/supabase';
 
@@ -22,17 +21,9 @@ export default function CustomerPanel({ role }: { role: UserRole }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-
   const reload = useCallback(async () => setCustomers(await getCustomers(200)), []);
   useEffect(() => { void reload().catch((e) => setError(e instanceof Error ? e.message : 'تعذر تحميل العملاء.')); }, [reload]);
-
-  async function run(action: () => Promise<unknown>, success: string) {
-    setBusy(true); setError(null); setMessage(null);
-    try { await action(); setMessage(success); await reload(); }
-    catch (e) { setError(e instanceof Error ? e.message : 'تعذر تنفيذ العملية.'); }
-    finally { setBusy(false); }
-  }
-
+  async function run(action: () => Promise<unknown>, success: string) { setBusy(true); setError(null); setMessage(null); try { await action(); setMessage(success); await reload(); } catch (e) { setError(e instanceof Error ? e.message : 'تعذر تنفيذ العملية.'); } finally { setBusy(false); } }
   async function dispatchInvitation(customer: StaffCustomer) {
     const email = (inviteEmail[customer.id] ?? '').trim().toLowerCase();
     if (!supabase || !email) return;
@@ -46,9 +37,7 @@ export default function CustomerPanel({ role }: { role: UserRole }) {
     } catch (e) { setError(e instanceof Error ? e.message : 'تعذر إرسال الدعوة.'); }
     finally { setInviteBusy(null); }
   }
-
   if (!canCreate && !canManage) return null;
-
   return <div className="cart-panel" id="customers">
     <div className="section-heading"><div><span className="eyebrow">العملاء</span><h2>دورة العميل</h2></div><span>{customers.length} عملاء</span></div>
     <div className="admin-grid">
@@ -59,7 +48,6 @@ export default function CustomerPanel({ role }: { role: UserRole }) {
         <select aria-label="فئة العميل" value={tier} onChange={(e) => setTier(e.target.value as CustomerTier)}>{tiers.map((item) => <option key={item} value={item}>{tierLabels[item]}</option>)}</select>
         <button disabled={busy}>حفظ العميل</button>
       </form>}
-
       <div className="admin-card">
         <h3>العملاء الحاليون</h3>
         {!customers.length ? <small>لا يوجد عملاء مسجلون بعد.</small> : <div className="cart-lines">{customers.map((customer) => <article className="cart-line" key={customer.id}>
