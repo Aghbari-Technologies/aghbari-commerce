@@ -4,7 +4,7 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  { ignores: ['dist'] },
+  { ignores: ['dist', 'e2e/**'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
@@ -18,7 +18,7 @@ export default tseslint.config(
   {
     files: ['**/*.mjs'],
     languageOptions: {
-      globals: { console: 'readonly' }
+      globals: { console: 'readonly', process: 'readonly' }
     }
   },
   {
