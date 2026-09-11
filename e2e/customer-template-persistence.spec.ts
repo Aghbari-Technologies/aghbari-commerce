@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 const email = process.env.E2E_CUSTOMER_EMAIL?.trim();
 const password = process.env.E2E_CUSTOMER_PASSWORD;
 
-test('customer order template survives reload and re-login', async ({ page }) => {
+test('customer order template survives reload, re-login, use, and delete', async ({ page }) => {
   test.skip(!email || !password, 'E2E_CUSTOMER_EMAIL/E2E_CUSTOMER_PASSWORD are required for customer runtime certification');
   const failures: string[] = [];
   page.on('pageerror', (error) => failures.push(`pageerror:${error.message}`));
@@ -18,20 +18,23 @@ test('customer order template survives reload and re-login', async ({ page }) =>
 
   const firstProduct = page.locator('.product-card').first();
   await expect(firstProduct).toBeVisible({ timeout: 15000 });
+  const productName = (await firstProduct.locator('h3').textContent())?.trim() ?? '';
   await firstProduct.getByRole('button', { name: 'إضافة للسلة' }).click();
   await page.getByRole('button', { name: /السلة/ }).click();
-  await page.getByPlaceholder('حفظ كمسحة').fill(`E2E مسحة ${Date.now()}`);
+
+  const templateName = `E2E مسحة ${Date.now()}`;
+  await page.getByPlaceholder('حفظ كمسحة').fill(templateName);
   await page.getByRole('button', { name: 'حفظ', exact: true }).click();
   await expect(page.getByText('تم حفظ المسحة في قاعدة البيانات.')).toBeVisible({ timeout: 10000 });
 
-  await page.getByRole('button', { name: 'الطلبات الدورية' }).click().catch(() => page.getByRole('button', { name: 'المسحات' }).click());
+  await page.getByRole('button', { name: 'المسحات' }).click();
   await expect(page.getByText('المسحات الجاهزة')).toBeVisible({ timeout: 10000 });
-  const templateText = await page.locator('.template-card strong').first().textContent();
-  expect(templateText).toMatch(/^E2E مسحة /);
+  const templateCard = page.locator('.template-card').filter({ hasText: templateName }).first();
+  await expect(templateCard).toBeVisible();
 
   await page.reload();
   await expect(page.getByText('المسحات الجاهزة')).toBeVisible({ timeout: 15000 });
-  await expect(page.locator('.template-card strong').first()).toHaveText(templateText!);
+  await expect(page.locator('.template-card').filter({ hasText: templateName }).first()).toBeVisible();
 
   await page.getByRole('button', { name: 'خروج' }).click();
   await expect(page.getByRole('button', { name: 'دخول آمن' })).toBeVisible();
@@ -40,7 +43,18 @@ test('customer order template survives reload and re-login', async ({ page }) =>
   await page.getByRole('button', { name: 'دخول آمن' }).click();
   await expect(page.getByText('بوابة الأغبري')).toBeVisible({ timeout: 15000 });
   await page.getByRole('button', { name: 'المسحات' }).click();
-  await expect(page.locator('.template-card strong').first()).toHaveText(templateText!, { timeout: 15000 });
+  await expect(page.locator('.template-card').filter({ hasText: templateName }).first()).toBeVisible({ timeout: 15000 });
+
+  await page.locator('.template-card').filter({ hasText: templateName }).getByRole('button', { name: 'إعادة الطلب' }).click();
+  await expect(page.getByRole('button', { name: /السلة/ })).toBeVisible();
+  await page.getByRole('button', { name: /السلة/ }).click();
+  await expect(page.getByText(productName)).toBeVisible({ timeout: 10000 });
+  await page.getByRole('button', { name: '×' }).first().click();
+
+  const finalTemplate = page.locator('.template-card').filter({ hasText: templateName }).first();
+  await finalTemplate.getByRole('button', { name: 'حذف' }).click();
+  await expect(page.getByText('تم حذف المسحة.')).toBeVisible({ timeout: 10000 });
+  await expect(page.locator('.template-card').filter({ hasText: templateName })).toHaveCount(0);
 
   if (failures.length) throw new Error(`runtime failures detected: ${failures.join(' | ')}`);
 });
