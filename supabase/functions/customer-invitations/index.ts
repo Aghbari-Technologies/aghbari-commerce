@@ -8,7 +8,8 @@ const siteUrl = (Deno.env.get('SITE_URL') ?? supabaseUrl).replace(/\/$/, '');
 const resendApiKey = Deno.env.get('RESEND_API_KEY');
 const resendFrom = Deno.env.get('RESEND_FROM');
 const admin = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false, autoRefreshToken: false } });
-function json(body: unknown, status = 200) { return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'Access-Control-Allow-Origin': '*' } }); }
+const corsHeaders = { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'Access-Control-Allow-Origin': siteUrl, 'Vary': 'Origin', 'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type', 'Access-Control-Allow-Methods': 'POST, OPTIONS' };
+function json(body: unknown, status = 200) { return new Response(JSON.stringify(body), { status, headers: corsHeaders }); }
 function bearer(request: Request) { const value = request.headers.get('authorization') ?? ''; return value.startsWith('Bearer ') ? value.slice(7).trim() : null; }
 async function requireStaff(request: Request) {
   const token = bearer(request); if (!token) throw new Error('authentication required');
@@ -17,16 +18,15 @@ async function requireStaff(request: Request) {
   if (error || !user) throw new Error('authentication required');
   const { data: profile, error: profileError } = await admin.from('profiles').select('organization_id,role').eq('id', user.id).single();
   if (profileError || !profile || !['owner', 'admin', 'sales'].includes(String(profile.role))) throw new Error('customer invitation access required');
-  return { user, profile, client };
+  return { user, client };
 }
-async function sendInvitationEmail(email: string, invitationUrl: string, customerId: string) {
-  if (!resendApiKey || !resendFrom) return { dispatched: false, reason: 'RESEND_NOT_CONFIGURED' };
+async function dispatchInvitationEmail(email: string, invitationUrl: string, customerId: string) {
+  if (!resendApiKey || !resendFrom) throw new Error('invitation email dispatch is not configured');
   const response = await fetch('https://api.resend.com/emails', { method: 'POST', headers: { Authorization: `Bearer ${resendApiKey}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ from: resendFrom, to: [email], subject: 'دعوة الدخول إلى بوابة الأغبري التجارية', html: `<div dir="rtl"><h2>دعوة إلى بوابة الأغبري التجارية</h2><p>تم إنشاء دعوة لحسابك التجاري.</p><p><a href="${invitationUrl}">قبول الدعوة وتفعيل الحساب</a></p><p>تنتهي الدعوة خلال 48 ساعة.</p></div>`, tags: [{ name: 'customer_id', value: customerId }] }) });
   if (!response.ok) throw new Error(`invitation email dispatch failed: ${response.status}`);
-  return { dispatched: true, reason: undefined as string | undefined };
 }
 Deno.serve(async (request) => {
-  if (request.method === 'OPTIONS') return json({ ok: true });
+  if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders });
   if (request.method !== 'POST') return json({ error: 'method_not_allowed' }, 405);
   try {
     const body = await request.json();
@@ -42,8 +42,17 @@ Deno.serve(async (request) => {
       const invitation = (data as Array<{ invitation_id: string; recipient_email: string; expires_at: string; token: string }> | null)?.[0];
       if (!invitation) return json({ error: 'invitation_not_created' }, 500);
       const invitationUrl = `${siteUrl}/?invite=${encodeURIComponent(invitation.token)}`;
-      const dispatch = await sendInvitationEmail(invitation.recipient_email, invitationUrl, customerId);
-      return json({ invitation_id: invitation.invitation_id, recipient_email: invitation.recipient_email, expires_at: invitation.expires_at, invitation_url: invitationUrl, dispatched: dispatch.dispatched, dispatch_reason: dispatch.reason, created_by: user.id });
+      try {
+        await dispatchInvitationEmail(invitation.recipient_email, invitationUrl, customerId);
+        const { error: markError } = await admin.from('customer_invitations').update({ dispatch_status: 'sent', dispatched_at: new Date().toISOString(), dispatch_provider: 'resend', dispatch_error: null }).eq('id', invitation.invitation_id);
+        if (markError) throw new Error(`invitation dispatch record failed: ${markError.message}`);
+      } catch (dispatchError) {
+        const dispatchMessage = dispatchError instanceof Error ? dispatchError.message : 'dispatch failed';
+        await admin.from('customer_invitations').update({ dispatch_status: 'failed', dispatch_error: dispatchMessage.slice(0, 1000) }).eq('id', invitation.invitation_id);
+        await admin.from('audit_events').insert({ organization_id: user.id, actor_id: user.id, action: 'customer.invitation.dispatch', target_type: 'customer_invitation', target_id: invitation.invitation_id, result: 'failure', metadata: { customer_id: customerId, error: dispatchMessage } }).catch(() => undefined);
+        return json({ error: 'invitation_dispatch_failed', invitation_id: invitation.invitation_id }, 502);
+      }
+      return json({ invitation_id: invitation.invitation_id, recipient_email: invitation.recipient_email, expires_at: invitation.expires_at, invitation_url: invitationUrl, dispatched: true, dispatch_provider: 'resend' });
     }
     if (action === 'accept') {
       const token = typeof body.token === 'string' ? body.token.trim().toLowerCase() : '';
