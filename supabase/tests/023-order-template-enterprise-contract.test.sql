@@ -9,8 +9,8 @@ select has_column('public','order_template_lines','product_id','template lines b
 select has_column('public','order_template_lines','quantity','template lines persist quantity');
 select col_is_pk('public','order_template_lines','id','template line primary key exists');
 select fk_ok('public','order_template_lines','template_id','public','order_templates','id','template lines reference canonical templates');
-select function_privs_are('public','apply_order_template','uuid, uuid, text','public',false,'anonymous cannot execute atomic template apply');
-select function_privs_are('public','save_order_template','text, jsonb, text','public',false,'anonymous cannot execute template save');
+select ok(not has_function_privilege('anon','public.apply_order_template(uuid,uuid,text)','EXECUTE'),'anonymous cannot execute atomic template apply');
+select ok(not has_function_privilege('anon','public.save_order_template(text,jsonb,text)','EXECUTE'),'anonymous cannot execute template save');
 
 select * from finish();
 rollback;
