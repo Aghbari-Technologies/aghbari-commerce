@@ -2,66 +2,66 @@
 
 **Canonical status ledger. Updated after every meaningful execution boundary.**
 
-## Identity
-- Product: **بوابة الأغبري للمواد الغذائية**
-- Repository: `Aghbari-Technologies/aghbari-commerce`
-- Branch: `main`
-- Current exact implementation HEAD after this execution boundary: **`a2508208d0c42852d8054920769ed3ebdd5f3291`**.
-- Scope: **Aghbari Commerce only.** `Report-Advisor` and every other project are out of scope.
-- Benchmark reference: `https://alamri.app/` only; Aghbari identity remains independent.
+## Truth Reset
+- Starting SHA ordered by this Owner-Level sprint: `0f28a8df8ce6efa8f4ee9569c36aa0d696d0386c`.
+- Current exact implementation HEAD: `34428c982c098859ad0247e37a00a801ee4df82d`.
+- Single certification candidate: `34428c982c098859ad0247e37a00a801ee4df82d`.
+- No evidence from an earlier SHA transfers to this candidate.
+- Scope: **Aghbari Commerce only**.
 
-## Certification stages
-| Stage | Current state |
+## Executed
+1. Added tenant-bound normalized order-template persistence:
+   - `order_templates.organization_id`
+   - `order_template_lines`
+   - `order_template_apply_operations`
+   - RLS and tenant/customer predicates
+   - authenticated server RPC `save_order_template`
+   - authenticated server RPC `apply_order_template`
+2. `apply_order_template` validates the complete template before any cart mutation: template ownership, organization, active warehouse, active product, warehouse stock and authorized price. Mutation occurs only after the full validation pass, inside the same database transaction.
+3. Template apply is idempotent and records an audit event.
+4. Added `src/services/orderTemplates.ts` wired to the canonical RPCs and normalized line storage.
+5. Added exact database contract coverage: `supabase/tests/023-order-template-enterprise-contract.test.sql`.
+6. Existing `apply_quick_order` was inspected live and confirmed to already implement server-side tenant/customer authorization, idempotency, duplicate-line rejection, authorized pricing, stock locking and atomic cart merge.
+
+## Live database evidence
+- Applied migration history contains `enterprise_order_templates_atomic`.
+- `order_template_lines` exists and RLS is enabled.
+- `order_template_apply_operations` exists and RLS is enabled.
+- Both template RPCs exist.
+- Anonymous execute privilege is denied for both template RPCs.
+- Ten exact live database contract assertions returned `pass=true`.
+- Live counts currently show zero template rows and zero apply-operation rows; this is expected because no real customer template mutation was performed merely to manufacture evidence.
+
+## Certification state
+| Stage | State |
 |---|---|
-| BUILT | **ADVANCED IMPLEMENTED** — commerce shell, catalog/pricing, cart/orders, staff operations, customers, inventory, purchasing/receiving, finance, import/export, outbox, PWA/offline and security hardening are present. |
-| INTEGRATED | **IMPLEMENTATION PASS** — current main includes product-price tenant-boundary hardening, import numeric hardening, search_path hardening, operation-idempotency authorization hardening, purchase/receipt idempotency payload hardening, defense-in-depth product-media storage limits, storage-limit regression proof, and database security regression contracts. |
-| VERIFIED | **PARTIAL** — G1 Domain Proof is PASS on exact `b63e98a...`; the new database security regression contract is now part of the exact certification candidate, while complete exact-head CI and clean migration/pgTAP evidence remain required. |
-| RUNTIME PROVEN | **PARTIAL** — the canonical Aghbari Vercel project is linked to `Aghbari-Technologies/aghbari-commerce`; deployment `dpl_4qn6nJVeYA3poHX8qkM9RMFdZdKD` is READY on exact SHA `a2508208...`. Build metadata, HTTPS shell, security headers, PWA manifest, and service worker are verified. Authenticated browser E2E and real business mutation proof remain required. |
-| PRODUCTION CERTIFIED | **NOT PROVEN** — final release gates remain open. |
+| BUILT | **ADVANCED / PARTIAL CLOSURE** |
+| INTEGRATED | **PARTIAL** — enterprise template backend and service are integrated on current main. |
+| VERIFIED | **PARTIAL** — live database contract is proven; full exact-head CI remains pending. |
+| RUNTIME PROVEN | **PARTIAL** — current main deployment is queued/building and authenticated browser proof is not yet fresh on the candidate SHA. |
+| PRODUCTION CERTIFIED | **NOT PROVEN** |
 
-## Latest execution boundary — 2026-09-09
-- Added `docs/MASTER-EXECUTABLE-PRODUCT-SPECIFICATION-FOR-DEVELOPER.md` as the master executable specification for implementation and completion.
-- Hardened the `product-media` storage bucket server-side: private bucket, 5 MiB maximum object size, and WebP-only objects. Live verification confirms these exact settings.
-- Added regression assertions to `supabase/tests/001-storage-boundary.test.sql` proving the bucket is private, enforces the 5 MiB limit, and accepts only WebP objects, in addition to the existing organization-boundary and registration tests.
-- Added `supabase/tests/013-security-regression-contract.test.sql` to continuously assert global public-table RLS coverage, NOT NULL organization boundaries, zero direct anon execution on public functions, and all four product-media CRUD policies.
-- Updated `scripts/release-audit.mjs` so future release audits require the canonical product-media storage hardening contract to remain present in migration history.
-- Previous purchase/receipt idempotency, numeric finiteness, product-price RLS, import numeric/search_path, RPC hardening, domain/order workflow proof, and PWA/offline hardening remain part of the implementation baseline.
-- Vercel project `aghbari-commerce-c2dd` is linked to the canonical Aghbari GitHub repository and currently serves exact `a2508208...` as a READY production deployment.
-- Supabase live security verification currently shows 45/45 public base tables with RLS enabled, no public table without an RLS policy, and 43/43 `organization_id` columns NOT NULL.
-- Supabase security-advisor residuals remain the intentional authenticated SECURITY DEFINER surface and the external Auth leaked-password-protection configuration warning. Neither is marked PASS without closure evidence.
+## Remaining release blockers
+1. Current `AppV3Fixed.tsx` on main still contains the legacy localStorage template UI path; the database/service implementation is present but current-main UI integration is not yet proven.
+2. Current-main Excel UI remains parse-only; the stronger reviewed Excel implementation exists on the separate execution branch and has not been transferred/proven on this exact main candidate.
+3. Fresh exact-head CI/typecheck/lint/unit/build/release-audit evidence for `34428c982c098859ad0247e37a00a801ee4df82d` is not yet available.
+4. Clean migration reset + full pgTAP evidence on this exact candidate is not yet available.
+5. Latest Vercel production deployment for the current candidate is still `QUEUED`; no production PASS is claimed.
+6. Auth leaked-password protection remains disabled according to the live Supabase security advisor.
+7. Security advisor still reports an authenticated SECURITY DEFINER surface; no blanket removal is performed because several functions are deliberate authorization boundaries and each must be reviewed individually.
+8. Fresh authenticated browser E2E, tenant-isolation E2E and production persistence proof remain outstanding.
 
-## Evidence reviewed
-- Purchasing/receiving pgTAP covers create, exact replay, changed-payload rejection, approval, receipt, inventory mutation, Outbox emission, and receipt replay.
-- Purchase full-payload pgTAP covers currency and notes conflicts under an existing idempotency key.
-- Inventory pgTAP covers atomic transfer, idempotent replay, insufficient-stock rejection, and threshold behavior.
-- Stock-count pgTAP covers completion gating, idempotency, reconciliation mutation, variance audit, and cross-tenant mutation rejection.
-- Finance pgTAP covers invoice creation, partial/final payment, overpayment rejection, and cash balance.
-- Migration-proof workflow is exact-SHA aware and is designed to reset an empty local Supabase database, run pgTAP, and verify migration inventory.
-- Product-media unit tests cover allowed MIME types, source-size bounds, decompression-bomb dimensions, and UUID/path validation.
-- Product-media pgTAP now covers private-bucket state, server-side size limit, WebP-only storage policy, organization isolation, path validation, and server registration.
-- Database security regression contracts now cover RLS, organization boundaries, anon function execution, and product-media policy presence.
-- Production deployment evidence confirms Vercel cloned `Aghbari-Technologies/aghbari-commerce` at exact `a2508208...`, completed the Vite production build, generated `build-meta.json`, and reached READY state.
-
-## Remaining closure work — priority order
-### P0 — Release blockers
-1. Obtain complete fresh exact-head GitHub Actions evidence for typecheck, lint, unit/domain tests, build and release audit on the final certification HEAD.
-2. Execute clean-source migration reset + full pgTAP on the exact certification HEAD, including the new security regression contracts.
-3. Execute authenticated browser E2E including tenant isolation and exact-created-order persistence.
-4. Execute deployed production smoke against the exact deployed SHA, then perform authenticated browser/runtime business-flow proof.
-5. Resolve Auth leaked-password-protection configuration warning.
-
-### P1 — Reliability proof
-6. Runtime-prove offline refresh/cache/reconnect/replay/conflict/recovery and tenant scoping.
-7. Runtime-prove outbox claim/delivery/retry/backoff/terminal failure and consumer idempotency.
-8. Runtime-prove import/export malformed-input, quarantine, atomic commit, authorization and cross-tenant cases.
-9. Re-run all pgTAP suites on clean/reset/repeat paths.
-
-### P2 — Final hardening
-10. Complete query-plan and representative-load review.
-11. Complete observability, audit, backup/recovery and rollback evidence.
-12. Release candidate → exact-SHA smoke → final regression → freeze → production certification.
+## Evidence links / identifiers
+- Candidate HEAD: `34428c982c098859ad0247e37a00a801ee4df82d`
+- Template DB migration: `20260914235034_enterprise_order_templates_atomic.sql`
+- Contract test: `supabase/tests/023-order-template-enterprise-contract.test.sql`
+- Template service commit: `7eed5cbe0c06868179e9c7d5442c35a785072ad5`
+- DB implementation commit: `1c5792439dadde9a9bbbd5996b059e7c0f536dec`
+- Current candidate Vercel deployment: `dpl_D4SeCB6z3d9YHaMsL3vjf6NxzezH` — target production, currently queued.
 
 ## No-false-closure
-A migration file is not migration execution evidence. A UI restriction is not authorization evidence. An object-storage policy is not a runtime upload proof. A queued outbox event is not successful delivery evidence. A green run on an earlier SHA is not exact-current-HEAD evidence. A documentation PASS is not a runtime PASS. Test credentials must never be fabricated or committed.
+`CODE != TEST != CI != RUNTIME != LIVE != PRODUCTION`
 
-**NEXT EXECUTION LOOP:** continue Aghbari-only execution from exact **`a2508208d0c42852d8054920769ed3ebdd5f3291`**. Resolve concrete defects immediately; external access is available for the canonical Vercel project, while authenticated runtime credentials remain required for full browser certification.
+`IMPLEMENTED != VERIFIED != PROVEN != CERTIFIED`
+
+Only evidence produced against the exact candidate SHA may advance this index toward certification.
