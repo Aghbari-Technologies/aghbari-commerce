@@ -53,9 +53,18 @@ export async function createOrderTemplate(input: { name: string; branchLabel?: s
   return created;
 }
 
-export async function applyOrderTemplate(id: string, warehouseId: string, idempotencyKey = crypto.randomUUID()): Promise<void> {
-  if (!UUID.test(id) || !UUID.test(warehouseId)) throw new Error('معرّف المسحة أو المستودع غير صالح.');
-  const { error } = await requireSupabase().rpc('apply_order_template', { p_template_id: id, p_warehouse_id: warehouseId, p_idempotency_key: idempotencyKey });
+export async function applyOrderTemplate(id: string, warehouseId?: string, idempotencyKey = crypto.randomUUID()): Promise<void> {
+  if (!UUID.test(id)) throw new Error('معرّف المسحة غير صالح.');
+  const client = requireSupabase();
+  let resolvedWarehouseId = warehouseId;
+  if (!resolvedWarehouseId) {
+    const { data, error } = await client.from('warehouses').select('id').eq('is_active', true).order('created_at').limit(1).maybeSingle();
+    if (error) throw error;
+    resolvedWarehouseId = data?.id ?? undefined;
+  }
+  if (!resolvedWarehouseId || !UUID.test(resolvedWarehouseId)) throw new Error('لا يوجد مستودع نشط متاح للحساب الحالي.');
+  if (!UUID.test(idempotencyKey)) throw new Error('معرّف العملية غير صالح.');
+  const { error } = await client.rpc('apply_order_template', { p_template_id: id, p_warehouse_id: resolvedWarehouseId, p_idempotency_key: idempotencyKey });
   if (error) throw error;
 }
 
