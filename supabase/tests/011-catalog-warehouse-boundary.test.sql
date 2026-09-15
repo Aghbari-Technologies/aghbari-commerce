@@ -31,12 +31,11 @@ insert into public.inventory_balances(organization_id,warehouse_id,product_id,qu
 
 set local role authenticated;
 set local request.jwt.claim.sub='11111111-1111-4111-8111-111111111111';
-
 select is((select available_quantity from public.get_catalog(null,null,24,0,'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa03') where sku='A-001'),17,'Tenant A sees its warehouse quantity');
 select is((select count(*) from public.get_catalog(null,null,24,0,'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa03') where sku='B-001'),0::bigint,'Tenant A cannot see Tenant B products');
 select throws_ok($$select * from public.get_catalog(null,null,24,0,'78787878-7878-4787-8787-787878787880')$$,'42501',null,'Tenant A cannot select Tenant B warehouse');
 select throws_ok($$select * from public.get_catalog(null,null,24,0,'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa04')$$,'42501',null,'Inactive warehouse is rejected');
-select is(has_function_privilege('authenticated','public.get_catalog(text,uuid,integer,integer)','execute'),false,'Legacy four-argument catalog execution is denied');
+select is(has_function_privilege('authenticated','public.get_catalog(text,uuid,integer,integer,uuid)','execute'),true,'Warehouse-aware catalog execution is granted');
 select throws_ok($$select * from public.get_catalog(null,null,0,0,'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa03')$$,'22023',null,'Invalid pagination is rejected');
 
 set local request.jwt.claim.sub='22222222-2222-4222-8222-222222222222';
