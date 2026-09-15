@@ -6,7 +6,7 @@ select plan(11);
 insert into auth.users (id, email) values ('88888888-8888-4888-8888-888888888888', 'stock-count-admin@test.local');
 insert into public.organizations (id, name) values ('67676767-6767-4676-8676-676767676767', 'Stock Count Tenant');
 insert into public.branches (id, organization_id, name) values ('67676767-6767-4676-8676-676767676768', '67676767-6767-4676-8676-676767676767', 'Main');
-insert into public.warehouses (id, organization_id, branch_id, name) values ('67676767-6767-4676-8676-676767676769', '67676767-6767-4676-8676-676767676768', '67676767-6767-4676-8676-676767676768', 'Main Warehouse');
+insert into public.warehouses (id, organization_id, branch_id, name) values ('67676767-6767-4676-8676-676767676769', '67676767-6767-4676-8676-676767676767', '67676767-6767-4676-8676-676767676768', 'Main Warehouse');
 insert into public.warehouses (id, organization_id, branch_id, name) values ('67676767-6767-4676-8676-676767676771', '67676767-6767-4676-8676-676767676767', '67676767-6767-4676-8676-676767676768', 'Second Warehouse');
 insert into public.products (id, organization_id, sku, name, unit) values ('67676767-6767-4676-8676-676767676770', '67676767-6767-4676-8676-676767676767', 'COUNT-001', 'Count Product', 'carton');
 insert into public.profiles (id, organization_id, role) values ('88888888-8888-4888-8888-888888888888', '67676767-6767-4676-8676-676767676767', 'admin');
