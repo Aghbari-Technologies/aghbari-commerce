@@ -1,6 +1,6 @@
 begin;
 
-select plan(8);
+select plan(7);
 
 create temp table fixture as
 select gen_random_uuid() org_a, gen_random_uuid() org_b, gen_random_uuid() admin_a, gen_random_uuid() admin_b, gen_random_uuid() viewer_a, gen_random_uuid() customer_a, gen_random_uuid() customer_b, gen_random_uuid() branch_a, gen_random_uuid() branch_b, gen_random_uuid() warehouse_a, gen_random_uuid() warehouse_b, gen_random_uuid() product_a, gen_random_uuid() product_b, gen_random_uuid() order_a, gen_random_uuid() order_b;
@@ -24,10 +24,10 @@ set local role authenticated;
 select set_config('request.jwt.claims',json_build_object('role','authenticated','sub',(select viewer_a::text from fixture))::text,true);
 select set_config('request.jwt.claim.role','authenticated',true);
 select set_config('request.jwt.claim.sub',(select viewer_a::text from fixture),true);
-select throws_ok(format('select public.transition_order(%L,%L)',order_a,'confirmed'::order_status),'42501','viewer cannot transition an order') from fixture;
-select throws_ok(format('select public.transition_order(%L,%L)',order_b,'confirmed'::order_status),'P0002','Tenant A viewer cannot target Tenant B order') from fixture;
+select throws_ok(format('select public.transition_order(%L,%L)',order_a,'confirmed'::order_status),'42501',null,'viewer cannot transition an order') from fixture;
+select throws_ok(format('select public.transition_order(%L,%L)',order_b,'confirmed'::order_status),'P0002',null,'Tenant A viewer cannot target Tenant B order') from fixture;
 select set_config('request.jwt.claim.sub',(select admin_a::text from fixture),true);
-select throws_ok(format('select public.transition_order(%L,%L)',order_b,'confirmed'::order_status),'P0002','Tenant A admin cannot target Tenant B order') from fixture;
+select throws_ok(format('select public.transition_order(%L,%L)',order_b,'confirmed'::order_status),'P0002',null,'Tenant A admin cannot target Tenant B order') from fixture;
 select public.transition_order(order_a,'confirmed'::order_status) from fixture;
 select is((select status from public.orders where id=(select order_a from fixture)),'confirmed'::order_status,'Tenant A admin can transition own order');
 select is((select count(*) from public.order_status_history h where h.order_id=(select order_a from fixture) and h.to_status='confirmed'),1::bigint,'Own order transition creates history');
