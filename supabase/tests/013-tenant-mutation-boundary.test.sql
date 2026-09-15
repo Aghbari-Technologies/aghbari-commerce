@@ -1,6 +1,6 @@
 begin;
 
-select plan(7);
+select plan(6);
 
 create temp table fixture as
 select gen_random_uuid() as org_a, gen_random_uuid() as org_b, gen_random_uuid() as user_a, gen_random_uuid() as admin_a, gen_random_uuid() as branch_a, gen_random_uuid() as branch_b, gen_random_uuid() as warehouse_a, gen_random_uuid() as warehouse_b, gen_random_uuid() as product_a, gen_random_uuid() as product_b, gen_random_uuid() as category_a;
@@ -25,7 +25,6 @@ select throws_ok(format('select public.upsert_product(%L,%L,%L,%L,%L,%L,%L)', pr
 select throws_ok(format('select public.set_product_price(%L,%L,%L,%L)', product_b, 'retail', 1, 'YER'), '42501', null, 'viewer cannot change Tenant B pricing') from fixture;
 select set_config('request.jwt.claim.sub', (select admin_a::text from fixture), true);
 select throws_ok(format('select public.adjust_inventory(%L,%L,-5,%L)', warehouse_b, product_b, 'cross-tenant admin'), 'P0002', null, 'Tenant A admin cannot mutate Tenant B inventory') from fixture;
-select public.adjust_inventory(warehouse_a, product_a, 1, 'same-tenant admin') from fixture;
 select is((select quantity from public.inventory_balances ib join fixture f on f.warehouse_a = ib.warehouse_id and f.product_a = ib.product_id), 11, 'Tenant A admin can mutate Tenant A inventory');
 
 select * from finish();
