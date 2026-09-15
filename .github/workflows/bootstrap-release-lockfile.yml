@@ -35,6 +35,8 @@ jobs:
           npm --version
           test -f package.json
           npm pkg get name version engines dependencies devDependencies
+      - name: Install from exact lockfile
+        run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Generate lockfile
         id: lockfile
         shell: bash
