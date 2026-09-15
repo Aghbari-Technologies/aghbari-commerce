@@ -29,12 +29,20 @@ function captureBrowserFailures(page: Page) {
   return { pageErrors, consoleErrors, failedResponses };
 }
 
-test('authenticated customer completes real catalog → cart → order → refresh persistence path', async ({ page }) => {
+test('authenticated customer completes real catalog → cart → order → refresh persistence path', async ({ page, request }) => {
   const email = process.env.E2E_EMAIL;
   const password = process.env.E2E_PASSWORD;
   if (!email || !password) throw new Error('E2E_EMAIL and E2E_PASSWORD are required; runtime tests must never silently skip.');
 
   const failures = captureBrowserFailures(page);
+  let createOrderRequest: { url: string; body: string; authorization?: string; apikey?: string } | null = null;
+  page.on('request', (req) => {
+    if (req.method() !== 'POST' || !req.url().includes('/rest/v1/rpc/create_order')) return;
+    const headers = req.headers();
+    const body = req.postData();
+    if (body && !createOrderRequest) createOrderRequest = { url: req.url(), body, authorization: headers.authorization, apikey: headers.apikey };
+  });
+
   await login(page, email, password);
   await expect(page.getByText('تجارة جملة أسرع')).toBeVisible();
 
@@ -54,6 +62,16 @@ test('authenticated customer completes real catalog → cart → order → refre
   const orderNumberMatch = successText.match(/طلب رقم\s+(\d+)/);
   expect(orderNumberMatch, `Order number missing from success message: ${successText}`).not.toBeNull();
   const orderNumber = orderNumberMatch![1];
+
+  expect(createOrderRequest, 'The browser must issue an authenticated create_order RPC request.').not.toBeNull();
+  const replayHeaders: Record<string, string> = { 'content-type': 'application/json' };
+  if (createOrderRequest?.authorization) replayHeaders.authorization = createOrderRequest.authorization;
+  if (createOrderRequest?.apikey) replayHeaders.apikey = createOrderRequest.apikey;
+  const replay = await request.post(createOrderRequest!.url, { headers: replayHeaders, data: createOrderRequest!.body });
+  expect(replay.status()).toBe(200);
+  const replayBody = await replay.json();
+  expect(replayBody?.[0]?.id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
+  expect(String(replayBody?.[0]?.order_number)).toBe(orderNumber);
 
   await expect(page.getByText('طلباتي')).toBeVisible();
   await expect(page.getByText(`طلب #${orderNumber}`, { exact: true })).toBeVisible();
