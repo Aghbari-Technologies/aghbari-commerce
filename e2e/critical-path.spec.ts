@@ -2,13 +2,14 @@ import { test, expect, type Page } from '@playwright/test';
 
 async function login(page: Page, email: string, password: string) {
   await page.goto('/');
-  await expect(page.getByText('بوابة الأغبري', { exact: false }).first()).toBeVisible();
+  await expect(page.getByText('بوابة الأغبري التجارية', { exact: true })).toBeVisible();
   const loginForm = page.locator('form').filter({ has: page.locator('input[type="password"]') }).first();
   await loginForm.locator('input[type="email"]').fill(email);
   await loginForm.locator('input[type="password"]').fill(password);
   await loginForm.getByRole('button', { name: 'دخول آمن' }).click();
   await expect(page.getByRole('link', { name: 'المنتجات' })).toBeVisible();
   await expect(page.getByRole('button', { name: /السلة/ })).toBeVisible();
+  await expect(page.locator('#catalog')).toBeVisible();
 }
 
 function captureBrowserFailures(page: Page) {
@@ -35,15 +36,15 @@ test('authenticated customer completes real catalog → cart → order → refre
 
   const failures = captureBrowserFailures(page);
   await login(page, email, password);
-  await expect(page.getByText('الكتالوج')).toBeVisible();
+  await expect(page.getByText('تجارة جملة أسرع')).toBeVisible();
 
-  const addButton = page.getByRole('button', { name: /إضافة|أضف/ }).first();
+  const addButton = page.getByRole('button', { name: /أضف للسلة|إضافة للسلة/ }).first();
   await expect(addButton).toBeVisible();
   await expect(addButton).toBeEnabled();
   await addButton.click();
   await expect(page.getByRole('button', { name: /السلة، 1 أصناف/ })).toBeVisible();
 
-  const checkout = page.getByRole('button', { name: 'إرسال الطلب' });
+  const checkout = page.getByRole('button', { name: 'إرسال طلب الجملة' });
   await expect(checkout).toBeEnabled();
   await checkout.click();
 
@@ -80,10 +81,10 @@ test('tenant isolation: Tenant B cannot read Tenant A order through the real UI 
   const pageA = await contextA.newPage();
   const failuresA = captureBrowserFailures(pageA);
   await login(pageA, emailA, passwordA);
-  const addButton = pageA.getByRole('button', { name: /إضافة|أضف/ }).first();
+  const addButton = pageA.getByRole('button', { name: /أضف للسلة|إضافة للسلة/ }).first();
   await expect(addButton).toBeEnabled();
   await addButton.click();
-  await pageA.getByRole('button', { name: 'إرسال الطلب' }).click();
+  await pageA.getByRole('button', { name: 'إرسال طلب الجملة' }).click();
   const success = pageA.getByRole('status').filter({ hasText: 'تم إرسال الطلب رقم' }).last();
   await expect(success).toBeVisible();
   const match = (await success.innerText()).match(/طلب رقم\s+(\d+)/);
