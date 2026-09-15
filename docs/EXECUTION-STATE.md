@@ -1,7 +1,7 @@
 # EXECUTION STATE
 
-CURRENT_HEAD: `817d6cdff26afc339138ec4bf416f97480350d6f`
-CURRENT_CANDIDATE: `817d6cdff26afc339138ec4bf416f97480350d6f` (NOT FROZEN)
+CURRENT_HEAD: `5ec5e2ceee24337cb9a10802670034290435cc03`
+CURRENT_CANDIDATE: `5ec5e2ceee24337cb9a10802670034290435cc03` (NOT FROZEN)
 CURRENT_PRODUCTION: `6bdfd97df4417d7ab6a533a29ad77c43c45ac0a8`
 LAST_CERTIFIED_EVIDENCE: `NONE`
 PRODUCTION: `NO TOUCH`
@@ -9,51 +9,55 @@ PRODUCTION: `NO TOUCH`
 ## WAR ROOM — 34 FRONTS
 | Front | Status | Exact SHA | Evidence | Blocker |
 |---|---|---|---|---|
-| F01 Fresh DB / P0 | FAIL | `817d6cd...` | `34924484015` on prior `a6cd1a9...`: 8 storage tests failed | storage RLS repair needs fresh replay |
-| F02 RPC WAR | RUNNING | `817d6cd...` | targeted RPC/security suites exist; current exact replay pending | — |
-| F03 Tenant A/B | RUNNING | `817d6cd...` | tenant boundary suites pass on earlier SHA only | current exact replay pending |
-| F04 Inventory | RUNNING | `817d6cd...` | transfer/stock-count/concurrency suites exist | current exact replay pending |
-| F05 Finance | RUNNING | `817d6cd...` | finance/cash suites exist | current exact replay pending |
-| F06 Order Lifecycle | RUNNING | `817d6cd...` | state-machine/tenant suites exist | browser/runtime proof pending |
-| F07 Quick Order | RUNNING | `817d6cd...` | quick-order history/contracts present | current exact replay pending |
-| F08 Imports / Reconciliation | RUNNING | `817d6cd...` | import tenant/delta suites exist | current exact replay pending |
-| F09 Order Templates | RUNNING | `817d6cd...` | enterprise template migration/test present | browser + adversarial proof pending |
-| F10 RBAC | RUNNING | `817d6cd...` | privilege/security contracts present | full role matrix pending |
-| F11 Customer Invitations | RUNNING | `817d6cd...` | invitation pgTAP present | browser proof pending |
-| F12 Outbox Worker | RUNNING | `817d6cd...` | worker/search_path suites present | current exact replay pending |
-| F13 Admin Authentication | RUNNING | `817d6cd...` | auth/session code present | browser proof pending |
-| F14 Customer Authentication | RUNNING | `817d6cd...` | customer auth/invitation code present | browser proof pending |
-| F15 Admin Browser E2E | BLOCKED | `817d6cd...` | workflow exists | no runtime workflow dispatch available |
-| F16 Customer Browser E2E | BLOCKED | `817d6cd...` | workflow exists | no runtime workflow dispatch available |
-| F17 Product Catalog | RUNNING | `817d6cd...` | catalog/warehouse contracts present | final UI/runtime proof pending |
-| F18 Pricing / MOQ | RUNNING | `817d6cd...` | pricing/tier contracts present | checkout authority proof pending |
-| F19 Cart / Checkout | RUNNING | `817d6cd...` | cart/order workflow suites exist | exact runtime replay pending |
-| F20 CMS / Merchant Control Plane | OPEN | `817d6cd...` | UI/control-plane code exists | mutation→customer proof pending |
-| F21 Shipping | OPEN | `817d6cd...` | domain surface not fully proven | end-to-end proof pending |
-| F22 Returns | OPEN | `817d6cd...` | domain surface not fully proven | end-to-end proof pending |
-| F23 Operational Accounting | RUNNING | `817d6cd...` | finance/invoice/cash contracts exist | cross-domain invariant proof pending |
-| F24 PWA | OPEN | `817d6cd...` | final installability proof pending | — |
-| F25 Offline / Sync | OPEN | `817d6cd...` | final queue/reconnect proof pending | — |
-| F26 Storage Security | FAIL | `817d6cd...` | fresh replay exposed 8 failures; repair committed | fresh replay pending |
-| F27 Security Final | RUNNING | `817d6cd...` | security suites exist | current exact sweep pending |
-| F28 Audit / Evidence | RUNNING | `817d6cd...` | audit contracts present | end-to-end trace proof pending |
-| F29 Recovery / Idempotency | RUNNING | `817d6cd...` | idempotency contracts/suites present | system-wide replay pending |
-| F30 Performance / Concurrency | RUNNING | `817d6cd...` | concurrency suites exist | broader domain replay pending |
-| F31 Test-the-Test | OPEN | `817d6cd...` | controlled-bypass work pending | — |
-| F32 UI/UX Final | OPEN | `817d6cd...` | product pass not certified | final browser review pending |
+| F01 Fresh DB / P0 | RUNNING | `5ec5e2c...` | Fresh replay `34925685129` running | — |
+| F02 RPC WAR | RUNNING | `5ec5e2c...` | security + domain CI passed on this SHA; adversarial closure pending | exact RPC replay |
+| F03 Tenant A/B | RUNNING | `5ec5e2c...` | tenant suites exist; exact current replay pending | — |
+| F04 Inventory | RUNNING | `5ec5e2c...` | G1/domain CI passed; concurrency closure pending | — |
+| F05 Finance | RUNNING | `5ec5e2c...` | finance contracts/suites exist; exact invariant proof pending | — |
+| F06 Order Lifecycle | RUNNING | `5ec5e2c...` | order workflow CI passed; full lifecycle/browser proof pending | — |
+| F07 Quick Order | RUNNING | `5ec5e2c...` | quick-order contracts present | adversarial/exact replay |
+| F08 Imports / Reconciliation | RUNNING | `5ec5e2c...` | import boundary suites present | exact current replay |
+| F09 Order Templates | FAIL | `5ec5e2c...` | App still contains localStorage template source-of-truth | code repair required |
+| F10 RBAC | RUNNING | `5ec5e2c...` | security CI passed; full role matrix pending | — |
+| F11 Customer Invitations | RUNNING | `5ec5e2c...` | invitation contracts/tests present | browser + adversarial proof |
+| F12 Outbox Worker | RUNNING | `5ec5e2c...` | worker contracts/tests present | exact replay |
+| F13 Admin Authentication | RUNNING | `5ec5e2c...` | auth/session code present | browser proof |
+| F14 Customer Authentication | RUNNING | `5ec5e2c...` | customer auth/session code present | browser proof |
+| F15 Admin Browser E2E | BLOCKED | `5ec5e2c...` | workflow exists | runtime workflow dispatch unavailable |
+| F16 Customer Browser E2E | BLOCKED | `5ec5e2c...` | workflow exists | runtime workflow dispatch unavailable |
+| F17 Product Catalog | RUNNING | `5ec5e2c...` | catalog contracts/UI present | final runtime proof |
+| F18 Pricing / MOQ | RUNNING | `5ec5e2c...` | pricing/tier code present | authoritative checkout proof |
+| F19 Cart / Checkout | RUNNING | `5ec5e2c...` | order workflow CI passed | exact runtime/adversarial proof |
+| F20 CMS / Merchant Control Plane | OPEN | `5ec5e2c...` | control-plane surface exists | mutation→customer proof |
+| F21 Shipping | OPEN | `5ec5e2c...` | surface not fully proven | end-to-end proof |
+| F22 Returns | OPEN | `5ec5e2c...` | surface not fully proven | end-to-end proof |
+| F23 Operational Accounting | RUNNING | `5ec5e2c...` | finance/invoice contracts present | cross-domain invariant |
+| F24 PWA | OPEN | `5ec5e2c...` | installability not proven | PWA proof |
+| F25 Offline / Sync | OPEN | `5ec5e2c...` | online indicator exists; durable sync not proven | implementation/proof |
+| F26 Storage Security | RUNNING | `5ec5e2c...` | Storage repair committed; fresh replay running | F01 replay |
+| F27 Security Final | RUNNING | `5ec5e2c...` | security CI passed | adversarial sweep |
+| F28 Audit / Evidence | RUNNING | `5ec5e2c...` | audit contracts present | end-to-end trace proof |
+| F29 Recovery / Idempotency | RUNNING | `5ec5e2c...` | idempotency contracts present | system-wide replay |
+| F30 Performance / Concurrency | RUNNING | `5ec5e2c...` | concurrency suites exist | broader replay |
+| F31 Test-the-Test | OPEN | `5ec5e2c...` | controlled-bypass validation not complete | test-the-test execution |
+| F32 UI/UX Final | OPEN | `5ec5e2c...` | RTL/product UI present | final browser review |
 | F33 Final Regression | BLOCKED | — | not started | candidate fronts not closed |
 | F34 Release / Production / Certification | BLOCKED | — | not started | F33 + freeze required |
 
 ## EXACT-SHA RULE
-PASS never transfers across SHAs. The current branch HEAD was checked directly and is `817d6cdff26afc339138ec4bf416f97480350d6f`; it is newer than the previously referenced `e8b32e0...`.
+PASS never transfers across SHAs. The exact branch HEAD was re-checked directly and is `5ec5e2ceee24337cb9a10802670034290435cc03`.
 
-## CURRENT P0 FAILURE / ROOT CAUSE
-Fresh DB run `34924484015` checked out exact `a6cd1a93441b14d03b341d1dc8b37c0da9ed877a`. Migrations and migration inventory passed; pgTAP failed only in `001-storage-boundary.test.sql` (8/19). Failures showed bucket metadata was queried under authenticated RLS, the authenticated media insert contract did not admit the intended staff fixture, and downstream registration/read assertions collapsed. The new repair adds an explicit Storage RLS contract and moves bucket metadata assertions to `service_role`; no production state was touched.
+## CURRENT P0
+Fresh DB run `34925685129` checks out exact SHA `5ec5e2ceee24337cb9a10802670034290435cc03`. Exact SHA validation, checkout, duplicate migration guard, Supabase CLI setup all passed; local Supabase startup is still running. No PASS is declared until migrations, pgTAP, inventory, and final SHA checks complete.
+
+## CURRENT FAILURE
+F09 Templates is explicitly FAIL because the application still uses browser localStorage as template state/source-of-truth. The cloud service `src/services/orderTemplates.ts` already provides DB-backed list/create/apply/delete operations, but App integration is incomplete. This front must be repaired before it can close.
 
 ## CURRENT WORK
-- Fresh DB repair is waiting for a new exact-SHA replay because no workflow-dispatch capability is exposed through the current GitHub connector.
-- Independent WAR fronts remain active; P0 does not stop code review/design/test preparation for independent fronts.
-- Admin/Customer browser fronts are blocked only by runtime workflow dispatch capability; credentials must remain in GitHub Actions and never be pasted into chat.
+- F01/F26: long-running Fresh DB proof is active in GitHub Actions.
+- Independent WAR fronts continue without waiting for P0.
+- Admin/Customer browser fronts remain explicitly BLOCKED only because runtime workflow dispatch is unavailable through the current connector; credentials stay in GitHub Actions.
+- Production remains untouched.
 
 ## PRODUCTION LOCK
 Production remains `NO TOUCH` until F33 passes on one exact Candidate SHA and Candidate Freeze is explicitly established.
@@ -65,8 +69,8 @@ Production remains `NO TOUCH` until F33 passes on one exact Candidate SHA and Ca
 `34`
 
 ## NEXT 5
-1. Fresh P0 replay on the new storage repair SHA.
-2. Close F26 Storage Security, then refresh F01 Fresh DB from the same SHA if the repair is clean.
-3. Continue exact-current RPC/Tenant/Inventory/Finance/Orders/Imports/Templates/RBAC/Outbox evidence without waiting for P0.
-4. Continue UI/CMS/Shipping/Returns/Test-the-Test fronts; keep browser fronts explicitly blocked rather than claiming API proof.
-5. Prepare one candidate evidence bundle only after the fronts converge; F33/F34 remain downstream.
+1. Let Fresh DB `34925685129` complete and capture exact pgTAP outcome.
+2. Repair F09 Templates so Cloud DB is the only source of truth, then run targeted + adversarial + regression tests.
+3. Continue exact-current RPC/Tenant/Inventory/Finance/Orders/Imports/RBAC/Outbox evidence in parallel.
+4. Execute Storage/security/recovery/concurrency/test-the-test closures as evidence becomes available.
+5. Keep F33/F34 downstream until all independent fronts actually close.
