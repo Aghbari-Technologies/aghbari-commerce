@@ -71,6 +71,30 @@ jobs:
           path: /tmp/npm-test.log
           if-no-files-found: error
           retention-days: 7
+      - name: TEST-THE-TEST order contract mutation
+        shell: bash
+        run: |
+          cp src/services/orders.ts /tmp/orders.ts
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('src/services/orders.ts')
+          s = p.read_text()
+          old = 'quantity > MAX_ORDER_QUANTITY_PER_LINE'
+          new = 'quantity > MAX_ORDER_QUANTITY_PER_LINE + 1'
+          if old not in s:
+              raise SystemExit('order mutation target not found')
+          p.write_text(s.replace(old, new, 1))
+          PY
+          set +e
+          npx vitest run src/services/orders.test.ts --reporter=verbose > /tmp/order-mutation.log 2>&1
+          rc=$?
+          set -e
+          cat /tmp/order-mutation.log
+          mv /tmp/orders.ts src/services/orders.ts
+          test "$rc" -ne 0
+          echo "TEST-THE-TEST: order contract mutation correctly failed"
+      - name: Re-run order contract after mutation restore
+        run: npx vitest run src/services/orders.test.ts
       - run: npm run build
       - run: npm run test:release-audit
 
@@ -127,8 +151,6 @@ jobs:
     needs: exact-sha
     timeout-minutes: 25
     env:
-      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-      VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
       E2E_BASE_URL: ${{ secrets.E2E_BASE_URL }}
       E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
       E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
@@ -138,14 +160,12 @@ jobs:
       - name: Require complete browser certification inputs
         shell: bash
         run: |
-          missing=0
-          for name in VITE_SUPABASE_URL VITE_SUPABASE_PUBLISHABLE_KEY E2E_BASE_URL E2E_EMAIL E2E_PASSWORD E2E_EMAIL_B E2E_PASSWORD_B; do
-            if [[ -z "${!name}" ]]; then
-              echo "BROWSER E2E: missing required secret $name"
-              missing=1
-            fi
-          done
-          test "$missing" -eq 0
+          test -n "$E2E_BASE_URL"
+          test -n "$E2E_EMAIL"
+          test -n "$E2E_PASSWORD"
+          test -n "$E2E_EMAIL_B"
+          test -n "$E2E_PASSWORD_B"
+          node -e "const u=new URL(process.env.E2E_BASE_URL); if(u.protocol !== 'https:') throw new Error('E2E_BASE_URL must use HTTPS'); if(u.username || u.password) throw new Error('E2E_BASE_URL must not contain credentials'); console.log('Runtime URL origin:', u.origin)"
       - uses: actions/checkout@v4
         with:
           ref: ${{ env.TARGET_SHA }}
