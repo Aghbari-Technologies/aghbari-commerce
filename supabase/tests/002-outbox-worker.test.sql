@@ -20,7 +20,28 @@ values ('33333333-3333-4333-8333-333333333333', 'cccccccc-cccc-4ccc-8ccc-ccccccc
 insert into public.outbox_events (organization_id, aggregate_type, aggregate_id, event_type, payload)
 values
   ('cccccccc-cccc-4ccc-8ccc-cccccccccccc', 'order', 'cccccccc-cccc-4ccc-8ccc-cccccccccc11', 'order.created', '{"kind":"tenant-a"}'::jsonb),
-  ('dddddddd-dddd-4ddd-8ddd-dddddddddddd', 'order', 'dddddddd-dddd-4ddd-8ddd-dddddddddd11', 'order.created', '{"kind":"tenant-b"}'::jsonb);
+  ('dddddddd-dddd-4ddd-8ddd-dddddddddddd', 'order', 'dddddddd-dddd-4ddd-8ddd-dddddddddd11', 'order.created', '{"kind":"tenant-b"}'::jsonb),
+  ('cccccccc-cccc-4ccc-8ccc-cccccccccccc', 'order', 'cccccccc-cccc-4ccc-8ccc-cccccccccc12', 'order.created', '{}'::jsonb),
+  ('cccccccc-cccc-4ccc-8ccc-cccccccccccc', 'order', 'cccccccc-cccc-4ccc-8ccc-cccccccccc13', 'order.created', '{}'::jsonb),
+  ('cccccccc-cccc-4ccc-8ccc-cccccccccccc', 'order', 'cccccccc-cccc-4ccc-8ccc-cccccccccc14', 'order.created', '{}'::jsonb),
+  ('dddddddd-dddd-4ddd-8ddd-dddddddddddd', 'order', 'dddddddd-dddd-4ddd-8ddd-dddddddddd12', 'order.created', '{}'::jsonb),
+  ('dddddddd-dddd-4ddd-8ddd-dddddddddddd', 'order', 'dddddddd-dddd-4ddd-8ddd-dddddddddd13', 'order.created', '{}'::jsonb);
+
+update public.outbox_events
+set status='processing', attempts=1, locked_until=now()-interval '1 minute'
+where id='cccccccc-cccc-4ccc-8ccc-cccccccccc12'::uuid;
+update public.outbox_events
+set status='processing', attempts=1, locked_until=now()
+where id='cccccccc-cccc-4ccc-8ccc-cccccccccc13'::uuid;
+update public.outbox_events
+set status='processing', attempts=8, locked_until=now()
+where id='cccccccc-cccc-4ccc-8ccc-cccccccccc14'::uuid;
+update public.outbox_events
+set status='processing', attempts=1, locked_until=now()
+where id in (
+  'dddddddd-dddd-4ddd-8ddd-dddddddddd12'::uuid,
+  'dddddddd-dddd-4ddd-8ddd-dddddddddd13'::uuid
+);
 
 set local role authenticated;
 set local request.jwt.claim.sub = '33333333-3333-4333-8333-333333333333';
@@ -32,13 +53,13 @@ select results_eq(
 );
 
 select results_eq(
-  $$select status from public.outbox_events where organization_id='cccccccc-cccc-4ccc-8ccc-cccccccccccc'$$,
+  $$select status from public.outbox_events where organization_id='cccccccc-cccc-4ccc-8ccc-cccccccccccc' and id='cccccccc-cccc-4ccc-8ccc-cccccccccc11'::uuid$$,
   $$values ('processing'::text)$$,
   'Claim transitions the event into processing'
 );
 
 select results_eq(
-  $$select attempts from public.outbox_events where organization_id='cccccccc-cccc-4ccc-8ccc-cccccccccccc'$$,
+  $$select attempts from public.outbox_events where id='cccccccc-cccc-4ccc-8ccc-cccccccccc11'::uuid$$,
   $$values (1::integer)$$,
   'Claim increments attempts exactly once'
 );
@@ -55,9 +76,6 @@ select results_eq(
   'Acknowledged event becomes delivered'
 );
 
-insert into public.outbox_events (organization_id, aggregate_type, aggregate_id, event_type, payload, status, attempts, locked_until)
-values ('cccccccc-cccc-4ccc-8ccc-cccccccccccc', 'order', 'cccccccc-cccc-4ccc-8ccc-cccccccccc12', 'order.created', '{}'::jsonb, 'processing', 1, now() - interval '1 minute');
-
 select is(
   public.recover_expired_outbox_events(10),
   1,
@@ -70,9 +88,6 @@ select results_eq(
   'Recovered work returns to pending for retry'
 );
 
-insert into public.outbox_events (organization_id, aggregate_type, aggregate_id, event_type, payload, status, attempts, locked_until)
-values ('cccccccc-cccc-4ccc-8ccc-cccccccccccc', 'order', 'cccccccc-cccc-4ccc-8ccc-cccccccccc13', 'order.created', '{}'::jsonb, 'processing', 1, now());
-
 select is(
   (select status from public.fail_outbox_event('cccccccc-cccc-4ccc-8ccc-cccccccccc13'::uuid,'temporary worker failure')),
   'pending'::text,
@@ -83,9 +98,6 @@ select ok(
   (select available_at > now() and last_error='temporary worker failure' from public.outbox_events where id='cccccccc-cccc-4ccc-8ccc-cccccccccc13'::uuid),
   'Retry uses bounded backoff and preserves the worker error'
 );
-
-insert into public.outbox_events (organization_id, aggregate_type, aggregate_id, event_type, payload, status, attempts, locked_until)
-values ('cccccccc-cccc-4ccc-8ccc-cccccccccccc', 'order', 'cccccccc-cccc-4ccc-8ccc-cccccccccc14', 'order.created', '{}'::jsonb, 'processing', 8, now());
 
 select is(
   (select status from public.fail_outbox_event('cccccccc-cccc-4ccc-8ccc-cccccccccc14'::uuid,'terminal worker failure')),
@@ -99,9 +111,6 @@ select results_eq(
   'Dead-letter transition preserves terminal attempt count'
 );
 
-insert into public.outbox_events (organization_id, aggregate_type, aggregate_id, event_type, payload, status, attempts, locked_until)
-values ('dddddddd-dddd-4ddd-8ddd-dddddddddddd', 'order', 'dddddddd-dddd-4ddd-8ddd-dddddddddd12', 'order.created', '{}'::jsonb, 'processing', 1, now());
-
 select throws_ok(
   $$select public.fail_outbox_event('dddddddd-dddd-4ddd-8ddd-dddddddddd12'::uuid,'forged tenant failure')$$,
   '42501',
@@ -114,9 +123,6 @@ select results_eq(
   $$values ('processing'::text)$$,
   'Cross-tenant failure handling leaves foreign work untouched'
 );
-
-insert into public.outbox_events (organization_id, aggregate_type, aggregate_id, event_type, payload, status, attempts, locked_until)
-values ('dddddddd-dddd-4ddd-8ddd-dddddddddddd', 'order', 'dddddddd-dddd-4ddd-8ddd-dddddddddd13', 'order.created', '{}'::jsonb, 'processing', 1, now());
 
 select is(
   public.ack_outbox_event('dddddddd-dddd-4ddd-8ddd-dddddddddd13'::uuid),
