@@ -13,7 +13,7 @@ insert into public.customers(id,organization_id,name,tier) values
  ('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbb01','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb','Customer B','wholesale');
 insert into public.profiles(id,organization_id,customer_id,role) values
  ('11111111-1111-4111-8111-111111111111','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa01','admin'),
- ('22222222-2222-4222-8222-222222222222','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbb01','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb01','admin');
+ ('22222222-2222-4222-8222-222222222222','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbb01','admin');
 insert into public.products(id,organization_id,sku,name,unit,status) values
  ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa','A-1','Product A','كرتون','active'),
  ('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbb11','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb','B-1','Product B','كرتون','active');
@@ -42,9 +42,9 @@ select results_eq($$select count(*) from storage.objects where name='aaaaaaaa-aa
 select throws_ok($$insert into storage.objects(bucket_id,name,owner_id,metadata) values ('product-media','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb11/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa33.webp','11111111-1111-4111-8111-111111111111','{"mimetype":"image/webp","size":2048}'::jsonb)$$,'42501',null,'Tenant A cannot upload into Tenant B organization prefix');
 select results_eq($$with changed as (update storage.objects set name='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa34.webp' where name='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa21.webp' returning 1) select count(*) from changed$$,$$values (0::bigint)$$,'Denied direct storage UPDATE affects zero rows');
 select results_eq($$select count(*) from storage.objects where name='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa21.webp'$$,$$values (1::bigint)$$,'Denied UPDATE leaves the original object unchanged');
-select lives_ok($$select public.register_product_media('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11'::uuid,'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa31.webp','image/webp',1200,900,2048)$$,'Server registers a valid owned WebP object');
-select throws_ok($$select public.register_product_media('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbb11'::uuid,'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb/bbbbbbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb11/bbbbbbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb35.webp','image/webp',1200,900,2048)$$,'42501',null,'Server rejects a product from another tenant');
-select throws_ok($$select public.register_product_media('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11'::uuid,'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa21.webp','image/png',1200,900,1024)$$,'22023',null,'Server registration accepts only canonical WebP');
+select lives_ok($$select public.register_product_media('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11'::uuid,'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa31.webp','image/webp',1200,900,2048)$$,'Server registers a valid owned WebP object');
+select throws_ok($$select public.register_product_media('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbb11'::uuid,'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb35.webp','image/webp',1200,900,2048)$$,'42501',null,'Server rejects a product from another tenant');
+select throws_ok($$select public.register_product_media('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11'::uuid,'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa21.webp','image/png',1200,900,1024)$$,'22023',null,'Server registration accepts only canonical WebP');
 select throws_ok($$delete from storage.objects where name='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa31.webp'$$,'42501',null,'Direct SQL deletion is blocked by the Storage protection trigger');
 
 select set_config('request.jwt.claims',json_build_object('role','authenticated','sub','22222222-2222-4222-8222-222222222222')::text,true);
