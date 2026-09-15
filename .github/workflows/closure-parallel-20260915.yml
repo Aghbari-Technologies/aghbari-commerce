@@ -54,7 +54,23 @@ jobs:
       - run: npm run test:architecture
       - run: npm run typecheck
       - run: npm run lint
-      - run: npm test -- --run
+      - name: Run unit suite with diagnostic artifact
+        shell: bash
+        run: |
+          set +e
+          npm test -- --run --reporter=verbose > /tmp/npm-test.log 2>&1
+          rc=$?
+          set -e
+          cat /tmp/npm-test.log
+          exit "$rc"
+      - name: Upload unit-test diagnostic
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: closure-unit-test-diagnostic-${{ env.TARGET_SHA }}
+          path: /tmp/npm-test.log
+          if-no-files-found: error
+          retention-days: 7
       - run: npm run build
       - run: npm run test:release-audit
 
