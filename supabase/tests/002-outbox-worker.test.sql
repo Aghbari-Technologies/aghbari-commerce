@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(8);
+select plan(7);
 
 insert into auth.users (id, email)
 values ('33333333-3333-4333-8333-333333333333', 'worker-a@test.local');
@@ -26,11 +26,7 @@ values
 set local role authenticated;
 set local request.jwt.claim.sub = '33333333-3333-4333-8333-333333333333';
 
-select results_eq(
-  $$select organization_id from public.claim_outbox_events(10)$$,
-  $$values ('cccccccc-cccc-4ccc-8ccc-cccccccccccc'::uuid)$$,
-  'Tenant-scoped worker claim returns only local events'
-);
+select results_eq($$select organization_id from public.claim_outbox_events(10)$$,$$values ('cccccccc-cccc-4ccc-8ccc-cccccccccccc'::uuid)$$,'Tenant-scoped worker claim returns only local events');
 select results_eq($$select status from public.outbox_events where id='cccccccc-cccc-4ccc-8ccc-cccccccccc11'::uuid$$,$$values ('processing'::text)$$,'Claim transitions the event into processing');
 select results_eq($$select attempts from public.outbox_events where id='cccccccc-cccc-4ccc-8ccc-cccccccccc11'::uuid$$,$$values (1::integer)$$,'Claim increments attempts exactly once');
 select is(public.ack_outbox_event('cccccccc-cccc-4ccc-8ccc-cccccccccc11'::uuid),true,'Acknowledgement succeeds for the claimed tenant event');
