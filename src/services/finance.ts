@@ -1,7 +1,7 @@
 import { requireSupabase } from '../lib/supabase';
 
-export type InvoiceStatus = 'confirmed' | 'partially_paid' | 'paid' | 'void' | 'cancelled';
-export interface OperationalInvoice { id: string; order_id: string | null; customer_id: string; invoice_number: string; status: InvoiceStatus; currency: string; subtotal: number; total: number; paid_amount: number; due_date: string | null; created_at: string; }
+export type InvoiceStatus = 'issued' | 'partially_paid' | 'paid' | 'void';
+export interface OperationalInvoice { id: string; order_id: string | null; customer_id: string; invoice_number: string; status: InvoiceStatus; currency: string; subtotal: number; total: number; paid_amount: number; due_at: string | null; created_at: string; }
 export interface CashBalance { id: string; name: string; currency: string; opening_balance: number; received: number; spent: number; current_balance: number; }
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -55,9 +55,28 @@ export function validateCashAccountInput(branchId: string, name: string, currenc
 
 export async function getInvoices(limit = 100) {
   const normalizedLimit = Number.isSafeInteger(limit) ? Math.min(Math.max(limit, 1), 500) : 100;
-  const { data, error } = await requireSupabase().from('sales_invoices').select('id,order_id,customer_id,invoice_number,status,currency,subtotal,total,paid_amount,due_date,created_at').order('created_at', { ascending: false }).limit(normalizedLimit);
+  const { data, error } = await requireSupabase().from('operational_invoices')
+    .select('id,order_id,customer_id,invoice_number,status,currency,subtotal,total,due_at,created_at,payments(amount)')
+    .order('created_at', { ascending: false })
+    .limit(normalizedLimit);
   if (error) throw error;
-  return (data ?? []) as OperationalInvoice[];
+  return (data ?? []).map((row) => {
+    const payments = Array.isArray(row.payments) ? row.payments : [];
+    const paidAmount = payments.reduce((sum: number, payment: { amount?: number | string | null }) => sum + Number(payment.amount ?? 0), 0);
+    return {
+      id: row.id,
+      order_id: row.order_id,
+      customer_id: row.customer_id,
+      invoice_number: String(row.invoice_number),
+      status: row.status as InvoiceStatus,
+      currency: row.currency,
+      subtotal: Number(row.subtotal),
+      total: Number(row.total),
+      paid_amount: paidAmount,
+      due_at: row.due_at,
+      created_at: row.created_at,
+    } satisfies OperationalInvoice;
+  });
 }
 export async function getCashBalances() {
   const { data, error } = await requireSupabase().rpc('get_cash_account_balances');
