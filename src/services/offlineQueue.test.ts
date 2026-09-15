@@ -11,6 +11,7 @@ import {
   OFFLINE_CART_SET_ITEM,
   pendingOfflineOperations
 } from './offlineQueue';
+import { MAX_ORDER_QUANTITY_PER_LINE } from '../domain/order';
 
 const storage = new Map<string, string>();
 const USER_A = '11111111-1111-4111-8111-111111111111';
@@ -38,6 +39,18 @@ describe('offline operation queue', () => {
     expect(pendingOfflineOperations(USER_A)).toHaveLength(1);
   });
   it('requires a valid authenticated user scope', () => expect(() => enqueueOfflineOperation('not-a-user', OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: 1 })).toThrow('هوية المستخدم مطلوبة'));
+  it('rejects cart quantities above the canonical order limit before persistence', () => {
+    expect(() => enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: MAX_ORDER_QUANTITY_PER_LINE + 1 })).toThrow('بيانات العملية غير المتصلة غير صالحة');
+    expect(pendingOfflineOperations(USER_A)).toHaveLength(0);
+  });
+  it('accepts the exact canonical maximum cart quantity', () => {
+    enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: MAX_ORDER_QUANTITY_PER_LINE });
+    expect(pendingOfflineOperations(USER_A)[0].payload).toEqual({ productId: PRODUCT_A, quantity: MAX_ORDER_QUANTITY_PER_LINE });
+  });
+  it('filters persisted cart operations that violate the canonical quantity limit', () => {
+    storage.set('aghbari.offline.operations.v1', JSON.stringify([{ operationId: crypto.randomUUID(), userId: USER_A, type: OFFLINE_CART_SET_ITEM, createdAt: new Date().toISOString(), attempts: 0, payload: { productId: PRODUCT_A, quantity: MAX_ORDER_QUANTITY_PER_LINE + 1 } }]));
+    expect(pendingOfflineOperations(USER_A)).toHaveLength(0);
+  });
   it('tracks attempts without losing operation identity', () => { const operation = enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: 1 }); markOfflineOperationAttempt(operation.operationId, 1_000); expect(pendingOfflineOperations(USER_A)[0]).toMatchObject({ operationId: operation.operationId, userId: USER_A, attempts: 1, type: OFFLINE_CART_SET_ITEM }); expect(Date.parse(pendingOfflineOperations(USER_A)[0].nextAttemptAt!)).toBe(3_000); });
   it('uses bounded exponential retry backoff and does not retry early', async () => { const operation = enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: 1 }); markOfflineOperationAttempt(operation.operationId, 10_000); const processor = async () => { throw new Error('transient'); }; expect(await drainOfflineOperations(processor, USER_A, 11_999)).toEqual({ processed: 0, failed: 0 }); expect(await drainOfflineOperations(processor, USER_A, 12_000)).toEqual({ processed: 0, failed: 1 }); expect(pendingOfflineOperations(USER_A)[0].attempts).toBe(2); expect(Date.parse(pendingOfflineOperations(USER_A)[0].nextAttemptAt!)).toBe(16_000); });
   it('marks exhausted operations terminal without blocking following work', async () => { const exhausted = enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: 1 }); const following = enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_B, quantity: 1 }); for (let index = 0; index < MAX_OFFLINE_ATTEMPTS; index += 1) markOfflineOperationAttempt(exhausted.operationId, 1_000 + index); const seen: string[] = []; const result = await drainOfflineOperations(async (operation) => { seen.push(operation.operationId); }, USER_A, Date.now() + 1_000_000); expect(result).toEqual({ processed: 1, failed: 0 }); expect(seen).toEqual([following.operationId]); expect(pendingOfflineOperations(USER_A)).toHaveLength(1); expect(pendingOfflineOperations(USER_A)[0]).toMatchObject({ operationId: exhausted.operationId, attempts: MAX_OFFLINE_ATTEMPTS, terminal: true }); });

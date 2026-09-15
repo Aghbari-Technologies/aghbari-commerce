@@ -1,3 +1,5 @@
+import { MAX_ORDER_QUANTITY_PER_LINE } from '../domain/order';
+
 export const OFFLINE_CART_SET_ITEM = 'cart:set_item';
 export const OFFLINE_CART_REMOVE_ITEM = 'cart:remove_item';
 export const OFFLINE_SAFE_OPERATION_TYPES = new Set([OFFLINE_CART_SET_ITEM, OFFLINE_CART_REMOVE_ITEM]);
@@ -34,7 +36,7 @@ function isSafePayload(type: string, payload: unknown): boolean {
   const value = payload as Record<string, unknown>;
   if (typeof value.productId !== 'string' || !UUID_PATTERN.test(value.productId.trim())) return false;
   if (type === OFFLINE_CART_SET_ITEM) {
-    return Number.isSafeInteger(value.quantity) && (value.quantity as number) > 0;
+    return Number.isSafeInteger(value.quantity) && (value.quantity as number) > 0 && (value.quantity as number) <= MAX_ORDER_QUANTITY_PER_LINE;
   }
   return type === OFFLINE_CART_REMOVE_ITEM;
 }
@@ -93,8 +95,8 @@ export function enqueueOfflineOperation<T>(userId: string, type: string, payload
   if (!OFFLINE_SAFE_OPERATION_TYPES.has(normalizedType)) {
     throw new Error('هذه العملية لا يُسمح بتأجيلها دون اتصال.');
   }
-  payloadBytes(payload);
-  if (payloadBytes(payload) > MAX_OFFLINE_PAYLOAD_BYTES) {
+  const bytes = payloadBytes(payload);
+  if (bytes > MAX_OFFLINE_PAYLOAD_BYTES) {
     throw new Error(`حجم بيانات العملية يتجاوز ${MAX_OFFLINE_PAYLOAD_BYTES} بايت.`);
   }
   if (!isSafePayload(normalizedType, payload)) {
