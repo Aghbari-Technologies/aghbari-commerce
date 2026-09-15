@@ -1,6 +1,6 @@
 begin;
 
-select plan(12);
+select plan(13);
 
 create temp table fixture as
 select gen_random_uuid() org_a, gen_random_uuid() org_b,
