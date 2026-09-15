@@ -1,5 +1,5 @@
 -- Unified data governance layer: versioned import profiles, central synonyms,
--- server-side idempotency, evidence provenance, and isolated Onyx/live inventory reconciliation.
+-- server-side idempotency, evidence provenance, and tenant-scoped inventory reconciliation.
 
 CREATE TABLE IF NOT EXISTS public.import_profiles (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(), organization_id uuid NOT NULL REFERENCES public.organizations(id) ON DELETE RESTRICT,
@@ -36,12 +36,16 @@ CREATE TABLE IF NOT EXISTS public.intelligence_evidence (
 CREATE INDEX IF NOT EXISTS intelligence_evidence_source_idx ON public.intelligence_evidence(organization_id, source_type, source_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS intelligence_evidence_metric_idx ON public.intelligence_evidence(organization_id, metric_key, created_at DESC);
 
+-- Reconciliation is anchored to this commerce app's import pipeline, not an external
+-- analytics/ERP schema. A dataset is therefore the same-tenant import job that produced it.
+ALTER TABLE public.import_jobs ADD CONSTRAINT import_jobs_id_organization_id_key UNIQUE (id, organization_id);
+
 CREATE TABLE IF NOT EXISTS public.inventory_reconciliations (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(), organization_id uuid NOT NULL REFERENCES public.organizations(id) ON DELETE RESTRICT, dataset_id uuid NOT NULL, warehouse_id uuid NOT NULL,
   status text NOT NULL DEFAULT 'preview' CHECK (status IN ('preview','ready','applied','rolled_back','failed')), source_name text NOT NULL, source_fingerprint text NOT NULL,
   summary jsonb NOT NULL DEFAULT '{}'::jsonb, conflicts jsonb NOT NULL DEFAULT '[]'::jsonb, preview jsonb NOT NULL DEFAULT '[]'::jsonb, applied_at timestamptz, rolled_back_at timestamptz,
   created_by uuid REFERENCES auth.users(id) ON DELETE SET NULL, created_at timestamptz NOT NULL DEFAULT now(), UNIQUE (id, organization_id),
-  FOREIGN KEY (dataset_id, organization_id) REFERENCES public.onyx_datasets(id, organization_id) ON DELETE RESTRICT,
+  FOREIGN KEY (dataset_id, organization_id) REFERENCES public.import_jobs(id, organization_id) ON DELETE RESTRICT,
   FOREIGN KEY (warehouse_id, organization_id) REFERENCES public.warehouses(id, organization_id) ON DELETE RESTRICT
 );
 CREATE INDEX IF NOT EXISTS inventory_reconciliations_lookup_idx ON public.inventory_reconciliations(organization_id, warehouse_id, created_at DESC);
@@ -103,7 +107,7 @@ BEGIN
   IF v_org IS NULL OR v_role NOT IN ('owner','admin') THEN RAISE EXCEPTION USING errcode='42501',message='evidence write access required'; END IF;
   IF nullif(trim(p_source_type),'') IS NULL OR nullif(trim(p_transformation),'') IS NULL THEN RAISE EXCEPTION USING errcode='22023',message='evidence source and transformation required'; END IF;
   IF p_confidence IS NOT NULL AND (p_confidence < 0 OR p_confidence > 1) THEN RAISE EXCEPTION USING errcode='22023',message='confidence must be between 0 and 1'; END IF;
-  INSERT INTO public.intelligence_evidence(organization_id,source_type,source_id,transformation,metric_key,metric_value,insight_key,insight_value,recommendation,confidence,period_start,period_end,created_by) VALUES(v_org,trim(p_source_type),p_source_id,trim(p_transformation),p_metric_key,p_metric_value,p_insight_key,p_insight_value,p_recommendation,p_confidence,p_period_start,p_period_end,auth.uid()) RETURNING id INTO v_id;
+  INSERT INTO public.intelligence_evidence(organization_id,source_type,source_id,transformation,metric_key,metric_value,insight_key,insight_value,recommendation,confidence,period_start,period_end,created_by) VALUES(v_org,trim(p_source_type),p_source_id,trim(p_transformation),p_metric_key,p_metric_value,p_insight_key,p_insight_value,p_recommendation,p_confidence,p_period_start,p_period_end) RETURNING id INTO v_id;
   RETURN v_id;
 END; $$;
 REVOKE ALL ON FUNCTION public.create_intelligence_evidence(text,uuid,text,text,jsonb,text,jsonb,jsonb,numeric,timestamptz,timestamptz) FROM PUBLIC;
