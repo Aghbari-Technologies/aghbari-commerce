@@ -90,6 +90,7 @@ CREATE POLICY order_templates_delete_own ON public.order_templates
 
 DROP POLICY IF EXISTS payments_customer_read ON public.payments;
 DROP POLICY IF EXISTS payments_staff_read ON public.payments;
+DROP POLICY IF EXISTS payments_read ON public.payments;
 CREATE POLICY payments_read ON public.payments
   FOR SELECT TO authenticated
   USING (
