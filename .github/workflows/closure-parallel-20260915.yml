@@ -4,7 +4,7 @@ on:
   push:
     branches: ['candidate/closure-20260915']
   pull_request:
-    branches: [main]
+    branches: [main, 'candidate/closure-20260915']
   workflow_dispatch:
     inputs:
       exact_sha:
@@ -17,10 +17,10 @@ permissions:
 
 concurrency:
   group: closure-20260915-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 env:
-  TARGET_SHA: ${{ inputs.exact_sha || github.sha }}
+  TARGET_SHA: ${{ inputs.exact_sha || github.event.pull_request.head.sha || github.sha }}
 
 jobs:
   exact-sha:
@@ -71,6 +71,30 @@ jobs:
           path: /tmp/npm-test.log
           if-no-files-found: error
           retention-days: 7
+      - name: TEST-THE-TEST order contract mutation
+        shell: bash
+        run: |
+          cp src/services/orders.ts /tmp/orders.ts
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('src/services/orders.ts')
+          s = p.read_text()
+          old = 'quantity > MAX_ORDER_QUANTITY_PER_LINE'
+          new = 'quantity > MAX_ORDER_QUANTITY_PER_LINE + 1'
+          if old not in s:
+              raise SystemExit('order mutation target not found')
+          p.write_text(s.replace(old, new, 1))
+          PY
+          set +e
+          npx vitest run src/services/orders.test.ts --reporter=verbose > /tmp/order-mutation.log 2>&1
+          rc=$?
+          set -e
+          cat /tmp/order-mutation.log
+          mv /tmp/orders.ts src/services/orders.ts
+          test "$rc" -ne 0
+          echo "TEST-THE-TEST: order contract mutation correctly failed"
+      - name: Re-run order contract after mutation restore
+        run: npx vitest run src/services/orders.test.ts
       - run: npm run build
       - run: npm run test:release-audit
 
@@ -127,33 +151,33 @@ jobs:
     needs: exact-sha
     timeout-minutes: 25
     env:
-      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-      VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
       E2E_BASE_URL: ${{ secrets.E2E_BASE_URL }}
+      E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
+      E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+      E2E_EMAIL_B: ${{ secrets.E2E_EMAIL_B }}
+      E2E_PASSWORD_B: ${{ secrets.E2E_PASSWORD_B }}
     steps:
-      - name: Report browser evidence availability
+      - name: Require complete browser certification inputs
         shell: bash
         run: |
-          if [[ -z "$VITE_SUPABASE_URL" || -z "$VITE_SUPABASE_PUBLISHABLE_KEY" || -z "$E2E_BASE_URL" ]]; then
-            echo "BROWSER E2E: CI-BLOCKED (runtime credentials/base URL unavailable)"
-            exit 0
-          fi
+          test -n "$E2E_BASE_URL"
+          test -n "$E2E_EMAIL"
+          test -n "$E2E_PASSWORD"
+          test -n "$E2E_EMAIL_B"
+          test -n "$E2E_PASSWORD_B"
+          node -e "const u=new URL(process.env.E2E_BASE_URL); if(u.protocol !== 'https:') throw new Error('E2E_BASE_URL must use HTTPS'); if(u.username || u.password) throw new Error('E2E_BASE_URL must not contain credentials'); console.log('Runtime URL origin:', u.origin)"
       - uses: actions/checkout@v4
-        if: ${{ env.VITE_SUPABASE_URL != '' && env.VITE_SUPABASE_PUBLISHABLE_KEY != '' && env.E2E_BASE_URL != '' }}
         with:
           ref: ${{ env.TARGET_SHA }}
           fetch-depth: 1
       - uses: actions/setup-node@v4
-        if: ${{ env.VITE_SUPABASE_URL != '' && env.VITE_SUPABASE_PUBLISHABLE_KEY != '' && env.E2E_BASE_URL != '' }}
         with:
           node-version: 22
           cache: npm
       - run: npm ci --no-audit --no-fund
-        if: ${{ env.VITE_SUPABASE_URL != '' && env.VITE_SUPABASE_PUBLISHABLE_KEY != '' && env.E2E_BASE_URL != '' }}
       - run: npx playwright install --with-deps chromium
-        if: ${{ env.VITE_SUPABASE_URL != '' && env.VITE_SUPABASE_PUBLISHABLE_KEY != '' && env.E2E_BASE_URL != '' }}
-      - run: npm run test:e2e
-        if: ${{ env.VITE_SUPABASE_URL != '' && env.VITE_SUPABASE_PUBLISHABLE_KEY != '' && env.E2E_BASE_URL != '' }}
+      - name: Run browser runtime certification
+        run: npm run test:e2e
 
   security-advisors:
     runs-on: ubuntu-latest
@@ -184,4 +208,5 @@ jobs:
           echo "security-advisors=${{ needs.security-advisors.result }}"
           test "${{ needs.application-quality.result }}" = success
           test "${{ needs.fresh-db.result }}" = success
+          test "${{ needs.browser-runtime.result }}" = success
           test "${{ needs.security-advisors.result }}" = success

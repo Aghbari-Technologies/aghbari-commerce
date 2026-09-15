@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { assertOrderTransitionInput, assertCreatedOrderReference, createOrder } from './orders';
 
 const UUID = '550e8400-e29b-41d4-a716-446655440000';
+const IDEMPOTENCY = 'checkout-00000001';
 
 // Input-boundary tests intentionally exercise the pure validation before any RPC call.
 describe('order input boundaries', () => {
@@ -18,7 +19,7 @@ describe('order input boundaries', () => {
 
   it('rejects duplicate products and invalid quantities before checkout RPC', async () => {
     const draft = {
-      idempotencyKey: 'checkout-1',
+      idempotencyKey: IDEMPOTENCY,
       lines: [
         { productId: UUID, quantity: 1 },
         { productId: UUID, quantity: 2 },
@@ -30,15 +31,15 @@ describe('order input boundaries', () => {
   it('rejects malformed runtime values before network use', async () => {
     await expect(createOrder(null as unknown as never, UUID)).rejects.toThrow('بيانات الطلب غير صالحة');
     await expect(createOrder({ idempotencyKey: 123 as unknown as string, lines: [{ productId: UUID, quantity: 1 }] }, UUID)).rejects.toThrow('مفتاح العملية غير صالح');
-    await expect(createOrder({ idempotencyKey: 'checkout-2', lines: [{ productId: 123 as unknown as string, quantity: 1 }] }, UUID)).rejects.toThrow('معرّف المنتج غير صالح');
-    await expect(createOrder({ idempotencyKey: 'checkout-3', lines: [{ productId: UUID, quantity: 0 }] }, UUID)).rejects.toThrow();
-    await expect(createOrder({ idempotencyKey: 'checkout-4', lines: [{ productId: UUID, quantity: 1 }] }, 123 as unknown as string)).rejects.toThrow('معرّف المستودع غير صالح');
+    await expect(createOrder({ idempotencyKey: IDEMPOTENCY, lines: [{ productId: 123 as unknown as string, quantity: 1 }] }, UUID)).rejects.toThrow('معرّف المنتج غير صالح');
+    await expect(createOrder({ idempotencyKey: 'checkout-00000002', lines: [{ productId: UUID, quantity: 0 }] }, UUID)).rejects.toThrow();
+    await expect(createOrder({ idempotencyKey: 'checkout-00000003', lines: [{ productId: UUID, quantity: 1 }] }, 123 as unknown as string)).rejects.toThrow('معرّف المستودع غير صالح');
   });
 
   it('rejects empty, oversized, and malformed checkout inputs before network use', async () => {
     await expect(createOrder({ idempotencyKey: '   ', lines: [{ productId: UUID, quantity: 1 }] }, UUID)).rejects.toThrow();
     await expect(createOrder({ idempotencyKey: 'x'.repeat(129), lines: [{ productId: UUID, quantity: 1 }] }, UUID)).rejects.toThrow();
-    await expect(createOrder({ idempotencyKey: 'checkout-5', lines: [] }, UUID)).rejects.toThrow();
+    await expect(createOrder({ idempotencyKey: 'checkout-00000004', lines: [] }, UUID)).rejects.toThrow();
   });
 
   it('keeps the false-success guard strict', () => {
