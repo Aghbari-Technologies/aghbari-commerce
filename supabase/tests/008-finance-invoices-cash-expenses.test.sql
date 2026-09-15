@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(8);
+select plan(6);
 
 insert into auth.users (id,email)
 values ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa','finance-admin@test.local');
