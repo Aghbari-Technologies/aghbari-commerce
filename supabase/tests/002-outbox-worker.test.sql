@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(10);
+select plan(14);
 
 insert into auth.users (id, email)
 values ('33333333-3333-4333-8333-333333333333', 'worker-a@test.local');
@@ -71,16 +71,61 @@ select results_eq(
 );
 
 insert into public.outbox_events (organization_id, aggregate_type, aggregate_id, event_type, payload, status, attempts, locked_until)
-values ('dddddddd-dddd-4ddd-8ddd-dddddddddddd', 'order', 'dddddddd-dddd-4ddd-8ddd-dddddddddd12', 'order.created', '{}'::jsonb, 'processing', 1, now() + interval '1 minute');
+values ('cccccccc-cccc-4ccc-8ccc-cccccccccccc', 'order', 'cccccccc-cccc-4ccc-8ccc-cccccccccc13', 'order.created', '{}'::jsonb, 'processing', 1, now());
 
 select is(
-  public.ack_outbox_event('dddddddd-dddd-4ddd-8ddd-dddddddddd12'::uuid),
+  (select status from public.fail_outbox_event('cccccccc-cccc-4ccc-8ccc-cccccccccc13'::uuid,'temporary worker failure')),
+  'pending'::text,
+  'Worker failure returns an in-flight event to pending'
+);
+
+select ok(
+  (select available_at > now() and last_error='temporary worker failure' from public.outbox_events where id='cccccccc-cccc-4ccc-8ccc-cccccccccc13'::uuid),
+  'Retry uses bounded backoff and preserves the worker error'
+);
+
+insert into public.outbox_events (organization_id, aggregate_type, aggregate_id, event_type, payload, status, attempts, locked_until)
+values ('cccccccc-cccc-4ccc-8ccc-cccccccccccc', 'order', 'cccccccc-cccc-4ccc-8ccc-cccccccccc14', 'order.created', '{}'::jsonb, 'processing', 8, now());
+
+select is(
+  (select status from public.fail_outbox_event('cccccccc-cccc-4ccc-8ccc-cccccccccc14'::uuid,'terminal worker failure')),
+  'dead'::text,
+  'Terminal attempt is marked dead instead of retried forever'
+);
+
+select results_eq(
+  $$select attempts,status from public.outbox_events where id='cccccccc-cccc-4ccc-8ccc-cccccccccc14'::uuid$$,
+  $$values (8::integer,'dead'::text)$$,
+  'Dead-letter transition preserves terminal attempt count'
+);
+
+insert into public.outbox_events (organization_id, aggregate_type, aggregate_id, event_type, payload, status, attempts, locked_until)
+values ('dddddddd-dddd-4ddd-8ddd-dddddddddddd', 'order', 'dddddddd-dddd-4ddd-8ddd-dddddddddd12', 'order.created', '{}'::jsonb, 'processing', 1, now());
+
+select throws_ok(
+  $$select public.fail_outbox_event('dddddddd-dddd-4ddd-8ddd-dddddddddd12'::uuid,'forged tenant failure')$$,
+  '42501',
+  'outbox worker access required',
+  'Worker cannot fail another tenant event'
+);
+
+select results_eq(
+  $$select status from public.outbox_events where id='dddddddd-dddd-4ddd-8ddd-dddddddddd12'::uuid$$,
+  $$values ('processing'::text)$$,
+  'Cross-tenant failure handling leaves foreign work untouched'
+);
+
+insert into public.outbox_events (organization_id, aggregate_type, aggregate_id, event_type, payload, status, attempts, locked_until)
+values ('dddddddd-dddd-4ddd-8ddd-dddddddddddd', 'order', 'dddddddd-dddd-4ddd-8ddd-dddddddddd13', 'order.created', '{}'::jsonb, 'processing', 1, now());
+
+select is(
+  public.ack_outbox_event('dddddddd-dddd-4ddd-8ddd-dddddddddd13'::uuid),
   false,
   'Worker cannot acknowledge another tenant event'
 );
 
 select results_eq(
-  $$select status from public.outbox_events where id='dddddddd-dddd-4ddd-8ddd-dddddddddd12'::uuid$$,
+  $$select status from public.outbox_events where id='dddddddd-dddd-4ddd-8ddd-dddddddddd13'::uuid$$,
   $$values ('processing'::text)$$,
   'Cross-tenant acknowledgement leaves foreign work untouched'
 );
