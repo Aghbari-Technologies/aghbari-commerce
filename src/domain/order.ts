@@ -57,6 +57,9 @@ export function calculateClientPreviewTotal(lines: CartLine[]): number {
     if (!Number.isFinite(line.unitPrice) || line.unitPrice < 0 || !Number.isSafeInteger(line.quantity) || line.quantity < 0) return sum;
     const lineTotal = line.unitPrice * line.quantity;
     if (!Number.isFinite(lineTotal)) return sum;
+    // Reject finite values that lost integer precision during multiplication, while
+    // preserving Number.MAX_VALUE as the finite saturation boundary of the preview.
+    if (!Number.isSafeInteger(lineTotal) && lineTotal !== Number.MAX_VALUE) return sum;
     const nextTotal = sum + lineTotal;
     return Number.isFinite(nextTotal) ? nextTotal : sum;
   }, 0);
