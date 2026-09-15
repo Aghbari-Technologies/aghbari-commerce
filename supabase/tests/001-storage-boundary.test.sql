@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(12);
+select plan(15);
 
 -- Isolated identities and tenant data. The test transaction rolls everything back.
 insert into auth.users (id, email)
@@ -120,11 +120,38 @@ select throws_ok(
   'Server registration accepts only the canonical WebP format'
 );
 
+select throws_ok(
+  $$select public.register_product_media(
+    'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11'::uuid,
+    'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa21.webp',
+    'image/webp', 0, 900, 1024
+  )$$,
+  '22023', null,
+  'Server rejects zero or invalid image dimensions'
+);
+
+select throws_ok(
+  $$select public.register_product_media(
+    'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11'::uuid,
+    'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa21.webp',
+    'image/webp', 1200, 900, 6 * 1024 * 1024
+  )$$,
+  '22023', null,
+  'Server rejects product media larger than 5 MB'
+);
+
 set local request.jwt.claim.sub = '22222222-2222-4222-8222-222222222222';
+select throws_ok(
+  $$delete from storage.objects where name='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa21.webp'$$,
+  '42501', null,
+  'Tenant B cannot delete Tenant A product media'
+);
+
+set local role anon;
 select results_eq(
   $$select count(*) from storage.objects where bucket_id='product-media'$$,
-  $$values (1::bigint)$$,
-  'Tenant B sees only its own active product media'
+  $$values (0::bigint)$$,
+  'Anonymous users cannot read product media'
 );
 
 select * from finish();

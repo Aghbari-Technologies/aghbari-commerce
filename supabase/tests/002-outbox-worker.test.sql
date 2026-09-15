@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(8);
+select plan(10);
 
 insert into auth.users (id, email)
 values ('33333333-3333-4333-8333-333333333333', 'worker-a@test.local');
@@ -68,6 +68,21 @@ select results_eq(
   $$select status from public.outbox_events where id='cccccccc-cccc-4ccc-8ccc-cccccccccc12'::uuid$$,
   $$values ('pending'::text)$$,
   'Recovered work returns to pending for retry'
+);
+
+insert into public.outbox_events (organization_id, aggregate_type, aggregate_id, event_type, payload, status, attempts, locked_until)
+values ('dddddddd-dddd-4ddd-8ddd-dddddddddddd', 'order', 'dddddddd-dddd-4ddd-8ddd-dddddddddd12', 'order.created', '{}'::jsonb, 'processing', 1, now() + interval '1 minute');
+
+select is(
+  public.ack_outbox_event('dddddddd-dddd-4ddd-8ddd-dddddddddd12'::uuid),
+  false,
+  'Worker cannot acknowledge another tenant event'
+);
+
+select results_eq(
+  $$select status from public.outbox_events where id='dddddddd-dddd-4ddd-8ddd-dddddddddd12'::uuid$$,
+  $$values ('processing'::text)$$,
+  'Cross-tenant acknowledgement leaves foreign work untouched'
 );
 
 select * from finish();
