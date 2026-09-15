@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-PGURL="postgresql://postgres@127.0.0.1:54322/postgres"
+PGURL="$(supabase status | awk -F': ' '/DB URL:/{print $2; exit}')"
+if [[ -z "$PGURL" ]]; then
+  echo 'F31: unable to obtain local Supabase DB URL' >&2
+  exit 1
+fi
 PROBE="war-room/f31/f31-mutation-probe.test.sql"
 OUT="${1:-/tmp/f31}"
 mkdir -p "$OUT"
