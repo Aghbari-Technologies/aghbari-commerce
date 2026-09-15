@@ -1,62 +1,52 @@
 # EXECUTION STATE
 
-Updated: 2026-09-15
+CURRENT_HEAD: `061355ddb1d5020a7d82c776ce1e5f41d17fe31e`
+CURRENT_CANDIDATE: `061355ddb1d5020a7d82c776ce1e5f41d17fe31e`
+CURRENT_PRODUCTION: `694756d78532aac649042b6cbe31ae3c3f8492d1`
+LAST_CERTIFIED_EVIDENCE: `NONE` on current candidate
+LAST_CLEAN_DB: `34912403160` — FAIL on older production SHA; replay fix is now in source
+LAST_CI: `061355ddb1d5020a7d82c776ce1e5f41d17fe31e` — required checks PASS except migration proof still unresolved
+LAST_SECURITY: `061355ddb1d5020a7d82c776ce1e5f41e` — baseline PASS; adversarial runtime not certified
+LAST_BROWSER_E2E: `NONE`
+LAST_PRODUCTION_SMOKE: `694756d78532aac649042b6cbe31ae3c3f8492d1` — HTTP 200; not candidate proof
 
-## CURRENT STATE
-- HEAD: `4fba9e6b69c146870882ee8796373deb9fc93f3c`
-- Certification candidate: `4fba9e6b69c146870882ee8796373deb9fc93f3c`
-- Production SHA: `694756d78532aac649042b6cbe31ae3c3f8492d1`
-- Production deployment: `dpl_BRyg1Hty49eU78NoZH415Sh8wPjy` — READY
-- Production smoke: HTTP 200
-- Last known application-quality PASS: `82af52a178a0f52f0a70d2ad8c7a7ba0fbb97b22` (older SHA)
-- Last migration proof: `34912403160` — FAIL on `694756d...`; exact-head checkout PASS, local Supabase startup PASS, replay failed at `20260909020347_harden_operation_idempotency_completion_authorization.sql`
-- Last security baseline: 0 anon-executable public functions; 0 anon-executable SECURITY DEFINER functions
-- Browser E2E: not certified; authenticated credentials/runtime proof unavailable
-- Leaked-password protection: blocker; disabled
-- Last stop: migration replay exposed missing `public.operation_idempotency` relation
+## TRACKS
+| TRACK | STATE | EXACT SHA | LAST PROOF | BLOCKER | NEXT ACTION |
+|---|---|---|---|---|---|
+| Clean DB | RUNNING | `061355ddb1d5020a7d82c776ce1e5f41e` | replay-fix committed | migration proof | complete clean replay |
+| Exact-head CI | PASS* | `061355ddb1d5020a7d82c776ce1e5f41e` | quality/security/G1/order/bootstrap/repair/lockfile PASS | migration proof | close migration proof |
+| Security | RUNNING | `061355ddb1d5020a7d82c776ce1e5f41e` | anon RPC baseline PASS | authenticated principals | risk-based adversarial runtime |
+| Tenant A/B | BLOCKED | `061355ddb1d5020a7d82c776ce1e5f41e` | schema/RLS baseline | authenticated principals | execute two-principal isolation test |
+| Customer Journey | BLOCKED | `061355ddb1d5020a7d82c776ce1e5f41e` | E2E harness present | authenticated browser runtime | run authenticated journey |
+| Templates | PASS* | `061355ddb1d5020a7d82c776ce1e5f41e` | cloud persistence/code tests | browser proof | authenticated browser proof |
+| Excel | PASS* | `061355ddb1d5020a7d82c776ce1e5f41e` | integration/build path | runtime fixture/browser | adversarial runtime |
+| Invitation | BLOCKED | `061355ddb1d5020a7d82c776ce1e5f41e` | implementation present | authenticated runtime | invitation E2E/replay |
+| Outbox | BLOCKED | `061355ddb1d5020a7d82c776ce1e5f41e` | schema/event implementation | delivery runtime | claim/deliver/retry proof |
+| Finance | BLOCKED | `061355ddb1d5020a7d82c776ce1e5f41e` | implementation | authenticated runtime | invoice/payment/statement proof |
+| Inventory | RUNNING | `061355ddb1d5020a7d82c776ce1e5f41e` | schema/security baseline | authenticated runtime | mutation/idempotency attacks |
+| RBAC | RUNNING | `061355ddb1d5020a7d82c776ce1e5f41e` | role model present | authenticated principals | direct RPC matrix |
+| Import/Export | RUNNING | `061355ddb1d5020a7d82c776ce1e5f41e` | import hardening migrations | authenticated runtime | adversarial fixture matrix |
+| Dynamic Admin | RUNNING | `061355ddb1d5020a7d82c776ce1e5f41e` | admin command surface present | runtime principal | propagation proof |
+| Offline/Recovery | BLOCKED | `061355ddb1d5020a7d82c776ce1e5f41e` | no current browser witness | browser runtime | reconnect/idempotency E2E |
+| Shipping/Returns | BLOCKED | `061355ddb1d5020a7d82c776ce1e5f41e` | no certified runtime witness | authenticated runtime | inspect/execute runtime path |
+| Performance | PASS* | `061355ddb1d5020a7d82c776ce1e5f41e` | init-plan findings cleared | none | delta-only regression |
+| Production | BLOCKED | `061355ddb1d5020a7d82c776ce1e5f41e` | old production READY/HTTP 200 | deployment mapping connector | exact-candidate deployment proof |
+| Leaked Password | BLOCKED | `061355ddb1d5020a7d82c776ce1e5f41e` | disabled | Supabase/provider config | resolve certification requirement |
 
-## COMPLETED
-- [PASS] Cloud order templates + limits — `767579168...` — targeted/application proof previously passed
-- [PASS] Excel quick-order integration — `767579168...` — application build path passed on prior exact SHA
-- [PASS] RLS/performance hardening — `694756d...` — advisor init-plan findings cleared; unused indexes retained
-- [PASS] Production deployment/smoke — `694756d...` — READY + HTTP 200
-- [PASS] Security baseline — prior exact evidence — anon RPC execution blocked
+`*` = implementation/automated evidence only; not final certification unless runtime/production witness exists.
 
-## ACTIVE
-- [P0] Clean migration replay/reproducibility
-- [P0] Exact-head CI after replay fix
+## P0 REMAINING
+Clean DB; authenticated adversarial security; Tenant A/B; authenticated browser E2E; invitation; outbox; RBAC; finance; inventory; import/export; offline/recovery; production exact-SHA proof; leaked-password decision; final regression/certification.
 
-## REMAINING
-### P0
-- Clean DB replay + pgTAP proof
-- Exact-head application-quality/G1/migration proofs
-- Security adversarial authenticated tests
-- Authenticated browser E2E
-- Tenant A/B isolation runtime proof
-- Invitation E2E
-- Outbox delivery/retry proof
-- RBAC direct attacks
-- Finance E2E
-- Offline/recovery
-- Import/export adversarial
-- Production exact-SHA smoke after final candidate deployment
-- Leaked-password protection
-- Final regression + certification
+## P1 REMAINING
+Shipping/returns runtime closure; dynamic admin runtime closure; performance delta regression; evidence/index reconciliation.
 
-### P1
-- Performance regression on changed surfaces
-- Evidence/index compaction and final traceability reconciliation
+## P2 REMAINING
+Non-certification product enhancements.
 
-### P2
-- Non-certification product enhancements only after closure
-
-## BLOCKERS
-- Clean replay currently fails because `operation_idempotency` is absent in the clean-source migration chain while a later migration references it.
-- Authenticated E2E credentials/runtime proof are not available in this execution context.
-- Supabase leaked-password protection remains disabled and cannot be certified until enabled.
-
-## NEXT ACTION
-1. Re-run Clean DB on the new replay-safe migration fix.
-2. If replay exposes the next dependency, fix that dependency immediately and restart Clean DB from zero.
-3. Once clean replay passes, run exact-head CI only for affected/required certification workflows.
-4. Continue P0 security/runtime proofs without re-running unchanged baselines.
+## NEXT 5 EXECUTABLE ACTIONS
+1. Finish clean-source migration replay on current candidate.
+2. Inspect and execute risk-based security/RBAC SQL probes that do not require a browser.
+3. Inspect invitation/outbox/finance schemas and functions and run safe invariant probes.
+4. Verify E2E harness prerequisites and fail-fast credential boundary; do not fabricate principals.
+5. After current candidate is stable, produce exact production mapping proof; do not certify old production SHA.
