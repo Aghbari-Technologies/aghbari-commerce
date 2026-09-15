@@ -64,8 +64,7 @@ select set_config('request.jwt.claim.sub', (select user_a::text from fixture), t
 
 select throws_ok(
   format('select public.adjust_inventory(%L,%L,-5,%L)', warehouse_b, product_b, 'cross-tenant viewer'),
-  '42501',
-  'viewer cannot mutate Tenant B inventory'
+  '42501', null, 'viewer cannot mutate Tenant B inventory'
 ) from fixture;
 
 select is(
@@ -76,22 +75,19 @@ select is(
 
 select throws_ok(
   format('select public.upsert_product(%L,%L,%L,%L,%L,%L,%L)', product_b, 'TENANT-B-HACK', 'Cross Tenant', 'unit', null, null, 'active'),
-  '42501',
-  'viewer cannot upsert Tenant B product'
+  '42501', null, 'viewer cannot upsert Tenant B product'
 ) from fixture;
 
 select throws_ok(
   format('select public.set_product_price(%L,%L,%L,%L)', product_b, 'retail', 1, 'YER'),
-  '42501',
-  'viewer cannot change Tenant B pricing'
+  '42501', null, 'viewer cannot change Tenant B pricing'
 ) from fixture;
 
 select set_config('request.jwt.claim.sub', (select admin_a::text from fixture), true);
 
 select throws_ok(
   format('select public.adjust_inventory(%L,%L,-5,%L)', warehouse_b, product_b, 'cross-tenant admin'),
-  'P0002',
-  'Tenant A admin cannot mutate Tenant B inventory'
+  'P0002', null, 'Tenant A admin cannot mutate Tenant B inventory'
 ) from fixture;
 
 select public.adjust_inventory(warehouse_a, product_a, 1, 'same-tenant admin') from fixture;
