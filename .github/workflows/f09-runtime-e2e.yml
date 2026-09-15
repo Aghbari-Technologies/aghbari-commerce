@@ -1,0 +1,37 @@
+name: F09 Runtime E2E
+
+on:
+  push:
+    branches:
+      - repair/clean-db-p0-war
+
+permissions:
+  contents: read
+
+jobs:
+  customer-template-runtime:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium
+      - name: Require runtime certification inputs
+        env:
+          E2E_BASE_URL: ${{ secrets.E2E_BASE_URL }}
+          E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
+          E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+        run: |
+          test -n "$E2E_BASE_URL" || { echo 'E2E_BASE_URL missing'; exit 2; }
+          test -n "$E2E_EMAIL" || { echo 'E2E_EMAIL missing'; exit 2; }
+          test -n "$E2E_PASSWORD" || { echo 'E2E_PASSWORD missing'; exit 2; }
+      - name: Customer template persistence E2E
+        env:
+          CI: true
+          E2E_BASE_URL: ${{ secrets.E2E_BASE_URL }}
+          E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
+          E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+        run: npx playwright test e2e/customer-template-persistence.spec.ts --project=chromium
