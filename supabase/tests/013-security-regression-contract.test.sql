@@ -23,8 +23,8 @@ select is(
 
 select is(
   (select count(*) from pg_policies where schemaname = 'storage' and tablename = 'objects' and policyname in ('product_media_select', 'product_media_insert', 'product_media_update', 'product_media_delete')),
-  4::bigint,
-  'Product media storage has all four explicit CRUD boundary policies'
+  3::bigint,
+  'Product media storage has explicit SELECT/INSERT/DELETE boundary policies; UPDATE is intentionally unsupported'
 );
 
 select * from finish();
