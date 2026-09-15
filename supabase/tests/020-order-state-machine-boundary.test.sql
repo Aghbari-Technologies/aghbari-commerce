@@ -33,7 +33,7 @@ select ok(not exists(select 1 from public.orders where organization_id=(select o
 select set_config('request.jwt.claim.sub',(select user_a::text from fixture),true);
 select ok(exists(select 1 from public.orders where organization_id=(select org_a from fixture)),'Tenant A can still read own order');
 select ok((select status from public.orders where organization_id=(select org_a from fixture) order by created_at desc limit 1)='pending'::order_status,'Failed viewer transition leaves order pending');
-set local role service_role;
+set local role postgres;
 select ok((select quantity from public.inventory_balances where organization_id=(select org_a from fixture) and product_id=(select product_a from fixture))=9,'Order creation decrements Tenant A stock once');
 select ok((select count(*) from public.order_status_history h join public.orders o on o.id=h.order_id where o.organization_id=(select org_a from fixture))>=1,'Order status history remains tenant-scoped');
 select * from finish();
