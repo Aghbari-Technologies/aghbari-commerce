@@ -1,58 +1,58 @@
 # EXECUTION STATE
 
-CURRENT_HEAD: `d30c789a648a21955e22ee1c7f831283de25e272`
-CURRENT_CANDIDATE: `d30c789a648a21955e22ee1c7f831283de25e272`
+CURRENT_HEAD: `02c6a5972ad65d312532502ae44a94ed4e8b1c1c`
+CURRENT_CANDIDATE: `02c6a5972ad65d312532502ae44a94ed4e8b1c1c` (NOT FROZEN)
 CURRENT_PRODUCTION: `6bdfd97df4417d7ab6a533a29ad77c43c45ac0a8`
-LAST_CERTIFIED_EVIDENCE: `NONE` on current candidate
-LAST_CLEAN_DB: `34912403160` — FAIL on older production SHA; replay fixes are in source; fresh current-candidate replay is now queued
-LAST_CI: `d30c789a648a21955e22ee1c7f831283de25e272` — prior parent quality exposed missing `apply_quick_order` migration history; source migration restored; exact-head rerun pending
-LAST_SECURITY: `19eb61aee1baaccae2c15924687ea36b08a83582` — exact-head security-audit PASS; authenticated adversarial runtime not certified
-LAST_BROWSER_E2E: `NONE` on current candidate
-LAST_PRODUCTION_SMOKE: `6bdfd97df4417d7ab6a533a29ad77c43c45ac0a8` — READY production deployment; HTTP smoke not yet recertified for candidate
+LAST_CERTIFIED_EVIDENCE: `NONE`
 
-## TRACKS
-| TRACK | STATE | EXACT SHA | LAST PROOF | BLOCKER | NEXT ACTION |
-|---|---|---|---|---|---|
-| Quick Order Migration History | FIXED | `d30c789...` | missing RPC contract restored to source migrations | exact-head audit | quality + clean replay |
-| Template Runtime | FIXED | `19eb61a...` | UI calls atomic `apply_order_template` service | browser witness | run create/persist/refresh/apply/delete E2E |
-| Clean DB | RUNNING | `d30c789...` | replay fixes + quick-order history fix in source | current replay | finish fresh replay; fix next dependency immediately |
-| Exact-head CI | RUNNING | `d30c789...` | parent: 176 tests + typecheck + build + security/order proof; release audit exposed missing RPC | current rerun | finish quality/security/order/release audit |
-| Security | OPEN | `d30c789...` | security-audit PASS on parent; 0 anon executable sensitive RPCs | authenticated adversarial runtime | execute risk-based RPC matrix |
-| Tenant A/B | OPEN | `d30c789...` | SQL/RLS baseline + selected rejection probes | browser proof | rerun exact-head browser isolation |
-| Customer Journey | OPEN | `d30c789...` | selector drift diagnosed and fixed | browser run | rerun exact-head customer journey |
-| Templates | OPEN-PROOF | `d30c789...` | cloud persistence + atomic apply implementation fixed | browser witness | persistence/apply/delete E2E |
-| Excel | PREPARED | `d30c789...` | integration/build path | runtime fixture | adversarial import fixture |
-| Invitation | ACTION REQUIRED | `d30c789...` | implementation/schema | admin principal | provision admin then execute invite/replay |
-| Outbox | PREPARED | `d30c789...` | schema/event implementation | delivery runtime | enqueue/claim/fail/retry/idempotency |
-| Finance | PREPARED | `d30c789...` | implementation/schema | authenticated runtime | invoice/payment/statement lifecycle |
-| Inventory | PREPARED | `d30c789...` | schema/security baseline | authenticated runtime | mutation/idempotency/ownership attacks |
-| RBAC | PREPARED | `d30c789...` | role model/baseline | authenticated principals | wrong-role/wrong-tenant/object tests |
-| Import/Export | PREPARED | `d30c789...` | import hardening source | authenticated runtime | adversarial fixture matrix |
-| Dynamic Admin | PREPARED | `d30c789...` | admin command surface | admin runtime principal | propagation/authorization proof |
-| Offline/Recovery | OPEN | `d30c789...` | no runtime witness | browser runtime | reconnect/idempotency E2E |
-| Shipping/Returns | PREPARED | `d30c789...` | no certified runtime witness | authenticated runtime | inspect then execute supported path |
-| Production | OPEN | `d30c789...` | production now maps to docs-only descendant; candidate mapping not certified | exact candidate deployment + browser | verify Vercel candidate mapping after CI |
-| Leaked Password | ACTION REQUIRED | `d30c789...` | disabled | Supabase/provider configuration | owner enables/configures; verify |
+## CLOSED / PROVEN ON CURRENT CANDIDATE
+- Application Quality: PASS — run `34918619189`, exact SHA `02c6a597...`; typecheck, 176 tests, lint, production build, release audit all PASS.
+- Release Audit: PASS inside run `34918619189`; frontend literal RPC contracts are covered by migration history.
+- Security baseline: 0 anon-executable SECURITY DEFINER RPCs; all customer-facing sensitive RPCs require authenticated.
+- Tenant A/B DB isolation probes: PASS for products, customers, inventory, invoices, payments, ledger; probes executed as authenticated Tenant A and rolled back.
+- Template implementation: cloud persistence + atomic apply wired to `apply_order_template`; browser proof still open.
+- Quick Order migration history: restored in `d30c789...`; current release audit confirms RPC history contract on `02c6...`.
+- Payments migration replay defect: fixed in `02c6...` by dropping pre-existing `payments_read` before recreate.
 
-`PREPARED` = implementation/schema/automated preparation only; never certification. `OPEN-PROOF` = implementation fix is present but runtime proof is absent. `ACTION REQUIRED` = explicit owner intervention is required; not a silent blocker.
+## OPEN / NOT PROVEN
+- Clean DB fresh replay + pgTAP + migration inventory on exact `02c6...`.
+- Customer authenticated Browser E2E on exact `02c6...`.
+- Tenant A/B Browser E2E on exact `02c6...`.
+- Full adversarial RPC matrix: wrong role / malformed / replay / no-side-effect across inventory, finance, imports, templates, orders.
+- Inventory receive/sale/cancel/adjust/oversell/retry runtime proof.
+- Finance invoice/payment/ledger partial/multiple/duplicate/wrong-amount runtime proof.
+- Quick Order browser/runtime malformed/duplicate/unknown/partial/retry proof.
+- RBAC owner/admin/sales/warehouse/viewer/customer deny matrix.
+- Order lifecycle invalid transitions + idempotency runtime proof.
+- Import/export quarantine/commit/rollback/retry runtime proof.
+- Outbox claim/process/failure/retry/idempotency runtime proof.
+- Offline/reconnect/expired-session/recovery browser proof.
+- Admin/invitation E2E.
+- Dynamic Admin and Shipping/Returns runtime proof.
+- Exact candidate SHA -> Vercel deployment -> production target -> live artifact -> browser proof.
+- Leaked Password Protection remains external configuration action.
+- Final regression and certification.
 
-## P0 REMAINING
-Clean DB; exact-head application-quality/security/order proof; authenticated adversarial security; Tenant A/B browser proof; authenticated customer E2E; invitation/admin; outbox runtime; RBAC runtime; finance runtime; inventory runtime; import/export runtime; offline/recovery; production exact-SHA proof; leaked-password decision; final regression/certification.
+## FAILURES / ROOT CAUSES
+- Previous clean replay failed because `payments_read` already existed when recreated. FIXED at exact candidate `02c6...`; fresh replay still required.
+- Previous release audit exposed missing `apply_quick_order` migration history. FIXED at `d30c789...`; current release audit PASS on `02c6...`.
+- Previous customer browser run hit stale selectors, not a post-login application failure. Selectors were repaired; exact-current browser rerun required.
 
-## P1 REMAINING
-Shipping/returns runtime closure; dynamic admin runtime closure; performance delta regression; evidence/index reconciliation.
+## EXACT EVIDENCE
+- Application Quality PASS: run `34918619189` / SHA `02c6a597...`.
+- Prior Order Workflow PASS: run `34917988448` / SHA `951bc8b...` — NOT transferred.
+- Prior Clean DB FAIL: run `34917961155` / older SHA — NOT PASS.
+- Current candidate security runtime DB probes: exact database state checked against candidate code/migration `02c6...`; no committed side effects.
 
-## P2 REMAINING
-Non-certification product enhancements.
+## USER ACTION
+1. `E2E_ADMIN_EMAIL` + `E2E_ADMIN_PASSWORD` must exist in GitHub Actions for invitation/admin E2E. Do not paste password in chat; reply `DONE ADMIN`.
+2. Enable/configure Supabase Auth leaked-password protection if available on the project/plan; then it must be verified.
 
-## OWNER ACTIONS
-1. **Admin principal:** create/provision a dedicated non-production owner/admin Auth user and GitHub Actions secrets `E2E_ADMIN_EMAIL` + `E2E_ADMIN_PASSWORD`; never paste the password into chat. Then reply `DONE ADMIN`.
-2. **Leaked Password Protection:** enable Supabase Auth leaked-password protection if the project/plan exposes it; do not change production data/migrations for this.
-3. **Production mapping:** after candidate freeze, map the exact candidate SHA to Vercel production and verify the live artifact.
+## NEXT ACTION
+1. Finish fresh Clean DB replay/pgTAP/inventory on `02c6...`; fix every replay failure immediately.
+2. Run exact-current Customer + Tenant A/B Browser E2E.
+3. Execute the remaining authenticated adversarial RPC matrix with exact signatures and no-side-effect checks.
+4. Run inventory/finance/import/outbox/recovery runtime fronts in parallel; no certification transfer.
+5. Only after all P0 proof closes: exact SHA production mapping, live Browser E2E, final regression, then certification decision.
 
-## NEXT 5 EXECUTABLE ACTIONS
-1. Finish exact-head application-quality + migration proof for `d30c789...`; every failure gets root-cause fix → retest.
-2. Rerun customer + Tenant A/B browser E2E on the exact candidate; no prior PASS transfer.
-3. Execute authenticated adversarial RPC matrix for orders/templates/inventory/finance/import/RBAC; record expected rejection + no side effect.
-4. After `DONE ADMIN`, run full invitation journey and admin/RBAC propagation proof.
-5. Freeze the candidate, map exact SHA → Vercel production → live artifact, run final regression and issue certification only if every boundary passes.
+Resource discipline: no raw logs stored; no duplicate expensive scans; docs-only checkpoints do not transfer code-dependent PASS.
