@@ -135,7 +135,8 @@ jobs:
         with:
           version: latest
       - name: Run full F31 mutation proof
-        run: ./war-room/f31/run-mutation-proof.sh /tmp/f31
+        shell: bash
+        run: bash ./war-room/f31/run-mutation-proof.sh /tmp/f31
       - name: Upload compact F31 evidence
         if: always()
         uses: actions/upload-artifact@v4
