@@ -1,58 +1,71 @@
 # EXECUTION STATE
 
-CURRENT_HEAD: `02c6a5972ad65d312532502ae44a94ed4e8b1c1c`
-CURRENT_CANDIDATE: `02c6a5972ad65d312532502ae44a94ed4e8b1c1c` (NOT FROZEN)
+CURRENT_HEAD: `a6cd1a93441b14d03b341d1dc8b37c0da9ed877a`
+CURRENT_CANDIDATE: `a6cd1a93441b14d03b341d1dc8b37c0da9ed877a` (NOT FROZEN)
 CURRENT_PRODUCTION: `6bdfd97df4417d7ab6a533a29ad77c43c45ac0a8`
 LAST_CERTIFIED_EVIDENCE: `NONE`
+PRODUCTION: `NO TOUCH`
 
-## CLOSED / PROVEN ON CURRENT CANDIDATE
-- Application Quality: PASS — run `34918619189`, exact SHA `02c6a597...`; typecheck, 176 tests, lint, production build, release audit all PASS.
-- Release Audit: PASS inside run `34918619189`; frontend literal RPC contracts are covered by migration history.
-- Security baseline: 0 anon-executable SECURITY DEFINER RPCs; all customer-facing sensitive RPCs require authenticated.
-- Tenant A/B DB isolation probes: PASS for products, customers, inventory, invoices, payments, ledger; probes executed as authenticated Tenant A and rolled back.
-- Template implementation: cloud persistence + atomic apply wired to `apply_order_template`; browser proof still open.
-- Quick Order migration history: restored in `d30c789...`; current release audit confirms RPC history contract on `02c6...`.
-- Payments migration replay defect: fixed in `02c6...` by dropping pre-existing `payments_read` before recreate.
+## WAR ROOM — FRONT COMPLETION
+| Front | Status | Exact SHA | Evidence |
+|---|---|---|---|
+| P0 Fresh DB | RUNNING | `a6cd1a93...` | `34924484015` pending; previous `34924033397` FAIL |
+| RPC WAR | RUNNING | `a6cd1a93...` | pgTAP RPC/security suites passed on prior SHA; exact-current rerun pending |
+| Tenant A/B WAR | RUNNING | `a6cd1a93...` | tenant boundary suites present; exact-current rerun pending |
+| Inventory WAR | RUNNING | `a6cd1a93...` | transfer/stock-count/concurrency suites present; exact-current runtime proof pending |
+| Finance WAR | RUNNING | `a6cd1a93...` | finance/cash suites present; exact-current replay pending |
+| Order Lifecycle WAR | RUNNING | `a6cd1a93...` | order-state/tenant suites present; exact-current browser/runtime proof pending |
+| Import / Quick Order WAR | RUNNING | `a6cd1a93...` | import tenant/delta suites present; exact-current replay pending |
+| Templates WAR | RUNNING | `a6cd1a93...` | cloud RPC service exists; browser/adversarial proof pending |
+| RBAC WAR | RUNNING | `a6cd1a93...` | privilege/security suites present; full role matrix pending |
+| Invitations | RUNNING | `a6cd1a93...` | invitation pgTAP present; browser proof pending |
+| Outbox Worker | RUNNING | `a6cd1a93...` | outbox worker suite present; exact-current replay pending |
+| Admin Browser E2E | OPEN | `a6cd1a93...` | workflow exists; exact run requires runtime workflow dispatch + credentials |
+| Customer Browser E2E | OPEN | `a6cd1a93...` | workflow exists; exact run requires runtime workflow dispatch + credentials |
+| UI/UX | OPEN | `a6cd1a93...` | final product pass not certified |
+| CMS / Merchant Control Plane | OPEN | `a6cd1a93...` | runtime mutation/visibility proof pending |
+| Shipping / Returns | OPEN | `a6cd1a93...` | end-to-end domain proof pending |
+| Security Final | RUNNING | `a6cd1a93...` | security audit `34924484021` in progress |
+| Test-the-Test | OPEN | `a6cd1a93...` | controlled-bypass proof pending |
+| Final Regression | BLOCKED | — | depends on candidate fronts being proven |
+| Candidate Freeze | BLOCKED | — | requires complete exact-SHA regression |
 
-## OPEN / NOT PROVEN
-- Clean DB fresh replay + pgTAP + migration inventory on exact `02c6...`.
-- Customer authenticated Browser E2E on exact `02c6...`.
-- Tenant A/B Browser E2E on exact `02c6...`.
-- Full adversarial RPC matrix: wrong role / malformed / replay / no-side-effect across inventory, finance, imports, templates, orders.
-- Inventory receive/sale/cancel/adjust/oversell/retry runtime proof.
-- Finance invoice/payment/ledger partial/multiple/duplicate/wrong-amount runtime proof.
-- Quick Order browser/runtime malformed/duplicate/unknown/partial/retry proof.
-- RBAC owner/admin/sales/warehouse/viewer/customer deny matrix.
-- Order lifecycle invalid transitions + idempotency runtime proof.
-- Import/export quarantine/commit/rollback/retry runtime proof.
-- Outbox claim/process/failure/retry/idempotency runtime proof.
-- Offline/reconnect/expired-session/recovery browser proof.
-- Admin/invitation E2E.
-- Dynamic Admin and Shipping/Returns runtime proof.
-- Exact candidate SHA -> Vercel deployment -> production target -> live artifact -> browser proof.
-- Leaked Password Protection remains external configuration action.
-- Final regression and certification.
+CURRENT EXACT-SHA PROVEN FRONTS: `0 / 20`
+PROVEN COMPLETION: `0%`
 
-## FAILURES / ROOT CAUSES
-- Previous clean replay failed because `payments_read` already existed when recreated. FIXED at exact candidate `02c6...`; fresh replay still required.
-- Previous release audit exposed missing `apply_quick_order` migration history. FIXED at `d30c789...`; current release audit PASS on `02c6...`.
-- Previous customer browser run hit stale selectors, not a post-login application failure. Selectors were repaired; exact-current browser rerun required.
+## CURRENT CI
+- Application Quality: run `34924484043` — IN PROGRESS on `a6cd1a93441b14d03b341d1dc8b37c0da9ed877a`
+- Security Audit: run `34924484021` — IN PROGRESS on `a6cd1a93441b14d03b341d1dc8b37c0da9ed877a`
+- G1 Domain: run `34924483990` — IN PROGRESS on `a6cd1a93441b14d03b341d1dc8b37c0da9ed877a`
+- Order Workflow: run `34924483988` — IN PROGRESS on `a6cd1a93441b14d03b341d1dc8b37c0da9ed877a`
+- Lockfile: run `34924483987` — QUEUED on `a6cd1a93441b14d03b341d1dc8b37c0da9ed877a`
+- Fresh DB: run `34924484015` — PENDING on `a6cd1a93441b14d03b341d1dc8b37c0da9ed877a`
 
-## EXACT EVIDENCE
-- Application Quality PASS: run `34918619189` / SHA `02c6a597...`.
-- Prior Order Workflow PASS: run `34917988448` / SHA `951bc8b...` — NOT transferred.
-- Prior Clean DB FAIL: run `34917961155` / older SHA — NOT PASS.
-- Current candidate security runtime DB probes: exact database state checked against candidate code/migration `02c6...`; no committed side effects.
+## LATEST P0 FAILURE
+Run `34924033397` on `fb6f4ece3c2e4fee8d5cb48ce0924e22309e35b6` failed only at pgTAP. Root cause: `supabase/tests/001-storage-boundary.test.sql` contained an invalid Tenant B product UUID/path fixture, causing PostgreSQL UUID input failure before assertions. Migration application and migration inventory passed. The fixture was corrected on `a6cd1a93441b14d03b341d1dc8b37c0da9ed877a`; fresh exact-SHA replay is required.
+
+## EXACT EVIDENCE — NOT TRANSFERRED
+- Prior Application Quality: `34924033376` / `fb6f4ece...` — PASS, not transferred after SHA change.
+- Prior Security Audit: `34924033370` / `fb6f4ece...` — PASS, not transferred.
+- Prior G1: `34924033374` / `fb6f4ece...` — PASS, not transferred.
+- Prior Order Workflow: `34924033328` / `fb6f4ece...` — PASS, not transferred.
+- Prior Lockfile: `34924033356` / `fb6f4ece...` — PASS, not transferred.
+- P0 failed: `34924033397` / `fb6f4ece...` — FAIL.
+
+## PRODUCT RULES
+- Evidence is exact-SHA only; no PASS transfer across SHAs.
+- `IMPLEMENTED != VERIFIED != PROVEN != CERTIFIED`.
+- Production remains NO TOUCH until Candidate Freeze.
+- No raw logs stored here.
+- Report-Advisor remains separate; no BI dashboard expansion in Aghbari Commerce.
+- Product identity is `الأغبري`; legacy `العامري` branding is prohibited.
 
 ## USER ACTION
-1. `E2E_ADMIN_EMAIL` + `E2E_ADMIN_PASSWORD` must exist in GitHub Actions for invitation/admin E2E. Do not paste password in chat; reply `DONE ADMIN`.
-2. Enable/configure Supabase Auth leaked-password protection if available on the project/plan; then it must be verified.
+`NONE` for the current engineering fronts. Admin/Customer browser proof is pending the existing runtime workflow dispatch capability and configured GitHub Actions credentials; do not paste passwords into chat.
 
-## NEXT ACTION
-1. Finish fresh Clean DB replay/pgTAP/inventory on `02c6...`; fix every replay failure immediately.
-2. Run exact-current Customer + Tenant A/B Browser E2E.
-3. Execute the remaining authenticated adversarial RPC matrix with exact signatures and no-side-effect checks.
-4. Run inventory/finance/import/outbox/recovery runtime fronts in parallel; no certification transfer.
-5. Only after all P0 proof closes: exact SHA production mapping, live Browser E2E, final regression, then certification decision.
-
-Resource discipline: no raw logs stored; no duplicate expensive scans; docs-only checkpoints do not transfer code-dependent PASS.
+## NEXT 5
+1. Fresh exact-SHA P0 replay `34924484015` and close/fix pgTAP immediately.
+2. Close exact-current CI gates on `a6cd1a93441b14d03b341d1dc8b37c0da9ed877a`.
+3. Expand authenticated adversarial WAR evidence across RPC/Tenant/Inventory/Finance/Orders/Imports/Templates/RBAC/Outbox.
+4. Execute Customer/Admin browser certification workflow when dispatch is available; do not call API-only proof Browser PASS.
+5. Continue UI/CMS/Shipping/Returns/Test-the-Test while regression remains downstream.
