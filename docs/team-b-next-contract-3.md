@@ -1,0 +1,1 @@
+Team B browser, PWA, offline, and responsive contracts are isolated from Team A domain ownership.
