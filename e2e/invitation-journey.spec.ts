@@ -1,10 +1,10 @@
 import { expect, test } from '@playwright/test';
 
-const staffEmail = process.env.E2E_EMAIL?.trim();
-const staffPassword = process.env.E2E_PASSWORD;
+const staffEmail = process.env.E2E_ADMIN_EMAIL?.trim();
+const staffPassword = process.env.E2E_ADMIN_PASSWORD;
 
 test('real admin-to-customer invitation journey', async ({ page, context }) => {
-  if (!staffEmail || !staffPassword) throw new Error('E2E credentials are required: E2E_EMAIL/E2E_PASSWORD');
+  if (!staffEmail || !staffPassword) throw new Error('E2E_ADMIN_EMAIL/E2E_ADMIN_PASSWORD are required for the real admin invitation journey.');
 
   const failures: string[] = [];
   page.on('pageerror', (error) => failures.push(`pageerror:${error.message}`));
