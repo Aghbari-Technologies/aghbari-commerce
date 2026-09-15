@@ -1,5 +1,5 @@
 -- Unified data governance layer: versioned import profiles, central synonyms,
--- server-side idempotency, evidence provenance, and isolated Onyx/live inventory reconciliation.
+-- server-side idempotency, evidence provenance, and isolated import-job/live inventory reconciliation.
 
 CREATE TABLE IF NOT EXISTS public.import_profiles (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(), organization_id uuid NOT NULL REFERENCES public.organizations(id) ON DELETE RESTRICT,
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS public.inventory_reconciliations (
   status text NOT NULL DEFAULT 'preview' CHECK (status IN ('preview','ready','applied','rolled_back','failed')), source_name text NOT NULL, source_fingerprint text NOT NULL,
   summary jsonb NOT NULL DEFAULT '{}'::jsonb, conflicts jsonb NOT NULL DEFAULT '[]'::jsonb, preview jsonb NOT NULL DEFAULT '[]'::jsonb, applied_at timestamptz, rolled_back_at timestamptz,
   created_by uuid REFERENCES auth.users(id) ON DELETE SET NULL, created_at timestamptz NOT NULL DEFAULT now(), UNIQUE (id, organization_id),
-  FOREIGN KEY (dataset_id, organization_id) REFERENCES public.onyx_datasets(id, organization_id) ON DELETE RESTRICT,
+  FOREIGN KEY (dataset_id, organization_id) REFERENCES public.import_jobs(id, organization_id) ON DELETE RESTRICT,
   FOREIGN KEY (warehouse_id, organization_id) REFERENCES public.warehouses(id, organization_id) ON DELETE RESTRICT
 );
 CREATE INDEX IF NOT EXISTS inventory_reconciliations_lookup_idx ON public.inventory_reconciliations(organization_id, warehouse_id, created_at DESC);
