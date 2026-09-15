@@ -19,6 +19,25 @@ test('public shell has Arabic RTL identity, security headers and no legacy brand
   expect(headers['referrer-policy']).toBe('strict-origin-when-cross-origin');
 });
 
+test('public authentication controls are accessible and every interactive control has a name', async ({ page }) => {
+  await page.goto('/');
+  const form = page.locator('form').filter({ has: page.locator('input[type="password"]') }).first();
+  await expect(form).toBeVisible();
+  await expect(page.getByLabel('البريد الإلكتروني')).toBeVisible();
+  await expect(page.getByLabel('كلمة المرور')).toBeVisible();
+  await expect(form.getByRole('button', { name: 'دخول آمن' })).toBeVisible();
+
+  const unnamed = await page.locator('button, a').evaluateAll((elements) => elements
+    .filter((element) => {
+      const text = (element.textContent ?? '').trim();
+      const aria = (element.getAttribute('aria-label') ?? '').trim();
+      const title = (element.getAttribute('title') ?? '').trim();
+      return !text && !aria && !title;
+    })
+    .map((element) => ({ tag: element.tagName, html: element.outerHTML.slice(0, 240) })));
+  expect(unnamed, `Interactive elements without accessible names: ${JSON.stringify(unnamed)}`).toEqual([]);
+});
+
 test('PWA manifest is Arabic RTL and service worker is actually registered with a root scope', async ({ page, request }) => {
   const manifestResponse = await request.get('/manifest.webmanifest');
   expect(manifestResponse.status()).toBe(200);
