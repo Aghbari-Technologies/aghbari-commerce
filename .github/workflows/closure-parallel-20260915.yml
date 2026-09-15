@@ -131,29 +131,24 @@ jobs:
       VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
       E2E_BASE_URL: ${{ secrets.E2E_BASE_URL }}
     steps:
-      - name: Report browser evidence availability
+      - name: Require browser evidence inputs
         shell: bash
         run: |
           if [[ -z "$VITE_SUPABASE_URL" || -z "$VITE_SUPABASE_PUBLISHABLE_KEY" || -z "$E2E_BASE_URL" ]]; then
-            echo "BROWSER E2E: CI-BLOCKED (runtime credentials/base URL unavailable)"
-            exit 0
+            echo "BROWSER E2E: BLOCKED — runtime credentials/base URL unavailable; closure cannot claim browser PASS."
+            exit 1
           fi
       - uses: actions/checkout@v4
-        if: ${{ env.VITE_SUPABASE_URL != '' && env.VITE_SUPABASE_PUBLISHABLE_KEY != '' && env.E2E_BASE_URL != '' }}
         with:
           ref: ${{ env.TARGET_SHA }}
           fetch-depth: 1
       - uses: actions/setup-node@v4
-        if: ${{ env.VITE_SUPABASE_URL != '' && env.VITE_SUPABASE_PUBLISHABLE_KEY != '' && env.E2E_BASE_URL != '' }}
         with:
           node-version: 22
           cache: npm
       - run: npm ci --no-audit --no-fund
-        if: ${{ env.VITE_SUPABASE_URL != '' && env.VITE_SUPABASE_PUBLISHABLE_KEY != '' && env.E2E_BASE_URL != '' }}
       - run: npx playwright install --with-deps chromium
-        if: ${{ env.VITE_SUPABASE_URL != '' && env.VITE_SUPABASE_PUBLISHABLE_KEY != '' && env.E2E_BASE_URL != '' }}
       - run: npm run test:e2e
-        if: ${{ env.VITE_SUPABASE_URL != '' && env.VITE_SUPABASE_PUBLISHABLE_KEY != '' && env.E2E_BASE_URL != '' }}
 
   security-advisors:
     runs-on: ubuntu-latest
@@ -184,4 +179,5 @@ jobs:
           echo "security-advisors=${{ needs.security-advisors.result }}"
           test "${{ needs.application-quality.result }}" = success
           test "${{ needs.fresh-db.result }}" = success
+          test "${{ needs.browser-runtime.result }}" = success
           test "${{ needs.security-advisors.result }}" = success
