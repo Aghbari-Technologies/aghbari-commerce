@@ -1,0 +1,1 @@
+Team B: mobile layout and browser contract are kept fail-closed and tied to exact SHA.
