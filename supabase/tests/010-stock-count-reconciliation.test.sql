@@ -6,7 +6,7 @@ select plan(11);
 insert into auth.users (id, email) values ('88888888-8888-4888-8888-888888888888', 'stock-count-admin@test.local');
 insert into public.organizations (id, name) values ('67676767-6767-4676-8676-676767676767', 'Stock Count Tenant');
 insert into public.branches (id, organization_id, name) values ('67676767-6767-4676-8676-676767676768', '67676767-6767-4676-8676-676767676767', 'Main');
-insert into public.warehouses (id, organization_id, branch_id, name) values ('67676767-6767-4676-8676-676767676769', '67676767-6767-4676-8676-676767676767', '67676767-6767-4676-8676-676767676768', 'Main Warehouse');
+insert into public.warehouses (id, organization_id, branch_id, name) values ('67676767-6767-4676-8676-676767676769', '67676767-6767-4676-8676-676767676768', '67676767-6767-4676-8676-676767676768', 'Main Warehouse');
 insert into public.warehouses (id, organization_id, branch_id, name) values ('67676767-6767-4676-8676-676767676771', '67676767-6767-4676-8676-676767676767', '67676767-6767-4676-8676-676767676768', 'Second Warehouse');
 insert into public.products (id, organization_id, sku, name, unit) values ('67676767-6767-4676-8676-676767676770', '67676767-6767-4676-8676-676767676767', 'COUNT-001', 'Count Product', 'carton');
 insert into public.profiles (id, organization_id, role) values ('88888888-8888-4888-8888-888888888888', '67676767-6767-4676-8676-676767676767', 'admin');
@@ -14,7 +14,9 @@ insert into public.inventory_balances(organization_id,warehouse_id,product_id,qu
 values ('67676767-6767-4676-8676-676767676767','67676767-6767-4676-8676-676767676769','67676767-6767-4676-8676-676767676770',10);
 
 set local role authenticated;
-set local request.jwt.claim.sub = '88888888-8888-4888-8888-888888888888';
+select set_config('request.jwt.claims',json_build_object('role','authenticated','sub','88888888-8888-4888-8888-888888888888')::text,true);
+select set_config('request.jwt.claim.role','authenticated',true);
+select set_config('request.jwt.claim.sub','88888888-8888-4888-8888-888888888888',true);
 
 select is((select status from public.start_stock_count('67676767-6767-4676-8676-676767676769','stock-count-idem-01','cycle count test')),'open'::public.stock_count_status,'Starting a stock count creates an open session');
 select is((select expected_quantity from public.stock_count_lines where session_id=(select id from public.stock_count_sessions where idempotency_key='stock-count-idem-01')) ,10,'Count captures the starting expected quantity');
@@ -35,8 +37,10 @@ insert into public.warehouses (id, organization_id, branch_id, name) values ('78
 insert into public.products (id, organization_id, sku, name, unit) values ('78787878-7878-4787-8787-787878787881', '78787878-7878-4787-8787-787878787878', 'COUNT-OTHER', 'Other Count Product', 'carton');
 insert into public.profiles (id, organization_id, role) values ('99999999-9999-4999-8999-999999999999', '78787878-7878-4787-8787-787878787878', 'admin');
 set local role authenticated;
-set local request.jwt.claim.sub = '99999999-9999-4999-8999-999999999999';
-select throws_ok($$select public.set_stock_count_line((select id from public.stock_count_sessions where idempotency_key='stock-count-idem-01'),'67676767-6767-4676-8676-676767676770',4)$$,'P0002','open stock count line not found','A different tenant cannot mutate another tenant stock count');
+select set_config('request.jwt.claims',json_build_object('role','authenticated','sub','99999999-9999-4999-8999-999999999999')::text,true);
+select set_config('request.jwt.claim.role','authenticated',true);
+select set_config('request.jwt.claim.sub','99999999-9999-4999-8999-999999999999',true);
+select throws_ok($$select public.set_stock_count_line((select id from public.stock_count_sessions where idempotency_key='stock-count-idem-01'),'67676767-6767-4676-8676-676767676770',4)$$,'P0002',null,'A different tenant cannot mutate another tenant stock count');
 
 select * from finish();
 rollback;
