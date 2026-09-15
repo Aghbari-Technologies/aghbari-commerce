@@ -47,6 +47,8 @@ run_case idempotency "do \$\$ declare c text; begin select c.conname into c from
 run_case outbox "drop function public.claim_outbox_events(integer);"
 
 MUTATED_PROBE="${OUT}/f04-contract-mutated.test.sql"
+ORIGINAL_PROBE="${OUT}/f04-contract-original.test.sql"
+cp "$PROBE" "$ORIGINAL_PROBE"
 cp "$PROBE" "$MUTATED_PROBE"
 python - "$MUTATED_PROBE" <<'PY'
 from pathlib import Path
@@ -67,17 +69,13 @@ assert_green "$OUT/f04-contract-baseline.tap"
 cp "$MUTATED_PROBE" "$PROBE"
 set +e
 run_probe "f04-contract-mutated"
-rc=$?
 set -e
-mv "$MUTATED_PROBE" "$PROBE"
-test "$rc" -ne 0
-if ! grep -Eq '^[[:space:]]*not ok ' "$OUT/f04-contract-mutated.tap"; then
-  echo 'F04 mutation did not produce a failing TAP assertion'
-  exit 1
-fi
+cp "$ORIGINAL_PROBE" "$PROBE"
+assert_red "$OUT/f04-contract-mutated.tap"
 supabase db reset --local --no-seed
 run_probe "f04-contract-restored"
 assert_green "$OUT/f04-contract-restored.tap"
+rm -f "$ORIGINAL_PROBE" "$MUTATED_PROBE"
 
 supabase stop --no-backup
 
