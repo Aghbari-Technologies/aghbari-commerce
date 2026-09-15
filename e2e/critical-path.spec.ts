@@ -7,7 +7,7 @@ async function login(page: Page, email: string, password: string) {
   await loginForm.locator('input[type="email"]').fill(email);
   await loginForm.locator('input[type="password"]').fill(password);
   await loginForm.getByRole('button', { name: 'دخول آمن' }).click();
-  await expect(page.getByRole('link', { name: 'المنتجات' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'الكتالوج', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: /السلة/ })).toBeVisible();
 }
 
@@ -58,7 +58,7 @@ test('authenticated customer completes real catalog → cart → order → refre
   await expect(page.getByText(`طلب #${orderNumber}`, { exact: true })).toBeVisible();
 
   await page.reload();
-  await expect(page.getByRole('link', { name: 'المنتجات' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'الكتالوج', exact: true })).toBeVisible();
   await expect(page.getByText('طلباتي')).toBeVisible();
   await expect(page.getByText(`طلب #${orderNumber}`, { exact: true })).toBeVisible();
 
