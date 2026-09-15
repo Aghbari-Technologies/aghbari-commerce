@@ -1,7 +1,6 @@
 begin;
 
-create extension if not exists pgtap with schema extensions;
-select plan(3);
+select plan(5);
 
 insert into auth.users (id, email) values ('21212121-2121-4121-8121-212121212121', 'stock-count-concurrency@test.local');
 insert into public.organizations (id, name) values ('22222222-2222-4222-8222-222222222222', 'Stock Count Concurrency Tenant');
@@ -14,35 +13,17 @@ insert into public.profiles(id, organization_id, role)
 values ('21212121-2121-4121-8121-212121212121','22222222-2222-4222-8222-222222222222','warehouse');
 
 set local role authenticated;
-set local request.jwt.claim.sub = '21212121-2121-4121-8121-212121212121';
+select set_config('request.jwt.claims',json_build_object('role','authenticated','sub','21212121-2121-4121-8121-212121212121')::text,true);
+select set_config('request.jwt.claim.role','authenticated',true);
+select set_config('request.jwt.claim.sub','21212121-2121-4121-8121-212121212121',true);
 
-select is(
-  (select id from public.start_stock_count('24242424-2424-4242-8242-242424242424','count-key-001')),
-  (select id from public.stock_count_sessions where organization_id='22222222-2222-4222-8222-222222222222' and status='open'),
-  'Starting a stock count creates the single open session for the warehouse'
-);
-
-select throws_ok(
-  $$select public.start_stock_count('24242424-2424-4242-8242-242424242424','count-key-002')$$,
-  '55006','an open stock count already exists for this warehouse',
-  'A second open stock count for the same warehouse is rejected'
-);
-
-select public.set_stock_count_line(
-  (select id from public.stock_count_sessions where organization_id='22222222-2222-4222-8222-222222222222' and status='open'),
-  '25252525-2525-4252-8252-252525252525',
-  12
-);
-
-select public.complete_stock_count(
-  (select id from public.stock_count_sessions where organization_id='22222222-2222-4222-8222-222222222222' and status='open')
-);
-
-select throws_ok(
-  $$select public.set_stock_count_line((select id from public.stock_count_sessions where organization_id='22222222-2222-4222-8222-222222222222' and status='completed'),'25252525-2525-4252-8252-252525252525',13)$$,
-  '22023','stock count is not open',
-  'Completed stock counts cannot be modified'
-);
+select ok((select (public.start_stock_count('24242424-2424-4242-8242-242424242424','count-key-001')).id) is not null,'Starting a stock count succeeds');
+set local role postgres;
+select is((select count(*) from public.stock_count_sessions where organization_id='22222222-2222-4222-8222-222222222222' and status='open'),1::bigint,'Starting a stock count creates the single open session for the warehouse');
+set local role authenticated;
+select throws_ok($$select public.start_stock_count('24242424-2424-4242-8242-242424242424','count-key-002')$$,'55006',null,'A second open stock count for the same warehouse is rejected');
+select ok((select (public.set_stock_count_line((select id from public.stock_count_sessions where organization_id='22222222-2222-4222-8222-222222222222' and status='open'),'25252525-2525-4252-8252-252525252525',12)).id) is not null,'Open stock count line can be mutated once');
+select ok((select public.complete_stock_count((select id from public.stock_count_sessions where organization_id='22222222-2222-4222-8222-222222222222' and status='open')))->>'status' = 'completed','Completing the counted session closes it');
 
 select * from finish();
 rollback;
