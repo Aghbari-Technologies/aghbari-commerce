@@ -46,4 +46,39 @@ run_case rbac "create function public.f31_forbidden_rpc() returns integer langua
 run_case idempotency "do \$\$ declare c text; begin select c.conname into c from pg_constraint c join pg_class r on r.oid=c.conrelid join pg_namespace n on n.oid=r.relnamespace where n.nspname='public' and r.relname='orders' and c.contype='u' and pg_get_constraintdef(c.oid) like '%(organization_id, idempotency_key)%' limit 1; if c is null then raise exception 'idempotency constraint not found'; end if; execute format('alter table public.orders drop constraint %I', c); end \$\$;"
 run_case outbox "drop function public.claim_outbox_events(integer);"
 
-echo 'F31 mutation proof PASS: eight boundaries each detected deliberate mutation and returned green after clean reset.'
+MUTATED_PROBE="${OUT}/f04-contract-mutated.test.sql"
+cp "$PROBE" "$MUTATED_PROBE"
+python - "$MUTATED_PROBE" <<'PY'
+from pathlib import Path
+import sys
+p = Path(sys.argv[1])
+s = p.read_text()
+needle = "2::bigint,'valid transfer');"
+replacement = "999::bigint,'valid transfer');"
+if needle not in s:
+    raise SystemExit('F04 mutation target not found: expected result literal is absent')
+p.write_text(s.replace(needle, replacement, 1))
+PY
+
+echo '===== F31 F04 contract mutation ====='
+supabase db reset --local --no-seed
+run_probe "f04-contract-baseline"
+assert_green "$OUT/f04-contract-baseline.tap"
+cp "$MUTATED_PROBE" "$PROBE"
+set +e
+run_probe "f04-contract-mutated"
+rc=$?
+set -e
+mv "$MUTATED_PROBE" "$PROBE"
+test "$rc" -ne 0
+if ! grep -Eq '^[[:space:]]*not ok ' "$OUT/f04-contract-mutated.tap"; then
+  echo 'F04 mutation did not produce a failing TAP assertion'
+  exit 1
+fi
+supabase db reset --local --no-seed
+run_probe "f04-contract-restored"
+assert_green "$OUT/f04-contract-restored.tap"
+
+supabase stop --no-backup
+
+echo 'F31 mutation proof PASS: eight security/domain boundaries plus a real F04 contract mutation detected failure and returned green after clean reset.'
