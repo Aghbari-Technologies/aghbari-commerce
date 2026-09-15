@@ -1,6 +1,6 @@
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(10);
+select plan(11);
 
 insert into auth.users (id, email) values ('11111111-1111-4111-8111-111111111111','transfer-admin@test.local');
 insert into public.organizations (id,name) values
@@ -30,6 +30,7 @@ select is((select total_quantity from public.transfer_inventory('11111111-1111-4
 select is((select quantity from public.inventory_balances where warehouse_id='11111111-1111-4111-8111-111111111114' and product_id='11111111-1111-4111-8111-111111111116'),8,'source decremented');
 select is((select quantity from public.inventory_balances where warehouse_id='11111111-1111-4111-8111-111111111115' and product_id='11111111-1111-4111-8111-111111111116'),2,'destination incremented');
 select is((select total_quantity from public.transfer_inventory('11111111-1111-4111-8111-111111111114','11111111-1111-4111-8111-111111111115','adv-001',jsonb_build_array(jsonb_build_object('product_id','11111111-1111-4111-8111-111111111116','quantity',2)),'adversarial')),2::bigint,'same-key replay is idempotent');
+select is((select count(*) from public.inventory_movements where organization_id='11111111-1111-4111-8111-111111111112' and source_type='inventory_transfer' and source_id=(select id from public.inventory_transfers where organization_id='11111111-1111-4111-8111-111111111112' and idempotency_key='adv-001')),2::bigint,'transfer records both movement sides');
 select throws_ok($$select * from public.transfer_inventory('11111111-1111-4111-8111-111111111114','11111111-1111-4111-8111-111111111115','adv-001',jsonb_build_array(jsonb_build_object('product_id','11111111-1111-4111-8111-111111111116','quantity',3)),'conflict')$$,'40001','idempotency key payload conflict','same-key different payload is rejected');
 select throws_ok($$select * from public.transfer_inventory('11111111-1111-4111-8111-111111111114','11111111-1111-4111-8111-111111111115','adv-002',jsonb_build_array(jsonb_build_object('product_id','11111111-1111-4111-8111-111111111116','quantity',99)),'insufficient')$$,'22003','insufficient inventory for transfer','insufficient stock is rejected');
 select throws_ok($$select * from public.transfer_inventory('11111111-1111-4111-8111-111111111114','22222222-2222-4222-8222-222222222224','adv-003',jsonb_build_array(jsonb_build_object('product_id','11111111-1111-4111-8111-111111111116','quantity',1)),'cross tenant')$$,'P0002','destination warehouse not found','cross-tenant warehouse is rejected');
