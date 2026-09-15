@@ -1,0 +1,51 @@
+name: Finance Contract Mutation Gate 2026-09-15
+
+on:
+  push:
+    branches: ['owner/team-b-closure-clean-20260915']
+  pull_request:
+    branches: [main, 'candidate/closure-20260915']
+
+permissions:
+  contents: read
+
+jobs:
+  finance-contract-mutation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Clean finance contract
+        run: npx vitest run src/services/finance.contract.test.ts
+      - name: TEST-THE-TEST finance contract mutation
+        shell: bash
+        run: |
+          cp src/services/finance.ts /tmp/finance.ts
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('src/services/finance.ts')
+          s = p.read_text()
+          old = "from('operational_invoices')"
+          new = "from('sales_invoices')"
+          if old not in s:
+              raise SystemExit('finance mutation target not found')
+          p.write_text(s.replace(old, new, 1))
+          PY
+          set +e
+          npx vitest run src/services/finance.contract.test.ts --reporter=verbose > /tmp/finance-mutation.log 2>&1
+          rc=$?
+          set -e
+          cat /tmp/finance-mutation.log
+          mv /tmp/finance.ts src/services/finance.ts
+          test "$rc" -ne 0
+          echo 'TEST-THE-TEST: finance contract mutation correctly failed'
+      - name: Restore and re-run finance contract
+        run: npx vitest run src/services/finance.contract.test.ts
