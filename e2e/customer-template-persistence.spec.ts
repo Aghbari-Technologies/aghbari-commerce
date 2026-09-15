@@ -1,10 +1,10 @@
 import { expect, test } from '@playwright/test';
 
-const email = process.env.E2E_CUSTOMER_EMAIL?.trim();
-const password = process.env.E2E_CUSTOMER_PASSWORD;
+const email = process.env.E2E_EMAIL?.trim();
+const password = process.env.E2E_PASSWORD;
 
 test('customer order template survives reload, re-login, apply, and delete', async ({ page }) => {
-  if (!email || !password) throw new Error('E2E_CUSTOMER_EMAIL/E2E_CUSTOMER_PASSWORD are required; never silently skip certification E2E.');
+  if (!email || !password) throw new Error('E2E_EMAIL/E2E_PASSWORD are required; never silently skip certification E2E.');
   const failures: string[] = [];
   page.on('pageerror', (error) => failures.push(`pageerror:${error.message}`));
   page.on('console', (message) => { if (message.type() === 'error') failures.push(`console:${message.text()}`); });
@@ -23,7 +23,7 @@ test('customer order template survives reload, re-login, apply, and delete', asy
   const templateName = `E2E مسحة ${Date.now()}`;
   await page.getByPlaceholder('حفظ كمسحة').fill(templateName);
   await page.getByRole('button', { name: 'حفظ' }).click();
-  await expect(page.getByText('تم حفظ المسحة في قاعدة البيانات.')).toBeVisible({ timeout: 10000 });
+  await expect(page.getByText('تم حفظ المسحة بنجاح.')).toBeVisible({ timeout: 10000 });
 
   await page.getByRole('button', { name: 'المسحات' }).click();
   await expect(page.getByText('المسحات الجاهزة')).toBeVisible({ timeout: 10000 });
