@@ -14,14 +14,10 @@ insert into auth.users(id,instance_id,aud,role,email,encrypted_password,created_
 select admin_a,'00000000-0000-0000-0000-000000000000'::uuid,'authenticated','authenticated','import-admin-a@fixture.invalid','x',now(),now() from fixture
 union all select admin_b,'00000000-0000-0000-0000-000000000000'::uuid,'authenticated','authenticated','import-admin-b@fixture.invalid','x',now(),now() from fixture
 union all select viewer_a,'00000000-0000-0000-0000-000000000000'::uuid,'authenticated','authenticated','import-viewer-a@fixture.invalid','x',now(),now() from fixture;
-insert into public.organizations(id,name,is_active)
-select org_a,'Import Tenant A',true from fixture union all select org_b,'Import Tenant B',true from fixture;
-insert into public.profiles(id,organization_id,role)
-select admin_a,org_a,'admin'::user_role from fixture union all select admin_b,org_b,'admin'::user_role from fixture union all select viewer_a,org_a,'viewer'::user_role from fixture;
-insert into public.branches(id,organization_id,name,is_active)
-select branch_a,org_a,'Import Branch A',true from fixture union all select branch_b,org_b,'Import Branch B',true from fixture;
-insert into public.warehouses(id,organization_id,branch_id,name,is_active)
-select warehouse_a,org_a,branch_a,'Import Warehouse A',true from fixture union all select warehouse_b,org_b,branch_b,'Import Warehouse B',true from fixture;
+insert into public.organizations(id,name,is_active) select org_a,'Import Tenant A',true from fixture union all select org_b,'Import Tenant B',true from fixture;
+insert into public.profiles(id,organization_id,role) select admin_a,org_a,'admin'::user_role from fixture union all select admin_b,org_b,'admin'::user_role from fixture union all select viewer_a,org_a,'viewer'::user_role from fixture;
+insert into public.branches(id,organization_id,name,is_active) select branch_a,org_a,'Import Branch A',true from fixture union all select branch_b,org_b,'Import Branch B',true from fixture;
+insert into public.warehouses(id,organization_id,branch_id,name,is_active) select warehouse_a,org_a,branch_a,'Import Warehouse A',true from fixture union all select warehouse_b,org_b,branch_b,'Import Warehouse B',true from fixture;
 
 set local role authenticated;
 select set_config('request.jwt.claim.role','authenticated',true);
@@ -37,7 +33,7 @@ select throws_ok(format('select public.commit_product_import((select id from pub
 
 select set_config('request.jwt.claim.sub',(select admin_b::text from fixture),true);
 select public.stage_product_import('tenant-b.xlsx',repeat('a',64),'[{"sku":"IMP-B","name":"Imported B","unit":"unit","category":"Imported","quantity":3,"prices":{"retail":11,"wholesale":10,"distributor":9}}]'::jsonb) is not null;
-select is((select count(*) from public.import_jobs where source_fingerprint=repeat('a',64)),2::bigint,'Same fingerprint is independently scoped by tenant');
+select is((select count(*) from public.import_jobs where source_fingerprint=repeat('a',64)),1::bigint,'Tenant B sees only its own staged job under RLS');
 select throws_ok(format('select public.commit_product_import(%L,%L)',(select id from public.import_jobs where organization_id=(select org_a from fixture) limit 1),warehouse_b),'P0002',null,'Tenant B cannot commit Tenant A job') from fixture;
 select is((select count(*) from public.import_rows r join public.import_jobs j on j.id=r.import_job_id where j.organization_id=(select org_b from fixture)),1::bigint,'Tenant B import rows remain tenant-scoped');
 
