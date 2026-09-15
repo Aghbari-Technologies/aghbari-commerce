@@ -19,26 +19,39 @@ test('public shell has Arabic RTL identity, security headers and no legacy brand
   expect(headers['referrer-policy']).toBe('strict-origin-when-cross-origin');
 });
 
-test('PWA manifest is Arabic RTL and service worker source is reachable', async ({ page, request }) => {
+test('PWA manifest is Arabic RTL and service worker is actually registered with a root scope', async ({ page, request }) => {
   const manifestResponse = await request.get('/manifest.webmanifest');
   expect(manifestResponse.status()).toBe(200);
   const manifest = await manifestResponse.json();
   expect(manifest.lang).toBe('ar');
   expect(manifest.dir).toBe('rtl');
   expect(manifest.name).toMatch(/الأغبري/);
-  expect(manifest.display).toBeTruthy();
+  expect(manifest.start_url).toBe('/');
+  expect(manifest.scope).toBe('/');
+  expect(manifest.display).toBe('standalone');
 
   const serviceWorkerResponse = await request.get('/sw.js');
   expect(serviceWorkerResponse.status()).toBe(200);
-  expect(await serviceWorkerResponse.text()).toContain('addEventListener');
+  const serviceWorkerSource = await serviceWorkerResponse.text();
+  expect(serviceWorkerSource).toContain('addEventListener');
+  expect(serviceWorkerSource).toContain("url.pathname.startsWith('/api/')");
+  expect(serviceWorkerSource).toContain("url.pathname.includes('/auth/')");
 
   await page.goto('/');
+  await expect.poll(async () => page.evaluate(async () => {
+    if (!('serviceWorker' in navigator)) return false;
+    const registration = await navigator.serviceWorker.getRegistration('/');
+    return Boolean(registration);
+  }), { timeout: 10_000 }).toBe(true);
+
   const registrationState = await page.evaluate(async () => {
-    if (!('serviceWorker' in navigator)) return { supported: false, registered: false };
-    const registration = await navigator.serviceWorker.getRegistration();
-    return { supported: true, registered: Boolean(registration) };
+    if (!('serviceWorker' in navigator)) return { supported: false, registered: false, scope: '' };
+    const registration = await navigator.serviceWorker.getRegistration('/');
+    return { supported: true, registered: Boolean(registration), scope: registration?.scope ?? '' };
   });
   expect(registrationState.supported).toBe(true);
+  expect(registrationState.registered).toBe(true);
+  expect(registrationState.scope).toMatch(/\/$/);
 });
 
 test('login shell exposes accessible authentication controls and actionable errors', async ({ page }) => {
