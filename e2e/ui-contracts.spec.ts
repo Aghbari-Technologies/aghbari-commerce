@@ -104,12 +104,14 @@ test('offline mode gives explicit status and keeps checkout unavailable', async 
   await form.getByRole('button', { name: 'دخول آمن' }).click();
   await expect(page.getByRole('link', { name: 'المنتجات' })).toBeVisible();
 
+  const checkout = page.getByRole('button', { name: 'إرسال طلب الجملة' });
+  await expect(checkout).toBeVisible();
+  await expect(checkout).toBeEnabled();
+
   await context.setOffline(true);
   await expect(page.getByRole('status')).toContainText('دون اتصال');
   await expect(page.getByText('أنت الآن دون اتصال')).toBeVisible();
-
-  const checkout = page.getByRole('button', { name: 'إرسال طلب الجملة' });
-  if (await checkout.count()) await expect(checkout).toBeDisabled();
+  await expect(checkout).toBeDisabled();
 
   await context.setOffline(false);
 });
