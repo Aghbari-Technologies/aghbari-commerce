@@ -44,7 +44,7 @@ select results_eq($$with changed as (update storage.objects set name='aaaaaaaa-a
 select results_eq($$select count(*) from storage.objects where name='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa21.webp'$$,$$values (1::bigint)$$,'Denied UPDATE leaves the original object unchanged');
 select lives_ok($$select public.register_product_media('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11'::uuid,'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa31.webp','image/webp',1200,900,2048)$$,'Server registers a valid owned WebP object');
 select throws_ok($$select public.register_product_media('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbb11'::uuid,'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbb21.webp','image/webp',1200,900,2048)$$,'42501',null,'Server rejects a product from another tenant');
-select throws_ok($$select public.register_product_media('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11'::uuid,'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa21.webp','image/png',1200,900,1024)$$,'22023',null,'Server registration accepts only canonical WebP');
+select throws_ok($$select public.register_product_media('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11'::uuid,'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa21.webp','image/png',1200,900,1024)$$,'22023',null,'Server registration accepts only canonical WebP');
 select throws_ok($$delete from storage.objects where name='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa31.webp'$$,'42501',null,'Direct SQL deletion is blocked by the Storage protection trigger');
 
 select set_config('request.jwt.claims',json_build_object('role','authenticated','sub','22222222-2222-4222-8222-222222222222')::text,true);
