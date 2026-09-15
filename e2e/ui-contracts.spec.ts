@@ -116,17 +116,47 @@ test('offline mode gives explicit status and keeps checkout unavailable', async 
   await context.setOffline(false);
 });
 
-test('mobile layout remains usable at 375px without horizontal overflow', async ({ page }) => {
-  await page.setViewportSize({ width: 375, height: 812 });
+test('responsive layouts stay within the viewport at phone and tablet breakpoints', async ({ page }) => {
+  for (const viewport of [
+    { width: 375, height: 812 },
+    { width: 390, height: 844 },
+    { width: 768, height: 1024 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.goto('/');
+    const metrics = await page.evaluate(() => ({
+      viewport: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+      bodyWidth: document.body.getBoundingClientRect().width,
+    }));
+    expect(metrics.scrollWidth, `Horizontal overflow at ${viewport.width}px: ${JSON.stringify(metrics)}`).toBeLessThanOrEqual(metrics.viewport + 1);
+    expect(metrics.bodyWidth).toBeLessThanOrEqual(metrics.viewport + 1);
+    await expect(page.getByText('بوابة الأغبري التجارية', { exact: true })).toBeVisible();
+    await expect(page.getByLabel('البريد الإلكتروني')).toBeVisible();
+    await expect(page.getByLabel('كلمة المرور')).toBeVisible();
+  }
+});
+
+test('public authentication is keyboard navigable with a visible focused control', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
-  const metrics = await page.evaluate(() => ({
-    viewport: document.documentElement.clientWidth,
-    scrollWidth: document.documentElement.scrollWidth,
-    bodyWidth: document.body.getBoundingClientRect().width,
-  }));
-  expect(metrics.scrollWidth, `Horizontal overflow at 375px: ${JSON.stringify(metrics)}`).toBeLessThanOrEqual(metrics.viewport + 1);
-  expect(metrics.bodyWidth).toBeLessThanOrEqual(metrics.viewport + 1);
-  await expect(page.getByText('بوابة الأغبري التجارية', { exact: true })).toBeVisible();
-  await expect(page.getByLabel('البريد الإلكتروني')).toBeVisible();
-  await expect(page.getByLabel('كلمة المرور')).toBeVisible();
+
+  for (let index = 0; index < 12; index += 1) {
+    await page.keyboard.press('Tab');
+    const focusState = await page.evaluate(() => {
+      const element = document.activeElement;
+      if (!(element instanceof HTMLElement)) return { tag: '', accessibleName: '', visible: false };
+      const rect = element.getBoundingClientRect();
+      const style = getComputedStyle(element);
+      return {
+        tag: element.tagName,
+        accessibleName: (element.getAttribute('aria-label') ?? element.textContent ?? '').trim(),
+        visible: rect.width > 0 && rect.height > 0 && style.visibility !== 'hidden' && style.display !== 'none',
+      };
+    });
+    if (focusState.tag) {
+      expect(focusState.accessibleName, `Unnamed keyboard focus target: ${JSON.stringify(focusState)}`).not.toBe('');
+      expect(focusState.visible, `Invisible keyboard focus target: ${JSON.stringify(focusState)}`).toBe(true);
+    }
+  }
 });
