@@ -115,3 +115,18 @@ test('offline mode gives explicit status and keeps checkout unavailable', async 
 
   await context.setOffline(false);
 });
+
+test('mobile layout remains usable at 375px without horizontal overflow', async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto('/');
+  const metrics = await page.evaluate(() => ({
+    viewport: document.documentElement.clientWidth,
+    scrollWidth: document.documentElement.scrollWidth,
+    bodyWidth: document.body.getBoundingClientRect().width,
+  }));
+  expect(metrics.scrollWidth, `Horizontal overflow at 375px: ${JSON.stringify(metrics)}`).toBeLessThanOrEqual(metrics.viewport + 1);
+  expect(metrics.bodyWidth).toBeLessThanOrEqual(metrics.viewport + 1);
+  await expect(page.getByText('بوابة الأغبري التجارية', { exact: true })).toBeVisible();
+  await expect(page.getByLabel('البريد الإلكتروني')).toBeVisible();
+  await expect(page.getByLabel('كلمة المرور')).toBeVisible();
+});
