@@ -1,5 +1,10 @@
 -- Restore the intended tenant/customer/staff read boundary for operational invoices.
--- These tables are already RLS-enabled; the live database drifted and lost both policies.
+-- This migration may replay after the original finance migration already created
+-- the same policy names, so replace them deterministically instead of failing on
+-- duplicate policy names. The definitions below remain the authoritative boundary.
+drop policy if exists operational_invoices_read on public.operational_invoices;
+drop policy if exists operational_invoice_items_read on public.operational_invoice_items;
+
 create policy operational_invoices_read
   on public.operational_invoices
   for select
