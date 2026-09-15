@@ -17,6 +17,7 @@ values ('cccccccc-cccc-4ccc-8ccc-cccccccccc01', 'cccccccc-cccc-4ccc-8ccc-ccccccc
 insert into public.profiles (id, organization_id, customer_id, role)
 values ('33333333-3333-4333-8333-333333333333', 'cccccccc-cccc-4ccc-8ccc-cccccccccccc', 'cccccccc-cccc-4ccc-8ccc-cccccccccc01', 'admin');
 
+set local role service_role;
 insert into public.outbox_events (organization_id, aggregate_type, aggregate_id, event_type, payload)
 values
   ('cccccccc-cccc-4ccc-8ccc-cccccccccccc', 'order', 'cccccccc-cccc-4ccc-8ccc-cccccccccc11', 'order.created', '{"kind":"tenant-a"}'::jsonb),
@@ -55,9 +56,11 @@ select results_eq(
   'Acknowledged event becomes delivered'
 );
 
+set local role service_role;
 insert into public.outbox_events (organization_id, aggregate_type, aggregate_id, event_type, payload, status, attempts, locked_until)
 values ('cccccccc-cccc-4ccc-8ccc-cccccccccccc', 'order', 'cccccccc-cccc-4ccc-8ccc-cccccccccc12', 'order.created', '{}'::jsonb, 'processing', 1, now() - interval '1 minute');
 
+set local role authenticated;
 select is(
   public.recover_expired_outbox_events(10),
   1,
