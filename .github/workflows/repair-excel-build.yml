@@ -49,19 +49,49 @@ jobs:
               else:
                   print(f'UNCHANGED: {filename}')
           if not changed:
-              print('NO_REPAIR_NEEDED')
+              print('NO_EXCEL_REPAIR_NEEDED')
           PY
+
+      - name: Repair cloud-backed order template runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -q "localStorage.getItem(\`aghbari:templates:" src/AppV3Fixed.tsx; then
+            git fetch origin 93a3665d899e4448153f3ee6d0a68f075da4ca4c --depth=1
+            git show 93a3665d899e4448153f3ee6d0a68f075da4ca4c:src/AppV3Fixed.tsx > /tmp/AppV3Fixed.tsx.base
+            cp /tmp/AppV3Fixed.tsx.base src/AppV3Fixed.tsx
+            python - <<'PY'
+            from pathlib import Path
+            import re
+            p=Path('src/AppV3Fixed.tsx')
+            s=p.read_text(encoding='utf-8')
+            old="import { createOrderTemplate, deleteOrderTemplate, getOrderTemplates, type OrderTemplate } from './services/orderTemplates';"
+            new="import { createOrderTemplate, deleteOrderTemplate, getOrderTemplates, applyOrderTemplate, type OrderTemplate } from './services/orderTemplates';"
+            if old not in s: raise SystemExit('orderTemplates import anchor missing')
+            s=s.replace(old,new,1)
+            pattern=re.compile(r"  async function applyTemplate\(t:OrderTemplate\)\{.*?\n  async function stageQuickExcel",re.S)
+            replacement="""  async function applyTemplate(t:OrderTemplate){if(busy)return;setBusy(true);setError('');setMessage('');try{await applyOrderTemplate(t.id);const saved=await getCart();setCart(saved.map(i=>{const p=products.find(x=>x.id===i.product_id)??({id:i.product_id,sku:i.sku,name:i.name,unit:i.unit,category:'أصناف',availableQuantity:0,status:'active'} as Product);return{product:p,quantity:i.quantity,unitPrice:i.authorized_price??0};}));setConfirmed({});setCartOpen(true);setMessage('تم تطبيق المسحة على السلة عبر العملية الذرية.');setSection('catalog');}catch(e){setError(e instanceof Error?e.message:'تعذر تطبيق المسحة.');}finally{setBusy(false);}}
+  async function stageQuickExcel"""
+            s,n=pattern.subn(replacement,s,count=1)
+            if n!=1: raise SystemExit(f'applyTemplate anchor count={n}')
+            p.write_text(s,encoding='utf-8')
+            PY
+            git diff --check
+            grep -F 'applyOrderTemplate' src/AppV3Fixed.tsx
+          else
+            echo 'TEMPLATE_RUNTIME_ALREADY_CLOUD_BACKED'
+          fi
 
       - name: Validate and commit repair
         shell: bash
         run: |
-          if git diff --quiet -- src/App.tsx src/services/importExcel.ts; then
+          if git diff --quiet -- src/App.tsx src/services/importExcel.ts src/AppV3Fixed.tsx; then
             echo 'NO_REPAIR_COMMIT_REQUIRED'
             exit 0
           fi
           git diff --check
           git config user.name 'Report-Engainall'
           git config user.email 'ahadnanmo@gmail.com'
-          git add src/App.tsx src/services/importExcel.ts
-          git commit -m 'fix: align Excel browser imports with compatibility adapter'
+          git add src/App.tsx src/services/importExcel.ts src/AppV3Fixed.tsx
+          git commit -m 'fix: restore cloud-backed order template runtime'
           git push origin HEAD:main
