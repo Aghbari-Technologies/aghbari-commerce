@@ -14,7 +14,7 @@ insert into public.customers(id,organization_id,name,tier) values
  ('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbb01','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb','Customer B','wholesale');
 insert into public.profiles(id,organization_id,role) values
  ('11111111-1111-4111-8111-111111111111','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa','admin'),
- ('22222222-2222-4222-8222-222222222222','bbbbbbbb-bbbb-4bbb-8ddd-bbbbbbbbbbbb'::uuid,'admin');
+ ('22222222-2222-4222-8222-222222222222','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb','admin');
 
 set local role authenticated;
 select set_config('request.jwt.claims','{"sub":"11111111-1111-4111-8111-111111111111","email":"staff-a@test.local"}',true);
