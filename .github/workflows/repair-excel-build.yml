@@ -95,3 +95,5 @@ jobs:
           git add src/App.tsx src/services/importExcel.ts src/AppV3Fixed.tsx
           git commit -m 'fix: restore cloud-backed order template runtime'
           git push origin HEAD:main
+
+# WAR_ROOM_TRIGGER: force this repair lane to execute on the current main head.
