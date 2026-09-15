@@ -1,0 +1,1 @@
+Team B closure additions remain isolated from Team A backend ownership and require exact-SHA verification before closure.
