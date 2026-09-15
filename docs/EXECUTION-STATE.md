@@ -1,71 +1,72 @@
 # EXECUTION STATE
 
-CURRENT_HEAD: `a6cd1a93441b14d03b341d1dc8b37c0da9ed877a`
-CURRENT_CANDIDATE: `a6cd1a93441b14d03b341d1dc8b37c0da9ed877a` (NOT FROZEN)
+CURRENT_HEAD: `817d6cdff26afc339138ec4bf416f97480350d6f`
+CURRENT_CANDIDATE: `817d6cdff26afc339138ec4bf416f97480350d6f` (NOT FROZEN)
 CURRENT_PRODUCTION: `6bdfd97df4417d7ab6a533a29ad77c43c45ac0a8`
 LAST_CERTIFIED_EVIDENCE: `NONE`
 PRODUCTION: `NO TOUCH`
 
-## WAR ROOM — FRONT COMPLETION
-| Front | Status | Exact SHA | Evidence |
-|---|---|---|---|
-| P0 Fresh DB | RUNNING | `a6cd1a93...` | `34924484015` pending; previous `34924033397` FAIL |
-| RPC WAR | RUNNING | `a6cd1a93...` | pgTAP RPC/security suites passed on prior SHA; exact-current rerun pending |
-| Tenant A/B WAR | RUNNING | `a6cd1a93...` | tenant boundary suites present; exact-current rerun pending |
-| Inventory WAR | RUNNING | `a6cd1a93...` | transfer/stock-count/concurrency suites present; exact-current runtime proof pending |
-| Finance WAR | RUNNING | `a6cd1a93...` | finance/cash suites present; exact-current replay pending |
-| Order Lifecycle WAR | RUNNING | `a6cd1a93...` | order-state/tenant suites present; exact-current browser/runtime proof pending |
-| Import / Quick Order WAR | RUNNING | `a6cd1a93...` | import tenant/delta suites present; exact-current replay pending |
-| Templates WAR | RUNNING | `a6cd1a93...` | cloud RPC service exists; browser/adversarial proof pending |
-| RBAC WAR | RUNNING | `a6cd1a93...` | privilege/security suites present; full role matrix pending |
-| Invitations | RUNNING | `a6cd1a93...` | invitation pgTAP present; browser proof pending |
-| Outbox Worker | RUNNING | `a6cd1a93...` | outbox worker suite present; exact-current replay pending |
-| Admin Browser E2E | OPEN | `a6cd1a93...` | workflow exists; exact run requires runtime workflow dispatch + credentials |
-| Customer Browser E2E | OPEN | `a6cd1a93...` | workflow exists; exact run requires runtime workflow dispatch + credentials |
-| UI/UX | OPEN | `a6cd1a93...` | final product pass not certified |
-| CMS / Merchant Control Plane | OPEN | `a6cd1a93...` | runtime mutation/visibility proof pending |
-| Shipping / Returns | OPEN | `a6cd1a93...` | end-to-end domain proof pending |
-| Security Final | RUNNING | `a6cd1a93...` | security audit `34924484021` in progress |
-| Test-the-Test | OPEN | `a6cd1a93...` | controlled-bypass proof pending |
-| Final Regression | BLOCKED | — | depends on candidate fronts being proven |
-| Candidate Freeze | BLOCKED | — | requires complete exact-SHA regression |
+## WAR ROOM — 34 FRONTS
+| Front | Status | Exact SHA | Evidence | Blocker |
+|---|---|---|---|---|
+| F01 Fresh DB / P0 | FAIL | `817d6cd...` | `34924484015` on prior `a6cd1a9...`: 8 storage tests failed | storage RLS repair needs fresh replay |
+| F02 RPC WAR | RUNNING | `817d6cd...` | targeted RPC/security suites exist; current exact replay pending | — |
+| F03 Tenant A/B | RUNNING | `817d6cd...` | tenant boundary suites pass on earlier SHA only | current exact replay pending |
+| F04 Inventory | RUNNING | `817d6cd...` | transfer/stock-count/concurrency suites exist | current exact replay pending |
+| F05 Finance | RUNNING | `817d6cd...` | finance/cash suites exist | current exact replay pending |
+| F06 Order Lifecycle | RUNNING | `817d6cd...` | state-machine/tenant suites exist | browser/runtime proof pending |
+| F07 Quick Order | RUNNING | `817d6cd...` | quick-order history/contracts present | current exact replay pending |
+| F08 Imports / Reconciliation | RUNNING | `817d6cd...` | import tenant/delta suites exist | current exact replay pending |
+| F09 Order Templates | RUNNING | `817d6cd...` | enterprise template migration/test present | browser + adversarial proof pending |
+| F10 RBAC | RUNNING | `817d6cd...` | privilege/security contracts present | full role matrix pending |
+| F11 Customer Invitations | RUNNING | `817d6cd...` | invitation pgTAP present | browser proof pending |
+| F12 Outbox Worker | RUNNING | `817d6cd...` | worker/search_path suites present | current exact replay pending |
+| F13 Admin Authentication | RUNNING | `817d6cd...` | auth/session code present | browser proof pending |
+| F14 Customer Authentication | RUNNING | `817d6cd...` | customer auth/invitation code present | browser proof pending |
+| F15 Admin Browser E2E | BLOCKED | `817d6cd...` | workflow exists | no runtime workflow dispatch available |
+| F16 Customer Browser E2E | BLOCKED | `817d6cd...` | workflow exists | no runtime workflow dispatch available |
+| F17 Product Catalog | RUNNING | `817d6cd...` | catalog/warehouse contracts present | final UI/runtime proof pending |
+| F18 Pricing / MOQ | RUNNING | `817d6cd...` | pricing/tier contracts present | checkout authority proof pending |
+| F19 Cart / Checkout | RUNNING | `817d6cd...` | cart/order workflow suites exist | exact runtime replay pending |
+| F20 CMS / Merchant Control Plane | OPEN | `817d6cd...` | UI/control-plane code exists | mutation→customer proof pending |
+| F21 Shipping | OPEN | `817d6cd...` | domain surface not fully proven | end-to-end proof pending |
+| F22 Returns | OPEN | `817d6cd...` | domain surface not fully proven | end-to-end proof pending |
+| F23 Operational Accounting | RUNNING | `817d6cd...` | finance/invoice/cash contracts exist | cross-domain invariant proof pending |
+| F24 PWA | OPEN | `817d6cd...` | final installability proof pending | — |
+| F25 Offline / Sync | OPEN | `817d6cd...` | final queue/reconnect proof pending | — |
+| F26 Storage Security | FAIL | `817d6cd...` | fresh replay exposed 8 failures; repair committed | fresh replay pending |
+| F27 Security Final | RUNNING | `817d6cd...` | security suites exist | current exact sweep pending |
+| F28 Audit / Evidence | RUNNING | `817d6cd...` | audit contracts present | end-to-end trace proof pending |
+| F29 Recovery / Idempotency | RUNNING | `817d6cd...` | idempotency contracts/suites present | system-wide replay pending |
+| F30 Performance / Concurrency | RUNNING | `817d6cd...` | concurrency suites exist | broader domain replay pending |
+| F31 Test-the-Test | OPEN | `817d6cd...` | controlled-bypass work pending | — |
+| F32 UI/UX Final | OPEN | `817d6cd...` | product pass not certified | final browser review pending |
+| F33 Final Regression | BLOCKED | — | not started | candidate fronts not closed |
+| F34 Release / Production / Certification | BLOCKED | — | not started | F33 + freeze required |
 
-CURRENT EXACT-SHA PROVEN FRONTS: `0 / 20`
-PROVEN COMPLETION: `0%`
+## EXACT-SHA RULE
+PASS never transfers across SHAs. The current branch HEAD was checked directly and is `817d6cdff26afc339138ec4bf416f97480350d6f`; it is newer than the previously referenced `e8b32e0...`.
 
-## CURRENT CI
-- Application Quality: run `34924484043` — IN PROGRESS on `a6cd1a93441b14d03b341d1dc8b37c0da9ed877a`
-- Security Audit: run `34924484021` — IN PROGRESS on `a6cd1a93441b14d03b341d1dc8b37c0da9ed877a`
-- G1 Domain: run `34924483990` — IN PROGRESS on `a6cd1a93441b14d03b341d1dc8b37c0da9ed877a`
-- Order Workflow: run `34924483988` — IN PROGRESS on `a6cd1a93441b14d03b341d1dc8b37c0da9ed877a`
-- Lockfile: run `34924483987` — QUEUED on `a6cd1a93441b14d03b341d1dc8b37c0da9ed877a`
-- Fresh DB: run `34924484015` — PENDING on `a6cd1a93441b14d03b341d1dc8b37c0da9ed877a`
+## CURRENT P0 FAILURE / ROOT CAUSE
+Fresh DB run `34924484015` checked out exact `a6cd1a93441b14d03b341d1dc8b37c0da9ed877a`. Migrations and migration inventory passed; pgTAP failed only in `001-storage-boundary.test.sql` (8/19). Failures showed bucket metadata was queried under authenticated RLS, the authenticated media insert contract did not admit the intended staff fixture, and downstream registration/read assertions collapsed. The new repair adds an explicit Storage RLS contract and moves bucket metadata assertions to `service_role`; no production state was touched.
 
-## LATEST P0 FAILURE
-Run `34924033397` on `fb6f4ece3c2e4fee8d5cb48ce0924e22309e35b6` failed only at pgTAP. Root cause: `supabase/tests/001-storage-boundary.test.sql` contained an invalid Tenant B product UUID/path fixture, causing PostgreSQL UUID input failure before assertions. Migration application and migration inventory passed. The fixture was corrected on `a6cd1a93441b14d03b341d1dc8b37c0da9ed877a`; fresh exact-SHA replay is required.
+## CURRENT WORK
+- Fresh DB repair is waiting for a new exact-SHA replay because no workflow-dispatch capability is exposed through the current GitHub connector.
+- Independent WAR fronts remain active; P0 does not stop code review/design/test preparation for independent fronts.
+- Admin/Customer browser fronts are blocked only by runtime workflow dispatch capability; credentials must remain in GitHub Actions and never be pasted into chat.
 
-## EXACT EVIDENCE — NOT TRANSFERRED
-- Prior Application Quality: `34924033376` / `fb6f4ece...` — PASS, not transferred after SHA change.
-- Prior Security Audit: `34924033370` / `fb6f4ece...` — PASS, not transferred.
-- Prior G1: `34924033374` / `fb6f4ece...` — PASS, not transferred.
-- Prior Order Workflow: `34924033328` / `fb6f4ece...` — PASS, not transferred.
-- Prior Lockfile: `34924033356` / `fb6f4ece...` — PASS, not transferred.
-- P0 failed: `34924033397` / `fb6f4ece...` — FAIL.
+## PRODUCTION LOCK
+Production remains `NO TOUCH` until F33 passes on one exact Candidate SHA and Candidate Freeze is explicitly established.
 
-## PRODUCT RULES
-- Evidence is exact-SHA only; no PASS transfer across SHAs.
-- `IMPLEMENTED != VERIFIED != PROVEN != CERTIFIED`.
-- Production remains NO TOUCH until Candidate Freeze.
-- No raw logs stored here.
-- Report-Advisor remains separate; no BI dashboard expansion in Aghbari Commerce.
-- Product identity is `الأغبري`; legacy `العامري` branding is prohibited.
+## PROVEN
+`0 / 34`
 
-## USER ACTION
-`NONE` for the current engineering fronts. Admin/Customer browser proof is pending the existing runtime workflow dispatch capability and configured GitHub Actions credentials; do not paste passwords into chat.
+## REMAINING
+`34`
 
 ## NEXT 5
-1. Fresh exact-SHA P0 replay `34924484015` and close/fix pgTAP immediately.
-2. Close exact-current CI gates on `a6cd1a93441b14d03b341d1dc8b37c0da9ed877a`.
-3. Expand authenticated adversarial WAR evidence across RPC/Tenant/Inventory/Finance/Orders/Imports/Templates/RBAC/Outbox.
-4. Execute Customer/Admin browser certification workflow when dispatch is available; do not call API-only proof Browser PASS.
-5. Continue UI/CMS/Shipping/Returns/Test-the-Test while regression remains downstream.
+1. Fresh P0 replay on the new storage repair SHA.
+2. Close F26 Storage Security, then refresh F01 Fresh DB from the same SHA if the repair is clean.
+3. Continue exact-current RPC/Tenant/Inventory/Finance/Orders/Imports/Templates/RBAC/Outbox evidence without waiting for P0.
+4. Continue UI/CMS/Shipping/Returns/Test-the-Test fronts; keep browser fronts explicitly blocked rather than claiming API proof.
+5. Prepare one candidate evidence bundle only after the fronts converge; F33/F34 remain downstream.
