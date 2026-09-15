@@ -20,7 +20,7 @@ union all select viewer_a,'00000000-0000-0000-0000-000000000000'::uuid,'authenti
 insert into public.organizations(id,name,is_active)
 select org_a,'Order Tenant A',true from fixture union all select org_b,'Order Tenant B',true from fixture;
 insert into public.customers(id,organization_id,name,tier,is_active)
-select customer_a,org_a,'Order Customer A','wholesale',true from fixture union all select customer_b,org_b,'Order Customer B','wholesale',true from fixture;
+select customer_a,org_a,'Order Customer A','wholesale'::customer_tier,true from fixture union all select customer_b,org_b,'Order Customer B','wholesale'::customer_tier,true from fixture;
 insert into public.profiles(id,organization_id,customer_id,role)
 select admin_a,org_a,customer_a,'admin'::user_role from fixture union all
 select admin_b,org_b,customer_b,'admin'::user_role from fixture union all
