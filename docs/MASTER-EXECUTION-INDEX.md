@@ -3,54 +3,44 @@
 **Canonical status ledger. Updated after every meaningful execution boundary.**
 
 ## Truth Reset
-- Starting SHA ordered by this Owner-Level sprint: `0f28a8df8ce6efa8f4ee9569c36aa0d696d0386c`.
-- Current exact implementation HEAD: `767579168cfd3e687c1274bfa8eace879a288ebd`.
-- Single certification candidate: `767579168cfd3e687c1274bfa8eace879a288ebd`.
-- No evidence from an earlier SHA transfers to this candidate.
+- Current `main` observed: `fb6700fb7829c57f9dde5e00f0d54d2ee8039778`.
+- Current closure work is split into narrow PRs; no prior SHA evidence transfers automatically.
 - Scope: **Aghbari Commerce only**.
 
-## Executed in this sprint
-1. Reviewed PR #45 against current main and closed the stale 122-commit branch without merging it wholesale; valid template/Excel work was integrated selectively on current main.
-2. Customer order templates now use PostgreSQL normalized storage through `orderTemplates` service operations for create/list/delete/apply; the integrated customer UI no longer uses browser `localStorage` as the template source of truth.
-3. Excel Quick Order is integrated as upload → parse → normalize/match → validation/quarantine → review → explicit commit-to-cart.
-4. Template persistence is tenant/customer bound with RLS, atomic apply, idempotency, authorization and audit.
-5. Template limits are enforced server-side, including a safe default of 50 when organization UI settings are absent.
-6. Added covering indexes for the nine remaining FK findings from the live performance advisor.
-7. Added an authenticated template persistence/apply/delete Playwright contract that fails loudly when real E2E credentials are absent.
-8. Fixed Vitest CI scope to execute application tests under `src` only.
+## Executed in current closure pass
+1. Confirmed `main` moved past the previous candidate and reset certification truth to the exact observed HEAD.
+2. Restored the previously reverted tenant/import reconciliation pgTAP contract in PR #53; the proof verifies Commerce `import_jobs` ownership and rejects cross-tenant dataset pairing.
+3. Added a compact owner-level closure gate in PR #54 covering P0 security/data-integrity, core business, reporting boundary, and runtime/release proof gates.
+4. Added a compact Commerce → Reporting Gateway → Report-Advisor boundary contract gate in PR #55.
+5. Added a compact operational certification ledger in PR #56.
+6. Preserved the rule that documentation/evidence changes do not constitute production certification.
 
-## Live database evidence
-- Applied migration history contains `enterprise_order_templates_atomic`, `enforce_template_limits`, `add_missing_fk_indexes`, and `fix_template_limit_default`.
-- `order_template_lines` and `order_template_apply_operations` exist with RLS enabled.
-- `save_order_template(text,jsonb,text)` and `apply_order_template(uuid,uuid,text)` exist.
-- Anonymous execute privilege is denied for both template RPCs.
-- Direct live security contract: 54/54 public tables have RLS; 0 RLS-enabled public tables lack policies; 0 public functions are executable by `anon`.
-- Direct live checks deny anonymous execution for template save/apply, quick order and cart mutation RPCs.
-- Live pgTAP is not claimed; clean-source pgTAP remains a CI/local-database proof boundary.
-- Nine FK indexes were applied; unused-index findings were not deleted blindly.
+## Existing implementation baseline
+- The repository already contains the Arabic RTL commerce application, operational domain services, Supabase migrations/RPCs, PWA/offline primitives, import pipeline, catalog export, order/cart hardening, purchasing/receiving, audit/outbox foundations, security hardening, Enterprise B2B work, order-template persistence, and Excel Quick Order flow.
 
-## CI evidence
-- Exact SHA `82af52a178a0f52f0a70d2ad8c7a7ba0fbb97b22`: application-quality completed **PASS** through typecheck, unit/integration, lint, production build and release audit.
-- Exact SHA `767579168cfd3e687c1274bfa8eace879a288ebd`: fresh `application-quality` and `G1 Domain Proof` runs were triggered; their final results are pending, and `supabase-migration-proof` is also running.
+## Current proven facts
+- `README.md` explicitly defines Commerce as the operational system of record and Report-Advisor as the analytics/decision layer.
+- Current package scripts include typecheck, build, lint, Vitest under `src`, Playwright E2E, and release audit.
+- Live evidence recorded by the previous exact-head index included 54/54 public tables with RLS, no public functions executable by `anon`, protected template RPCs, and nine FK indexes; these are historical evidence and must be re-proven on a changed candidate when required by impact.
+
+## Exact-head proof gates still required
+- Fresh CI quality, migration proof, and domain proof on the release candidate.
+- Authenticated customer/admin browser E2E.
+- Tenant-A/Tenant-B adversarial browser proof.
+- Sensitive SECURITY DEFINER RPC adversarial runtime proof.
+- Outbox delivery/retry/terminal failure proof.
+- Invitation E2E, dynamic-admin behavior, RBAC direct-RPC denial, finance statement E2E, offline/recovery, and import/export adversarial coverage where not already exact-head proven.
+- Exact candidate → Vercel production mapping, READY deployment, runtime inspection, and production browser smoke.
+- Supabase leaked-password protection configuration.
 
 ## Certification state
 | Stage | State |
 |---|---|
-| BUILT | **ADVANCED / P0 PRODUCT CLOSURE IMPLEMENTED** |
+| BUILT | **ADVANCED** |
 | INTEGRATED | **SUBSTANTIALLY CLOSED** |
-| VERIFIED | **PARTIAL** — exact 82af quality proof is PASS; 767579 exact-head proof is pending. |
-| RUNTIME PROVEN | **PARTIAL** — authenticated browser execution is not proven in this environment. |
+| VERIFIED | **PARTIAL — exact-head reproof pending** |
+| RUNTIME PROVEN | **PARTIAL** |
 | PRODUCTION CERTIFIED | **NOT PROVEN** |
-
-## Remaining blockers
-1. Finish fresh CI/migration/G1 proofs on exact candidate `767579168cfd3e687c1274bfa8eace879a288ebd`.
-2. Execute real authenticated browser E2E for catalog/pricing/cart/checkout/order persistence, templates and Excel review/commit.
-3. Execute Tenant-A/Tenant-B adversarial browser proof.
-4. Map exact candidate SHA to Vercel Production and run Production browser smoke; current Vercel connector cannot deploy the project from this session.
-5. Enable/configure Supabase leaked-password protection; live advisor still reports it disabled.
-6. Complete adversarial runtime proof for sensitive authenticated SECURITY DEFINER RPCs.
-7. Execute/prove outbox delivery/retry/terminal failure, invitation E2E, dynamic-admin behavior, RBAC direct-RPC denial, finance statement E2E, offline/recovery and import/export adversarial flows where not already covered by exact-head tests.
-8. Resolve remaining RLS init-plan warnings only where workload-safe; no blanket rewrite without evidence.
 
 ## No-false-closure
 `CODE != TEST != CI != RUNTIME != LIVE != PRODUCTION`
