@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
-      E2E_BASE_URL: ${{ inputs.base_url || 'https://aghbari-commerce-c2dd-git-executio-03cdfa-aghbari-technologies1.vercel.app' }}
+      E2E_BASE_URL: ${{ inputs.base_url || 'https://aghbari-commerce-c2dd.vercel.app' }}
       E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
       E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
       E2E_EMAIL_B: ${{ secrets.E2E_EMAIL_B }}
@@ -56,12 +56,12 @@ jobs:
             exit 1
           }
           echo "EXACT CERTIFICATION HEAD: $actual"
-      - name: Wait for matching deployed artifact
+      - name: Resolve matching deployed artifact
         shell: bash
         run: |
           for attempt in $(seq 1 60); do
-            meta="$(curl --fail --silent --show-error --max-time 10 "$E2E_BASE_URL/build-meta.json" 2>/dev/null || true)"
-            deployed_sha="$(printf '%s' "$meta" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{try{console.log(JSON.parse(s).git_sha||'')}catch{console.log('')}})")"
+            response="$(curl --fail --silent --show-error --max-time 10 -L "$E2E_BASE_URL/build-meta.json" 2>/dev/null || true)"
+            deployed_sha="$(printf '%s' "$response" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{try{const x=JSON.parse(s);console.log(x.git_sha||'')}catch{console.log('')}})")"
             if [ "$deployed_sha" = "$E2E_EXACT_SHA" ]; then
               echo "MATCHING DEPLOYED SHA: $deployed_sha"
               exit 0
