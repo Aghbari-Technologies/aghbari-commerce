@@ -2,7 +2,8 @@ name: Runtime E2E Certification
 
 on:
   push:
-    branches: [execution/replay-contract-closure-20260916]
+    branches:
+      - execution/replay-contract-closure-20260916
   workflow_dispatch:
     inputs:
       base_url:
@@ -21,16 +22,13 @@ concurrency:
   group: aghbari-runtime-e2e-${{ github.workflow }}-${{ github.ref_name }}
   cancel-in-progress: false
 
-env:
-  DEFAULT_E2E_BASE_URL: https://aghbari-commerce-c2dd-git-executio-03cdfa-aghbari-technologies1.vercel.app
-
 jobs:
   runtime-e2e:
     name: Authenticated browser critical path
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
-      E2E_BASE_URL: ${{ inputs.base_url || env.DEFAULT_E2E_BASE_URL }}
+      E2E_BASE_URL: ${{ inputs.base_url || 'https://aghbari-commerce-c2dd-git-executio-03cdfa-aghbari-technologies1.vercel.app' }}
       E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
       E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
       E2E_EMAIL_B: ${{ secrets.E2E_EMAIL_B }}
