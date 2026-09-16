@@ -25,7 +25,7 @@ select is(
   (select imported_rows from public.commit_product_import(
     (select public.stage_product_import(
       'inventory-delta.xlsx',
-      'inventory-delta-fingerprint-01',
+      'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
       jsonb_build_array(jsonb_build_object(
         'sku','IMP-001','name','Import Delta Product','unit','carton','category','Imported','quantity',13,
         'prices',jsonb_build_object('retail',120,'wholesale',110,'distributor',100)
@@ -69,7 +69,7 @@ select is(
 
 select throws_ok(
   $$select * from public.commit_product_import(
-    (select id from public.import_jobs where organization_id='15151515-1515-4515-8515-151515151516' and source_fingerprint='inventory-delta-fingerprint-01'),
+    (select id from public.import_jobs where organization_id='15151515-1515-4515-8515-151515151516' and source_fingerprint='bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'),
     '15151515-1515-4515-8515-151515151518'
   )$$,
   'P0001','import is not ready for atomic commit','A completed import cannot be committed a second time'
