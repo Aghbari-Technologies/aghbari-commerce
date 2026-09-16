@@ -27,11 +27,11 @@ select throws_ok(
   '23505','idempotency key is already bound to another warehouse','An idempotency key cannot be replayed against another warehouse'
 );
 select is((select counted_quantity from public.set_stock_count_line((select id from public.stock_count_sessions where idempotency_key='stock-count-idem-01'),'67676767-6767-4676-8676-676767676770',7)),7,'Counted quantity is persisted');
-select is((select status from public.complete_stock_count((select id from public.stock_count_sessions where idempotency_key='stock-count-idem-01'))),'completed','Completed count closes the session');
+select is((select public.complete_stock_count((select id from public.stock_count_sessions where idempotency_key='stock-count-idem-01'))->>'status'),'completed','Completed count closes the session');
 select is((select quantity from public.inventory_balances where warehouse_id='67676767-6767-4676-8676-676767676769' and product_id='67676767-6767-4676-8676-676767676770'),7,'Reconciliation sets the authoritative balance to the physical count');
 select is((select count(*) from public.inventory_movements where source_type='stock_count' and source_id=(select id from public.stock_count_sessions where idempotency_key='stock-count-idem-01')),1::bigint,'A non-zero count variance creates an auditable inventory movement');
 select is((select variance from public.stock_count_lines where session_id=(select id from public.stock_count_sessions where idempotency_key='stock-count-idem-01')),-3,'Variance is recorded against the balance at completion');
-select is((select status from public.start_stock_count('67676767-6767-4676-8676-676767676769','stock-count-idem-01')),'completed'::public.stock_count_status,'Replaying the same start key is idempotent and returns the completed session');
+select is((select (public.start_stock_count('67676767-6767-4676-8676-676767676769','stock-count-idem-01'))->>'status'),'completed','Replaying the same start key is idempotent and returns the completed session');
 
 insert into auth.users (id, email) values ('99999999-9999-4999-8999-999999999999', 'stock-count-other-tenant@test.local');
 insert into public.organizations (id, name) values ('78787878-7878-4787-8787-787878787878', 'Other Tenant');
