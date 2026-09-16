@@ -1,4 +1,4 @@
-# Operational Certification Ledger — 2026-09-16
+# Compact Ops Certification Ledger — 2026-09-16
 
 ## Candidate truth
 - Current `main`: `fb6700fb7829c57f9dde5e00f0d54d2ee8039778`
@@ -8,11 +8,13 @@
 - Operational B2B application and domain services are present.
 - Enterprise order-template persistence/apply path is integrated.
 - Excel quick-order flow is integrated through validation/quarantine/review.
-- Inventory reconciliation has a dedicated tenant/import-boundary proof restored on PR #53.
-- Repository engineering contract explicitly separates implementation, verification, runtime proof and production certification.
+- Live public and anon EXECUTE privilege on public functions is zero.
+- Live `get_low_stock()` search_path is pinned to empty; source parity is tracked in PR #57.
+- Twenty-five previously targeted operational FK indexes plus seven newly covered FK advisor findings exist live.
+- Onyx is treated as an external operational integration boundary; Report-Advisor remains the analytics/decision layer.
 
 ## Open proof gates
-- Exact-head CI and migration/domain proof.
+- Exact-head migration proof still has stale/drifting test contracts.
 - Authenticated browser E2E.
 - Tenant A/B browser adversarial proof.
 - Sensitive RPC adversarial runtime proof.
