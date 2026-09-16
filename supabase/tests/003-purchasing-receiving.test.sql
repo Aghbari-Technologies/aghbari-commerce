@@ -3,22 +3,14 @@ begin;
 create extension if not exists pgtap with schema extensions;
 select plan(15);
 
-insert into auth.users (id, email)
-values ('44444444-4444-4444-8444-444444444444', 'purchasing-admin@test.local');
-insert into public.organizations (id, name)
-values ('eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', 'Purchasing Tenant A');
-insert into public.branches (id, organization_id, name)
-values ('eeeeeeee-eeee-4eee-8eee-eeeeeeeeee01', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', 'Main Branch');
-insert into public.warehouses (id, organization_id, branch_id, name)
-values ('eeeeeeee-eeee-4eee-8eee-eeeeeeeeee02', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee01', 'Main Warehouse');
-insert into public.products (id, organization_id, sku, name, unit)
-values ('eeeeeeee-eeee-4eee-8eee-eeeeeeeeee03', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', 'R5-001', 'Rice', 'carton');
-insert into public.customers (id, organization_id, name, tier)
-values ('eeeeeeee-eeee-4eee-8eee-eeeeeeeeee04', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', 'Buyer', 'wholesale');
-insert into public.suppliers (id, organization_id, name)
-values ('eeeeeeee-eeee-4eee-8eee-eeeeeeeeee05', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', 'Supplier A');
-insert into public.profiles (id, organization_id, customer_id, role)
-values ('44444444-4444-4444-8444-444444444444', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee04', 'admin');
+insert into auth.users (id, email) values ('44444444-4444-4444-8444-444444444444', 'purchasing-admin@test.local');
+insert into public.organizations (id, name) values ('eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', 'Purchasing Tenant A');
+insert into public.branches (id, organization_id, name) values ('eeeeeeee-eeee-4eee-8eee-eeeeeeeeee01', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', 'Main Branch');
+insert into public.warehouses (id, organization_id, branch_id, name) values ('eeeeeeee-eeee-4eee-8eee-eeeeeeeeee02', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee01', 'Main Warehouse');
+insert into public.products (id, organization_id, sku, name, unit) values ('eeeeeeee-eeee-4eee-8eee-eeeeeeeeee03', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', 'R5-001', 'Rice', 'carton');
+insert into public.customers (id, organization_id, name, tier) values ('eeeeeeee-eeee-4eee-8eee-eeeeeeeeee04', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', 'Buyer', 'wholesale');
+insert into public.suppliers (id, organization_id, name) values ('eeeeeeee-eeee-4eee-8eee-eeeeeeeeee05', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', 'Supplier A');
+insert into public.profiles (id, organization_id, customer_id, role) values ('44444444-4444-4444-8444-444444444444', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee', 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeee04', 'admin');
 
 set local role authenticated;
 set local request.jwt.claim.sub = '44444444-4444-4444-8444-444444444444';
