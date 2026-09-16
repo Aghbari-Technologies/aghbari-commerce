@@ -7,3 +7,4 @@ ALTER FUNCTION public.commit_product_import(uuid, uuid) SET search_path = '';
 ALTER FUNCTION public.save_order_template(text, jsonb, text) SET search_path = '';
 ALTER FUNCTION public.apply_order_template(uuid, uuid, text) SET search_path = '';
 ALTER FUNCTION public.set_stock_threshold(uuid, uuid, integer, integer, integer) SET search_path = '';
+ALTER FUNCTION public.register_product_media(uuid, text, text, integer, integer, bigint) SET search_path = '';
