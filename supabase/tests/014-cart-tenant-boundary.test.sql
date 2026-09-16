@@ -36,7 +36,8 @@ select set_config('request.jwt.claim.sub',(select user_b::text from fixture),tru
 select public.set_cart_item(product_b,5) from fixture;
 select is((select quantity from public.get_cart() where product_id=(select product_b from fixture)),5,'Tenant B sees only its own cart item');
 select is((select count(*) from public.get_cart() where product_id=(select product_a from fixture)),0::bigint,'Tenant B cannot see Tenant A cart item');
-select is((select count(*) from public.cart_items ci join fixture f on ci.product_id=f.product_a),1::bigint,'Tenant B operations do not mutate Tenant A cart');
+select set_config('request.jwt.claim.sub',(select user_a::text from fixture),true);
+select is((select quantity from public.get_cart() where product_id=(select product_a from fixture)),3,'Tenant B operations do not mutate Tenant A cart');
 
 select * from finish();
 rollback;
