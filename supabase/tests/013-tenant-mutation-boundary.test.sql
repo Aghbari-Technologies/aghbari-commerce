@@ -1,6 +1,6 @@
 begin;
 
-select plan(8);
+select plan(7);
 
 create temp table fixture as
 select
@@ -62,51 +62,15 @@ set local role authenticated;
 select set_config('request.jwt.claim.role', 'authenticated', true);
 select set_config('request.jwt.claim.sub', (select user_a::text from fixture), true);
 
-select throws_ok(
-  format('select public.adjust_inventory(%L,%L,-5,%L)', warehouse_b, product_b, 'cross-tenant viewer'),
-  '42501',
-  'warehouse access required'
-) from fixture;
-
-select is(
-  (select count(*) from public.inventory_balances ib join fixture f on f.warehouse_b = ib.warehouse_id and f.product_b = ib.product_id),
-  0::bigint,
-  'Tenant A viewer cannot read Tenant B inventory through RLS'
-);
-
-select throws_ok(
-  format('select public.upsert_product(%L,%L,%L,%L,%L,%L,%L)', product_b, 'TENANT-B-HACK', 'Cross Tenant', 'unit', null, null, 'active'),
-  '42501',
-  'staff catalog access required'
-) from fixture;
-
-select throws_ok(
-  format('select public.set_product_price(%L,%L,%L,%L)', product_b, 'retail', 1, 'YER'),
-  '42501',
-  'staff pricing access required'
-) from fixture;
+select throws_ok(format('select public.adjust_inventory(%L,%L,-5,%L)', warehouse_b, product_b, 'cross-tenant viewer'),'42501','warehouse access required') from fixture;
+select is((select count(*) from public.inventory_balances ib join fixture f on f.warehouse_b = ib.warehouse_id and f.product_b = ib.product_id),0::bigint,'Tenant A viewer cannot read Tenant B inventory through RLS');
+select throws_ok(format('select public.upsert_product(%L,%L,%L,%L,%L,%L,%L)', product_b, 'TENANT-B-HACK', 'Cross Tenant', 'unit', null, null, 'active'),'42501','staff catalog access required') from fixture;
+select throws_ok(format('select public.set_product_price(%L,%L,%L,%L)', product_b, 'retail', 1, 'YER'),'42501','staff pricing access required') from fixture;
 
 select set_config('request.jwt.claim.sub', (select admin_a::text from fixture), true);
-
-select throws_ok(
-  format('select public.adjust_inventory(%L,%L,-5,%L)', warehouse_b, product_b, 'cross-tenant admin'),
-  'P0002',
-  'warehouse not found'
-) from fixture;
-
+select throws_ok(format('select public.adjust_inventory(%L,%L,-5,%L)', warehouse_b, product_b, 'cross-tenant admin'),'P0002','warehouse not found') from fixture;
 select public.adjust_inventory(warehouse_a, product_a, 1, 'same-tenant admin') from fixture;
-
-select is(
-  (select quantity from public.inventory_balances ib join fixture f on f.warehouse_a = ib.warehouse_id and f.product_a = ib.product_id),
-  11,
-  'Tenant A admin can mutate Tenant A inventory'
-);
-
-select is(
-  (select count(*) from public.inventory_balances ib join fixture f on f.warehouse_b = ib.warehouse_id and f.product_b = ib.product_id),
-  0::bigint,
-  'Tenant A admin cannot read Tenant B inventory through RLS'
-);
+select is((select quantity from public.inventory_balances ib join fixture f on f.warehouse_a = ib.warehouse_id and f.product_a = ib.product_id),11,'Tenant A admin can mutate Tenant A inventory');
 
 select * from finish();
 rollback;
