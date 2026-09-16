@@ -24,7 +24,10 @@ select is((select status from public.outbox_events where organization_id='cccccc
 select is((select attempts from public.outbox_events where organization_id='cccccccc-cccc-4ccc-8ccc-cccccccccccc'),1,'Claim increments attempts once');
 select is(public.ack_outbox_event((select id from public.outbox_events where organization_id='cccccccc-cccc-4ccc-8ccc-cccccccccccc')),true,'Acknowledgement succeeds for the claimed event');
 select is((select status from public.outbox_events where organization_id='cccccccc-cccc-4ccc-8ccc-cccccccccccc'),'delivered'::text,'Acknowledged event becomes delivered');
+select is((select count(*) from public.outbox_events where organization_id='dddddddd-dddd-4ddd-8ddd-dddddddddddd'),0::bigint,'Tenant B event is not visible across the tenant boundary');
+set local role service_role;
 select is((select status from public.outbox_events where organization_id='dddddddd-dddd-4ddd-8ddd-dddddddddddd'),'pending'::text,'Tenant B event remains untouched');
+set local role authenticated;
 
 set local role service_role;
 insert into public.outbox_events (organization_id, aggregate_type, aggregate_id, event_type, payload, status, attempts, locked_until)
