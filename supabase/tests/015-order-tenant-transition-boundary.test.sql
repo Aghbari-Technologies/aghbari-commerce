@@ -1,6 +1,6 @@
 begin;
 
-select plan(8);
+select plan(7);
 
 create temp table fixture as
 select gen_random_uuid() org_a, gen_random_uuid() org_b,
@@ -39,10 +39,10 @@ select org_a,order_a,product_a,2,5,'wholesale'::customer_tier from fixture union
 set local role authenticated;
 select set_config('request.jwt.claim.role','authenticated',true);
 select set_config('request.jwt.claim.sub',(select viewer_a::text from fixture),true);
-select throws_ok(format('select public.transition_order(%L,%L)',order_a,'confirmed'::order_status),'42501','viewer cannot transition an order') from fixture;
-select throws_ok(format('select public.transition_order(%L,%L)',order_b,'confirmed'::order_status),'P0002','Tenant A viewer cannot target Tenant B order') from fixture;
+select throws_ok(format('select public.transition_order(%L,%L)',order_a,'confirmed'::order_status),'42501',null,'Viewer cannot transition an order');
+select throws_ok(format('select public.transition_order(%L,%L)',order_b,'confirmed'::order_status),'P0002',null,'Tenant A viewer cannot target Tenant B order');
 select set_config('request.jwt.claim.sub',(select admin_a::text from fixture),true);
-select throws_ok(format('select public.transition_order(%L,%L)',order_b,'confirmed'::order_status),'P0002','Tenant A admin cannot target Tenant B order') from fixture;
+select throws_ok(format('select public.transition_order(%L,%L)',order_b,'confirmed'::order_status),'P0002',null,'Tenant A admin cannot target Tenant B order');
 select public.transition_order(order_a,'confirmed'::order_status) from fixture;
 select is((select status from public.orders where id=(select order_a from fixture)),'confirmed'::order_status,'Tenant A admin can transition own order');
 select is((select count(*) from public.order_status_history h where h.order_id=(select order_a from fixture) and h.to_status='confirmed'),1::bigint,'Own order transition creates history');
