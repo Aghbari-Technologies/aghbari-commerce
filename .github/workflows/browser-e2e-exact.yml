@@ -30,9 +30,12 @@ concurrency:
 jobs:
   browser-e2e:
     if: >-
-      github.event_name != 'deployment_status' ||
-      (github.event.deployment_status.state == 'success' &&
-       github.event.deployment_status.environment == 'production')
+      (github.event_name == 'deployment_status' &&
+       github.event.deployment_status.state == 'success' &&
+       github.event.deployment_status.environment == 'production') ||
+      github.event_name == 'workflow_dispatch' ||
+      ((github.event_name == 'push' || github.event_name == 'pull_request') &&
+       secrets.E2E_BASE_URL != '')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
