@@ -1,0 +1,174 @@
+import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2';
+
+type ExportRow = {
+  id: string;
+  dataset_id: string;
+  organization_id: string;
+  tenant_id: string;
+  source_system: string;
+  source_dataset_id: string;
+  source_version: string;
+  contract_version: string;
+  schema_version: string;
+  processing_status: string;
+  activation_status: string;
+  data_period_start: string | null;
+  data_period_end: string | null;
+  provenance_ref: string;
+  correlation_id: string;
+};
+
+type ProductRow = {
+  id: string;
+  sku: string;
+  name: string;
+  unit: string;
+  status: string;
+  created_at: string;
+};
+
+type PriceRow = {
+  product_id: string;
+  amount: number;
+  valid_from: string;
+  valid_to: string | null;
+  price_lists: { tier: string; currency: string } | null;
+};
+
+const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
+const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+const ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+const REPORT_ADVISOR_URL = (Deno.env.get('REPORT_ADVISOR_URL') ?? '').replace(/\/$/, '');
+const REPORT_ADVISOR_INGEST_TOKEN = Deno.env.get('REPORT_ADVISOR_INGEST_TOKEN') ?? '';
+const admin = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, { auth: { persistSession: false, autoRefreshToken: false } });
+
+function json(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'Access-Control-Allow-Origin': '*' } });
+}
+
+function bearer(request: Request) {
+  const value = request.headers.get('authorization') ?? '';
+  return value.startsWith('Bearer ') ? value.slice(7).trim() : null;
+}
+
+async function requireAdmin(request: Request) {
+  const token = bearer(request);
+  if (!token) throw new Error('authentication required');
+  const client = createClient(SUPABASE_URL, ANON_KEY, { global: { headers: { Authorization: `Bearer ${token}` } }, auth: { persistSession: false, autoRefreshToken: false } });
+  const { data: { user }, error } = await client.auth.getUser(token);
+  if (error || !user) throw new Error('authentication required');
+  const { data: profile, error: profileError } = await admin.from('profiles').select('organization_id,role').eq('id', user.id).single();
+  if (profileError || !profile || !['owner', 'admin'].includes(String(profile.role))) throw new Error('reporting publication requires owner or admin role');
+  return { user, organizationId: String(profile.organization_id), client };
+}
+
+function validateVersion(value: unknown, field: string) {
+  if (typeof value !== 'string' || value.length === 0 || value.length > 128) throw new Error(`invalid ${field}`);
+  return value.trim();
+}
+
+function buildProductFacts(products: ProductRow[], prices: PriceRow[]) {
+  const priceByProduct = new Map<string, { retail?: number; wholesale?: number; distributor?: number; currency?: string }>();
+  for (const row of prices) {
+    const tier = row.price_lists?.tier;
+    if (!tier || !['retail', 'wholesale', 'distributor'].includes(tier)) continue;
+    const current = priceByProduct.get(row.product_id) ?? {};
+    if (current[tier as 'retail' | 'wholesale' | 'distributor'] === undefined) current[tier as 'retail' | 'wholesale' | 'distributor'] = Number(row.amount);
+    current.currency ??= row.price_lists?.currency;
+    priceByProduct.set(row.product_id, current);
+  }
+  return products.map((product) => ({
+    source_record_id: product.id,
+    sku: product.sku,
+    name: product.name,
+    unit: product.unit,
+    status: product.status,
+    created_at: product.created_at,
+    prices: priceByProduct.get(product.id) ?? {}
+  }));
+}
+
+async function markFailure(exportRow: ExportRow, message: string) {
+  await admin.from('reporting_exports').update({ processing_status: 'PROCESSING_FAILED', activation_status: 'REJECTED', completed_at: new Date().toISOString(), error_message: message.slice(0, 1000) }).eq('id', exportRow.id).eq('organization_id', exportRow.organization_id);
+}
+
+async function processExport(exportRow: ExportRow, client: SupabaseClient) {
+  if (exportRow.processing_status === 'ACTIVE' && exportRow.activation_status === 'ACTIVE') return { already_active: true, dataset_id: exportRow.dataset_id };
+  if (!REPORT_ADVISOR_URL || !REPORT_ADVISOR_INGEST_TOKEN) {
+    await markFailure(exportRow, 'REPORTING_TARGET_NOT_CONFIGURED');
+    return { blocked: true, reason: 'REPORTING_TARGET_NOT_CONFIGURED', dataset_id: exportRow.dataset_id };
+  }
+
+  const [{ data: products, error: productsError }, { data: prices, error: pricesError }] = await Promise.all([
+    client.from('products').select('id,sku,name,unit,status,created_at').eq('organization_id', exportRow.organization_id).order('created_at'),
+    client.from('product_prices').select('product_id,amount,valid_from,valid_to,price_lists!inner(tier,currency)').eq('organization_id', exportRow.organization_id).lte('valid_from', new Date().toISOString()).or(`valid_to.is.null,valid_to.gte.${new Date().toISOString()}`).order('valid_from', { ascending: false }).limit(30000)
+  ]);
+  if (productsError) throw productsError;
+  if (pricesError) throw pricesError;
+
+  const facts = buildProductFacts((products ?? []) as ProductRow[], (prices ?? []) as unknown as PriceRow[]);
+  const createdAt = new Date().toISOString();
+  const envelope = {
+    dataset_id: exportRow.dataset_id,
+    source_system: exportRow.source_system,
+    source_dataset_id: exportRow.source_dataset_id,
+    source_version: exportRow.source_version,
+    contract_version: exportRow.contract_version,
+    schema_version: exportRow.schema_version,
+    tenant_id: exportRow.tenant_id,
+    created_at: createdAt,
+    data_period_start: exportRow.data_period_start ?? createdAt.slice(0, 10),
+    data_period_end: exportRow.data_period_end ?? createdAt.slice(0, 10),
+    record_count: facts.length,
+    accepted_record_count: facts.length,
+    rejected_record_count: 0,
+    data_quality_score: 100,
+    provenance_ref: exportRow.provenance_ref,
+    processing_status: 'ACTIVE',
+    activation_status: 'ACTIVE',
+    analysis_run_id: null,
+    correlation_id: exportRow.correlation_id,
+    facts
+  };
+
+  const response = await fetch(`${REPORT_ADVISOR_URL}/api/intelligence/ingest`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${REPORT_ADVISOR_INGEST_TOKEN}`, 'Content-Type': 'application/json', 'Idempotency-Key': exportRow.dataset_id, 'X-Aghbari-Tenant': exportRow.tenant_id, 'X-Aghbari-Contract': `${exportRow.contract_version}/${exportRow.schema_version}` },
+    body: JSON.stringify(envelope)
+  });
+  if (!response.ok) throw new Error(`REPORT_ADVISOR_INGEST_FAILED:${response.status}`);
+
+  const { error: updateError } = await admin.from('reporting_exports').update({ processing_status: 'ACTIVE', activation_status: 'ACTIVE', record_count: facts.length, accepted_record_count: facts.length, rejected_record_count: 0, data_quality_score: 100, completed_at: new Date().toISOString(), error_message: null }).eq('id', exportRow.id).eq('organization_id', exportRow.organization_id);
+  if (updateError) throw updateError;
+  return { active: true, dataset_id: exportRow.dataset_id, record_count: facts.length };
+}
+
+Deno.serve(async (request) => {
+  if (request.method === 'OPTIONS') return json({ ok: true });
+  if (request.method !== 'POST') return json({ error: 'method_not_allowed' }, 405);
+  let exportRow: ExportRow | null = null;
+  try {
+    const { user, organizationId, client } = await requireAdmin(request);
+    const body = await request.json();
+    if (!body || typeof body !== 'object') return json({ error: 'invalid_payload' }, 422);
+    const input = body as Record<string, unknown>;
+    const sourceDatasetId = validateVersion(input.source_dataset_id, 'source_dataset_id');
+    const sourceVersion = validateVersion(input.source_version, 'source_version');
+    const schemaVersion = validateVersion(input.schema_version ?? '1.0', 'schema_version');
+    const idempotencyKey = validateVersion(input.idempotency_key, 'idempotency_key');
+    const start = typeof input.data_period_start === 'string' ? input.data_period_start : null;
+    const end = typeof input.data_period_end === 'string' ? input.data_period_end : null;
+    const { data, error } = await client.rpc('request_reporting_export', { p_source_dataset_id: sourceDatasetId, p_source_version: sourceVersion, p_schema_version: schemaVersion, p_idempotency_key: idempotencyKey, p_data_period_start: start, p_data_period_end: end });
+    if (error) throw error;
+    exportRow = Array.isArray(data) ? (data[0] as ExportRow | undefined) ?? null : (data as ExportRow | null);
+    if (!exportRow || exportRow.organization_id !== organizationId || exportRow.tenant_id !== organizationId || exportRow.created_by !== user.id) throw new Error('reporting export tenant binding failed');
+    const result = await processExport(exportRow, client);
+    if ('blocked' in result) return json({ ok: false, ...result }, 424);
+    return json({ ok: true, ...result, tenant_id: organizationId, actor_id: user.id });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'unexpected_error';
+    if (exportRow) await markFailure(exportRow, message);
+    const status = /authentication|required|access|tenant binding/.test(message) ? 403 : /NOT_CONFIGURED/.test(message) ? 424 : /FAILED:/.test(message) ? 502 : 400;
+    return json({ error: message }, status);
+  }
+});

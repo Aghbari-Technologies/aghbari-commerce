@@ -25,3 +25,6 @@ enabled = false
 
 [functions.outbox-worker]
 verify_jwt = false
+
+[functions.reporting-gateway]
+verify_jwt = true
