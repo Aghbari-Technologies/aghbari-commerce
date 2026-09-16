@@ -14,7 +14,7 @@ BEGIN
    IF existing_count<>jsonb_array_length(p_lines) THEN RAISE EXCEPTION USING errcode='40001',message='idempotency key payload conflict'; END IF;
    IF EXISTS (SELECT 1 FROM jsonb_array_elements(p_lines) x WHERE NOT EXISTS (SELECT 1 FROM public.purchase_receipt_items pri WHERE pri.organization_id=o AND pri.receipt_id=existing.id AND pri.purchase_order_item_id=(x->>'purchase_order_item_id')::uuid AND pri.product_id=(x->>'product_id')::uuid AND pri.quantity_received=(x->>'quantity')::integer)) THEN RAISE EXCEPTION USING errcode='40001',message='idempotency key payload conflict'; END IF;
    SELECT * INTO po FROM public.purchase_orders WHERE id=existing.purchase_order_id AND organization_id=o;
-   SELECT coalesce(sum(line_total),0) INTO total FROM public.purchase_receipt_items WHERE organization_id=o AND receipt_id=existing.id;
+   SELECT coalesce(sum(pri.line_total),0) INTO total FROM public.purchase_receipt_items pri WHERE pri.organization_id=o AND pri.receipt_id=existing.id;
    RETURN QUERY SELECT existing.id,existing.receipt_number,existing.purchase_order_id,po.status,total; RETURN;
  END IF;
  SELECT * INTO po FROM public.purchase_orders po0 WHERE po0.id=p_purchase_order_id AND po0.organization_id=o FOR UPDATE;
