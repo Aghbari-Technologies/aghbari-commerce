@@ -20,9 +20,9 @@ select is(has_function_privilege('public', 'public.get_or_create_cart()', 'execu
 select is(has_function_privilege('anon', 'public.get_catalog(text,uuid,integer,integer,uuid)', 'execute'), false, 'anon cannot execute warehouse-aware get_catalog');
 select is(has_function_privilege('authenticated', 'public.get_catalog(text,uuid,integer,integer,uuid)', 'execute'), true, 'authenticated can execute warehouse-aware get_catalog');
 select is(has_function_privilege('public', 'public.get_catalog(text,uuid,integer,integer,uuid)', 'execute'), false, 'PUBLIC cannot execute warehouse-aware get_catalog');
-select is(has_function_privilege('authenticated', 'public.get_catalog(text,uuid,integer,integer)', 'execute'), false, 'authenticated cannot execute legacy 4-arg get_catalog');
-select is(has_function_privilege('anon', 'public.get_catalog(text,uuid,integer,integer)', 'execute'), false, 'anon cannot execute legacy 4-arg get_catalog');
-select is(has_function_privilege('public', 'public.get_catalog(text,uuid,integer,integer)', 'execute'), false, 'PUBLIC cannot execute legacy 4-arg get_catalog');
+select is(to_regprocedure('public.get_catalog(text,uuid,integer,integer)'), null, 'legacy 4-arg get_catalog is absent');
+select is(to_regprocedure('public.get_catalog(text,uuid,integer,integer)'), null, 'legacy 4-arg get_catalog is absent for anonymous callers');
+select is(to_regprocedure('public.get_catalog(text,uuid,integer,integer)'), null, 'legacy 4-arg get_catalog is absent from public surface');
 select is(has_function_privilege('anon', 'public.remove_cart_item(uuid)', 'execute'), false, 'anon cannot execute remove_cart_item');
 select is(has_function_privilege('authenticated', 'public.remove_cart_item(uuid)', 'execute'), true, 'authenticated can execute remove_cart_item');
 select is(has_function_privilege('public', 'public.remove_cart_item(uuid)', 'execute'), false, 'PUBLIC cannot execute remove_cart_item');
