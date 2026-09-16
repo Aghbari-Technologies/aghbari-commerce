@@ -14,6 +14,7 @@ import InventoryPanel from './InventoryPanel';
 import FinancePanel from './FinancePanel';
 import ClientControlPanel from './ClientControlPanel';
 import AdminExecutiveDashboard from './AdminExecutiveDashboard';
+import StaffManagementPanel from './StaffManagementPanel';
 import './admin-executive-dashboard.css';
 
 interface StaffProduct { id: string; sku: string; name: string; unit: string; }
@@ -46,6 +47,7 @@ export default function AdminPanel({ role }: { role: UserRole }) {
 
   return <section className="admin-panel" id="account">
     <AdminExecutiveDashboard role={role} />
+    <StaffManagementPanel role={role} />
     <details className="admin-operations" open>
       <summary>مركز التشغيل التفصيلي وإدارة البيانات</summary>
       <div className="section-heading"><div><span className="eyebrow">إدارة التشغيل</span><h2>مركز التحكم</h2></div><span>الصلاحيات تُفرض على الخادم أيضًا</span></div>
