@@ -4,7 +4,7 @@ select plan(8);
 
 create temp table fixture as
 select gen_random_uuid() org_a, gen_random_uuid() org_b,
-       gen_random_uuid() user_a, gen_random_uuid() user_b,
+       gen_random_uuid() user_a, gen_random_uuid() admin_a, gen_random_uuid() user_b,
        gen_random_uuid() customer_a, gen_random_uuid() customer_b,
        gen_random_uuid() warehouse_a, gen_random_uuid() warehouse_b,
        gen_random_uuid() branch_a, gen_random_uuid() branch_b,
@@ -13,13 +13,14 @@ grant select on fixture to authenticated;
 
 insert into auth.users(id,instance_id,aud,role,email,encrypted_password,created_at,updated_at)
 select user_a,'00000000-0000-0000-0000-000000000000'::uuid,'authenticated','authenticated','state-a@fixture.invalid','x',now(),now() from fixture
+union all select admin_a,'00000000-0000-0000-0000-000000000000'::uuid,'authenticated','authenticated','state-admin-a@fixture.invalid','x',now(),now() from fixture
 union all select user_b,'00000000-0000-0000-0000-000000000000'::uuid,'authenticated','authenticated','state-b@fixture.invalid','x',now(),now() from fixture;
 insert into public.organizations(id,name,is_active)
 select org_a,'State Tenant A',true from fixture union all select org_b,'State Tenant B',true from fixture;
 insert into public.customers(id,organization_id,name,tier,is_active)
 select customer_a,org_a,'State Customer A','retail'::customer_tier,true from fixture union all select customer_b,org_b,'State Customer B','retail'::customer_tier,true from fixture;
 insert into public.profiles(id,organization_id,customer_id,role)
-select user_a,org_a,customer_a,'viewer'::user_role from fixture union all select user_b,org_b,customer_b,'viewer'::user_role from fixture;
+select user_a,org_a,customer_a,'viewer'::user_role from fixture union all select admin_a,org_a,customer_a,'admin'::user_role from fixture union all select user_b,org_b,customer_b,'viewer'::user_role from fixture;
 insert into public.branches(id,organization_id,name,is_active)
 select branch_a,org_a,'State Branch A',true from fixture union all select branch_b,org_b,'State Branch B',true from fixture;
 insert into public.warehouses(id,organization_id,branch_id,name,is_active)
@@ -46,6 +47,7 @@ select ok(not exists(select 1 from public.orders where organization_id=(select o
 select set_config('request.jwt.claim.sub',(select user_a::text from fixture),true);
 select ok(exists(select 1 from public.orders where organization_id=(select org_a from fixture)),'Tenant A can still read own order');
 select ok((select status from public.orders where organization_id=(select org_a from fixture) order by created_at desc limit 1)='pending'::order_status,'Failed viewer transition leaves order pending');
+select set_config('request.jwt.claim.sub',(select admin_a::text from fixture),true);
 select ok((select quantity from public.inventory_balances where organization_id=(select org_a from fixture) and product_id=(select product_a from fixture))=9,'Order creation decrements Tenant A stock once');
 select ok((select count(*) from public.order_status_history h join public.orders o on o.id=h.order_id where o.organization_id=(select org_a from fixture))>=1,'Order status history remains tenant-scoped');
 
