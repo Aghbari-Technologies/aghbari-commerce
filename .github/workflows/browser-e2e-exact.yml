@@ -35,7 +35,7 @@ jobs:
        github.event.deployment_status.environment == 'production') ||
       github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     env:
       E2E_BASE_URL: >-
         ${{ github.event_name == 'deployment_status' && github.event.deployment_status.environment_url || inputs.base_url }}
@@ -45,44 +45,34 @@ jobs:
       E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
       E2E_EMAIL_B: ${{ secrets.E2E_EMAIL_B }}
       E2E_PASSWORD_B: ${{ secrets.E2E_PASSWORD_B }}
+      E2E_ADMIN_EMAIL: ${{ secrets.E2E_ADMIN_EMAIL }}
+      E2E_ADMIN_PASSWORD: ${{ secrets.E2E_ADMIN_PASSWORD }}
     steps:
       - name: Validate exact inputs
         shell: bash
         run: |
           test -n "$E2E_BASE_URL" || { echo 'BLOCKED: E2E_BASE_URL is missing'; exit 1; }
           test -n "$EXPECTED_SHA" || { echo 'BLOCKED: EXPECTED_SHA is missing'; exit 1; }
-          case "$E2E_BASE_URL" in
-            https://*) ;;
-            *) echo 'BLOCKED: E2E_BASE_URL must use HTTPS'; exit 1 ;;
-          esac
+          case "$E2E_BASE_URL" in https://*) ;; *) echo 'BLOCKED: E2E_BASE_URL must use HTTPS'; exit 1 ;; esac
           echo "$EXPECTED_SHA" | grep -Eq '^[0-9a-f]{40}$' || { echo 'BLOCKED: EXPECTED_SHA is not a full SHA'; exit 1; }
-
       - uses: actions/checkout@v4
         with:
           ref: ${{ env.EXPECTED_SHA }}
           fetch-depth: 1
-
       - name: Fail closed on checked-out SHA drift
         shell: bash
         run: |
           actual="$(git rev-parse HEAD)"
-          test "$actual" = "$EXPECTED_SHA" || {
-            echo "SHA MISMATCH: expected=$EXPECTED_SHA actual=$actual"
-            exit 1
-          }
+          test "$actual" = "$EXPECTED_SHA" || { echo "SHA MISMATCH: expected=$EXPECTED_SHA actual=$actual"; exit 1; }
           echo "EXACT CHECKED-OUT SHA: $actual"
-
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
-
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-
       - name: Verify deployed artifact identity before browser execution
         shell: bash
         run: |
@@ -91,17 +81,23 @@ jobs:
           const fs = require('node:fs');
           const meta = JSON.parse(fs.readFileSync('build-meta.json', 'utf8'));
           if (meta.product !== 'aghbari-commerce') throw new Error(`Unexpected product: ${meta.product}`);
-          if (meta.git_sha !== process.env.EXPECTED_SHA) {
-            throw new Error(`DEPLOYED SHA MISMATCH: expected=${process.env.EXPECTED_SHA} actual=${meta.git_sha}`);
-          }
+          if (meta.git_sha !== process.env.EXPECTED_SHA) throw new Error(`DEPLOYED SHA MISMATCH: expected=${process.env.EXPECTED_SHA} actual=${meta.git_sha}`);
           if (typeof meta.version !== 'string' || !meta.version.trim()) throw new Error('Missing deployed version');
           console.log(`EXACT DEPLOYED SHA: ${meta.git_sha}`);
           console.log(`DEPLOYED VERSION: ${meta.version}`);
           NODE
-
+      - name: Require customer E2E credentials
+        shell: bash
+        run: |
+          test -n "$E2E_EMAIL" && test -n "$E2E_PASSWORD" && test -n "$E2E_EMAIL_B" && test -n "$E2E_PASSWORD_B" || { echo 'BLOCKED: customer E2E credentials are incomplete'; exit 1; }
       - name: Run customer critical-path browser E2E
         run: npx playwright test e2e/critical-path.spec.ts --project=chromium
-
+      - name: Require admin E2E credentials
+        shell: bash
+        run: |
+          test -n "$E2E_ADMIN_EMAIL" && test -n "$E2E_ADMIN_PASSWORD" || { echo 'BLOCKED: admin E2E credentials are incomplete'; exit 1; }
+      - name: Run admin control-plane browser E2E
+        run: npx playwright test e2e/admin-control-plane.spec.ts --project=chromium
       - name: Upload Playwright evidence
         if: always()
         uses: actions/upload-artifact@v4

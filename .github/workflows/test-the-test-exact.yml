@@ -1,0 +1,71 @@
+name: Test-the-Test / Exact SHA
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      exact_sha:
+        description: 'Exact Git SHA to verify'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: aghbari-test-the-test-${{ github.event.pull_request.head.sha || inputs.exact_sha || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  sensitivity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      TARGET_SHA: ${{ inputs.exact_sha || github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - name: Validate exact SHA
+        shell: bash
+        run: echo "$TARGET_SHA" | grep -Eq '^[0-9a-f]{40}$'
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 1
+      - name: Verify exact HEAD
+        shell: bash
+        run: |
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$TARGET_SHA" || exit 1
+          echo "EXACT TEST-THE-TEST SHA: $actual"
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.117.0
+      - name: Start local Supabase and reset from zero
+        run: |
+          supabase start
+          supabase db reset --local
+      - name: Baseline sensitive suite must PASS
+        run: supabase test db --local
+      - name: Intentionally break tenant RLS boundary
+        shell: bash
+        run: |
+          psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 <<'SQL'
+          alter table public.products disable row level security;
+          SQL
+      - name: Mutated implementation must make the sensitive suite FAIL
+        shell: bash
+        run: |
+          set +e
+          supabase test db --local > mutated-test.log 2>&1
+          rc=$?
+          cat mutated-test.log
+          if [ "$rc" -eq 0 ]; then
+            echo 'TEST-THE-TEST FAILURE: suite still passed after intentional RLS removal'
+            exit 1
+          fi
+          echo "Mutation detected by suite as expected; exit=$rc"
+      - name: Stop local Supabase
+        if: always()
+        run: supabase stop --no-backup
