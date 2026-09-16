@@ -17,7 +17,7 @@ select user_b,'00000000-0000-0000-0000-000000000000'::uuid,'authenticated','auth
 insert into public.organizations(id,name,is_active)
 select org_a,'Cart Tenant A',true from fixture union all select org_b,'Cart Tenant B',true from fixture;
 insert into public.customers(id,organization_id,name,tier,is_active)
-select customer_a,org_a,'Customer A','wholesale',true from fixture union all select customer_b,org_b,'Customer B','wholesale',true from fixture;
+select customer_a,org_a,'Customer A','wholesale'::public.customer_tier,true from fixture union all select customer_b,org_b,'Customer B','wholesale'::public.customer_tier,true from fixture;
 insert into public.profiles(id,organization_id,customer_id,role)
 select user_a,org_a,customer_a,'viewer'::user_role from fixture union all select user_b,org_b,customer_b,'viewer'::user_role from fixture;
 insert into public.products(id,organization_id,sku,name,unit,status)
