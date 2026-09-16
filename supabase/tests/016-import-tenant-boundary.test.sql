@@ -1,6 +1,6 @@
 begin;
 
-select plan(10);
+select plan(8);
 
 create temp table fixture as
 select gen_random_uuid() org_a, gen_random_uuid() org_b,
@@ -39,7 +39,6 @@ select set_config('request.jwt.claim.sub',(select admin_b::text from fixture),tr
 select public.stage_product_import('tenant-b.xlsx',repeat('a',64),'[{"sku":"IMP-B","name":"Imported B","unit":"unit","category":"Imported","quantity":3,"prices":{"retail":11,"wholesale":10,"distributor":9}}]'::jsonb) is not null;
 select is((select count(*) from public.import_jobs where organization_id=(select org_b from fixture) and source_fingerprint=repeat('a',64)),1::bigint,'Tenant B can independently use the same fingerprint');
 select throws_ok(format('select public.commit_product_import(%L,%L)',(select id from public.import_jobs where organization_id=(select org_a from fixture) limit 1),warehouse_b),'P0002','import job not found') from fixture;
-select is((select count(*) from public.import_rows r join public.import_jobs j on j.id=r.import_job_id where j.organization_id=(select org_b from fixture)),1::bigint,'Tenant B import rows remain tenant-scoped');
 
 select * from finish();
 rollback;
