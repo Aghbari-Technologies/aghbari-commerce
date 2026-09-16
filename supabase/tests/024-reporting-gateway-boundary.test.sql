@@ -18,6 +18,7 @@ select is((public.request_reporting_export('sales-2026-09','2026.09','1.0','repo
 select throws_ok($$select public.request_reporting_export('sales-2026-10','2026.10','1.0','report-key-0001')$$,'40001',null,'Changed source payload with the same key is rejected');
 select throws_ok($$select public.request_reporting_export('sales-2026-09','2026.09','2.0','report-key-0002')$$,'22023',null,'Unsupported schema versions are rejected');
 select throws_ok($$select public.request_reporting_export('sales-2026-09','2026.09','1.0','bad')$$,'22023',null,'Short/invalid idempotency keys are rejected');
+select throws_ok($$select public.request_reporting_export('sales-2026-09','2026.09','1.0','report-key-period','2026-09-16','2026-09-01')$$,'22023',null,'Invalid data period is rejected');
 select set_config('request.jwt.claim.sub','33333333-3333-4333-8333-333333333333',true);
 select throws_ok($$select public.request_reporting_export('sales-2026-09','2026.09','1.0','report-key-sales')$$,'42501',null,'Sales role cannot publish analytical datasets');
 select throws_ok($$insert into public.reporting_exports(organization_id,dataset_id,source_dataset_id,source_version,tenant_id,idempotency_key,provenance_ref,correlation_id) values ('34343434-3434-4434-8434-343434343434','DIRECT-WRITE','sales','v1','34343434-3434-4434-8434-343434343434','direct-write-key','prov://direct','corr-direct')$$,'42501',null,'Authenticated users cannot write reporting_exports directly');
