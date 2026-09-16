@@ -1,0 +1,60 @@
+name: Concurrency Proof / Exact SHA
+
+on:
+  push:
+    branches:
+      - main
+      - 'execution/**'
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      exact_sha:
+        description: 'Exact Git SHA to verify'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: aghbari-concurrency-${{ github.event.pull_request.head.sha || inputs.exact_sha || github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  concurrency-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      EXPECTED_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.event_name == 'workflow_dispatch' && inputs.exact_sha || github.sha }}
+    steps:
+      - name: Validate exact SHA
+        shell: bash
+        run: |
+          echo "$EXPECTED_SHA" | grep -Eq '^[0-9a-f]{40}$' || { echo "INVALID SHA: $EXPECTED_SHA"; exit 1; }
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.EXPECTED_SHA }}
+          fetch-depth: 1
+      - name: Verify exact checkout
+        shell: bash
+        run: |
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$EXPECTED_SHA" || { echo "SHA MISMATCH expected=$EXPECTED_SHA actual=$actual"; exit 1; }
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Start Supabase and reset from zero
+        run: |
+          supabase start
+          supabase db reset --local
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+      - name: Run real concurrent order/idempotency proof
+        run: bash scripts/concurrency-proof.sh
+      - name: Stop Supabase
+        if: always()
+        run: supabase stop
