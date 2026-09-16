@@ -34,8 +34,8 @@ select product_a,org_a,'ORDER-A','Order Product A','unit','active' from fixture 
 insert into public.orders(id,organization_id,customer_id,warehouse_id,status,currency,subtotal,total,idempotency_key,created_by)
 select order_a,org_a,customer_a,warehouse_a,'pending'::order_status,'YER',10,10,'order-a-key-123456',admin_a from fixture union all
 select order_b,org_b,customer_b,warehouse_b,'pending'::order_status,'YER',20,20,'order-b-key-123456',admin_b from fixture;
-insert into public.order_items(organization_id,order_id,product_id,quantity,unit_price,pricing_tier,line_total)
-select org_a,order_a,product_a,2,5,'wholesale'::customer_tier,10 from fixture union all select org_b,order_b,product_b,2,10,'wholesale'::customer_tier,20 from fixture;
+insert into public.order_items(organization_id,order_id,product_id,quantity,unit_price,pricing_tier)
+select org_a,order_a,product_a,2,5,'wholesale'::customer_tier from fixture union all select org_b,order_b,product_b,2,10,'wholesale'::customer_tier from fixture;
 set local role authenticated;
 select set_config('request.jwt.claim.role','authenticated',true);
 select set_config('request.jwt.claim.sub',(select viewer_a::text from fixture),true);
