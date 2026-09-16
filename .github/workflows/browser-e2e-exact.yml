@@ -24,7 +24,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: aghbari-browser-e2e-${{ github.event.deployment.sha || inputs.exact_sha || github.sha }}
+  group: aghbari-browser-e2e-${{ github.event.deployment.sha || inputs.exact_sha || github.event.pull_request.head.sha || github.sha }}
   cancel-in-progress: false
 
 jobs:
@@ -43,6 +43,7 @@ jobs:
       EXPECTED_SHA: >-
         ${{ github.event_name == 'deployment_status' && github.event.deployment.sha ||
             github.event_name == 'workflow_dispatch' && inputs.exact_sha ||
+            github.event_name == 'pull_request' && github.event.pull_request.head.sha ||
             github.sha }}
       E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
       E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
