@@ -33,12 +33,12 @@ select public.stage_product_import('tenant-a.xlsx',repeat('a',64),'[{"sku":"IMP-
 select throws_ok($$select public.stage_product_import('duplicate.xlsx',repeat('a',64),'[{"sku":"IMP-A2","name":"Duplicate","unit":"unit","category":"Imported","quantity":1,"prices":{"retail":2,"wholesale":2,"distributor":2}}]'::jsonb)$$,'23505',null,'duplicate fingerprint is rejected inside the same tenant');
 select is((select count(*) from public.import_jobs where organization_id=(select org_a from fixture)),1::bigint,'Tenant A has exactly one staged job');
 select is((select count(*) from public.import_jobs where source_fingerprint=repeat('a',64) and organization_id=(select org_b from fixture)),0::bigint,'Tenant B has no Tenant A import job');
-select throws_ok(format('select public.commit_product_import((select id from public.import_jobs where organization_id=%L limit 1),%L)',org_a,warehouse_b),'42501','Tenant A cannot commit to Tenant B warehouse') from fixture;
+select throws_ok(format('select public.commit_product_import((select id from public.import_jobs where organization_id=%L limit 1),%L)',org_a,warehouse_b),'42501','warehouse not available') from fixture;
 
 select set_config('request.jwt.claim.sub',(select admin_b::text from fixture),true);
 select public.stage_product_import('tenant-b.xlsx',repeat('a',64),'[{"sku":"IMP-B","name":"Imported B","unit":"unit","category":"Imported","quantity":3,"prices":{"retail":11,"wholesale":10,"distributor":9}}]'::jsonb) is not null;
-select is((select count(*) from public.import_jobs where source_fingerprint=repeat('a',64)),2::bigint,'Same fingerprint is independently scoped by tenant');
-select throws_ok(format('select public.commit_product_import(%L,%L)',(select id from public.import_jobs where organization_id=(select org_a from fixture) limit 1),warehouse_b),'P0002','Tenant B cannot commit Tenant A job') from fixture;
+select is((select count(*) from public.import_jobs where organization_id=(select org_b from fixture) and source_fingerprint=repeat('a',64)),1::bigint,'Tenant B can independently use the same fingerprint');
+select throws_ok(format('select public.commit_product_import(%L,%L)',(select id from public.import_jobs where organization_id=(select org_a from fixture) limit 1),warehouse_b),'P0002','import job not found') from fixture;
 select is((select count(*) from public.import_rows r join public.import_jobs j on j.id=r.import_job_id where j.organization_id=(select org_b from fixture)),1::bigint,'Tenant B import rows remain tenant-scoped');
 
 select * from finish();
