@@ -2,8 +2,7 @@ import { test, expect, type Page } from '@playwright/test';
 
 async function login(page: Page, email: string, password: string) {
   await page.goto('/');
-  await expect(page.getByText('بوابة الأغبري', { exact: false }).first()).toBeVisible();
-  const loginForm = page.locator('form').filter({ has: page.locator('input[type="password"]') }).first();
+  const loginForm = page.locator('form.auth-card').first();
   await loginForm.locator('input[type="email"]').fill(email);
   await loginForm.locator('input[type="password"]').fill(password);
   await loginForm.getByRole('button', { name: 'دخول آمن' }).click();
@@ -34,7 +33,7 @@ test('authenticated customer completes real search → catalog → cart → orde
 
   const failures = captureBrowserFailures(page);
   await login(page, email, password);
-  await expect(page.locator('main.customer-main')).toHaveAttribute('dir', 'rtl');
+  await expect(page.locator('.customer-app')).toHaveAttribute('dir', 'rtl');
 
   const firstCard = page.locator('.b2b-product-card').first();
   await expect(firstCard).toBeVisible();
@@ -55,7 +54,7 @@ test('authenticated customer completes real search → catalog → cart → orde
   await expect(checkout).toBeEnabled();
   await checkout.click();
 
-  const success = page.getByRole('status').filter({ hasText: 'تم إرسال الطلب #' }).last();
+  const success = page.locator('.success').filter({ hasText: 'تم إرسال الطلب #' }).last();
   await expect(success).toBeVisible();
   const successText = await success.innerText();
   const orderNumberMatch = successText.match(/طلب #([^\s]+) بنجاح/);
@@ -81,12 +80,12 @@ test('tenant isolation: Tenant B cannot read Tenant A order through the real UI 
   const pageA = await contextA.newPage();
   const failuresA = captureBrowserFailures(pageA);
   await login(pageA, emailA, passwordA);
-  await expect(pageA.locator('main.customer-main')).toHaveAttribute('dir', 'rtl');
+  await expect(pageA.locator('.customer-app')).toHaveAttribute('dir', 'rtl');
   const addButton = pageA.getByRole('button', { name: /\+ إضافة/ }).first();
   await expect(addButton).toBeEnabled();
   await addButton.click();
   await pageA.getByRole('button', { name: 'تأكيد وإرسال الطلب' }).click();
-  const success = pageA.getByRole('status').filter({ hasText: 'تم إرسال الطلب #' }).last();
+  const success = pageA.locator('.success').filter({ hasText: 'تم إرسال الطلب #' }).last();
   await expect(success).toBeVisible();
   const match = (await success.innerText()).match(/طلب #([^\s]+) بنجاح/);
   expect(match, 'Tenant A order number must be captured from the real persisted response.').not.toBeNull();
