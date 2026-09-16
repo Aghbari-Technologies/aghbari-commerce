@@ -10,10 +10,10 @@ insert into public.customers(id,organization_id,name,tier) values ('aaaaaaaa-aaa
 insert into public.profiles(id,organization_id,customer_id,role) values ('11111111-1111-4111-8111-111111111111','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa01','admin'),('22222222-2222-4222-8222-222222222222','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbb01','admin');
 insert into public.products(id,organization_id,sku,name,unit,status) values ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa','A-1','Product A','كرتون','active'),('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbb11','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb','B-1','Product B','كرتون','active');
 set local role service_role;
-insert into storage.objects(bucket_id,name,metadata) values
-('product-media','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa21.webp','{"mimetype":"image/webp","size":1024}'::jsonb),
-('product-media','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbb11/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbb21.webp','{"mimetype":"image/webp","size":1024}'::jsonb),
-('product-media','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa99/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa29.webp','{"mimetype":"image/webp","size":1024}'::jsonb);
+insert into storage.objects(bucket_id,name,owner_id,metadata) values
+('product-media','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa21.webp','11111111-1111-4111-8111-111111111111','{"mimetype":"image/webp","size":1024}'::jsonb),
+('product-media','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbb11/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbb21.webp','22222222-2222-4222-8222-222222222222','{"mimetype":"image/webp","size":1024}'::jsonb),
+('product-media','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa99/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa29.webp','11111111-1111-4111-8111-111111111111','{"mimetype":"image/webp","size":1024}'::jsonb);
 set local role authenticated;
 set local request.jwt.claim.sub='11111111-1111-4111-8111-111111111111';
 select is((select count(*) from storage.objects where bucket_id='product-media'),1::bigint,'Tenant A can enumerate only media bound to its real products');
