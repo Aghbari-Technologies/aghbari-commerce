@@ -10,7 +10,7 @@ CREATE OR REPLACE FUNCTION public.transfer_inventory(
   p_notes text DEFAULT NULL
 )
 RETURNS TABLE(transfer_id uuid,transfer_status text,total_quantity bigint)
-LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$
+LANGUAGE plpgsql SECURITY DEFINER SET search_path='' AS $$
 DECLARE
   v_org uuid:=public.current_organization_id(); v_role public.user_role:=public.current_role(); v_key text:=trim(coalesce(p_idempotency_key,'')); v_notes text:=nullif(trim(p_notes),'');
   v_transfer public.inventory_transfers%rowtype; v_existing public.inventory_transfers%rowtype; v_line jsonb; v_product uuid; v_qty integer; v_count integer; v_existing_count integer; v_source integer; v_total bigint:=0;
