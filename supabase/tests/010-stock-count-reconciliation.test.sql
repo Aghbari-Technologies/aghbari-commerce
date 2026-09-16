@@ -15,7 +15,7 @@ set local role authenticated;
 set local request.jwt.claim.role='authenticated';
 set local request.jwt.claim.sub = '88888888-8888-4888-8888-888888888888';
 
-select is((public.start_stock_count('67676767-6767-4676-8676-676767676769','stock-count-idem-01','cycle count test'))->>'status','open','Starting a stock count creates an open session');
+select is((public.start_stock_count('67676767-6767-4676-8676-676767676769','stock-count-idem-01','cycle count test')).status,'open','Starting a stock count creates an open session');
 select is((select expected_quantity from public.stock_count_lines where session_id=(select id from public.stock_count_sessions where idempotency_key='stock-count-idem-01')) ,10,'Count captures the starting expected quantity');
 select throws_ok($$select public.complete_stock_count((select id from public.stock_count_sessions where idempotency_key='stock-count-idem-01'))$$,'22023','all stock count lines must be counted before completion','Completion is blocked until every line is counted');
 select throws_ok($$select public.start_stock_count('67676767-6767-4676-8676-676767676771','stock-count-idem-01')$$,'23505','idempotency key is already bound to another warehouse','An idempotency key cannot be replayed against another warehouse');
@@ -24,7 +24,7 @@ select is((public.complete_stock_count((select id from public.stock_count_sessio
 select is((select quantity from public.inventory_balances where warehouse_id='67676767-6767-4676-8676-676767676769' and product_id='67676767-6767-4676-8676-676767676770'),7,'Reconciliation sets the authoritative balance to the physical count');
 select is((select count(*) from public.inventory_movements where source_type='stock_count' and source_id=(select id from public.stock_count_sessions where idempotency_key='stock-count-idem-01')),1::bigint,'A non-zero count variance creates an auditable inventory movement');
 select is((select variance from public.stock_count_lines where session_id=(select id from public.stock_count_sessions where idempotency_key='stock-count-idem-01')),-3,'Variance is recorded against the balance at completion');
-select is((public.start_stock_count('67676767-6767-4676-8676-676767676769','stock-count-idem-01'))->>'status','completed','Replaying the same start key is idempotent and returns the completed session');
+select is((public.start_stock_count('67676767-6767-4676-8676-676767676769','stock-count-idem-01')).status,'completed','Replaying the same start key is idempotent and returns the completed session');
 
 insert into auth.users (id, email) values ('99999999-9999-4999-8999-999999999999', 'stock-count-other-tenant@test.local');
 insert into public.organizations (id, name) values ('78787878-7878-4787-8787-787878787878', 'Other Tenant');
