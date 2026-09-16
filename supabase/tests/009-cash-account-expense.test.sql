@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(3);
+select plan(5);
 
 insert into auth.users(id,email) values ('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb','cash-admin@test.local');
 insert into public.organizations(id,name) values ('78787878-7878-4787-8787-787878787878','Cash Tenant');
@@ -13,6 +13,8 @@ set local request.jwt.claim.sub='bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
 select is((select name from public.create_cash_account('78787878-7878-4787-8787-787878787879','Main Cash','YER',100)),'Main Cash','Admin can provision a cash account');
 select lives_ok($$select public.record_expense('78787878-7878-4787-8787-787878787879',(select id from public.cash_accounts where name='Main Cash'),'Transport',25,'YER','Delivery')$$,'Authorized expense posts successfully');
 select is((select current_balance from public.get_cash_account_balances() where name='Main Cash'),75::numeric,'Posted expense reduces the operational cash balance');
+select throws_ok($$select public.record_expense('78787878-7878-4787-8787-787878787879',(select id from public.cash_accounts where name='Main Cash'),'Overdraw',76,'YER','Should fail')$$,'22003','expense exceeds available cash balance','Expense cannot overdraw the operational cash account');
+select throws_ok($$select public.record_expense('78787878-7878-4787-8787-787878787879',(select id from public.cash_accounts where name='Main Cash'),'NonFinite','NaN'::numeric,'YER','Should fail')$$,'22023',null,'Non-finite numeric expense is rejected');
 
 select * from finish();
 rollback;
