@@ -21,7 +21,20 @@
 ## Current proven facts
 - `README.md` explicitly defines Commerce as the operational system of record and Report-Advisor as the analytics/decision layer.
 - Current package scripts include typecheck, build, lint, Vitest under `src`, Playwright E2E, and release audit.
-- Live evidence recorded by the previous exact-head index included 54/54 public tables with RLS, no public functions executable by `anon`, protected template RPCs, and nine FK indexes; these are historical evidence and must be re-proven on a changed candidate when required by impact.
+- Historical exact-head evidence recorded by the prior index included 54/54 public tables with RLS, no public functions executable by `anon`, protected template RPCs, and nine FK indexes; those facts are not promoted to current certification without exact-head reproof when impacted.
+- Latest `main` has a Vercel commit status, but the available Vercel connector currently returns `403 Not authorized` for deployment listing and therefore cannot independently prove production mapping from this session.
+
+## Current closure fronts
+| Front | State | Exact evidence |
+|---|---|---|
+| Reporting boundary test restoration | **IMPLEMENTED** | PR #53 head `e573d347f36dca12b9b58ad2fb05c176f48169f3` |
+| Closure gate/index discipline | **IMPLEMENTED** | PR #54 head currently contains the updated index |
+| Reporting contract gate | **IMPLEMENTED** | PR #55 head `a9046c3e34d129f8305a53eaeb1c9af5afdce169` |
+| Ops certification ledger | **IMPLEMENTED** | PR #56 head `e056db021449f4f1631a5b2395e27abf6e0a9e10` |
+| Exact-head CI | **BLOCKED/UNPROVEN** | GitHub returned no workflow runs for current `main` through the available commit-run query |
+| Local test execution | **BLOCKED** | Runtime could not resolve `github.com`; no local clone/evaluation performed |
+| Vercel production proof | **BLOCKED** | Connector returned 403 Not authorized |
+| Browser authenticated E2E | **UNPROVEN** | No authenticated browser session available in current tool surface |
 
 ## Exact-head proof gates still required
 - Fresh CI quality, migration proof, and domain proof on the release candidate.
