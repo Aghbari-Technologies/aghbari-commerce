@@ -1,0 +1,188 @@
+name: Browser E2E / Fresh Local Supabase
+
+on:
+  push:
+    branches:
+      - 'execution/**'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      exact_sha:
+        description: 'Exact Git SHA to verify'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+env:
+  EXPECTED_SHA: ${{ inputs.exact_sha || github.event.pull_request.head.sha || github.sha }}
+
+jobs:
+  fresh-local-browser-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Validate exact SHA
+        shell: bash
+        run: echo "$EXPECTED_SHA" | grep -Eq '^[0-9a-f]{40}$'
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.EXPECTED_SHA }}
+          fetch-depth: 1
+
+      - name: Verify exact checkout
+        shell: bash
+        run: |
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$EXPECTED_SHA"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.117.0
+
+      - name: Clean install
+        run: |
+          rm -rf node_modules dist playwright-report test-results
+          npm ci --no-audit --no-fund
+
+      - name: Start fresh local Supabase
+        run: supabase start
+
+      - name: Load local Supabase connection values
+        shell: bash
+        run: |
+          supabase status -o env > /tmp/supabase.env
+          cat /tmp/supabase.env | sed -E 's/=.*/="***"/'
+          source /tmp/supabase.env
+          {
+            echo "VITE_SUPABASE_URL=$API_URL"
+            echo "VITE_SUPABASE_PUBLISHABLE_KEY=$ANON_KEY"
+            echo "LOCAL_DB_URL=$DB_URL"
+            echo "LOCAL_ANON_KEY=$ANON_KEY"
+            echo "LOCAL_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY"
+          } >> "$GITHUB_ENV"
+
+      - name: Seed fresh browser fixtures
+        shell: bash
+        run: |
+          sudo apt-get update -y >/dev/null
+          sudo apt-get install -y postgresql-client >/dev/null
+          cat > /tmp/seed-browser.sql <<'SQL'
+          create extension if not exists pgcrypto;
+          insert into auth.users(id,instance_id,aud,role,email,encrypted_password,email_confirmed_at,raw_app_meta_data,raw_user_meta_data,created_at,updated_at)
+          values
+            ('90000000-0000-4000-8000-000000000001',(select id from auth.instances limit 1),'authenticated','authenticated','customer-a@test.local',crypt('AghbariE2E!2026',gen_salt('bf')),now(),'{{"provider":"email","providers":["email"]}}'::jsonb,'{}'::jsonb,now(),now()),
+            ('90000000-0000-4000-8000-000000000002',(select id from auth.instances limit 1),'authenticated','authenticated','customer-b@test.local',crypt('AghbariE2E!2026',gen_salt('bf')),now(),'{{"provider":"email","providers":["email"]}}'::jsonb,'{}'::jsonb,now(),now()),
+            ('90000000-0000-4000-8000-000000000003',(select id from auth.instances limit 1),'authenticated','authenticated','admin-a@test.local',crypt('AghbariE2E!2026',gen_salt('bf')),now(),'{{"provider":"email","providers":["email"]}}'::jsonb,'{}'::jsonb,now(),now()),
+            ('90000000-0000-4000-8000-000000000004',(select id from auth.instances limit 1),'authenticated','authenticated','admin-b@test.local',crypt('AghbariE2E!2026',gen_salt('bf')),now(),'{{"provider":"email","providers":["email"]}}'::jsonb,'{}'::jsonb,now(),now())
+          on conflict (id) do nothing;
+          insert into public.organizations(id,name,is_active) values
+            ('90000000-0000-4000-8000-000000000101','Browser Tenant A',true),
+            ('90000000-0000-4000-8000-000000000102','Browser Tenant B',true)
+          on conflict (id) do nothing;
+          insert into public.customers(id,organization_id,name,tier,is_active) values
+            ('90000000-0000-4000-8000-000000000201','90000000-0000-4000-8000-000000000101','Browser Customer A','retail',true),
+            ('90000000-0000-4000-8000-000000000202','90000000-0000-4000-8000-000000000102','Browser Customer B','retail',true);
+          insert into public.profiles(id,organization_id,customer_id,role) values
+            ('90000000-0000-4000-8000-000000000001','90000000-0000-4000-8000-000000000101','90000000-0000-4000-8000-000000000201','viewer'),
+            ('90000000-0000-4000-8000-000000000002','90000000-0000-4000-8000-000000000102','90000000-0000-4000-8000-000000000202','viewer'),
+            ('90000000-0000-4000-8000-000000000003','90000000-0000-4000-8000-000000000101',null,'admin'),
+            ('90000000-0000-4000-8000-000000000004','90000000-0000-4000-8000-000000000102',null,'admin');
+          insert into public.branches(id,organization_id,name,is_active) values
+            ('90000000-0000-4000-8000-000000000301','90000000-0000-4000-8000-000000000101','Browser Branch A',true),
+            ('90000000-0000-4000-8000-000000000302','90000000-0000-4000-8000-000000000102','Browser Branch B');
+          insert into public.warehouses(id,organization_id,branch_id,name,is_active) values
+            ('90000000-0000-4000-8000-000000000401','90000000-0000-4000-8000-000000000101','90000000-0000-4000-8000-000000000301','Browser Warehouse A',true),
+            ('90000000-0000-4000-8000-000000000402','90000000-0000-4000-8000-000000000102','90000000-0000-4000-8000-000000000302','Browser Warehouse B',true);
+          insert into public.products(id,organization_id,sku,name,unit,status) values
+            ('90000000-0000-4000-8000-000000000501','90000000-0000-4000-8000-000000000101','BROW-001','Browser Product A','unit','active'),
+            ('90000000-0000-4000-8000-000000000502','90000000-0000-4000-8000-000000000102','BROW-002','Browser Product B','unit','active'),
+            ('90000000-0000-4000-8000-000000000503','90000000-0000-4000-8000-000000000101','BROW-INACTIVE','Inactive Product','unit','inactive');
+          insert into public.price_lists(organization_id,tier,name,currency) values
+            ('90000000-0000-4000-8000-000000000101','retail','Browser Retail A','YER'),
+            ('90000000-0000-4000-8000-000000000102','retail','Browser Retail B','YER');
+          insert into public.product_prices(organization_id,price_list_id,product_id,amount,valid_from)
+          select organization_id,id,'90000000-0000-4000-8000-000000000501',100,now() from public.price_lists where organization_id='90000000-0000-4000-8000-000000000101';
+          insert into public.product_prices(organization_id,price_list_id,product_id,amount,valid_from)
+          select organization_id,id,'90000000-0000-4000-8000-000000000502',100,now() from public.price_lists where organization_id='90000000-0000-4000-8000-000000000102';
+          insert into public.inventory_balances(organization_id,warehouse_id,product_id,quantity) values
+            ('90000000-0000-4000-8000-000000000101','90000000-0000-4000-8000-000000000401','90000000-0000-4000-8000-000000000501',20),
+            ('90000000-0000-4000-8000-000000000102','90000000-0000-4000-8000-000000000402','90000000-0000-4000-8000-000000000502',20);
+          SQL
+          psql "$LOCAL_DB_URL" -v ON_ERROR_STOP=1 -f /tmp/seed-browser.sql
+
+      - name: Production build with local test-only environment
+        run: npm run build
+
+      - name: Verify exact artifact identity
+        shell: bash
+        run: |
+          test -s dist/build-meta.json
+          node -e "const m=require('./dist/build-meta.json'); if(m.product!=='aghbari-commerce'||m.git_sha!==process.env.EXPECTED_SHA) process.exit(1); console.log(m)"
+          sha256sum dist/build-meta.json
+
+      - name: Start production preview
+        shell: bash
+        run: |
+          nohup npm run preview -- --host 127.0.0.1 --port 4173 >/tmp/preview.log 2>&1 &
+          for i in $(seq 1 30); do curl --fail --silent http://127.0.0.1:4173/build-meta.json >/tmp/served-meta.json && break || sleep 1; done
+          diff -u dist/build-meta.json /tmp/served-meta.json
+
+      - name: Run real Customer browser E2E
+        env:
+          E2E_BASE_URL: http://127.0.0.1:4173
+          E2E_EMAIL: customer-a@test.local
+          E2E_PASSWORD: AghbariE2E!2026
+          E2E_EMAIL_B: customer-b@test.local
+          E2E_PASSWORD_B: AghbariE2E!2026
+        run: npx playwright test e2e/critical-path.spec.ts --project=chromium
+
+      - name: Run real Admin browser E2E
+        env:
+          E2E_BASE_URL: http://127.0.0.1:4173
+          E2E_ADMIN_EMAIL: admin-a@test.local
+          E2E_ADMIN_PASSWORD: AghbariE2E!2026
+        run: |
+          npx playwright install --with-deps chromium
+          npx playwright test e2e/admin-control-plane.spec.ts --project=chromium
+
+      - name: Storage adversarial runtime against fresh local Supabase
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import base64
+          open('/tmp/1x1.webp','wb').write(base64.b64decode('UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEAAQAcJaQAA3AA/vuUAAA='))
+          PY
+          token() { curl -fsS "$VITE_SUPABASE_URL/auth/v1/token?grant_type=password" -H "apikey: $LOCAL_ANON_KEY" -H 'Content-Type: application/json' --data "{\"email\":\"$1\",\"password\":\"AghbariE2E!2026\"}" | python3 -c 'import json,sys; print(json.load(sys.stdin)["access_token"])'; }
+          TA="$(curl -fsS "$VITE_SUPABASE_URL/auth/v1/token?grant_type=password" -H "apikey: $LOCAL_ANON_KEY" -H 'Content-Type: application/json' --data '{"email":"admin-a@test.local","password":"AghbariE2E!2026"}' | python3 -c 'import json,sys; print(json.load(sys.stdin)["access_token"])')"
+          TB="$(curl -fsS "$VITE_SUPABASE_URL/auth/v1/token?grant_type=password" -H "apikey: $LOCAL_ANON_KEY" -H 'Content-Type: application/json' --data '{"email":"admin-b@test.local","password":"AghbariE2E!2026"}' | python3 -c 'import json,sys; print(json.load(sys.stdin)["access_token"])')"
+          PATH_A='90000000-0000-4000-8000-000000000101/90000000-0000-4000-8000-000000000501/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa.webp'
+          PATH_B='90000000-0000-4000-8000-000000000102/90000000-0000-4000-8000-000000000502/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb.webp'
+          FORGED='90000000-0000-4000-8000-000000000101/90000000-0000-4000-8000-000000000502/cccccccc-cccc-4ccc-8ccc-cccccccccccc.webp'
+          INACTIVE='90000000-0000-4000-8000-000000000101/90000000-0000-4000-8000-000000000503/dddddddd-dddd-4ddd-8ddd-dddddddddddd.webp'
+          put() { curl -sS -o /tmp/storage.out -w '%{http_code}' -X POST "$VITE_SUPABASE_URL/storage/v1/object/product-media/$1" -H "apikey: $LOCAL_ANON_KEY" -H "Authorization: Bearer $2" -H 'Content-Type: image/webp' --data-binary @/tmp/1x1.webp; }
+          get() { curl -sS -o /tmp/storage-read -w '%{http_code}' "$VITE_SUPABASE_URL/storage/v1/object/product-media/$1" -H "apikey: $LOCAL_ANON_KEY" -H "Authorization: Bearer $2"; }
+          del() { curl -sS -o /tmp/storage.out -w '%{http_code}' -X DELETE "$VITE_SUPABASE_URL/storage/v1/object/product-media/$1" -H "apikey: $LOCAL_ANON_KEY" -H "Authorization: Bearer $2"; }
+          code="$(put "$PATH_A" "$TA")"; [[ "$code" =~ ^20[01]$ ]] || { echo "A upload A failed: $code"; cat /tmp/storage.out; exit 1; }
+          code="$(get "$PATH_A" "$TA")"; [[ "$code" =~ ^2[0-9][0-9]$ ]] || { echo "A read A failed: $code"; exit 1; }
+          code="$(get "$PATH_A" "$TB")"; [[ ! "$code" =~ ^2[0-9][0-9]$ ]] || { echo "B read A unexpectedly succeeded"; exit 1; }
+          code="$(del "$PATH_A" "$TB")"; [[ ! "$code" =~ ^2[0-9][0-9]$ ]] || { echo "B delete A unexpectedly succeeded"; exit 1; }
+          code="$(curl -sS -o /tmp/storage.out -w '%{http_code}' -X POST "$VITE_SUPABASE_URL/storage/v1/object/product-media/$PATH_A" -H "apikey: $LOCAL_ANON_KEY" -H "Authorization: Bearer $TB" -H 'Content-Type: image/webp' -H 'x-upsert: true' --data-binary @/tmp/1x1.webp)"; [[ ! "$code" =~ ^2[0-9][0-9]$ ]] || { echo "B overwrite A unexpectedly succeeded"; exit 1; }
+          code="$(put "$FORGED" "$TA")"; [[ ! "$code" =~ ^2[0-9][0-9]$ ]] || { echo "Forged foreign-product path unexpectedly succeeded"; exit 1; }
+          code="$(put "$INACTIVE" "$TA")"; [[ ! "$code" =~ ^2[0-9][0-9]$ ]] || { echo "Inactive product media upload unexpectedly succeeded"; exit 1; }
+          code="$(curl -sS -o /tmp/storage.out -w '%{http_code}' -X POST "$VITE_SUPABASE_URL/storage/v1/object/product-media/90000000-0000-4000-8000-000000000101/90000000-0000-4000-8000-000000000501/not-a-uuid.webp" -H "apikey: $LOCAL_ANON_KEY" -H "Authorization: Bearer $TA" -H 'Content-Type: image/webp' --data-binary @/tmp/1x1.webp)"; [[ ! "$code" =~ ^2[0-9][0-9]$ ]] || { echo "Malformed object path unexpectedly succeeded"; exit 1; }
+          code="$(curl -sS -o /tmp/storage.out -w '%{http_code}' -X POST "$VITE_SUPABASE_URL/storage/v1/object/product-media/$PATH_A" -H "apikey: $LOCAL_ANON_KEY" -H 'Content-Type: image/webp' --data-binary @/tmp/1x1.webp)"; [[ ! "$code" =~ ^2[0-9][0-9]$ ]] || { echo "Anonymous upload unexpectedly succeeded"; exit 1; }
+          code="$(del "$PATH_A" "$TA")"; [[ "$code" =~ ^2[0-9][0-9]$ ]] || { echo "A delete A failed: $code"; exit 1; }
+          echo "STORAGE ADVERSARIAL RUNTIME: PASS"
+
+      - name: Stop local Supabase
+        if: always()
+        run: supabase stop --no-backup
