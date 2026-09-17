@@ -58,9 +58,11 @@ select * from public.create_order(
 
 select is((select count(*) from first_order),1::bigint,'First order creates exactly one canonical result');
 select is((select total from first_order),20::numeric,'First order total is server-authoritative');
+set local role postgres;
 select is((select quantity from public.inventory_balances where organization_id=(select org_id from fixture) and warehouse_id=(select warehouse_id from fixture) and product_id=(select product_id from fixture)),8,'First order decrements inventory exactly once');
 select is((select count(*) from public.order_items oi where oi.organization_id=(select org_id from fixture) and oi.order_id=(select order_id from first_order)),1::bigint,'First order creates exactly one order item');
 select is((select count(*) from public.order_status_history h where h.organization_id=(select org_id from fixture) and h.order_id=(select order_id from first_order)),1::bigint,'First order creates exactly one status history row');
+set local role authenticated;
 
 create temp table replay_order as
 select * from public.create_order(
@@ -70,10 +72,12 @@ select * from public.create_order(
 );
 
 select is((select order_id from replay_order),(select order_id from first_order),'Exact replay returns the same canonical order');
+set local role postgres;
 select is((select count(*) from public.orders where organization_id=(select org_id from fixture) and idempotency_key='order-idem-adversarial-001'),1::bigint,'Exact replay creates no duplicate order');
 select is((select count(*) from public.order_items oi where oi.organization_id=(select org_id from fixture) and oi.order_id=(select order_id from first_order)),1::bigint,'Exact replay creates no duplicate order item');
 select is((select quantity from public.inventory_balances where organization_id=(select org_id from fixture) and warehouse_id=(select warehouse_id from fixture) and product_id=(select product_id from fixture)),8,'Exact replay creates zero additional inventory effect');
 select is((select count(*) from public.outbox_events where organization_id=(select org_id from fixture) and event_type='order.created' and aggregate_id=(select order_id from first_order)),1::bigint,'Exact replay creates no duplicate outbox event');
+set local role authenticated;
 
 select throws_ok(
   $$select * from public.create_order(
@@ -97,8 +101,10 @@ select throws_ok(
   'insufficient stock',
   'Failed order is rejected before any business mutation'
 );
+set local role postgres;
 select is((select count(*) from public.orders where organization_id=(select org_id from fixture) and idempotency_key='order-idem-failure-retry-001'),0::bigint,'Failed order does not reserve idempotency key or create order');
 select is((select quantity from public.inventory_balances where organization_id=(select org_id from fixture) and warehouse_id=(select warehouse_id from fixture) and product_id=(select product_id from fixture)),8,'Failed order leaves inventory unchanged');
+set local role authenticated;
 
 create temp table retry_after_failure as
 select * from public.create_order(
@@ -107,8 +113,10 @@ select * from public.create_order(
   jsonb_build_array(jsonb_build_object('product_id',(select product_id from fixture),'quantity',1))
 );
 select is((select count(*) from retry_after_failure),1::bigint,'Retry after failed transaction succeeds');
+set local role postgres;
 select is((select quantity from public.inventory_balances where organization_id=(select org_id from fixture) and warehouse_id=(select warehouse_id from fixture) and product_id=(select product_id from fixture)),7,'Retry applies exactly one inventory effect after failure');
 select is((select count(*) from public.outbox_events where organization_id=(select org_id from fixture) and event_type='order.created' and aggregate_id=(select order_id from retry_after_failure)),1::bigint,'Retry creates exactly one outbox effect');
+set local role authenticated;
 
 select set_config('request.jwt.claim.sub',(select user_b::text from fixture),true);
 select throws_ok(
