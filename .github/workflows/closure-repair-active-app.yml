@@ -1,0 +1,41 @@
+name: closure repair active app
+on:
+  push:
+    branches:
+      - execution/closure-hammer-20260918b
+permissions:
+  contents: write
+jobs:
+  repair:
+    if: ${{ !contains(github.event.head_commit.message, 'closure-repair-active-app') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: execution/closure-hammer-20260918b
+      - name: Restore known-good file and apply surgical login fix
+        run: |
+          set -euo pipefail
+          git checkout 89513a8f6223b9a26aa523aa1d989a8ad2ab5f7c -- src/AppV3Fixed.tsx
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('src/AppV3Fixed.tsx')
+          s = p.read_text()
+          old = "async function login(e:FormEvent){e.preventDefault();setBusy(true);setError('');try{const s=await signIn(email,password);if(s)await loadIdentity(s.user.id);}catch(e){setError(e instanceof Error?e.message:'تعذر تسجيل الدخول.');}finally{setBusy(false);}}"
+          new = "async function login(e:FormEvent){e.preventDefault();setBusy(true);setError('');try{const s=await signIn(email,password);if(!s)throw new Error('تعذر إنشاء جلسة دخول صالحة.');await loadIdentity(s.user.id);setSignedIn(true);setReady(true);}catch(e){setSignedIn(false);setReady(true);setError(e instanceof Error?e.message:'تعذر تسجيل الدخول.');}finally{setBusy(false);}}"
+          if old not in s:
+              raise SystemExit('EXPECTED_LOGIN_PATTERN_NOT_FOUND')
+          p.write_text(s.replace(old, new, 1))
+          PY
+          git diff --check
+          git diff -- src/AppV3Fixed.tsx
+      - name: Commit repaired source and remove one-shot workflow
+        run: |
+          set -euo pipefail
+          rm .github/workflows/closure-repair-active-app.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/AppV3Fixed.tsx .github/workflows/closure-repair-active-app.yml
+          git commit -m 'fix(auth): repair active app login deterministically [closure-repair-active-app] [skip ci]'
+          git push origin HEAD:execution/closure-hammer-20260918b
