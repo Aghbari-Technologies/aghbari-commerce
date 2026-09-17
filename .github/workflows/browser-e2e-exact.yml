@@ -71,12 +71,14 @@ jobs:
       E2E_PASSWORD_B: ${{ secrets.E2E_PASSWORD_B }}
       E2E_ADMIN_EMAIL: ${{ secrets.E2E_ADMIN_EMAIL }}
       E2E_ADMIN_PASSWORD: ${{ secrets.E2E_ADMIN_PASSWORD }}
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
     steps:
       - name: Validate exact deployment inputs
         shell: bash
         run: |
           test -n "$E2E_BASE_URL" || { echo 'BLOCKED: E2E_BASE_URL is missing'; exit 1; }
           test -n "$EXPECTED_SHA" || { echo 'BLOCKED: EXPECTED_SHA is missing'; exit 1; }
+          test -n "$VERCEL_AUTOMATION_BYPASS_SECRET" || { echo 'BLOCKED: VERCEL_AUTOMATION_BYPASS_SECRET is missing; configure Vercel Automation Bypass and GitHub Actions secret'; exit 1; }
           case "$E2E_BASE_URL" in https://*) ;; *) echo 'BLOCKED: E2E_BASE_URL must use HTTPS'; exit 1 ;; esac
           case "$E2E_BASE_URL" in https://vercel.com/*|https://*.vercel.com/*) echo 'BLOCKED: E2E_BASE_URL points to a Vercel dashboard URL, not the deployed application'; exit 1 ;; esac
           echo "$EXPECTED_SHA" | grep -Eq '^[0-9a-f]{40}$' || { echo 'BLOCKED: EXPECTED_SHA is not a full SHA'; exit 1; }
@@ -101,7 +103,10 @@ jobs:
       - name: Verify deployed artifact identity before browser execution
         shell: bash
         run: |
-          curl --fail --silent --show-error --location --max-time 20 "$E2E_BASE_URL/build-meta.json" -o build-meta.json
+          curl --fail --silent --show-error --location --max-time 20 \
+            -H "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET" \
+            -H 'x-vercel-set-bypass-cookie: true' \
+            "$E2E_BASE_URL/build-meta.json" -o build-meta.json
           node - <<'NODE'
           const fs = require('node:fs');
           const meta = JSON.parse(fs.readFileSync('build-meta.json', 'utf8'));
