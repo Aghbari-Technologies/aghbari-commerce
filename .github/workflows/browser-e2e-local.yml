@@ -22,6 +22,7 @@ concurrency:
 
 env:
   EXPECTED_SHA: ${{ inputs.exact_sha || github.event.pull_request.head.sha || github.sha }}
+  VITE_BUILD_SHA: ${{ inputs.exact_sha || github.event.pull_request.head.sha || github.sha }}
   VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
   VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
   E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
