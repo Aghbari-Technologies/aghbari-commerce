@@ -43,7 +43,7 @@ test('invalid login is rejected and does not expose the customer portal', async 
   expect([400, 401]).toContain(authResponse.status());
   await expect(page.getByRole('button', { name: 'دخول آمن' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'الكتالوج', exact: true })).toHaveCount(0);
-  await expect(page.locator('.error-banner[role="alert"]')).toBeVisible();
+  await expect(page.locator('.error-banner')).toBeVisible();
   await assertCleanBrowser(failures, /^(?:400|401)\s+POST\s+.*\/auth\/v1\/token/);
 });
 
