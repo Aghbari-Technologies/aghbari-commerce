@@ -87,14 +87,14 @@ BEGIN
     END IF;
 
     SELECT * INTO v_po
-    FROM public.purchase_orders
-    WHERE id = v_existing.purchase_order_id
-      AND organization_id = v_org;
+    FROM public.purchase_orders po0
+    WHERE po0.id = v_existing.purchase_order_id
+      AND po0.organization_id = v_org;
 
-    SELECT coalesce(sum(line_total), 0) INTO v_total
-    FROM public.purchase_receipt_items
-    WHERE organization_id = v_org
-      AND receipt_id = v_existing.id;
+    SELECT coalesce(sum(pri.line_total), 0) INTO v_total
+    FROM public.purchase_receipt_items pri
+    WHERE pri.organization_id = v_org
+      AND pri.receipt_id = v_existing.id;
 
     RETURN QUERY
     SELECT v_existing.id,
@@ -238,8 +238,8 @@ BEGIN
   WHERE po0.id = v_po.id;
 
   SELECT * INTO v_po
-  FROM public.purchase_orders
-  WHERE id = v_po.id;
+  FROM public.purchase_orders po0
+  WHERE po0.id = v_po.id;
 
   INSERT INTO public.audit_events(
     organization_id,
