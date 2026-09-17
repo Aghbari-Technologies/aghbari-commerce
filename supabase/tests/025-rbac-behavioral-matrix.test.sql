@@ -39,9 +39,9 @@ insert into public.price_lists(organization_id,tier,name,currency) values
  ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0100','distributor','RBAC Distributor A','YER'),
  ('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbb0200','wholesale','RBAC Wholesale B','YER');
 insert into public.product_prices(organization_id,price_list_id,product_id,amount,valid_from)
-select organization_id,id,'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0130',100,now() from public.price_lists where organization_id='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0100' and tier='wholesale';
+select organization_id,id,'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0130',100,now() - interval '1 second' from public.price_lists where organization_id='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0100' and tier='wholesale';
 insert into public.product_prices(organization_id,price_list_id,product_id,amount,valid_from)
-select organization_id,id,'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbb0230',100,now() from public.price_lists where organization_id='bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbb0200';
+select organization_id,id,'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbb0230',100,now() - interval '1 second' from public.price_lists where organization_id='bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbb0200';
 insert into public.inventory_balances(organization_id,warehouse_id,product_id,quantity) values
  ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0100','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0120','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0130',20),
  ('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbb0200','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbb0220','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbb0230',20);
