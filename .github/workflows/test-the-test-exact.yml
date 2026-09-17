@@ -22,9 +22,10 @@ concurrency:
 jobs:
   sensitivity:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 45
     env:
       TARGET_SHA: ${{ inputs.exact_sha || github.event.pull_request.head.sha || github.sha }}
+      DB_URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
     steps:
       - name: Validate exact SHA
         shell: bash
@@ -48,24 +49,56 @@ jobs:
           supabase db reset --local
       - name: Baseline sensitive suite must PASS
         run: supabase test db --local
-      - name: Intentionally break tenant RLS boundary
+      - name: Mutation 1 — remove product tenant RLS
         shell: bash
         run: |
-          psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 <<'SQL'
-          alter table public.products disable row level security;
-          SQL
-      - name: Mutated implementation must make the sensitive suite FAIL
-        shell: bash
-        run: |
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -c "alter table public.products disable row level security;"
           set +e
-          supabase test db --local > mutated-test.log 2>&1
+          supabase test db --local > mutated-products-rls.log 2>&1
           rc=$?
-          cat mutated-test.log
-          if [ "$rc" -eq 0 ]; then
-            echo 'TEST-THE-TEST FAILURE: suite still passed after intentional RLS removal'
-            exit 1
-          fi
-          echo "Mutation detected by suite as expected; exit=$rc"
+          cat mutated-products-rls.log
+          set -e
+          test "$rc" -ne 0 || { echo 'TEST-THE-TEST FAILURE: product tenant RLS removal was not detected'; exit 1; }
+          echo "PASS: product tenant-RLS mutation detected (exit=$rc)"
+      - name: Restore implementation from zero
+        run: supabase db reset --local
+      - name: Mutation 2 — grant sensitive order RPC to anon
+        shell: bash
+        run: |
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -c "grant execute on function public.create_order(text,uuid,jsonb) to anon;"
+          set +e
+          supabase test db --local > mutated-anon-rpc.log 2>&1
+          rc=$?
+          cat mutated-anon-rpc.log
+          set -e
+          test "$rc" -ne 0 || { echo 'TEST-THE-TEST FAILURE: anon EXECUTE grant was not detected'; exit 1; }
+          echo "PASS: anon-RPC privilege mutation detected (exit=$rc)"
+      - name: Restore implementation from zero
+        run: supabase db reset --local
+      - name: Mutation 3 — remove storage tenant RLS
+        shell: bash
+        run: |
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -c "alter table storage.objects disable row level security;"
+          set +e
+          supabase test db --local > mutated-storage-rls.log 2>&1
+          rc=$?
+          cat mutated-storage-rls.log
+          set -e
+          test "$rc" -ne 0 || { echo 'TEST-THE-TEST FAILURE: storage RLS removal was not detected'; exit 1; }
+          echo "PASS: storage RLS mutation detected (exit=$rc)"
+      - name: Restore implementation from zero
+        run: supabase db reset --local
+      - name: Mutation 4 — remove inventory tenant RLS
+        shell: bash
+        run: |
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -c "alter table public.inventory_balances disable row level security;"
+          set +e
+          supabase test db --local > mutated-inventory-rls.log 2>&1
+          rc=$?
+          cat mutated-inventory-rls.log
+          set -e
+          test "$rc" -ne 0 || { echo 'TEST-THE-TEST FAILURE: inventory RLS removal was not detected'; exit 1; }
+          echo "PASS: inventory RLS mutation detected (exit=$rc)"
       - name: Stop local Supabase
         if: always()
         run: supabase stop --no-backup
