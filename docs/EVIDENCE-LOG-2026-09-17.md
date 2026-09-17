@@ -1,54 +1,41 @@
 # Aghbari Commerce — Evidence Log — 2026-09-17
 
-## Current candidate
-- `946176e695c11d03d3f10ad9b93ec857b9ec1cce`
-- Branch: `execution/final-closure-surgery-20260917`
-- Base: `main` at `fb6700fb7829c57f9dde5e00f0d54d2ee8039778`
-- Main was not modified.
+## Current closure candidate
+`946176e695c11d03d3f10ad9b93ec857b9ec1cce`
 
-## Execution policy
-- Existing gates were executed before adding further test surface.
-- Any source/test HEAD change invalidates earlier code-dependent evidence.
-- Browser deployment proof remains separate from local browser proof.
+Closure branch: `execution/final-closure-surgery-20260917`
+Base: `main` at `fb6700fb7829c57f9dde5e00f0d54d2ee8039778`
+Main was not modified.
 
-## Defects exposed and fixed
-### C72 / ED replay
-1. RBAC test used stale RPC signatures and temporal price fixtures.
-2. Clean-source migrations lacked the production-required chunked import RPC lifecycle:
-   - `begin_product_import(text,text,integer)`
-   - `stage_product_import_chunk(uuid,integer,jsonb)`
-   - `finalize_product_import(uuid)`
-3. Clean-source migrations lacked the production-required customer/role RPCs:
-   - `update_customer(uuid,text,text,customer_tier)`
-   - `set_organization_user_role(uuid,user_role)`
-4. Clean-source security regression found 3 public functions directly executable by `anon` after later function recreation.
-5. Import adversarial test evaluated foreign-tenant cases at invalid lifecycle/query-visibility stages; fixtures were corrected to preserve the real tenant boundary proof.
+## Findings from exact-SHA execution
+- The C72 round exposed actual source/test drift, not merely missing evidence.
+- Clean-source migrations were missing the chunked import lifecycle used by the application.
+- Clean-source migrations were missing `update_customer` and owner-only `set_organization_user_role`.
+- Clean-source security regression exposed three public functions executable by `anon` after later function recreation.
+- RBAC price fixtures conflicted with the temporal unique key because repeated `set_product_price` calls share the same transaction timestamp; the test now uses distinct price lists without pre-seeded conflicting rows.
+- Import foreign-tenant checks were corrected to exercise the security boundary at valid lifecycle/query-visibility stages.
 
-## Changes now in branch
-- `supabase/migrations/20260917170000_restore_import_chunk_lifecycle.sql`
-  Restores the chunked import lifecycle with tenant/role guards, empty `search_path`, authenticated-only execute.
-- `supabase/migrations/20260917172000_restore_customer_rbac_boundaries.sql`
-  Restores customer update + owner-only organization role management, empty `search_path`, authenticated-only execute, and revokes `anon` execution across the public function surface.
-- `supabase/tests/025-rbac-behavioral-matrix.test.sql`
-  Uses exact RPC casts, distinct price lists without conflicting seed price rows, and the observed foreign-tenant inventory denial code.
-- `supabase/tests/026-import-full-lifecycle.test.sql`
-  Moves foreign-warehouse denial to a valid finalized lifecycle state, captures the Tenant-A job id before switching to Tenant-B actor context, and asserts no unauthorized business-side effects.
+## Fixes on closure branch
+`ed523b558d611dfef7ed162648b01c1356d5b22d` restored chunked import RPCs and repaired the existing RBAC fixture/signatures.
 
-## Exact observed CI evidence
-### `ed523b558d611dfef7ed162648b01c1356d5b22d`
-- Application Quality: run `35171051497` — PASS.
-- Order Workflow: run `35171051485` — PASS.
-- Migration proof: run `35171051517` — empty-database migration application PASS; pgTAP exposed the defects recorded above.
-- Test-the-Test: run `35171051535` — baseline FAIL because source/test drift was exposed; mutation phase correctly stopped fail-closed.
-- Fresh Local Browser E2E: run `35171051544` — exact checkout/clean install/local Supabase path started; later evidence invalidated by the next source/test HEAD.
+`946176e695c11d03d3f10ad9b93ec857b9ec1cce` restored customer update/owner role management, revoked anon execution across the public function surface, and repaired the existing RBAC and Import proofs.
 
-## Current head execution
-At `946176e695c11d03d3f10ad9b93ec857b9ec1cce`, GitHub Actions created a fresh exact-SHA matrix including migration proof, browser-local proof, quality, and the other existing closure workflows.
+## Exact observed CI
+For `ed523b558d611dfef7ed162648b01c1356d5b22d`:
+- Application Quality run `35171051497`: PASS.
+- Order Workflow run `35171051485`: PASS.
+- Migration proof run `35171051517`: empty-database migration application PASS; pgTAP then exposed the defects above.
+- Test-the-Test run `35171051535`: exact checkout and fresh DB setup PASS; baseline sensitive suite FAIL, therefore mutation stages remained fail-closed.
+- Fresh Local Browser E2E run `35171051544`: exact checkout/clean install/local Supabase startup executed; evidence invalidated after the code/test HEAD advanced.
 
-## External blockers kept separate
-- Vercel exact matching deployment: blocked externally by current build-capacity/rate-limit status.
-- Report-Advisor handoff: blocked externally until its configured URL/token contract is available.
-- Supabase leaked-password protection: external plan/configuration gate; no forced upgrade or workaround.
+For `946176e695c11d03d3f10ad9b93ec857b9ec1cce`:
+- Fresh exact-SHA closure workflows were created automatically after the fixes.
+- No PASS is claimed until the new runs complete on this exact SHA.
 
-## Certification state
-Not certified until current exact SHA proves internal gates and then the required matching deployment → artifact → live runtime → browser → production smoke chain.
+## External boundaries
+- Vercel matching deployment remains externally blocked by build-capacity/rate-limit state.
+- Report-Advisor handoff remains externally blocked until its URL/token contract is configured.
+- Supabase leaked-password protection remains an external plan/configuration gate; no forced upgrade/workaround.
+
+## Certification
+Not certified until the current exact SHA proves internal gates and then matching deployment -> artifact -> live runtime -> browser -> production smoke.
