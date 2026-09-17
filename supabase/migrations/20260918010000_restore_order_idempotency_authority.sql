@@ -92,8 +92,8 @@ BEGIN
     END IF;
 
     SELECT count(*) INTO v_existing_count
-    FROM public.order_items
-    WHERE organization_id = v_org AND order_id = v_existing.id;
+    FROM public.order_items oi
+    WHERE oi.organization_id = v_org AND oi.order_id = v_existing.id;
     IF v_existing_count <> v_line_count OR EXISTS (
       SELECT 1
       FROM pg_catalog.jsonb_array_elements(p_lines) line
