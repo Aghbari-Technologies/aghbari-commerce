@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(12);
+select plan(18);
 
 create temp table fixture as
 select
@@ -85,6 +85,30 @@ select throws_ok(
   'idempotency key payload conflict',
   'Same key with different quantity is blocked'
 );
+
+select set_config('request.jwt.claim.sub',(select user_a::text from fixture),true);
+select throws_ok(
+  $$select * from public.create_order(
+    'order-idem-failure-retry-001',
+    (select warehouse_id from fixture),
+    jsonb_build_array(jsonb_build_object('product_id',(select product_id from fixture),'quantity',99))
+  )$$,
+  'P0001',
+  'insufficient stock',
+  'Failed order is rejected before any business mutation'
+);
+select is((select count(*) from public.orders where organization_id=(select org_id from fixture) and idempotency_key='order-idem-failure-retry-001'),0::bigint,'Failed order does not reserve idempotency key or create order');
+select is((select quantity from public.inventory_balances where organization_id=(select org_id from fixture) and warehouse_id=(select warehouse_id from fixture) and product_id=(select product_id from fixture)),8,'Failed order leaves inventory unchanged');
+
+create temp table retry_after_failure as
+select * from public.create_order(
+  'order-idem-failure-retry-001',
+  (select warehouse_id from fixture),
+  jsonb_build_array(jsonb_build_object('product_id',(select product_id from fixture),'quantity',1))
+);
+select is((select count(*) from retry_after_failure),1::bigint,'Retry after failed transaction succeeds');
+select is((select quantity from public.inventory_balances where organization_id=(select org_id from fixture) and warehouse_id=(select warehouse_id from fixture) and product_id=(select product_id from fixture)),7,'Retry applies exactly one inventory effect after failure');
+select is((select count(*) from public.outbox_events where organization_id=(select org_id from fixture) and event_type='order.created' and aggregate_id=(select order_id from retry_after_failure)),1::bigint,'Retry creates exactly one outbox effect');
 
 select set_config('request.jwt.claim.sub',(select user_b::text from fixture),true);
 select throws_ok(
