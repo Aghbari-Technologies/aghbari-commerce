@@ -191,9 +191,11 @@ SQL
 wait "$P17"; RC17=$?; wait "$P18"; RC18=$?; set -e
 CLAIMED=$("${PSQL[@]}" -tAc "select count(*) from public.outbox_events where id='$OUTBOX_EVENT' and status='processing' and attempts=1;")
 [ "$RC17" -eq 0 ] && [ "$RC18" -eq 0 ] && [ "$CLAIMED" = "1" ] || { echo "FAIL outbox claim race rc=$RC17,$RC18 claimed=$CLAIMED"; cat "$tmpdir/ob1" "$tmpdir/ob2"; exit 1; }
-ACK=$("${PSQL[@]}" -tAc "set role authenticated; select set_config('request.jwt.claim.role','authenticated',true); select set_config('request.jwt.claim.sub','$ADMIN',true); select public.ack_outbox_event('$OUTBOX_EVENT'::uuid);")
-ACK2=$("${PSQL[@]}" -tAc "set role authenticated; select set_config('request.jwt.claim.role','authenticated',true); select set_config('request.jwt.claim.sub','$ADMIN',true); select public.ack_outbox_event('$OUTBOX_EVENT'::uuid);")
-[ "$ACK" = "t" ] && [ "$ACK2" = "f" ] || { echo "FAIL outbox duplicate delivery ack=$ACK,$ACK2"; exit 1; }
+ACK_RAW=$("${PSQL[@]}" -tAc "set role authenticated; select set_config('request.jwt.claim.role','authenticated',true); select set_config('request.jwt.claim.sub','$ADMIN',true); select public.ack_outbox_event('$OUTBOX_EVENT'::uuid);")
+ACK=$(printf '%s\n' "$ACK_RAW" | awk 'NF { v=$0 } END { gsub(/[[:space:]]/,"",v); print v }')
+ACK2_RAW=$("${PSQL[@]}" -tAc "set role authenticated; select set_config('request.jwt.claim.role','authenticated',true); select set_config('request.jwt.claim.sub','$ADMIN',true); select public.ack_outbox_event('$OUTBOX_EVENT'::uuid);")
+ACK2=$(printf '%s\n' "$ACK2_RAW" | awk 'NF { v=$0 } END { gsub(/[[:space:]]/,"",v); print v }')
+[ "$ACK" = "t" ] && [ "$ACK2" = "f" ] || { echo "FAIL outbox duplicate delivery ack=$ACK,$ACK2 raw1=$ACK_RAW raw2=$ACK2_RAW"; exit 1; }
 
 printf '%s\n' \
   'PASS: concurrency matrix' \
