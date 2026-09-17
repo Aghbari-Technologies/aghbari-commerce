@@ -63,7 +63,7 @@ select is((select status from public.import_rows where import_job_id=(select id 
 select throws_ok($$select public.commit_product_import((select id from public.import_jobs where source_fingerprint=repeat('b',64)),'aaaaaaaa-1111-4111-8111-aaaaaaaa0120')$$,'P0001',null,'invalid import cannot commit');
 
 set local request.jwt.claim.sub='bbbbbbbb-2222-4222-8222-bbbbbbbb0001';
-select is((select organization_id from public.import_jobs where id = public.stage_product_import('foreign.xlsx',repeat('e',64),jsonb_build_array(jsonb_build_object('sku','FOREIGN-001','name','Foreign Attempt','unit','unit','category','Foreign','quantity',1,'prices',jsonb_build_object('retail',10,'wholesale',9,'distributor',8))))),'bbbbbbbb-2222-4222-8222-bbbbbbbb0200'::uuid,'foreign actor is restricted to its own tenant');
+select is((select count(*) from public.import_jobs where organization_id='bbbbbbbb-2222-4222-8222-bbbbbbbb0200' and source_fingerprint=repeat('e',64)),1::bigint,'foreign actor stages only in its own tenant');
 select is((select count(*) from public.import_jobs where organization_id='aaaaaaaa-1111-4111-8111-aaaaaaaa0100' and source_fingerprint=repeat('e',64)),0::bigint,'foreign staging creates no Tenant A job');
 set local request.jwt.claim.sub='aaaaaaaa-1111-4111-8111-aaaaaaaa0002';
 select lives_ok($$select public.stage_product_import('sales.xlsx',repeat('f',64),jsonb_build_array(jsonb_build_object('sku','SALES-001','name','Sales Import','unit','unit','category','Sales','quantity',2,'prices',jsonb_build_object('retail',20,'wholesale',18,'distributor',16))))$$,'authorized sales actor can stage import');
