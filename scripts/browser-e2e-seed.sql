@@ -17,7 +17,6 @@ select
   'email',
   null,
   now(),
-  now(),
   now()
 from auth.users
 where email in ('customer-a@test.local','customer-b@test.local','admin-a@test.local','admin-b@test.local')
