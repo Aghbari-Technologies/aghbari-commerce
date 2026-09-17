@@ -25,7 +25,7 @@ concurrency:
 jobs:
   concurrency-proof:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 40
     env:
       EXPECTED_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.event_name == 'workflow_dispatch' && inputs.exact_sha || github.sha }}
     steps:
@@ -57,6 +57,8 @@ jobs:
         run: bash scripts/concurrency-proof.sh
       - name: Run expanded nine-surface concurrency matrix
         run: bash scripts/concurrency-matrix-proof.sh
+      - name: Run 8-way reporting race hammer
+        run: bash scripts/concurrency-reporting-8way-proof.sh
       - name: Stop Supabase
         if: always()
         run: supabase stop
