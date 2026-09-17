@@ -1,6 +1,6 @@
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(30);
+select plan(32);
 
 insert into auth.users(id,email) values
  ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0001','rbac-owner@test.local'),
@@ -46,7 +46,6 @@ insert into public.inventory_balances(organization_id,warehouse_id,product_id,qu
 
 set local role authenticated;
 set local request.jwt.claim.role='authenticated';
-
 set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0001';
 select lives_ok($$select public.set_product_price('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0130','wholesale',101,'YER')$$,'owner price');
 set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0002';
@@ -105,11 +104,11 @@ set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0005';
 select throws_ok($$update public.client_ui_settings set config='{"showSearch":false}'::jsonb where organization_id='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0100'$$,'42501',null,'viewer settings denied');
 
 set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0001';
-select lives_ok($$select public.request_reporting_export('orders','rbac-owner','1.0','rbac-role-key-owner')$$,'owner reporting');
+select lives_ok($$select public.request_reporting_export('orders','rbac-owner','1.0','rbac-role-key-owner-123')$$,'owner reporting');
 set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0003';
-select throws_ok($$select public.request_reporting_export('orders','rbac-sales','1.0','rbac-role-key-sales')$$,'42501',null,'sales reporting denied');
+select throws_ok($$select public.request_reporting_export('orders','rbac-sales','1.0','rbac-role-key-sales-123')$$,'42501',null,'sales reporting denied');
 set local request.jwt.claim.sub='bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbb0001';
-select throws_ok($$select public.request_reporting_export('orders','rbac-foreign','1.0','rbac-role-key-foreign')$$,'42501',null,'foreign tenant reporting denied');
+select throws_ok($$select public.request_reporting_export('orders','rbac-foreign','1.0','rbac-role-key-foreign-123')$$,'42501',null,'foreign tenant reporting denied');
 
 set local role postgres;
 insert into public.orders(id,organization_id,customer_id,warehouse_id,status,currency,subtotal,total,idempotency_key,created_by)
@@ -119,7 +118,7 @@ set local request.jwt.claim.role='authenticated';
 set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0006';
 select throws_ok($$select public.transition_order('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0999','confirmed')$$,'42501',null,'customer order mutation denied');
 set local request.jwt.claim.sub='bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbb0001';
-select throws_ok($$select public.transition_order('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0999','confirmed')$$,'P0002',null,'foreign tenant order denied');
+select throws_ok($$select public.transition_order('aaaaaaaa-aaaa-aaaa-8aaa-aaaaaaaa0999','confirmed')$$,'P0002',null,'foreign tenant order denied');
 select is((select status from public.orders where id='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0999'),'pending','denied order mutations have no side effect');
 select * from finish();
 rollback;
