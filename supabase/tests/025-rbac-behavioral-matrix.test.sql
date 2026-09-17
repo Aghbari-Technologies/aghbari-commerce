@@ -113,14 +113,15 @@ select throws_ok($$select public.stage_product_import('viewer.xlsx',repeat('3',6
 set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0001';
 select lives_ok($$insert into public.client_ui_settings(organization_id,config) values ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0100','{"showSearch":true}'::jsonb)$$,'owner settings');
 set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0005';
-select throws_ok($$update public.client_ui_settings set config='{"showSearch":false}'::jsonb where organization_id='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0100'$$,'42501',null,'viewer settings denied');
+select is((select config->>'showSearch' from public.client_ui_settings where organization_id='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0100'),'true','viewer cannot alter settings through RLS');
+select is((select count(*) from public.client_ui_settings where organization_id='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0100'),1::bigint,'viewer settings attempt has no side effect');
 
 set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0001';
 select lives_ok($$select public.request_reporting_export('orders','rbac-owner','1.0','rbac-role-key-owner-123')$$,'owner reporting');
 set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0003';
 select throws_ok($$select public.request_reporting_export('orders','rbac-sales','1.0','rbac-role-key-sales-123')$$,'42501',null,'sales reporting denied');
 set local request.jwt.claim.sub='bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbb0001';
-select throws_ok($$select public.request_reporting_export('orders','rbac-foreign','1.0','rbac-role-key-foreign-123')$$,'42501',null,'foreign tenant reporting denied');
+select is((select organization_id from public.request_reporting_export('orders','rbac-foreign','1.0','rbac-role-key-foreign-123')),'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbb0200'::uuid,'foreign actor is constrained to own tenant');
 
 set local role postgres;
 insert into public.orders(id,organization_id,customer_id,warehouse_id,status,currency,subtotal,total,idempotency_key,created_by)
@@ -131,6 +132,7 @@ set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0006';
 select throws_ok($$select public.transition_order('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0999','confirmed')$$,'42501',null,'customer order mutation denied');
 set local request.jwt.claim.sub='bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbb0001';
 select throws_ok($$select public.transition_order('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0999','confirmed')$$,'P0002',null,'foreign tenant order denied');
+set local role postgres;
 select is((select status from public.orders where id='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0999'),'pending','denied order mutations have no side effect');
 select * from finish();
 rollback;
