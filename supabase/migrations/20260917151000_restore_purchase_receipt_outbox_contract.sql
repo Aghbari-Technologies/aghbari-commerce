@@ -1,6 +1,7 @@
--- Restore the authoritative purchase receiving outbox contract in a fresh reconstruction.
--- The live function emits one durable purchase.receipt aggregate event after the transaction's
--- receipt, inventory and audit effects are created. Keep the public signature unchanged.
+-- Restore the missing durable outbox event after the final receipt function
+-- recreation in 20260909021749_harden_purchase_receipt_idempotency_payloads.sql.
+-- Keep the established purchase/receipt behavior intact and only restore the
+-- event contract required by the application and pgTAP boundary.
 
 CREATE OR REPLACE FUNCTION public.receive_purchase_order(
   p_purchase_order_id uuid,
@@ -31,20 +32,26 @@ DECLARE
   v_product uuid;
   v_qty integer;
   v_inventory integer;
-  v_total numeric(18,2) := 0;
+  v_total numeric := 0;
   v_existing_count integer;
+  v_requested_lines jsonb;
+  v_existing_lines jsonb;
 BEGIN
   IF v_org IS NULL OR v_role NOT IN ('owner','admin','warehouse') THEN
-    RAISE EXCEPTION USING errcode='42501', message='receiving access required';
+    RAISE EXCEPTION USING errcode='42501';
   END IF;
 
   IF p_purchase_order_id IS NULL
      OR length(v_key) < 16
-     OR length(v_key) > 128
+     OR length(v_key) > 200
      OR p_lines IS NULL
      OR jsonb_typeof(p_lines) <> 'array'
      OR jsonb_array_length(p_lines) = 0
      OR jsonb_array_length(p_lines) > 100 THEN
+    RAISE EXCEPTION USING errcode='22023';
+  END IF;
+
+  IF p_notes IS NOT NULL AND length(p_notes) > 2000 THEN
     RAISE EXCEPTION USING errcode='22023';
   END IF;
 
@@ -56,52 +63,55 @@ BEGIN
     AND idempotency_key = v_key;
 
   IF FOUND THEN
-    IF v_existing.purchase_order_id <> p_purchase_order_id
-       OR coalesce(v_existing.notes, '') <> coalesce(nullif(trim(p_notes), ''), '') THEN
-      RAISE EXCEPTION USING errcode='40001', message='idempotency key payload conflict';
-    END IF;
+    SELECT coalesce(jsonb_agg(
+      jsonb_build_object(
+        'purchase_order_item_id', x.item_id,
+        'product_id', x.product_id,
+        'quantity', x.quantity
+      ) ORDER BY x.item_id
+    ), '[]'::jsonb)
+    INTO v_requested_lines
+    FROM (
+      SELECT
+        (value->>'purchase_order_item_id')::text AS item_id,
+        (value->>'product_id')::text AS product_id,
+        (value->>'quantity')::integer AS quantity
+      FROM jsonb_array_elements(p_lines)
+    ) x;
 
-    SELECT count(*) INTO v_existing_count
+    SELECT coalesce(jsonb_agg(
+      jsonb_build_object(
+        'purchase_order_item_id', pri.purchase_order_item_id::text,
+        'product_id', pri.product_id::text,
+        'quantity', pri.quantity_received
+      ) ORDER BY pri.purchase_order_item_id
+    ), '[]'::jsonb)
+    INTO v_existing_lines
     FROM public.purchase_receipt_items pri
     WHERE pri.organization_id = v_org
       AND pri.receipt_id = v_existing.id;
 
-    IF v_existing_count <> jsonb_array_length(p_lines) THEN
-      RAISE EXCEPTION USING errcode='40001', message='idempotency key payload conflict';
-    END IF;
-
-    IF EXISTS (
-      SELECT 1
-      FROM jsonb_array_elements(p_lines) x
-      WHERE NOT EXISTS (
-        SELECT 1
-        FROM public.purchase_receipt_items pri
-        WHERE pri.organization_id = v_org
-          AND pri.receipt_id = v_existing.id
-          AND pri.purchase_order_item_id = (x->>'purchase_order_item_id')::uuid
-          AND pri.product_id = (x->>'product_id')::uuid
-          AND pri.quantity_received = (x->>'quantity')::integer
-      )
-    ) THEN
+    IF v_existing.purchase_order_id IS DISTINCT FROM p_purchase_order_id
+       OR coalesce(v_existing.notes, '') IS DISTINCT FROM coalesce(nullif(trim(p_notes), ''), '')
+       OR v_existing_lines IS DISTINCT FROM v_requested_lines THEN
       RAISE EXCEPTION USING errcode='40001', message='idempotency key payload conflict';
     END IF;
 
     SELECT * INTO v_po
     FROM public.purchase_orders po0
-    WHERE po0.id = v_existing.purchase_order_id
-      AND po0.organization_id = v_org;
-
-    SELECT coalesce(sum(pri.line_total), 0) INTO v_total
-    FROM public.purchase_receipt_items pri
-    WHERE pri.organization_id = v_org
-      AND pri.receipt_id = v_existing.id;
+    WHERE po0.id = v_existing.purchase_order_id;
 
     RETURN QUERY
     SELECT v_existing.id,
            v_existing.receipt_number,
            v_existing.purchase_order_id,
            v_po.status,
-           v_total;
+           coalesce((
+             SELECT sum(pri.line_total)
+             FROM public.purchase_receipt_items pri
+             WHERE pri.organization_id = v_org
+               AND pri.receipt_id = v_existing.id
+           ), 0);
     RETURN;
   END IF;
 
@@ -112,7 +122,19 @@ BEGIN
   FOR UPDATE;
 
   IF NOT FOUND OR v_po.status NOT IN ('approved','partially_received') THEN
-    RAISE EXCEPTION USING errcode='22023', message='purchase order is not receivable';
+    RAISE EXCEPTION USING errcode='22023';
+  END IF;
+
+  IF EXISTS (
+    SELECT 1
+    FROM (
+      SELECT value->>'purchase_order_item_id' AS item_id
+      FROM jsonb_array_elements(p_lines)
+    ) x
+    GROUP BY item_id
+    HAVING count(*) > 1
+  ) THEN
+    RAISE EXCEPTION USING errcode='22023', message='duplicate receipt line';
   END IF;
 
   INSERT INTO public.purchase_receipts(
@@ -174,7 +196,7 @@ BEGIN
     FOR UPDATE;
 
     UPDATE public.inventory_balances ib
-    SET quantity = coalesce(v_inventory, 0) + v_qty,
+    SET quantity = v_inventory + v_qty,
         updated_at = now()
     WHERE ib.organization_id = v_org
       AND ib.warehouse_id = v_po.warehouse_id
@@ -237,31 +259,12 @@ BEGIN
   updated_at = now()
   WHERE po0.id = v_po.id;
 
-  SELECT * INTO v_po
-  FROM public.purchase_orders po0
-  WHERE po0.id = v_po.id;
-
-  INSERT INTO public.audit_events(
-    organization_id,
-    actor_id,
-    action,
-    target_type,
-    target_id,
-    result,
-    metadata
-  )
-  VALUES (
-    v_org,
-    auth.uid(),
-    'purchase.received',
-    'purchase_receipt',
-    v_receipt.id,
-    'success',
-    jsonb_build_object(
-      'purchase_order_id', v_po.id,
-      'received_total', v_total
-    )
-  );
+  RETURN QUERY
+  SELECT v_receipt.id,
+         v_receipt.receipt_number,
+         v_po.id,
+         (SELECT po1.status FROM public.purchase_orders po1 WHERE po1.id = v_po.id),
+         v_total;
 
   INSERT INTO public.outbox_events(
     organization_id,
@@ -276,18 +279,11 @@ BEGIN
     v_receipt.id,
     'purchase.received',
     jsonb_build_object(
-      'receipt_id', v_receipt.id,
       'purchase_order_id', v_po.id,
-      'received_total', v_total
+      'receipt_id', v_receipt.id,
+      'receipt_number', v_receipt.receipt_number
     )
   );
-
-  RETURN QUERY
-  SELECT v_receipt.id,
-         v_receipt.receipt_number,
-         v_po.id,
-         v_po.status,
-         v_total;
 END;
 $$;
 
