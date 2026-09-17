@@ -113,8 +113,8 @@ BEGIN
   END IF;
 
   IF NOT EXISTS (
-    SELECT 1 FROM public.warehouses
-    WHERE id = p_warehouse_id AND organization_id = v_org AND is_active
+    SELECT 1 FROM public.warehouses w
+    WHERE w.id = p_warehouse_id AND w.organization_id = v_org AND w.is_active
   ) THEN
     RAISE EXCEPTION USING errcode='42501', message='warehouse not available';
   END IF;
@@ -127,8 +127,8 @@ BEGIN
     v_qty := (v_line->>'quantity')::integer;
 
     IF NOT EXISTS (
-      SELECT 1 FROM public.products
-      WHERE id = v_product AND organization_id = v_org AND status = 'active'
+      SELECT 1 FROM public.products p
+      WHERE p.id = v_product AND p.organization_id = v_org AND p.status = 'active'
     ) THEN
       RAISE EXCEPTION USING errcode='P0001', message='product unavailable';
     END IF;
@@ -149,9 +149,9 @@ BEGIN
       RAISE EXCEPTION USING errcode='P0001', message='authorized price unavailable';
     END IF;
 
-    SELECT quantity INTO v_available
-    FROM public.inventory_balances
-    WHERE organization_id = v_org AND warehouse_id = p_warehouse_id AND product_id = v_product
+    SELECT ib.quantity INTO v_available
+    FROM public.inventory_balances ib
+    WHERE ib.organization_id = v_org AND ib.warehouse_id = p_warehouse_id AND ib.product_id = v_product
     FOR UPDATE;
     IF NOT FOUND OR v_available < v_qty THEN
       RAISE EXCEPTION USING errcode='P0001', message='insufficient stock';
@@ -187,12 +187,12 @@ BEGIN
     ORDER BY pp.valid_from DESC
     LIMIT 1;
 
-    UPDATE public.inventory_balances
-    SET quantity = quantity - v_qty, updated_at = pg_catalog.now()
-    WHERE organization_id = v_org
-      AND warehouse_id = p_warehouse_id
-      AND product_id = v_product
-      AND quantity >= v_qty;
+    UPDATE public.inventory_balances ib
+    SET quantity = ib.quantity - v_qty, updated_at = pg_catalog.now()
+    WHERE ib.organization_id = v_org
+      AND ib.warehouse_id = p_warehouse_id
+      AND ib.product_id = v_product
+      AND ib.quantity >= v_qty;
     IF NOT FOUND THEN
       RAISE EXCEPTION USING errcode='P0001', message='inventory changed; retry order';
     END IF;
@@ -206,16 +206,16 @@ BEGIN
     ) VALUES(v_org, v_order.id, v_product, v_qty, v_price, v_tier);
   END LOOP;
 
-  SELECT id INTO v_cart_id
-  FROM public.carts
-  WHERE organization_id = v_org AND customer_id = v_customer AND status = 'active'
+  SELECT c.id INTO v_cart_id
+  FROM public.carts c
+  WHERE c.organization_id = v_org AND c.customer_id = v_customer AND c.status = 'active'
   FOR UPDATE;
   IF v_cart_id IS NOT NULL THEN
-    DELETE FROM public.cart_items
-    WHERE organization_id = v_org AND cart_id = v_cart_id;
-    UPDATE public.carts
+    DELETE FROM public.cart_items ci
+    WHERE ci.organization_id = v_org AND ci.cart_id = v_cart_id;
+    UPDATE public.carts c
     SET status = 'converted', updated_at = pg_catalog.now()
-    WHERE id = v_cart_id AND organization_id = v_org;
+    WHERE c.id = v_cart_id AND c.organization_id = v_org;
   END IF;
 
   INSERT INTO public.order_status_history(organization_id, order_id, from_status, to_status, actor_id)
