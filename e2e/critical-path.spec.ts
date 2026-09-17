@@ -6,7 +6,20 @@ async function login(page: Page, email: string, password: string) {
   await loginForm.locator('input[type="email"]').fill(email);
   await loginForm.locator('input[type="password"]').fill(password);
   await loginForm.getByRole('button', { name: 'دخول آمن' }).click();
-  await expect(page.getByRole('button', { name: 'الكتالوج', exact: true })).toBeVisible();
+
+  const portal = page.getByRole('button', { name: 'الكتالوج', exact: true });
+  const error = page.locator('.error-banner');
+  await Promise.race([
+    portal.waitFor({ state: 'visible', timeout: 5000 }),
+    error.waitFor({ state: 'visible', timeout: 5000 })
+  ]).catch(() => undefined);
+
+  if (await error.isVisible().catch(() => false)) {
+    const message = await error.innerText();
+    throw new Error('Login/bootstrap failed: ' + message);
+  }
+
+  await expect(portal).toBeVisible();
   await expect(page.getByRole('button', { name: /السلة/ })).toBeVisible();
 }
 
@@ -44,6 +57,10 @@ test('invalid login is rejected and does not expose the customer portal', async 
   await expect(page.getByRole('button', { name: 'دخول آمن' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'الكتالوج', exact: true })).toHaveCount(0);
   await expect(page.locator('.error-banner')).toBeVisible();
+  const unexpectedConsoleErrors = failures.consoleErrors.filter(
+    (message) => !/Failed to load resource: the server responded with a status of 400 \(Bad Request\)/.test(message)
+  );
+  expect(unexpectedConsoleErrors, 'Unexpected browser console errors: ' + unexpectedConsoleErrors.join(' | ')).toEqual([]);
   await assertCleanBrowser(failures, /^(?:400|401)\s+POST\s+.*\/auth\/v1\/token/);
 });
 
