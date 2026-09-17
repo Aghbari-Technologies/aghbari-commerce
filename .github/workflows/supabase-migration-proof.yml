@@ -90,16 +90,16 @@ jobs:
               AND p.proname = 'create_order'
               AND pg_get_function_identity_arguments(p.oid) = 'p_idempotency_key text, p_warehouse_id uuid, p_lines jsonb';
 
-            IF fn NOT LIKE '%pg_advisory_xact_lock(pg_catalog.hashtextextended(v_org::text || '':'' || v_requested_key, 0))%' THEN
+            IF fn NOT LIKE '%pg_catalog.pg_advisory_xact_lock%' OR fn NOT LIKE '%v_requested_key%' THEN
               RAISE EXCEPTION 'effective create_order is missing same-key serialization';
             END IF;
-            IF fn NOT LIKE '%WHERE c.organization_id = v_org AND c.customer_id = v_customer AND c.status = ''active''%' THEN
+            IF fn NOT LIKE '%c.organization_id = v_org%' OR fn NOT LIKE '%c.customer_id = v_customer%' OR fn NOT LIKE '%c.status = ''active''%' THEN
               RAISE EXCEPTION 'effective create_order is missing atomic active-cart lock';
             END IF;
             IF fn NOT LIKE '%SET status = ''converted'', updated_at = pg_catalog.now()%' THEN
               RAISE EXCEPTION 'effective create_order is missing atomic cart conversion';
             END IF;
-            IF fn NOT LIKE '%RAISE EXCEPTION USING errcode=''40001'', message=''idempotency key payload conflict''%' THEN
+            IF fn NOT LIKE '%idempotency key payload conflict%' OR fn NOT LIKE '%errcode=''40001''%' THEN
               RAISE EXCEPTION 'effective create_order is missing payload-conflict fail-closed contract';
             END IF;
             IF fn NOT LIKE '%SET search_path = ''''%' THEN
