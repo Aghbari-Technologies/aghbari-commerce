@@ -44,7 +44,7 @@ jobs:
           test "$actual" = "$EXPECTED_SHA" || { echo "SHA MISMATCH expected=$EXPECTED_SHA actual=$actual"; exit 1; }
       - uses: supabase/setup-cli@v1
         with:
-          version: latest
+          version: 2.117.0
       - name: Start Supabase and reset from zero
         run: |
           supabase start
