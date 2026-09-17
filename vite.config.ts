@@ -7,7 +7,7 @@ const buildMetadataPlugin = (): Plugin => ({
   name: 'aghbari-build-metadata',
   generateBundle() {
     const env = ((globalThis as typeof globalThis & { process?: { env?: BuildEnv } }).process?.env ?? {}) as BuildEnv;
-    const gitSha = env.VERCEL_GIT_COMMIT_SHA || env.GITHUB_SHA || env.VITE_BUILD_SHA || 'unknown';
+    const gitSha = env.VERCEL_GIT_COMMIT_SHA || env.VITE_BUILD_SHA || env.GITHUB_SHA || 'unknown';
     const version = env.npm_package_version || '0.1.0';
     const builtAt = new Date().toISOString();
     this.emitFile({
