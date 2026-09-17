@@ -118,7 +118,7 @@ set local request.jwt.claim.role='authenticated';
 set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0006';
 select throws_ok($$select public.transition_order('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0999','confirmed')$$,'42501',null,'customer order mutation denied');
 set local request.jwt.claim.sub='bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbb0001';
-select throws_ok($$select public.transition_order('aaaaaaaa-aaaa-aaaa-8aaa-aaaaaaaa0999','confirmed')$$,'P0002',null,'foreign tenant order denied');
+select throws_ok($$select public.transition_order('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0999','confirmed')$$,'P0002',null,'foreign tenant order denied');
 select is((select status from public.orders where id='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0999'),'pending','denied order mutations have no side effect');
 select * from finish();
 rollback;
