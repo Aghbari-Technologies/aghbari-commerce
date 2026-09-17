@@ -8,6 +8,21 @@ values
   ('90000000-0000-4000-8000-000000000004',(select id from auth.instances limit 1),'authenticated','authenticated','admin-b@test.local',crypt('AghbariE2E!2026',gen_salt('bf')),now(),'{"provider":"email","providers":["email"]}'::jsonb,'{}'::jsonb,now(),now())
 on conflict (id) do nothing;
 
+insert into auth.identities(id,user_id,provider_id,identity_data,provider,last_sign_in_at,created_at,updated_at)
+select
+  id,
+  id,
+  id::text,
+  jsonb_build_object('sub',id::text,'email',email),
+  'email',
+  null,
+  now(),
+  now(),
+  now()
+from auth.users
+where email in ('customer-a@test.local','customer-b@test.local','admin-a@test.local','admin-b@test.local')
+on conflict (id) do nothing;
+
 insert into public.organizations(id,name,is_active) values
   ('90000000-0000-4000-8000-000000000101','Browser Tenant A',true),
   ('90000000-0000-4000-8000-000000000102','Browser Tenant B',true)
