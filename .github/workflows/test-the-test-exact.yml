@@ -22,7 +22,7 @@ concurrency:
 jobs:
   sensitivity:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 55
     env:
       TARGET_SHA: ${{ inputs.exact_sha || github.event.pull_request.head.sha || github.sha }}
       DB_URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
@@ -99,6 +99,19 @@ jobs:
           set -e
           test "$rc" -ne 0 || { echo 'TEST-THE-TEST FAILURE: inventory RLS removal was not detected'; exit 1; }
           echo "PASS: inventory RLS mutation detected (exit=$rc)"
+      - name: Restore implementation from zero
+        run: supabase db reset --local
+      - name: Mutation 5 — remove authenticated access to order transition RPC
+        shell: bash
+        run: |
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -c "revoke execute on function public.transition_order(uuid,public.order_status) from authenticated;"
+          set +e
+          supabase test db --local > mutated-order-rpc-grant.log 2>&1
+          rc=$?
+          cat mutated-order-rpc-grant.log
+          set -e
+          test "$rc" -ne 0 || { echo 'TEST-THE-TEST FAILURE: sensitive order-transition EXECUTE removal was not detected'; exit 1; }
+          echo "PASS: order-transition privilege mutation detected (exit=$rc)"
       - name: Stop local Supabase
         if: always()
         run: supabase stop --no-backup
