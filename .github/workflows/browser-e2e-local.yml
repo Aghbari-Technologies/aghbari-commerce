@@ -16,26 +16,18 @@ on:
 permissions:
   contents: read
 
+env:
+  EXPECTED_SHA: ${{ inputs.exact_sha || github.event.pull_request.head.sha || github.sha }}
+  VITE_BUILD_SHA: ${{ inputs.exact_sha || github.event.pull_request.head.sha || github.sha }}
+
 concurrency:
   group: aghbari-browser-local-${{ github.event.pull_request.head.sha || inputs.exact_sha || github.sha }}
   cancel-in-progress: false
 
-env:
-  EXPECTED_SHA: ${{ inputs.exact_sha || github.event.pull_request.head.sha || github.sha }}
-  VITE_BUILD_SHA: ${{ inputs.exact_sha || github.event.pull_request.head.sha || github.sha }}
-  VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-  VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
-  E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
-  E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
-  E2E_EMAIL_B: ${{ secrets.E2E_EMAIL_B }}
-  E2E_PASSWORD_B: ${{ secrets.E2E_PASSWORD_B }}
-  E2E_ADMIN_EMAIL: ${{ secrets.E2E_ADMIN_EMAIL }}
-  E2E_ADMIN_PASSWORD: ${{ secrets.E2E_ADMIN_PASSWORD }}
-
 jobs:
   local-browser-e2e:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 45
     steps:
       - name: Validate exact SHA
         shell: bash
@@ -51,7 +43,7 @@ jobs:
         run: |
           actual="$(git rev-parse HEAD)"
           test "$actual" = "$EXPECTED_SHA" || {
-            echo "EXACT HEAD MISMATCH expected=$EXPECTED_SHA actual=$actual"
+            echo "EXACT LOCAL BROWSER SHA MISMATCH expected=$EXPECTED_SHA actual=$actual"
             exit 1
           }
           echo "EXACT LOCAL BROWSER SHA: $actual"
@@ -60,6 +52,10 @@ jobs:
         with:
           node-version: 22
           cache: npm
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.117.0
 
       - name: Clean dependency state
         shell: bash
@@ -76,6 +72,28 @@ jobs:
           node -p "require.resolve('vite/package.json')"
           test -x node_modules/.bin/vite
           node_modules/.bin/vite --version
+
+      - name: Start isolated local Supabase
+        run: supabase start
+
+      - name: Load isolated local Supabase connection values
+        shell: bash
+        run: |
+          supabase status -o env > /tmp/supabase.env
+          source /tmp/supabase.env
+          {
+            echo "VITE_SUPABASE_URL=$API_URL"
+            echo "VITE_SUPABASE_PUBLISHABLE_KEY=$ANON_KEY"
+            echo "LOCAL_DB_URL=$DB_URL"
+            echo "LOCAL_ANON_KEY=$ANON_KEY"
+          } >> "$GITHUB_ENV"
+
+      - name: Seed isolated browser fixtures
+        shell: bash
+        run: |
+          sudo apt-get update -y >/dev/null
+          sudo apt-get install -y postgresql-client >/dev/null
+          psql "$LOCAL_DB_URL" -v ON_ERROR_STOP=1 -f scripts/browser-e2e-seed.sql
 
       - name: Production build from exact SHA
         run: npm run build
@@ -112,30 +130,24 @@ jobs:
           test -s /tmp/local-meta.json
           diff -u dist/build-meta.json /tmp/local-meta.json
 
-      - name: Require browser credentials
-        shell: bash
-        run: |
-          test -n "$E2E_EMAIL"
-          test -n "$E2E_PASSWORD"
-          test -n "$E2E_EMAIL_B"
-          test -n "$E2E_PASSWORD_B"
-          test -n "$E2E_ADMIN_EMAIL"
-          test -n "$E2E_ADMIN_PASSWORD"
-          test -n "$VITE_SUPABASE_URL"
-          test -n "$VITE_SUPABASE_PUBLISHABLE_KEY"
-
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Run customer browser E2E against local artifact
+      - name: Run customer browser E2E against exact local artifact
         env:
           E2E_BASE_URL: http://127.0.0.1:4173
+          E2E_EMAIL: customer-a@test.local
+          E2E_PASSWORD: AghbariE2E!2026
+          E2E_EMAIL_B: customer-b@test.local
+          E2E_PASSWORD_B: AghbariE2E!2026
           EXPECTED_SHA: ${{ env.EXPECTED_SHA }}
         run: npx playwright test e2e/critical-path.spec.ts --project=chromium
 
-      - name: Run admin browser E2E against local artifact
+      - name: Run admin browser E2E against exact local artifact
         env:
           E2E_BASE_URL: http://127.0.0.1:4173
+          E2E_ADMIN_EMAIL: admin-a@test.local
+          E2E_ADMIN_PASSWORD: AghbariE2E!2026
           EXPECTED_SHA: ${{ env.EXPECTED_SHA }}
         run: npx playwright test e2e/admin-control-plane.spec.ts --project=chromium
 
@@ -152,3 +164,8 @@ jobs:
             test-results/
           if-no-files-found: ignore
           retention-days: 7
+
+      - name: Stop isolated local Supabase
+        if: always()
+        shell: bash
+        run: supabase stop || true
