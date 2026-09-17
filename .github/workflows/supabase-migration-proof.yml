@@ -102,7 +102,7 @@ jobs:
             IF fn NOT LIKE '%idempotency key payload conflict%' OR fn NOT LIKE '%errcode=''40001''%' THEN
               RAISE EXCEPTION 'effective create_order is missing payload-conflict fail-closed contract';
             END IF;
-            IF fn NOT LIKE '%SET search_path = ''''%' THEN
+            IF fn NOT LIKE '%SET search_path TO ''''%' AND fn NOT LIKE '%SET search_path = ''''%' THEN
               RAISE EXCEPTION 'effective create_order is missing empty search_path';
             END IF;
             IF fn LIKE '%EXCEPTION WHEN unique_violation THEN%' THEN
