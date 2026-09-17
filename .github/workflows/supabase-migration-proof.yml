@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       exact_sha:
-        description: 'Exact Git commit SHA to verify'
+        description: 'Exact Git SHA to verify'
         required: true
         type: string
 
@@ -29,8 +29,7 @@ jobs:
       - name: Validate exact SHA input
         shell: bash
         run: echo "$TARGET_SHA" | grep -Eq '^[0-9a-f]{40}$'
-      - name: Checkout exact target SHA
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.exact_sha || github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 1
@@ -61,6 +60,66 @@ jobs:
         run: supabase start
       - name: Apply migrations from empty database
         run: supabase db reset --local
+      - name: Verify effective final order authority in Fresh DB
+        shell: bash
+        run: |
+          supabase status -o env > /tmp/supabase.env
+          source /tmp/supabase.env
+          psql "$DB_URL" -v ON_ERROR_STOP=1 <<'SQL'
+          DO $$
+          DECLARE
+            fn text;
+            fn_count integer;
+            auth_ok boolean;
+            anon_ok boolean;
+          BEGIN
+            SELECT count(*) INTO fn_count
+            FROM pg_proc p
+            JOIN pg_namespace n ON n.oid = p.pronamespace
+            WHERE n.nspname = 'public'
+              AND p.proname = 'create_order'
+              AND pg_get_function_identity_arguments(p.oid) = 'p_idempotency_key text, p_warehouse_id uuid, p_lines jsonb';
+            IF fn_count <> 1 THEN
+              RAISE EXCEPTION 'effective create_order signature count=%', fn_count;
+            END IF;
+
+            SELECT pg_get_functiondef(p.oid) INTO fn
+            FROM pg_proc p
+            JOIN pg_namespace n ON n.oid = p.pronamespace
+            WHERE n.nspname = 'public'
+              AND p.proname = 'create_order'
+              AND pg_get_function_identity_arguments(p.oid) = 'p_idempotency_key text, p_warehouse_id uuid, p_lines jsonb';
+
+            IF fn NOT LIKE '%pg_advisory_xact_lock(pg_catalog.hashtextextended(v_org::text || '':'' || v_requested_key, 0))%' THEN
+              RAISE EXCEPTION 'effective create_order is missing same-key serialization';
+            END IF;
+            IF fn NOT LIKE '%WHERE c.organization_id = v_org AND c.customer_id = v_customer AND c.status = ''active''%' THEN
+              RAISE EXCEPTION 'effective create_order is missing atomic active-cart lock';
+            END IF;
+            IF fn NOT LIKE '%SET status = ''converted'', updated_at = pg_catalog.now()%' THEN
+              RAISE EXCEPTION 'effective create_order is missing atomic cart conversion';
+            END IF;
+            IF fn NOT LIKE '%RAISE EXCEPTION USING errcode=''40001'', message=''idempotency key payload conflict''%' THEN
+              RAISE EXCEPTION 'effective create_order is missing payload-conflict fail-closed contract';
+            END IF;
+            IF fn NOT LIKE '%SET search_path = ''''%' THEN
+              RAISE EXCEPTION 'effective create_order is missing empty search_path';
+            END IF;
+            IF fn LIKE '%EXCEPTION WHEN unique_violation THEN%' THEN
+              RAISE EXCEPTION 'effective create_order contains unsafe generic unique_violation success recovery';
+            END IF;
+
+            SELECT has_function_privilege('authenticated', 'public.create_order(text,uuid,jsonb)', 'EXECUTE') INTO auth_ok;
+            SELECT has_function_privilege('anon', 'public.create_order(text,uuid,jsonb)', 'EXECUTE') INTO anon_ok;
+            IF NOT auth_ok THEN
+              RAISE EXCEPTION 'authenticated must retain create_order EXECUTE';
+            END IF;
+            IF anon_ok THEN
+              RAISE EXCEPTION 'anon/PUBLIC must not retain create_order EXECUTE';
+            END IF;
+          END $$;
+          SELECT 'Fresh DB effective create_order authority: PASS' AS evidence;
+          SQL
       - name: Run database pgTAP proofs
         run: supabase test db --local
       - name: Verify local migration inventory
