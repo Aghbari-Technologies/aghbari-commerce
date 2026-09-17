@@ -31,26 +31,7 @@ SQL
 tmpdir=$(mktemp -d)
 trap 'rm -rf "$tmpdir"' EXIT
 last_line() { awk 'NF { v=$0 } END { print v }' "$1"; }
-run_order() {
-  local out="$1"
-  ("${PSQL[@]}" >"$out" 2>&1 <<SQL
-begin;
-set local role authenticated;
-set local request.jwt.claim.role='authenticated';
-set local request.jwt.claim.sub='$USER';
-select * from public.create_order('$KEY','$WAREHOUSE'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT'::uuid,'quantity',2)));
-commit;
-SQL
-  ) & echo $!
-}
 
-pids=()
-for i in $(seq 1 8); do
-  run_order "$tmpdir/initial-$i" >/dev/null | true
-done
-# Capture PIDs deterministically from a second launch block because command substitution/background output
-# above is intentionally isolated from the parent shell's strict-mode state.
-rm -f "$tmpdir/initial-"*
 pids=()
 for i in $(seq 1 8); do
   ("${PSQL[@]}" >"$tmpdir/initial-$i" 2>&1 <<SQL
