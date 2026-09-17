@@ -9,6 +9,7 @@ BRANCH='d8000000-0000-4000-8000-000000000004'
 WAREHOUSE='d8000000-0000-4000-8000-000000000005'
 PRODUCT='d8000000-0000-4000-8000-000000000006'
 KEY='order-8way-idempotency-20260918'
+FAIL_KEY='order-8way-failure-retry-20260918'
 
 "${PSQL[@]}" <<SQL
 begin;
@@ -99,4 +100,67 @@ stock2=$("${PSQL[@]}" -c "select quantity from public.inventory_balances where o
 [ "$outbox2" = "1" ] || { echo "FAIL replay duplicate outbox: $outbox2"; exit 1; }
 [ "$stock2" = "18" ] || { echo "FAIL replay changed stock: $stock2"; exit 1; }
 
-echo "ORDER_8WAY_PASS canonical=$canonical initial=8 replay=8 orders=1 items=1 outbox=1 stock=18"
+failure_pids=()
+for i in $(seq 1 8); do
+  ("${PSQL[@]}" >"$tmpdir/failure-$i" 2>&1 <<SQL
+begin;
+set local role authenticated;
+set local request.jwt.claim.role='authenticated';
+set local request.jwt.claim.sub='$USER';
+select * from public.create_order('$FAIL_KEY','$WAREHOUSE'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT'::uuid,'quantity',99)));
+commit;
+SQL
+  ) & failure_pids+=("$!")
+done
+failures=0
+for pid in "${failure_pids[@]}"; do
+  if wait "$pid"; then
+    echo 'FAIL failure hammer: an intentionally over-stocked order succeeded'
+    failures=-100
+  else
+    failures=$((failures + 1))
+  fi
+done
+[ "$failures" = "8" ] || { echo "FAIL expected 8 transactional failures, observed $failures"; cat "$tmpdir"/failure-* || true; exit 1; }
+failed_orders=$("${PSQL[@]}" -c "select count(*) from public.orders where organization_id='$ORG' and idempotency_key='$FAIL_KEY';")
+failed_outbox=$("${PSQL[@]}" -c "select count(*) from public.outbox_events where organization_id='$ORG' and event_type='order.created' and payload->>'order_id' in (select id::text from public.orders where organization_id='$ORG' and idempotency_key='$FAIL_KEY');")
+failed_stock=$("${PSQL[@]}" -c "select quantity from public.inventory_balances where organization_id='$ORG' and warehouse_id='$WAREHOUSE' and product_id='$PRODUCT';")
+[ "$failed_orders" = "0" ] || { echo "FAIL failed-order hammer left orders=$failed_orders"; exit 1; }
+[ "$failed_outbox" = "0" ] || { echo "FAIL failed-order hammer left outbox=$failed_outbox"; exit 1; }
+[ "$failed_stock" = "18" ] || { echo "FAIL failed-order hammer changed stock=$failed_stock"; exit 1; }
+
+retry_pids=()
+for i in $(seq 1 8); do
+  ("${PSQL[@]}" >"$tmpdir/retry-$i" 2>&1 <<SQL
+begin;
+set local role authenticated;
+set local request.jwt.claim.role='authenticated';
+set local request.jwt.claim.sub='$USER';
+select * from public.create_order('$FAIL_KEY','$WAREHOUSE'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT'::uuid,'quantity',1)));
+commit;
+SQL
+  ) & retry_pids+=("$!")
+done
+rc=0
+for pid in "${retry_pids[@]}"; do wait "$pid" || rc=1; done
+if [ "$rc" -ne 0 ]; then
+  echo 'FAIL concurrent retry after failed order: one or more retries failed'
+  cat "$tmpdir"/retry-* || true
+  exit 1
+fi
+retry_canonical=''
+for i in $(seq 1 8); do
+  value=$(last_line "$tmpdir/retry-$i")
+  [ -n "$value" ] || { echo "FAIL missing canonical output for retry $i"; exit 1; }
+  if [ -z "$retry_canonical" ]; then retry_canonical="$value"; else [ "$value" = "$retry_canonical" ] || { echo "FAIL inconsistent retry result request=$i value=$value canonical=$retry_canonical"; exit 1; }; fi
+done
+retry_orders=$("${PSQL[@]}" -c "select count(*) from public.orders where organization_id='$ORG' and idempotency_key='$FAIL_KEY';")
+retry_items=$("${PSQL[@]}" -c "select count(*) from public.order_items oi join public.orders o on o.id=oi.order_id where o.organization_id='$ORG' and o.idempotency_key='$FAIL_KEY';")
+retry_outbox=$("${PSQL[@]}" -c "select count(*) from public.outbox_events where organization_id='$ORG' and event_type='order.created' and payload->>'order_id'=(split_part('$retry_canonical','|',1));")
+retry_stock=$("${PSQL[@]}" -c "select quantity from public.inventory_balances where organization_id='$ORG' and warehouse_id='$WAREHOUSE' and product_id='$PRODUCT';")
+[ "$retry_orders" = "1" ] || { echo "FAIL concurrent retry duplicate orders: $retry_orders"; exit 1; }
+[ "$retry_items" = "1" ] || { echo "FAIL concurrent retry duplicate items: $retry_items"; exit 1; }
+[ "$retry_outbox" = "1" ] || { echo "FAIL concurrent retry duplicate outbox: $retry_outbox"; exit 1; }
+[ "$retry_stock" = "17" ] || { echo "FAIL concurrent retry stock expected 17 got $retry_stock"; exit 1; }
+
+echo "ORDER_8WAY_PASS canonical=$canonical initial=8 replay=8 orders=1 items=1 outbox=1 stock=18 failed_initial=8 failed_residue_orders=0 failed_residue_outbox=0 failed_residue_stock=18 concurrent_retries=8 retry_orders=1 retry_items=1 retry_outbox=1 retry_stock=17"
