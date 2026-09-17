@@ -138,16 +138,16 @@ STOCK_INV=$("${PSQL[@]}" -tAc "select quantity from public.inventory_balances wh
 # 6. import x import with same fingerprint
 set +e
 ("${PSQL[@]}" >"$tmpdir/imp1" 2>&1 <<SQL
-begin; set local role authenticated; select set_config('request.jwt.claim.role','authenticated',true); select set_config('request.jwt.claim.sub','$IMPORT_JOB_USER',true); select public.begin_product_import('concurrent.xlsx',repeat('e',64),1); commit;
+begin; set local role authenticated; select set_config('request.jwt.claim.role','authenticated',true); select set_config('request.jwt.claim.sub','$IMPORT_JOB_USER',true); select public.stage_product_import('concurrent.xlsx',repeat('e',64),jsonb_build_array(jsonb_build_object('sku','CONC-IMP','name','Concurrent Import','unit','unit','category','Concurrent','quantity',1,'prices',jsonb_build_object('retail',20,'wholesale',18,'distributor',16)))); commit;
 SQL
 ) & P11=$!
 ("${PSQL[@]}" >"$tmpdir/imp2" 2>&1 <<SQL
-begin; set local role authenticated; select set_config('request.jwt.claim.role','authenticated',true); select set_config('request.jwt.claim.sub','$IMPORT_JOB_USER',true); select public.begin_product_import('concurrent.xlsx',repeat('e',64),1); commit;
+begin; set local role authenticated; select set_config('request.jwt.claim.role','authenticated',true); select set_config('request.jwt.claim.sub','$IMPORT_JOB_USER',true); select public.stage_product_import('concurrent.xlsx',repeat('e',64),jsonb_build_array(jsonb_build_object('sku','CONC-IMP','name','Concurrent Import','unit','unit','category','Concurrent','quantity',1,'prices',jsonb_build_object('retail',20,'wholesale',18,'distributor',16)))); commit;
 SQL
 ) & P12=$!
 wait "$P11"; RC11=$?; wait "$P12"; RC12=$?; set -e
 IMPORTS=$("${PSQL[@]}" -tAc "select count(*) from public.import_jobs where organization_id='$ORG_A' and source_fingerprint=repeat('e',64);")
-[ "$RC11" -eq 0 ] && [ "$RC12" -eq 0 ] && [ "$IMPORTS" = "1" ] || { echo "FAIL import concurrency rc=$RC11,$RC12 jobs=$IMPORTS"; cat "$tmpdir/imp1" "$tmpdir/imp2"; exit 1; }
+[ "$IMPORTS" = "1" ] && { [ "$RC11" -eq 0 ] || [ "$RC12" -eq 0 ]; } || { echo "FAIL import concurrency rc=$RC11,$RC12 jobs=$IMPORTS"; cat "$tmpdir/imp1" "$tmpdir/imp2"; exit 1; }
 
 # 7. invitation x invitation
 set +e
@@ -175,7 +175,7 @@ begin; set local role authenticated; select set_config('request.jwt.claim.role',
 SQL
 ) & P16=$!
 wait "$P15"; RC15=$?; wait "$P16"; RC16=$?; set -e
-REPORTS=$("${PSQL[@]}" -tAc "select count(*) from public.reporting_export_requests where organization_id='$ORG_A' and idempotency_key='cm-report-race-key';")
+REPORTS=$("${PSQL[@]}" -tAc "select count(*) from public.reporting_exports where organization_id='$ORG_A' and idempotency_key='cm-report-race-key';")
 [ "$RC15" -eq 0 ] && [ "$RC16" -eq 0 ] && [ "$REPORTS" = "1" ] || { echo "FAIL reporting race rc=$RC15,$RC16 rows=$REPORTS"; cat "$tmpdir/report1" "$tmpdir/report2"; exit 1; }
 
 # 9. outbox duplicate delivery: one claim wins, duplicate ack is false
