@@ -38,21 +38,28 @@ SQL
   ) & echo $!
 }
 
+last_line() {
+  awk 'NF { v=$0 } END { print v }' "$1"
+}
+
 run_phase() {
   local phase="$1";
   local pids=();
   for i in $(seq 1 8); do
-    run_request "$TMPDIR/${phase}-${i}" >"$TMPDIR/${phase}-pid-${i}";
-    pids+=("$(cat "$TMPDIR/${phase}-pid-${i}")");
+    run_request "$TMPDIR/${phase}-${i}" >"$TMPDIR/${phase}-pid-${i}"
+    pids+=("$(cat "$TMPDIR/${phase}-pid-${i}")")
   done
   local failed=0;
   for pid in "${pids[@]}"; do wait "$pid" || failed=1; done
   [ "$failed" -eq 0 ] || { echo "FAIL $phase: non-zero request"; cat "$TMPDIR/${phase}-"*; exit 1; }
+
   local canonical="";
   for i in $(seq 1 8); do
-    local row="$(cat "$TMPDIR/${phase}-${i}")";
-    [ -n "$row" ] || { echo "FAIL $phase: request $i returned empty"; exit 1; }
-    if [ -z "$canonical" ]; then canonical="$row"; else
+    local row="$(last_line "$TMPDIR/${phase}-${i}")";
+    [ -n "$row" ] || { echo "FAIL $phase: request $i returned empty output"; cat "$TMPDIR/${phase}-${i}"; exit 1; }
+    if [ -z "$canonical" ]; then
+      canonical="$row"
+    else
       [ "$row" = "$canonical" ] || { echo "FAIL $phase: request $i non-canonical: $row vs $canonical"; exit 1; }
     fi
   done
@@ -64,12 +71,14 @@ run_phase replay
 
 ROWS=$("${PSQL[@]}" -c "select count(*) from public.reporting_exports where organization_id='$ORG' and idempotency_key='$KEY';")
 [ "$ROWS" = "1" ] || { echo "FAIL final row count=$ROWS"; exit 1; }
-CANONICAL_ID=$(cut -d'|' -f1 < "$TMPDIR/initial-1")
-CANONICAL_DATASET=$(cut -d'|' -f2 < "$TMPDIR/initial-1")
+CANONICAL_ROW="$(last_line "$TMPDIR/initial-1")"
+CANONICAL_ID="${CANONICAL_ROW%%|*}"
+CANONICAL_DATASET="$(printf '%s\n' "$CANONICAL_ROW" | cut -d'|' -f2)"
 FINAL_ID=$("${PSQL[@]}" -c "select id::text from public.reporting_exports where organization_id='$ORG' and idempotency_key='$KEY';")
 FINAL_DATASET=$("${PSQL[@]}" -c "select dataset_id from public.reporting_exports where organization_id='$ORG' and idempotency_key='$KEY';")
 [ "$FINAL_ID" = "$CANONICAL_ID" ] || { echo "FAIL canonical id mismatch final=$FINAL_ID initial=$CANONICAL_ID"; exit 1; }
 [ "$FINAL_DATASET" = "$CANONICAL_DATASET" ] || { echo "FAIL canonical dataset mismatch final=$FINAL_DATASET initial=$CANONICAL_DATASET"; exit 1; }
+
 printf '%s\n' \
   'PASS: reporting 8-way concurrency proof' \
   'INITIAL CONCURRENT REQUESTS: 8' \
