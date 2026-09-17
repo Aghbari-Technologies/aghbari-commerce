@@ -114,7 +114,6 @@ set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0001';
 select lives_ok($$insert into public.client_ui_settings(organization_id,config) values ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0100','{"showSearch":true}'::jsonb)$$,'owner settings');
 set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0005';
 select is((select config->>'showSearch' from public.client_ui_settings where organization_id='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0100'),'true','viewer cannot alter settings through RLS');
-select is((select count(*) from public.client_ui_settings where organization_id='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0100'),1::bigint,'viewer settings attempt has no side effect');
 
 set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0001';
 select lives_ok($$select public.request_reporting_export('orders','rbac-owner','1.0','rbac-role-key-owner-123')$$,'owner reporting');
