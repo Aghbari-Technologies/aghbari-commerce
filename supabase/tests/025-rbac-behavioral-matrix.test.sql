@@ -72,7 +72,7 @@ select lives_ok($$select public.set_product_price('aaaaaaaa-aaaa-4aaa-8aaa-aaaaa
 set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0005';
 select throws_ok($$select public.set_product_price('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0130','wholesale',104,'YER')$$,'42501',null,'viewer price denied');
 set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0006';
-select throws_ok($$select public.set_product_price('aaaaaaaa-aaaa-4aaa-4aaa-8aaa-aaaaaaaa0130','wholesale',105,'YER')$$,'42501',null,'customer price denied');
+select throws_ok($$select public.set_product_price('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0130','wholesale',105,'YER')$$,'42501',null,'customer price denied');
 
 set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0004';
 select lives_ok($$select public.set_stock_threshold('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0120','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0130',5,6,12)$$,'warehouse threshold');
