@@ -20,10 +20,13 @@ function captureBrowserFailures(page: Page) {
   return { pageErrors, consoleErrors, failedResponses };
 }
 
-async function assertCleanBrowser(failures: ReturnType<typeof captureBrowserFailures>) {
+async function assertCleanBrowser(failures: ReturnType<typeof captureBrowserFailures>, allowedResponse: RegExp | null = null) {
+  const unexpectedResponses = allowedResponse
+    ? failures.failedResponses.filter((entry) => !allowedResponse.test(entry))
+    : failures.failedResponses;
   expect(failures.pageErrors, `Uncaught browser errors: ${failures.pageErrors.join(' | ')}`).toEqual([]);
   expect(failures.consoleErrors, `Browser console errors: ${failures.consoleErrors.join(' | ')}`).toEqual([]);
-  expect(failures.failedResponses, `HTTP responses >= 400: ${failures.failedResponses.join(' | ')}`).toEqual([]);
+  expect(unexpectedResponses, `Unexpected HTTP responses >= 400: ${unexpectedResponses.join(' | ')}`).toEqual([]);
 }
 
 test('invalid login is rejected and does not expose the customer portal', async ({ page }) => {
@@ -34,11 +37,14 @@ test('invalid login is rejected and does not expose the customer portal', async 
   const loginForm = page.locator('form').filter({ has: page.locator('input[type="password"]') }).first();
   await loginForm.locator('input[type="email"]').fill(email!);
   await loginForm.locator('input[type="password"]').fill('definitely-wrong-password-20260918');
+  const authResponsePromise = page.waitForResponse((response) => response.url().includes('/auth/v1/token') && response.request().method() === 'POST');
   await loginForm.getByRole('button', { name: 'دخول آمن' }).click();
+  const authResponse = await authResponsePromise;
+  expect([400, 401]).toContain(authResponse.status());
   await expect(page.getByRole('button', { name: 'دخول آمن' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'الكتالوج', exact: true })).toHaveCount(0);
   await expect(page.locator('.error-banner[role="alert"]')).toBeVisible();
-  await assertCleanBrowser(failures);
+  await assertCleanBrowser(failures, /^(?:400|401)\s+POST\s+.*\/auth\/v1\/token/);
 });
 
 test('authenticated customer completes real search → catalog → cart → order → refresh → logout path', async ({ page }) => {
