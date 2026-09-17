@@ -62,7 +62,7 @@ jobs:
     timeout-minutes: 25
     env:
       E2E_BASE_URL: >-
-        ${{ github.event_name == 'deployment_status' && github.event.deployment_status.environment_url || inputs.base_url }}
+        ${{ github.event_name == 'deployment_status' && (github.event.deployment_status.target_url || github.event.deployment_status.environment_url) || inputs.base_url }}
       EXPECTED_SHA: >-
         ${{ github.event_name == 'deployment_status' && github.event.deployment.sha || inputs.exact_sha }}
       E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
@@ -78,6 +78,7 @@ jobs:
           test -n "$E2E_BASE_URL" || { echo 'BLOCKED: E2E_BASE_URL is missing'; exit 1; }
           test -n "$EXPECTED_SHA" || { echo 'BLOCKED: EXPECTED_SHA is missing'; exit 1; }
           case "$E2E_BASE_URL" in https://*) ;; *) echo 'BLOCKED: E2E_BASE_URL must use HTTPS'; exit 1 ;; esac
+          case "$E2E_BASE_URL" in https://vercel.com/*|https://*.vercel.com/*) echo 'BLOCKED: E2E_BASE_URL points to a Vercel dashboard URL, not the deployed application'; exit 1 ;; esac
           echo "$EXPECTED_SHA" | grep -Eq '^[0-9a-f]{40}$' || { echo 'BLOCKED: EXPECTED_SHA is not a full SHA'; exit 1; }
       - uses: actions/checkout@v4
         with:
