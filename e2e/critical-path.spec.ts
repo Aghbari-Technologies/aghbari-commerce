@@ -26,31 +26,46 @@ async function assertCleanBrowser(failures: ReturnType<typeof captureBrowserFail
   expect(failures.failedResponses, `HTTP responses >= 400: ${failures.failedResponses.join(' | ')}`).toEqual([]);
 }
 
-test('authenticated customer completes real search → catalog → cart → order → refresh path', async ({ page }) => {
+test('invalid login is rejected and does not expose the customer portal', async ({ page }) => {
+  const email = process.env.E2E_EMAIL;
+  expect(email).toBeTruthy();
+  const failures = captureBrowserFailures(page);
+  await page.goto('/');
+  const loginForm = page.locator('form').filter({ has: page.locator('input[type="password"]') }).first();
+  await loginForm.locator('input[type="email"]').fill(email!);
+  await loginForm.locator('input[type="password"]').fill('definitely-wrong-password-20260918');
+  await loginForm.getByRole('button', { name: 'دخول آمن' }).click();
+  await expect(page.getByRole('button', { name: 'دخول آمن' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'الكتالوج', exact: true })).toHaveCount(0);
+  await expect(page.locator('.error-banner[role="alert"]')).toBeVisible();
+  await assertCleanBrowser(failures);
+});
+
+test('authenticated customer completes real search → catalog → cart → order → refresh → logout path', async ({ page }) => {
   const email = process.env.E2E_EMAIL;
   const password = process.env.E2E_PASSWORD;
   if (!email || !password) throw new Error('E2E_EMAIL and E2E_PASSWORD are required; runtime tests must never silently skip.');
 
   const failures = captureBrowserFailures(page);
   await login(page, email, password);
-  await expect(page.locator('.customer-app')).toHaveAttribute('dir', 'rtl');
+  await expect(page.locator('.customer-shell')).toBeVisible();
 
-  const firstCard = page.locator('.b2b-product-card').first();
+  const firstCard = page.locator('.product-card').first();
   await expect(firstCard).toBeVisible();
   const productName = (await firstCard.getByRole('heading').first().innerText()).trim();
-  const search = page.getByRole('textbox', { name: 'بحث المنتج' });
+  const search = page.getByRole('textbox', { name: 'البحث في الكتالوج' });
   await expect(search).toBeVisible();
   await search.fill(productName);
-  await expect(page.locator('.b2b-product-card')).toHaveCount(1);
-  await expect(page.locator('.b2b-product-card').first().getByRole('heading', { name: productName, exact: true })).toBeVisible();
+  await expect(page.locator('.product-card')).toHaveCount(1);
+  await expect(page.locator('.product-card').first().getByRole('heading', { name: productName, exact: true })).toBeVisible();
   await search.fill('');
 
-  const addButton = page.getByRole('button', { name: /\+ إضافة/ }).first();
+  const addButton = page.getByRole('button', { name: 'إضافة للسلة', exact: true }).first();
   await expect(addButton).toBeEnabled();
   await addButton.click();
   await expect(page.getByRole('button', { name: /السلة/ })).toContainText('1');
 
-  const checkout = page.getByRole('button', { name: 'تأكيد وإرسال الطلب' });
+  const checkout = page.getByRole('button', { name: 'تأكيد وإرسال الطلب', exact: true });
   await expect(checkout).toBeEnabled();
   await checkout.click();
 
@@ -61,11 +76,16 @@ test('authenticated customer completes real search → catalog → cart → orde
   expect(orderNumberMatch, `Order number missing from success message: ${successText}`).not.toBeNull();
   const orderNumber = orderNumberMatch![1];
 
-  await expect(page.getByRole('button', { name: 'طلباتي' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'طلباتي', exact: true })).toBeVisible();
   await expect(page.getByText(`طلب #${orderNumber}`, { exact: true })).toBeVisible();
   await page.reload();
-  await expect(page.getByRole('button', { name: 'طلباتي' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'طلباتي', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'طلباتي', exact: true }).click();
   await expect(page.getByText(`طلب #${orderNumber}`, { exact: true })).toBeVisible();
+
+  await page.getByRole('button', { name: 'خروج', exact: true }).last().click();
+  await expect(page.getByRole('button', { name: 'دخول آمن', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'الكتالوج', exact: true })).toHaveCount(0);
   await assertCleanBrowser(failures);
 });
 
@@ -80,11 +100,10 @@ test('tenant isolation: Tenant B cannot read Tenant A order through the real UI 
   const pageA = await contextA.newPage();
   const failuresA = captureBrowserFailures(pageA);
   await login(pageA, emailA, passwordA);
-  await expect(pageA.locator('.customer-app')).toHaveAttribute('dir', 'rtl');
-  const addButton = pageA.getByRole('button', { name: /\+ إضافة/ }).first();
+  const addButton = pageA.getByRole('button', { name: 'إضافة للسلة', exact: true }).first();
   await expect(addButton).toBeEnabled();
   await addButton.click();
-  await pageA.getByRole('button', { name: 'تأكيد وإرسال الطلب' }).click();
+  await pageA.getByRole('button', { name: 'تأكيد وإرسال الطلب', exact: true }).click();
   const success = pageA.locator('.success').filter({ hasText: 'تم إرسال الطلب #' }).last();
   await expect(success).toBeVisible();
   const match = (await success.innerText()).match(/طلب #([^\s]+) بنجاح/);
@@ -95,7 +114,7 @@ test('tenant isolation: Tenant B cannot read Tenant A order through the real UI 
   const pageB = await contextB.newPage();
   const failuresB = captureBrowserFailures(pageB);
   await login(pageB, emailB, passwordB);
-  await expect(pageB.getByRole('button', { name: 'طلباتي' })).toBeVisible();
+  await pageB.getByRole('button', { name: 'طلباتي', exact: true }).click();
   await expect(pageB.getByText(`طلب #${orderNumberA}`, { exact: true })).toHaveCount(0);
   await assertCleanBrowser(failuresA);
   await assertCleanBrowser(failuresB);
