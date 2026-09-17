@@ -37,8 +37,12 @@ async function assertCleanBrowser(failures: ReturnType<typeof captureBrowserFail
   const unexpectedResponses = allowedResponse
     ? failures.failedResponses.filter((entry) => !allowedResponse.test(entry))
     : failures.failedResponses;
+  const hasAllowedResponse = allowedResponse ? failures.failedResponses.some((entry) => allowedResponse.test(entry)) : false;
+  const unexpectedConsoleErrors = hasAllowedResponse
+    ? failures.consoleErrors.filter((message) => !/Failed to load resource: the server responded with a status of 400 \(Bad Request\)/.test(message))
+    : failures.consoleErrors;
   expect(failures.pageErrors, `Uncaught browser errors: ${failures.pageErrors.join(' | ')}`).toEqual([]);
-  expect(failures.consoleErrors, `Browser console errors: ${failures.consoleErrors.join(' | ')}`).toEqual([]);
+  expect(unexpectedConsoleErrors, `Browser console errors: ${unexpectedConsoleErrors.join(' | ')}`).toEqual([]);
   expect(unexpectedResponses, `Unexpected HTTP responses >= 400: ${unexpectedResponses.join(' | ')}`).toEqual([]);
 }
 
@@ -57,10 +61,6 @@ test('invalid login is rejected and does not expose the customer portal', async 
   await expect(page.getByRole('button', { name: 'دخول آمن' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'الكتالوج', exact: true })).toHaveCount(0);
   await expect(page.locator('.error-banner')).toBeVisible();
-  const unexpectedConsoleErrors = failures.consoleErrors.filter(
-    (message) => !/Failed to load resource: the server responded with a status of 400 \(Bad Request\)/.test(message)
-  );
-  expect(unexpectedConsoleErrors, 'Unexpected browser console errors: ' + unexpectedConsoleErrors.join(' | ')).toEqual([]);
   await assertCleanBrowser(failures, /^(?:400|401)\s+POST\s+.*\/auth\/v1\/token/);
 });
 
