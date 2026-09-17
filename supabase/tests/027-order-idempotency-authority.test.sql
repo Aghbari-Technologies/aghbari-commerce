@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(8);
+select plan(12);
 
 create temp table fixture as
 select
@@ -47,7 +47,7 @@ select org_id,warehouse_id,product_id,10 from fixture;
 
 set local role authenticated;
 set local request.jwt.claim.role='authenticated';
-set local request.jwt.claim.sub=(select user_a::text from fixture);
+select set_config('request.jwt.claim.sub',(select user_a::text from fixture),true);
 
 create temp table first_order as
 select * from public.create_order(
@@ -59,6 +59,8 @@ select * from public.create_order(
 select is((select count(*) from first_order),1::bigint,'First order creates exactly one canonical result');
 select is((select total from first_order),20::numeric,'First order total is server-authoritative');
 select is((select quantity from public.inventory_balances where organization_id=(select org_id from fixture) and warehouse_id=(select warehouse_id from fixture) and product_id=(select product_id from fixture)),8,'First order decrements inventory exactly once');
+select is((select count(*) from public.order_items oi where oi.organization_id=(select org_id from fixture) and oi.order_id=(select order_id from first_order)),1::bigint,'First order creates exactly one order item');
+select is((select count(*) from public.order_status_history h where h.organization_id=(select org_id from fixture) and h.order_id=(select order_id from first_order)),1::bigint,'First order creates exactly one status history row');
 
 create temp table replay_order as
 select * from public.create_order(
@@ -69,6 +71,8 @@ select * from public.create_order(
 
 select is((select order_id from replay_order),(select order_id from first_order),'Exact replay returns the same canonical order');
 select is((select count(*) from public.orders where organization_id=(select org_id from fixture) and idempotency_key='order-idem-adversarial-001'),1::bigint,'Exact replay creates no duplicate order');
+select is((select count(*) from public.order_items oi where oi.organization_id=(select org_id from fixture) and oi.order_id=(select order_id from first_order)),1::bigint,'Exact replay creates no duplicate order item');
+select is((select quantity from public.inventory_balances where organization_id=(select org_id from fixture) and warehouse_id=(select warehouse_id from fixture) and product_id=(select product_id from fixture)),8,'Exact replay creates zero additional inventory effect');
 select is((select count(*) from public.outbox_events where organization_id=(select org_id from fixture) and event_type='order.created' and aggregate_id=(select order_id from first_order)),1::bigint,'Exact replay creates no duplicate outbox event');
 
 select throws_ok(
@@ -82,7 +86,7 @@ select throws_ok(
   'Same key with different quantity is blocked'
 );
 
-set local request.jwt.claim.sub=(select user_b::text from fixture);
+select set_config('request.jwt.claim.sub',(select user_b::text from fixture),true);
 select throws_ok(
   $$select * from public.create_order(
     'order-idem-adversarial-001',
