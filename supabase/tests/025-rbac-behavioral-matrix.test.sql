@@ -1,6 +1,6 @@
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(32);
+select plan(36);
 
 insert into auth.users(id,email) values
  ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0001','rbac-owner@test.local'),
@@ -34,10 +34,12 @@ insert into public.products(id,organization_id,sku,name,unit,status) values
  ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0130','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0100','RBAC-A-001','RBAC Product A','unit','active'),
  ('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbb0230','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbb0200','RBAC-B-001','RBAC Product B','unit','active');
 insert into public.price_lists(organization_id,tier,name,currency) values
+ ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0100','retail','RBAC Retail A','YER'),
  ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0100','wholesale','RBAC Wholesale A','YER'),
+ ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0100','distributor','RBAC Distributor A','YER'),
  ('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbb0200','wholesale','RBAC Wholesale B','YER');
 insert into public.product_prices(organization_id,price_list_id,product_id,amount,valid_from)
-select organization_id,id,'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0130',100,now() from public.price_lists where organization_id='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0100';
+select organization_id,id,'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0130',100,now() from public.price_lists where organization_id='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0100' and tier='wholesale';
 insert into public.product_prices(organization_id,price_list_id,product_id,amount,valid_from)
 select organization_id,id,'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbb0230',100,now() from public.price_lists where organization_id='bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbb0200';
 insert into public.inventory_balances(organization_id,warehouse_id,product_id,quantity) values
@@ -47,15 +49,30 @@ insert into public.inventory_balances(organization_id,warehouse_id,product_id,qu
 set local role authenticated;
 set local request.jwt.claim.role='authenticated';
 set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0001';
+select is(public.current_role(),'owner'::public.user_role,'owner identity');
+set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0002';
+select is(public.current_role(),'admin'::public.user_role,'admin identity');
+set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0003';
+select is(public.current_role(),'sales'::public.user_role,'sales identity');
+set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0004';
+select is(public.current_role(),'warehouse'::public.user_role,'warehouse identity');
+set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0005';
+select is(public.current_role(),'viewer'::public.user_role,'viewer identity');
+set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0006';
+select is(public.current_role(),'viewer'::public.user_role,'customer identity');
+set local request.jwt.claim.sub='bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbb0001';
+select is(public.current_role(),'admin'::public.user_role,'foreign tenant identity');
+
+set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0001';
 select lives_ok($$select public.set_product_price('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0130','wholesale',101,'YER')$$,'owner price');
 set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0002';
-select lives_ok($$select public.set_product_price('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0130','wholesale',102,'YER')$$,'admin price');
+select lives_ok($$select public.set_product_price('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0130','retail',102,'YER')$$,'admin price');
 set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0003';
-select lives_ok($$select public.set_product_price('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0130','wholesale',103,'YER')$$,'sales price');
+select lives_ok($$select public.set_product_price('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0130','distributor',103,'YER')$$,'sales price');
 set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0005';
 select throws_ok($$select public.set_product_price('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0130','wholesale',104,'YER')$$,'42501',null,'viewer price denied');
 set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0006';
-select throws_ok($$select public.set_product_price('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0130','wholesale',105,'YER')$$,'42501',null,'customer price denied');
+select throws_ok($$select public.set_product_price('aaaaaaaa-aaaa-4aaa-4aaa-8aaa-aaaaaaaa0130','wholesale',105,'YER')$$,'42501',null,'customer price denied');
 
 set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0004';
 select lives_ok($$select public.set_stock_threshold('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0120','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0130',5,6,12)$$,'warehouse threshold');
@@ -67,7 +84,7 @@ select throws_ok($$select public.set_stock_threshold('aaaaaaaa-aaaa-4aaa-8aaa-aa
 set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0001';
 select lives_ok($$select public.create_customer('Owner customer','10001','retail')$$,'owner customer mutation');
 set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0002';
-select lives_ok($$select public.update_customer('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0101','Admin updated','10002','wholesale')$$,'admin customer mutation');
+select lives_ok($$select public.set_customer_tier('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0101','retail')$$,'admin customer mutation');
 set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0004';
 select throws_ok($$select public.create_customer('Warehouse denied','10003','retail')$$,'42501',null,'warehouse customer mutation denied');
 set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0006';
@@ -82,21 +99,16 @@ select throws_ok($$select public.adjust_inventory('aaaaaaaa-aaaa-4aaa-8aaa-aaaaa
 set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0005';
 select throws_ok($$select public.adjust_inventory('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0120','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0130',1,'viewer denied')$$,'42501',null,'viewer inventory denied');
 set local request.jwt.claim.sub='bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbb0001';
-select throws_ok($$select public.adjust_inventory('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0120','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0130',1,'foreign denied')$$,'42501',null,'foreign tenant inventory denied');
+select throws_ok($$select public.adjust_inventory('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0120','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0130',1,'foreign denied')$$,'P0002',null,'foreign tenant inventory denied');
+set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0001';
 select is((select quantity from public.inventory_balances where organization_id='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0100' and warehouse_id='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0120' and product_id='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0130'),22,'denied inventory requests had no side effect');
 
 set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0001';
-select lives_ok($$select public.begin_product_import('owner.xlsx',repeat('1',64),1)$$,'owner import authorization');
+select lives_ok($$select public.stage_product_import('owner.xlsx',repeat('1',64),jsonb_build_array(jsonb_build_object('sku','RBAC-IMP','name','RBAC Import','unit','unit','category','RBAC','quantity',1,'prices',jsonb_build_object('retail',10,'wholesale',9,'distributor',8))))$$,'owner import authorization');
 set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0004';
-select throws_ok($$select public.begin_product_import('warehouse.xlsx',repeat('2',64),1)$$,'42501',null,'warehouse import denied');
+select throws_ok($$select public.stage_product_import('warehouse.xlsx',repeat('2',64),jsonb_build_array(jsonb_build_object('sku','RBAC-W','name','Denied','unit','unit','category','RBAC','quantity',1,'prices',jsonb_build_object('retail',10,'wholesale',9,'distributor',8))))$$,'42501',null,'warehouse import denied');
 set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0005';
-select throws_ok($$select public.begin_product_import('viewer.xlsx',repeat('3',64),1)$$,'42501',null,'viewer import denied');
-
-set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0001';
-select is(public.set_organization_user_role('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0005','sales'),'sales'::public.user_role,'owner role assignment');
-select is(public.set_organization_user_role('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0005','viewer'),'viewer'::public.user_role,'owner restores viewer');
-set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0002';
-select throws_ok($$select public.set_organization_user_role('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0005','viewer')$$,'42501',null,'admin role assignment denied');
+select throws_ok($$select public.stage_product_import('viewer.xlsx',repeat('3',64),jsonb_build_array(jsonb_build_object('sku','RBAC-V','name','Denied','unit','unit','category','RBAC','quantity',1,'prices',jsonb_build_object('retail',10,'wholesale',9,'distributor',8))))$$,'42501',null,'viewer import denied');
 
 set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0001';
 select lives_ok($$insert into public.client_ui_settings(organization_id,config) values ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaa0100','{"showSearch":true}'::jsonb)$$,'owner settings');
