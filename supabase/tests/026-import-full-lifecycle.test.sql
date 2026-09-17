@@ -1,6 +1,6 @@
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(36);
+select plan(40);
 
 insert into auth.users(id,email) values
  ('aaaaaaaa-1111-4111-8111-aaaaaaaa0001','import-owner@test.local'),
@@ -62,9 +62,9 @@ select lives_ok($$select public.begin_product_import('partial.xlsx',repeat('d',6
 select is(public.stage_product_import_chunk((select id from public.import_jobs where source_fingerprint=repeat('d',64)),1,jsonb_build_array(jsonb_build_object('sku','PART-001','name','Partial One','unit','unit','category','Partial','quantity',1,'prices',jsonb_build_object('retail',20,'wholesale',19,'distributor',18)))),1,'partial import receives first chunk');
 select throws_ok($$select public.commit_product_import((select id from public.import_jobs where source_fingerprint=repeat('d',64)),'aaaaaaaa-1111-4111-8111-aaaaaaaa0120')$$,'P0001',null,'partial import cannot commit before finalization');
 select throws_ok($$select public.finalize_product_import((select id from public.import_jobs where source_fingerprint=repeat('d',64)))$$,'P0001',null,'partial import cannot finalize before all rows arrive');
-select is((select id from public.import_jobs where source_fingerprint=repeat('d',64))::text,(select id from public.import_jobs where source_fingerprint=repeat('d',64))::text,'partial import id captured before tenant switch');
+select set_config('test.import_job_d',(select id::text from public.import_jobs where source_fingerprint=repeat('d',64)),true);
 set local request.jwt.claim.sub='bbbbbbbb-2222-4222-8222-bbbbbbbb0001';
-select throws_ok($$select public.stage_product_import_chunk((select '00000000-0000-4000-8000-000000000000'::uuid),2,jsonb_build_array(jsonb_build_object('sku','PART-002','name','Foreign Attempt','unit','unit','category','Partial','quantity',1,'prices',jsonb_build_object('retail',20,'wholesale',19,'distributor',18))))$$,'P0002',null,'foreign tenant cannot stage rows into Tenant A import');
+select throws_ok($$select public.stage_product_import_chunk(current_setting('test.import_job_d')::uuid,2,jsonb_build_array(jsonb_build_object('sku','PART-002','name','Foreign Attempt','unit','unit','category','Partial','quantity',1,'prices',jsonb_build_object('retail',20,'wholesale',19,'distributor',18))))$$,'P0002',null,'foreign tenant cannot stage rows into Tenant A import');
 set local request.jwt.claim.sub='aaaaaaaa-1111-4111-8111-aaaaaaaa0002';
 select is(public.stage_product_import_chunk((select id from public.import_jobs where source_fingerprint=repeat('d',64)),2,jsonb_build_array(jsonb_build_object('sku','PART-002','name','Partial Two','unit','unit','category','Partial','quantity',1,'prices',jsonb_build_object('retail',20,'wholesale',19,'distributor',18)))),1,'authorized retry completes the missing chunk');
 select lives_ok($$select public.finalize_product_import((select id from public.import_jobs where source_fingerprint=repeat('d',64)))$$,'recovered import finalizes after missing chunk arrives');
