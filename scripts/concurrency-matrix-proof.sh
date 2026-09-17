@@ -89,35 +89,35 @@ CART_ROWS2=$("${PSQL[@]}" -tAc "select count(*) from public.cart_items ci join p
 [ "$CART_ROWS2" = "0" ] || [ "$CART_ROWS2" = "1" ] || { echo "FAIL cart update/remove invalid row count: $CART_ROWS2"; exit 1; }
 
 # 3. checkout x checkout: one quantity-6 reservation can succeed against stock 10; no oversell
-"${PSQL[@]}" -c "update public.inventory_balances set quantity=10 where organization_id='$ORG_A' and warehouse_id='$WAREHOUSE' and product_id='$PRODUCT'; delete from public.orders where idempotency_key in ('cm-checkout-a','cm-checkout-b');" >/dev/null
+"${PSQL[@]}" -c "update public.inventory_balances set quantity=10 where organization_id='$ORG_A' and warehouse_id='$WAREHOUSE' and product_id='$PRODUCT'; delete from public.orders where idempotency_key in ('cm-checkout-a-000001','cm-checkout-b-000001');" >/dev/null
 set +e
 ("${PSQL[@]}" >"$tmpdir/co1" 2>&1 <<SQL
-begin; set local role authenticated; select set_config('request.jwt.claim.role','authenticated',true); select set_config('request.jwt.claim.sub','$ADMIN',true); select public.create_order('cm-checkout-a','$WAREHOUSE'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT'::uuid,'quantity',6))); commit;
+begin; set local role authenticated; select set_config('request.jwt.claim.role','authenticated',true); select set_config('request.jwt.claim.sub','$ADMIN',true); select public.create_order('cm-checkout-a-000001','$WAREHOUSE'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT'::uuid,'quantity',6))); commit;
 SQL
 ) & P5=$!
 ("${PSQL[@]}" >"$tmpdir/co2" 2>&1 <<SQL
-begin; set local role authenticated; select set_config('request.jwt.claim.role','authenticated',true); select set_config('request.jwt.claim.sub','$ADMIN',true); select public.create_order('cm-checkout-b','$WAREHOUSE'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT'::uuid,'quantity',6))); commit;
+begin; set local role authenticated; select set_config('request.jwt.claim.role','authenticated',true); select set_config('request.jwt.claim.sub','$ADMIN',true); select public.create_order('cm-checkout-b-000001','$WAREHOUSE'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT'::uuid,'quantity',6))); commit;
 SQL
 ) & P6=$!
 wait "$P5"; RC5=$?; wait "$P6"; RC6=$?; set -e
-ORDERS_CO=$("${PSQL[@]}" -tAc "select count(*) from public.orders where organization_id='$ORG_A' and idempotency_key in ('cm-checkout-a','cm-checkout-b');")
+ORDERS_CO=$("${PSQL[@]}" -tAc "select count(*) from public.orders where organization_id='$ORG_A' and idempotency_key in ('cm-checkout-a-000001','cm-checkout-b-000001');")
 STOCK_CO=$("${PSQL[@]}" -tAc "select quantity from public.inventory_balances where organization_id='$ORG_A' and warehouse_id='$WAREHOUSE' and product_id='$PRODUCT';")
 [ "$ORDERS_CO" = "1" ] || { echo "FAIL checkout oversell/orders=$ORDERS_CO rc=$RC5,$RC6"; cat "$tmpdir/co1" "$tmpdir/co2"; exit 1; }
 [ "$STOCK_CO" = "4" ] || { echo "FAIL checkout stock=$STOCK_CO"; exit 1; }
 
 # 4. same idempotency key x concurrent requests
-"${PSQL[@]}" -c "delete from public.orders where idempotency_key='cm-same-key'; update public.inventory_balances set quantity=10 where organization_id='$ORG_A' and warehouse_id='$WAREHOUSE' and product_id='$PRODUCT';" >/dev/null
+"${PSQL[@]}" -c "delete from public.orders where idempotency_key='cm-same-key-000001'; update public.inventory_balances set quantity=10 where organization_id='$ORG_A' and warehouse_id='$WAREHOUSE' and product_id='$PRODUCT';" >/dev/null
 set +e
 ("${PSQL[@]}" >"$tmpdir/id1" 2>&1 <<SQL
-begin; set local role authenticated; select set_config('request.jwt.claim.role','authenticated',true); select set_config('request.jwt.claim.sub','$ADMIN',true); select public.create_order('cm-same-key','$WAREHOUSE'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT'::uuid,'quantity',6))); commit;
+begin; set local role authenticated; select set_config('request.jwt.claim.role','authenticated',true); select set_config('request.jwt.claim.sub','$ADMIN',true); select public.create_order('cm-same-key-000001','$WAREHOUSE'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT'::uuid,'quantity',6))); commit;
 SQL
 ) & P7=$!
 ("${PSQL[@]}" >"$tmpdir/id2" 2>&1 <<SQL
-begin; set local role authenticated; select set_config('request.jwt.claim.role','authenticated',true); select set_config('request.jwt.claim.sub','$ADMIN',true); select public.create_order('cm-same-key','$WAREHOUSE'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT'::uuid,'quantity',6))); commit;
+begin; set local role authenticated; select set_config('request.jwt.claim.role','authenticated',true); select set_config('request.jwt.claim.sub','$ADMIN',true); select public.create_order('cm-same-key-000001','$WAREHOUSE'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT'::uuid,'quantity',6))); commit;
 SQL
 ) & P8=$!
 wait "$P7"; RC7=$?; wait "$P8"; RC8=$?; set -e
-ORDERS_ID=$("${PSQL[@]}" -tAc "select count(*) from public.orders where organization_id='$ORG_A' and idempotency_key='cm-same-key';")
+ORDERS_ID=$("${PSQL[@]}" -tAc "select count(*) from public.orders where organization_id='$ORG_A' and idempotency_key='cm-same-key-000001';")
 [ "$ORDERS_ID" = "1" ] || { echo "FAIL same-key orders=$ORDERS_ID rc=$RC7,$RC8"; cat "$tmpdir/id1" "$tmpdir/id2"; exit 1; }
 
 # 5. inventory mutation x concurrent requests
