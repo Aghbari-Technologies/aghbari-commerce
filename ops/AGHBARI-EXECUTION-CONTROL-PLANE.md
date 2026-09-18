@@ -54,9 +54,10 @@ The control plane is a living execution system, not a static instruction sheet.
 
 Before doing any work:
 1. Read this Control Plane.
-2. Read PROJECT_MEMORY.md from this same branch.
-3. Read ops/AGHBARI-LATEST-EXECUTION-STATE.md from this same branch.
-4. Verify current GitHub state, current candidate SHA, open/running workflows, relevant Vercel deployment state, and relevant Supabase state.
+2. Read ops/AGHBARI-DEVELOPMENT-PROGRESS.md from this same branch — MANDATORY RESUME CHECKPOINT.
+3. Read PROJECT_MEMORY.md from this same branch.
+4. Read ops/AGHBARI-LATEST-EXECUTION-STATE.md from this same branch.
+5. Verify current GitHub state, current candidate SHA, open/running workflows, relevant Vercel deployment state, and relevant Supabase state.
 5. Reconcile the stored state against reality.
 6. Treat reality as authoritative if the stored state is stale.
 7. Start only from unresolved fronts.
@@ -67,7 +68,8 @@ The user must not be asked to paste an old report when project evidence can be r
 
 Before returning a completion report:
 1. Persist the newest verified state in ops/AGHBARI-LATEST-EXECUTION-STATE.md.
-2. Append a compact execution record with RUN/JOB/SHA/FRONT/RESULT/ROOT CAUSE/ARTIFACT/NEXT ACTION.
+2. Append the run record to ops/AGHBARI-DEVELOPMENT-PROGRESS.md before the user-facing report.
+3. Append a compact execution record with RUN/JOB/SHA/FRONT/RESULT/ROOT CAUSE/ARTIFACT/NEXT ACTION.
 3. Update the Control Plane when the run discovers a new rule, failure mode, tool capability, proof weakness, or safer execution technique.
 4. Reconcile every PASS/FAIL/BLOCKED/OPEN state against exact SHA.
 5. Only then send the user-facing exit report.
@@ -1693,3 +1695,16 @@ PRODUCTION RELEASE: **NO TOUCH / NOT PROMOTED**
 ### Next executable closure gate
 
 Provide the existing Vercel Automation Bypass secret to the repository and provision the admin E2E account credentials; then trigger `browser-e2e-exact.yml` and `runtime-e2e.yml` against the exact deployment URL and exact SHA `2263648fbbbd0d480b37401795ac16c2b5764da6`. After both authenticated browser proofs pass, recheck the complete exact-head gate inventory and only then evaluate production promotion.
+
+## 0E. DURABLE DEVELOPMENT PROGRESS LEDGER — MANDATORY
+
+The file `ops/AGHBARI-DEVELOPMENT-PROGRESS.md` is the durable memory for every non-certifying development execution.
+
+Rules:
+- Command `1` MUST read this ledger before any code inspection or implementation.
+- The top checkpoint is the re-entry point; do not redo work already marked CLOSED/PROVEN unless the exact SHA, dependency, evidence, or environment invalidates it.
+- Every execution MUST append exactly one compact run record before the user-facing report.
+- The record MUST contain at least: START_SHA, END_SHA, branch, fronts worked, implemented items, tests, proven evidence, failures/root causes, blockers, production/certification state, decisions, and NEXT.
+- This ledger is append-only. Never rewrite history to make a failed run look successful.
+- Certification evidence and development progress are separate. Development progress does not certify Production.
+- A new SHA invalidates affected prior evidence; use the ledger to resume work, not to transfer PASS status.
