@@ -983,3 +983,14 @@ When executing from this memory:
 - Validate market-facing features with the same security, evidence and release standards as core features.
 - Keep the certification candidate isolated when broad development is underway.
 - Any source change creates a new evidence subject; never transfer PASS across SHAs.
+
+## 2026-09-18 — Durable development progress ledger
+
+Decision:
+- Introduced `ops/AGHBARI-DEVELOPMENT-PROGRESS.md` as the append-only memory ledger for non-certifying development executions.
+- It records the latest development SHA, branch/PR, implemented work, exact test/proof results, failures/root causes, blockers, decisions, and the next resume queue.
+- Every future execution triggered by command `1` must read this ledger before any code/test action and must resume from its latest checkpoint rather than rediscovering completed work.
+- Every execution must append exactly one compact run record before the user-facing report.
+- Historical PASS is never transferred across SHAs; the ledger is a resume/memory mechanism, not a certification mechanism.
+- Current durable checkpoint: `27ab5c3798c0294a026d2e96050c8eaea15a4234` on `enhancement/market-ready-v4-20260918`, PR #88.
+- Current development work includes Command Center, Smart Reorder, scanner-friendly Quick Order, Arabic order timeline, admin bulk operations, theme/density controls, Offline Recovery Center, catalog pagination, inline quantities, product details, debounced search, timezone consistency, and exact-SHA Netlify verification workflow.
