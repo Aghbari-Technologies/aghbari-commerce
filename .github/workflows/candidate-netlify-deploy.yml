@@ -60,7 +60,7 @@ jobs:
       - name: Require Netlify token
         run: test -n "$NETLIFY_AUTH_TOKEN"
       - name: Deploy exact artifact to Netlify
-        run: npx --yes netlify-cli deploy --dir=dist --site="$NETLIFY_SITE_ID" --auth="$NETLIFY_AUTH_TOKEN" --prod
+        run: npx --yes netlify-cli deploy --dir=dist --site="$NETLIFY_SITE_ID" --auth="$NETLIFY_AUTH_TOKEN" --prod --no-build
       - name: Verify public artifact identity
         run: |
           curl --fail --silent --show-error --location --max-time 30 "$NETLIFY_SITE_URL/build-meta.json" -o deployed-meta.json
