@@ -31,3 +31,8 @@
 - Netlify deploy produced by the successful run is deploy ID `6aad96f8f09963d71ffa10dc`, state `ready`, production URL `https://aghbari-commerce-web.netlify.app`, deploy URL `https://6aad96f8f09963d71ffa10dc--aghbari-commerce-web.netlify.app`.
 - This proves exact-candidate live Netlify deployment plus authenticated Customer/Admin browser E2E for the candidate artifact. It does not by itself replace any separately required canonical/formal runtime certification workflow if such a workflow is still gated elsewhere.
 - Production remains NO TOUCH; the Vercel quota blocker remains external.
+
+## Append-only correction — 2026-09-18 20:02 +03
+
+- Terminology correction: the successful fallback deployment was intentionally published to the Netlify fallback site's production URL `https://aghbari-commerce-web.netlify.app`.
+- The `Production NO TOUCH` restriction in the canonical certification track refers to canonical Vercel Production; no Vercel production promotion or mutation was performed.
