@@ -1037,3 +1037,23 @@ RESULT:
 - Supabase live project remains ACTIVE_HEALTHY and unchanged; no Production SQL was executed.
 ARTIFACTS: PR #83; candidate 9dc6bd3e3bed86bfcbca29ff2538dfd30ebcd218; Vercel project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`; Netlify site `6c515d48-3385-46eb-958c-3ff2ee17e95e`; Firecrawl sessions `01a0b4d4-9744-71cd-b5eb-29a8ae38ec9e`.
 NEXT ACTION: await terminal candidate evidence on `9dc6bd3e3bed86bfcbca29ff2538dfd30ebcd218`; inspect first terminal failures at exact head; execute candidate browser/final regression only after an exact deployment exists. Production remains NO TOUCH.
+
+
+### 2026-09-18 — Command 1 — latest exact-head reconciliation after deep closure
+
+RUN: exact-head PR reconciliation + fresh-DB forensic repair + offline integration audit
+JOB: keep release lineage truthful while closing proven correctness gaps
+CURRENT HEADS:
+- Candidate PR #83: `9dc6bd3e3bed86bfcbca29ff2538dfd30ebcd218`
+- Main: `427ff0801544449f432290205b2a29f2508541f3`
+- PR #84: `0b3e540a90e1e9e0d5992febbf18c4c59561547e`
+- PR #86: `661b797cc195fb5664d304921d5ebf59a3cc2490`
+RESULT:
+- Candidate checkout-policy Fresh-DB failure was traced to a malformed/overlapping payment-method migration chain and repaired at source; the latest candidate commit `9dc6bd3...` only removes stray migration text left by that repair.
+- Candidate exact-head CI for `9dc6bd3...` is currently queued; no result is inferred from predecessor SHAs.
+- PR #84 contains the same payment/catalog corrections on the isolated fix lane; exact-head CI remains queued and it has not been merged.
+- PR #86 contains offline quantity-boundary enforcement plus runtime reconnect synchronization. During adversarial review, a re-entry loop caused by a state-dependent callback was found and repaired using a stable ref guard; regression coverage was added. Exact-head CI remains queued.
+- Import/migration/reporting/RBAC proof suites already exist in main with extensive database tests; they were not needlessly reimplemented.
+- Production remains NO TOUCH.
+- Real browser proof remains valid only for the observed non-candidate deployment SHA and is not transferred to the candidate.
+NEXT ACTION: inspect newly terminal exact-head CI; merge only proven isolated fixes; then create the next single release candidate from the proven main lineage so payment/catalog/offline fixes are all represented by one exact SHA before final certification.
