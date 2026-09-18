@@ -595,3 +595,14 @@ RESULT: live DB is ACTIVE_HEALTHY. Read-only inspection confirmed the target SEC
 ROOT CAUSE: none; verification-only front.
 ARTIFACT: Supabase project `mrcyqezbhpncuvaehwgf`; read-only SQL result captured during Command 1.
 NEXT ACTION: preserve candidate freeze. Remaining certification work is exact-SHA deployment, authenticated deployed-browser proof, and Formal Final Regression execution.
+
+
+### 2026-09-18 — Command 1 — production runtime safety recheck
+RUN: Vercel grouped runtime-error scan, 24h window
+JOB: production safety / side-effect verification
+SHA: production deployment `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`; canonical project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`
+FRONT: Production observability boundary
+RESULT: No runtime errors were found in the selected 24-hour window. This is read-only production evidence; no deployment, alias, migration, or runtime mutation occurred.
+ROOT CAUSE: none observed.
+ARTIFACT: Vercel Runtime Errors scan for canonical project.
+NEXT ACTION: keep Production NO TOUCH; continue only when exact candidate deployment and authenticated regression capabilities become available.
