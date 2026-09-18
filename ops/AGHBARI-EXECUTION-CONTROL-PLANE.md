@@ -33,7 +33,7 @@
 # 0A. AUTHORITATIVE LIVE EXECUTION STATE — 2026-09-18
 
 - CURRENT CANDIDATE: `4d5057d7952e213d6b5328a80f0229f1ff9fb861` on `execution/closure-hammer-20260918b`.
-- MAIN: `29aa5c928deb97a652e78c0f0581ec09d7caa050`; delta from previous `b102ce5…` is documentation-only in `AGHBARI-EXECUTION-START.md`.
+- MAIN: `b29ae9c22c09582774edfcb0e28d692f643dc9dc`; delta from previous `b102ce5…` is documentation-only in `AGHBARI-EXECUTION-START.md`.
 - LIVE/PRODUCTION: `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`.
 - PRODUCTION: NO TOUCH; candidate not promoted and no alias/migration/live mutation performed.
 - CANDIDATE EXACT-SHA GATES: Fresh Local+Storage, Migration, Test-the-Test, Concurrency, Local Production Browser, Quality, Security, G1, Order Workflow, Deployment Contract, Order Invariant, Bootstrap Lockfile = PASS.
@@ -42,7 +42,7 @@
 - LIVE/PRODUCTION DEPLOYMENT: `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5` READY exact `b102ce5…`, target production. Production error/fatal inspection over 24h found none.
 - FINAL REGRESSION: NOT_PROVEN / TOOL BOUNDARY — required workflow dispatch is unavailable.
 - EVIDENCE RECONCILIATION: OPEN for Deployment Browser, Live Alignment, Final Regression, and operational/tooling reconciliation.
-- TOOLING PR #72: head `1830e3a109a9e0605f5306b2ddc8f308457fb375`, draft, isolated.
+- TOOLING PR #72: current head `93552ada8b7cc33e0d1d3960a428566e378ef486`, draft, isolated. Earlier tooling findings recorded on `1830e3a…` are historical and do not transfer to the current PR head.
 - TOOLING #72 exact results: Gitleaks FAIL (61 `generic-api-key` findings across history); Semgrep FAIL (36 findings before/after ZAP hardening remained 36 at latest scan: 33 mutable action refs, 2 Dependabot cooldown warnings, 1 non-literal RegExp); Trivy PASS; security PASS; quality PASS; G1 PASS; CodeQL PASS; CodeQL JS/TS PASS; Vercel Preview Comments PASS; migration-proof FAIL in pgTAP phase.
 - TOOLING CI DEFECTS FIXED: Gitleaks expression/artifact escaping on `15511628…`; ZAP shell-input handling + action pinning on `1830e3a…`.
 - TOOLING MIGRATION FAILURE CLASSIFICATION: NOT CANDIDATE DEFECT. Empty-database migration apply passed, then 31 pgTAP files produced multiple stale/mismatched expectations (e.g. missing RPC, missing inventory_changed, expected search_path metadata false, operational FK index assertions, storage test mismatches). Candidate’s own exact migration proof remains PASS and is separate.
@@ -1091,6 +1091,14 @@ Tooling safety:
 - Normalized stale duplicated current-state sections so historical incidents cannot be mistaken for active fronts.
 
 ---
+### 2026-09-18 — Master autonomous leadership reconciliation
+
+- Main launch router is now `b29ae9c22c09582774edfcb0e28d692f643dc9dc`; documentation-only change, candidate unchanged.
+- PR #72 current head was independently re-read from GitHub as `93552ada8b7cc33e0d1d3960a428566e378ef486`; older 1830e3a findings are historical evidence only.
+- Current tooling PR remains isolated and non-certifying until the current head itself produces reconciled CI evidence.
+
+---
+
 # 24. CONTROL-PLANE EVOLUTION LOG
 
 ## 2026-09-18 — Autonomous Memory Contract
@@ -1142,7 +1150,7 @@ Keep Production NO TOUCH. Continue only on the unresolved external/evidence fron
 
 - **2026-09-18 — Read-only Vercel share-path rule:** A temporary Vercel share URL can safely provide read-only browser/render/build-metadata evidence for a protected candidate without disabling protection or exposing secrets. It may reduce uncertainty around artifact/page health, but it cannot close an authenticated Deployment Browser E2E gate or prove customer/admin workflows.
 
-### 2026-09-18 — Command 1 tooling/security reconciliation
+### 2026-09-18 — Master autonomous leadership reconciliation
 
 - `main` advanced from `b102ce5…` to `29aa5c9…` via a documentation-only commit; candidate `4d5057…` remained frozen and candidate PASS evidence was not invalidated.
 - Proven tooling CI defect fixed on isolated PR #72: escaped GitHub expressions in `.github/workflows/gitleaks-secrets.yml` caused an invalid artifact name and were corrected on tooling SHA `15511628…`; the rerun successfully uploaded SARIF artifact `10530351599`.
