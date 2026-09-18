@@ -1123,3 +1123,31 @@ FINDINGS / FIXES:
 - Production remains NO TOUCH.
 
 NEXT ACTION: inspect terminal results on current exact heads; integrate only fully proven fixes, then create one consolidated candidate from the proven main lineage and re-run the complete exact-SHA certification set.
+
+
+### 2026-09-18 — Command 1 — consolidated certification candidate frozen for CI
+
+CURRENT CANDIDATE: `cdc30836c287312e4b113b24c1d8d5ba038331ff` (PR #83 OPEN, non-draft, base main @ `427ff0801544449f432290205b2a29f2508541f3`).
+
+CONSOLIDATED FIXES IN CANDIDATE:
+- Server-authoritative checkout payment method schema + policy enforcement.
+- Actual customer runtime payment selection passed to create_order.
+- Server-authorized catalog price/currency fallback when no customer tier exists; highest applicable tier resolution and regressions.
+- Notification persistence table + tenant/customer RLS boundary required by create_order.
+- Browser E2E cart cleanup across retries to prevent state contamination.
+- Offline quantity ceiling, reconnect-driven cart synchronization, visible connection/sync state, and re-entry guard.
+- Reporting Gateway browser CORS contract, period-bound idempotency, remote-accepted/local-finalize recovery, and safe unavailable-state messaging.
+- Corresponding unit/source/pgTAP regression coverage.
+
+QUEUE HYGIENE:
+- PR #84, #86, #87 were closed as superseded because their proven fixes were copied into this single candidate. Their head branches remain preserved; evidence remains SHA-scoped and non-transferable.
+
+CURRENT CERTIFICATION STATE:
+- Exact-head CI for `cdc30836...`: 11 required workflows queued; no result inferred yet.
+- Prior G1/Security PASS on `9dc6bd3...` is historical and invalid for current head.
+- No exact candidate Vercel deployment exists; no deployment was manufactured.
+- LIVE production corroboration remains valid only for the actual operational production SHA; no transfer to candidate.
+- Production project `mrcyqezbhpncuvaehwgf` was inspected read-only only. No migrations, Edge Functions, Auth, RLS or data changes applied.
+- No dedicated Commerce staging Supabase project exists in the connected account.
+
+NEXT EXECUTION: inspect terminal gates for exact head `cdc30836...`; repair only concrete failures; once all required exact-head gates are terminal and a matching deployment/browser proof exists, close certification. Do not merge or touch Production before that evidence exists.
