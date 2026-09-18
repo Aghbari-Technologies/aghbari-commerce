@@ -88,6 +88,34 @@ jobs:
           console.log('EXACT DEPLOYED SHA:', meta.git_sha);
           console.log('DEPLOYED VERSION:', meta.version);
           NODE
+      - name: Verify security headers and application shell
+        shell: bash
+        run: |
+          curl --fail --silent --show-error --location --max-time 20 \
+            -H "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET" \
+            -D headers.txt "$E2E_BASE_URL/" -o index.html
+          grep -qi '^content-security-policy:' headers.txt
+          grep -qi '^x-content-type-options:.*nosniff' headers.txt
+          grep -qi '^x-frame-options:.*DENY' headers.txt
+          grep -qi '^strict-transport-security:' headers.txt
+          grep -qi '^referrer-policy:' headers.txt
+          grep -qi '^permissions-policy:' headers.txt
+          grep -qi 'lang="ar"' index.html
+          grep -qi 'dir="rtl"' index.html
+          grep -qi 'بوابة الأغبري' index.html
+          curl --fail --silent --show-error --location --max-time 20 \
+            -H "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET" \
+            "$E2E_BASE_URL/manifest.webmanifest" -o manifest.webmanifest
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const p = JSON.parse(fs.readFileSync('manifest.webmanifest', 'utf8'));
+          if (!p.name || !p.short_name) throw new Error('PWA name contract missing');
+          if (p.lang !== 'ar' || p.dir !== 'rtl') throw new Error('PWA locale/direction mismatch');
+          if (p.start_url !== '/' || p.scope !== '/') throw new Error('PWA scope/start_url mismatch');
+          if (p.display !== 'standalone') throw new Error('PWA display mismatch');
+          if (!Array.isArray(p.icons) || p.icons.length < 2) throw new Error('PWA icons incomplete');
+          console.log('Security headers + app shell + PWA: PASS');
+          NODE
       - name: Require runtime credentials
         shell: bash
         run: |
