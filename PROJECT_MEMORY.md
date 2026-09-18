@@ -832,3 +832,154 @@ When a new requirement is accepted:
 4. Mark superseded requirements rather than silently deleting them.
 5. Reconcile current state and exact-SHA evidence before treating the new requirement as implemented/proven.
 
+
+---
+
+## 25. SINGLE CANONICAL REQUIREMENTS CONSTITUTION — 2026-09-18
+
+### 25.1 Authority
+For product requirements and accepted scope, this PROJECT_MEMORY.md is the single canonical live-memory document.
+The following remain subordinate companion references only:
+- Control Plane: execution procedure/rules.
+- Latest Execution State: current mutable state, blockers, runs and deployment facts.
+- Detailed specification documents: implementation detail and historical/domain references.
+- Evidence files: proof artifacts and compact evidence pointers.
+A conflicting or older requirement in a companion document does not override this section. The memory hub must be updated first when a requirement changes.
+
+### 25.2 Complete product outcome
+The target is a commercially credible, sale-ready Aghbari B2B commerce platform with:
+- Arabic-first RTL UX and strong mobile/desktop/PWA behavior.
+- Customer portal + merchant/admin control plane.
+- Catalog, authorized pricing, cart, checkout/order lifecycle, repeat ordering.
+- Customers, suppliers, purchasing and receiving.
+- Warehouse/inventory ledger with safe concurrent mutations.
+- Operational finance/customer and supplier statements.
+- Excel/legacy onboarding with quarantine/review/atomic commit.
+- Notifications, durable outbox and reliable integrations.
+- Offline bounded workflows and safe reconnect/replay.
+- Role/RBAC + RLS + tenant/branch/warehouse isolation.
+- Report-Advisor handoff without duplicating BI truth in Aghbari.
+- Onyx/WhatsApp/integration-ready boundaries.
+- Auditability, observability, recovery and evidence.
+- Proof-backed portfolio/demo readiness.
+
+### 25.3 Final UI experience contract
+The final experience must feel like a mature operational SaaS rather than a prototype:
+- Original Aghbari visual language.
+- Clear information hierarchy and low cognitive load.
+- Command Center that emphasizes actions, exceptions and work queues rather than decorative analytics.
+- Customer shopping/order experience optimized for repeat B2B work.
+- Admin Control Plane optimized for high-frequency operations.
+- Responsive table/card transformations by device.
+- Strong loading, empty, error, confirmation, validation, retry and offline states.
+- Real keyboard shortcuts and Command Palette where exposed.
+- Barcode-first/scan-friendly warehouse paths where applicable.
+- Saved views, bulk actions and fast search where they materially shorten workflows.
+- Accessibility, focus management and keyboard usability are functional requirements.
+
+### 25.4 Market / freelance-work readiness — platform-neutral
+Aghbari is also maintained as a real engineering portfolio and client-delivery asset, not only as a product.
+The product and its documentation must support credible work opportunities across platforms such as Upwork and comparable freelance/professional marketplaces without relying on unsupported claims.
+Required market-facing capabilities:
+- Demonstrable Supabase/PostgreSQL security, RLS, RBAC and multi-tenant isolation.
+- Demonstrable B2B commerce, order, inventory and purchasing workflows.
+- Demonstrable Arabic/RTL product engineering.
+- Demonstrable existing-codebase rescue/takeover, refactoring and hardening capability.
+- Demonstrable Excel/legacy data migration and onboarding.
+- Demonstrable API/integration, webhook, outbox, retry, idempotency and recovery engineering.
+- Demonstrable CI/CD, deployment, observability and production-readiness discipline.
+- Demonstrable testing quality: unit/integration, contract, pgTAP where applicable, browser E2E and adversarial proof.
+- Clear architecture, decision records and technical documentation.
+- Safe demo/test data and reproducible portfolio artifacts.
+- Honest capability statements that distinguish implemented/tested/verified/proven/production-certified work.
+
+### 25.5 Commercial portfolio requirements
+For every major client-relevant capability, the project should be able to produce:
+CLIENT PROBLEM → AGHBARI WORKFLOW → TECHNICAL SOLUTION → PROOF → OUTCOME/MEASURABLE ACCEPTANCE
+Priority portfolio stories:
+1. Multi-tenant Supabase security/RLS hardening.
+2. B2B order + inventory workflow.
+3. Excel/legacy migration and onboarding.
+4. Arabic/RTL SaaS UX.
+5. Offline/recovery and low-bandwidth resilience.
+6. Integration/outbox/webhook reliability.
+7. Existing-project rescue/takeover and certification.
+8. Production deployment/evidence discipline.
+No portfolio case study may invent client names, revenue, performance numbers, production status, or outcomes.
+
+### 25.6 Proposal / opportunity fit requirements
+For market opportunities, screen against:
+- Technical fit.
+- Product/workflow fit.
+- Security/data-risk fit.
+- Evidence available.
+- First milestone that can be bounded and demonstrated.
+- Required stack compatibility.
+- Deployment/integration feasibility.
+- Commercial scope and cost implications.
+Default commercial flow:
+DISCOVER → SCREEN → FIT-MAP → PROOF-MAP → DIFFERENTIATOR-MAP → COMMERCIAL CHECK → PROPOSAL → FOLLOW-UP → INTERVIEW PREP → CONTRACT REVIEW → DELIVERY → PORTFOLIO UPDATE
+Preferred opportunity structure:
+ONE MARKET LANE + ONE PRIMARY MOAT + ONE PROOF ASSET + ONE MEASURABLE FIRST MILESTONE
+
+### 25.7 Six default market lanes
+1. Supabase Multi-Tenant Security / RLS.
+2. B2B Commerce / Order & Inventory Operations.
+3. Arabic/RTL B2B SaaS.
+4. Production Rescue / Takeover / Hardening of existing web applications.
+5. Data Migration / Excel / Legacy-to-SaaS onboarding.
+6. Integration Reliability / Webhooks / Outbox / Recovery.
+Out-of-lane opportunities remain watch/backlog unless their fit is explicitly stronger and the work can be safely bounded.
+
+### 25.8 Product differentiation requirements
+Do not compete by raw feature-count imitation.
+Preferred defensible value:
+CLIENT PAIN → WORKFLOW DEPTH → TRUST → RELIABILITY → PROOF
+Differentiator candidates, executed only when they fit validated scope:
+- Command Palette.
+- Bulk Action Center.
+- Smart Reorder.
+- Barcode-first operations.
+- Explainable Business State.
+- Conflict Center.
+- Recovery Center.
+- Tenant Onboarding Wizard.
+- Saved Views.
+- Keyboard-first workflow.
+- Sanitized Demo Mode.
+- Capability/evidence cards.
+
+### 25.9 Scope and prioritization
+Use:
+- P0: correctness, security, data integrity.
+- P1: production readiness and core reliability.
+- P2: UX, performance, maintainability and market readiness.
+- P3: optional/future enhancements.
+Market demand can elevate work only through:
+market signal → product-fit gap → bounded backlog item → implementation → exact evidence → portfolio artifact
+Market demand never authorizes:
+- duplicate BI inside Aghbari;
+- insecure shortcuts;
+- tenant-isolation weakening;
+- production bypasses;
+- unsupported marketing claims;
+- uncontrolled feature expansion.
+
+### 25.10 Requirement lifecycle
+Every new accepted requirement is handled as:
+CAPTURE → CLASSIFY → INSERT INTO THIS MEMORY HUB → LINK DETAILED REFERENCE → IMPLEMENT → TEST → PROVE → UPDATE STATUS
+Every changed requirement must record whether it:
+- extends the current requirement;
+- supersedes it;
+- or is rejected/deferred.
+Never silently delete an important requirement.
+
+### 25.11 Developer execution directive
+When executing from this memory:
+- Read this hub before starting implementation.
+- Treat it as the complete product/scope baseline.
+- Choose the smallest technically complete implementation that preserves the product intent.
+- Continue through dependent technical layers rather than stopping at UI/source changes.
+- Validate market-facing features with the same security, evidence and release standards as core features.
+- Keep the certification candidate isolated when broad development is underway.
+- Any source change creates a new evidence subject; never transfer PASS across SHAs.
