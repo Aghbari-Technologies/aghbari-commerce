@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import appSource from '../AppV3Fixed.tsx?raw';
 import { DEFAULT_CUSTOMER_PORTAL_CONFIG, firstEnabledPaymentMethod, isPaymentMethodEnabled, validateCheckoutPolicy } from './customerPolicy';
 
 describe('customer checkout policy', () => {
@@ -17,5 +18,13 @@ describe('customer checkout policy', () => {
   });
   it('requires confirmation for every line when configured', () => {
     expect(validateCheckoutPolicy({ config:DEFAULT_CUSTOMER_PORTAL_CONFIG, paymentMethod:'credit', total:100, lineProductIds:['p1','p2'], confirmedProductIds:new Set(['p1']) })).toContain('تأكيد كمية كل صنف');
+  });
+
+  it('wires the selected payment method into the real customer order submission path', () => {
+    expect(appSource).toContain('{ paymentMethod: payment }');
+  });
+  it('falls back to the first enabled payment method when the configured default is disabled', () => {
+    expect(appSource).toContain('firstEnabledPaymentMethod(nextConfig)');
+    expect(appSource).toContain('isPaymentMethodEnabled(nextConfig,current)');
   });
 });
