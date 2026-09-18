@@ -1,6 +1,6 @@
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(15);
+select plan(16);
 select results_eq($$select public from storage.buckets where id='product-media'$$,$$values (false)$$,'Product media bucket is private');
 select results_eq($$select file_size_limit from storage.buckets where id='product-media'$$,$$values (5242880::bigint)$$,'Product media bucket enforces the 5 MiB server-side limit');
 select results_eq($$select allowed_mime_types from storage.buckets where id='product-media'$$,$$values (array['image/webp']::text[])$$,'Product media bucket accepts only canonical WebP objects');
@@ -12,6 +12,7 @@ insert into public.products(id,organization_id,sku,name,unit,status) values ('aa
 insert into storage.objects(bucket_id,name,owner_id,metadata) values ('product-media','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa21.webp','11111111-1111-4111-8111-111111111111','{"mimetype":"image/webp","size":1024}'::jsonb),('product-media','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbb11/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbb21.webp','22222222-2222-4222-8222-222222222222','{"mimetype":"image/webp","size":1024}'::jsonb),('product-media','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa99/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa29.webp','11111111-1111-4111-8111-111111111111','{"mimetype":"image/webp","size":1024}'::jsonb);
 set local role authenticated;
 set local request.jwt.claim.sub='11111111-1111-4111-8111-111111111111';
+select is(has_table_privilege('authenticated','storage.objects','UPDATE'),false,'Authenticated role has no direct storage UPDATE table privilege');
 select results_eq($$select count(*) from storage.objects where bucket_id='product-media'$$,$$values (1::bigint)$$,'Tenant A can read only its active product media');
 select results_eq($$select count(*) from storage.objects where bucket_id='product-media' and name like 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb/%'$$,$$values (0::bigint)$$,'Tenant A cannot read Tenant B media');
 select lives_ok($$insert into storage.objects(bucket_id,name,owner_id,metadata) values ('product-media','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa31.webp','11111111-1111-4111-8111-111111111111','{"mimetype":"image/webp","size":2048}'::jsonb)$$,'Tenant A staff can create valid media for its own product');
