@@ -40,7 +40,7 @@ jobs:
           echo "$E2E_EXACT_SHA" | grep -Eq '^[0-9a-f]{40}$'
           node -e "const u=new URL(process.env.E2E_BASE_URL); if(u.protocol !== 'https:') throw new Error('E2E_BASE_URL must use HTTPS'); if(u.username || u.password) throw new Error('E2E_BASE_URL must not contain credentials'); console.log('Runtime URL origin:', u.origin)"
       - name: Checkout exact certification SHA
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           ref: ${{ inputs.exact_sha }}
           fetch-depth: 1
@@ -54,7 +54,7 @@ jobs:
           }
           echo "EXACT CERTIFICATION HEAD: $actual"
       - name: Setup Node 22
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: 22
           cache: npm
@@ -76,7 +76,7 @@ jobs:
         run: npm run test:e2e -- --reporter=list
       - name: Upload Playwright evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: aghbari-runtime-e2e-evidence-${{ inputs.exact_sha }}
           path: |

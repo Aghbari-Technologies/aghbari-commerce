@@ -27,7 +27,7 @@ jobs:
       BASE_URL: ${{ inputs.base_url }}
       EXPECTED_SHA: ${{ inputs.exact_sha }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           ref: ${{ inputs.exact_sha }}
           fetch-depth: 1
