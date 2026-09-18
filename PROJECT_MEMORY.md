@@ -155,3 +155,20 @@ Append durable lessons; never convert unresolved assumptions into facts.
 For latest verified SHA, blockers, runs, deployments, tool status, and next queue, read ops/AGHBARI-LATEST-EXECUTION-STATE.md.
 
 For the complete execution constitution, read ops/AGHBARI-EXECUTION-CONTROL-PLANE.md.
+
+## 17. EXECUTION LESSONS — 2026-09-18
+
+### 17.1 Treat remote PR metadata as live truth
+A tooling PR's stored/current-head SHA can drift independently of prior reports. Before accepting any tooling evidence, re-read the PR object and reconcile its actual `head_sha`; historical evidence from another SHA is never current evidence. On 2026-09-18 PR #72 actual head was `1830e3a109a9e0605f5306b2ddc8f308457fb375`, while older state text referenced `93552ada…`.
+
+### 17.2 Self-mutating repair workflows are a release/supply-chain risk
+An obsolete workflow `.github/workflows/repair-excel-build.yml` on `main` had `contents: write`, a push trigger, source mutation logic, and `git push origin HEAD:main`. The intended repairs were already present in product source, so the workflow was removed rather than retained. Removal was committed as `4505bcb655c0b747aeea7e1cc526a94f93270d3d`. Durable rule: automation that can rewrite and push application source to `main` must have a justified lifecycle, narrow authority, explicit review boundary, and must not remain after its repair purpose is obsolete.
+
+### 17.3 Protected deployments remain blocked proof boundaries
+A read-only browser run against candidate preview `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32` redirected both the app and `/build-meta.json` to Vercel SSO. This is evidence of an access boundary, not application failure and not PASS. Do not weaken deployment protection merely to manufacture browser proof.
+
+### 17.4 Vercel source identity must be reconciled before release claims
+The canonical org-linked Vercel project is `aghbari-commerce-c2dd` under `Aghbari-Technologies/aghbari-commerce`. A separate legacy `aghbari-commerce-web4` project is linked to `Report-Engainall/aghbari-commerce`. Treat such project/repository drift as a release/evidence reconciliation item; never assume a READY deployment is the canonical product deployment merely from its name.
+
+### 17.5 Current tooling findings are real proof-system inputs
+On tooling head `1830e3a109a9e0605f5306b2ddc8f308457fb375`, Gitleaks run `35301488345` produced 61 `generic-api-key` findings (artifact `10529832877`), and Semgrep run `35301488324` produced 36 blocking findings (artifact `10530271974`). The Gitleaks findings are concentrated in deterministic test fixtures and proof scripts, so they require classification against source before any allowlist is introduced; they are not automatically safe and are not candidate certification evidence.
