@@ -132,6 +132,8 @@ test('authenticated customer completes real search → catalog → cart → orde
   await expect(page.getByRole('button', { name: 'طلباتي', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'طلباتي', exact: true }).click();
   await expect(page.getByText(`طلب #${orderNumber}`, { exact: true })).toBeVisible();
+  await expect(page.getByRole('status').filter({ hasText: 'قيد المراجعة' }).first()).toBeVisible();
+  await expect(page.locator('.order-progress').first()).toBeVisible();
 
   await page.getByRole('button', { name: 'خروج', exact: true }).last().click();
   await expect(page.getByRole('button', { name: 'دخول آمن', exact: true })).toBeVisible();
