@@ -1474,3 +1474,22 @@ RESULT: candidate remains frozen with 13/13 terminal exact-SHA PASS. Tooling mig
 ROOT CAUSE: deployment quota / approved credential / workflow-dispatch boundaries remain external; tooling pgTAP baseline is not aligned with current main database contracts.
 ARTIFACT: migration-proof job `105527257696`; Vercel project/deployment sweep; candidate combined status; Supabase advisor/migration inventory.
 NEXT ACTION: preserve candidate and Production boundaries; resolve exact-SHA deployment, approved authenticated-browser credential path, and dispatch-capable final regression execution; keep tooling pgTAP remediation isolated.
+
+
+## 2026-09-18 — EVOLUTION: Vercel READY activity must be classified by recorded Git SHA
+
+- A live Vercel reconciliation showed the canonical project can have a newer READY deployment for `ops/execution-control-plane` while the frozen product candidate has no deployment.
+- Durable rule: a READY deployment is evidence only for the exact Git SHA recorded in its deployment metadata. A newer READY deployment on any other branch/ref must not be treated as candidate delivery, runtime proof, or release evidence.
+- Candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b` remains frozen and has zero exact-SHA Vercel deployments in the reconciled canonical deployment set.
+- This execution also reconfirmed PR #74 exact head, candidate 13/13 terminal PASS, and the isolated tooling migration-proof failure. No candidate or Production mutation occurred.
+
+## 2026-09-18 — COMMAND 1 RE-ENTRY RECORD
+
+RUN: `35321683922;35321683893;35321683989;35321683986;35321683999;35321683950;35321683916;35321684096;35321683994;35321683953;35321683815;35321684089;35321683806;35322281510`
+JOB: candidate exact-SHA verification; Vercel deployment reconciliation; tooling pgTAP forensic classification
+SHA: candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b`; tooling `d884f90fcdcb95eeceb47e78d8f36792268f830d`; diagnostic `e62cb960dfb17204074914b4a3dd5a13abcb333f`; main `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
+FRONT: certification closure / deployment artifact integrity / final regression capability / tooling isolation / evidence reconciliation
+RESULT: candidate remains unchanged with all 13 mandatory gates terminal PASS on exact SHA; candidate deployment remains unavailable; Vercel latest READY deployment is operational-documentation only; tooling migration proof remains FAIL in pgTAP after clean migrations; Production remains NO TOUCH.
+ROOT CAUSE: exact candidate deployment is blocked by Vercel build-rate limiting; authenticated Deployment Browser is blocked by missing approved bypass credential; Formal Final Regression is not proven because connected GitHub mutation tooling lacks workflow dispatch; tooling pgTAP is a separate baseline-contract problem and is not candidate evidence.
+ARTIFACT: latest canonical Vercel READY `dpl_F54C7KZc1UDsFbqrJgtgrWbDeLQh` records Git SHA `b967ebc4a7a571684f163534a2c96aa992db2a51`; tooling Migration Proof `35322281510` / job `105527257696`; candidate proof set remains the 13 exact-SHA runs recorded in Latest State.
+NEXT ACTION: keep candidate frozen; do not spend deployment quota while Vercel rate limit is active; resolve approved credential and dispatch paths through owner-controlled tooling; keep tooling diagnostic isolated; perform final evidence reconciliation only when the missing release-layer evidence exists.
