@@ -773,3 +773,22 @@ The full canonical execution protocol remains on:
 - Exact-SHA Deployment Browser run 35298902449 / job 105457162861 is BLOCKED — CREDENTIAL BOUNDARY: it failed at the required VERCEL_AUTOMATION_BYPASS_SECRET check before browser execution. Separate browser-contract proof passed.
 - Vercel preview deployment for 4d5057…: dpl_7QvezhhAMnzarGuxa4csQC94oB7A, READY, exact SHA 4d5057…. Supplemental TinyFish browser inspection passed with no visible runtime/resource errors; this is not GitHub CI PASS.
 - Intermediate e04e83… and b45fc8… proof evidence remains invalidated and must not be transferred to 4d5057…
+
+
+### 2026-09-18 — Final exact proof snapshot for 4d5057
+
+- Fresh Local Browser 35298870968: PASS, including Storage adversarial.
+- Migration Proof 35298870785: PASS.
+- Test-the-Test 35298870801: PASS; five mutation checks passed.
+- Concurrency Proof 35298870837: PASS.
+- Local Production Artifact 35298870832: PASS.
+- Quality 35298870876: PASS.
+- Security 35298871009: PASS.
+- G1 Domain 35298870885: PASS.
+- Order Workflow 35298870822: PASS.
+- Deployment contract 35298870871: PASS.
+- Preview deployment dpl_7QvezhhAMnzarGuxa4csQC94oB7A is READY for exact SHA 4d5057.
+- Deployment browser execution remains blocked by missing Vercel bypass credential; the CI job stops before browser execution.
+- Live production remains on main SHA b102ce5; no production mutation or promotion was performed.
+- Formal final regression and evidence reconciliation are still open.
+- Frozen release candidate ref remains 466857aa; 4d5057 is the proven repair candidate and is not yet promoted.
