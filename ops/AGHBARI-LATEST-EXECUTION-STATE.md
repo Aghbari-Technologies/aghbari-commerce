@@ -1388,3 +1388,15 @@ NEXT: preserve exact candidate; when a connected Netlify upload/build channel wi
 - Candidate `2facceb3...` vs deployed `2263648...` differs only in `.github/workflows/browser-e2e-exact.yml` and `e2e/critical-path.spec.ts`; no product-source file differs. This is useful runtime correlation only and is not exact-SHA deployment evidence.
 - Production remains unchanged / NO TOUCH. Vercel runtime-error scan for the canonical project over the selected 24h window is clean.
 - Certification remains NO until an exact candidate deployment is recorded by Vercel and its authenticated customer + admin browser E2E, plus formal `runtime-e2e.yml`, run on that exact deployment/SHA.
+
+
+## 2026-09-18 — Command 1 — final external deployment fallback sweep
+
+- Exact candidate remains `2facceb39aaa826413f20245a6f20b6c2ff7cd34`; no source commit or candidate SHA mutation.
+- Fresh exact-SHA CI cycle completed with PASS for Local Production Artifact, Customer/Admin browser E2E, Fresh Local Supabase browser E2E, Test-the-Test, expanded concurrency, Security Audit, Application Quality, G1 Domain Proof, Order Workflow Proof, and Supabase Migration Proof.
+- Vercel is definitively at `api-deployments-free-per-day: remaining 0` for the current account scope. Further Vercel API deployment attempts are not productive until the reset window.
+- GitHub Pages fallback was executed. Exact candidate build + artifact upload PASS; deploy failed with GitHub Pages HTTP 404 because Pages is not enabled for the repository. Enabling Pages requires repository administration not available through the current GitHub connector.
+- Netlify fallback was executed through a dedicated exact-candidate GitHub Actions workflow. Exact checkout/build/artifact identity PASSed. Deployment stopped at `Require Netlify token`: `NETLIFY_AUTH_TOKEN` is absent from GitHub Actions secrets. No secret was written into source control.
+- Interactive Netlify setup via browser is blocked by the connected TinyFish wallet balance (insufficient funds). No browser payment or account mutation was attempted.
+- NETLIFY FALLBACK WORKFLOW READY: branch `execution/netlify-probe-2facceb3`, commit `7c4205cd4d06e4a11dff1284596f1df2f0ef9de6`, run `35381203602`. After adding a GitHub Actions secret named `NETLIFY_AUTH_TOKEN`, re-push the same branch/ref or rerun the workflow; it will build exact candidate SHA, deploy to site `6c515d48-3385-46eb-958c-3ff2ee17e95e`, verify public `build-meta.json`, then run Customer and Admin deployed E2E.
+- CERTIFICATION: NO. PRODUCTION: NO TOUCH.
