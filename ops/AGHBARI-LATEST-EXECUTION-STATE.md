@@ -100,6 +100,12 @@
 
 ### 2026-09-18 — Command 1 current record
 
+CURRENT TOOLING HEAD: `ddd00fc142ef60bc99e5fe8ebc63d4c53caaed94`
+TOOLING CI: Gitleaks `35307503455` PASS; Security Audit `35307503508` PASS; G1 `35307503543` PASS; Semgrep `35307503464` PASS; Trivy `35307503456` PASS; Application Quality `35307503487` PASS; CodeQL `35307503481` PASS; Migration Proof `35307503570` FAIL in pgTAP after empty-database migration apply succeeded.
+TOOLING CLASSIFICATION: legacy pgTAP baseline incompatibility; not candidate product defect. Diagnostic candidate-test copy was reverted.
+EVIDENCE: `ops/evidence/20260918-command1-closure-0437.md` commit `e3e106d13e1b5735daaf9dfe1e3743ab4565e233`.
+
+
 RUN: `35300514635; 35301353532; 35301488324; 35301488345`
 JOB: Gitleaks/Semgrep/Migration terminalized on tooling SHA; two workflow defects repaired on isolated tooling SHAs
 SHA: candidate `4d5057…`; tooling `1830e3a…`; main `29aa5…`; production `b102ce5…`
