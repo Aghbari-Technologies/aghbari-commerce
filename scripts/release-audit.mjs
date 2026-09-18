@@ -169,8 +169,8 @@ if (existsSync(manifestPath)) {
 for (const script of ['test', 'lint', 'build', 'test:e2e', 'test:release-audit', 'typecheck']) {
   if (!pkg.scripts?.[script]) fail(`Missing package script: ${script}`);
 }
-if (pkg.engines?.node !== '>=22 <23') {
-  fail('Node runtime contract must remain pinned to >=22 <23.');
+if (pkg.engines?.node !== '>=22 <25') {
+  fail('Node runtime contract must remain compatible with the deployed Vercel Node 24 runtime (>=22 <25).');
 }
 if (pkg.private !== true) fail('Application package must remain private.');
 if (pkg.type !== 'module') fail('Application package must remain ESM.');
