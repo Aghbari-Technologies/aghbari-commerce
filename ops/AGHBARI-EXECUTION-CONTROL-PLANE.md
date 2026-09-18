@@ -32,17 +32,17 @@
 
 # 0A. AUTHORITATIVE LIVE EXECUTION STATE — 2026-09-18 — CURRENT RECONCILIATION
 
-- CURRENT CANDIDATE: `4753cc3319f551aeccbe2bd081b988fa68df8e87` on `execution/closure-hammer-20260918c`; PR #74 open/draft/mergeable.
+- CURRENT CANDIDATE: `64f5283e7b3f893de72dac9ea4d0bf5c3eef4b8d` on `execution/closure-hammer-20260918c`; PR #74 open/draft/mergeable.
 - Proof-integrity correction now applied: candidate advanced to `64f5283e7b3f893de72dac9ea4d0bf5c3eef4b8d` after proven pull_request exact-SHA defects in G1 and Security Audit; Intelligence Contract Proof was corrected in the same focused change.
 - MAIN: `4505bcb655c0b747aeea7e1cc526a94f93270d3d`.
 - LIVE/PRODUCTION: `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`; Production = NO TOUCH; no promotion or mutation.
-- CURRENT CANDIDATE CI: terminal PASS on application-quality, G1, bootstrap-release-lockfile, security-audit, Order Workflow Proof, order-invariant, Supabase Migration Proof, Fresh Local Browser, Test-the-Test, Concurrency, and Local Production Artifact.
-- LOCAL PRODUCTION ARTIFACT PROOF: run `35310025159` / job `105490749871` PASS; exact SHA verified, isolated local Supabase, production build/checksum, customer E2E, admin E2E, cleanup.
+- CURRENT CANDIDATE CI: fresh verification is executing on `64f5283…`; 8 pull_request gates are terminal PASS so far (application-quality, G1, bootstrap-release-lockfile, security-audit, Order Workflow Proof, order-invariant, Intelligence Contract Proof, Browser E2E / Exact Deployment); Supabase Migration Proof, Test-the-Test, Fresh Local Browser, Concurrency, and Local Production Artifact remain RUNNING/PENDING at this checkpoint.
+- LOCAL PRODUCTION ARTIFACT PROOF: prior run on `4753cc…` is historical/invalidated; fresh candidate run `35321399240` is pending on `64f5283…`.
 - CANDIDATE DEPLOYMENT: NOT_AVAILABLE; GitHub Vercel status is FAILURE — "Deployment rate limited — retry in 24 hours"; no candidate-SHA deployment appears in canonical Vercel deployment list.
 - CANDIDATE DEPLOYMENT BROWSER: browser-contract PASS in run `35310024991`; actual browser-e2e SKIPPED because no candidate deployment. Authenticated deployment browser remains BLOCKED because `VERCEL_AUTOMATION_BYPASS_SECRET` is unavailable.
 - FORMAL FINAL REGRESSION: NOT_PROVEN. The candidate repository contains `workflow_dispatch` on 13 of 15 workflows, but the connected GitHub mutation surface exposes no workflow-dispatch execution capability. Prior browser inspection of GitHub Actions was unauthenticated.
 - WORKFLOW SAFETY: CLOSED on current candidate — 15 workflow files audited; 0 `contents: write`; 0 `git push`.
-- FINAL EVIDENCE RECONCILIATION: OPEN.
+NaN
 - CERTIFICATION: NO.
 - TOOLING PR #72: exact head `92fa7bffb8971eecb10d91fe588709da0e06675a`, isolated/non-certifying.
 - PGTAP DIAGNOSTIC PR #73: exact head `cf7db1c376e40c44ed0cec1956c9b59ee8f5d7f0`, isolated diagnostic lane.
