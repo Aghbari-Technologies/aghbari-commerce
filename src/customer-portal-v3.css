@@ -78,3 +78,10 @@
 .notification-item small{display:block;white-space:nowrap}
 .notification-item p{margin:7px 0 0;line-height:1.65}
 .notification-item>span{display:inline-block;margin-top:8px;font-size:12px}
+
+
+.order-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.order-timeline{display:grid;gap:8px;margin-top:12px;padding-right:14px;border-right:2px solid var(--line,#d9dee7)}
+.timeline-item{display:flex;justify-content:space-between;gap:12px;padding:8px 10px;border-radius:10px;background:var(--surface-muted,#f7f8fa)}
+.timeline-item span{font-weight:700}
+.timeline-item small{opacity:.7}
