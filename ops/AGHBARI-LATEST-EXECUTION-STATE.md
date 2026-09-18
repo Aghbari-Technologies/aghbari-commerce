@@ -201,14 +201,29 @@ ARTIFACT: TinyFish run 604c8f4a-19f1-4357-b380-9b2c816937fb; tooling head ffdf0b
 NEXT ACTION: terminalize fresh tooling CI; resolve any remaining Gitleaks findings without broad suppressions; preserve authenticated Deployment Browser and Final Regression as separate release gates.
 
 
-## CURRENT VERIFIED OVERLAY — 2026-09-18
+## CURRENT VERIFIED OVERLAY — 2026-09-18 — RECONCILED 07:26 +03
 
 - Candidate: `4d5057d7952e213d6b5328a80f0229f1ff9fb861` — frozen; no candidate mutation.
-- Main: `4505bcb655c0b747aeea7e1cc526a94f93270d3d` — obsolete self-mutating repair workflow removed.
-- Production: `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497` — untouched; deployment `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5` READY; no inspected runtime errors in 24h.
-- Tooling PR #72 current head: `b9a585aa64058feaff9bd5f65476f52863d2a503`.
-- Tooling exact-head terminal PASS: Gitleaks `35304530215`; Semgrep CE `35304530295`; CodeQL `35304530253`; Trivy `35304530237`; security-audit `35304530280`; application-quality `35304530205`; G1 Domain Proof `35304530524`.
-- Tooling migration-proof: `35304530279` still RUNNING at Start local Supabase; no status assigned until terminal.
-- Read-only candidate browser proof: PASS — TinyFish `604c8f4a-19f1-4357-b380-9b2c816937fb`; exact build SHA confirmed; authenticated E2E remains BLOCKED.
-- Formal Final Regression: NOT_PROVEN because connected GitHub mutation tools still lack workflow dispatch.
-- Release status: NOT CERTIFIED; no promotion.
+- Candidate deployment: `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32` READY, exact candidate SHA; read-only browser proof remains PASS via TinyFish `604c8f4a-19f1-4357-b380-9b2c816937fb`. Authenticated Deployment Browser remains BLOCKED by Vercel SSO/approved credential boundary.
+- Main: `4505bcb655c0b747aeea7e1cc526a94f93270d3d` — obsolete self-mutating repair workflow removed; Production remains untouched.
+- Production: `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`, deployment `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5` READY, target production. No promotion performed.
+- Canonical Vercel project verified: `aghbari-commerce-c2dd` / `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`, linked to `Aghbari-Technologies/aghbari-commerce`.
+- Vercel canonical project latest deployment is tooling PR #72, not the frozen candidate: `dpl_768DDP4S1PC7fr4NsEmSwGXPetct`, exact SHA `0aee3ff711951acba4c9679fda8d7ec5df1db67d`. This is not candidate evidence.
+- Tooling PR #72 actual GitHub head is `bc40f6b04ca974d6f7aed9daf5c581e18ca710d8` (draft, base main). Earlier tooling heads `b9a585aa`, `ffdf0b3e`, `1830e3a`, `93552ada` are historical only.
+- Tooling exact-head CI evidence: `bc40f6b0` currently has no associated PR workflow runs exposed by connected GitHub read surface; therefore prior tooling PASSes are invalid for this new head and are NOT_PROVEN pending fresh terminal runs.
+- Tooling head combined status currently reports Vercel failure with target `upgradeToPro=build-rate-limit`; this is deployment/tooling infrastructure evidence, not candidate product evidence.
+- Supabase production/live project `mrcyqezbhpncuvaehwgf` is ACTIVE_HEALTHY. Migration ledger is present through `20260917032458`. Security advisor currently reports 1 anon-executable SECURITY DEFINER finding for `get_customer_invitation_for_acceptance(p_token text)` and 58 authenticated-executable SECURITY DEFINER findings; these are live database findings and are not being changed because Production = NO TOUCH.
+- Supabase performance advisor reports many unused-index observations; no destructive index changes are authorized by this execution because production mutation is prohibited and the observations require workload evidence before removal.
+- Formal Final Regression: NOT_PROVEN — connected GitHub mutation surface has no workflow-dispatch capability.
+- Final Evidence Reconciliation: OPEN. Certification: NO. Live alignment to candidate: NOT_PROVEN.
+
+### 2026-09-18 — Command 1 autonomous execution reconciliation
+
+RUN: GitHub PR #72 fetch; candidate/tooling commit workflow/status fetch; Vercel project/deployment reconciliation; Supabase migrations/advisors
+JOB: stale-state reconciliation / exact-SHA evidence invalidation / production safety / release closure
+SHA: candidate `4d5057d7952e213d6b5328a80f0229f1ff9fb861`; tooling `bc40f6b04ca974d6f7aed9daf5c581e18ca710d8`; main `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
+FRONT: autonomous control-plane execution / tooling evidence / Vercel identity / Supabase safety / final regression
+RESULT: stale operational references were detected and reclassified; candidate remained frozen; no Production or candidate mutation performed; current tooling head has no fresh workflow evidence exposed and prior tooling PASSes were barred from transfer; canonical Vercel project/deployments reconciled; live Supabase security observations rechecked without mutation.
+ROOT CAUSE: PR #72 advanced after the stored tooling PASS evidence, while the operational memory still named an older tooling SHA; current connected GitHub mutation surface also lacks workflow dispatch.
+ARTIFACT: PR #72 head `bc40f6b04ca974d6f7aed9daf5c581e18ca710d8`; candidate deployment `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32`; production deployment `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5`; canonical project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`.
+NEXT ACTION: obtain fresh terminal tooling runs for `bc40f6b0`, resolve protected authenticated Deployment Browser and Final Regression capability boundaries, then reconcile exact-SHA evidence. Do not promote or mutate Production.
