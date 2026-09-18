@@ -51,7 +51,7 @@
 4. Certification: NO.
 5. Live alignment to candidate: NOT_PROVEN / no promotion.
 6. `repair-excel-build.yml`: CLOSED on both main and tooling branch; removed because it was obsolete and self-mutating with write-to-main authority.
-7. Tooling PR #72: OPEN / NOT_PROVEN. Current head `b9a585aa64058feaff9bd5f65476f52863d2a503`; Gitleaks, Semgrep, CodeQL, Trivy, security-audit, G1, and application-quality are terminal PASS on this exact head; Supabase migration-proof is still RUNNING.
+7. Tooling PR #72: OPEN / NOT_PROVEN. Current head `ddd00fc142ef60bc99e5fe8ebc63d4c53caaed94`; Gitleaks `35307503455`, Semgrep `35307503464`, CodeQL `35307503481`, Trivy `35307503456`, security-audit `35307503508`, G1 `35307503543`, and application-quality `35307503487` are terminal PASS on this exact head. Supabase migration-proof `35307503570` is terminal FAIL in pgTAP after empty-database migration apply succeeded.
 
 ## Connected tooling
 
@@ -59,10 +59,10 @@
 - Vercel: CONNECTED
 - Supabase: CONNECTED
 - Playwright: PRESENT in project, `@playwright/test 1.63.0`
-- Gitleaks: IMPLEMENTED on isolated tooling PR #72; current exact-head CI PASS on `b9a585aa…`
-- CodeQL: IMPLEMENTED on isolated tooling PR #72; current exact-head CI PASS on `b9a585aa…`
-- Semgrep CE: IMPLEMENTED on isolated tooling PR #72; current exact-head CI PASS on `b9a585aa…`
-- Trivy: IMPLEMENTED on isolated tooling PR #72; current exact-head CI PASS on `b9a585aa…`
+- Gitleaks: IMPLEMENTED on isolated tooling PR #72; exact-head CI PASS on `ddd00fc1…`
+- CodeQL: IMPLEMENTED on isolated tooling PR #72; exact-head CI PASS on `ddd00fc1…`
+- Semgrep CE: IMPLEMENTED on isolated tooling PR #72; exact-head CI PASS on `ddd00fc1…`
+- Trivy: IMPLEMENTED on isolated tooling PR #72; exact-head CI PASS on `ddd00fc1…`
 - OWASP ZAP: IMPLEMENTED as manual-only baseline on isolated tooling PR #72; verification pending
 - Dependabot: IMPLEMENTED on isolated tooling PR #72
 - OpenSSF Scorecard: IMPLEMENTED on isolated tooling PR #72; verification pending
@@ -93,9 +93,10 @@
 
 - Candidate SHA remained `4d5057d7952e213d6b5328a80f0229f1ff9fb861`.
 - No candidate SHA change.
+- Tooling head at round close: `ddd00fc142ef60bc99e5fe8ebc63d4c53caaed94`.
 - Candidate exact-SHA gates remain PASS and untouched.
 - Main is now `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; production remains `b102ce5…`.
-- Tooling PR #72 remains isolated; actual current head is `b9a585aa64058feaff9bd5f65476f52863d2a503`. Prior `93552ada…` and `1830e3a…` references are historical only.
+- Tooling PR #72 remains isolated; actual current head is `ddd00fc142ef60bc99e5fe8ebc63d4c53caaed94`. Prior tooling heads are historical only.
 - Deployment Browser remains BLOCKED; Final Regression remains NOT_PROVEN; Production remains untouched.
 
 ### 2026-09-18 — Command 1 current record
