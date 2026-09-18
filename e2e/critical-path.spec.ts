@@ -22,6 +22,7 @@ async function login(page: Page, email: string, password: string) {
   await expect(portal).toBeVisible();
   await expect(page.getByRole('button', { name: /السلة/ })).toBeVisible();
   await clearCustomerCart(page);
+  await expect(page.getByRole('button', { name: /السلة/ })).toContainText('0');
 }
 
 
