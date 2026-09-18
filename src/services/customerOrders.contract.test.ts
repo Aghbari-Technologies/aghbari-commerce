@@ -7,6 +7,7 @@ const validOrder = {
   status: 'pending',
   total: 1250,
   currency: 'YER',
+  payment_method: 'cash',
   created_at: '2026-09-06T12:00:00.000Z'
 };
 
@@ -27,6 +28,7 @@ describe('customer order response contracts', () => {
     expect(() => assertCustomerOrderSummary({ ...validOrder, total: -1 })).toThrow();
     expect(() => assertCustomerOrderSummary({ ...validOrder, total: NaN })).toThrow();
     expect(() => assertCustomerOrderSummary({ ...validOrder, currency: 'yer' })).toThrow();
+    expect(() => assertCustomerOrderSummary({ ...validOrder, payment_method: 'bitcoin' })).toThrow();
     expect(() => assertCustomerOrderSummary({ ...validOrder, created_at: 'not-a-date' })).toThrow();
   });
 
