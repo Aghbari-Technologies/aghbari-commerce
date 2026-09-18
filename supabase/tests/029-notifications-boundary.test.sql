@@ -10,7 +10,8 @@ set local request.jwt.claim.sub='41414141-4141-4141-8141-414141414141';
 select lives_ok($$select id from public.notifications limit 1$$,'Notification table is queryable inside the contract');
 select is((select count(*) from public.notifications),0::bigint,'Customer starts with no notifications');
 select throws_ok($$insert into public.notifications(organization_id,customer_id,kind,title,body) values ('43434343-4343-4343-8343-434343434343','45454545-4545-4545-8545-454545454545','test','Direct write','blocked')$$,'42501',null,'Customer direct notification writes are blocked');
-select is((insert into public.notifications(organization_id,customer_id,kind,title,body) values ('43434343-4343-4343-8343-434343434343','45454545-4545-4545-8545-454545454545','test','Fixture','Tenant A') returning 1),1,'Fixture insert is observable under transactional owner test context');
+insert into public.notifications(organization_id,customer_id,kind,title,body)
+values ('43434343-4343-4343-8343-434343434343','45454545-4545-4545-8545-454545454545','test','Fixture','Tenant A');
 select is((select count(*) from public.notifications),1::bigint,'Tenant A reads its notification');
 set_config('request.jwt.claim.sub','42424242-4242-4242-8242-424242424242',true);
 select is((select count(*) from public.notifications),0::bigint,'Tenant B cannot read Tenant A notifications');
