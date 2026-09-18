@@ -83,7 +83,7 @@ select throws_ok(
 );
 
 select throws_ok(
-  format('select public.create_order(%L, %L, %L)', 'cross-tenant-order-0010', (select warehouse_b from fixture), jsonb_build_array(jsonb_build_object('product_id', (select product_b from fixture), 'quantity', 1)),'credit'),
+  format('select public.create_order(%L, %L, %L, %L)', 'cross-tenant-order-0010', (select warehouse_b from fixture), jsonb_build_array(jsonb_build_object('product_id', (select product_b from fixture), 'quantity', 1)), 'credit'),
   '42501',
   'warehouse not available',
   'Tenant A cannot create order against Tenant B warehouse'
