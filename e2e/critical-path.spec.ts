@@ -175,3 +175,32 @@ test('tenant isolation: Tenant B cannot read Tenant A order through the real UI 
   await contextB.close();
   await contextA.close();
 });
+
+
+test('command center supports keyboard-first navigation and fast search', async ({ page }) => {
+  const email = process.env.E2E_EMAIL;
+  const password = process.env.E2E_PASSWORD;
+  if (!email || !password) throw new Error('E2E_EMAIL and E2E_PASSWORD are required for command-center runtime proof.');
+
+  const failures = captureBrowserFailures(page);
+  await login(page, email, password);
+  await page.keyboard.press('Control+k');
+
+  const palette = page.getByRole('dialog', { name: 'أوامر الأغبري' });
+  await expect(palette).toBeVisible();
+  await expect(palette.getByRole('menuitem', { name: /فتح الكتالوج/ })).toBeVisible();
+  await expect(palette.getByRole('menuitem', { name: /الطلب السريع/ })).toBeVisible();
+
+  const commandSearch = palette.getByRole('textbox', { name: 'البحث في الأوامر' });
+  await expect(commandSearch).toBeFocused();
+  await commandSearch.fill('إعادة');
+  await expect(palette.getByRole('menuitem', { name: /إعادة تجهيز آخر طلب/ })).toBeVisible();
+  await expect(palette.getByRole('menuitem', { name: /فتح الكتالوج/ })).toHaveCount(0);
+
+  await page.keyboard.press('Escape');
+  await expect(palette).toHaveCount(0);
+
+  await page.keyboard.press('/');
+  await expect(page.getByRole('textbox', { name: 'البحث في الكتالوج' })).toBeFocused();
+  await assertCleanBrowser(failures);
+});

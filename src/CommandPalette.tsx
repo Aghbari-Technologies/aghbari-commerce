@@ -1,3 +1,4 @@
+import { filterCommandActions } from './domain/commandPalette';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 
 export type CommandPaletteAction = {
@@ -47,16 +48,7 @@ export default function CommandPalette({
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [open, onClose]);
 
-  const filtered = useMemo(() => {
-    const normalized = query.trim().toLocaleLowerCase('ar');
-    if (!normalized) return actions;
-    return actions.filter((action) =>
-      [action.label, action.hint ?? '', ...(action.keywords ?? [])]
-        .join(' ')
-        .toLocaleLowerCase('ar')
-        .includes(normalized),
-    );
-  }, [actions, query]);
+  const filtered = useMemo(() => filterCommandActions(actions, query), [actions, query]);
 
   if (!open) return null;
 
