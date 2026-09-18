@@ -4,8 +4,8 @@
 
 ## Truth Reset
 - Starting SHA ordered by this Owner-Level sprint: `0f28a8df8ce6efa8f4ee9569c36aa0d696d0386c`.
-- Current exact implementation HEAD: `767579168cfd3e687c1274bfa8eace879a288ebd`.
-- Single certification candidate: `767579168cfd3e687c1274bfa8eace879a288ebd`.
+- Current exact implementation HEAD: `4753cc3319f551aeccbe2bd081b988fa68df8e87`.
+- Single certification candidate: `4753cc3319f551aeccbe2bd081b988fa68df8e87`.
 - No evidence from an earlier SHA transfers to this candidate.
 - Scope: **Aghbari Commerce only**.
 
@@ -58,3 +58,13 @@
 `IMPLEMENTED != VERIFIED != PROVEN != CERTIFIED`
 
 Only evidence produced against the exact certification candidate SHA may advance this index toward certification.
+
+
+## Latest Exact-Head Reconciliation — 2026-09-18
+- Candidate: `4753cc3319f551aeccbe2bd081b988fa68df8e87` on `execution/closure-hammer-20260918c`, PR #74.
+- Terminal exact-SHA verification is PASS across the current candidate gates, including application quality, G1, migration proof, security, order contracts, concurrency, Test-the-Test, Fresh Local Supabase Browser E2E, and Local Production Artifact Browser E2E.
+- Exact Deployment contract `35310024991`: PASS; browser child is SKIPPED because no deployment exists for the exact candidate SHA.
+- Canonical Vercel project `aghbari-commerce-c2dd` (`prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`) is linked to `Aghbari-Technologies/aghbari-commerce`; latest observed READY deployments are on different SHAs.
+- `Runtime E2E Certification` is dispatchable in source as `.github/workflows/runtime-e2e.yml`, requiring `base_url` and `exact_sha`; browser dispatch is blocked by authentication in the connected session.
+- `Production Smoke / Exact Artifact` is verification-only; no Vercel deployment workflow exists in the repository.
+- Certification remains NOT PROVEN. Production remains NO TOUCH.
