@@ -308,3 +308,15 @@ RESULT: no current-SHA deployment exists. Canonical Vercel project `aghbari-comm
 ROOT CAUSE: deployment creation remains outside the connected Vercel mutation surface; authenticated GitHub dispatch remains unavailable in the connected browser/session. Do not substitute an older deployment URL for the current candidate.
 ARTIFACT: Runtime E2E workflow `.github/workflows/runtime-e2e.yml`; Production Smoke `.github/workflows/production-smoke.yml`; Vercel project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`.
 NEXT ACTION: preserve candidate; retry Vercel only when a supported authenticated deployment path/rate-limit window permits exact-SHA preview deployment. Then dispatch Runtime E2E with the exact candidate SHA and matching deployment URL. Production remains NO TOUCH.
+
+
+### 2026-09-18 — Command 1 — runtime E2E and deployment limit re-audit
+
+RUN: Vercel deploy mutation attempt; TinyFish `2a97fd56-f439-4f43-9079-c4d741a6b794`; GitHub artifact/log inspection
+JOB: exact candidate deployment / authenticated runtime E2E / browser evidence reconciliation
+SHA: candidate `4753cc3319f551aeccbe2bd081b988fa68df8e87`
+FRONT: deployment / authenticated runtime / E2E evidence completeness
+RESULT: direct Vercel deployment attempt reached the API but failed closed with HTTP 402 `api-deployments-free-per-day` (100 deployments/day exhausted; Vercel returned a reset timestamp). Canonical project still has no deployment for the candidate SHA. Exact candidate Local Production Artifact job `105490749871` is proven to have run 3 customer tests + 1 admin test successfully. The uploaded HTML report is from the last admin command and therefore is not sufficient alone to represent the customer suite; job logs provide the authoritative 3+1 execution evidence. Repository inspection confirms `runtime-e2e.yml` is dispatchable in source, but there are no Runtime E2E Certification runs on candidate SHA `4753cc3…`; all recorded runs are on earlier SHAs. The candidate's only current external failing status is Vercel deployment rate-limit.
+ROOT CAUSE: Vercel free deployment quota is exhausted; authenticated GitHub workflow dispatch is unavailable in the connected browser/session; therefore authenticated deployed runtime has not executed on the candidate.
+ARTIFACT: Local browser artifact `10532997772`; Local browser run `35310025159`; job `105490749871`; Runtime E2E workflow source `.github/workflows/runtime-e2e.yml`; Vercel canonical project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`.
+NEXT ACTION: preserve candidate. At the next available deployment window, create a preview for exact SHA `4753cc3…`, then dispatch `runtime-e2e.yml` with that exact SHA and the matching HTTPS deployment URL; after terminal result, run exact artifact smoke and reconcile R0-R7. Production remains NO TOUCH.
