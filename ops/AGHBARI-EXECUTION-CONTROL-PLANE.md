@@ -1227,3 +1227,17 @@ NEXT ACTION: continue exact-SHA tooling remediation/verification and protected D
 - Tested the tempting remediation of copying candidate tests into tooling, identified that the candidate also contains later product migrations absent from the tooling baseline, and reverted the diagnostic changes to preserve tooling isolation.
 - Durable rule: never import candidate product migrations or candidate-specific test contracts into an isolated tooling baseline merely to make a tooling gate green.
 - Fresh exact-head evidence is now admitted only for the seven successful tooling runs above; migration proof remains FAIL until its baseline is intentionally reconciled.
+
+
+### 2026-09-18 — Command 1 closure reconciliation — tooling / pgTAP / browser
+
+- PR #72 was rebuilt from main and is isolated at exact head `92fa7bffb8971eecb10d91fe588709da0e06675a`; 11 terminal CI gates PASS.
+- Supabase Migration Proof `35308340466` remains FAIL only in pgTAP after empty-DB migration application PASS. No candidate migration/test was imported to make this tooling gate green.
+- Diagnostic PR #73 at `cf7db1c376e40c44ed0cec1956c9b59ee8f5d7f0` repaired baseline test-harness defects and left 12 real product/schema contract failures across five test files: storage boundary, receipt outbox, expense cash balance, transfer search_path, and remaining SECURITY DEFINER search_paths.
+- Live Supabase migration history independently corroborates that Production already contains corresponding hardening migrations; this is observation-only and Production remained untouched.
+- Fresh TinyFish candidate browser proof `683148ee-b515-4e81-a2cb-ff4fa4a07ca0` passed read-only page/brand/RTL checks with no visible errors. It does not substitute for authenticated E2E.
+- Authenticated Deployment Browser remains BLOCKED by the missing `VERCEL_AUTOMATION_BYPASS_SECRET` credential boundary. Formal Final Regression remains NOT_PROVEN because workflow dispatch is unavailable.
+- Candidate `4d5057d7952e213d6b5328a80f0229f1ff9fb861` remains frozen. Production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497` remains NO TOUCH.
+
+NEXT ACTION:
+Keep tooling isolated; use PR #73 as the clean baseline diagnosis. The candidate remains the certification subject. Do not weaken gates or touch Production. Continue with the authenticated browser credential path and formal final-regression capability; only product changes on a new candidate may consume the five identified main-branch contract gaps.
