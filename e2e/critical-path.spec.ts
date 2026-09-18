@@ -61,7 +61,7 @@ async function assertCleanBrowser(failures: ReturnType<typeof captureBrowserFail
     : failures.failedResponses;
   const hasAllowedResponse = allowedResponse ? failures.failedResponses.some((entry) => allowedResponse.test(entry)) : false;
   const unexpectedConsoleErrors = hasAllowedResponse
-    ? failures.consoleErrors.filter((message) => !/Failed to load resource: the server responded with a status of 400 \(Bad Request\)/.test(message))
+    ? failures.consoleErrors.filter((message) => !/^Failed to load resource: the server responded with a status of 400 \((?:Bad Request)?\)$/.test(message))
     : failures.consoleErrors;
   expect(failures.pageErrors, `Uncaught browser errors: ${failures.pageErrors.join(' | ')}`).toEqual([]);
   expect(unexpectedConsoleErrors, `Browser console errors: ${unexpectedConsoleErrors.join(' | ')}`).toEqual([]);
