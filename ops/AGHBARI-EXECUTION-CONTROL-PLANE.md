@@ -1582,3 +1582,14 @@ RESULT: candidate PR #74 remains OPEN/DRAFT/MERGEABLE with 13/13 terminal exact-
 ROOT CAUSE: candidate exact deployment remains unresolved; authenticated deployed-browser credential and workflow-dispatch execution remain unavailable. The repository contains no workflow_dispatch execution run for the candidate.
 ARTIFACT: candidate status; 33-run exact-head inventory; Vercel Production `dpl_AmTBr8X9qBGCLdngxirQgdRM4Xjo`; GitHub compare `4505bcb655c0b747aeea7e1cc526a94f93270d3d...${newMainSha}` and `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497...${newProdSha}`; 24h Vercel runtime-error scan.
 NEXT ACTION: keep candidate `5b9f2a...` frozen. Do not manufacture a deployment or new SHA. Resume through an approved exact-SHA Git-linked deployment path; then run authenticated Deployment Browser and Formal Final Regression on the exact candidate SHA. Production remains NO TOUCH.
+
+
+## 2026-09-18 — Control Plane Evolution: UI proof and business-timezone rules
+
+Observed improvement requirements from Command 1:
+1. Business dashboards must define their reporting timezone explicitly; runtime/CI locale is not a valid implicit source of business-day semantics.
+2. UI authorization must be fail-closed visually as well as server-side: role-inaccessible destinations must not appear as actionable navigation or quick actions.
+3. Critical dashboard calculations should be extracted from component effects into pure, testable domain helpers so a green UI build does not hide arithmetic/timezone defects.
+4. Provider-neutral deployment preparation is valid scope when it reduces an external deployment bottleneck, but deployment existence remains a separate evidence layer from source configuration.
+
+These rules were applied immediately on non-certifying PR #81; no certification candidate or Production mutation occurred.
