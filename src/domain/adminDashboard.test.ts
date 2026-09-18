@@ -30,6 +30,14 @@ describe('dashboard sales metrics', () => {
     expect(DASHBOARD_TIME_ZONE).toBe('Asia/Aden');
   });
 
+  it('keeps the seven-day total aligned with the seven displayed calendar days', () => {
+    expect(calculateSevenDaySales([
+      row('2026-09-12T01:00:00+03:00', 15),
+      row('2026-09-11T23:59:59+03:00', 90),
+      row('2026-09-18T13:00:00+03:00', 60),
+    ], now)).toBe(15);
+  });
+
   it('returns exactly seven local calendar days in ascending order', () => {
     const days = buildSevenDaySales([], now);
     expect(days).toHaveLength(7);
