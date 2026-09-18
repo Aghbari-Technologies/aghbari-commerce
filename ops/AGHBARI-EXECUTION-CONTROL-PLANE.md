@@ -1493,3 +1493,12 @@ RESULT: candidate remains unchanged with all 13 mandatory gates terminal PASS on
 ROOT CAUSE: exact candidate deployment is blocked by Vercel build-rate limiting; authenticated Deployment Browser is blocked by missing approved bypass credential; Formal Final Regression is not proven because connected GitHub mutation tooling lacks workflow dispatch; tooling pgTAP is a separate baseline-contract problem and is not candidate evidence.
 ARTIFACT: latest canonical Vercel READY `dpl_F54C7KZc1UDsFbqrJgtgrWbDeLQh` records Git SHA `b967ebc4a7a571684f163534a2c96aa992db2a51`; tooling Migration Proof `35322281510` / job `105527257696`; candidate proof set remains the 13 exact-SHA runs recorded in Latest State.
 NEXT ACTION: keep candidate frozen; do not spend deployment quota while Vercel rate limit is active; resolve approved credential and dispatch paths through owner-controlled tooling; keep tooling diagnostic isolated; perform final evidence reconciliation only when the missing release-layer evidence exists.
+
+
+## 2026-09-18 — Protocol Improvement: Vercel Status vs Exact Deployment Identity
+
+- A GitHub commit status named `Vercel` with state `failure` must not be interpreted as proof that the Vercel project cannot deploy at all. Current observation: READY deployments are being created for `ops/*` commits while the candidate SHA has zero matching deployments.
+- Release evidence must therefore use the Vercel deployment object's exact Git SHA (and, where applicable, deployed `build-meta.json`) as the deployment-identity authority. A generic GitHub Vercel status remains an integration/platform signal and may explain a blocker, but it is not a substitute for exact deployment identity.
+- Do not satisfy a deployment connector that requires `files[]` by uploading an incomplete project merely to bypass a Git-source limitation. An incomplete deployment is invalid evidence and can create a misleading READY/ERROR artifact.
+- A GitHub Actions browser artifact is not assumed deployable unless the complete required `dist/` tree is present. Artifact `10537173227` was explicitly inspected and classified as evidence-only because it contains build metadata/hash/preview log and Playwright evidence, not the complete build output.
+- Creating a no-code branch at the frozen candidate SHA is an allowed alternate-path probe only when it cannot change the candidate commit; absence of a resulting deployment must be recorded, and the branch must never be mistaken for candidate deployment evidence.
