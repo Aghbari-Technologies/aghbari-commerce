@@ -1647,3 +1647,12 @@ Observed a second consolidation defect: `offlineQueue.ts` referenced the canonic
 Durable rule: every consolidated module must be checked for imported ownership of shared constants/helpers, not merely for textual references. Prefer compiler/typecheck evidence over string-presence assertions for symbol integrity.
 
 Applied on candidate `8479c16e...`; no production mutation.
+
+
+## EVOLUTION — 2026-09-18 — Secure compatibility for overloaded RPCs
+
+Read-only production inspection exposed a legacy overloaded `create_order(text,uuid,jsonb)` RPC still executable by authenticated clients alongside the authoritative 4-argument version.
+
+Durable rule: when a security-sensitive RPC contract gains a new authoritative overload, audit existing overloads in the live schema. Prefer revoking client-role execution from legacy overloads over destructive removal when dependency risk is unknown. Add an exact proof that client roles cannot execute the legacy signature and can execute only the authoritative signature.
+
+Applied to candidate `e3eafd7582f4d8ce26c94e90d073c98c5e7284b7`; no production mutation.
