@@ -92,11 +92,11 @@ CART_ROWS2=$("${PSQL[@]}" -tAc "select count(*) from public.cart_items ci join p
 "${PSQL[@]}" -c "update public.inventory_balances set quantity=10 where organization_id='$ORG_A' and warehouse_id='$WAREHOUSE' and product_id='$PRODUCT'; delete from public.orders where idempotency_key in ('cm-checkout-a-000001','cm-checkout-b-000001');" >/dev/null
 set +e
 ("${PSQL[@]}" >"$tmpdir/co1" 2>&1 <<SQL
-begin; set local role authenticated; select set_config('request.jwt.claim.role','authenticated',true); select set_config('request.jwt.claim.sub','$ADMIN',true); select public.create_order('cm-checkout-a-000001','$WAREHOUSE'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT'::uuid,'quantity',6))); commit;
+begin; set local role authenticated; select set_config('request.jwt.claim.role','authenticated',true); select set_config('request.jwt.claim.sub','$ADMIN',true); select public.create_order('cm-checkout-a-000001','$WAREHOUSE'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT'::uuid,'quantity',6)),'credit'); commit;
 SQL
 ) & P5=$!
 ("${PSQL[@]}" >"$tmpdir/co2" 2>&1 <<SQL
-begin; set local role authenticated; select set_config('request.jwt.claim.role','authenticated',true); select set_config('request.jwt.claim.sub','$ADMIN',true); select public.create_order('cm-checkout-b-000001','$WAREHOUSE'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT'::uuid,'quantity',6))); commit;
+begin; set local role authenticated; select set_config('request.jwt.claim.role','authenticated',true); select set_config('request.jwt.claim.sub','$ADMIN',true); select public.create_order('cm-checkout-b-000001','$WAREHOUSE'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT'::uuid,'quantity',6)),'credit'); commit;
 SQL
 ) & P6=$!
 wait "$P5"; RC5=$?; wait "$P6"; RC6=$?; set -e
@@ -109,11 +109,11 @@ STOCK_CO=$("${PSQL[@]}" -tAc "select quantity from public.inventory_balances whe
 "${PSQL[@]}" -c "delete from public.orders where idempotency_key='cm-same-key-000001'; update public.inventory_balances set quantity=10 where organization_id='$ORG_A' and warehouse_id='$WAREHOUSE' and product_id='$PRODUCT';" >/dev/null
 set +e
 ("${PSQL[@]}" >"$tmpdir/id1" 2>&1 <<SQL
-begin; set local role authenticated; select set_config('request.jwt.claim.role','authenticated',true); select set_config('request.jwt.claim.sub','$ADMIN',true); select public.create_order('cm-same-key-000001','$WAREHOUSE'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT'::uuid,'quantity',6))); commit;
+begin; set local role authenticated; select set_config('request.jwt.claim.role','authenticated',true); select set_config('request.jwt.claim.sub','$ADMIN',true); select public.create_order('cm-same-key-000001','$WAREHOUSE'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT'::uuid,'quantity',6)),'credit'); commit;
 SQL
 ) & P7=$!
 ("${PSQL[@]}" >"$tmpdir/id2" 2>&1 <<SQL
-begin; set local role authenticated; select set_config('request.jwt.claim.role','authenticated',true); select set_config('request.jwt.claim.sub','$ADMIN',true); select public.create_order('cm-same-key-000001','$WAREHOUSE'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT'::uuid,'quantity',6))); commit;
+begin; set local role authenticated; select set_config('request.jwt.claim.role','authenticated',true); select set_config('request.jwt.claim.sub','$ADMIN',true); select public.create_order('cm-same-key-000001','$WAREHOUSE'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT'::uuid,'quantity',6)),'credit'); commit;
 SQL
 ) & P8=$!
 wait "$P7"; RC7=$?; wait "$P8"; RC8=$?; set -e
