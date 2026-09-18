@@ -1734,3 +1734,16 @@ Durable rule:
 - Continue repository, CI, deployment, and documentation reconciliation through available native/read-only paths while the boundary remains blocked.
 
 No candidate or Production mutation occurred.
+
+
+## CONTROL-PLANE EVOLUTION — 2026-09-19 — Production identity reconciliation — Netlify primary
+
+Read-only Netlify verification established that project `aghbari-commerce-web` currently reports deploy `6aadaea0475017968f71cfda` as the READY current deployment for the primary site. Netlify records `context=production`, and the public build metadata reports exact development SHA `cb2707b8005ac8237b06a7c89cc9bcf68dc50061`.
+
+Durable rule:
+- Deployment environment labels must be reconciled from the hosting provider's current-deploy identity, not from historical narrative.
+- A development SHA serving the primary production site is a release-safety state mismatch even when no mutation occurred in the current run.
+- Do not auto-rollback, re-alias, or promote a different SHA to repair that mismatch; require the deliberate release decision after certification.
+- Future certification reports must distinguish "no production mutation in this run" from "production currently points to an approved/certified SHA".
+
+No production mutation was performed during this run.
