@@ -1620,3 +1620,12 @@ These rules were applied immediately on non-certifying PR #81; no certification 
 - Fresh-DB browser proof exposed a real missing dependency: the restored `create_order` contract inserts `public.notifications`, but the schema had no notification table. The product fix is to create the table with indexes, authenticated read RLS, and no direct authenticated writes; deleting the notification insert would weaken the user-facing order contract.
 - Browser E2E retries were found to reuse persisted server cart state. The proof suite now clears the customer cart after successful login using the real UI, preventing retry contamination while preserving the actual checkout path.
 - Current exact-head evidence is invalidated whenever these proof changes alter the SHA; only the newest head may be certified.
+
+
+## EVOLUTION — 2026-09-18 — Proof SQL syntax boundary
+
+Observed failure on exact candidate `85c289fa62598d140a87ab37fec173b5f2962b3f`: pgTAP notification RLS proof stopped parsing at a bare `set_config(...)` statement, producing a bad plan and failing both migration-proof and Test-the-Test.
+
+Durable rule: PostgreSQL session-setting functions inside SQL proof fixtures must be invoked as expressions (for example `select set_config(...)`) unless executed inside a procedural block. A proof fixture parse error is a release-blocking proof defect and must be repaired at source; never reduce the assertion plan or bypass the failing line merely to obtain green CI.
+
+Applied immediately on candidate as `c5b88ac0adc12560731254333cf1eb345e9a297e`; predecessor evidence remains invalid by exact-SHA policy.
