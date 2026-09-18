@@ -439,3 +439,52 @@ Market differentiation never overrides:
 - Production NO TOUCH;
 - no-false-closure;
 - honest portfolio and client claims.
+
+## 23. SIX-LANE COMPETITIVE HUNT DECISION — 2026-09-18
+
+### Decision
+Adopt six narrow Upwork hunt lanes as the default commercial search surface for Aghbari:
+
+1. Supabase Multi-Tenant Security / RLS
+2. B2B Commerce / Order & Inventory Operations
+3. Arabic/RTL B2B SaaS
+4. Next.js/Supabase Production Rescue / Takeover
+5. Data Migration / Excel / Legacy-to-SaaS Onboarding
+6. Integration Reliability / Webhooks / Outbox / Recovery
+
+Detailed rules are maintained in:
+- `docs/UPWORK-COMPETITIVE-HUNT-LANES-20260918.md`
+- `docs/UPWORK-BID-ENGINE-20260918.md`
+- `docs/COMPETITIVE-MOAT-AND-PORTFOLIO-20260918.md`
+
+### Operating principle
+The commercial unit is:
+`CLIENT PAIN → RELEVANT AGHBARI WORKFLOW → PROOF → DIFFERENTIATOR → BOUNDED MILESTONE`
+
+One opportunity must map to:
+`one lane + one primary moat + one proof asset + one measurable first milestone`.
+
+### Why these lanes
+The lanes were selected because current Upwork postings directly show demand around Supabase/RLS/multi-tenant security, Arabic/RTL Next.js/Supabase SaaS, existing Next.js/Supabase hardening/takeover, and closely related SaaS/operations work. The product already contains reusable evidence and architecture for these areas.
+
+### Search discipline
+Generic "Full-Stack Developer" search is no longer the default. Search uses narrow lane-specific query families. Out-of-lane opportunities are WATCH/SKIP unless their problem-to-proof fit is demonstrably stronger than the six lanes.
+
+### Proof discipline
+A market request does not create a product claim. Commercial claims must be backed by a real Aghbari artifact/evidence layer. Production claims require production evidence.
+
+### Competitive objective
+Do not attempt to beat larger providers by feature-count breadth. Beat them in selected problems through:
+- deeper workflow specificity;
+- stronger trust/security proof;
+- faster operational journeys;
+- Arabic/RTL excellence;
+- migration/integration readiness;
+- reliability/recovery;
+- evidence-backed proposals and demos.
+
+### Product-roadmap rule
+Market demand can become a product backlog item only through:
+`market signal → product-fit gap → controlled backlog → implementation → exact evidence → portfolio artifact → targeted proposal`
+
+No market-derived requirement may weaken security, exact-SHA evidence, release gates, tenant isolation, or Production NO TOUCH.
