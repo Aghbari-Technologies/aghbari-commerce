@@ -16,18 +16,18 @@
 - Branch: `execution/closure-hammer-20260918c`
 - PR: #74 (open, draft, mergeable)
 - Base: `main @ 4505bcb655c0b747aeea7e1cc526a94f93270d3d`
-- Candidate deployment: NOT_AVAILABLE — exact-SHA Vercel deployment is not proven. Canonical project `aghbari-commerce-c2dd` / `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm` has zero deployments matching candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b`. Latest observed operational deployment is `dpl_3CThAUEVsB4hGcrM2JjqqiGijpdK` at control-plane SHA `b1c466322411dbcd33676cfc8dcbf2c4c1e8bb63`; it is unrelated to candidate evidence. The immediately preceding synthetic deployment probe `dpl_9TXFomQ7i286qAiGGEFDD2jBc7hp` terminalized ERROR (`vite: command not found`) and has empty Git metadata; it is explicitly invalid/non-certifying. Candidate GitHub status remains Vercel FAILURE on the build-rate-limit target.
+- Candidate deployment: NOT_AVAILABLE — exact-SHA Vercel deployment is not proven. Canonical project `aghbari-commerce-c2dd` / `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm` has zero deployments matching candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b`. Latest observed Vercel deployment is `dpl_AmTBr8X9qBGCLdngxirQgdRM4Xjo`, READY, target=Production, Git-linked from `main` at `a7953a62e601eb12322fbbd902c0790c7a3921b1`; it is unrelated to candidate evidence. The immediately preceding synthetic deployment probe `dpl_9TXFomQ7i286qAiGGEFDD2jBc7hp` terminalized ERROR (`vite: command not found`) and has empty Git metadata; it is explicitly invalid/non-certifying. Candidate GitHub status remains Vercel FAILURE on the build-rate-limit target.
 - Candidate authenticated browser certification: BLOCKED — approved Vercel automation-bypass credential is unavailable.
 - Evidence for `64f5283…` is also now historical/invalidated because the bootstrap release proof exposed the same pull_request merge-ref flaw; the current candidate is `5b9f2a…`.
 
 ## Main / Live / Production
 
-- Main SHA: `4505bcb655c0b747aeea7e1cc526a94f93270d3d`
-- Live/Production SHA: `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
-- Production deployment: `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5` READY
+- Main SHA: `8ab9cc24f012d93a69a98bb561cd6c6642c9ae6f`
+- Live/Production source SHA: `a7953a62e601eb12322fbbd902c0790c7a3921b1`
+- Production deployment: `dpl_AmTBr8X9qBGCLdngxirQgdRM4Xjo` READY (current Vercel Production deployment; Git-linked from `main`)
 - Production: NO TOUCH
 - Promotion: NOT PERFORMED
-- No production migration, alias switch, or runtime mutation occurred in this execution.
+- No production migration, alias switch, or manual promotion/runtime mutation was performed by this execution. Vercel currently shows a Git-triggered Production deployment from `main`; this is recorded as observed external platform state, not as an action taken here.
 
 ## Exact-SHA candidate proof currently recorded
 
@@ -758,3 +758,15 @@ RESULT: candidate remains frozen with 13/13 exact-SHA terminal PASS. Candidate-t
 ROOT CAUSE: certification blockers remain external exact-SHA deployment, approved browser-bypass secret, and workflow-dispatch authority; candidate source is not the current blocker.
 ARTIFACT: GitHub compare `5b9f2a... -> 4505bcb...`; Vercel project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`; latest operational deployment previously observed `dpl_Dc6wHP4SN6J7ug2a5V8UrFSB1oyg`
 NEXT ACTION: preserve candidate and Production. When the Vercel rate-limit window and approved deployment path permit it, verify an exact candidate Git SHA deployment; otherwise continue read-only reconciliation without redundant state commits.
+
+### 2026-09-18 — Command 1 — candidate deployment/quota truth reconciliation
+
+- Exact candidate remains `5b9f2a76615e76bb6444c81f39e02f3479c0704b`; no SHA change.
+- Candidate Vercel deployment count remains zero.
+- Candidate GitHub Vercel status remains FAILURE with the build-rate-limit target, but the canonical Vercel project later created READY Git-linked Production deployment `dpl_AmTBr8X9qBGCLdngxirQgdRM4Xjo` for `main` at `a7953a62e601eb12322fbbd902c0790c7a3921b1`. Therefore the prior rate-limit message is retained as an observed candidate status, but a current global quota outage is not asserted.
+- Main is now `8ab9cc24f012d93a69a98bb561cd6c6642c9ae6f`. The 11-commit movement from the prior recorded main is docs/operations-only. No candidate product/runtime/database merge is justified.
+- Exact candidate workflow inventory: 33 runs on the candidate head, with 20 `push`, 13 `pull_request`, and 0 `workflow_dispatch`.
+- Vercel 24h runtime-error scan: no runtime errors.
+- Deployment Browser remains BLOCKED by missing approved `VERCEL_AUTOMATION_BYPASS_SECRET`.
+- Formal Final Regression remains NOT_PROVEN because no dispatch-capable connected execution path exists and no `workflow_dispatch` candidate run was found.
+- Production remains NO TOUCH; current Production state is recorded only as observed platform reality.

@@ -34,11 +34,11 @@
 
 - CURRENT CANDIDATE: `5b9f2a76615e76bb6444c81f39e02f3479c0704b` on `execution/closure-hammer-20260918c`; PR #74 open/draft/mergeable.
 - Proof-integrity correction now applied: candidate advanced to `5b9f2a76615e76bb6444c81f39e02f3479c0704b` after an exhaustive pull_request checkout audit fixed G1, Security Audit, Intelligence Contract Proof, and Bootstrap Release Lockfile exact-SHA semantics.
-- MAIN: `4505bcb655c0b747aeea7e1cc526a94f93270d3d`.
-- LIVE/PRODUCTION: `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`; Production = NO TOUCH; no promotion or mutation.
+- MAIN: `8ab9cc24f012d93a69a98bb561cd6c6642c9ae6f`.
+- LIVE/PRODUCTION: `a7953a62e601eb12322fbbd902c0790c7a3921b1`; current Vercel Production deployment is `dpl_AmTBr8X9qBGCLdngxirQgdRM4Xjo` (READY, Git-linked from `main`); Production = NO TOUCH from this execution.
 - CURRENT CANDIDATE CI: 13 mandatory pull_request gates are terminal PASS on `5b9f2a…`; all current PASS evidence is exact-SHA verified.
 - LOCAL PRODUCTION ARTIFACT PROOF: current candidate run `35321683815` / job `105526067670` is PASS; exact candidate/build SHA matched; customer suite 3/3 and admin suite 1/1 passed; artifact `10537173227`.
-- CANDIDATE DEPLOYMENT: NOT_AVAILABLE; GitHub Vercel status is FAILURE — "Deployment rate limited — retry in 24 hours"; no candidate-SHA deployment appears in canonical Vercel deployment list.
+- CANDIDATE DEPLOYMENT: NOT_AVAILABLE; candidate SHA still has zero exact-SHA Vercel deployments. GitHub Vercel status remains FAILURE with the historical rate-limit target, but later Git-linked `main` deployments are succeeding; therefore a current global quota outage is NOT_PROVEN.
 - CANDIDATE DEPLOYMENT BROWSER: browser-contract PASS in run `35310024991`; actual browser-e2e SKIPPED because no candidate deployment. Authenticated deployment browser remains BLOCKED because `VERCEL_AUTOMATION_BYPASS_SECRET` is unavailable.
 - FORMAL FINAL REGRESSION: NOT_PROVEN. The candidate repository contains `workflow_dispatch` on 13 of 15 workflows, but the connected GitHub mutation surface exposes no workflow-dispatch execution capability. Prior browser inspection of GitHub Actions was unauthenticated.
 - WORKFLOW SAFETY: CLOSED on current candidate — 15 workflow files audited; 0 `contents: write`; 0 `git push`.
@@ -1570,3 +1570,15 @@ Durable implementation backlog opened in GitHub:
 
 These remain backlog states, not implementation PASS. They must pass the normal exact-SHA evidence pipeline before closure.
 
+
+
+### 2026-09-18 — Command 1 — exact deployment and external main reconciliation
+
+RUN: GitHub candidate/status/workflow inventory; Vercel project/latest-production deployment inspection; main-vs-base and production-vs-live diff audit
+JOB: candidate deployment identity / quota truth / production safety / stale-state correction
+SHA: candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b`; main `8ab9cc24f012d93a69a98bb561cd6c6642c9ae6f`; current Vercel Production source `a7953a62e601eb12322fbbd902c0790c7a3921b1`; production deployment `dpl_AmTBr8X9qBGCLdngxirQgdRM4Xjo`
+FRONT: exact candidate deployment / formal regression / authenticated browser / main drift / production alignment
+RESULT: candidate PR #74 remains OPEN/DRAFT/MERGEABLE with 13/13 terminal exact-SHA PASS gates. An exhaustive exact-candidate Actions inventory returned 33 runs: 20 `push`, 13 `pull_request`, and 0 `workflow_dispatch` runs. Candidate Vercel deployment count remains zero. The canonical Vercel project now reports a READY Production deployment `dpl_AmTBr8X9qBGCLdngxirQgdRM4Xjo` sourced from `main` at `a7953a62e601eb12322fbbd902c0790c7a3921b1`. GitHub comparison of old main `4505bcb655c0b747aeea7e1cc526a94f93270d3d` to current main `8ab9cc24f012d93a69a98bb561cd6c6642c9ae6f` is documentation/operational-only (7 changed files; no product runtime/database source files), and comparison of prior Production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497` to current Production source `a7953a62e601eb12322fbbd902c0790c7a3921b1` is likewise limited to docs/operational workflow files. Current Vercel runtime-error scan for 24h is clean. This changes the blocker interpretation: the old candidate status still says rate-limited, but later successful main deployments mean a current global Vercel quota outage is not proven. No safe connector path exists to retry the frozen candidate at the same SHA without risking a new SHA or an unverified deployment mutation.
+ROOT CAUSE: candidate exact deployment remains unresolved; authenticated deployed-browser credential and workflow-dispatch execution remain unavailable. The repository contains no workflow_dispatch execution run for the candidate.
+ARTIFACT: candidate status; 33-run exact-head inventory; Vercel Production `dpl_AmTBr8X9qBGCLdngxirQgdRM4Xjo`; GitHub compare `4505bcb655c0b747aeea7e1cc526a94f93270d3d...${newMainSha}` and `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497...${newProdSha}`; 24h Vercel runtime-error scan.
+NEXT ACTION: keep candidate `5b9f2a...` frozen. Do not manufacture a deployment or new SHA. Resume through an approved exact-SHA Git-linked deployment path; then run authenticated Deployment Browser and Formal Final Regression on the exact candidate SHA. Production remains NO TOUCH.
