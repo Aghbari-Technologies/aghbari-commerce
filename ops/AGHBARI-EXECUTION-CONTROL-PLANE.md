@@ -923,3 +923,34 @@ Candidate preview `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32` READY exact `4d5057…`; pr
 
 NEXT ACTION:
 Only remaining release blockers: approved Deployment Browser credential path, formal Final Regression execution, Live Alignment to candidate, and final evidence reconciliation. Keep Production NO TOUCH.
+
+# 23. FREE TOOLING LAYER — CURRENT
+
+| Tool | State | Purpose | Proof status |
+|---|---|---|---|
+| Playwright | PRESENT | Browser/E2E and runtime evidence | VERIFIED IN SOURCE; existing CI evidence separate |
+| Gitleaks | IMPLEMENTED | Secret scanning | NOT_PROVEN until CI run |
+| CodeQL | IMPLEMENTED | SAST JavaScript/TypeScript | NOT_PROVEN until CI run |
+| Semgrep CE | IMPLEMENTED | Free SAST/community rules | NOT_PROVEN until CI run |
+| Trivy | IMPLEMENTED | Filesystem vulnerability/misconfiguration scan | NOT_PROVEN until CI run |
+| OWASP ZAP | IMPLEMENTED | Manual baseline DAST | NOT_PROVEN until intentional target run |
+| Dependabot | IMPLEMENTED | npm + GitHub Actions updates | Awaiting GitHub schedule/PR evidence |
+| OpenSSF Scorecard | IMPLEMENTED | Supply-chain/CI security posture | NOT_PROVEN until run |
+
+Tooling PR:
+- PR #72, branch `ops/tooling-baseline-20260918`
+- Current head: `93552ada8b7cc33e0d1d3960a428566e378ef486`
+- PR is draft and isolated from the frozen candidate.
+
+Connected accelerators:
+- Firecrawl: CONNECTED
+- TinyFish: CONNECTED
+- PostHog: CONNECTED
+- Codex Security: NOT CONNECTED
+- Datadog: NOT CONNECTED
+
+Tooling safety:
+- No production or live touch.
+- No secret values stored.
+- Tool availability/configuration never counts as PASS without an observed result.
+- Any merge of tooling into main/candidate changes SHA and triggers evidence invalidation/rerun rules.
