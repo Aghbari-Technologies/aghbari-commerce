@@ -1363,3 +1363,10 @@ RESULT: no candidate source mutation; exact-SHA CI evidence remains valid; no ca
 ROOT CAUSE: external deployment quota and authentication/dispatch capability boundaries.
 ARTIFACT: `ops/evidence/20260918-command1-live-boundary-recheck-1002.md`
 NEXT ACTION: preserve candidate; continue only when the approved Vercel credential and dispatch-capable path are available; never weaken protection or transfer stale evidence.
+
+
+### 2026-09-18 — Control Plane Evolution — Vercel upload-path integrity
+
+LESSON: the connected Vercel deployment mutation requires an explicit complete file payload; a partial payload would be a different artifact and must not be used to manufacture candidate deployment evidence.
+
+RULE: never create a candidate Preview from an incomplete or reconstructed file subset when the release claim requires exact candidate-source identity. Prefer a Git-linked deployment or a complete exact-source upload with independently verifiable identity metadata. A validation-only tool probe is not deployment evidence.

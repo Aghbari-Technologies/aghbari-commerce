@@ -16,7 +16,7 @@
 - Branch: `execution/closure-hammer-20260918c`
 - PR: #74 (open, draft, mergeable)
 - Base: `main @ 4505bcb655c0b747aeea7e1cc526a94f93270d3d`
-- Candidate deployment: NOT_AVAILABLE — Vercel exact-SHA status is FAILURE due deployment rate limiting; no deployment for this SHA is present in the canonical project deployment list. The latest READY deployment observed is for an `ops/execution-control-plane` commit, not the candidate. Latest observed canonical READY deployment: `dpl_EsRYS1as7Ak584g4YSyXqkucT27r` at `ops/execution-control-plane` commit `9b2ff5dca88bf679c82ce1ce9872d69c8bab7964` (read-only reconciliation 2026-09-18).
+- Candidate deployment: NOT_AVAILABLE — Vercel exact-SHA status is FAILURE due deployment rate limiting; no deployment for this SHA is present in the canonical project deployment list. The latest READY deployment observed is for an `ops/execution-control-plane` commit, not the candidate. Latest canonical READY deployment observed: `dpl_BnKnFREtxGbUVEwHaWsaMyUne3U6` for `ops/execution-control-plane` commit `4847b44e2907e08cb610bd6195c9e912b7b193e9`. Latest observed canonical READY deployment: `dpl_EsRYS1as7Ak584g4YSyXqkucT27r` at `ops/execution-control-plane` commit `9b2ff5dca88bf679c82ce1ce9872d69c8bab7964` (read-only reconciliation 2026-09-18).
 - Candidate authenticated browser certification: BLOCKED — approved Vercel automation-bypass credential is unavailable.
 - Previous candidate evidence for `4d5057…` is historical and not transferable.
 
@@ -394,3 +394,15 @@ RESULT: canonical Vercel project checked on the current deployment page and in t
 ROOT CAUSE: candidate branch has no corresponding Vercel deployment event; candidate source was not changed.
 ARTIFACT: `ops/evidence/20260918-command1-vercel-pagination-recheck.md`
 NEXT ACTION: preserve candidate; retry candidate deployment only through an approved exact-SHA deployment path. Production remains NO TOUCH.
+
+
+### 2026-09-18 — Command 1 — current boundary and tooling reconciliation
+
+RUN: GitHub candidate/PR/head reconciliation; Vercel deployment sweep; Vercel deployment-tool schema probe; Supabase advisor; pgTAP diagnostic run head verification
+JOB: unresolved evidence + tooling boundaries
+SHA: candidate `4753cc3319f551aeccbe2bd081b988fa68df8e87`; tooling #72 `92fa7bffb8971eecb10d91fe588709da0e06675a`; diagnostic #73 `cf7db1c376e40c44ed0cec1956c9b59ee8f5d7f0`; production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
+FRONT: candidate deployment / tooling evidence / production safety
+RESULT: Candidate SHA and PR #74 head remain unchanged. Candidate exact-SHA Actions remain terminal PASS. Canonical Vercel list still contains zero deployments matching candidate SHA; current READY activity is on the operational branch. Vercel deployment tool was probed without mutation and requires a complete file payload, so no incomplete preview was created. PR #73 migration-proof failure is confirmed on its exact current head and remains isolated diagnostic evidence; it is not candidate evidence. Production runtime errors remain absent in the checked 24h range.
+ROOT CAUSE: exact-SHA Vercel deployment requires an approved deployment path that can carry the candidate source/identity; current connected GitHub dispatch remains unavailable. Diagnostic pgTAP failures belong to an isolated baseline lane.
+ARTIFACT: `ops/evidence/20260918-command1-current-boundary-and-tooling-reconciliation.md`
+NEXT ACTION: preserve candidate; do not create speculative commits or incomplete deployments. Continue with approved exact-SHA deployment and authenticated regression paths only when available. Production remains NO TOUCH.
