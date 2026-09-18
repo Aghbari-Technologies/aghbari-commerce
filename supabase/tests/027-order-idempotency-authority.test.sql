@@ -68,7 +68,7 @@ create temp table replay_order as
 select * from public.create_order(
   'order-idem-adversarial-001',
   (select warehouse_id from fixture),
-  jsonb_build_array(jsonb_build_object('product_id',(select product_id from fixture),'quantity',2))
+  jsonb_build_array(jsonb_build_object('product_id',(select product_id from fixture),'quantity',2)),'credit'
 );
 
 select is((select order_id from replay_order),(select order_id from first_order),'Exact replay returns the same canonical order');
@@ -123,7 +123,7 @@ select throws_ok(
   $$select * from public.create_order(
     'order-idem-adversarial-001',
     (select warehouse_id from fixture),
-    jsonb_build_array(jsonb_build_object('product_id',(select product_id from fixture),'quantity',2))
+    jsonb_build_array(jsonb_build_object('product_id',(select product_id from fixture),'quantity',2)),'credit'
   )$$,
   '40001',
   'idempotency key payload conflict',
