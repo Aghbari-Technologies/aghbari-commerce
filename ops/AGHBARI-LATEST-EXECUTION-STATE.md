@@ -382,3 +382,15 @@ RESULT: candidate remains frozen and exact-SHA CI remains terminal PASS. Canonic
 ROOT CAUSE: unresolved capability boundaries are external to the candidate source: exact-SHA deployment quota, authenticated Vercel bypass credential, and authenticated GitHub workflow-dispatch authority.
 ARTIFACT: `ops/evidence/20260918-command1-live-boundary-recheck-1002.md`
 NEXT ACTION: preserve candidate and Production NO TOUCH; resolve owner-controlled Vercel automation credential and dispatch-capable GitHub path; do not transfer older deployment/runtime evidence or alter workflow protections.
+
+ 
+### 2026-09-18 — Command 1 — Vercel pagination / candidate-match recheck
+
+RUN: Vercel deployment list page sweep across candidate push window
+JOB: exact candidate deployment existence verification
+SHA: candidate `4753cc3319f551aeccbe2bd081b988fa68df8e87`
+FRONT: candidate deployment
+RESULT: canonical Vercel project checked on the current deployment page and in the historical 05:00Z–05:30Z window covering the candidate commit time; candidate deployment match count remained zero. A READY deployment `dpl_BnKnFREtxGbUVEwHaWsaMyUne3U6` exists for `ops/execution-control-plane` commit `4847b44e2907e08cb610bd6195c9e912b7b193e9`, confirming current Vercel activity is on the operational branch, not the candidate.
+ROOT CAUSE: candidate branch has no corresponding Vercel deployment event; candidate source was not changed.
+ARTIFACT: `ops/evidence/20260918-command1-vercel-pagination-recheck.md`
+NEXT ACTION: preserve candidate; retry candidate deployment only through an approved exact-SHA deployment path. Production remains NO TOUCH.
