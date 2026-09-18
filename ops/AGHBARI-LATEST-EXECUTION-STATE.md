@@ -934,3 +934,21 @@ RESULT:
 - This defect was independently established from live non-production-read evidence; no Production data was changed.
 - Certification candidate `0fb5a17bcb65816963056112f5a41ccbb4ae3106` remains untouched.
 VERIFICATION: fix branch is 6 commits ahead of main, clean diff limited to customer-portal pricing/payment wiring plus tests. CI verification is deferred while repository-wide Actions queue saturation remains active, to avoid multiplying queued runs without execution capacity.
+
+
+### 2026-09-18 — Command 1 — strong continuation / real browser + product-correctness closure
+
+RUN: Firecrawl real browser + Vercel deployment identity sweep + PR #84 verification + Netlify failover capability probe
+JOB: exhaust safe runtime/product fronts without transferring evidence or touching Production
+SHA: certification candidate #83 `0fb5a17bcb65816963056112f5a41ccbb4ae3106`; main `427ff0801544449f432290205b2a29f2508541f3`; non-certifying fix PR #84 `3c78047737618cba39936b1fb46350bf833c4d9a`
+FRONT: Runtime Browser / deployment identity / payment correctness / catalog price correctness / failover hosting / evidence persistence
+RESULT:
+- Real browser execution succeeded against the live Vercel deployment URL `https://aghbari-commerce-c2dd.vercel.app/`. Observed RTL shell, branding `AGHBARI B2B`, title `بوابة الأغبري التجارية`, Arabic login inputs, secure-login button, and no visible runtime/error state.
+- Vercel deployment identity was independently checked: the READY deployment examined is Git-linked to operational control-plane SHA `cf82b754fae55ddf11ab30cbeaa7738c1c5ab619`, not candidate #83. Build-meta endpoint independently reports the same SHA. Therefore browser success is retained as real runtime evidence for that deployment only and is not transferred to candidate #83.
+- Read-only Vercel historical window checks returned no deployment records matching candidate #83 SHA. Candidate remains without an admissible exact-SHA external deployment.
+- PR #84 is OPEN and non-certifying at exact HEAD `3c78047737618cba39936b1fb46350bf833c4d9a`. Its current GitHub Actions runs are queued under the repository-wide queue pressure; no merge was forced and no candidate/Production mutation occurred.
+- Netlify deploy control was invoked for existing site `6c515d48-3385-46eb-958c-3ff2ee17e95e`; the connected integration returned a source-upload CLI command rather than performing the upload. No deployment is claimed.
+- Candidate #83 remains untouched; Production remains NO TOUCH.
+ROOT CAUSE / CURRENT BOUNDARY: Runtime Browser itself is not a blocker. The remaining certifying boundary is exact deployment identity for candidate #83 plus authenticated final regression/dispatch capability. External browser wallet/session limits are capability constraints, not product-runtime failures.
+ARTIFACTS: Firecrawl browser session `01a0b4be-cd2a-730a-9819-253e041db8ce`; Vercel deployment `dpl_CZCJ5crKq5XJ9Qi3wznjPfZpB6S5`; build-meta SHA `cf82b754fae55ddf11ab30cbeaa7738c1c5ab619`; PR #84; Netlify site `6c515d48-3385-46eb-958c-3ff2ee17e95e`.
+NEXT ACTION: keep #83 frozen and Production untouched; let PR #84 obtain exact-head CI when queue capacity permits, then integrate its proven fixes into a new candidate only after verification. Do not transfer runtime evidence from `cf82b754...` to #83 and do not burn Vercel quota with synthetic deployments.
