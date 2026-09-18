@@ -37,12 +37,12 @@
 - LIVE/PRODUCTION: `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`.
 - PRODUCTION: NO TOUCH; candidate not promoted and no alias/migration/live mutation performed.
 - CANDIDATE EXACT-SHA GATES: Fresh Local+Storage, Migration, Test-the-Test, Concurrency, Local Production Browser, Quality, Security, G1, Order Workflow, Deployment Contract, Order Invariant, Bootstrap Lockfile = PASS.
-- CANDIDATE PREVIEW: `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32` READY exact `4d5057…`. TinyFish `9cf69038-40b0-4f33-8365-322abe4c8146` executed read-only browser verification, but Vercel SSO blocked the app and `/build-meta.json`; therefore no browser/app/SHA proof was obtained.
+- CANDIDATE PREVIEW: `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32` READY exact `4d5057…`. TinyFish `604c8f4a-19f1-4357-b380-9b2c816937fb` verified the application through a temporary Vercel access link, including brand/RTL/Arabic and exact `build-meta.json` SHA. This is read-only proof only.
 - DEPLOYMENT BROWSER: BLOCKED — approved Vercel automation bypass/E2E credentials are unavailable; TinyFish independently confirmed the candidate deployment is behind Vercel SSO.
 - LIVE/PRODUCTION DEPLOYMENT: `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5` READY exact `b102ce5…`, target production. Production error/fatal inspection over 24h found none.
 - FINAL REGRESSION: NOT_PROVEN / TOOL BOUNDARY — required workflow dispatch is unavailable.
 - EVIDENCE RECONCILIATION: OPEN for Deployment Browser, Live Alignment, Final Regression, and operational/tooling reconciliation.
-- TOOLING PR #72: current head `1830e3a109a9e0605f5306b2ddc8f308457fb375`, draft, isolated. Previous references to `93552ada…` are stale and are not current-head evidence.
+- TOOLING PR #72: current head `ffdf0b3e6d34adef11a198c8263a9fa9760188b8`, draft, isolated. Older heads are historical only.
 - TOOLING #72 current-head results on `1830e3a…`: Gitleaks FAIL — run `35301488345`, 61 `generic-api-key` findings, artifact `10529832877`; Semgrep FAIL — run `35301488324`, 36 blocking findings, artifact `10530271974`. No tooling result is transferred to candidate certification.
 - TOOLING CI DEFECTS FIXED: Gitleaks expression/artifact escaping on `15511628…`; ZAP shell-input handling + action pinning on `1830e3a…`.
 - TOOLING MIGRATION FAILURE CLASSIFICATION: NOT CANDIDATE DEFECT. Empty-database migration apply passed, then 31 pgTAP files produced multiple stale/mismatched expectations (e.g. missing RPC, missing inventory_changed, expected search_path metadata false, operational FK index assertions, storage test mismatches). Candidate’s own exact migration proof remains PASS and is separate.
