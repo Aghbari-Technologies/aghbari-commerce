@@ -297,3 +297,10 @@ Release evidence state:
 
 Durable lesson:
 Do not conflate a workflow's source-level `workflow_dispatch` declaration with the operator's ability to execute it. Do not add speculative workflows or weaken security controls merely to compensate for a connector limitation. Preserve exact-SHA evidence and Production NO TOUCH.
+
+
+### 2026-09-18 — Durable lesson: deployment capability and verification capability are separate
+- Exact candidate `4753cc3319f551aeccbe2bd081b988fa68df8e87` has terminal exact-SHA CI/browser-local evidence, but no exact-SHA Vercel deployment.
+- The canonical Vercel project is the Aghbari-Technologies-linked project `aghbari-commerce-c2dd`; older/fork-linked projects are not interchangeable evidence sources.
+- `runtime-e2e.yml` is the formal authenticated browser certification workflow and is manually dispatchable in source, while `production-smoke.yml` only verifies an already-deployed exact artifact.
+- Repository workflow presence does not imply connected-session dispatch authority. Do not substitute an older deployment URL or weaken protection to bridge this gap.
