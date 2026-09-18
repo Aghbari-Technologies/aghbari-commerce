@@ -16,7 +16,7 @@
 - Branch: `execution/closure-hammer-20260918c`
 - PR: #74 (open, draft, mergeable)
 - Base: `main @ 4505bcb655c0b747aeea7e1cc526a94f93270d3d`
-- Candidate deployment: NOT_AVAILABLE — exact-SHA Vercel deployment is not proven. Canonical project `aghbari-commerce-c2dd` / `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm` currently has zero deployments matching candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b`. Latest observed READY deployment is `dpl_6taQxmems1bBX4GovgMkNAGPQwvs` on `ops/execution-control-plane` at SHA `5dddb2c4ac369f03a121a81891c54d647d146292`; it is not candidate evidence. Candidate GitHub status remains Vercel FAILURE on the build-rate-limit target.
+- Candidate deployment: NOT_AVAILABLE — exact-SHA Vercel deployment is not proven. Canonical project `aghbari-commerce-c2dd` / `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm` has zero deployments matching candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b`. Latest observed operational deployment is `dpl_3CThAUEVsB4hGcrM2JjqqiGijpdK` at control-plane SHA `b1c466322411dbcd33676cfc8dcbf2c4c1e8bb63`; it is unrelated to candidate evidence. The immediately preceding synthetic deployment probe `dpl_9TXFomQ7i286qAiGGEFDD2jBc7hp` terminalized ERROR (`vite: command not found`) and has empty Git metadata; it is explicitly invalid/non-certifying. Candidate GitHub status remains Vercel FAILURE on the build-rate-limit target.
 - Candidate authenticated browser certification: BLOCKED — approved Vercel automation-bypass credential is unavailable.
 - Evidence for `64f5283…` is also now historical/invalidated because the bootstrap release proof exposed the same pull_request merge-ref flaw; the current candidate is `5b9f2a…`.
 
@@ -180,6 +180,18 @@ RESULT: PR #74 remains OPEN/DRAFT/MERGEABLE at candidate `5b9f2a...`. The three 
 ROOT CAUSE: release remains blocked at external evidence boundaries: exact candidate Vercel deployment quota/path, approved `VERCEL_AUTOMATION_BYPASS_SECRET` for authenticated deployment browser, and connected GitHub workflow-dispatch authority. Tooling pgTAP remains an isolated baseline-contract failure after clean migration application and is not candidate evidence.
 ARTIFACT: candidate proof runs `35321683922;35321683893;35321683989;35321683986;35321683999;35321683950;35321683916;35321684096;35321683994;35321683953;35321683815;35321684089;35321683806`; Vercel `dpl_6taQxmems1bBX4GovgMkNAGPQwvs`; Supabase project `mrcyqezbhpncuvaehwgf`; TinyFish wallet boundary `2026-09-18T09:56:49Z`
 NEXT ACTION: keep candidate `5b9f2a...` frozen and do not create a speculative SHA or consume deployment quota. When an approved exact-SHA deployment path exists, run authenticated deployed-browser E2E and Formal Final Regression on that same SHA, then perform final evidence reconciliation. Keep PR #72/#73 isolated and Production NO TOUCH.
+
+
+### 2026-09-18 — Command 1 — final closure checkpoint after deployment-tool safety correction
+
+RUN: deployment connector capability probe; Vercel deployment terminal-state reconciliation; candidate PR/status recheck
+JOB: exact-SHA deployment boundary / deployment-probe side-effect containment / final evidence state
+SHA: candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b`; control-plane `b1c466322411dbcd33676cfc8dcbf2c4c1e8bb63`; main `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
+FRONT: candidate deployment / authenticated browser / final regression / operational safety
+RESULT: candidate PR #74 remains OPEN/DRAFT/MERGEABLE at the same SHA with the existing 13/13 terminal exact-SHA PASS set intact. Vercel still reports no deployment whose recorded Git SHA is the candidate. A deliberately malformed connector validation probe created preview deployment `dpl_9TXFomQ7i286qAiGGEFDD2jBc7hp`, which failed closed at build because `vite` was unavailable in the incomplete payload; it carried no Git SHA metadata and is not evidence. This revealed that the deployment wrapper accepts the request and mutates Vercel rather than behaving as a dry-run. The correction has been recorded in the Control Plane. The control-plane update itself also produced operational deployment `dpl_3CThAUEVsB4hGcrM2JjqqiGijpdK` on the ops branch; it is unrelated to candidate delivery. Candidate combined status remains only the Vercel rate-limit FAILURE. Production remains untouched.
+ROOT CAUSE: the remaining release-layer blocker is the absence of a valid exact-SHA deployment path plus authenticated deployed-browser and workflow-dispatch authority. The connected Vercel wrapper does not expose a safe Git-linked dry-run; synthetic file payloads are prohibited because they create real deployments.
+ARTIFACT: invalid probe `dpl_9TXFomQ7i286qAiGGEFDD2jBc7hp` ERROR; operational `dpl_3CThAUEVsB4hGcrM2JjqqiGijpdK` BUILDING on `b1c4663...`; candidate exact proof set unchanged.
+NEXT ACTION: no further deployment mutation in this round. Preserve candidate `5b9f2a...` unchanged. Resume only through an approved Git-linked exact-SHA deployment path and authenticated regression authority. Production remains NO TOUCH.
 
 ## State update contract
 
