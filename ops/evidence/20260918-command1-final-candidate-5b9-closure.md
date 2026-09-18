@@ -40,7 +40,7 @@ The candidate was therefore advanced through `64f5283...` to `5b9f2a...` using f
 - Selected 24h Vercel runtime-error scan: no runtime errors found
 
 ## Tooling isolation
-- PR #72 current head: `d884f90fcdcb95eeceb47e78d8f36792268f830d`, isolated. Semgrep, Trivy, Gitleaks, CodeQL, Security Audit, G1, Application Quality, Order, Intelligence, and Bootstrap are terminal PASS; Supabase Migration Proof remains RUNNING.
+- PR #72 current head: `d884f90fcdcb95eeceb47e78d8f36792268f830d`, isolated. Semgrep, Trivy, Gitleaks, CodeQL, Security Audit, G1, Application Quality, Order, Intelligence, and Bootstrap are terminal PASS; Supabase Migration Proof is terminal FAIL in pgTAP baseline assertions after clean migration application.
 - PR #73 current head: `e62cb960dfb17204074914b4a3dd5a13abcb333f`, diagnostic only; exact-head migration proof reaches pgTAP after clean empty-DB migration apply and fails 12 known product/schema contract assertions.
 - No tooling or diagnostic result transfers into candidate certification.
 
