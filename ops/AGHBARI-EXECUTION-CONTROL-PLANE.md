@@ -33,19 +33,18 @@
 # 0A. AUTHORITATIVE LIVE EXECUTION STATE — 2026-09-18
 
 - CURRENT CANDIDATE: `4d5057d7952e213d6b5328a80f0229f1ff9fb861` on `execution/closure-hammer-20260918b`.
-- MAIN: `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`.
-- LIVE/PRODUCTION: `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`.
+- MAIN: `29aa5c928deb97a652e78c0f0581ec09d7caa050` (one commit ahead of previous `b102ce5…`; diff is documentation-only in `AGHBARI-EXECUTION-START.md`).
+- LIVE/PRODUCTION: `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`; production remains behind current main and the candidate.
 - PRODUCTION: NO TOUCH. No promotion, alias switch, production migration, or live mutation performed.
-- EXACT-SHA GATES CLOSED/PASS: Fresh Local Browser + Storage adversarial, Migration, Test-the-Test, Concurrency, Local Production Browser, Quality, Security, G1 Domain, Order Workflow, Deployment Contract source gate, Order Invariant Contract, and Bootstrap Release Lockfile.
-- EXACT-SHA RUNS: Fresh Local `35299449995 / 105458810059`; Migration `35299450012`; Test-the-Test `35299450053 / 105458822785`; Concurrency `35299450051 / 105459616923`; Local Production `35299450068 / 105459493871`; Quality `35299450009`; Security `35299449999`; G1 `35299449994`; Order Workflow `35299450067`; Deployment Contract `35299450001`; Order Invariant `35299450120 / 105458810941`; Bootstrap Lockfile `35299450039 / 105458810220`.
-- CANDIDATE PREVIEW: `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32` READY, exact SHA `4d5057…`. A read-only TinyFish run `549b9736-f328-44f6-bd4f-e11818e8489b` through a Vercel share URL rendered the page and verified `build-meta.json` with product `aghbari-commerce`, version `0.1.0`, exact `git_sha=4d5057…`. This is browser/artifact health evidence, not authenticated Deployment Browser E2E.
-- DEPLOYMENT BROWSER: BLOCKED — run `35298902449 / 105457162861` reached the exact candidate contract but stopped at credential validation; browser steps were not executed because the approved `VERCEL_AUTOMATION_BYPASS_SECRET` / required E2E credentials are unavailable through current mutation tooling.
-- LIVE/PRODUCTION DEPLOYMENT: `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5` READY, exact SHA `b102ce5…`, target `production`. Vercel grouped runtime errors: none in the inspected 24h. Deployment-scoped error/fatal logs: none.
-- FINAL REGRESSION: NOT_PROVEN / TOOL BOUNDARY. `production-smoke.yml` and `runtime-e2e.yml` require `workflow_dispatch`; connected GitHub mutation surface exposes no workflow dispatch.
-- EVIDENCE RECONCILIATION: OPEN for Deployment Browser, Live Alignment, Final Regression, and repair-excel operational safety.
-- TOOLING PR #72: head `93552ada8b7cc33e0d1d3960a428566e378ef486`, draft, isolated from candidate; no associated workflow runs were returned, so Gitleaks/CodeQL/Semgrep/Trivy/ZAP/Scorecard evidence remains NOT_PROVEN.
-- OPERATIONAL LANE: `.github/workflows/repair-excel-build.yml` on main is still OPEN as a safety risk. Current file blob `68fcca2124145651e648f05b97318dcfea5dc45e` has `contents: write`, `push` trigger, and `git push origin HEAD:main`. Latest run `35296779614` has no job records/logs through the connector, so failure root cause remains NOT_PROVEN. No mutation made.
-
+- EXACT-SHA CANDIDATE GATES CLOSED/PASS: Fresh Local Browser + Storage adversarial, Migration, Test-the-Test, Concurrency, Local Production Browser, Quality, Security, G1 Domain, Order Workflow, Deployment Contract source gate, Order Invariant Contract, and Bootstrap Release Lockfile.
+- CANDIDATE PREVIEW: `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32` READY, exact SHA `4d5057…`. TinyFish read-only run `549b9736-f328-44f6-bd4f-e11818e8489b` verified page render and `build-meta.json` exact `4d5057…`; not authenticated Deployment Browser E2E.
+- DEPLOYMENT BROWSER: BLOCKED — `35298902449 / 105457162861` stopped at credential validation; required Vercel bypass/E2E credential boundary is unavailable through connected mutation tooling.
+- LIVE/PRODUCTION DEPLOYMENT: `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5` READY, exact SHA `b102ce5…`, target production. Runtime error/fatal inspections found none in the inspected 24h window.
+- FINAL REGRESSION: NOT_PROVEN / TOOL BOUNDARY — `production-smoke.yml` and `runtime-e2e.yml` require workflow dispatch, not available through connected GitHub mutation tooling.
+- EVIDENCE RECONCILIATION: OPEN for Deployment Browser, Live Alignment, Final Regression, and operational/security tooling reconciliation.
+- TOOLING PR #72: head `1830e3a109a9e0605f5306b2ddc8f308457fb375`, draft, isolated from candidate.
+- TOOLING #72 current exact results: CodeQL JavaScript/TypeScript RUNNING; migration-proof RUNNING; Gitleaks FAILED with 61 `generic-api-key` historical findings; Semgrep FAILED with 36 findings (33 mutable-action-tag warnings, 2 Dependabot cooldown warnings, 1 non-literal RegExp warning); Trivy PASS; security PASS; quality PASS; G1 PASS; Vercel Preview Comments PASS. Gitleaks/Semgrep reports were successfully uploaded after CI artifact-name repair.
+- OPERATIONAL LANE: `.github/workflows/repair-excel-build.yml` on main is still OPEN as a safety risk. Current file blob `68fcca2124145651e648f05b97318dcfea5dc45e` confirms `contents: write`, push-trigger, and `git push origin HEAD:main`. Run `35296779614` remains failure with zero job records exposed by connector; root cause NOT_PROVEN. No mutation made.
 
 # 0B. AUTONOMOUS MEMORY + SELF-IMPROVEMENT PROTOCOL
 
@@ -1112,3 +1111,12 @@ NEXT ACTION:
 Keep Production NO TOUCH. Continue only on the unresolved external/evidence fronts: approved Deployment Browser credentials, actual Final Regression dispatch, final reconciliation, and operational workflow-safety decision. Read-only share-link browser evidence must never substitute for authenticated Deployment Browser E2E.
 
 - **2026-09-18 — Read-only Vercel share-path rule:** A temporary Vercel share URL can safely provide read-only browser/render/build-metadata evidence for a protected candidate without disabling protection or exposing secrets. It may reduce uncertainty around artifact/page health, but it cannot close an authenticated Deployment Browser E2E gate or prove customer/admin workflows.
+
+### 2026-09-18 — Command 1 tooling/security reconciliation
+
+- `main` advanced from `b102ce5…` to `29aa5c9…` via a documentation-only commit; candidate `4d5057…` remained frozen and candidate PASS evidence was not invalidated.
+- Proven tooling CI defect fixed on isolated PR #72: escaped GitHub expressions in `.github/workflows/gitleaks-secrets.yml` caused an invalid artifact name and were corrected on tooling SHA `15511628…`; the rerun successfully uploaded SARIF artifact `10530351599`.
+- Proven tooling security CI defect fixed on isolated PR #72: ZAP target validation interpolated `github` context directly inside `run:`; changed to an environment variable and ZAP action pinned to verified commit `de8ad967d3548d44ef623df22cf95c3b0baf8b25` on tooling SHA `1830e3a…`.
+- Gitleaks on `1830e3a…` still finds 61 `generic-api-key` results across historical test/fixture commits. Current evidence shows findings concentrated in synthetic test UUID/idempotency data. Do not add broad path exclusions; future remediation should use exact finding/fingerprint review before allowlisting.
+- Semgrep on `1830e3a…` reduced from 38 to 36 after the ZAP fix. Remaining findings are dominated by mutable GitHub Action refs plus Dependabot cooldown and one release-audit RegExp warning. These remain tooling hardening work, not candidate PASS/FAIL evidence.
+- Read-only Vercel share evidence is retained only as page/artifact-health evidence; it never closes authenticated Deployment Browser E2E.
