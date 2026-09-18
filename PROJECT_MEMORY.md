@@ -213,3 +213,18 @@ On tooling head `1830e3a109a9e0605f5306b2ddc8f308457fb375`, Gitleaks run `353014
 - Durable decision: tooling CI and product-candidate certification are separate evidence lanes. Never import candidate migrations or candidate-specific contracts into the tooling branch simply to obtain a green tooling run.
 - Candidate `4d5057d7952e213d6b5328a80f0229f1ff9fb861` remains frozen and its previously proven exact-SHA evidence remains intact.
 - Production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497` remains untouched; runtime inspection found no error clusters or error/fatal logs over the inspected 24h window.
+
+
+## 21. COMMAND 1 — 2026-09-18 — TOOLING / PGTAP / BROWSER RECONCILIATION
+
+- PR #72 exact head is `92fa7bffb8971eecb10d91fe588709da0e06675a`. Eleven terminal CI gates pass on this exact SHA; migration proof fails only during pgTAP.
+- PR #73 exact head `cf7db1c376e40c44ed0cec1956c9b59ee8f5d7f0` is test-harness-only. After its repairs, pgTAP still fails 12 assertions across storage, purchase receipt outbox, expense cash balance, transfer search_path, and remaining SECURITY DEFINER search_path contracts.
+- Durable classification: the five remaining failures are main-branch product/schema contract gaps, not license to copy candidate migrations into tooling. Keep proof-system remediation and product remediation separate.
+- Supabase production migration history contains corresponding hardening migrations; this is corroborating evidence only. Production was not modified.
+- Fresh read-only candidate browser proof `683148ee-b515-4e81-a2cb-ff4fa4a07ca0` passed page load, Arabic RTL, brand visibility, and no visible errors/broken links or images.
+- Authenticated E2E remains blocked by the unavailable Vercel automation-bypass credential path. Formal Final Regression remains not proven because workflow dispatch is not exposed.
+- Candidate `4d5057d7952e213d6b5328a80f0229f1ff9fb861` remains frozen; Production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497` remains untouched.
+- Evidence artifact: `ops/evidence/20260918-command1-tooling-pgtap-browser-reconciliation.md`.
+
+Decision:
+Tooling PR #72 stays isolated and non-certifying until its baseline contract is intentionally reconciled. PR #73 remains a diagnostic/test-only lane. No production promotion or protection weakening is permitted.
