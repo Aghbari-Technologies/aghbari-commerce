@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(10);
+select plan(11);
 
 insert into auth.users (id, email) values ('88888888-8888-4888-8888-888888888888', 'stock-count-admin@test.local');
 insert into public.organizations (id, name) values ('67676767-6767-4676-8676-676767676767', 'Stock Count Tenant');
@@ -44,7 +44,7 @@ select is((select row_to_json(public.start_stock_count('67676767-6767-4676-8676-
 set local request.jwt.claim.sub = '99999999-9999-4999-8999-999999999999';
 select throws_ok(
   $$select public.set_stock_count_line((select id from public.stock_count_sessions where idempotency_key='stock-count-idem-01'),'67676767-6767-4676-8676-676767676770',4)$$,
-  'P0002','open stock count line not found','A different tenant cannot mutate another tenant stock count'
+  'P0002','stock count not found','A different tenant cannot mutate another tenant stock count'
 );
 
 select * from finish();
