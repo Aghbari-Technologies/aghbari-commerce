@@ -1349,3 +1349,17 @@ RESULT: 11/11 candidate verification gates terminal PASS on the exact SHA. The d
 ROOT CAUSE: proof-system defects were separated from product behavior; the current release boundary is now external deployment/dispatch capability rather than a proven product failure.
 ARTIFACT: Browser E2E predecessor evidence job `105693765986`; exact candidate CI runs `35374002270;35374002287;35374002300;35374002314;35374002336;35374002346;35374002357;35374002373;35374002403;35374002428;35374002430`; Vercel target status `upgradeToPro=build-rate-limit`.
 NEXT ACTION: preserve candidate `2facceb3…`; do not promote or create speculative deployments; resume deployed-browser + Formal Runtime E2E only when exact-SHA deployment and authorized dispatch are available.
+
+
+### 2026-09-18 — Netlify alternate-hosting attempt
+
+RUN: alternate frontend hosting via Netlify
+CANDIDATE SHA: `2facceb39aaa826413f20245a6f20b6c2ff7cd34`
+RESULT: alternate-hosting path investigated and not falsely certified.
+EVIDENCE:
+- Netlify project `aghbari-commerce-web` exists (site id `6c515d48-3385-46eb-958c-3ff2ee17e95e`) but its primary URL and returned branch-version URL currently resolve to Netlify `Site not found` / 404.
+- Netlify deploy updater exposes a direct MCP CLI upload command for the existing site; it requires the source/repo directory locally.
+- Local execution environment cannot resolve `github.com` DNS, so the repository cannot be cloned into that environment for the direct upload.
+- No `NETLIFY_AUTH_TOKEN`/existing Netlify deploy workflow was found in repository source.
+- Therefore no Netlify deployment was claimed, no fake SHA mapping was created, and Vercel Production was untouched.
+NEXT: preserve exact candidate; when a connected Netlify upload/build channel with source access exists, deploy candidate source and verify `build-meta.json` exact SHA before using it for Runtime E2E.
