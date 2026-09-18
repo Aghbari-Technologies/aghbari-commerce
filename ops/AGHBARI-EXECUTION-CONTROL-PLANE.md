@@ -34,11 +34,13 @@
 
 - CURRENT CANDIDATE: `4d5057d7952e213d6b5328a80f0229f1ff9fb861` on `execution/closure-hammer-20260918b`.
 - CANDIDATE MOVE: Fast-forwarded candidate ref from `466857aa0dd1062db380800e2d0b46dc4fb53075` to existing proven SHA `4d5057…`; no new commit was created by the ref move.
-- PROVEN EXACT-SHA GATES: Storage/Fresh Browser, Migration, Test-the-Test, Concurrency, Local Production Browser, Quality, Security, G1 Domain, Order Workflow, and Deployment Contract all PASS on `4d5057…`.
-- CANDIDATE PREVIEW: `dpl_7QvezhhAMnzarGuxa4csQC94oB7A` READY for `4d5057…`; later deployment `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32` is also READY and points to the same candidate SHA.
-- LIVE/PRODUCTION: production deployment `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5` is READY but serves `b102ce5…`; read-only live browser inspection passed for rendering/identity/no visible errors. This is health evidence only, not candidate alignment.
-- DEPLOYMENT BROWSER: BLOCKED — `VERCEL_AUTOMATION_BYPASS_SECRET` missing; GitHub Actions job stops before browser execution. `E2E_ADMIN_EMAIL` and `E2E_ADMIN_PASSWORD` are also absent in that environment.
-- FINAL REGRESSION: NOT_PROVEN / TOOL BOUNDARY. The repository's formal production-smoke/runtime-e2e workflows are `workflow_dispatch` inputs and the connected GitHub toolset exposes no workflow-dispatch mutation. Do not convert the read-only Live inspection into a final-regression PASS.
+- PROVEN EXACT-SHA GATES: Storage/Fresh Browser, Migration, Quality, Security, G1 Domain, Order Workflow, and Deployment Contract source gate PASS on `4d5057…`; prior exact-SHA Test-the-Test/Concurrency/Local Production proofs also remain valid on this unchanged SHA.
+- CURRENT EXACT-SHA RE-RUNS: Fresh Local Browser run `35299449995` = PASS (job `105458810059`); Test-the-Test `35299450053` = RUNNING; Local Production Artifact `35299450068` = RUNNING; Concurrency `35299450051` = RUNNING. These runs are on the same candidate SHA and do not invalidate earlier exact-SHA evidence.
+- CANDIDATE PREVIEW: Vercel `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32` READY, exact SHA `4d5057…`; `dpl_7QvezhhAMnzarGuxa4csQC94oB7A` also READY for the same SHA.
+- DEPLOYMENT BROWSER: BLOCKED — exact-deployment browser job `105457162861` stopped before browser execution because `VERCEL_AUTOMATION_BYPASS_SECRET`, `E2E_ADMIN_EMAIL`, and `E2E_ADMIN_PASSWORD` were absent. Contract-only job can PASS, but it is not a browser PASS.
+- LIVE/PRODUCTION: production deployment `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5` is READY and serves `b102ce5…`. Live remains health-only evidence; no candidate/live alignment is proven.
+- FINAL REGRESSION: NOT_PROVEN / TOOL BOUNDARY. Formal `production-smoke.yml` and `runtime-e2e.yml` are `workflow_dispatch` workflows; the connected GitHub toolset has no workflow-dispatch mutation.
+- OPERATIONAL LANE: `.github/workflows/repair-excel-build.yml` remains OPEN as an operational-safety issue: it has `contents: write` and can `git push origin HEAD:main`, while latest main-triggered run `35296779614` on `b102ce5…` failed. Root cause is not proven from available job logs; no source/production mutation was made to “fix” it during certification.
 - RELEASE SAFETY: Production remains NO TOUCH. No alias switch, promotion, production migration, or live mutation was performed.
 
 # 1. COMMAND SEMANTICS
@@ -369,16 +371,16 @@ Do not transfer PASS by similarity, cherry-pick assumption, or "small change" re
 
 ```
 CURRENT SHA
-466857aa0dd1062db380800e2d0b46dc4fb53075
+4d5057d7952e213d6b5328a80f0229f1ff9fb861
 
 BRANCH
 execution/closure-hammer-20260918b
 
 MAIN
-fb6700fb7829c57f9dde5e00f0d54d2ee8039778
+b102ce5e9aebe61bb13581cd9a8f45d1cc43c497
 
-LIVE SHA
-efb30b3d23a7a9fcef22d028c33017eeab0855af
+LIVE/PRODUCTION
+b102ce5e9aebe61bb13581cd9a8f45d1cc43c497
 
 PRODUCTION
 NO TOUCH
@@ -387,37 +389,19 @@ CERTIFICATION
 NO
 ```
 
-## Proven current-SHA evidence
+## Current exact-SHA release evidence
 
-| Front | Status | Run / Job |
-|---|---|---|
-| Quality | PASS | 35290658369 / 105432560918 |
-| Security | PASS | 35290658353 / 105432559718 |
-| G1 | PASS | 35290658461 / 105432559797 |
-| Order Workflow | PASS | 35290658426 / 105432576802 |
-| Order Invariant | PASS | 35290658401 / 105432559706 |
-| Migration | PASS | 35290658404 / 105432559691 |
-| Concurrency | PASS | 35290658348 / 105432... |
-| Bootstrap Lockfile | PASS | 35290658360 |
-| Local Production Browser | PASS | 35290658376 / 105433163476 |
-| Test-the-Test | PASS | 35290658388 / 105433637993 |
-| Deployment Artifact | PASS | dpl_BuuPRP2VoBNTuJ8b9LYwmMj8mtdR |
-| Deployment build-meta | PASS | exact SHA 466857aa... |
-
-## Open / Blocked
-
-| Front | State | Evidence |
-|---|---|---|
-| Fresh Local Storage adversarial | FAIL | Candidate 466857aa…: runs 35290655695 / 35290658368 and same-SHA reruns 105446382106 / 105446481693 all FAIL; diagnostic proof branch 6583b91… run 35298202228 / job 105455032168 RUNNING |
-| Fresh Browser PR | FAIL | storage boundary failure repeated |
-| Deployment Browser | BLOCKED/FAIL | 35290689616 / 105441117323 |
-| Final Regression | NOT_PROVEN | blocked by unresolved fronts |
-| Evidence Reconciliation | OPEN | unresolved fronts remain |
-| Live | NOT_PROVEN | live remains old SHA |
-| Certification | NO | not eligible while blocking fronts remain |
-| Production | NO TOUCH | mandatory safety boundary |
-
----
+- Fresh Local Browser / Storage adversarial: PASS — `35299449995 / 105458810059`.
+- Migration: PASS — `35299450012`.
+- Quality: PASS — `35299450009`.
+- Security: PASS — `35299449999`.
+- G1 Domain: PASS — `35299449994`.
+- Order Workflow: PASS — `35299450067`.
+- Deployment Contract: PASS — `35299450001` contract job; deployment-browser portion skipped because credential boundary is unresolved.
+- Test-the-Test: RUNNING — `35299450053 / 105458822785`.
+- Concurrency: RUNNING — `35299450051 / 105459616923`.
+- Local Production Browser: RUNNING — `35299450068 / 105459493871`.
+- Candidate Vercel preview: `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32`, READY, exact SHA `4d5057…`.
 
 # 11. CURRENT STORAGE FORENSIC FACTS
 
@@ -812,3 +796,38 @@ The full canonical execution protocol remains on:
 - TinyFish read-only inspection of live production confirmed page rendering and Aghbari Commerce identity with no visible runtime/resource errors. This does not prove candidate/live alignment or authenticated deployment E2E.
 - Deployment Browser remains credential-blocked; formal final regression remains NOT_PROVEN because workflow dispatch is unavailable through the connected GitHub tool.
 
+### 2026-09-18 — Command 1 execution re-entry / exact-SHA state reconciliation
+
+RUN:
+- `35299449995`
+- `35299450053`
+- `35299450051`
+- `35299450068`
+- deployment-browser prior run `35298902449`
+- repair-excel-build `35296779614`
+
+JOB:
+- Fresh Local `105458810059` = PASS
+- Test-the-Test `105458822785` = RUNNING
+- Concurrency `105459616923` = RUNNING
+- Local Production `105459493871` = RUNNING
+- deployment-browser `105457162861` = BLOCKED before browser
+- repair-excel-build job records unavailable through connector
+
+SHA:
+`4d5057d7952e213d6b5328a80f0229f1ff9fb861` (candidate); `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497` (main/live)
+
+FRONT:
+Exact-SHA revalidation; deployment browser credential boundary; final regression tooling boundary; operational workflow safety; live alignment
+
+RESULT:
+No candidate SHA change. No new product defect established. Existing 4d5057 exact proofs remain valid; Fresh Local exact rerun passed; three other exact reruns are still running.
+
+ROOT CAUSE:
+Deployment Browser blocker = missing approved GitHub Actions/Vercel credential boundary. Final Regression blocker = no workflow-dispatch mutation in connected GitHub tooling. repair-excel-build failure root cause remains unresolved.
+
+ARTIFACT:
+Candidate preview `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32` READY; production `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5` READY on main SHA.
+
+NEXT ACTION:
+Close RUNNING exact-SHA jobs by recorded terminal evidence; preserve Deployment Browser BLOCKED and Final Regression NOT_PROVEN until approved credential/dispatch paths exist; keep Production NO TOUCH; then perform final evidence reconciliation.
