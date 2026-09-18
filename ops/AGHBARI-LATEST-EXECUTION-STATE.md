@@ -1151,3 +1151,28 @@ CURRENT CERTIFICATION STATE:
 - No dedicated Commerce staging Supabase project exists in the connected account.
 
 NEXT EXECUTION: inspect terminal gates for exact head `cdc30836...`; repair only concrete failures; once all required exact-head gates are terminal and a matching deployment/browser proof exists, close certification. Do not merge or touch Production before that evidence exists.
+
+
+### 2026-09-18 — Command 1 — exact-head test-the-test forensic repair
+
+CURRENT CANDIDATE: `c5b88ac0adc12560731254333cf1eb345e9a297e` on `certification/final-candidate-20260918`; PR #83 remains OPEN / non-draft.
+BASE: `main @ 427ff0801544449f432290205b2a29f2508541f3`.
+
+FORENSIC FINDING:
+- Exact-head predecessor `85c289fa...` had two terminal failures in the same proof boundary.
+- `supabase-migration-proof` run `35356466242` and `Test-the-Test / Exact SHA` run `35356466116` both failed at `supabase/tests/029-notifications-boundary.test.sql:30`.
+- Root cause: PostgreSQL function `set_config(...)` was used as a bare statement. The test planned 5 assertions but executed only 4 because parsing stopped at that line.
+- Repair: changed the session-claim switch to `select set_config(...)`; no product runtime behavior was weakened or changed.
+- New exact candidate SHA: `c5b88ac0...`; all predecessor evidence is invalidated by the SHA change.
+- Immediate post-repair reconciliation shows no workflow runs attached yet to `c5b88ac0...`; no PASS is inferred and no manual rerun capability is available for a run that does not yet exist.
+- Existing predecessor gates that passed (application-quality, security, concurrency, browser local artifact, fresh local Supabase, G1, order workflow, etc.) remain historical only and are not transferred.
+- Vercel has no deployment whose Git SHA matches `c5b88ac0...`; no synthetic deployment attempt made. Production remains NO TOUCH.
+
+PROOF/PROCESS LESSON:
+- pgTAP boundary fixtures must treat SQL session-setting functions as expressions (`SELECT set_config(...)`) rather than bare statements; malformed proof SQL is itself a release-blocking proof defect.
+- Exact-SHA verification remains mandatory after every proof-harness change.
+
+NEXT ACTION:
+- Reconcile whether GitHub has created the fresh exact-head workflow suite for `c5b88ac0...`.
+- Inspect the first terminal failure only; repair only concrete failures.
+- When all exact-head gates are terminal PASS, obtain matching candidate deployment/browser evidence. Until then certification remains NO and Production remains NO TOUCH.
