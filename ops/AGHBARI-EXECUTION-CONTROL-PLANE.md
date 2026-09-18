@@ -669,6 +669,15 @@ Only when all required gates are proven.
 - Compare 466857aa… to e04e83ca… shows only the new migration plus the Storage test modification; no unrelated Product/UI changes.
 - The repair SHA is NOT YET PROMOTED to the release candidate. Exact-SHA targeted CI is running and must pass before candidate promotion.
 
+### 2026-09-18 — Storage repair tightening and proof-harness correction
+
+- Intermediate repair SHA e04e83ca56a778a1db82e5a75f59300b064a057e is INVALIDATED: its pgTAP regression was malformed by dollar-quoting and its evidence is not reusable.
+- Intermediate repair SHA b45fc8a0a77d35f6479e52adb6be62964230550b is INVALIDATED as a release proof SHA because the subsequent pgTAP run exposed the malformed regression test; its Product migration remains the basis of the current repair branch but final proof must use the newest SHA.
+- Final current repair/proof SHA is 4d5057d7952e213d6b5328a80f0229f1ff9fb861 on execution/fix-storage-inactive-rls-20260918.
+- 4d5057… contains the same proven Storage policy fix plus corrected pgTAP quoting. No Production mutation and no promotion of the frozen candidate occurred.
+- New exact-SHA runs for 4d5057…: Fresh Local Storage workflow 35298870968; Migration Proof 35298870785; Test-the-Test 35298870801; Concurrency 35298870837; Quality 35298870876; Security 35298871009; G1 Domain 35298870885; Local Production Artifact 35298870832; Exact Deployment 35298870871; Order Workflow 35298870822. Results are still pending/queued except where not yet terminal.
+- b45fc8… Exact Deployment failure 35298673836 / job 105456565020 is classified BLOCKED — VERCEL_AUTOMATION_BYPASS_SECRET missing. The job failed at input validation before browser execution; no product/runtime failure was exercised.
+
 ### Mandatory next-run start point
 
 ```
