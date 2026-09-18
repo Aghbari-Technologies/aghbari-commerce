@@ -4,6 +4,7 @@
 
 Upon receiving `1`, the programmer MUST:
 - read the canonical Control Plane;
+- read `ops/AGHBARI-DEVELOPMENT-PROGRESS.md` — **MANDATORY RESUME CHECKPOINT; do not skip**;
 - read `PROJECT_MEMORY.md`;
 - read `ops/AGHBARI-LATEST-EXECUTION-STATE.md`;
 - verify the repository's real current state and exact SHA;
@@ -40,8 +41,8 @@ Even when one front is blocked, continue every independent executable front and 
 
 When the user sends only `1`, this is an execution trigger. Begin repository/tool execution immediately. The operator must not echo, regenerate, or paraphrase the operating instructions as its primary response. It must execute them.
 
-READ CONTROL PLANE + PROJECT MEMORY + LATEST STATE
-→ VERIFY REAL GITHUB / VERCEL / SUPABASE STATE
+READ CONTROL PLANE + DEVELOPMENT PROGRESS LEDGER + PROJECT MEMORY + LATEST STATE
+→ RESOLVE LATEST CHECKPOINT → SKIP ALREADY-CLOSED WORK → VERIFY REAL GITHUB / VERCEL / SUPABASE STATE
 → RECONCILE STORED STATE VS REALITY
 → IDENTIFY ALL OPEN / BLOCKED / RUNNING / NOT_PROVEN FRONTS
 → CLASSIFY BY RISK, VALUE, DEPENDENCY
@@ -109,7 +110,8 @@ Additional connectors may be used when actually connected and relevant; capabili
 
 Before the programmer reports completion:
 1. Save newest verified state to `ops/AGHBARI-LATEST-EXECUTION-STATE.md`.
-2. Record the compact run/job/SHA/front/result/root-cause/artifact/next-action entry.
+2. Append one run record to `ops/AGHBARI-DEVELOPMENT-PROGRESS.md` before reporting.
+3. Record the compact run/job/SHA/front/result/root-cause/artifact/next-action entry.
 3. Record consequential decisions in `PROJECT_MEMORY.md`.
 4. Add a Control Plane evolution entry when a durable lesson, tool change, proof weakness, or safer procedure was discovered.
 5. Reconcile exact-SHA evidence and release blockers.
@@ -145,3 +147,7 @@ NEXT ACTION
 The next logical executable front.
 
 **The project advances by initiative + execution + evidence, not by waiting for the owner to manage technical details.**
+
+### Durable development memory gate
+
+**Before any code or test action, Command `1` must read `ops/AGHBARI-DEVELOPMENT-PROGRESS.md` and use its latest checkpoint as the resume point. After every execution, append exactly one run record there. A prior closed item must not be reimplemented unless the exact-SHA/dependency/evidence state invalidates its closure.**
