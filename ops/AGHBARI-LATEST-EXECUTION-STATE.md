@@ -22,25 +22,18 @@
 
 ## Current candidate
 
-- SHA: `e3eafd7582f4d8ce26c94e90d073c98c5e7284b7`
+- SHA: `61e06987a547677c3568799d73489a27d5d05732`
 - Branch: `certification/final-candidate-20260918`
 - PR: #83 (OPEN, non-draft, mergeable)
 - Base: `main @ 427ff0801544449f432290205b2a29f2508541f3`
-- Candidate lineage: checkout-policy hardening + payment/catalog correctness + notification schema/RLS + E2E cart isolation + offline reconnect synchronization + reporting gateway CORS/idempotency/recovery + legacy `create_order` overload execution closure.
-- Current exact-head CI suite: 11 named gates created for `e3eafd758...`; all queued at latest read. No PASS is transferred from prior candidate heads.
-- Fresh-head forensic repairs immediately preceding this SHA:
-  - `85c289fa...`: corrected pgTAP `set_config` syntax in notification RLS proof.
-  - `744e294a...`: restored customer-portal offline sync imports/state declarations.
-  - `8479c16e...`: restored missing `MAX_ORDER_QUANTITY_PER_LINE` import in offline queue.
-  - `290e3cf...`: made reporting delivery state request-scoped.
-  - `9dea919d...`: aligned Quick Order/Excel quantity validation with the canonical 10,000 ceiling.
-  - `e3eafd758...`: revoked client-role EXECUTE on the legacy 3-argument `create_order` overload and added exact pgTAP coverage.
-- Candidate deployment: NOT_AVAILABLE — no Vercel deployment matching `e3eafd7582f4d8ce26c94e90d073c98c5e7284b7`.
-- Candidate deployed-browser proof: NOT_PROVEN. Real browser runtime evidence exists on a separate operational deployment only and is non-transferable.
-- Formal Final Regression: NOT_PROVEN because connected GitHub mutation surface has no workflow-dispatch operation.
+- Candidate lineage: checkout-policy hardening + payment/catalog correctness + notification schema/RLS + E2E cart isolation + offline reconnect synchronization + reporting gateway CORS/idempotency/recovery + legacy order RPC closure.
+- Latest source/proof repair: updated reporting recovery proof to match the request-scoped delivery-state implementation.
+- Current exact-head CI: fresh 11-gate suite attached to `61e06987...`; Order Workflow PASS, Fresh Local Supabase RUNNING, remaining gates queued/pending at latest reconciliation.
+- Candidate deployment: NOT_AVAILABLE — no Vercel deployment matching `61e06987...`.
+- Candidate browser proof: NOT_PROVEN.
+- Formal Final Regression: NOT_PROVEN — no workflow-dispatch mutation on connected GitHub surface.
 - Certification: NO.
 - Production: NO TOUCH.
-
 
 # Main / Live / Production
 
@@ -1239,3 +1232,22 @@ CURRENT PROOF STATE:
 - Candidate Vercel deployment remains absent; Production remains NO TOUCH.
 
 NEXT ACTION: reconcile the fresh 11-gate CI suite, inspect the first terminal failure, and keep production unchanged until certification is proven.
+
+
+### 2026-09-18 — Command 1 — reporting recovery proof alignment
+
+CURRENT CANDIDATE: `61e06987a547677c3568799d734a8d05732` (correct full SHA is recorded below by GitHub as `61e06987a547677c3568799d73489a27d5d05732`) on `certification/final-candidate-20260918`; PR #83 OPEN.
+
+EXACT-HEAD FAILURE FOUND AND REPAIRED:
+- On predecessor `e3eafd758...`, Application Quality passed TypeScript and 195 tests but failed one source-contract assertion in `src/domain/reportingGatewayRecovery.test.ts`.
+- The test expected the pre-refactor shared variable `let externalAccepted = false`, while the implementation had intentionally moved to request-scoped `delivery.externalAccepted`.
+- Repair: updated the test to prove the new request-scoped contract and explicitly assert the legacy shared variable is absent.
+
+CURRENT PROOF:
+- Fresh exact-head CI attached to `61e06987...`; Order Workflow already PASS, Fresh Local Supabase currently RUNNING, other gates queued/pending.
+- Candidate deployment remains absent; Production remains NO TOUCH.
+- Predecessor evidence is invalidated by the new SHA.
+
+ADDITIONAL LIVE READ-ONLY SECURITY AUDIT:
+- Only one SECURITY DEFINER function is currently executable by `anon` in live production: `get_customer_invitation_for_acceptance(text)`, with strict 64-hex token validation, SHA-256 hash matching, unaccepted/unrevoked/unerexpired checks.
+- Live production still contains the legacy 3-argument `create_order` overload; it is not modified. Candidate migration revokes client-role EXECUTE on it.
