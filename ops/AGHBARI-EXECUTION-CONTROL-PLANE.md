@@ -859,3 +859,36 @@ Candidate migration `20260917171000_restore_customer_invitation_runtime.sql` exp
 
 NEXT ACTION:
 Keep this advisory as documented/intentional. Do not modify the DB during certification. Continue exact-SHA CI closure and formal release blockers only.
+
+
+---
+
+# 22. TOOLING EXECUTION — 2026-09-18
+
+## Playwright
+- **Status: PRESENT / VERIFIED IN SOURCE**
+- Package: `@playwright/test 1.63.0`
+- Existing E2E command: `npm run test:e2e`
+- Existing deployment browser workflow installs Chromium and uploads Playwright report/test-results.
+- Existing config captures screenshot on failure and trace/video on retry.
+- No duplicate dependency change was made.
+- Do not upgrade solely for novelty; change version only for a proven compatibility/security requirement.
+
+## Gitleaks
+- **Status: IMPLEMENTED ON ISOLATED TOOLING BRANCH**
+- Branch: `ops/tooling-baseline-20260918`
+- PR: #72 (draft)
+- Head after tooling docs: `ab44dcd834f03f52e3c4bef9e9fb7f17ff766b08`
+- Workflow: `.github/workflows/gitleaks-secrets.yml`
+- Engine: Gitleaks `v8.30.1`
+- Image: official GHCR image, pinned by digest
+- Mode: full Git-history scan, redacted output
+- CI report: redacted SARIF artifact
+- No secret value is stored in the repository.
+- Verification state: **NOT_PROVEN / CI RUN PENDING**. Do not mark PASS until a real workflow execution is observed and reconciled.
+
+## Tooling isolation
+The tooling branch is based on MAIN, not the frozen product candidate. It must not alter the candidate SHA or invalidate candidate evidence merely by existing.
+
+## Current execution rule
+The programmer may consume the tooling branch after review/merge, but any merge that reaches MAIN or the candidate changes the source SHA and therefore invokes the normal evidence invalidation/rerun rules.
