@@ -241,3 +241,26 @@ Tooling PR #72 stays isolated and non-certifying until its baseline contract is 
 
 Durable rule:
 When an authenticated browser gate is blocked by a missing secret, re-running the exact SHA is valid diagnostic evidence only; do not work around the secret by weakening deployment protection, using a share link as a substitute, or fabricating credentials.
+
+
+## 21. COMMAND 1 — WORKFLOW SAFETY + RELEASE-GATE RECONCILIATION — 2026-09-18
+
+### Durable workflow-security lesson
+An operational workflow audit must cover every file under .github/workflows, not only the workflow currently named in the incident. A release candidate was found to contain three repository-write paths: repair-excel-build.yml and two bootstrap lockfile workflows. The candidate was hardened by removing the self-mutating repair workflow, removing the redundant bootstrap-package-lock workflow, and converting bootstrap-release-lockfile.yml to read-only validation. An exhaustive scan at candidate SHA 4753cc3319f551aeccbe2bd081b988fa68df8e87 found 15 workflow files with zero contents: write declarations and zero git push commands.
+
+### Release-audit contract lesson
+Deleting a workflow that a release-audit script explicitly requires is not a valid hardening fix. The intermediate candidate SHA 70bd9bd9d7df6e0dd889dff189698841096fd116 failed Release Audit because bootstrap-release-lockfile.yml was missing. The final candidate restored the required file with least-privilege read-only validation. The correct pattern is contract-preserving hardening, not contract removal.
+
+### Current candidate / evidence state
+PR #74 current head: 4753cc3319f551aeccbe2bd081b988fa68df8e87.
+All evidence tied to previous candidate 4d5057d7952e213d6b5328a80f0229f1ff9fb861 is historical and invalid for the current candidate until re-proven.
+
+### External release blockers
+The canonical Vercel project reported the current candidate SHA as Deployment rate limited — retry in 24 hours, and no current-SHA deployment was present in the deployment list. Therefore Deployment Artifact and Deployment Browser cannot be certified from an older deployment.
+
+The authenticated Deployment Browser remains blocked by the missing approved Vercel automation-bypass credential. Formal Final Regression remains NOT_PROVEN because the connected GitHub mutation surface has no workflow-dispatch capability; a TinyFish inspection of the GitHub Actions UI was also unauthenticated and showed no Run workflow control.
+
+Production remains b102ce5e9aebe61bb13581cd9a8f45d1cc43c497 and NO TOUCH. No production mutation or promotion occurred.
+
+### Evidence artifact
+ops/evidence/20260918-command1-workflow-safety-release-gates.md
