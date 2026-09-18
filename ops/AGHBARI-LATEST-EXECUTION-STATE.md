@@ -22,16 +22,17 @@
 
 ## Current candidate
 
-- SHA: `0fb5a17bcb65816963056112f5a41ccbb4ae3106`
+- SHA: `b05adb77567e527313dfa5ed5c66fbae8c5fb870`
 - Branch: `certification/final-candidate-20260918`
 - PR: #83 (OPEN, non-draft, mergeable)
 - Base: `main @ 427ff0801544449f432290205b2a29f2508541f3`
-- Candidate deployment: NOT_AVAILABLE — canonical Vercel project has zero deployments matching `0fb5a17...`.
-- Candidate CI: 11 named verification runs currently queued on exact SHA; no terminal result is claimed from queued state.
-- Candidate authenticated browser certification: NOT_PROVEN because no exact candidate deployment exists and the approved Vercel bypass credential path is unavailable.
-- Formal Final Regression: NOT_PROVEN because the connected GitHub mutation surface has no workflow-dispatch capability.
+- Candidate change from prior head `0fb5a17b...`: proven Test-the-Test fixture defect fix only. `supabase/tests/028-client-checkout-policy.test.sql` now relies on the schema default `is_active=true` for the warehouse fixture, matching established fixture patterns elsewhere.
+- Candidate CI: 16 exact-head check-runs created after the fix; current snapshot shows all 11 unique named gates queued, plus a duplicate cancelled entry. No new PASS is claimed from queued state.
+- Prior failed evidence at old SHA `0fb5a17b...`: Test-the-Test run `35349927329` / job `105615357821` failed before executing any of the 8 planned cases because test 028 line 10 produced PostgreSQL `INSERT has more target columns than expressions`. This failure is now historical because the candidate SHA changed.
+- Candidate deployment: NOT_AVAILABLE — no Vercel deployment matches `b05adb77...`.
+- Candidate deployed-browser proof: NOT_PROVEN. Real browser capability is available on other deployments, but evidence cannot transfer across deployment SHAs.
+- Formal Final Regression: NOT_PROVEN because connected GitHub mutation surface exposes no workflow_dispatch execution.
 - Certification: NO.
-
 # Main / Live / Production
 
 - Main SHA: `8ab9cc24f012d93a69a98bb561cd6c6642c9ae6f`
@@ -979,3 +980,17 @@ RESULT:
 - Production remains NO TOUCH.
 ARTIFACTS: control-plane commit `6f29d7c33d674239d27e5786f19900d4e001e819`; latest-state commit before this append `73d3b09cdd17359da0560aba7c2e7e0b7858c0ec`; PR #82 merge `d8fdb226...`; PR #74/#81 closed; PR #83 candidate `0fb5a17...`; PR #84 `3c780477...`.
 NEXT ACTION: continue only on executable fronts that materially reduce uncertainty; when queue capacity produces terminal evidence, verify PR #84 at exact head before adoption; when a supported exact-SHA deployment path exists, run candidate browser + final regression. Do not transfer operational runtime evidence or burn deployment quota with synthetic commits.
+
+
+### 2026-09-18 — Command 1 — exact candidate Test-the-Test fixture repair
+
+RUN: exact candidate Test-the-Test failure forensic + fixture correction
+JOB: unblock proof system without weakening the product/security assertions
+SHA: old candidate `0fb5a17bcb65816963056112f5a41ccbb4ae3106` → corrected candidate `b05adb77567e527313dfa5ed5c66fbae8c5fb870`
+FRONT: Test-the-Test baseline / candidate evidence integrity
+RESULT:
+- Exact-SHA Test-the-Test job `105615357821` proved checkout integrity, then failed at baseline execution of test 028 before any adversarial mutations. PostgreSQL reported `supabase/tests/028-client-checkout-policy.test.sql:10: INSERT has more target columns than expressions`, planned 8 tests, ran 0.
+- The failing statement was the warehouse fixture. Established sibling fixtures use the schema default for `is_active`; the correction removes `is_active,true` from this fixture target/value list and leaves the table default to supply true. No product authorization rule or assertion was weakened.
+- This is a proof-system/test-fixture defect, not a proven product failure. Because the candidate source changed, all prior candidate PASS evidence is invalidated and must be re-established against `b05adb77...`.
+- GitHub created a fresh exact-head check suite (16 check-runs; 11 unique named gates currently queued, one duplicate cancelled). No PASS is transferred from `0fb5a17...`.
+- Production remains NO TOUCH; Vercel candidate deployment remains absent.
