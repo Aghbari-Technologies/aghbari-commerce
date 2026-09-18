@@ -36,8 +36,8 @@
 - Proof-integrity correction now applied: candidate advanced to `5b9f2a76615e76bb6444c81f39e02f3479c0704b` after an exhaustive pull_request checkout audit fixed G1, Security Audit, Intelligence Contract Proof, and Bootstrap Release Lockfile exact-SHA semantics.
 - MAIN: `4505bcb655c0b747aeea7e1cc526a94f93270d3d`.
 - LIVE/PRODUCTION: `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`; Production = NO TOUCH; no promotion or mutation.
-- CURRENT CANDIDATE CI: 10 mandatory pull_request gates are terminal PASS on `5b9f2a…`; Test-the-Test `35321684089` and Concurrency `35321683806` remain RUNNING. All current PASS evidence is exact-SHA verified.
-- LOCAL PRODUCTION ARTIFACT PROOF: current candidate run `35321683815` / job `105526067670` is PASS; exact candidate/build SHA matched and customer/admin browser suites passed.
+- CURRENT CANDIDATE CI: 13 mandatory pull_request gates are terminal PASS on `5b9f2a…`; all current PASS evidence is exact-SHA verified.
+- LOCAL PRODUCTION ARTIFACT PROOF: current candidate run `35321683815` / job `105526067670` is PASS; exact candidate/build SHA matched; customer suite 3/3 and admin suite 1/1 passed; artifact `10537173227`.
 - CANDIDATE DEPLOYMENT: NOT_AVAILABLE; GitHub Vercel status is FAILURE — "Deployment rate limited — retry in 24 hours"; no candidate-SHA deployment appears in canonical Vercel deployment list.
 - CANDIDATE DEPLOYMENT BROWSER: browser-contract PASS in run `35310024991`; actual browser-e2e SKIPPED because no candidate deployment. Authenticated deployment browser remains BLOCKED because `VERCEL_AUTOMATION_BYPASS_SECRET` is unavailable.
 - FORMAL FINAL REGRESSION: NOT_PROVEN. The candidate repository contains `workflow_dispatch` on 13 of 15 workflows, but the connected GitHub mutation surface exposes no workflow-dispatch execution capability. Prior browser inspection of GitHub Actions was unauthenticated.
@@ -1453,3 +1453,13 @@ RESULT: candidate has 10 terminal PASS gates on exact source head, plus Test-the
 ROOT CAUSE: candidate source proof integrity is now hardened; remaining candidate release blockers are deployment/authentication/dispatch boundaries rather than a current product defect.
 ARTIFACT: candidate runs `35321683922;35321683893;35321683989;35321683986;35321683999;35321683950;35321683916;35321684096;35321683994;35321683953;35321683815`.
 NEXT ACTION: terminalize Test-the-Test and Concurrency; then reconcile final candidate evidence and preserve the three external release blockers.
+### 2026-09-18 — Final candidate 5b9 exact-SHA closure
+
+RUN: 35321683922;35321683893;35321683989;35321683986;35321683999;35321683950;35321683916;35321684096;35321683994;35321683953;35321683815;35321684089;35321683806
+JOB: final candidate exact-SHA closure
+SHA: 5b9f2a76615e76bb6444c81f39e02f3479c0704b
+FRONT: candidate verification / adversarial testing / workflow safety / final release evidence
+RESULT: 13/13 terminal PASS on the exact current candidate SHA. Test-the-Test and Concurrency are both closed. Local Production Artifact proves exact source/build SHA, customer 3/3, admin 1/1, artifact 10537173227. Exhaustive workflow safety is clean: 15 workflows, zero contents:write, zero git-push, zero implicit pull_request checkout. Candidate deployment remains absent and Vercel status remains rate-limit FAILURE. Authenticated deployment browser and Formal Final Regression remain external blockers. Production remains NO TOUCH.
+ROOT CAUSE: candidate source proof is closed; only deployment/authentication/dispatch evidence remains unresolved.
+ARTIFACT: ops/evidence/20260918-command1-final-candidate-5b9-closure.md
+NEXT ACTION: obtain approved exact-SHA Vercel deployment and authenticated regression/dispatch capability; then perform final evidence reconciliation.
