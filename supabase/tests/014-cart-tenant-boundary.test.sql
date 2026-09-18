@@ -30,7 +30,7 @@ select set_config('request.jwt.claim.sub',(select user_a::text from fixture),tru
 select public.set_cart_item(product_a,3) from fixture;
 select is((select count(*) from public.get_cart() where product_id=(select product_a from fixture)),1::bigint,'Tenant A cart contains its own product');
 select is((select quantity from public.get_cart() where product_id=(select product_a from fixture)),3,'Tenant A quantity is isolated');
-select throws_ok(format('select public.set_cart_item(%L,2)',product_b),'P0001',null,'Tenant A cannot add Tenant B product');
+select throws_ok(format('select public.set_cart_item(%L,2)',(select product_b from fixture)),'P0001',null,'Tenant A cannot add Tenant B product');
 select is((select count(*) from public.carts c join fixture f on c.organization_id=f.org_b and c.customer_id=f.customer_b),0::bigint,'Tenant A cannot create or expose Tenant B cart');
 
 select set_config('request.jwt.claim.sub',(select user_b::text from fixture),true);
