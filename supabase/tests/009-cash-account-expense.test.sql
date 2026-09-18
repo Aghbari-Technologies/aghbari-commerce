@@ -11,12 +11,9 @@ set local role authenticated;
 set local request.jwt.claim.sub='bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
 
 select is((select name from public.create_cash_account('78787878-7878-4787-8787-787878787879','Main Cash','YER',100)),'Main Cash','Admin can provision a cash account');
-select * from public.record_expense('78787878-7878-4787-8787-787878787879',(select id from public.cash_accounts where name='Main Cash'),'Transport',25,'YER','Delivery');
+select lives_ok($$select * from public.record_expense('78787878-7878-4787-8787-787878787879',(select id from public.cash_accounts where name='Main Cash'),'Transport',25,'YER','Delivery')$$,'Admin can post a valid expense');
 select is((select current_balance from public.get_cash_account_balances() where name='Main Cash'),75::numeric,'Posted expense reduces the operational cash balance');
-select throws_ok(
-  $$select public.record_expense('78787878-7878-4787-8787-787878787879',(select id from public.cash_accounts where name='Main Cash'),'Overdraw',76,'YER','Should fail')$$,
-  '22003','expense exceeds available cash balance','Expense cannot overdraw the operational cash account'
-);
+select throws_ok($$select public.record_expense('78787878-7878-4787-8787-787878787879',(select id from public.cash_accounts where name='Main Cash'),'Overdraw',76,'YER','Should fail')$$,'22003','expense exceeds available cash balance','Expense cannot overdraw the operational cash account');
 
 select * from finish();
 rollback;
