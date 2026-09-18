@@ -34,7 +34,7 @@ function isSafePayload(type: string, payload: unknown): boolean {
   const value = payload as Record<string, unknown>;
   if (typeof value.productId !== 'string' || !UUID_PATTERN.test(value.productId.trim())) return false;
   if (type === OFFLINE_CART_SET_ITEM) {
-    return Number.isSafeInteger(value.quantity) && (value.quantity as number) > 0;
+    return Number.isSafeInteger(value.quantity) && (value.quantity as number) > 0 && (value.quantity as number) <= MAX_ORDER_QUANTITY_PER_LINE;
   }
   return type === OFFLINE_CART_REMOVE_ITEM;
 }
