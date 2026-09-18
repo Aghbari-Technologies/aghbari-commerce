@@ -202,3 +202,14 @@ On tooling head `1830e3a109a9e0605f5306b2ddc8f308457fb375`, Gitleaks run `353014
 - Live/production remains `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`, untouched. No promotion or production mutation occurred.
 - Supabase live project `mrcyqezbhpncuvaehwgf` is ACTIVE_HEALTHY. Current security advisor observations include 1 anon-executable SECURITY DEFINER function (`get_customer_invitation_for_acceptance`) and 58 authenticated-executable SECURITY DEFINER functions. These were observed only; no Production mutation was performed.
 - Durable lesson: operational memory must be reconciled against remote source-of-truth at the start of every run, and any newly advanced SHA immediately invalidates affected predecessor evidence.
+
+
+## 20. COMMAND 1 — 2026-09-18 TOOLING BASELINE RECONCILIATION
+
+- PR #72 current head is `ddd00fc142ef60bc99e5fe8ebc63d4c53caaed94` and remains draft/isolated from the frozen candidate.
+- Exact-head tooling CI: Gitleaks `35307503455`, security-audit `35307503508`, G1 Domain Proof `35307503543`, Semgrep CE `35307503464`, Trivy `35307503456`, application-quality `35307503487`, and CodeQL `35307503481` completed successfully. Supabase migration proof `35307503570` failed only in pgTAP.
+- Migration proof for the tooling baseline successfully started local Supabase and applied the full migration set from an empty database. The failure occurred during pgTAP execution and includes stale syntax/plans/permissions and old search_path expectations.
+- A diagnostic attempt copied candidate tests into the tooling branch. Comparison showed that the candidate also contains later product migrations absent from the tooling baseline, including product-media, purchase-outbox, and security-definer hardening. The diagnostic commits were fully reverted so the tooling branch remains isolated.
+- Durable decision: tooling CI and product-candidate certification are separate evidence lanes. Never import candidate migrations or candidate-specific contracts into the tooling branch simply to obtain a green tooling run.
+- Candidate `4d5057d7952e213d6b5328a80f0229f1ff9fb861` remains frozen and its previously proven exact-SHA evidence remains intact.
+- Production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497` remains untouched; runtime inspection found no error clusters or error/fatal logs over the inspected 24h window.
