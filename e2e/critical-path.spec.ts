@@ -111,6 +111,10 @@ test('authenticated customer completes real search → catalog → cart → orde
   await expect(page.getByRole('button', { name: 'طلباتي', exact: true })).toBeVisible();
   await expect(page.getByText(`طلب #${orderNumber}`, { exact: true })).toBeVisible();
   await expect(page.getByText('الدفع: نقدي', { exact: true })).toBeVisible();
+  const trackButton = page.getByRole('button', { name: 'تتبع الطلب', exact: true }).first();
+  await trackButton.click();
+  await expect(page.locator('.order-timeline .timeline-item').first()).toBeVisible();
+
   const notifications = page.getByRole('button', { name: 'التنبيهات' });
   await expect(notifications).toContainText('1');
   await notifications.click();
