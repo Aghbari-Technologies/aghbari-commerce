@@ -332,3 +332,15 @@ RESULT: browser automation confirmed the connected GitHub session is unauthentic
 ROOT CAUSE: GitHub browser-session authentication is unavailable through the current connected automation session; candidate deployment is separately blocked by Vercel free-plan deployment quota exhaustion.
 ARTIFACT: TinyFish run `d6315349-d551-473c-b108-997141884371`; exact workflow source `.github/workflows/runtime-e2e.yml`; canonical Vercel project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`.
 NEXT ACTION: preserve candidate `4753cc3…`; when an approved authenticated GitHub dispatch path and an exact-SHA Vercel deployment are available, dispatch Runtime E2E with matching `base_url` + `exact_sha`; Production remains NO TOUCH.
+
+
+### 2026-09-18 — Command 1 — exact local proof log confirmation
+
+RUN: GitHub Actions job-log fetch `105490749871`
+JOB: Browser E2E / Local Production Artifact — `35310025159`
+SHA: `4753cc3319f551aeccbe2bd081b988fa68df8e87`
+FRONT: exact-SHA local browser evidence
+RESULT: raw job log confirms `EXPECTED_SHA = VITE_BUILD_SHA = 4753cc3…`, exact local browser SHA match, Chromium launch, Customer suite `3 passed`, Admin suite `1 passed`, evidence artifact `10532997772` uploaded, and successful job completion. This closes the local artifact evidence without relying on the previously overwritten HTML report. It does not close deployed authenticated runtime certification.
+ROOT CAUSE: none; evidence verification only.
+ARTIFACT: run `35310025159`; job `105490749871`; artifact `10532997772`.
+NEXT ACTION: no rerun of this closed front unless candidate/dependency changes. Keep deployment, authenticated browser, formal dispatch, and final evidence reconciliation unresolved until independently proven.
