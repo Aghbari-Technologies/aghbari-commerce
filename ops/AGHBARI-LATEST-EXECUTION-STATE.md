@@ -825,3 +825,16 @@ RESULT:
 ROOT CAUSE: remaining certification gaps are external proof/capability boundaries (exact candidate Vercel deployment, authenticated deployed-browser credentials/bypass, workflow-dispatch execution authority, and plan/config-dependent leaked-password protection), not a newly proven defect in candidate code.
 ARTIFACT: candidate runs above; Vercel project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`; Production `dpl_AmTBr8X9qBGCLdngxirQgdRM4Xjo`; Supabase `mrcyqezbhpncuvaehwgf`.
 NEXT ACTION: preserve candidate and Production. Resume only through an approved exact-SHA Git/Vercel deployment path, then run authenticated deployed browser E2E and formal final regression on that exact deployment. Do not create no-op candidate commits or consume Vercel quota to manufacture evidence.
+
+
+### 2026-09-18 — UI quality / deployment failover lane
+
+RUN: non-certifying UI/product quality execution
+JOB: audit existing interfaces, correct proven UX/runtime defects, preserve certification candidate
+SHA: UI branch `enhancement/ui-command-center-20260918` HEAD `b8d49319f8702a59431f7a1134f013f3fa4ff8e8`; certification candidate remains `5b9f2a76615e76bb6444c81f39e02f3479c0704b`
+FRONT: customer portal UX + admin dashboard correctness + template source-of-truth + deployment failover
+RESULT: existing UI surfaces were confirmed in source: customer B2B portal v3, admin executive dashboard, admin operations, customers, inventory, purchasing, finance, exports, client settings, RTL/responsive/accessibility/offline styling. Proven defects corrected on isolated PR #81: customer order templates now use the existing server-authoritative `orderTemplates` service instead of `localStorage`; Ctrl/Cmd+K now actually focuses the global catalog search; admin executive dashboard inventory count now reads `inventory_balances` (current schema) instead of nonexistent `inventory`; admin dashboard navigation now targets real work-area anchors; unified visual polish layer added across auth/customer/admin/mobile/overlay states. Netlify SPA/build/header configuration added as a Vercel-independent deployment fallback. Netlify integration is connected at product level, but no Netlify deployment API tool is exposed in the current execution surface, so no false deployment claim is recorded. Candidate/Production untouched.
+ROOT CAUSE: UI had accumulated presentation-only affordances and one stale schema reference; template persistence frontend had drifted behind the already-hardened database contract.
+ACTION: opened non-certifying PR #81; all changes isolated from candidate.
+VERIFICATION: GitHub Actions are executing on PR #81 HEAD `b8d4931...`; bootstrap-release-lockfile PASS `35343916541`, Order Workflow Proof PASS `35343916438`, security-audit PASS `35343907896`; G1/application-quality/supabase migration were still running/pending at last read. No production deployment attempted.
+NEXT ACTION: finish remaining PR #81 CI gates; then perform browser visual verification on the improvement branch through an authenticated browser path when available; once CI/browser evidence is sufficient, merge only PR #81, not PR #74. Configure/trigger Netlify deployment through the connected Netlify integration when its deployment controls are exposed; retain Vercel as a secondary provider rather than forcing quota-consuming candidate redeployments.
