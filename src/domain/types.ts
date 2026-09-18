@@ -12,6 +12,7 @@ export interface Product {
   description?: string;
   availableQuantity: number;
   status: 'active' | 'inactive';
+  authorizedPrice?: number;
 }
 
 export interface ProductPrice {
@@ -29,10 +30,13 @@ export interface CartLine {
   unitPrice: number;
 }
 
+export type PaymentMethod = 'credit' | 'cash' | 'transfer';
+
 export interface OrderDraft {
   // Deprecated compatibility field. It is intentionally ignored by validation and the RPC.
   // The authenticated server context remains the sole authority for customer binding.
   customerId?: string;
   idempotencyKey: string;
+  paymentMethod?: PaymentMethod;
   lines: Array<{ productId: string; quantity: number }>;
 }
