@@ -1217,3 +1217,23 @@ CURRENT PROOF STATE:
 NEXT ACTION:
 - Reconcile the 11 exact-head gates for `8479c16e...` when attached; inspect first terminal failures only.
 - Continue safe independent source/security checks without creating duplicate deployments or speculative commits.
+
+
+### 2026-09-18 — Command 1 — legacy create_order overload security closure
+
+CURRENT CANDIDATE: `e3eafd7582f4d8ce26c94e90d073c98c5e7284b7` on `certification/final-candidate-20260918`; PR #83 OPEN.
+
+LIVE READ-ONLY FINDING:
+- Commerce production project `mrcyqezbhpncuvaehwgf` still exposes two public `create_order` overloads: the legacy 3-argument signature and the new 4-argument authoritative payment-method signature.
+- The legacy 3-argument overload is currently EXECUTABLE by `authenticated` in Production. No production mutation was performed.
+
+CANDIDATE REPAIR:
+- The candidate migration now revokes EXECUTE from `public, anon, authenticated` on the legacy 3-argument overload instead of dropping it, minimizing dependency-break risk while closing the client RPC bypass.
+- Checkout policy pgTAP now explicitly proves authenticated cannot execute the legacy overload and can execute the authoritative 4-argument overload.
+- New exact candidate SHA: `e3eafd7582f4d8ce26c94e90d073c98c5e7284b7`; all predecessor evidence is invalid for this SHA.
+
+CURRENT PROOF STATE:
+- Fresh exact-head workflow discovery is not yet populated immediately after this commit; no PASS inferred.
+- Candidate Vercel deployment remains absent; Production remains NO TOUCH.
+
+NEXT ACTION: reconcile the fresh 11-gate CI suite, inspect the first terminal failure, and keep production unchanged until certification is proven.
