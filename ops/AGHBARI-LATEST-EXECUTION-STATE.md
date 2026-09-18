@@ -12,13 +12,13 @@
 
 ## Current candidate
 
-- SHA: `4753cc3319f551aeccbe2bd081b988fa68df8e87`
+- SHA: `64f5283e7b3f893de72dac9ea4d0bf5c3eef4b8d`
 - Branch: `execution/closure-hammer-20260918c`
 - PR: #74 (open, draft, mergeable)
 - Base: `main @ 4505bcb655c0b747aeea7e1cc526a94f93270d3d`
-- Candidate deployment: NOT_AVAILABLE — exact-SHA Vercel deployment is still not proven. Canonical project `aghbari-commerce-c2dd` has zero deployments matching candidate `4753cc3319f551aeccbe2bd081b988fa68df8e87`; latest READY observed is `dpl_DWrwAkfmGXUGyFxEsvMhX9YgaPuv` for operational commit `a42dfa928e1c966973fb647065e91266cfd43be7`, not the candidate. Candidate GitHub status remains Vercel FAILURE on the build-rate-limit target.
+- Candidate deployment: NOT_AVAILABLE — exact-SHA Vercel deployment is not proven. Canonical project `aghbari-commerce-c2dd` currently has zero deployments matching candidate `64f5283e7b3f893de72dac9ea4d0bf5c3eef4b8d`; latest READY activity is on operational/tooling commits. Candidate GitHub status remains Vercel FAILURE on the build-rate-limit target.
 - Candidate authenticated browser certification: BLOCKED — approved Vercel automation-bypass credential is unavailable.
-- Previous candidate evidence for `4d5057…` is historical and not transferable.
+- Previous candidate evidence for `4753cc…` is historical and invalidated by a proven proof-system defect.
 
 ## Main / Live / Production
 
@@ -469,3 +469,15 @@ NEXT ACTION: terminalize rerun when the external job completes; if it fails, ret
 LESSON: the connected GitHub mutation surface can rerun failed workflow jobs/runs even though it cannot invoke `workflow_dispatch` manually.
 RULE: distinguish three layers: workflow source dispatch capability, manual dispatch authority, and rerun authority. A rerun of an already-created isolated diagnostic run may be used when it does not mutate the candidate or Production, but its result must remain tied to the exact original SHA and be treated as diagnostic until terminal evidence is captured.
 EVIDENCE: rerun request succeeded for run `35308829558`; GitHub reports `run_attempt=2` and status `in_progress` on exact SHA `cf7db1c376e40c44ed0cec1956c9b59ee8f5d7f0`.
+
+
+### 2026-09-18 — Command 1 — candidate exact-SHA proof integrity correction
+
+RUN: forensic audit of pull_request verification semantics; focused workflow correction; fresh candidate CI trigger
+JOB: proof-system integrity / candidate protection
+SHA: previous candidate `4753cc3319f551aeccbe2bd081b988fa68df8e87` -> current candidate `64f5283e7b3f893de72dac9ea4d0bf5c3eef4b8d`
+FRONT: G1 / Security Audit / Intelligence Contract exact-SHA proof integrity
+RESULT: proven defect found: G1 run `35310025098` and Security Audit run `35310025100` used merge commit `7b4da729...` because their pull_request workflows resolved `github.sha`. All evidence tied to `4753cc3...` is invalidated. Corrected three workflows to prefer `github.event.pull_request.head.sha` and assert exact HEAD. Fresh candidate CI is now running on `64f5283...`.
+ROOT CAUSE: pull_request merge-ref semantics made affected exact-SHA claims unsound.
+ARTIFACT: compare `4753cc3...64f5283`; affected workflows: g1-domain-proof.yml, security-audit.yml, intelligence-contract-proof.yml.
+NEXT ACTION: terminalize the fresh `64f5283...` CI set, verify each proof logs the exact candidate SHA, then reconcile release evidence. Vercel deployment, authenticated browser, and Formal Final Regression remain separate release blockers. Production remains NO TOUCH.
