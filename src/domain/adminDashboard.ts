@@ -18,13 +18,9 @@ function includedSale(row: DashboardSaleRow): boolean {
 }
 
 export function calculateSevenDaySales(rows: DashboardSaleRow[], now = new Date()): number {
-  const cutoff = new Date(now);
-  cutoff.setDate(cutoff.getDate() - 7);
-  return rows.reduce((sum, row) => {
-    if (!includedSale(row)) return sum;
-    const created = new Date(row.created_at);
-    return created >= cutoff && created <= now ? sum + row.total : sum;
-  }, 0);
+  const days = buildSevenDaySales(rows, now);
+  const nowKey = localDayKey(now);
+  return days.reduce((sum, day) => day.key <= nowKey ? sum + day.value : sum, 0);
 }
 
 export function buildSevenDaySales(rows: DashboardSaleRow[], now = new Date()): Array<{ key: string; label: string; value: number }> {
