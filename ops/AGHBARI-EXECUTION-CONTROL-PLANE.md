@@ -33,15 +33,15 @@
 # 0A. AUTHORITATIVE LIVE EXECUTION STATE — 2026-09-18
 
 - CURRENT CANDIDATE: `4d5057d7952e213d6b5328a80f0229f1ff9fb861` on `execution/closure-hammer-20260918b`.
-- CANDIDATE MOVE: Fast-forwarded candidate ref from `466857aa0dd1062db380800e2d0b46dc4fb53075` to existing proven SHA `4d5057…`; no new commit was created by the ref move.
-- PROVEN EXACT-SHA GATES: Storage/Fresh Browser, Migration, Quality, Security, G1 Domain, Order Workflow, and Deployment Contract source gate PASS on `4d5057…`; prior exact-SHA Test-the-Test/Concurrency/Local Production proofs also remain valid on this unchanged SHA.
-- CURRENT EXACT-SHA RE-RUNS: Fresh Local Browser run `35299449995` = PASS (job `105458810059`); Test-the-Test `35299450053` = RUNNING; Local Production Artifact `35299450068` = RUNNING; Concurrency `35299450051` = RUNNING. These runs are on the same candidate SHA and do not invalidate earlier exact-SHA evidence.
-- CANDIDATE PREVIEW: Vercel `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32` READY, exact SHA `4d5057…`; `dpl_7QvezhhAMnzarGuxa4csQC94oB7A` also READY for the same SHA.
-- DEPLOYMENT BROWSER: BLOCKED — exact-deployment browser job `105457162861` stopped before browser execution because `VERCEL_AUTOMATION_BYPASS_SECRET`, `E2E_ADMIN_EMAIL`, and `E2E_ADMIN_PASSWORD` were absent. Contract-only job can PASS, but it is not a browser PASS.
-- LIVE/PRODUCTION: production deployment `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5` is READY and serves `b102ce5…`. Live remains health-only evidence; no candidate/live alignment is proven.
-- FINAL REGRESSION: NOT_PROVEN / TOOL BOUNDARY. Formal `production-smoke.yml` and `runtime-e2e.yml` are `workflow_dispatch` workflows; the connected GitHub toolset has no workflow-dispatch mutation.
-- OPERATIONAL LANE: `.github/workflows/repair-excel-build.yml` remains OPEN as an operational-safety issue: it has `contents: write` and can `git push origin HEAD:main`, while latest main-triggered run `35296779614` on `b102ce5…` failed. Root cause is not proven from available job logs; no source/production mutation was made to “fix” it during certification.
-- RELEASE SAFETY: Production remains NO TOUCH. No alias switch, promotion, production migration, or live mutation was performed.
+- EXACT-SHA GATES NOW CLOSED/PASS: Fresh Local Browser + Storage adversarial, Migration, Test-the-Test, Concurrency, Local Production Browser, Quality, Security, G1 Domain, Order Workflow, and Deployment Contract source gate all PASS on `4d5057…`.
+- LATEST EXACT-SHA CI: Fresh Local `35299449995 / 105458810059` PASS; Test-the-Test `35299450053 / 105458822785` PASS; Concurrency `35299450051 / 105459616923` PASS; Local Production `35299450068 / 105459493871` PASS.
+- CANDIDATE PREVIEW: `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32` READY, exact SHA `4d5057…`; secondary exact candidate deployment `dpl_7QvezhhAMnzarGuxa4csQC94oB7A` READY.
+- DEPLOYMENT BROWSER: BLOCKED — run `35298902449 / 105457162861` failed at credential validation before browser execution. A new read-only TinyFish check of the exact preview was redirected to Vercel Login; product identity/build-meta could not be verified. This confirms Deployment Protection is active; it is not a browser PASS.
+- LIVE/PRODUCTION: production deployment `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5` remains READY on `b102ce5…`. Production runtime error/fatal query over the inspected 24h window returned no logs.
+- FINAL REGRESSION: NOT_PROVEN / TOOL BOUNDARY. Formal `production-smoke.yml` and `runtime-e2e.yml` are `workflow_dispatch`; connected GitHub tooling exposes no dispatch mutation.
+- EVIDENCE RECONCILIATION: OPEN only for Deployment Browser, Live Alignment, Final Regression, and operational workflow-safety reconciliation.
+- OPERATIONAL LANE: `.github/workflows/repair-excel-build.yml` remains OPEN/risk-not-closed. It has `contents: write` and `git push origin HEAD:main`; latest run `35296779614` on `b102ce5…` failed. Job details are unavailable through the current connector, so root cause is NOT_PROVEN. No mutation made.
+- RELEASE SAFETY: Production = NO TOUCH. No promotion, alias switch, production migration, or live mutation performed.
 
 # 1. COMMAND SEMANTICS
 
@@ -393,14 +393,14 @@ NO
 
 - Fresh Local Browser / Storage adversarial: PASS — `35299449995 / 105458810059`.
 - Migration: PASS — `35299450012`.
+- Test-the-Test: PASS — `35299450053 / 105458822785`.
+- Concurrency: PASS — `35299450051 / 105459616923`.
+- Local Production Browser: PASS — `35299450068 / 105459493871`.
 - Quality: PASS — `35299450009`.
 - Security: PASS — `35299449999`.
 - G1 Domain: PASS — `35299449994`.
 - Order Workflow: PASS — `35299450067`.
-- Deployment Contract: PASS — `35299450001` contract job; deployment-browser portion skipped because credential boundary is unresolved.
-- Test-the-Test: RUNNING — `35299450053 / 105458822785`.
-- Concurrency: RUNNING — `35299450051 / 105459616923`.
-- Local Production Browser: RUNNING — `35299450068 / 105459493871`.
+- Deployment Contract: PASS — `35299450001`; browser execution remains blocked separately.
 - Candidate Vercel preview: `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32`, READY, exact SHA `4d5057…`.
 
 # 11. CURRENT STORAGE FORENSIC FACTS
@@ -892,3 +892,34 @@ The tooling branch is based on MAIN, not the frozen product candidate. It must n
 
 ## Current execution rule
 The programmer may consume the tooling branch after review/merge, but any merge that reaches MAIN or the candidate changes the source SHA and therefore invokes the normal evidence invalidation/rerun rules.
+
+### 2026-09-18 — Command 1 exact-SHA gate closure
+
+RUN:
+- `35299449995`, `35299450053`, `35299450051`, `35299450068`
+- TinyFish read-only preview inspection `7c9864c2-5018-4622-85d6-432e6f5895e0`
+- Vercel production runtime log query for `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5`
+
+JOB:
+- Fresh Local `105458810059` = PASS
+- Test-the-Test `105458822785` = PASS
+- Concurrency `105459616923` = PASS
+- Local Production `105459493871` = PASS
+
+SHA:
+`4d5057d7952e213d6b5328a80f0229f1ff9fb861` candidate; `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497` production/main
+
+FRONT:
+Exact-SHA gate closure; Deployment Browser; Live health; final regression; operational safety
+
+RESULT:
+All previously RUNNING exact-SHA gates closed PASS on the unchanged candidate SHA. No candidate SHA change. TinyFish preview inspection was redirected to Vercel Login, confirming protection rather than proving browser runtime. Production runtime error/fatal query returned no matching logs in the inspected 24h window.
+
+ROOT CAUSE:
+Deployment Browser remains blocked by missing approved bypass/CI credentials. Final Regression remains blocked by unavailable workflow dispatch. repair-excel-build failure root cause remains unresolved because job details are unavailable via connector.
+
+ARTIFACT:
+Candidate preview `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32` READY exact `4d5057…`; production `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5` READY exact `b102ce5…`.
+
+NEXT ACTION:
+Only remaining release blockers: approved Deployment Browser credential path, formal Final Regression execution, Live Alignment to candidate, and final evidence reconciliation. Keep Production NO TOUCH.
