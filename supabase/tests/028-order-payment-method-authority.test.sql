@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(15);
+select plan(18);
 
 select is(
   (select data_type from information_schema.columns
@@ -134,6 +134,24 @@ select is(
   (select payment_method from public.orders where id=(select order_id from cash_order)),
   'cash',
   'created order persists selected payment method'
+);
+
+select is(
+  (select count(*) from public.notifications where entity_id=(select order_id from cash_order) and kind='order' and title='تم استلام طلبك'),
+  1::bigint,
+  'create_order emits one receipt notification'
+);
+
+select is(
+  (select count(*) from public.notifications where entity_id=(select order_id from cash_order) and kind='order' and title='تحديث حالة الطلب'),
+  1::bigint,
+  'initial pending history emits one status notification'
+);
+
+select is(
+  (select count(*) from public.notifications where entity_id=(select order_id from cash_order) and kind='order'),
+  2::bigint,
+  'customer order creation emits receipt plus status notification only'
 );
 
 select is(
