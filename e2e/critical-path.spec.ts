@@ -38,12 +38,18 @@ async function clearCustomerCart(page: Page) {
   if (await close.isVisible().catch(() => false)) await close.click();
 }
 
+const EXPECTED_VERCEL_TOOLBAR_CSP_ERROR = /Loading the script 'https:\/\/vercel\\.live\/_next-live\/feedback\/feedback\\.js' violates the following Content Security Policy directive: "script-src 'self'"/;
+
 function captureBrowserFailures(page: Page) {
   const pageErrors: string[] = [];
   const consoleErrors: string[] = [];
   const failedResponses: string[] = [];
   page.on('pageerror', (error) => pageErrors.push(error.message));
-  page.on('console', (message) => { if (message.type() === 'error') consoleErrors.push(message.text()); });
+  page.on('console', (message) => {
+    if (message.type() === 'error' && !EXPECTED_VERCEL_TOOLBAR_CSP_ERROR.test(message.text())) {
+      consoleErrors.push(message.text());
+    }
+  });
   page.on('response', (response) => { const status = response.status(); if (status >= 400 && !response.url().endsWith('/favicon.ico')) failedResponses.push(`${status} ${response.request().method()} ${response.url()}`); });
   return { pageErrors, consoleErrors, failedResponses };
 }
