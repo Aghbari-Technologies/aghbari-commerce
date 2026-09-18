@@ -16,7 +16,7 @@
 - Branch: `execution/closure-hammer-20260918c`
 - PR: #74 (open, draft, mergeable)
 - Base: `main @ 4505bcb655c0b747aeea7e1cc526a94f93270d3d`
-- Candidate deployment: NOT_AVAILABLE — Vercel exact-SHA status is FAILURE due deployment rate limiting; no deployment for this SHA is present in the canonical project deployment list. The latest READY deployment observed is for an `ops/execution-control-plane` commit, not the candidate. Latest canonical READY deployment observed: `dpl_BnKnFREtxGbUVEwHaWsaMyUne3U6` for `ops/execution-control-plane` commit `4847b44e2907e08cb610bd6195c9e912b7b193e9`. Latest observed canonical READY deployment: `dpl_EsRYS1as7Ak584g4YSyXqkucT27r` at `ops/execution-control-plane` commit `9b2ff5dca88bf679c82ce1ce9872d69c8bab7964` (read-only reconciliation 2026-09-18).
+- Candidate deployment: NOT_AVAILABLE — Vercel exact-SHA status is FAILURE due deployment rate limiting; no deployment for this SHA is present in the canonical project deployment list. The latest READY deployment observed is for an `ops/execution-control-plane` commit, not the candidate. Latest observed canonical READY deployment: `dpl_DWrwAkfmGXUGyFxEsvMhX9YgaPuv` for `ops/execution-control-plane` commit `a42dfa928e1c966973fb647065e91266cfd43be7`. Candidate match count remains zero.
 - Candidate authenticated browser certification: BLOCKED — approved Vercel automation-bypass credential is unavailable.
 - Previous candidate evidence for `4d5057…` is historical and not transferable.
 
@@ -406,3 +406,15 @@ RESULT: Candidate SHA and PR #74 head remain unchanged. Candidate exact-SHA Acti
 ROOT CAUSE: exact-SHA Vercel deployment requires an approved deployment path that can carry the candidate source/identity; current connected GitHub dispatch remains unavailable. Diagnostic pgTAP failures belong to an isolated baseline lane.
 ARTIFACT: `ops/evidence/20260918-command1-current-boundary-and-tooling-reconciliation.md`
 NEXT ACTION: preserve candidate; do not create speculative commits or incomplete deployments. Continue with approved exact-SHA deployment and authenticated regression paths only when available. Production remains NO TOUCH.
+
+
+### 2026-09-18 — Command 1 — final current-boundary recheck
+
+RUN: live GitHub/Vercel/Supabase reconciliation; candidate workflow audit; exact-SHA deployment-window sweep
+JOB: candidate release evidence closure / external capability boundaries / production safety
+SHA: candidate `4753cc3319f551aeccbe2bd081b988fa68df8e87`; main `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`; ops `d2194a571b9f93657c5f80f085b04119e23d8a96`
+FRONT: exact-SHA candidate / deployment / authenticated browser / final regression / production safety
+RESULT: PR #74 remains OPEN/DRAFT/MERGEABLE at the same candidate SHA. All recorded candidate verification runs are terminal PASS, including Local Production Artifact browser E2E. All 15 candidate workflows were re-audited: 0 `contents: write`, 0 `git push`; 13 expose `workflow_dispatch`. Canonical Vercel project has zero deployments matching candidate SHA, including the candidate push window; current READY deployments are operational-branch commits. Candidate combined status remains Vercel FAILURE on the deployment-rate-limit target. Production deployment `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5` remains READY at `b102ce5…`; current 24h runtime-error scan is clean. Supabase remains ACTIVE_HEALTHY; security advisor still reports the existing SECURITY DEFINER surfaces and leaked-password protection warning. No candidate source, Production, alias, migration, or protection mutation occurred.
+ROOT CAUSE: remaining release gaps are external evidence-capability boundaries: exact candidate deployment availability, approved Vercel automation-bypass credential, and authenticated workflow-dispatch execution. The connected Vercel deployment mutation path was validated only at schema/input level and was not used to create a partial or misleading artifact.
+ARTIFACT: candidate runs `35310025140,35310025100,35310025210,35310025147,35310025098,35310025169,35310025159,35310025067,35310024991,35310025060,35310025041,35310025032`; Local browser job `105490749871` / artifact `10532997772`; Vercel project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`; Production `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5`; runtime source `.github/workflows/runtime-e2e.yml`; workflow audit at candidate SHA.
+NEXT ACTION: preserve candidate `4753cc3…`. Do not create a new SHA or consume deployment quota until an approved exact-SHA deployment path is available. Then execute authenticated Runtime E2E and Formal Final Regression with the exact candidate SHA. Production remains NO TOUCH.
