@@ -16,8 +16,8 @@
 - Branch: `execution/closure-hammer-20260918b`
 - Candidate deployment: `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32`
 - Candidate deployment state: READY
-- Candidate browser certification: BLOCKED — candidate deployment is behind Vercel SSO and approved automation/E2E credentials are unavailable.
-- Read-only candidate browser inspection: BLOCKED via TinyFish `9cf69038-40b0-4f33-8365-322abe4c8146`; both app URL and `/build-meta.json` redirected to Vercel login. No application/brand/SHA proof obtained.
+- Candidate authenticated browser certification: BLOCKED — approved E2E credentials/bypass boundary unavailable.
+- Read-only candidate browser inspection: PASS via TinyFish 604c8f4a-19f1-4357-b380-9b2c816937fb using temporary Vercel access link; app brand/RTL/Arabic verified and /build-meta.json matched exact candidate SHA.
 
 ## Main / Live / Production
 
@@ -187,3 +187,15 @@ RESULT: candidate remained unchanged and all previously proven candidate gates r
 ROOT CAUSE: stale operational references, unsafe self-mutating CI, unavailable protected deployment credentials, and non-clean tooling findings on current tooling head.
 ARTIFACT: main safety fix `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; Gitleaks artifact `10529832877`; Semgrep artifact `10530271974`; TinyFish run `9cf69038-40b0-4f33-8365-322abe4c8146`; production deployment `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5` READY exact `b102ce5…`.
 NEXT ACTION: continue protected deployment browser credential-boundary resolution, formal final-regression execution path, exact-SHA tooling remediation/verification on PR #72, and final state reconciliation; do not promote candidate or weaken Vercel protection.
+
+
+### 2026-09-18 — Command 1 continued execution
+
+RUN: 604c8f4a-19f1-4357-b380-9b2c816937fb; 35303994774; 35303994670; 35303994744; 35303994738; 35303994732; 35303994721; 35303994641
+JOB: protected read-only candidate browser; fresh tooling security/quality CI on current PR head
+SHA: candidate 4d5057d7952e213d6b5328a80f0229f1ff9fb861; tooling ffdf0b3e6d34adef11a198c8263a9fa9760188b8; main 4505bcb655c0b747aeea7e1cc526a94f93270d3d; production b102ce5e9aebe61bb13581cd9a8f45d1cc43c497
+FRONT: browser proof / tooling hardening / CI verification / release closure
+RESULT: read-only candidate deployment proof PASS with exact build SHA; authenticated E2E remains blocked; tooling hardening committed and fresh CI is running on exact current tooling head; no candidate or production mutation.
+ROOT CAUSE: Vercel access protection required approved temporary share access for non-authenticated proof; tooling had mutable action tags, missing Dependabot cooldown, and dynamic regex static-analysis finding.
+ARTIFACT: TinyFish run 604c8f4a-19f1-4357-b380-9b2c816937fb; tooling head ffdf0b3e6d34adef11a198c8263a9fa9760188b8.
+NEXT ACTION: terminalize fresh tooling CI; resolve any remaining Gitleaks findings without broad suppressions; preserve authenticated Deployment Browser and Final Regression as separate release gates.
