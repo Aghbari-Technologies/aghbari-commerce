@@ -82,7 +82,7 @@ All 13 PASS results are tied to the exact current candidate SHA and independentl
 - Preserve Vercel rate-limit blocker and re-check only when platform allows; never reuse an older deployment.
 - Obtain the owner-controlled Vercel automation-bypass secret through the approved secret path; do not weaken protection or store the value in repository files.
 - Obtain a dispatch-capable execution path for Formal Final Regression.
-- Reconcile all release evidence strictly to `4753cc…`.
+- Reconcile all release evidence strictly to `5b9f2a…`.
 
 ### P1
 - Keep workflow-safety hardening and isolated tooling PR #72/#73 separate from candidate certification.
