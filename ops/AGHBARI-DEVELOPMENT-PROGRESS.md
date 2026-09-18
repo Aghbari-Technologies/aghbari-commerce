@@ -22,7 +22,7 @@ Historical PASS is not reusable across SHAs. Historical root causes that already
 
 # 1. CURRENT DEVELOPMENT CHECKPOINT
 
-- LATEST_RUN_ID: RUN-2026-09-18-UI-001
+- LATEST_RUN_ID: RUN-2026-09-18-MEMORY-001
 - LATEST_CHECKPOINT_SHA: 27ab5c3798c0294a026d2e96050c8eaea15a4234
 - DEVELOPMENT_BRANCH: enhancement/market-ready-v4-20260918
 - DEVELOPMENT_PR: #88 — OPEN / DRAFT / MERGEABLE
@@ -94,6 +94,26 @@ Do not restart discovery of these failures unless a new regression proves the re
 - CERTIFICATION: unchanged; this is a non-certifying development lane until deliberately promoted through release evidence.
 - NEXT: inspect terminal heavy gates; browser proof only after exact public SHA and both browser suites terminalize.
 - MEMORY_LESSON: future command 1 executions must read this ledger and resume from the queue.
+
+# 3. RUN HISTORY CONTINUATION
+
+## RUN-2026-09-18-MEMORY-001
+
+- START_CONTEXT: Owner requested durable memory so future executions do not forget completed work or repeat it.
+- START_SHA: 27ab5c3798c0294a026d2e96050c8eaea15a4234
+- END_SHA: 27ab5c3798c0294a026d2e96050c8eaea15a4234
+- BRANCH: enhancement/market-ready-v4-20260918 (product checkpoint) + ops/execution-control-plane (durable protocol)
+- FRONT: execution memory, resume protocol, and command-1 routing.
+- IMPLEMENTED: created ops/AGHBARI-DEVELOPMENT-PROGRESS.md; added mandatory progress-ledger read gate to the canonical Control Plane; added mandatory run-record write rule; updated AGHBARI-EXECUTION-START.md on main so command 1 must read the progress ledger and resume from its latest checkpoint; recorded the current development checkpoint and prior concrete fixes.
+- TESTED: verified repository files and exact branch/PR/HEAD state through GitHub; no product code changed in this memory transaction.
+- PROVEN: progress ledger commit a15a881172abdc714aab57047187876e7a39b6ef0; Control Plane commit f7e1263458a797755eb86bf2108d882bb51ec517; Project Memory commit 53b74e198878e31a98801d04e861771fd6213bde; Latest State commit 85f0e325d00d9bfede79c2afdeb72385a5a1cd47; main command-router commit 3db3bd27d50fcac9462fc5e143b6ba3078b592d9.
+- FAILED/BLOCKED/RUNNING: no product execution changed; current development CI state remains governed by the 27ab5c3... checkpoint recorded above.
+- ROOT_CAUSE: chat/session memory alone is not a durable project source of truth for completed development work.
+- EVIDENCE: exact GitHub commits listed above and ledger checkpoint.
+- PRODUCTION: NO TOUCH.
+- CERTIFICATION: unchanged; development lane remains non-certifying.
+- DECISIONS: future command 1 must read the progress ledger before code/test work and must append one run record before reporting.
+- NEXT: on the next 1, read the ledger first and resume from its NEXT RESUME QUEUE; do not restart completed UI work.
 
 # 3. CONTINUOUS APPEND TEMPLATE
 
