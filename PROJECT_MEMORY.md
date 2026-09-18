@@ -511,3 +511,8 @@ No market-derived requirement may weaken security, exact-SHA evidence, release g
 ## 2026-09-18 — Release Integration Over Frozen Candidate
 
 A release integration branch `release/ui-over-certified-candidate-20260918` now starts exactly at the frozen candidate `5b9f2a...` and adds only the seven-file UI/Netlify improvement set. This is the correct path when main is missing candidate-era database hardening. The frozen candidate branch is immutable; the integration branch is a new evidence subject. No prior PASS transfers to its new SHA.
+
+
+## 2026-09-18 — Release Integration Evidence Closed
+
+The candidate-derived UI integration subject at `a85926c2ec4ff781f03b230e929b0a1ecb5bfafe` passed Application Quality, Security, G1, Order Workflow, Order Invariant, Intelligence Contract, Bootstrap Lockfile, Supabase Migration Proof, Fresh Local Browser E2E, Local Production Artifact Browser E2E, Concurrency Proof, and Test-the-Test. External/live deployment proof remains a distinct missing layer; no PASS was transferred to Production or to an external deploy that does not exist.
