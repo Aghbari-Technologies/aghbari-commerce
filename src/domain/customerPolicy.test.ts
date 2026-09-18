@@ -23,4 +23,8 @@ describe('customer checkout policy', () => {
   it('wires the selected payment method into the real customer order submission path', () => {
     expect(appSource).toContain('{ paymentMethod: payment }');
   });
+  it('falls back to the first enabled payment method when the configured default is disabled', () => {
+    expect(appSource).toContain('firstEnabledPaymentMethod(nextConfig)');
+    expect(appSource).toContain('isPaymentMethodEnabled(nextConfig,current)');
+  });
 });
