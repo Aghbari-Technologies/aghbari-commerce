@@ -343,3 +343,8 @@ PR #72 remains an isolated tooling lane at its current head; PR #73 remains an i
 - Shell regex validation in GitHub Actions must use a shell-supported construct such as `[[ "$TARGET_SHA" =~ ... ]]` or `grep -Eq`; `test ... =~ ...` is invalid and causes false tooling failures before the actual scanner runs.
 - Tooling lanes remain non-certifying until their exact current head has terminal evidence. A clean migration apply followed by pgTAP failures must remain FAIL/diagnostic; never suppress the failing suite merely to make the tooling PR green.
 - Current candidate at this record is `5b9f2a76615e76bb6444c81f39e02f3479c0704b`; all candidate verification evidence must remain tied to that exact SHA.
+
+## 2026-09-18 — Durable deployment-evidence rule
+
+- A Vercel deployment marked READY on a branch may point to an older commit than that branch's current GitHub HEAD. Therefore deployment evidence is admissible only when the deployment's recorded Git SHA exactly matches the claim under verification; "latest deployment" or branch name alone is never sufficient.
+- Current observed example: tooling branch HEAD is `d884f90fcdcb95eeceb47e78d8f36792268f830d`, while the latest observed Vercel deployment for that branch is commit `337b8c787c4f4d35de957214ad5596e87cc27eb4`. The deployment is valid historical evidence for that older commit, not evidence for current tooling HEAD and never evidence for candidate #74.
