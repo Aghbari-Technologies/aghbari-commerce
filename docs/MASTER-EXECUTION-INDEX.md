@@ -4,8 +4,8 @@
 
 ## Truth Reset
 - Starting SHA ordered by this Owner-Level sprint: `0f28a8df8ce6efa8f4ee9569c36aa0d696d0386c`.
-- Current exact implementation HEAD: `767579168cfd3e687c1274bfa8eace879a288ebd`.
-- Single certification candidate: `767579168cfd3e687c1274bfa8eace879a288ebd`.
+- Current exact implementation HEAD: `fc4b9ee002e56636ed213444acfbbd76175ddc9a`.
+- Single certification candidate: `fc4b9ee002e56636ed213444acfbbd76175ddc9a`.
 - No evidence from an earlier SHA transfers to this candidate.
 - Scope: **Aghbari Commerce only**.
 
@@ -30,8 +30,10 @@
 - Nine FK indexes were applied; unused-index findings were not deleted blindly.
 
 ## CI evidence
-- Exact SHA `82af52a178a0f52f0a70d2ad8c7a7ba0fbb97b22`: application-quality completed **PASS** through typecheck, unit/integration, lint, production build and release audit.
-- Exact SHA `767579168cfd3e687c1274bfa8eace879a288ebd`: fresh `application-quality` and `G1 Domain Proof` runs were triggered; their final results are pending, and `supabase-migration-proof` is also running.
+- Exact SHA `fc4b9ee002e56636ed213444acfbbd76175ddc9a`: `application-quality` **PASS**, `security-audit` **PASS**, `G1 Domain Proof` **PASS**, and `supabase-migration-proof` **PASS**.
+- Migration proof on this exact SHA reset the database from empty, applied the full migration set in filename order, then ran clean-source pgTAP: **33 test files / 317 tests / 0 failures**.
+- The prior migration-proof failure was isolated to `017-import-inventory-delta.test.sql`: both imports occurred in one transaction, so `created_at` was not a safe ordering key. The contract now binds the second assertion to the second import's `source_id`.
+- The repair Excel workflow was changed earlier to manual/read-only; no production/main write path is allowed from that workflow.
 
 ## Certification state
 | Stage | State |
@@ -43,14 +45,16 @@
 | PRODUCTION CERTIFIED | **NOT PROVEN** |
 
 ## Remaining blockers
-1. Finish fresh CI/migration/G1 proofs on exact candidate `767579168cfd3e687c1274bfa8eace879a288ebd`.
-2. Execute real authenticated browser E2E for catalog/pricing/cart/checkout/order persistence, templates and Excel review/commit.
-3. Execute Tenant-A/Tenant-B adversarial browser proof.
-4. Map exact candidate SHA to Vercel Production and run Production browser smoke; current Vercel connector cannot deploy the project from this session.
-5. Enable/configure Supabase leaked-password protection; live advisor still reports it disabled.
-6. Complete adversarial runtime proof for sensitive authenticated SECURITY DEFINER RPCs.
-7. Execute/prove outbox delivery/retry/terminal failure, invitation E2E, dynamic-admin behavior, RBAC direct-RPC denial, finance statement E2E, offline/recovery and import/export adversarial flows where not already covered by exact-head tests.
-8. Resolve remaining RLS init-plan warnings only where workload-safe; no blanket rewrite without evidence.
+1. Execute authenticated browser E2E against an exact deployed artifact whose build metadata matches the exact candidate SHA.
+2. Execute Tenant-A/Tenant-B adversarial browser proof plus sensitive authenticated SECURITY DEFINER runtime denial/authorization paths.
+3. Run Production Smoke and browser smoke against the exact production deployment; current Vercel deployments visible in the connected team are older SHAs and do not prove this candidate.
+4. Resolve external platform configuration required for leaked-password/HIBP protection; the current Supabase organization is on the Free plan, so this is not represented as a code-pass failure.
+5. Complete any remaining live E2E coverage called out by the product closure scope: invitation activation, dynamic-admin/RBAC denial, finance statement flow, offline/recovery, and import/export adversarial paths where exact-head coverage is not already sufficient.
+6. Only after the runtime and production evidence gates close, perform the final candidate freeze and promotion review.
+
+## Operational boundary
+- This index is the canonical compact evidence ledger for the current execution branch.
+- Evidence is exact-SHA scoped; any subsequent commit invalidates current CI evidence for certification purposes.
 
 ## No-false-closure
 `CODE != TEST != CI != RUNTIME != LIVE != PRODUCTION`
