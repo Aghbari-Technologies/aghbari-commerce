@@ -22,8 +22,8 @@ Historical PASS is not reusable across SHAs. Historical root causes that already
 
 # 1. CURRENT DEVELOPMENT CHECKPOINT
 
-- LATEST_RUN_ID: RUN-2026-09-18-MEMORY-001
-- LATEST_CHECKPOINT_SHA: 27ab5c3798c0294a026d2e96050c8eaea15a4234
+- LATEST_RUN_ID: RUN-2026-09-19-EXEC-001
+- LATEST_CHECKPOINT_SHA: 4d7fbe9e6f0ff977f2829ef91e07d290c6d83554
 - DEVELOPMENT_BRANCH: enhancement/market-ready-v4-20260918
 - DEVELOPMENT_PR: #88 — OPEN / DRAFT / MERGEABLE
 - PR_BASE: certification candidate 2facceb39aaa826413f20245a6f20b6c2ff7cd34
@@ -33,13 +33,13 @@ Historical PASS is not reusable across SHAs. Historical root causes that already
 
 ## 1.1 CURRENT-SHA VERIFIED GATES
 
-- Application Quality run 35394271044: PASS.
-- Security Audit run 35394270910: PASS.
-- G1 Domain Proof runs 35394273756 and 35394271444: PASS.
-- Test-the-Test run 35394271014: RUNNING when this checkpoint was captured.
-- Supabase Migration Proof run 35394271490: RUNNING when this checkpoint was captured.
-- Market Ready UI / Netlify Exact SHA run 35394270995: RUNNING when this checkpoint was captured; exact checkout, build, artifact identity and credential checks already passed before deployment.
-- Do not claim deployed-browser PASS until public exact-SHA verification and both customer/admin browser suites terminalize.
+- Application Quality run 35394271044: PASS on prior exact checkpoint 27ab5c3....
+- Security Audit run 35394270910: PASS on prior exact checkpoint 27ab5c3....
+- G1 Domain Proof run 35395387584: PASS on exact development SHA 4d7fbe9....
+- Market Ready UI / Netlify Exact SHA run 35395387603: RUNNING; build and exact artifact identity passed, deployment/public verification passed, browser execution still running.
+- Customer E2E on prior SHA 27ab5c3... exposed four repeatable failures; this run uses a hardened test contract intended to remove locator/race assertions without weakening product behavior.
+- Supabase Migration Proof and Test-the-Test remain under inspection; do not claim terminal PASS until their exact-SHA runs terminalize.
+- Do not claim deployed-browser PASS until customer E2E and admin E2E both terminalize successfully.
 
 ## 1.2 IMPLEMENTED IN THIS DEVELOPMENT LANE
 
@@ -62,18 +62,20 @@ Historical PASS is not reusable across SHAs. Historical root causes that already
 - 4f8782c...: missing JSX fragment boundary in progressive catalog rendering; fixed by ca12bc1....
 - ca12bc1...: TypeScript exposed refreshOfflineState used before declaration and a missing MAX_ORDER_QUANTITY_PER_LINE test import; fixed by d6abd2e....
 - d6abd2e...: build still exposed the stale Offline source-contract assertion; fixed by 27ab5c3....
+- 27ab5c3...: deployed browser E2E exposed four assertion defects: cart cleanup race, duplicate portal navigation strictness, command palette reset expectation, and product-detail label semantics. The E2E contract was hardened on 4d7fbe9...; no security or certification code was changed.
 
 Do not restart discovery of these failures unless a new regression proves the repair unsound.
 
 ## 1.4 NEXT RESUME QUEUE
 
-1. Inspect terminal Test-the-Test and Supabase Migration Proof for exact SHA 27ab5c3798c0294a026d2e96050c8eaea15a4234; inspect the first terminal failure only.
-2. Inspect Netlify exact-SHA run 35394270995; claim browser proof only after public SHA identity + customer E2E + admin E2E.
-3. Capture exact Netlify deploy ID/URL and artifact references if those checks pass.
-4. Keep certification candidate 2facceb39aaa826413f20245a6f20b6c2ff7cd34 untouched.
-5. Keep Production NO TOUCH.
-6. After heavy gates terminalize, compare remaining product gaps against the accepted market baseline before another code commit.
-7. Every future execution must append a new record and update the top checkpoint.
+1. Inspect terminal Test-the-Test and Supabase Migration Proof for exact development SHA; inspect the first terminal failure only.
+2. Inspect run 35395387603 to terminalize public exact-SHA customer/admin browser proof.
+3. If customer E2E still fails, use its first exact failure artifact/log as the next root cause; do not weaken assertions to manufacture PASS.
+4. Capture exact Netlify deploy ID/URL and browser evidence only after both suites PASS.
+5. Keep certification candidate 2facceb39aaa826413f20245a6f20b6c2ff7cd34 untouched.
+6. Keep Production NO TOUCH.
+7. After heavy gates terminalize, compare remaining product gaps against the accepted market baseline before another code commit.
+8. Every future execution must append a new record and update the top checkpoint.
 
 # 2. RUN HISTORY — APPEND ONLY
 
@@ -95,8 +97,6 @@ Do not restart discovery of these failures unless a new regression proves the re
 - NEXT: inspect terminal heavy gates; browser proof only after exact public SHA and both browser suites terminalize.
 - MEMORY_LESSON: future command 1 executions must read this ledger and resume from the queue.
 
-# 3. RUN HISTORY CONTINUATION
-
 ## RUN-2026-09-18-MEMORY-001
 
 - START_CONTEXT: Owner requested durable memory so future executions do not forget completed work or repeat it.
@@ -114,6 +114,26 @@ Do not restart discovery of these failures unless a new regression proves the re
 - CERTIFICATION: unchanged; development lane remains non-certifying.
 - DECISIONS: future command 1 must read the progress ledger before code/test work and must append one run record before reporting.
 - NEXT: on the next 1, read the ledger first and resume from its NEXT RESUME QUEUE; do not restart completed UI work.
+
+## RUN-2026-09-19-EXEC-001
+
+- START_CONTEXT: Command `1`; mandatory resume from durable control plane and progress ledger.
+- START_SHA: 27ab5c3798c0294a026d2e96050c8eaea15a4234
+- END_SHA: 4d7fbe9e6f0ff977f2829ef91e07d290c6d83554
+- BRANCH: enhancement/market-ready-v4-20260918
+- PR: #88
+- FRONT: terminalize current development gates; diagnose and repair exact-SHA deployed browser failures without touching certification candidate or production.
+- IMPLEMENTED: hardened e2e/critical-path.spec.ts cleanup to serialize cart removal and avoid stale state; scoped duplicate catalog navigation with first visible control; aligned Command Center reopen assertion with its reset contract; aligned product-detail assertion with the actual customer-visible eyebrow label. Commit 4d7fbe9e6f0ff977f2829ef91e07d290c6d83554.
+- TESTED: new exact-SHA workflow started; build passed; build-meta exact SHA verification passed; Netlify deployment/public exact SHA verification passed; G1 run 35395387584 passed.
+- PROVEN: no final browser PASS yet. Browser execution is still running in run 35395387603. Prior failure evidence is retained and was not reclassified as PASS.
+- FAILED/BLOCKED/RUNNING: browser E2E RUNNING; Test-the-Test/Supabase heavy gates not yet terminalized.
+- ROOT_CAUSE: prior browser failures were test-contract synchronization/locator defects rather than evidence to weaken. The cart path remains the only suspected race-sensitive area until the new exact-SHA run terminalizes.
+- EVIDENCE: exact development commit 4d7fbe9...; run 35395387584 G1 PASS; run 35395387603 build/deploy/public-SHA steps PASS so far.
+- PRODUCTION: NO TOUCH.
+- CERTIFICATION: unchanged; frozen candidate remains 2facceb39aaa826413f20245a6f20b6c2ff7cd34.
+- DECISIONS: do not promote, merge, or reuse historical PASS until all current-SHA evidence terminalizes.
+- NEXT: resume from browser/heavy-gate terminal states; first failure only if any.
+- MEMORY_LESSON: browser E2E assertions are evidence contracts and must match actual accessible UI semantics without hiding genuine product failures.
 
 # 3. CONTINUOUS APPEND TEMPLATE
 
