@@ -3,7 +3,7 @@
 -- successful receipts regain their audit and outbox side effects.
 create or replace function public.receive_purchase_order(p_purchase_order_id uuid, p_idempotency_key text, p_lines jsonb, p_notes text default null)
 returns table(receipt_id uuid, receipt_number bigint, purchase_order_id uuid, purchase_order_status public.purchase_order_status, received_total numeric)
-language plpgsql security definer set search_path = public
+language plpgsql security definer set search_path = ''
 as $$
 declare o uuid:=public.current_organization_id(); r public.user_role:=public.current_role(); po public.purchase_orders%rowtype; rec public.purchase_receipts%rowtype; existing public.purchase_receipts%rowtype; l jsonb; item public.purchase_order_items%rowtype; pid uuid; q int; inv int; total numeric:=0; key text:=trim(coalesce(p_idempotency_key,'')); requested_lines jsonb; existing_lines jsonb;
 begin
