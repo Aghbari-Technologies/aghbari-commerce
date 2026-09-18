@@ -397,7 +397,7 @@ NO
 
 | Front | State | Evidence |
 |---|---|---|
-| Fresh Local Storage adversarial | FAIL | 35290655695 / 105432550436; repeated 35290658368 / 105432559523 |
+| Fresh Local Storage adversarial | FAIL | 35290655695 / 105432550436; repeated 35290658368 / 105432559523; same-SHA rerun 105446382106 IN_PROGRESS; rerun 105446481693 QUEUED |
 | Fresh Browser PR | FAIL | storage boundary failure repeated |
 | Deployment Browser | BLOCKED/FAIL | 35290689616 / 105441117323 |
 | Final Regression | NOT_PROVEN | blocked by unresolved fronts |
@@ -641,6 +641,7 @@ Only when all required gates are proven.
 - Test-the-Test passed independently.
 - Deployment artifact is exact-SHA aligned and READY.
 - Deployment Browser is blocked by missing `VERCEL_AUTOMATION_BYPASS_SECRET`.
+- Latest same-SHA Storage forensic reruns at the time of recording: `105446382106` IN_PROGRESS and `105446481693` QUEUED; neither is PASS until completed and reconciled.
 - Live remains old SHA and therefore NOT_PROVEN.
 - Production was not touched.
 - Final regression and evidence reconciliation remain open.
