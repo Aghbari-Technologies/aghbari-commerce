@@ -32,18 +32,19 @@
 
 # 0A. AUTHORITATIVE LIVE EXECUTION STATE — 2026-09-18 — CURRENT RECONCILIATION
 
-- CURRENT CANDIDATE: `4d5057d7952e213d6b5328a80f0229f1ff9fb861` on `execution/closure-hammer-20260918b`; frozen.
-- MAIN: `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; verified from GitHub.
-- LIVE/PRODUCTION: `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`; Production = NO TOUCH; no promotion/mutation.
-- CANDIDATE DEPLOYMENT: `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32` READY and exact-SHA aligned.
-- READ-ONLY CANDIDATE BROWSER: TinyFish `683148ee-b515-4e81-a2cb-ff4fa4a07ca0` PASS: page load, Arabic RTL, `بوابة الأغبري التجارية`, login landing page, no visible errors/broken links/images.
-- AUTHENTICATED DEPLOYMENT BROWSER: BLOCKED. Rerun job `105488272913` / run `35299467671` fail-closed because `VERCEL_AUTOMATION_BYPASS_SECRET` is empty. `E2E_BASE_URL` and `EXPECTED_SHA` were present; browser execution did not start.
-- FORMAL FINAL REGRESSION: NOT_PROVEN — no executable workflow-dispatch capability exposed through the connected GitHub mutation surface.
-- TOOLING PR #72: current exact head `92fa7bffb8971eecb10d91fe588709da0e06675a`, draft, base `main @ 4505bcb655c0b747aeea7e1cc526a94f93270d3d`. Eleven terminal CI gates PASS; migration-proof `35308340466` FAIL only in pgTAP after empty-DB migration apply PASS.
-- PGTAP DIAGNOSTIC PR #73: `cf7db1c376e40c44ed0cec1956c9b59ee8f5d7f0`; 12 assertions remain across five product/schema contract gaps after test-harness repair.
-- VERCEL PROJECT: `aghbari-commerce-c2dd` / `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`, linked to `Aghbari-Technologies/aghbari-commerce`; team plan observed as Hobby.
-- SUPABASE LIVE: `mrcyqezbhpncuvaehwgf` ACTIVE_HEALTHY; live advisor findings are observation-only.
-- CERTIFICATION: NO. FINAL EVIDENCE RECONCILIATION: OPEN. LIVE ALIGNMENT TO CANDIDATE: NOT_PROVEN.
+- CURRENT CANDIDATE: `4753cc3319f551aeccbe2bd081b988fa68df8e87` on `execution/closure-hammer-20260918c`; PR #74 open/draft/mergeable.
+- MAIN: `4505bcb655c0b747aeea7e1cc526a94f93270d3d`.
+- LIVE/PRODUCTION: `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`; Production = NO TOUCH; no promotion or mutation.
+- CURRENT CANDIDATE CI: terminal PASS on application-quality, G1, bootstrap-release-lockfile, security-audit, Order Workflow Proof, order-invariant, Supabase Migration Proof, Fresh Local Browser, Test-the-Test, Concurrency, and Local Production Artifact.
+- LOCAL PRODUCTION ARTIFACT PROOF: run `35310025159` / job `105490749871` PASS; exact SHA verified, isolated local Supabase, production build/checksum, customer E2E, admin E2E, cleanup.
+- CANDIDATE DEPLOYMENT: NOT_AVAILABLE; GitHub Vercel status is FAILURE — "Deployment rate limited — retry in 24 hours"; no candidate-SHA deployment appears in canonical Vercel deployment list.
+- CANDIDATE DEPLOYMENT BROWSER: browser-contract PASS in run `35310024991`; actual browser-e2e SKIPPED because no candidate deployment. Authenticated deployment browser remains BLOCKED because `VERCEL_AUTOMATION_BYPASS_SECRET` is unavailable.
+- FORMAL FINAL REGRESSION: NOT_PROVEN. The candidate repository contains `workflow_dispatch` on 13 of 15 workflows, but the connected GitHub mutation surface exposes no workflow-dispatch execution capability. Prior browser inspection of GitHub Actions was unauthenticated.
+- WORKFLOW SAFETY: CLOSED on current candidate — 15 workflow files audited; 0 `contents: write`; 0 `git push`.
+- FINAL EVIDENCE RECONCILIATION: OPEN.
+- CERTIFICATION: NO.
+- TOOLING PR #72: exact head `92fa7bffb8971eecb10d91fe588709da0e06675a`, isolated/non-certifying.
+- PGTAP DIAGNOSTIC PR #73: exact head `cf7db1c376e40c44ed0cec1956c9b59ee8f5d7f0`, isolated diagnostic lane.
 
 
 # 0B. AUTONOMOUS MEMORY + SELF-IMPROVEMENT PROTOCOL
@@ -1283,3 +1284,24 @@ RESULT: Migration, Fresh Browser, Test-the-Test, and Concurrency are terminal PA
 ROOT CAUSE: current candidate deployment is blocked by Vercel rate limiting; this prevents authenticated deployment-browser proof.
 ARTIFACT: ops/evidence/20260918-command1-current-candidate-update.md
 NEXT ACTION: close Local Production Artifact when terminal; then reconcile all mandatory gates. Preserve deployment/browser/final-regression blockers and Production NO TOUCH.
+
+
+# 2026-09-18 — Durable execution rule: distinguish workflow presence from dispatch capability
+
+A repository may contain valid `workflow_dispatch` declarations while the connected automation surface still cannot invoke them. Record these as two separate facts:
+- workflow capability in source: PRESENT;
+- execution capability in the connected control surface: BLOCKED/NOT_AVAILABLE.
+
+Do not add speculative workflows or weaken repository controls solely to compensate for a connector mutation limitation. Prefer existing push/PR-triggered evidence and an authenticated owner-controlled dispatch path when one becomes available.
+
+
+### 2026-09-18 — Command 1 — current candidate closure reconciliation
+
+RUN: `35310025067;35310025098;35310025140;35310025100;35310025147;35310025210;35310025169;35310025060;35310025041;35310025032;35310025159`
+JOB: current candidate exact-SHA CI / local browser / workflow audit / release boundary verification
+SHA: candidate `4753cc3319f551aeccbe2bd081b988fa68df8e87`; main `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
+FRONT: candidate CI closure / workflow safety / deployment alignment / authenticated browser / formal regression
+RESULT: current candidate verification runs are terminal PASS, including Local Production Artifact browser E2E. Exhaustive workflow authority audit remains clean with 15 workflows, zero write permissions, zero git-push commands. Candidate deployment is blocked by Vercel's 24-hour rate limit. Authenticated Deployment Browser is blocked by missing automation-bypass credential. Formal Final Regression remains NOT_PROVEN because connected GitHub tooling cannot invoke workflow_dispatch despite the workflows containing dispatch triggers.
+ROOT CAUSE: remaining blockers are external execution/evidence boundaries; no current candidate product defect was found in this closure check.
+ARTIFACT: `ops/evidence/20260918-command1-current-candidate-closure.md` commit `14800754e7e379f6abdf8b4dce1528fc5b3120c6`.
+NEXT ACTION: preserve candidate and Production NO TOUCH; resolve approved Vercel automation credential and dispatch execution capability; never transfer stale deployment/browser evidence or weaken protections.
