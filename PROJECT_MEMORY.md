@@ -516,3 +516,18 @@ A release integration branch `release/ui-over-certified-candidate-20260918` now 
 ## 2026-09-18 — Release Integration Evidence Closed
 
 The candidate-derived UI integration subject at `a85926c2ec4ff781f03b230e929b0a1ecb5bfafe` passed Application Quality, Security, G1, Order Workflow, Order Invariant, Intelligence Contract, Bootstrap Lockfile, Supabase Migration Proof, Fresh Local Browser E2E, Local Production Artifact Browser E2E, Concurrency Proof, and Test-the-Test. External/live deployment proof remains a distinct missing layer; no PASS was transferred to Production or to an external deploy that does not exist.
+
+
+## 16. NEW DURABLE LESSONS — 2026-09-18
+
+### 16.1 Exact runtime identity
+A successful real browser session is valid evidence for the exact Deployment/SHA it actually opened. It must never be transferred to a different candidate SHA, even when the application branding and UI are identical.
+
+### 16.2 Offline completion definition
+Offline support is incomplete when only a local queue exists. The runtime must reject impossible payloads using the canonical domain limits, re-authenticate through the normal session path, drain on reconnect, surface connection/sync state to the user, and guard the drain against effect re-entry loops.
+
+### 16.3 Reporting Gateway browser contract
+A browser-invoked Edge Function must explicitly satisfy CORS preflight requirements for the headers/methods actually sent by the client. Reporting publication retries must preserve the same idempotency key for the same period; the server-side idempotency contract must include the reporting period itself.
+
+### 16.4 Superseded release lanes
+When a successor candidate or merged implementation replaces an older PR, close the superseded lane while retaining its evidence as historical/non-transferable. The current exact head must remain visible in the authoritative state.
