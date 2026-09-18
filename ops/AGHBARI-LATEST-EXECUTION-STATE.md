@@ -58,7 +58,7 @@ All 13 PASS results are tied to the exact current candidate SHA and independentl
 6. Live alignment to candidate: NOT_PROVEN; no promotion.
 7. Workflow safety: CANDIDATE CLOSED — 15 workflow files audited at exact SHA, 0 `contents: write`, 0 `git push`.
 8. Tooling PR #72: OPEN / NOT_PROVEN — exact current head `d884f90fcdcb95eeceb47e78d8f36792268f830d`, isolated.
-9. PgTAP diagnostic PR #73: OPEN / test-harness/product-contract diagnostic lane, exact head `e62cb960dfb17204074914b4a3dd5a13abcb333f`; exact PR-head migration proof fails 12 isolated pgTAP product/schema contracts after clean empty-DB migration application.
+9. PgTAP diagnostic PR #73: OPEN / isolated diagnostic lane, exact head `e62cb960dfb17204074914b4a3dd5a13abcb333f`; provenance comparison proves this branch stops before multiple candidate-era corrective migrations, so its pgTAP failures are stale-source diagnostic evidence and are not transferable to candidate certification.
 
 ## Connected tooling
 
