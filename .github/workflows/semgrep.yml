@@ -1,0 +1,37 @@
+name: Security / Semgrep CE
+
+on:
+  push:
+    branches: [main, 'execution/**', 'ops/**']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: semgrep-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  semgrep:
+    name: Semgrep Community Edition
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    container:
+      image: semgrep/semgrep
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Run Semgrep CE
+        shell: bash
+        run: semgrep scan --config auto --error --json --output semgrep-results.json .
+      - name: Upload Semgrep evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: semgrep-${{ github.sha }}
+          path: semgrep-results.json
+          if-no-files-found: ignore
+          retention-days: 7

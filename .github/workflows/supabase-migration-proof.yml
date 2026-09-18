@@ -30,7 +30,7 @@ jobs:
         shell: bash
         run: echo "$TARGET_SHA" | grep -Eq '^[0-9a-f]{40}$'
       - name: Checkout exact target SHA
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           ref: ${{ inputs.exact_sha || github.sha }}
           fetch-depth: 1
@@ -54,7 +54,7 @@ jobs:
             exit 1
           fi
           echo "Migration version uniqueness: PASS"
-      - uses: supabase/setup-cli@v1
+      - uses: supabase/setup-cli@ab058987d8d6c725971f6cf9d0b5c98467e30bd1
         with:
           version: 2.117.0
       - name: Start local Supabase

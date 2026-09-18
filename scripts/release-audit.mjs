@@ -208,10 +208,11 @@ for (const file of sourceFiles.filter((path) => /\.(?:ts|tsx|js|mjs)$/.test(path
   const text = readFileSync(file, 'utf8');
   for (const match of text.matchAll(/\.rpc\(\s*['"]([a-z0-9_]+)['"]/gi)) rpcCalls.add(match[1]);
 }
-const missingRpcs = [...rpcCalls].filter((name) => {
-  const functionPattern = new RegExp(`(?:create|replace)\\s+function\\s+(?:public\\.)?${name}\\s*\\(`, 'i');
-  return !functionPattern.test(migrationText);
-});
+const migrationFunctions = new Set(
+  [...migrationText.matchAll(/(?:create|replace)\s+function\s+(?:public\.)?([a-z0-9_]+)\s*\(/gi)]
+    .map((match) => match[1].toLowerCase()),
+);
+const missingRpcs = [...rpcCalls].filter((name) => !migrationFunctions.has(name.toLowerCase()));
 for (const name of missingRpcs) fail(`RPC contract missing from migration history: ${name}`);
 
 const vercelText = readFileSync(join(root, 'vercel.json'), 'utf8');

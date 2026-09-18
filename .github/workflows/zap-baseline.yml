@@ -1,0 +1,41 @@
+name: Security / OWASP ZAP Baseline
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'HTTPS application URL to scan'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  zap:
+    name: OWASP ZAP Baseline
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Validate target
+        env:
+          ZAP_TARGET: ${{ inputs.target }}
+        shell: bash
+        run: |
+          case "$ZAP_TARGET" in
+            https://*) ;;
+            *) echo "Target must use HTTPS"; exit 1 ;;
+          esac
+      - name: Run ZAP baseline scan
+        uses: zaproxy/action-baseline@de8ad967d3548d44ef623df22cf95c3b0baf8b25
+        with:
+          target: ${{ inputs.target }}
+          fail_action: false
+          allow_issue_writing: false
+          artifact_name: zap-baseline
+      - name: Record scan boundary
+        shell: bash
+        run: |
+          echo "ZAP baseline executed against explicitly supplied HTTPS target."
+          echo "Manual-only workflow; no Production promotion or alias changes."
