@@ -336,3 +336,10 @@ Current candidate CI closure does not equal deployed-runtime certification. Exac
 
 ### 23.4 Tooling isolation
 PR #72 remains an isolated tooling lane at its current head; PR #73 remains an isolated pgTAP diagnostic lane. Their findings and PASS states do not transfer into candidate certification. Never import candidate migrations/contracts into a tooling baseline merely to obtain green status.
+
+## 2026-09-18 — Closure lessons: exact-head proof and tooling validation
+
+- Pull-request workflows must derive certification target from `github.event.pull_request.head.sha || github.sha` and assert the checked-out HEAD before executing any proof. A successful workflow on a synthetic merge ref is not evidence for the PR head.
+- Shell regex validation in GitHub Actions must use a shell-supported construct such as `[[ "$TARGET_SHA" =~ ... ]]` or `grep -Eq`; `test ... =~ ...` is invalid and causes false tooling failures before the actual scanner runs.
+- Tooling lanes remain non-certifying until their exact current head has terminal evidence. A clean migration apply followed by pgTAP failures must remain FAIL/diagnostic; never suppress the failing suite merely to make the tooling PR green.
+- Current candidate at this record is `5b9f2a76615e76bb6444c81f39e02f3479c0704b`; all candidate verification evidence must remain tied to that exact SHA.
