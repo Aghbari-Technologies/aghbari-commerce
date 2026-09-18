@@ -86,7 +86,6 @@ export default function AdminPanel({ role }: { role: UserRole }) {
       {canInventory && <div id="admin-export"><ExportPanel role={role}/></div>}
       {canCategory && <div id="admin-settings"><ClientControlPanel role={role}/></div>} 
     </details>
-  </section>
     <CommandPalette open={commandOpen} onClose={() => setCommandOpen(false)} actions={commandActions} title="أوامر مركز الإدارة" />
   </section>;
 }
