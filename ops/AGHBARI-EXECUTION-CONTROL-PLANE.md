@@ -33,18 +33,20 @@
 # 0A. AUTHORITATIVE LIVE EXECUTION STATE — 2026-09-18
 
 - CURRENT CANDIDATE: `4d5057d7952e213d6b5328a80f0229f1ff9fb861` on `execution/closure-hammer-20260918b`.
-- MAIN: `29aa5c928deb97a652e78c0f0581ec09d7caa050` (one commit ahead of previous `b102ce5…`; diff is documentation-only in `AGHBARI-EXECUTION-START.md`).
-- LIVE/PRODUCTION: `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`; production remains behind current main and the candidate.
-- PRODUCTION: NO TOUCH. No promotion, alias switch, production migration, or live mutation performed.
-- EXACT-SHA CANDIDATE GATES CLOSED/PASS: Fresh Local Browser + Storage adversarial, Migration, Test-the-Test, Concurrency, Local Production Browser, Quality, Security, G1 Domain, Order Workflow, Deployment Contract source gate, Order Invariant Contract, and Bootstrap Release Lockfile.
-- CANDIDATE PREVIEW: `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32` READY, exact SHA `4d5057…`. TinyFish read-only run `549b9736-f328-44f6-bd4f-e11818e8489b` verified page render and `build-meta.json` exact `4d5057…`; not authenticated Deployment Browser E2E.
-- DEPLOYMENT BROWSER: BLOCKED — `35298902449 / 105457162861` stopped at credential validation; required Vercel bypass/E2E credential boundary is unavailable through connected mutation tooling.
-- LIVE/PRODUCTION DEPLOYMENT: `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5` READY, exact SHA `b102ce5…`, target production. Runtime error/fatal inspections found none in the inspected 24h window.
-- FINAL REGRESSION: NOT_PROVEN / TOOL BOUNDARY — `production-smoke.yml` and `runtime-e2e.yml` require workflow dispatch, not available through connected GitHub mutation tooling.
-- EVIDENCE RECONCILIATION: OPEN for Deployment Browser, Live Alignment, Final Regression, and operational/security tooling reconciliation.
-- TOOLING PR #72: head `1830e3a109a9e0605f5306b2ddc8f308457fb375`, draft, isolated from candidate.
-- TOOLING #72 current exact results: CodeQL JavaScript/TypeScript RUNNING; migration-proof RUNNING; Gitleaks FAILED with 61 `generic-api-key` historical findings; Semgrep FAILED with 36 findings (33 mutable-action-tag warnings, 2 Dependabot cooldown warnings, 1 non-literal RegExp warning); Trivy PASS; security PASS; quality PASS; G1 PASS; Vercel Preview Comments PASS. Gitleaks/Semgrep reports were successfully uploaded after CI artifact-name repair.
-- OPERATIONAL LANE: `.github/workflows/repair-excel-build.yml` on main is still OPEN as a safety risk. Current file blob `68fcca2124145651e648f05b97318dcfea5dc45e` confirms `contents: write`, push-trigger, and `git push origin HEAD:main`. Run `35296779614` remains failure with zero job records exposed by connector; root cause NOT_PROVEN. No mutation made.
+- MAIN: `29aa5c928deb97a652e78c0f0581ec09d7caa050`; delta from previous `b102ce5…` is documentation-only in `AGHBARI-EXECUTION-START.md`.
+- LIVE/PRODUCTION: `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`.
+- PRODUCTION: NO TOUCH; candidate not promoted and no alias/migration/live mutation performed.
+- CANDIDATE EXACT-SHA GATES: Fresh Local+Storage, Migration, Test-the-Test, Concurrency, Local Production Browser, Quality, Security, G1, Order Workflow, Deployment Contract, Order Invariant, Bootstrap Lockfile = PASS.
+- CANDIDATE PREVIEW: `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32` READY exact `4d5057…`. TinyFish `549b9736-f328-44f6-bd4f-e11818e8489b` verified page render and exact `build-meta.json`; not authenticated Deployment Browser E2E.
+- DEPLOYMENT BROWSER: BLOCKED — `35298902449 / 105457162861` stopped at credential validation because approved Vercel bypass/E2E credential boundary is unavailable.
+- LIVE/PRODUCTION DEPLOYMENT: `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5` READY exact `b102ce5…`, target production. Production error/fatal inspection over 24h found none.
+- FINAL REGRESSION: NOT_PROVEN / TOOL BOUNDARY — required workflow dispatch is unavailable.
+- EVIDENCE RECONCILIATION: OPEN for Deployment Browser, Live Alignment, Final Regression, and operational/tooling reconciliation.
+- TOOLING PR #72: head `1830e3a109a9e0605f5306b2ddc8f308457fb375`, draft, isolated.
+- TOOLING #72 exact results: Gitleaks FAIL (61 `generic-api-key` findings across history); Semgrep FAIL (36 findings before/after ZAP hardening remained 36 at latest scan: 33 mutable action refs, 2 Dependabot cooldown warnings, 1 non-literal RegExp); Trivy PASS; security PASS; quality PASS; G1 PASS; CodeQL PASS; CodeQL JS/TS PASS; Vercel Preview Comments PASS; migration-proof FAIL in pgTAP phase.
+- TOOLING CI DEFECTS FIXED: Gitleaks expression/artifact escaping on `15511628…`; ZAP shell-input handling + action pinning on `1830e3a…`.
+- TOOLING MIGRATION FAILURE CLASSIFICATION: NOT CANDIDATE DEFECT. Empty-database migration apply passed, then 31 pgTAP files produced multiple stale/mismatched expectations (e.g. missing RPC, missing inventory_changed, expected search_path metadata false, operational FK index assertions, storage test mismatches). Candidate’s own exact migration proof remains PASS and is separate.
+- OPERATIONAL LANE: `.github/workflows/repair-excel-build.yml` remains OPEN safety risk; source blob `68fcca2124145651e648f05b97318dcfea5dc45e` confirms `contents: write`, push trigger, and `git push origin HEAD:main`. Failure `35296779614` has zero exposed job records; root cause NOT_PROVEN.
 
 # 0B. AUTONOMOUS MEMORY + SELF-IMPROVEMENT PROTOCOL
 
@@ -1120,3 +1122,12 @@ Keep Production NO TOUCH. Continue only on the unresolved external/evidence fron
 - Gitleaks on `1830e3a…` still finds 61 `generic-api-key` results across historical test/fixture commits. Current evidence shows findings concentrated in synthetic test UUID/idempotency data. Do not add broad path exclusions; future remediation should use exact finding/fingerprint review before allowlisting.
 - Semgrep on `1830e3a…` reduced from 38 to 36 after the ZAP fix. Remaining findings are dominated by mutable GitHub Action refs plus Dependabot cooldown and one release-audit RegExp warning. These remain tooling hardening work, not candidate PASS/FAIL evidence.
 - Read-only Vercel share evidence is retained only as page/artifact-health evidence; it never closes authenticated Deployment Browser E2E.
+
+### 2026-09-18 — Command 1 continued: tooling CI forensic classification
+
+- `main` moved only by the documentation commit `29aa5c9…`; candidate `4d5057…` remained unchanged, so prior candidate evidence was not invalidated by source mutation.
+- PR #72 now has terminal evidence. This exposed two real workflow defects which were repaired in isolation, but also confirmed substantive security-tool findings. These remain outside candidate certification.
+- The tooling migration job proves migrations can apply from empty DB on tooling SHA `1830e3a…`, but its pgTAP suite is not aligned with that baseline. Do not fix product schema/tests speculatively on the tooling branch; keep this classified as tooling-baseline incompatibility until a specific intended baseline is established.
+- Gitleaks scans full history and reports 61 `generic-api-key` findings. Because findings span historical test/fixture commits, no blanket ignore/allowlist was introduced.
+- Semgrep reports 33 mutable GitHub Action refs after the ZAP shell-injection fix, plus Dependabot cooldown and non-literal RegExp findings. These are hardening opportunities, not certification evidence for `4d5057…`.
+- Candidate release lane remains frozen while external evidence boundaries are unresolved.
