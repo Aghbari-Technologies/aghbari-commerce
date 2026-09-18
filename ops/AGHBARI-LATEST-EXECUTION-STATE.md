@@ -22,18 +22,20 @@
 
 ## Current candidate
 
-- SHA: `290e3cf958d779196de1095e17c4bd8fcbb86a95`
+- SHA: `e3eafd7582f4d8ce26c94e90d073c98c5e7284b7`
 - Branch: `certification/final-candidate-20260918`
 - PR: #83 (OPEN, non-draft, mergeable)
 - Base: `main @ 427ff0801544449f432290205b2a29f2508541f3`
-- Candidate lineage: checkout-policy hardening + payment/catalog correctness + notification schema/RLS + E2E cart isolation + offline reconnect synchronization + reporting gateway CORS/idempotency/recovery hardening.
-- Current exact-head CI suite: 11 named gates created for `290e3cf...`; all queued at latest read. No PASS is transferred from prior candidate heads.
+- Candidate lineage: checkout-policy hardening + payment/catalog correctness + notification schema/RLS + E2E cart isolation + offline reconnect synchronization + reporting gateway CORS/idempotency/recovery + legacy `create_order` overload execution closure.
+- Current exact-head CI suite: 11 named gates created for `e3eafd758...`; all queued at latest read. No PASS is transferred from prior candidate heads.
 - Fresh-head forensic repairs immediately preceding this SHA:
   - `85c289fa...`: corrected pgTAP `set_config` syntax in notification RLS proof.
-  - `744e294a...`: restored missing customer-portal offline sync imports/state declarations.
+  - `744e294a...`: restored customer-portal offline sync imports/state declarations.
   - `8479c16e...`: restored missing `MAX_ORDER_QUANTITY_PER_LINE` import in offline queue.
-  - `290e3cf...`: made reporting delivery state request-scoped so concurrent requests cannot share acceptance state.
-- Candidate deployment: NOT_AVAILABLE — no Vercel deployment matching `290e3cf958d779196de1095e17c4bd8fcbb86a95`.
+  - `290e3cf...`: made reporting delivery state request-scoped.
+  - `9dea919d...`: aligned Quick Order/Excel quantity validation with the canonical 10,000 ceiling.
+  - `e3eafd758...`: revoked client-role EXECUTE on the legacy 3-argument `create_order` overload and added exact pgTAP coverage.
+- Candidate deployment: NOT_AVAILABLE — no Vercel deployment matching `e3eafd7582f4d8ce26c94e90d073c98c5e7284b7`.
 - Candidate deployed-browser proof: NOT_PROVEN. Real browser runtime evidence exists on a separate operational deployment only and is non-transferable.
 - Formal Final Regression: NOT_PROVEN because connected GitHub mutation surface has no workflow-dispatch operation.
 - Certification: NO.
