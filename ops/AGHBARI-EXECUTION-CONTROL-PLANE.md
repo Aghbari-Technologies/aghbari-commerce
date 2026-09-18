@@ -30,20 +30,20 @@
 
 ---
 
-# 0A. AUTHORITATIVE LIVE EXECUTION STATE — 2026-09-18 — CURRENT RECONCILIATION
+# 0A. AUTHORITATIVE LIVE EXECUTION STATE — 2026-09-19 — CURRENT RECONCILIATION
 
-- CURRENT CANDIDATE: `e3eafd7582f4d8ce26c94e90d073c98c5e7284b7` on `certification/final-candidate-20260918`; PR #83 OPEN / non-draft / mergeable.
-- CANDIDATE BASE: `main @ 427ff0801544449f432290205b2a29f2508541f3`.
-- CANDIDATE STATUS: Fresh-DB/browser proof is being regenerated after concrete source/proof defects were found and repaired. Prior candidate PASS evidence is SHA-invalid.
-- MAIN: `427ff0801544449f432290205b2a29f2508541f3`.
-- PRODUCTION: `a7953a62e601eb12322fbbd902c0790c7a3921b1`; Vercel Production `dpl_AmTBr8X9qBGCLdngxirQgdRM4Xjo` READY; Production = NO TOUCH.
-- CANDIDATE DEPLOYMENT: NOT_AVAILABLE — no Vercel deployment matches `e3eafd758...`.
-- CANDIDATE BROWSER: NOT_PROVEN — exact deployment is absent.
-- FORMAL FINAL REGRESSION: NOT_PROVEN — connected GitHub surface has no workflow-dispatch mutation.
-- CURRENT EXACT CI: 11 required gates queued for `e3eafd758...`; no terminal result inferred.
-- LIVE BROWSER HEALTH: previously verified on non-candidate operational deployment only; no cross-SHA transfer.
-- LIVE READ-ONLY SECURITY FINDING: Production currently has legacy `create_order(text,uuid,jsonb)` executable by `authenticated`; candidate closes client execution via migration without mutating Production.
-- CERTIFICATION: NO. Production remains untouched.
+- DEVELOPMENT LANE: `enhancement/market-ready-v4-20260918`; PR #88 OPEN / DRAFT / MERGEABLE.
+- CURRENT DEVELOPMENT SHA: `cb2707b8005ac8237b06a7c89cc9bcf68dc50061`.
+- DEVELOPMENT STATUS: required non-certifying quality/security/domain/migration/adversarial/deployed-browser gates are terminal PASS on this exact SHA.
+- EXACT NETLIFY DEPLOYMENT: `6aadaea0475017968f71cfda`, READY; unique URL `https://6aadaea0475017968f71cfda--aghbari-commerce-web.netlify.app`.
+- EXACT PUBLIC ARTIFACT: `build-meta.json` reports product `aghbari-commerce` and Git SHA `cb2707b8005ac8237b06a7c89cc9bcf68dc50061`.
+- DEPLOYED BROWSER PROOF: GitHub run `35397451565` / job `105769426008` terminal PASS; customer E2E PASS and admin E2E PASS.
+- BROWSER EVIDENCE ARTIFACT: `10569735072`.
+- EXACT-SHA CI: Quality `35397451577` PASS; Security `35397451588` PASS; G1 `35397451545` + `35397455871` PASS; Migration `35397451566` PASS; Sensitivity/Test-the-Test `35397451567` PASS.
+- FORMAL FINAL REGRESSION: NOT_PROVEN — the connected GitHub mutation surface exposes no workflow-dispatch operation.
+- CERTIFICATION: NO.
+- CERTIFICATION CANDIDATE: `2facceb39aaa826413f20245a6f20b6c2ff7cd34` — FROZEN / NO TOUCH.
+- PRODUCTION: NO TOUCH. No promotion, alias switch, production migration, or production runtime mutation was performed.
 
 
 # 0B. AUTONOMOUS MEMORY + SELF-IMPROVEMENT PROTOCOL
@@ -1708,3 +1708,16 @@ Rules:
 - This ledger is append-only. Never rewrite history to make a failed run look successful.
 - Certification evidence and development progress are separate. Development progress does not certify Production.
 - A new SHA invalidates affected prior evidence; use the ledger to resume work, not to transfer PASS status.
+
+
+## CONTROL-PLANE EVOLUTION — 2026-09-19 — Multi-quantity browser fixture integrity
+
+Observed on exact development SHA `4d7fbe9e6f0ff977f2829ef91e07d290c6d83554`: deployed browser tests were still failing because the shared UI fixture assumed a single decrement would remove a persisted cart line. Real persisted carts can contain quantities greater than one, so the fixture contaminated later scenarios.
+
+Durable rule:
+- Browser setup/cleanup code that mutates persisted quantities must assert the actual state transition: quantity decreases when above one, or the row disappears at one.
+- After destructive fixture cleanup, rehydrate from the server and verify the persisted state before the next scenario.
+- Classify such failures as proof/test defects when the product behavior is correct; do not weaken semantic product assertions to compensate.
+- The repaired exact development SHA is `cb2707b8005ac8237b06a7c89cc9bcf68dc50061`, and the full exact deployed browser suite subsequently passed.
+
+This rule is now part of the permanent evidence-fixture standard and prevents false cross-test contamination.
