@@ -34,7 +34,7 @@ select product_a,org_a,'ORDER-A','Order Product A','unit','active' from fixture 
 insert into public.inventory_balances(organization_id,warehouse_id,product_id,quantity)
 select org_a,warehouse_a,product_a,10 from fixture union all select org_b,warehouse_b,product_b,20 from fixture;
 insert into public.orders(id,organization_id,customer_id,warehouse_id,order_number,status,currency,subtotal,total,idempotency_key,created_by)
-select order_a,org_a,customer_a,warehouse_a,900001,'pending','YER',10,10,'order-a-key-123456',admin_a from fixture union all
+select order_a,org_a,customer_a,warehouse_a,900001,'pending'::public.order_status,'YER',10,10,'order-a-key-123456',admin_a from fixture union all
 select order_b,org_b,customer_b,warehouse_b,900002,'pending','YER',20,20,'order-b-key-123456',admin_b from fixture;
 insert into public.order_items(organization_id,order_id,product_id,quantity,unit_price,pricing_tier,line_total)
 select org_a,order_a,product_a,2,5,'wholesale'::customer_tier,10 from fixture union all select org_b,order_b,product_b,2,10,'wholesale'::customer_tier,20 from fixture;
