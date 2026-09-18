@@ -1655,3 +1655,12 @@ Read-only production inspection exposed a legacy overloaded `create_order(text,u
 Durable rule: when a security-sensitive RPC contract gains a new authoritative overload, audit existing overloads in the live schema. Prefer revoking client-role execution from legacy overloads over destructive removal when dependency risk is unknown. Add an exact proof that client roles cannot execute the legacy signature and can execute only the authoritative signature.
 
 Applied to candidate `e3eafd7582f4d8ce26c94e90d073c98c5e7284b7`; no production mutation.
+
+
+## EVOLUTION — 2026-09-18 — Source-contract tests must follow intentional refactors
+
+Observed a false-negative proof failure after a correct implementation refactor: a source-contract test encoded the old implementation variable name rather than the required behavior.
+
+Durable rule: source-contract tests must assert stable architectural behavior and security invariants, not incidental local variable names. When an implementation is intentionally refactored without changing the required contract, update the proof to the new observable contract rather than reverting the implementation to satisfy stale test text.
+
+Applied on candidate `61e06987a547677c3568799d73489a27d5d05732`.
