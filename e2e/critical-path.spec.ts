@@ -209,3 +209,27 @@ test('command center supports keyboard-first navigation and fast search', async 
   await expect(page.getByRole('textbox', { name: 'البحث في الكتالوج' })).toBeFocused();
   await assertCleanBrowser(failures);
 });
+
+
+test('quick order accepts scanner-style Enter submission', async ({ page }) => {
+  const email = process.env.E2E_EMAIL;
+  const password = process.env.E2E_PASSWORD;
+  if (!email || !password) throw new Error('E2E_EMAIL and E2E_PASSWORD are required for quick-order runtime proof.');
+
+  const failures = captureBrowserFailures(page);
+  await login(page, email, password);
+  const sku = await page.locator('.product-card').first().locator('.sku').innerText();
+  const quickButton = page.getByRole('button', { name: 'طلب سريع', exact: true });
+  await expect(quickButton).toBeVisible();
+  await quickButton.click();
+
+  const skuInput = page.getByRole('textbox', { name: 'SKU / الباركود' });
+  const qtyInput = page.getByRole('spinbutton', { name: 'كمية الطلب' });
+  await expect(skuInput).toBeFocused();
+  await skuInput.fill(sku.trim());
+  await qtyInput.fill('1');
+  await qtyInput.press('Enter');
+
+  await expect(page.getByRole('button', { name: /السلة/ })).toContainText('1');
+  await assertCleanBrowser(failures);
+});
