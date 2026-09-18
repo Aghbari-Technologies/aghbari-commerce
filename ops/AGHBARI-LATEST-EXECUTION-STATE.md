@@ -1103,3 +1103,23 @@ Observed: HTTP 200; `lang=ar`, `dir=rtl`; title `بوابة الأغبري ال�
 Vercel production runtime: no runtime errors and no error/fatal logs in the selected last-24h window.
 Evidence class: LIVE/PRODUCTION corroboration only for the actual deployed production SHA; not candidate certification. Production remains NO TOUCH.
 Candidate #83 current exact head remains separate and must pass its own exact-head CI and matching deployment/browser proof.
+
+
+### 2026-09-18 — Command 1 — deep product/proof closure checkpoint
+
+CURRENT CANDIDATE: `85c289fa62598d140a87ab37fec173b5f2962b3f`
+PR #84: `3ce43ff36a44b0e27dca7aa1adb34cabe46c08a9`
+PR #86: `10dac1d629c8804c048efcd626cfe4e71f4cda6a`
+PR #87: `71fb3fa267f4d5b3b80a9e77b2e2afa4cb5d51b4`
+
+FINDINGS / FIXES:
+- Fresh-DB Browser E2E on the payment/catalog fix branch proved `create_order` failed with 404/42P01 because `public.notifications` did not exist. Added notification persistence schema + tenant-scoped authenticated read + direct-write denial to candidate and all active fix lanes.
+- Browser retries were contaminating the persisted cart (`1 → 2 → 4`) after earlier order failure. Added UI-driven cart reset after login to make retries independent without hiding real failures.
+- Verified pgTAP plans: Reporting Gateway boundary = 16 planned / 16 assertion calls; Notifications boundary = 5 planned / 5 assertion calls.
+- PR #84 also fixed price continuity after cart reload so applicable customer tier pricing is preserved in the persisted cart view.
+- PR #86 continues offline runtime hardening with reconnect sync and loop guard.
+- PR #87 now covers CORS, same-period retry idempotency, and remote-accepted/local-finalize recovery; live Edge Function is still not deployed.
+- Real browser deployment health was independently verified on non-candidate SHA `cf82b754...`; no evidence transferred to candidate.
+- Production remains NO TOUCH.
+
+NEXT ACTION: inspect terminal results on current exact heads; integrate only fully proven fixes, then create one consolidated candidate from the proven main lineage and re-run the complete exact-SHA certification set.
