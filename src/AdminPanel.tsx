@@ -13,6 +13,7 @@ import CustomerPanel from './CustomerPanel';
 import InventoryPanel from './InventoryPanel';
 import FinancePanel from './FinancePanel';
 import ClientControlPanel from './ClientControlPanel';
+import CommandPalette from './CommandPalette';
 import AdminExecutiveDashboard from './AdminExecutiveDashboard';
 import './admin-executive-dashboard.css';
 
@@ -33,6 +34,7 @@ function allowedNextStatuses(status: OrderStatus, role: UserRole): OrderStatus[]
 
 export default function AdminPanel({ role }: { role: UserRole }) {
   const [products, setProducts] = useState<StaffProduct[]>([]); const [warehouses, setWarehouses] = useState<Warehouse[]>([]); const [categories, setCategories] = useState<CategoryOption[]>([]); const [orders, setOrders] = useState<StaffOrderSummary[]>([]); const [ordersLoading, setOrdersLoading] = useState(false);
+  const [commandOpen, setCommandOpen] = useState(false);
   const [product, setProduct] = useState({ sku: '', name: '', unit: 'كرتون', categoryId: '', description: '' }); const [category, setCategory] = useState({ name: '', slug: '', parentId: '' }); const [selectedProduct, setSelectedProduct] = useState(''); const [tier, setTier] = useState<CustomerTier>('wholesale'); const [price, setPrice] = useState(''); const [warehouseId, setWarehouseId] = useState(''); const [delta, setDelta] = useState(''); const [reason, setReason] = useState(''); const [imageFile, setImageFile] = useState<File | null>(null); const [importFile, setImportFile] = useState<File | null>(null); const [importJobId, setImportJobId] = useState<string | null>(null); const [importPreview, setImportPreview] = useState<{ rows: number; invalid: number } | null>(null); const [busy, setBusy] = useState(false); const [message, setMessage] = useState<string | null>(null); const [error, setError] = useState<string | null>(null);
 
   const reload = useCallback(async () => { if (!supabase) return; setOrdersLoading(true); try { const [{ data: productRows, error: productError }, { data: warehouseRows, error: warehouseError }, categoryRows, orderRows] = await Promise.all([supabase.from('products').select('id,sku,name,unit').eq('status', 'active').order('name').limit(200), supabase.from('warehouses').select('id,name').eq('is_active', true).order('created_at'), getCategories(), getStaffOrders(50)]); if (productError) throw productError; if (warehouseError) throw warehouseError; setProducts((productRows ?? []) as StaffProduct[]); setCategories(categoryRows); setOrders(orderRows); const nextWarehouses = (warehouseRows ?? []) as Warehouse[]; setWarehouses(nextWarehouses); if (!warehouseId && nextWarehouses[0]) setWarehouseId(nextWarehouses[0].id); } finally { setOrdersLoading(false); } }, [warehouseId]);
@@ -43,8 +45,26 @@ export default function AdminPanel({ role }: { role: UserRole }) {
   async function commitImport() { if (!importJobId || !warehouseId) return; await run(async () => { const result = await commitProductImport(importJobId, warehouseId); setImportJobId(null); setImportFile(null); setImportPreview(null); return result; }, 'تم اعتماد الاستيراد بالكامل وتسجيل أثر المخزون والتدقيق.'); }
   async function changeOrderStatus(orderId: string, status: OrderStatus) { await run(async () => transitionOrder(orderId, status), `تم تحديث حالة الطلب إلى: ${STATUS_LABELS[status]}.`); }
   const canCatalog = role === 'owner' || role === 'admin' || role === 'sales'; const canCategory = role === 'owner' || role === 'admin'; const canInventory = role === 'owner' || role === 'admin' || role === 'warehouse'; const canOrderWorkflow = STAFF_ROLES.has(role); const canFinance = ['owner', 'admin', 'sales'].includes(role);
+  const commandActions = [
+    ...(canCatalog ? [
+      { id: 'product-create', label: 'إضافة منتج', hint: 'فتح نموذج إنشاء المنتج', icon: '+', onSelect: () => document.getElementById('admin-product-create')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), keywords: ['منتج', 'sku'] },
+      { id: 'pricing', label: 'تحديث الأسعار', hint: 'إدارة السعر حسب فئة العميل', icon: 'ر.ي', onSelect: () => document.getElementById('admin-pricing')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), keywords: ['سعر', 'تسعير'] },
+      { id: 'import', label: 'مركز الاستيراد', hint: 'رفع ومعاينة ملف المنتجات', icon: '⇧', onSelect: () => document.getElementById('admin-import')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), keywords: ['excel', 'استيراد'] },
+    ] : []),
+    ...(canCategory ? [{ id: 'category', label: 'إضافة تصنيف', hint: 'إنشاء تصنيف جديد', icon: '▦', onSelect: () => document.getElementById('admin-category-create')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), keywords: ['تصنيف'] }] : []),
+    ...(canInventory ? [
+      { id: 'inventory', label: 'تعديل المخزون', hint: 'فتح حركة المخزون الآمنة', icon: '◫', onSelect: () => document.getElementById('admin-inventory-adjust')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), keywords: ['مخزون', 'مستودع'] },
+      { id: 'purchasing', label: 'المشتريات والاستلام', hint: 'فتح دورة الشراء والاستلام', icon: '↘', onSelect: () => document.getElementById('admin-purchasing')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), keywords: ['شراء', 'مورد'] },
+    ] : []),
+    ...(canOrderWorkflow ? [{ id: 'orders', label: 'إدارة الطلبات', hint: 'طلبات العملاء وحالاتها', icon: '↗', onSelect: () => document.getElementById('admin-orders')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), keywords: ['طلبات', 'تجهيز', 'شحن'] }] : []),
+    ...(canCatalog ? [{ id: 'customers', label: 'إدارة العملاء', hint: 'فتح ملفات العملاء', icon: '👥', onSelect: () => document.getElementById('admin-customers')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), keywords: ['عملاء'] }] : []),
+    ...(canFinance ? [{ id: 'finance', label: 'المركز المالي', hint: 'الكشوف والحركات التشغيلية', icon: '◍', onSelect: () => document.getElementById('admin-finance')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), keywords: ['مالية', 'كشف'] }] : []),
+    ...(canCategory ? [{ id: 'settings', label: 'إعدادات بوابة العميل', hint: 'هوية الواجهة والخيارات التشغيلية', icon: '⚙', onSelect: () => document.getElementById('admin-settings')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), keywords: ['إعدادات', 'واجهة', 'ثيم'] }] : []),
+  ];
+  useEffect(() => { const onKeyDown = (event: KeyboardEvent) => { if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); setCommandOpen(true); } }; window.addEventListener('keydown', onKeyDown); return () => window.removeEventListener('keydown', onKeyDown); }, []);
 
   return <section className="admin-panel" id="account">
+    <div className="staff-commandbar"><div><span className="eyebrow">مركز التشغيل</span><strong>وصول سريع للمهام</strong><small>Ctrl/⌘ K</small></div><button type="button" onClick={() => setCommandOpen(true)}>⚡ أوامر الأغبري</button></div>
     <AdminExecutiveDashboard role={role} />
     <details className="admin-operations" open>
       <summary>مركز التشغيل التفصيلي وإدارة البيانات</summary>
@@ -66,5 +86,7 @@ export default function AdminPanel({ role }: { role: UserRole }) {
       {canInventory && <div id="admin-export"><ExportPanel role={role}/></div>}
       {canCategory && <div id="admin-settings"><ClientControlPanel role={role}/></div>} 
     </details>
+  </section>
+    <CommandPalette open={commandOpen} onClose={() => setCommandOpen(false)} actions={commandActions} title="أوامر مركز الإدارة" />
   </section>;
 }
