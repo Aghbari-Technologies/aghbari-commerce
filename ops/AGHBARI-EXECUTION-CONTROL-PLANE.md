@@ -30,6 +30,17 @@
 
 ---
 
+# 0A. AUTHORITATIVE LIVE EXECUTION STATE — 2026-09-18
+
+- CURRENT CANDIDATE: `4d5057d7952e213d6b5328a80f0229f1ff9fb861` on `execution/closure-hammer-20260918b`.
+- CANDIDATE MOVE: Fast-forwarded candidate ref from `466857aa0dd1062db380800e2d0b46dc4fb53075` to existing proven SHA `4d5057…`; no new commit was created by the ref move.
+- PROVEN EXACT-SHA GATES: Storage/Fresh Browser, Migration, Test-the-Test, Concurrency, Local Production Browser, Quality, Security, G1 Domain, Order Workflow, and Deployment Contract all PASS on `4d5057…`.
+- CANDIDATE PREVIEW: `dpl_7QvezhhAMnzarGuxa4csQC94oB7A` READY for `4d5057…`; later deployment `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32` is also READY and points to the same candidate SHA.
+- LIVE/PRODUCTION: production deployment `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5` is READY but serves `b102ce5…`; read-only live browser inspection passed for rendering/identity/no visible errors. This is health evidence only, not candidate alignment.
+- DEPLOYMENT BROWSER: BLOCKED — `VERCEL_AUTOMATION_BYPASS_SECRET` missing; GitHub Actions job stops before browser execution. `E2E_ADMIN_EMAIL` and `E2E_ADMIN_PASSWORD` are also absent in that environment.
+- FINAL REGRESSION: NOT_PROVEN / TOOL BOUNDARY. The repository's formal production-smoke/runtime-e2e workflows are `workflow_dispatch` inputs and the connected GitHub toolset exposes no workflow-dispatch mutation. Do not convert the read-only Live inspection into a final-regression PASS.
+- RELEASE SAFETY: Production remains NO TOUCH. No alias switch, promotion, production migration, or live mutation was performed.
+
 # 1. COMMAND SEMANTICS
 
 ## USER COMMAND 1 — EXECUTE
@@ -792,3 +803,12 @@ The full canonical execution protocol remains on:
 - Live production remains on main SHA b102ce5; no production mutation or promotion was performed.
 - Formal final regression and evidence reconciliation are still open.
 - Frozen release candidate ref remains 466857aa; 4d5057 is the proven repair candidate and is not yet promoted.
+
+### 2026-09-18 — Candidate fast-forward and live read-only reconciliation
+
+- Candidate branch `execution/closure-hammer-20260918b` verified at `4d5057…` after a fast-forward ref move; no new SHA was generated.
+- Exact 4d proof set remains valid because the evidence was already generated on the exact same SHA.
+- Live production remains `b102ce5…`; Vercel `build-meta.json` returned HTTP 200 and exact `git_sha=b102ce5…`. Production runtime error query returned no matching error/fatal logs in the inspected 24h window.
+- TinyFish read-only inspection of live production confirmed page rendering and Aghbari Commerce identity with no visible runtime/resource errors. This does not prove candidate/live alignment or authenticated deployment E2E.
+- Deployment Browser remains credential-blocked; formal final regression remains NOT_PROVEN because workflow dispatch is unavailable through the connected GitHub tool.
+
