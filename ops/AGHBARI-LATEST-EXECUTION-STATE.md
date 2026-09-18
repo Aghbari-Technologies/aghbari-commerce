@@ -10,7 +10,52 @@
 - Durable project memory: `PROJECT_MEMORY.md`
 - Fast entry point on main: `AGHBARI-EXECUTION-START.md`
 
-## Current non-certifying UI / deployment lane — 2026-09-18
+## CURRENT RECONCILED STATE — 2026-09-18 19:56 +03
+
+### Candidate
+- SHA: `2263648fbbbd0d480b37401795ac16c2b5764da6`
+- Branch: `certification/final-candidate-20260918`
+- PR: #83 — OPEN / non-draft / mergeable
+- Base: `main @ 427ff0801544449f432290205b2a29f2508541f3`
+- Candidate Vercel deployment: `dpl_DsZ3vCJi5ik2LayyshG6ywxAabCZ` — READY, exact Git SHA aligned
+- Candidate deployment URL: `https://aghbari-commerce-c2dd-afp5s1m0f-aghbari-technologies1.vercel.app`
+- Candidate exact-head verification suite: terminal PASS across the current recorded gates, including application quality, security, G1, order workflow, migration proof, fresh/local browser, local production artifact browser, concurrency, and test-the-test.
+- Candidate deployed browser E2E: **BLOCKED** because GitHub Actions received an empty `VERCEL_AUTOMATION_BYPASS_SECRET` environment value in job `105686041380`.
+- Customer and admin E2E credential variables were present in the job environment, but the Vercel bypass secret was not.
+- Formal Final Runtime E2E: **NOT EXECUTED**; `runtime-e2e.yml` remains workflow-dispatch-only and the connected GitHub mutation surface has no dispatch operation.
+- Certification: **NO**
+- Production: **NO TOUCH**
+
+### Exact evidence for the latest blocker
+- Original deployment-triggered `browser-e2e` run: `35364384800`
+- Original failure job: `105663196657` — failed at `Validate exact deployment inputs` because `VERCEL_AUTOMATION_BYPASS_SECRET` was empty.
+- Rerun requested after the reported secret addition: job `105686041380`
+- Rerun result: **FAIL** at the same validation step; the GitHub log explicitly shows `VERCEL_AUTOMATION_BYPASS_SECRET:` with no value.
+- Therefore the current repository Actions runtime still does not have an accessible secret under the exact required name/scope.
+- This is a **secret scope/provisioning boundary**, not a product defect.
+- Do not print or persist the secret value. Only the name and availability state are recorded.
+
+### Vercel reconciliation
+- Project: `aghbari-commerce-c2dd`
+- Project ID: `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`
+- Team: `Aghbari-Technologies`
+- Team ID: `team_xN16zQ6PKax27q3eWR7YockV`
+- Deployment source: Git
+- Deployment branch: `certification/final-candidate-20260918`
+- Deployment Git SHA: exact match to candidate
+- Deployment state: READY
+- Runtime error scan for selected 6-hour window: no runtime errors found
+
+### Next executable closure gate
+1. Make the GitHub Actions repository/org secret `VERCEL_AUTOMATION_BYPASS_SECRET` accessible to `Aghbari-Technologies/aghbari-commerce` under that exact name. A Vercel Dashboard secret alone is not automatically exposed to GitHub Actions.
+2. Re-run failed job `105686041380` (or the resulting replacement job for the same deployment-status workflow).
+3. Require deployed artifact `build-meta.json` to match exact SHA `2263648fbbbd0d480b37401795ac16c2b5764da6`.
+4. Require real customer and admin browser E2E to execute and pass.
+5. Obtain Formal Final Runtime E2E through an authorized workflow-dispatch path.
+6. Only after exact evidence reconciliation evaluate release promotion; Production remains NO TOUCH.
+
+## Current non-certifying UI / deployment lane — 2026-09-18 (historical state)
+
 
 - PR #81: OPEN / MERGEABLE / non-certifying; current HEAD: `384a0f494702e942fdc23d9f0a0981cff8d277fd`.
 - Scope: preserve existing customer/admin interfaces and harden them in place; server-authoritative order templates, working keyboard search, canonical inventory source, role-aware navigation/actions, visual polish, and testable business-day dashboard metrics.
@@ -1280,3 +1325,16 @@ PRODUCTION RELEASE: **NO TOUCH / NOT PROMOTED**
 ### Next executable closure gate
 
 Provide the existing Vercel Automation Bypass secret to the repository and provision the admin E2E account credentials; then trigger `browser-e2e-exact.yml` and `runtime-e2e.yml` against the exact deployment URL and exact SHA `2263648fbbbd0d480b37401795ac16c2b5764da6`. After both authenticated browser proofs pass, recheck the complete exact-head gate inventory and only then evaluate production promotion.
+
+
+### 2026-09-18 — Automation bypass secret recheck
+
+RUN: exact candidate deployment browser recovery
+JOB: `35364384800` → rerun job `105686041380`
+SHA: candidate `2263648fbbbd0d480b37401795ac16c2b5764da6`
+FRONT: authenticated deployed browser E2E
+RESULT: BLOCKED/FAIL — the rerun still received an empty `VERCEL_AUTOMATION_BYPASS_SECRET`; no Playwright test executed.
+ROOT CAUSE: GitHub Actions cannot currently resolve the required repository/org secret under the exact workflow secret name/scope. Customer/admin credential variables were present.
+ARTIFACT: GitHub job `105686041380`; deployment `dpl_DsZ3vCJi5ik2LayyshG6ywxAabCZ` remains READY and exact-SHA aligned.
+NEXT ACTION: provision/authorize `VERCEL_AUTOMATION_BYPASS_SECRET` for the repository Actions context, then rerun the same failed job. Do not alter candidate or Production.
+
