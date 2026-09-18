@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(18);
+select plan(19);
 
 select is(
   (select data_type from information_schema.columns
@@ -161,6 +161,12 @@ select is(
 );
 
 set local role authenticated;
+
+select is(
+  (select count(*) from public.notifications where entity_id=(select order_id from cash_order) and kind='order'),
+  2::bigint,
+  'idempotent replay does not create duplicate customer notifications'
+);
 
 select throws_ok(
   $$select * from public.create_order(
