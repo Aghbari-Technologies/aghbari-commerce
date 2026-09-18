@@ -304,3 +304,12 @@ Do not conflate a workflow's source-level `workflow_dispatch` declaration with t
 - The canonical Vercel project is the Aghbari-Technologies-linked project `aghbari-commerce-c2dd`; older/fork-linked projects are not interchangeable evidence sources.
 - `runtime-e2e.yml` is the formal authenticated browser certification workflow and is manually dispatchable in source, while `production-smoke.yml` only verifies an already-deployed exact artifact.
 - Repository workflow presence does not imply connected-session dispatch authority. Do not substitute an older deployment URL or weaken protection to bridge this gap.
+
+
+### 2026-09-18 — Command 1 — latest runtime/deployment evidence reconciliation
+
+- Direct Vercel deployment creation was attempted against the connected deployment surface. It failed with HTTP 402 `api-deployments-free-per-day` because the free deployment quota is exhausted; no deployment was created and no Production mutation occurred.
+- Canonical Vercel project `aghbari-commerce-c2dd` remains the correct repository-linked project. Its latest observed READY deployments are for control-plane/tooling commits, not candidate `4753cc3…`.
+- Exact candidate Local Production Artifact run `35310025159` / job `105490749871` executed the customer suite (3 tests: invalid login; authenticated customer search/catalog/cart/order/refresh/logout; Tenant-A/Tenant-B isolation) and the admin control-plane test (1 test), all PASS on exact SHA `4753cc3319f551aeccbe2bd081b988fa68df8e87`. The uploaded Playwright HTML report represents the final admin invocation only; job logs are the authoritative 3+1 execution proof.
+- Repository source confirms `.github/workflows/runtime-e2e.yml` dispatches the complete authenticated E2E suite, including invitation and customer-template specs. A read-only workflow-history audit found no Runtime E2E Certification run on candidate `4753cc3…`; five recorded runs are on earlier SHAs and are historical only.
+- Durable rule: a successful partial/local E2E job does not close the complete authenticated runtime gate when the formal runtime workflow has not executed the candidate's full e2e suite.
