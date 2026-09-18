@@ -24,6 +24,7 @@ export function assertCustomerOrderSummary(value: unknown): CustomerOrderSummary
   if (typeof item.total !== 'number' || !Number.isFinite(item.total) || item.total < 0) throw new Error('إجمالي الطلب غير صالح. لم يتم إثبات نجاح العملية.');
   if (typeof item.currency !== 'string' || !/^[A-Z]{3}$/.test(item.currency)) throw new Error('عملة الطلب غير صالحة. لم يتم إثبات نجاح العملية.');
   if (typeof item.payment_method !== 'string' || !['credit','cash','transfer'].includes(item.payment_method)) throw new Error('طريقة دفع الطلب غير صالحة. لم يتم إثبات نجاح العملية.');
+  if (typeof item.payment_method !== 'string' || !['credit','cash','transfer'].includes(item.payment_method)) throw new Error('طريقة دفع الطلب غير صالحة. لم يتم إثبات نجاح العملية.');
   if (typeof item.created_at !== 'string' || !item.created_at.trim() || Number.isNaN(Date.parse(item.created_at))) throw new Error('تاريخ الطلب غير صالح. لم يتم إثبات نجاح العملية.');
   return { id: item.id, order_number: item.order_number, status: item.status as OrderStatus, total: item.total, currency: item.currency, payment_method: item.payment_method as CustomerOrderSummary['payment_method'], created_at: item.created_at };
 }
