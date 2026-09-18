@@ -50,7 +50,7 @@ describe('offline operation queue', () => {
     expect(appSource).toContain("window.addEventListener('online',online)");
     expect(appSource).toContain("void flushOfflineCart()");
     expect(appSource).toContain('syncingOfflineRef.current');
-    expect(appSource).toContain('[signedIn,customerId]);');
+    expect(appSource).toContain('[signedIn,customerId,refreshOfflineState]);');
   });
 
   it('requires a valid authenticated user scope', () => {
