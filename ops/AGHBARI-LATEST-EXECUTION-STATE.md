@@ -952,3 +952,12 @@ RESULT:
 ROOT CAUSE / CURRENT BOUNDARY: Runtime Browser itself is not a blocker. The remaining certifying boundary is exact deployment identity for candidate #83 plus authenticated final regression/dispatch capability. External browser wallet/session limits are capability constraints, not product-runtime failures.
 ARTIFACTS: Firecrawl browser session `01a0b4be-cd2a-730a-9819-253e041db8ce`; Vercel deployment `dpl_CZCJ5crKq5XJ9Qi3wznjPfZpB6S5`; build-meta SHA `cf82b754fae55ddf11ab30cbeaa7738c1c5ab619`; PR #84; Netlify site `6c515d48-3385-46eb-958c-3ff2ee17e95e`.
 NEXT ACTION: keep #83 frozen and Production untouched; let PR #84 obtain exact-head CI when queue capacity permits, then integrate its proven fixes into a new candidate only after verification. Do not transfer runtime evidence from `cf82b754...` to #83 and do not burn Vercel quota with synthetic deployments.
+
+
+### 2026-09-18 — Command 1 — runtime server-side corroboration
+
+RUN: Vercel runtime-error read-only scan
+JOB: corroborate live runtime health independently of browser rendering
+DEPLOYMENT: `dpl_CZCJ5crKq5XJ9Qi3wznjPfZpB6S5` (READY; control-plane operational SHA `cf82b754fae55ddf11ab30cbeaa7738c1c5ab619`)
+RESULT: Vercel project runtime-error aggregation returned **no runtime errors** in the selected 6-hour window. This strengthens the live runtime-health signal for the observed deployment but remains non-transferable to certification candidate `0fb5a17b...` because deployment SHA does not match.
+PRODUCTION: NO TOUCH.
