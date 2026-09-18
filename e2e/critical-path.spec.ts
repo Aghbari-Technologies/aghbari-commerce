@@ -267,3 +267,18 @@ test('inline product quantity controls preserve a single cart line', async ({ pa
     await expect(card.locator('.product-qty-control output')).toHaveText('1');
   }
 });
+
+test('product detail modal exposes customer-safe facts', async ({ page }) => {
+  const email = process.env.E2E_EMAIL;
+  const password = process.env.E2E_PASSWORD;
+  if (!email || !password) throw new Error('E2E_EMAIL and E2E_PASSWORD are required for product detail proof.');
+  await login(page, email, password);
+  const card = page.locator('.product-card').first();
+  await expect(card).toBeVisible();
+  await card.getByRole('button', { name: 'عرض التفاصيل' }).click();
+  await expect(page.getByRole('heading', { name: 'تفاصيل المنتج' })).toBeVisible();
+  await expect(page.getByText('SKU', { exact: true })).toBeVisible();
+  await expect(page.getByText('الوحدة', { exact: true })).toBeVisible();
+  await expect(page.getByText('التوفر', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'إغلاق تفاصيل المنتج' }).click();
+});
