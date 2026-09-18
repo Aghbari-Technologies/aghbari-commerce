@@ -33,15 +33,20 @@
 # 0A. AUTHORITATIVE LIVE EXECUTION STATE — 2026-09-18 — CURRENT RECONCILIATION
 
 - CURRENT CANDIDATE: `9dc6bd3e3bed86bfcbca29ff2538dfd30ebcd218` on `certification/final-candidate-20260918`; PR #83 OPEN / non-draft / mergeable.
-- CANDIDATE BASE: `main @ 427ff0801544449f432290205b2a29f2508541f3`.
-- CURRENT CANDIDATE CI: 11 named pull_request verification gates newly created for exact HEAD `9dc6bd3e3bed86bfcbca29ff2538dfd30ebcd218`; latest snapshot all queued. No prior PASS transfers.
-- CANDIDATE DEPLOYMENT: NOT_AVAILABLE; canonical Vercel project has no deployment with Git SHA `9dc6bd3e3bed86bfcbca29ff2538dfd30ebcd218`.
-- DEPLOYED BROWSER: real browser capability proven on a separate operational deployment only; no transfer to candidate.
-- FORMAL FINAL REGRESSION: NOT_PROVEN; connected GitHub mutation surface exposes no workflow_dispatch execution operation.
-- PRODUCTION/LIVE: production source `a7953a62e601eb12322fbbd902c0790c7a3921b1`, deployment `dpl_AmTBr8X9qBGCLdngxirQgdRM4Xjo`; Production = NO TOUCH.
-- PRODUCT FIX LANES: PR #84 current line contains payment-selection propagation, authorized-price fallback, disabled-default payment fallback, restored payment schema migration; PR #85 contains offline reconnect sync plus restored payment schema migration. Neither may merge before exact-head CI verification.
-- PR #82 MERGED; #81/#74 CLOSED superseded. #30/#48 historical blockers closed; #31 updated to dedicated staging requirement.
-- CERTIFICATION: NO.
+- MAIN: `427ff0801544449f432290205b2a29f2508541f3`.
+- LIVE/PRODUCTION: `a7953a62e601eb12322fbbd902c0790c7a3921b1`; Vercel deployment `dpl_AmTBr8X9qBGCLdngxirQgdRM4Xjo` READY, Git-linked from main; Production = NO TOUCH.
+- CANDIDATE CI: current exact-head run set exists but remains queued/pending; no prior SHA evidence is transferred.
+- CANDIDATE DEPLOYMENT: NOT_AVAILABLE — no Vercel deployment record matches candidate `9dc6bd3...`.
+- CANDIDATE BROWSER: NOT_PROVEN — exact deployment/browser proof requires a matching candidate deployment.
+- FORMAL FINAL REGRESSION: NOT_PROVEN — no connected workflow-dispatch mutation path.
+- REAL BROWSER HEALTH: Firecrawl verified the live Aghbari application on a separate operational deployment; observed RTL, `AGHBARI B2B`, `بوابة الأغبري التجارية`, login controls, and no visible error. This evidence is explicitly non-transferable to candidate #83.
+- SERVER RUNTIME HEALTH: Vercel runtime-error aggregation returned no errors in the selected recent window for the observed project state; non-candidate corroboration only.
+- PR #84: OPEN/non-certifying, current HEAD `0b3e540a90e1e9e0d5992febbf18c4c59561547e`; payment selection + authorized catalog pricing + payment-method schema hardening; exact-head CI queued.
+- PR #86: OPEN/non-certifying, current HEAD `661b797cc195fb5664d304921d5ebf59a3cc2490`; offline quantity ceiling + reconnect sync + visible connection state + re-entry-loop guard; exact-head CI queued.
+- PR #87: OPEN/non-certifying, current HEAD `ef26828b672ac01f922df9b3b6042a8063c76822`; reporting-gateway browser CORS + retry idempotency hardening; live function currently not deployed; exact-head CI queued.
+- PR #82: MERGED into main at `d8fdb226866a2563164816066cdecc8e08549bae`.
+- PR #74 and PR #81: CLOSED as superseded; historical evidence retained only.
+- CERTIFICATION: NO. Production remains untouched.
 # 0B. AUTONOMOUS MEMORY + SELF-IMPROVEMENT PROTOCOL
 
 The control plane is a living execution system, not a static instruction sheet.
