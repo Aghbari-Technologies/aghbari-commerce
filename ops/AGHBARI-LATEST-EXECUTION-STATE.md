@@ -12,82 +12,81 @@
 
 ## Current candidate
 
-- SHA: 4753cc3319f551aeccbe2bd081b988fa68df8e87
-- Branch: execution/closure-hammer-20260918c
-- Candidate deployment: NOT_AVAILABLE — Vercel deployment rate-limited
-- Candidate deployment evidence: exact SHA status remains FAILURE — Deployment rate limited — retry in 24 hours; no deployment for this SHA is present in the canonical project deployment list.
-- Candidate authenticated browser certification: BLOCKED — approved E2E credentials / Vercel automation-bypass boundary unavailable.
-- Prior candidate 4d5057… deployment and browser evidence are historical and not transferable.
-
+- SHA: `4753cc3319f551aeccbe2bd081b988fa68df8e87`
+- Branch: `execution/closure-hammer-20260918c`
+- PR: #74 (open, draft, mergeable)
+- Base: `main @ 4505bcb655c0b747aeea7e1cc526a94f93270d3d`
+- Candidate deployment: NOT_AVAILABLE — Vercel exact-SHA status is FAILURE: "Deployment rate limited — retry in 24 hours"; no deployment for this SHA is present in the canonical project deployment list.
+- Candidate authenticated browser certification: BLOCKED — approved Vercel automation-bypass credential is unavailable.
+- Previous candidate evidence for `4d5057…` is historical and not transferable.
 
 ## Main / Live / Production
 
 - Main SHA: `4505bcb655c0b747aeea7e1cc526a94f93270d3d`
-- Main change: security-only deletion of obsolete self-mutating repair-excel-build.yml; main still retains legacy bootstrap write workflows pending candidate integration.
 - Live/Production SHA: `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
-- Main delta from previous live/main `b102ce5…`: security-only deletion of `.github/workflows/repair-excel-build.yml`.
+- Production deployment: `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5` READY
 - Production: NO TOUCH
 - Promotion: NOT PERFORMED
-- Production deployment: `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5` READY
-- Production runtime errors: none found in inspected 24h window
+- No production migration, alias switch, or runtime mutation occurred in this execution.
 
 ## Exact-SHA candidate proof currently recorded
 
-- Current candidate 4753cc3319f551aeccbe2bd081b988fa68df8e87 terminal PASS:
-  application-quality 35310025067; G1 35310025098; bootstrap-release-lockfile 35310025140; security-audit 35310025100; Order Workflow 35310025147; order-invariant 35310025210; supabase-migration-proof 35310025169; Fresh Local Browser 35310025060; Test-the-Test 35310025041; Concurrency 35310025032.
-- Browser E2E / Exact Deployment run 35310024991 has browser-contract PASS but the actual browser-e2e job is SKIPPED because no current-SHA Vercel deployment exists.
-- Browser E2E / Local Production Artifact run 35310025159 / job 105490749871 remains IN_PROGRESS at isolated local Supabase startup.
-- All evidence tied to previous candidate 4d5057… is historical and invalidated for the current candidate.
-
+Current candidate `4753cc3319f551aeccbe2bd081b988fa68df8e87` terminal PASS:
+- application-quality: `35310025067`
+- G1 Domain Proof: `35310025098`
+- bootstrap-release-lockfile: `35310025140`
+- security-audit: `35310025100`
+- Order Workflow Proof: `35310025147`
+- order-invariant-contract: `35310025210`
+- supabase-migration-proof: `35310025169`
+- Browser E2E / Fresh Local Supabase: `35310025060`
+- Test-the-Test / Exact SHA: `35310025041`
+- Concurrency Proof / Exact SHA: `35310025032`
+- Browser E2E / Local Production Artifact: `35310025159` / job `105490749871` — PASS. It executed exact-SHA checkout, clean install, isolated Supabase, production build, artifact identity/checksum, Chromium, customer E2E, admin E2E, evidence upload, and cleanup.
+- Browser E2E / Exact Deployment: `35310024991` — browser-contract PASS; browser-e2e child SKIPPED because no current-SHA Vercel deployment exists.
+- All prior candidate `4d5057…` evidence is historical and invalidated for the current candidate.
 
 ## Release blockers
 
-1. Candidate Deployment: BLOCKED — Vercel exact-SHA status is "Deployment rate limited — retry in 24 hours"; no current-SHA deployment is available.
-2. Deployment Browser: BLOCKED — approved automation bypass credential unavailable.
-3. Formal Final Regression: NOT_PROVEN — workflow dispatch unavailable; browser UI check was unauthenticated.
+1. Candidate Deployment: BLOCKED — Vercel exact-SHA commit status remains "Deployment rate limited — retry in 24 hours"; no current-SHA deployment exists.
+2. Deployment Browser: BLOCKED — `VERCEL_AUTOMATION_BYPASS_SECRET` unavailable; fail-closed validation prevents authenticated browser execution.
+3. Formal Final Regression: NOT_PROVEN — repository workflows contain dispatch triggers, but the connected GitHub mutation surface cannot invoke `workflow_dispatch`; browser inspection was unauthenticated.
 4. Final Evidence Reconciliation: OPEN.
 5. Certification: NO.
-6. Live alignment to candidate: NOT_PROVEN / no promotion.
-7. Workflow safety: CANDIDATE CLOSED — 15 current workflow files, zero contents: write declarations, zero git push commands.
-8. Tooling PR #72: OPEN / NOT_PROVEN. Exact current head 92fa7bff… remains isolated; migration proof 35308340466 is pgTAP FAIL after empty-DB apply.
-
+6. Live alignment to candidate: NOT_PROVEN; no promotion.
+7. Workflow safety: CANDIDATE CLOSED — 15 workflow files audited at exact SHA, 0 `contents: write`, 0 `git push`.
+8. Tooling PR #72: OPEN / NOT_PROVEN — exact current head `92fa7bffb8971eecb10d91fe588709da0e06675a`, isolated.
+9. PgTAP diagnostic PR #73: OPEN / test-harness/product-contract diagnostic lane, exact head `cf7db1c376e40c44ed0cec1956c9b59ee8f5d7f0`.
 
 ## Connected tooling
 
 - GitHub: CONNECTED
 - Vercel: CONNECTED
 - Supabase: CONNECTED
-- Playwright: PRESENT in project, `@playwright/test 1.63.0`
-- Gitleaks: IMPLEMENTED on isolated tooling PR #72; exact-head CI PASS on `ddd00fc1…`
-- CodeQL: IMPLEMENTED on isolated tooling PR #72; exact-head CI PASS on `ddd00fc1…`
-- Semgrep CE: IMPLEMENTED on isolated tooling PR #72; exact-head CI PASS on `ddd00fc1…`
-- Trivy: IMPLEMENTED on isolated tooling PR #72; exact-head CI PASS on `ddd00fc1…`
-- OWASP ZAP: IMPLEMENTED as manual-only baseline on isolated tooling PR #72; verification pending
-- Dependabot: IMPLEMENTED on isolated tooling PR #72
-- OpenSSF Scorecard: IMPLEMENTED on isolated tooling PR #72; verification pending
 - TinyFish: CONNECTED
 - Firecrawl: CONNECTED
 - PostHog: CONNECTED
+- Playwright: PRESENT in project, `@playwright/test 1.63.0`
 - Codex Security: NOT CONNECTED
 - Datadog: NOT CONNECTED
+- Workflow-dispatch execution through connected GitHub surface: NOT AVAILABLE
 
 ## Next execution queue
 
 ### P0
-- Reconcile terminal CI on candidate 4753cc3319f551aeccbe2bd081b988fa68df8e87.
-- Re-check Vercel candidate deployment availability without bypassing the rate limit.
-- Preserve Deployment Browser BLOCKED until owner-controlled automation credentials exist.
-- Preserve Formal Final Regression NOT_PROVEN until an actual dispatch-capable path exists.
-- Reconcile all evidence strictly to the current candidate SHA.
+- Preserve candidate `4753cc…` as certification subject; do not create a new SHA without a proven defect.
+- Preserve Vercel rate-limit blocker and re-check only when platform allows; never reuse an older deployment.
+- Obtain the owner-controlled Vercel automation-bypass secret through the approved secret path; do not weaken protection or store the value in repository files.
+- Obtain a dispatch-capable execution path for Formal Final Regression.
+- Reconcile all release evidence strictly to `4753cc…`.
 
 ### P1
-- Keep workflow safety hardening in the candidate; do not restore repository write/push automation.
-- Continue isolated tooling #72/#73 without transferring findings into candidate certification.
-- Improve any real observability gaps uncovered by terminal current-SHA runs.
+- Keep workflow-safety hardening and isolated tooling PR #72/#73 separate from candidate certification.
+- Re-run only evidence invalidated by a candidate SHA change or proven dependency defect.
 
 ### P2
-- Live alignment only after every mandatory candidate gate is PROVEN.
-- Certification only after complete exact-SHA evidence reconciliation and release safety approval.
+- Live alignment only after mandatory candidate evidence is PROVEN.
+- Certification and production release remain gated until exact-SHA deployment/browser/regression evidence is complete.
 
 ## Last execution record
 
@@ -287,3 +286,14 @@ ROOT CAUSE: external Vercel deployment rate limit prevents current-SHA deploymen
 ARTIFACT: ops/evidence/20260918-command1-current-candidate-terminal-checkpoint.md commit 977207b49f46dcb89bdfa64b9ab7bdb0880be8ba
 NEXT ACTION: terminalize the remaining current-SHA CI fronts if/when they execute; do not reuse historical evidence or touch Production.
 
+
+
+### 2026-09-18 — Command 1 — current candidate closure
+RUN: `35310025067;35310025098;35310025140;35310025100;35310025147;35310025210;35310025169;35310025060;35310025041;35310025032;35310025159`
+JOB: current-candidate exact-SHA CI + workflow authority audit + deployment reconciliation
+SHA: candidate `4753cc3319f551aeccbe2bd081b988fa68df8e87`; main `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
+FRONT: candidate CI closure / local browser proof / workflow safety / deployment / authenticated browser / final regression
+RESULT: all listed candidate verification runs are terminal PASS, including Local Production Artifact browser E2E. Workflow audit confirms 15 workflows with zero repository write permissions and zero git-push commands. Deployment remains unavailable due Vercel rate limit; authenticated deployment browser remains blocked by missing bypass credential; Formal Final Regression remains NOT_PROVEN because dispatch execution is unavailable through the connected GitHub mutation surface.
+ROOT CAUSE: remaining blockers are external evidence-capability boundaries, not a current candidate code failure.
+ARTIFACT: `ops/evidence/20260918-command1-current-candidate-closure.md` commit `14800754e7e379f6abdf8b4dce1528fc5b3120c6`
+NEXT ACTION: preserve candidate and Production NO TOUCH; resolve approved deployment credential and dispatch capability without weakening controls.
