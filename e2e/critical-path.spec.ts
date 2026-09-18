@@ -111,6 +111,14 @@ test('authenticated customer completes real search → catalog → cart → orde
   await expect(page.getByRole('button', { name: 'طلباتي', exact: true })).toBeVisible();
   await expect(page.getByText(`طلب #${orderNumber}`, { exact: true })).toBeVisible();
   await expect(page.getByText('الدفع: نقدي', { exact: true })).toBeVisible();
+  const notifications = page.getByRole('button', { name: 'التنبيهات' });
+  await expect(notifications).toContainText('1');
+  await notifications.click();
+  await expect(page.getByText('تم استلام طلبك', { exact: true })).toBeVisible();
+  await page.getByText('تم استلام طلبك', { exact: true }).click();
+  await expect(notifications).toContainText('0');
+  await page.keyboard.press('Escape');
+
   await page.reload();
   await expect(page.getByRole('button', { name: 'طلباتي', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'طلباتي', exact: true }).click();
