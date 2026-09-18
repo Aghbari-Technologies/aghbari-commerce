@@ -1199,3 +1199,14 @@ RESULT: main safety risk removed; candidate untouched; browser remains NOT_PROVE
 ROOT CAUSE: unsafe obsolete self-mutating CI, protected deployment access boundary, stale PR-head references, and unresolved tooling findings.
 ARTIFACT: main safety commit `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; Gitleaks artifact `10529832877`; Semgrep artifact `10530271974`; TinyFish run `9cf69038-40b0-4f33-8365-322abe4c8146`.
 NEXT ACTION: continue exact-SHA tooling remediation/verification and protected Deployment Browser/Final Regression paths; reconcile live/canonical Vercel identity before release.
+
+
+## 0F. CURRENT EXECUTION RECONCILIATION — 2026-09-18
+
+- Tooling PR #72 actual current head: `b9a585aa64058feaff9bd5f65476f52863d2a503`.
+- Exact-head tooling PASS: Gitleaks `35304530215`; Semgrep `35304530295`; CodeQL `35304530253`; Trivy `35304530237`; security-audit `35304530280`; application-quality `35304530205`; G1 Domain `35304530524`.
+- Gitleaks fixture handling is scoped to deterministic test/proof data; no global secret-scanner disablement was used.
+- The obsolete repair-excel workflow is removed from main and tooling branch.
+- Candidate `4d5057d7952e213d6b5328a80f0229f1ff9fb861` remains frozen; production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497` remains untouched.
+- Candidate read-only browser proof PASS: TinyFish `604c8f4a-19f1-4357-b380-9b2c816937fb`; authenticated E2E remains separate and unresolved.
+- Migration-proof `35304530279` remains RUNNING; certification must not infer a terminal result.
