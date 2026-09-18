@@ -320,3 +320,15 @@ RESULT: direct Vercel deployment attempt reached the API but failed closed with 
 ROOT CAUSE: Vercel free deployment quota is exhausted; authenticated GitHub workflow dispatch is unavailable in the connected browser/session; therefore authenticated deployed runtime has not executed on the candidate.
 ARTIFACT: Local browser artifact `10532997772`; Local browser run `35310025159`; job `105490749871`; Runtime E2E workflow source `.github/workflows/runtime-e2e.yml`; Vercel canonical project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`.
 NEXT ACTION: preserve candidate. At the next available deployment window, create a preview for exact SHA `4753cc3…`, then dispatch `runtime-e2e.yml` with that exact SHA and the matching HTTPS deployment URL; after terminal result, run exact artifact smoke and reconcile R0-R7. Production remains NO TOUCH.
+
+
+### 2026-09-18 — Command 1 — authenticated GitHub dispatch capability confirmation
+
+RUN: TinyFish `d6315349-d551-473c-b108-997141884371`; GitHub exact-source inspection; Vercel canonical project reconciliation
+JOB: formal Runtime E2E dispatch capability / candidate deployment evidence
+SHA: candidate `4753cc3319f551aeccbe2bd081b988fa68df8e87`; candidate branch unchanged
+FRONT: authenticated browser / workflow dispatch / deployment evidence
+RESULT: browser automation confirmed the connected GitHub session is unauthenticated (GitHub header shows Sign in), so the browser could not expose or execute workflow-dispatch controls. Independent exact-SHA source inspection of `.github/workflows/runtime-e2e.yml` confirmed `workflow_dispatch` is present with required `base_url` and `exact_sha` inputs. No workflow was dispatched, no repository mutation was made on the candidate, and Production was untouched. Canonical Vercel project `aghbari-commerce-c2dd` remains linked to `Aghbari-Technologies/aghbari-commerce`; no deployment for candidate `4753cc3…` is present.
+ROOT CAUSE: GitHub browser-session authentication is unavailable through the current connected automation session; candidate deployment is separately blocked by Vercel free-plan deployment quota exhaustion.
+ARTIFACT: TinyFish run `d6315349-d551-473c-b108-997141884371`; exact workflow source `.github/workflows/runtime-e2e.yml`; canonical Vercel project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`.
+NEXT ACTION: preserve candidate `4753cc3…`; when an approved authenticated GitHub dispatch path and an exact-SHA Vercel deployment are available, dispatch Runtime E2E with matching `base_url` + `exact_sha`; Production remains NO TOUCH.
