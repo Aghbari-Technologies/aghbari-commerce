@@ -16,6 +16,7 @@
 - Candidate deployment: `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32`
 - Candidate deployment state: READY
 - Candidate browser certification: BLOCKED by missing approved `VERCEL_AUTOMATION_BYPASS_SECRET`
+- Read-only candidate browser/artifact inspection: PASS for page render + exact `build-meta.json` via TinyFish `549b9736-f328-44f6-bd4f-e11818e8489b`; not a substitute for authenticated deployment E2E.
 
 ## Main / Live / Production
 
@@ -23,6 +24,8 @@
 - Live/Production SHA: `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
 - Production: NO TOUCH
 - Promotion: NOT PERFORMED
+- Production deployment: `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5` READY
+- Production runtime errors: none found in inspected 24h window
 
 ## Exact-SHA candidate proof currently recorded
 
@@ -44,7 +47,8 @@
 3. Final Evidence Reconciliation: OPEN until blockers above are resolved.
 4. Certification: NO.
 5. Live alignment to candidate: NOT_PROVEN / no promotion performed.
-6. `.github/workflows/repair-excel-build.yml`: OPEN risk item; latest known failure `35296779614` on `b102ce5…`; job-level root cause unavailable through current connector.
+6. `.github/workflows/repair-excel-build.yml`: OPEN operational-safety risk; current source blob `68fcca2124145651e648f05b97318dcfea5dc45e` confirms `contents: write` + main push + `git push origin HEAD:main`; latest run `35296779614` has no job records through connector, so root cause remains NOT_PROVEN.
+7. Tooling PR #72: NOT_PROVEN — no workflow runs returned for head `93552ada8b7cc33e0d1d3960a428566e378ef486`.
 
 ## Connected tooling
 
@@ -85,12 +89,24 @@
 ## Last execution record
 
 - Candidate SHA remained `4d5057d7952e213d6b5328a80f0229f1ff9fb861`.
-- No candidate SHA change was generated in the latest recorded re-entry.
-- Fresh Local Storage proof is PASS.
-- Deployment Browser remains BLOCKED before browser execution.
+- No candidate SHA change was generated.
+- All previously running exact-SHA candidate gates are now terminal PASS.
+- TinyFish read-only candidate inspection verified exact page render and build metadata.
+- Deployment Browser remains BLOCKED before authenticated browser execution.
 - Final Regression remains NOT_PROVEN.
 - Production remained untouched.
-- Latest exact-SHA evidence must be re-read from GitHub before declaring any final state.
+- Runtime error/fatal inspection for production remained clean in the inspected 24h window.
+
+### 2026-09-18 — Command 1 current reconciliation
+
+RUN: `35299449995, 35299450012, 35299450039, 35299450051, 35299450053, 35299450067, 35299450068, 35299449994, 35299449999, 35299450009, 35299450001, 35299450120, 35298902449, 549b9736-f328-44f6-bd4f-e11818e8489b, 35296779614`
+JOB: candidate listed gates PASS; Deployment Browser blocked at credential validation; repair-excel job records unavailable
+SHA: `4d5057d7952e213d6b5328a80f0229f1ff9fb861`
+FRONT: closure / deployment browser / final regression / live alignment / tooling / operational safety
+RESULT: no candidate SHA change; no new product defect; exact-SHA candidate gates fully terminal PASS; read-only candidate artifact/browser health verified
+ROOT CAUSE: external credential/dispatch boundaries; repair-excel failure root cause NOT_PROVEN
+ARTIFACT: candidate preview READY exact 4d5057; production READY exact b102ce5; TinyFish verified build-meta exact 4d5057
+NEXT ACTION: preserve Production NO TOUCH; continue unresolved external/evidence reconciliation only
 
 ## State update contract
 
