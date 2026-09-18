@@ -195,6 +195,11 @@ test('command center supports keyboard-first navigation and fast search', async 
   await expect(commandSearch).toBeFocused();
   await commandSearch.fill('إعادة');
   await expect(palette.getByRole('menuitem', { name: /إعادة تجهيز آخر طلب/ })).toBeVisible();
+  await commandSearch.press('ArrowDown');
+  await commandSearch.press('Enter');
+  await expect(palette).toHaveCount(0);
+  await page.keyboard.press('Control+k');
+  await expect(palette).toBeVisible();
   await expect(palette.getByRole('menuitem', { name: /فتح الكتالوج/ })).toHaveCount(0);
 
   await page.keyboard.press('Escape');

@@ -22,6 +22,7 @@ export default function CommandPalette({
   title?: string;
 }) {
   const [query, setQuery] = useState('');
+  const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -50,7 +51,23 @@ export default function CommandPalette({
 
   const filtered = useMemo(() => filterCommandActions(actions, query), [actions, query]);
 
+  useEffect(() => { setActiveIndex(0); }, [query]);
+
   if (!open) return null;
+  const handleCommandKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!filtered.length) return;
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      setActiveIndex((index) => Math.min(index + 1, filtered.length - 1));
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      setActiveIndex((index) => Math.max(index - 1, 0));
+    } else if (event.key === 'Enter') {
+      event.preventDefault();
+      const action = filtered[activeIndex];
+      if (action) { action.onSelect(); onClose(); }
+    }
+  };
 
   return (
     <div className="command-backdrop" role="presentation" onMouseDown={onClose}>
@@ -78,17 +95,19 @@ export default function CommandPalette({
             onChange={(event) => setQuery(event.target.value)}
             placeholder="ابحث عن إجراء…"
             aria-label="البحث في الأوامر"
+            onKeyDown={handleCommandKeyDown}
           />
           <kbd>Esc</kbd>
         </label>
         <div className="command-list" role="menu">
           {filtered.length ? (
-            filtered.map((action) => (
+            filtered.map((action, index) => (
               <button
                 type="button"
                 role="menuitem"
-                className="command-item"
+                className={`command-item ${index === activeIndex ? 'active' : ''}`}
                 key={action.id}
+                aria-current={index === activeIndex ? 'true' : undefined}
                 onClick={() => {
                   action.onSelect();
                   onClose();

@@ -66,10 +66,10 @@ export default function AppV3Fixed(){
     {id:'catalog',label:'فتح الكتالوج',hint:'الأصناف والأسعار المصرح بها',icon:'▦',onSelect:()=>navigate('catalog'),keywords:['منتجات','اصناف']},
     {id:'orders',label:'فتح الطلبات',hint:'المتابعة وإعادة الطلب',icon:'↗',onSelect:()=>navigate('orders'),keywords:['طلبات','شحن']},
     {id:'latest-order',label:'إعادة تجهيز آخر طلب',hint:'تجهيز الأصناف المتاحة من آخر طلب',icon:'↻',onSelect:()=>void reorderLatest(),keywords:['إعادة طلب','reorder']},
-    {id:'templates',label:'الطلبات المحفوظة',hint:'المسحات المتكررة',icon:'▤',onSelect:()=>navigate('templates'),keywords:['مسحات','قوائم']},
-    {id:'finance',label:'المركز المالي',hint:'الرصيد والائتمان والكشف',icon:'◫',onSelect:()=>navigate('finance'),keywords:['مالية','كشف','ائتمان']},
+    ...(config.showTemplates ? [{id:'templates',label:'الطلبات المحفوظة',hint:'المسحات المتكررة',icon:'▤',onSelect:()=>navigate('templates'),keywords:['مسحات','قوائم']}] : []),
+    ...(config.showCredit ? [{id:'finance',label:'المركز المالي',hint:'الرصيد والائتمان والكشف',icon:'◫',onSelect:()=>navigate('finance'),keywords:['مالية','كشف','ائتمان']}] : []),
     {id:'quick-order',label:'الطلب السريع',hint:'SKU + الكمية',icon:'⚡',onSelect:()=>setQuickOpen(true),keywords:['sku','سريع']},
-    {id:'excel',label:'استيراد طلب Excel',hint:'رفع ومراجعة الملف',icon:'⇧',onSelect:()=>document.getElementById('aghbari-excel-input')?.click(),keywords:['excel','استيراد']},
+    ...(config.showExcel ? [{id:'excel',label:'استيراد طلب Excel',hint:'رفع ومراجعة الملف',icon:'⇧',onSelect:()=>document.getElementById('aghbari-excel-input')?.click(),keywords:['excel','استيراد']}] : []),
     {id:'cart',label:'فتح السلة',hint:'مراجعة الكميات والدفع',icon:'🛒',onSelect:()=>setCartOpen(true),keywords:['سلة','checkout']},
     {id:'search',label:'البحث السريع',hint:'الاختصار / يركز البحث',icon:'⌕',onSelect:()=>requestAnimationFrame(()=>searchRef.current?.focus()),keywords:['بحث','باركود']},
   ],[orders,products,finance,config,cart]);
