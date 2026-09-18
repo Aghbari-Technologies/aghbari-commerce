@@ -124,6 +124,27 @@ The strategy is now executable through dedicated GitHub fronts:
 
 These are backlog fronts, not proof that they are implemented. They must enter the normal exact-SHA execution/evidence pipeline when selected.
 
+
+
+## Competitive hunt lanes — added 2026-09-18
+
+Commercial search is now intentionally narrow. Default Upwork coverage is **six competitive hunt lanes**, chosen for direct evidence leverage from Aghbari:
+
+1. **Supabase Multi-Tenant Security / RLS**
+2. **B2B Commerce / Order & Inventory Operations**
+3. **Arabic/RTL B2B SaaS**
+4. **Next.js/Supabase Production Rescue / Takeover**
+5. **Data Migration / Excel / Legacy-to-SaaS Onboarding**
+6. **Integration Reliability / Webhooks / Outbox / Recovery**
+
+Detailed lane rules, search families, proof thresholds, win messages and skip criteria:
+`docs/UPWORK-COMPETITIVE-HUNT-LANES-20260918.md`
+
+Operating rule:
+**One opportunity → one lane → one primary differentiator → one proof asset → one bounded first milestone.**
+
+Jobs outside these lanes are WATCH/SKIP by default unless their problem-to-proof fit is demonstrably stronger.
+
 ## Remaining blockers
 1. Finish exact-SHA candidate evidence and reconcile current candidate from the canonical control plane.
 2. Execute authenticated deployed-browser E2E.
