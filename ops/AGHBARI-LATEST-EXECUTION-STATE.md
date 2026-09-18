@@ -7,6 +7,7 @@
 
 - Repository: `Aghbari-Technologies/aghbari-commerce`
 - Canonical control plane: `ops/AGHBARI-EXECUTION-CONTROL-PLANE.md`
+- Durable project memory: `PROJECT_MEMORY.md`
 - Fast entry point on main: `AGHBARI-EXECUTION-START.md`
 
 ## Current candidate
@@ -20,7 +21,8 @@
 
 ## Main / Live / Production
 
-- Main SHA: `29aa5c928deb97a652e78c0f0581ec09d7caa050`
+- Main SHA: `b29ae9c22c09582774edfcb0e28d692f643dc9dc`
+- Main change: autonomous execution router / documentation only.
 - Live/Production SHA: `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
 - Main delta from previous live/main `b102ce5…`: documentation-only `AGHBARI-EXECUTION-START.md`
 - Production: NO TOUCH
@@ -107,6 +109,16 @@ ROOT CAUSE: tooling baseline incompatibility for pgTAP; full-history secret find
 ARTIFACT: Gitleaks artifact `10529832877`; Semgrep artifact `10530271974`; candidate preview READY exact `4d5057…`
 NEXT ACTION: keep candidate frozen; continue only unresolved external evidence and explicitly scoped tooling remediation; never promote or weaken controls
 
+### 2026-09-18 — Master autonomous leadership integration
+
+RUN: documentation/governance integration
+JOB: Control Plane + PROJECT_MEMORY + main launch router
+SHA: candidate `4d5057…`; control-plane commit `ba34d966…`; memory commit `b446418…`; main `b29ae9c…`
+FRONT: autonomous ownership / operational memory / decision governance / scope control / evidence governance
+RESULT: integrated delegated technical leadership, autonomous decision rights, adjacent-work discovery, scope controls, system-level review, research/learning, decision ledger, adversarial closure, and truthful status vocabulary; no candidate or production mutation
+ROOT CAUSE: existing protocol had strong execution/evidence rules but did not centralize full technical decision authority, durable architecture/decision memory, or explicit scope/escalation governance
+ARTIFACT: PROJECT_MEMORY.md created; Control Plane master governance layer added; AGHBARI-EXECUTION-START.md rewritten as launch router
+NEXT ACTION: future command 1 reads all three operational layers, verifies real state, executes unresolved fronts in parallel, persists evidence/decisions, and evolves the protocol when new durable lessons appear
 ## State update contract
 
 Every run must replace this file's current-state sections with the newest verified facts, then append one compact entry below in this format:
@@ -126,7 +138,10 @@ Never record a PASS unless a real run/job/artifact proves it.
 
 ## Protocol state
 
-- Control Plane latest evolution commit: `acedbc99add67ad046aa09a87d8154c4b4ceb8e2`
+- Control Plane latest commit: `ba34d9660b0ace297e55411bdc24ff43c53bc718`
+- Project Memory latest commit: `b446418682c18036328380e96d13c51f05f0e54a`
+- Fast entry point latest main commit: `b29ae9c22c09582774edfcb0e28d692f643dc9dc`
+- Previous Control Plane evolution commit: `acedbc99add67ad046aa09a87d8154c4b4ceb8e2`
 - Fast entry point latest main commit: `29aa5c928deb97a652e78c0f0581ec09d7caa050`
 - Required execution invariant: READ → VERIFY → PARALLELIZE → EXECUTE → CAPTURE → CLASSIFY → IMPROVE PROTOCOL → PERSIST STATE → RECONCILE → REPORT
 - The programmer must update this latest-state file before declaring the round complete.
