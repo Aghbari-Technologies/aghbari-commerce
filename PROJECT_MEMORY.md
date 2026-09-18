@@ -506,3 +506,8 @@ No market-derived requirement may weaken security, exact-SHA evidence, release g
 - Admin navigation and quick actions are part of the authorization UX contract: a control that targets an unavailable role-specific work area must not be rendered as an actionable link.
 - Netlify failover is now provisioned as a separate static-hosting path (`aghbari-commerce-web`) with the production Supabase URL/publishable client configuration. Actual deployment remains a separate proof layer and must not be claimed until source upload succeeds.
 - Current scope is PR #81 at exact HEAD `384a0f494702e942fdc23d9f0a0981cff8d277fd`; certification candidate `5b9f2a...` remains unchanged.
+
+
+## 2026-09-18 — Release Integration Over Frozen Candidate
+
+A release integration branch `release/ui-over-certified-candidate-20260918` now starts exactly at the frozen candidate `5b9f2a...` and adds only the seven-file UI/Netlify improvement set. This is the correct path when main is missing candidate-era database hardening. The frozen candidate branch is immutable; the integration branch is a new evidence subject. No prior PASS transfers to its new SHA.
