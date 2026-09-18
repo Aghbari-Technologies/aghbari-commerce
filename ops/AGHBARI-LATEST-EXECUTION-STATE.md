@@ -12,13 +12,13 @@
 
 ## Current candidate
 
-- SHA: `64f5283e7b3f893de72dac9ea4d0bf5c3eef4b8d`
+- SHA: `5b9f2a76615e76bb6444c81f39e02f3479c0704b`
 - Branch: `execution/closure-hammer-20260918c`
 - PR: #74 (open, draft, mergeable)
 - Base: `main @ 4505bcb655c0b747aeea7e1cc526a94f93270d3d`
-- Candidate deployment: NOT_AVAILABLE — exact-SHA Vercel deployment is not proven. Canonical project `aghbari-commerce-c2dd` currently has zero deployments matching candidate `64f5283e7b3f893de72dac9ea4d0bf5c3eef4b8d`; latest READY activity is on operational/tooling commits. Candidate GitHub status remains Vercel FAILURE on the build-rate-limit target.
+- Candidate deployment: NOT_AVAILABLE — exact-SHA Vercel deployment is not proven. Canonical project `aghbari-commerce-c2dd` currently has zero deployments matching candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b`; latest READY activity is on operational/tooling commits. Candidate GitHub status remains Vercel FAILURE on the build-rate-limit target.
 - Candidate authenticated browser certification: BLOCKED — approved Vercel automation-bypass credential is unavailable.
-- Previous candidate evidence for `4753cc…` is historical and invalidated by a proven proof-system defect.
+- Evidence for `64f5283…` is also now historical/invalidated because the bootstrap release proof exposed the same pull_request merge-ref flaw; the current candidate is `5b9f2a…`.
 
 ## Main / Live / Production
 
@@ -481,3 +481,14 @@ RESULT: proven defect found: G1 run `35310025098` and Security Audit run `353100
 ROOT CAUSE: pull_request merge-ref semantics made affected exact-SHA claims unsound.
 ARTIFACT: compare `4753cc3...64f5283`; affected workflows: g1-domain-proof.yml, security-audit.yml, intelligence-contract-proof.yml.
 NEXT ACTION: terminalize the fresh `64f5283...` CI set, verify each proof logs the exact candidate SHA, then reconcile release evidence. Vercel deployment, authenticated browser, and Formal Final Regression remain separate release blockers. Production remains NO TOUCH.
+
+### 2026-09-18 — Command 1 — exhaustive pull_request proof-surface correction
+
+RUN: candidate workflow checkout-semantics audit; bootstrap release proof correction; fresh candidate CI trigger
+JOB: exact-SHA proof integrity / release-gate hardening
+SHA: `5b9f2a76615e76bb6444c81f39e02f3479c0704b`
+FRONT: bootstrap release lockfile + exhaustive PR proof surface
+RESULT: after correcting G1, Security Audit, and Intelligence Contract Proof, the exhaustive audit found one remaining pull_request workflow with default checkout: `bootstrap-release-lockfile.yml`. It was corrected to bind TARGET_SHA and checkout to `github.event.pull_request.head.sha || github.sha` and assert exact HEAD. A second exhaustive scan now shows every pull_request workflow with checkout uses explicit PR-head binding; all scanned workflows have zero contents: write and zero git-push findings. This correction produced current candidate `5b9f2a…`, so all prior candidate evidence is historical.
+ROOT CAUSE: GitHub pull_request synthetic merge refs can silently invalidate source-head evidence even when run metadata names the PR head.
+ARTIFACT: exhaustive scan at `5b9f2a…`; compare from prior `64f5283…` shows only `bootstrap-release-lockfile.yml` changed in this final correction.
+NEXT ACTION: terminalize current candidate CI and verify corrected runs log exact candidate SHA. Then rebuild release evidence; Vercel deployment/authenticated browser/formal regression remain separate blockers. Production NO TOUCH.
