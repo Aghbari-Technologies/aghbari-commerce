@@ -1,0 +1,124 @@
+name: Candidate Vercel Prebuilt / Exact Artifact
+
+on:
+  push:
+    branches:
+      - release/vercel-prebuilt-probe-2facceb3
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: candidate-vercel-prebuilt-2facceb3
+  cancel-in-progress: false
+
+env:
+  SOURCE_SHA: 2facceb39aaa826413f20245a6f20b6c2ff7cd34
+  VERCEL_ORG_ID: team_xN16zQ6PKax27q3eWR7YockV
+  VERCEL_PROJECT_ID: prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm
+
+jobs:
+  deploy-and-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+      E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
+      E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+      E2E_EMAIL_B: ${{ secrets.E2E_EMAIL_B }}
+      E2E_PASSWORD_B: ${{ secrets.E2E_PASSWORD_B }}
+      E2E_ADMIN_EMAIL: ${{ secrets.E2E_ADMIN_EMAIL }}
+      E2E_ADMIN_PASSWORD: ${{ secrets.E2E_ADMIN_PASSWORD }}
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.SOURCE_SHA }}
+          fetch-depth: 1
+      - name: Verify exact candidate
+        run: |
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$SOURCE_SHA"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Build exact candidate artifact
+        run: npm run build
+        env:
+          VITE_BUILD_SHA: ${{ env.SOURCE_SHA }}
+      - name: Verify exact artifact identity
+        run: |
+          node - <<'NODE'
+          const fs=require('node:fs');
+          const m=JSON.parse(fs.readFileSync('dist/build-meta.json','utf8'));
+          if(m.product!=='aghbari-commerce') throw new Error('product mismatch');
+          if(m.git_sha!==process.env.SOURCE_SHA) throw new Error('artifact SHA mismatch: '+m.git_sha);
+          console.log('EXACT ARTIFACT SHA:',m.git_sha);
+          NODE
+      - name: Require Vercel deployment token
+        run: test -n "$VERCEL_TOKEN"
+      - name: Prepare linked Vercel project
+        run: |
+          mkdir -p .vercel
+          printf '%s\n' '{"projectId":"prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm","orgId":"team_xN16zQ6PKax27q3eWR7YockV"}' > .vercel/project.json
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+      - name: Deploy exact prebuilt artifact to Vercel Preview
+        id: deploy
+        shell: bash
+        run: |
+          url="$(vercel deploy --prebuilt --yes --token="$VERCEL_TOKEN" --scope="$VERCEL_ORG_ID" | tail -n 1)"
+          test -n "$url"
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "VERCEL_PREVIEW_URL=$url"
+      - name: Verify public exact artifact identity
+        env:
+          E2E_BASE_URL: ${{ steps.deploy.outputs.url }}
+        run: |
+          curl --fail --silent --show-error --location --max-time 30 -H "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET" "$E2E_BASE_URL/build-meta.json" -o deployed-meta.json
+          node - <<'NODE'
+          const fs=require('node:fs');
+          const m=JSON.parse(fs.readFileSync('deployed-meta.json','utf8'));
+          if(m.product!=='aghbari-commerce') throw new Error('public product mismatch');
+          if(m.git_sha!==process.env.SOURCE_SHA) throw new Error('public SHA mismatch: '+m.git_sha);
+          console.log('EXACT DEPLOYED ARTIFACT SHA:',m.git_sha);
+          console.log('DEPLOYED VERSION:',m.version);
+          NODE
+      - name: Require browser credentials
+        run: |
+          test -n "$VERCEL_AUTOMATION_BYPASS_SECRET"
+          test -n "$E2E_EMAIL" && test -n "$E2E_PASSWORD"
+          test -n "$E2E_EMAIL_B" && test -n "$E2E_PASSWORD_B"
+          test -n "$E2E_ADMIN_EMAIL" && test -n "$E2E_ADMIN_PASSWORD"
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run deployed customer E2E
+        env:
+          E2E_BASE_URL: ${{ steps.deploy.outputs.url }}
+          EXPECTED_SHA: ${{ env.SOURCE_SHA }}
+        run: npx playwright test e2e/critical-path.spec.ts --project=chromium
+      - name: Run deployed admin E2E
+        env:
+          E2E_BASE_URL: ${{ steps.deploy.outputs.url }}
+          EXPECTED_SHA: ${{ env.SOURCE_SHA }}
+        run: npx playwright test e2e/admin-control-plane.spec.ts --project=chromium
+      - name: Run full authenticated runtime E2E suite
+        env:
+          E2E_BASE_URL: ${{ steps.deploy.outputs.url }}
+          E2E_EXACT_SHA: ${{ env.SOURCE_SHA }}
+        run: npm run test:e2e -- --reporter=list
+      - name: Upload deployed browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: candidate-vercel-prebuilt-e2e-${{ env.SOURCE_SHA }}
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 7
