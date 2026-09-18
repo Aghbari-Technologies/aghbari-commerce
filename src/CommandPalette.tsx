@@ -1,5 +1,5 @@
 import { filterCommandActions } from './domain/commandPalette';
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react';
 
 export type CommandPaletteAction = {
   id: string;
@@ -54,7 +54,7 @@ export default function CommandPalette({
   useEffect(() => { setActiveIndex(0); }, [query]);
 
   if (!open) return null;
-  const handleCommandKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleCommandKeyDown = (event: ReactKeyboardEvent<HTMLInputElement>) => {
     if (!filtered.length) return;
     if (event.key === 'ArrowDown') {
       event.preventDefault();
