@@ -43,7 +43,7 @@
 - FORMAL FINAL REGRESSION: NOT_PROVEN. The candidate repository contains `workflow_dispatch` on 13 of 15 workflows, but the connected GitHub mutation surface exposes no workflow-dispatch execution capability. Prior browser inspection of GitHub Actions was unauthenticated.
 - WORKFLOW SAFETY: CLOSED on current candidate — 15 workflow files audited; 0 `contents: write`; 0 `git push`.
 - CERTIFICATION: NO.
-- TOOLING PR #72: exact head `d884f90fcdcb95eeceb47e78d8f36792268f830d`, isolated/non-certifying; fresh Semgrep safe-directory repair is under CI.
+- TOOLING PR #72: exact head `d884f90fcdcb95eeceb47e78d8f36792268f830d`, isolated/non-certifying; Semgrep, Trivy, Gitleaks, CodeQL, Security Audit, G1, Application Quality, Order, Intelligence, and Bootstrap are terminal PASS; Supabase Migration Proof is terminal FAIL only in pgTAP baseline assertions.
 - PGTAP DIAGNOSTIC PR #73: exact head `e62cb960dfb17204074914b4a3dd5a13abcb333f`, isolated diagnostic lane; exact-head migration workflow fails 12 known product/schema contract assertions after migrations apply cleanly.
 
 
