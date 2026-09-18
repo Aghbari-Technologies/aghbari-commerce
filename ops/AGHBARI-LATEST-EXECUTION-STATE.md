@@ -963,3 +963,19 @@ JOB: corroborate live runtime health independently of browser rendering
 DEPLOYMENT: `dpl_CZCJ5crKq5XJ9Qi3wznjPfZpB6S5` (READY; control-plane operational SHA `cf82b754fae55ddf11ab30cbeaa7738c1c5ab619`)
 RESULT: Vercel project runtime-error aggregation returned **no runtime errors** in the selected 6-hour window. This strengthens the live runtime-health signal for the observed deployment but remains non-transferable to certification candidate `0fb5a17b...` because deployment SHA does not match.
 PRODUCTION: NO TOUCH.
+
+
+### 2026-09-18 — Command 1 — canonical-state repair + release-lane cleanup
+
+RUN: control-plane start transaction + PR reconciliation + candidate CI/Vercel/runtime sweep
+JOB: eliminate stale candidate references; reduce superseded PR noise; preserve exact-SHA evidence; verify current executable boundaries
+SHA: candidate `0fb5a17bcb65816963056112f5a41ccbb4ae3106`; main `427ff0801544449f432290205b2a29f2508541f3`; production `a7953a62e601eb12322fbbd902c0790c7a3921b1`
+RESULT:
+- Canonical Control Plane and Latest Execution State were corrected from stale candidate `5b9f2a...` to current candidate `0fb5a17...` / PR #83.
+- PR #82 is confirmed merged into main at `d8fdb226...`; its UI hardening is now part of main. PR #81 was closed as superseded. PR #74 was closed as superseded by #83; its 13/13 exact-SHA proof history remains historical and non-transferable.
+- PR #84 remains OPEN/non-certifying at `3c780477...`; its 11 pull_request verification runs are queued. No merge or candidate mutation was performed before exact-head verification.
+- Candidate #83 currently has 11 named pull_request verification runs queued; no terminal result is claimed from queued state.
+- Canonical Vercel still has no deployment matching candidate #83. Real browser verification succeeded on a separate READY operational deployment, and Vercel runtime-error aggregation reported no runtime errors; both are explicitly retained as deployment-specific non-candidate evidence.
+- Production remains NO TOUCH.
+ARTIFACTS: control-plane commit `6f29d7c33d674239d27e5786f19900d4e001e819`; latest-state commit before this append `73d3b09cdd17359da0560aba7c2e7e0b7858c0ec`; PR #82 merge `d8fdb226...`; PR #74/#81 closed; PR #83 candidate `0fb5a17...`; PR #84 `3c780477...`.
+NEXT ACTION: continue only on executable fronts that materially reduce uncertainty; when queue capacity produces terminal evidence, verify PR #84 at exact head before adoption; when a supported exact-SHA deployment path exists, run candidate browser + final regression. Do not transfer operational runtime evidence or burn deployment quota with synthetic commits.
