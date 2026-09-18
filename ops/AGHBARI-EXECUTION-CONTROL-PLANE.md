@@ -1305,3 +1305,23 @@ RESULT: current candidate verification runs are terminal PASS, including Local P
 ROOT CAUSE: remaining blockers are external execution/evidence boundaries; no current candidate product defect was found in this closure check.
 ARTIFACT: `ops/evidence/20260918-command1-current-candidate-closure.md` commit `14800754e7e379f6abdf8b4dce1528fc5b3120c6`.
 NEXT ACTION: preserve candidate and Production NO TOUCH; resolve approved Vercel automation credential and dispatch execution capability; never transfer stale deployment/browser evidence or weaken protections.
+
+
+### 2026-09-18 — Control Plane Evolution — dispatch source vs operator authentication
+
+LESSON: A missing “Run workflow” control in an unauthenticated GitHub browser session must not be interpreted as absence of `workflow_dispatch` in source. The authoritative source check showed `.github/workflows/runtime-e2e.yml` contains `workflow_dispatch` with required `base_url` and `exact_sha` inputs, while the connected browser showed GitHub “Sign in”.
+
+RULE: whenever dispatch is blocked, verify the workflow source independently and classify the two layers separately: SOURCE DISPATCH = PRESENT/ABSENT; OPERATOR DISPATCH AUTHORITY = AVAILABLE/NOT_AVAILABLE. Do not alter workflow files to compensate for an authentication boundary.
+
+EVIDENCE: TinyFish `d6315349-d551-473c-b108-997141884371`; exact candidate source inspection; candidate `4753cc3319f551aeccbe2bd081b988fa68df8e87`.
+
+### 2026-09-18 — Command 1 — final local-proof forensic confirmation
+
+RUN: GitHub workflow job/log inspection
+JOB: `35310025159` / `105490749871`
+SHA: `4753cc3319f551aeccbe2bd081b988fa68df8e87`
+FRONT: exact local production artifact proof
+RESULT: job logs explicitly show EXPECTED_SHA = VITE_BUILD_SHA = candidate SHA, exact local browser SHA match, Chromium execution, Customer suite `3 passed`, Admin suite `1 passed`, artifact `10532997772` uploaded, and job completed successfully. This is valid exact-SHA local browser evidence, but does not prove the separate authenticated deployed runtime suite.
+ROOT CAUSE: none; this was evidence strengthening only.
+ARTIFACT: run `35310025159`; job `105490749871`; artifact `10532997772`.
+NEXT ACTION: preserve candidate; do not rerun this closed front unless the candidate or dependency changes. Continue only the external deployment/authentication/dispatch fronts.
