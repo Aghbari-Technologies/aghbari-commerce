@@ -16,15 +16,15 @@
 - Branch: `execution/closure-hammer-20260918b`
 - Candidate deployment: `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32`
 - Candidate deployment state: READY
-- Candidate browser certification: BLOCKED by missing approved `VERCEL_AUTOMATION_BYPASS_SECRET`
-- Read-only candidate browser/artifact inspection: PASS via TinyFish `549b9736-f328-44f6-bd4f-e11818e8489b`; not authenticated deployment E2E.
+- Candidate browser certification: BLOCKED — candidate deployment is behind Vercel SSO and approved automation/E2E credentials are unavailable.
+- Read-only candidate browser inspection: BLOCKED via TinyFish `9cf69038-40b0-4f33-8365-322abe4c8146`; both app URL and `/build-meta.json` redirected to Vercel login. No application/brand/SHA proof obtained.
 
 ## Main / Live / Production
 
-- Main SHA: `b29ae9c22c09582774edfcb0e28d692f643dc9dc`
-- Main change: autonomous execution router / documentation only.
+- Main SHA: `4505bcb655c0b747aeea7e1cc526a94f93270d3d`
+- Main change: removed obsolete self-mutating `repair-excel-build.yml` after proving its intended source repairs were already present.
 - Live/Production SHA: `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
-- Main delta from previous live/main `b102ce5…`: documentation-only `AGHBARI-EXECUTION-START.md`
+- Main delta from previous live/main `b102ce5…`: security-only deletion of `.github/workflows/repair-excel-build.yml`.
 - Production: NO TOUCH
 - Promotion: NOT PERFORMED
 - Production deployment: `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5` READY
@@ -95,7 +95,7 @@
 - No candidate SHA change.
 - Candidate exact-SHA gates remain PASS and untouched.
 - Main is now `b29ae9c…`; production remains `b102ce5…`.
-- Tooling PR #72 remains isolated; current head is `93552ada…`. Historical CI findings from `1830e3a…` are not reused as current-head evidence.
+- Tooling PR #72 remains isolated; actual current head is `1830e3a109a9e0605f5306b2ddc8f308457fb375`. Prior references to `93552ada…` are stale and are not used as current-head evidence.
 - Deployment Browser remains BLOCKED; Final Regression remains NOT_PROVEN; Production remains untouched.
 
 ### 2026-09-18 — Command 1 current record
@@ -175,3 +175,15 @@ Never record a PASS unless a real run/job/artifact proves it.
 - Fast entry point latest main commit: `29aa5c928deb97a652e78c0f0581ec09d7caa050`
 - Required execution invariant: READ → VERIFY → PARALLELIZE → EXECUTE → CAPTURE → CLASSIFY → IMPROVE PROTOCOL → PERSIST STATE → RECONCILE → REPORT
 - The programmer must update this latest-state file before declaring the round complete.
+
+
+### 2026-09-18 — Command 1 execution reconciliation
+
+RUN: `35299450012; 35299449995; 35299450009; 35299450053; 35299450051; 35299450067; 35299450068; 35299450001; 35299449999; 35299449994; 35301488324; 35301488345; 9cf69038-40b0-4f33-8365-322abe4c8146`
+JOB: candidate exact-SHA gates; tooling Semgrep/Gitleaks; TinyFish read-only candidate browser
+SHA: candidate `4d5057d7952e213d6b5328a80f0229f1ff9fb861`; tooling `1830e3a109a9e0605f5306b2ddc8f308457fb375`; main `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
+FRONT: closure / tooling / deployment browser / operational safety / evidence reconciliation
+RESULT: candidate remained unchanged and all previously proven candidate gates remained exact-SHA PASS; self-mutating repair workflow was removed; candidate browser remained NOT_PROVEN because Vercel SSO blocked both page and build metadata; tooling current head has real Gitleaks and Semgrep failures.
+ROOT CAUSE: stale operational references, unsafe self-mutating CI, unavailable protected deployment credentials, and non-clean tooling findings on current tooling head.
+ARTIFACT: main safety fix `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; Gitleaks artifact `10529832877`; Semgrep artifact `10530271974`; TinyFish run `9cf69038-40b0-4f33-8365-322abe4c8146`; production deployment `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5` READY exact `b102ce5…`.
+NEXT ACTION: continue protected deployment browser credential-boundary resolution, formal final-regression execution path, exact-SHA tooling remediation/verification on PR #72, and final state reconciliation; do not promote candidate or weaken Vercel protection.
