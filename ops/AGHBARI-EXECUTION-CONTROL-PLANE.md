@@ -831,3 +831,31 @@ Candidate preview `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32` READY; production `dpl_FSaJ
 
 NEXT ACTION:
 Close RUNNING exact-SHA jobs by recorded terminal evidence; preserve Deployment Browser BLOCKED and Final Regression NOT_PROVEN until approved credential/dispatch paths exist; keep Production NO TOUCH; then perform final evidence reconciliation.
+
+### 2026-09-18 — Supabase advisory re-check
+
+RUN:
+- Supabase security/performance advisors at `2026-09-18T02:39:06Z`
+- read-only ACL query on project `mrcyqezbhpncuvaehwgf`
+
+JOB:
+- Security advisor: 1 anon SECURITY DEFINER warning + 58 authenticated SECURITY DEFINER warnings
+- ACL: `get_customer_invitation_for_acceptance(text)` has anon=TRUE, authenticated=TRUE; public SECURITY DEFINER count=60
+
+SHA:
+`4d5057d7952e213d6b5328a80f0229f1ff9fb861` (candidate)
+
+FRONT:
+Security advisory / live DB drift investigation
+
+RESULT:
+No new product defect established. The candidate migration explicitly preserves anonymous EXECUTE for token lookup and restricts invitation create/consume; the single anon warning is therefore an intentional contract, not grounds for an unproven repair. No production DB mutation performed.
+
+ROOT CAUSE:
+Advisor lint reflects a SECURITY DEFINER API surface that contains an intentional anonymous token-lookup function. Current remote DB has the intended `revoke_invitation_anon_execute` migration recorded, while the lookup function remains intentionally executable by anon.
+
+ARTIFACT:
+Candidate migration `20260917171000_restore_customer_invitation_runtime.sql` explicitly grants `get_customer_invitation_for_acceptance(text)` to `anon, authenticated`; `20260917173000_revoke_invitation_anon_execute.sql` revokes only create/consume from anon.
+
+NEXT ACTION:
+Keep this advisory as documented/intentional. Do not modify the DB during certification. Continue exact-SHA CI closure and formal release blockers only.
