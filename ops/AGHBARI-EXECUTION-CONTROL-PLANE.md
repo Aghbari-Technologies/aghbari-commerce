@@ -762,3 +762,14 @@ The full canonical execution protocol remains on:
 
 `ops/execution-control-plane/ops/AGHBARI-EXECUTION-CONTROL-PLANE.md`
 
+
+
+### 2026-09-18 — Current exact proof snapshot: 4d5057…
+
+- Current frozen release candidate remains 466857aa0dd1062db380800e2d0b46dc4fb53075 on execution/closure-hammer-20260918b. It has not been changed or promoted.
+- Current repair/proof SHA is 4d5057d7952e213d6b5328a80f0229f1ff9fb861 on execution/fix-storage-inactive-rls-20260918.
+- Exact-SHA PASS on 4d5057…: application-quality run 35298870876; security-audit 35298871009; G1 Domain Proof 35298870885; Order Workflow Proof 35298870822; Browser E2E deployment contract 35298870871 (browser-e2e portion skipped because automation credential is unavailable).
+- Exact-SHA RUNNING/NOT_PROVEN at this snapshot: Fresh Local Browser 35298870968 / job 105457043751; Migration Proof 35298870785 / job 105457043088; Test-the-Test 35298870801 / job 105457043158; Concurrency 35298870837 / job 105457043287; Local Production Artifact 35298870832 / job 105457043383.
+- Exact-SHA Deployment Browser run 35298902449 / job 105457162861 is BLOCKED — CREDENTIAL BOUNDARY: it failed at the required VERCEL_AUTOMATION_BYPASS_SECRET check before browser execution. Separate browser-contract proof passed.
+- Vercel preview deployment for 4d5057…: dpl_7QvezhhAMnzarGuxa4csQC94oB7A, READY, exact SHA 4d5057…. Supplemental TinyFish browser inspection passed with no visible runtime/resource errors; this is not GitHub CI PASS.
+- Intermediate e04e83… and b45fc8… proof evidence remains invalidated and must not be transferred to 4d5057…
