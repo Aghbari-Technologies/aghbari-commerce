@@ -1513,3 +1513,11 @@ OBSERVATION: a capability probe with one empty `index.html` created `dpl_9TXFomQ
 RULE: never use `deploy_to_vercel` with synthetic/minimal files as a capability probe. Treat every accepted payload as a real deployment mutation. For exact-SHA release evidence, use only a complete exact-source payload or a Git-linked deployment path whose source identity can be independently verified. A validation probe that creates an artifact is itself a deployment side effect and must be recorded explicitly.
 
 SAFETY: no candidate SHA, Production deployment, alias, migration, or protection was modified by this probe.
+
+
+## CONTROL-PLANE EVOLUTION — 2026-09-18 — Migration provenance boundary
+A new durable rule is added from the PR #73 investigation:
+
+**Diagnostic migration-proof results are valid only for the exact migration tree they execute. Before transferring or comparing any pgTAP/clean-DB failure to the release candidate, reconcile the migration-file set and effective final definitions (functions/policies/grants) against the candidate SHA. A diagnostic branch missing candidate-era corrective migrations is stale-source evidence, not candidate defect evidence.**
+
+This rule strengthens evidence sovereignty without weakening tests or changing candidate/Production.
