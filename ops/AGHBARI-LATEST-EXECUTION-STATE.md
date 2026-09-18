@@ -139,6 +139,16 @@ RESULT: current PR head confirmed as `93552ada…`; prior `1830e3a…` scan resu
 ROOT CAUSE: latest-state/control-plane wording could have caused historical tooling findings to be interpreted as current-head evidence
 ARTIFACT: GitHub PR #72 verified from repository; control plane and latest state normalized
 NEXT ACTION: execute or inspect fresh CI evidence on current head before assigning any tooling result
+### 2026-09-18 — One-key execution trigger hardening
+
+RUN: one-key command semantics repair
+JOB: launch-router + Control Plane alignment
+SHA: main `93ad193…`; control plane `5de4427…`; candidate remains `4d5057…`
+FRONT: execution trigger / autonomous ownership / anti-stagnation
+RESULT: `1` is now explicitly defined as RUN NOW; programmer must execute the canonical three-layer protocol and must not echo/rephrase old prompts instead of working
+ROOT CAUSE: prior launch wording allowed the operator to behave as though `1` meant generating another execution instruction rather than directly executing the repository control plane
+ARTIFACT: `AGHBARI-EXECUTION-START.md` one-key contract; Control Plane `#0D ONE-KEY EXECUTION OVERRIDE`
+NEXT ACTION: user can send only `1`; operator must read the three canonical layers and execute unresolved fronts, persisting results before reporting
 ## State update contract
 
 Every run must replace this file's current-state sections with the newest verified facts, then append one compact entry below in this format:
@@ -160,7 +170,7 @@ Never record a PASS unless a real run/job/artifact proves it.
 
 - Control Plane latest commit: `51e3870fc56a1949257e1ae277bb27397ca5d670`
 - Project Memory latest commit: `b446418682c18036328380e96d13c51f05f0e54a`
-- Fast entry point latest main commit: `b29ae9c22c09582774edfcb0e28d692f643dc9dc`
+- Fast entry point latest main commit: `93ad1933804ca2cba6cc2a051b2906dc979176e9`
 - Previous Control Plane evolution commit: `ba34d9660b0ace297e55411bdc24ff43c53bc718`
 - Fast entry point latest main commit: `29aa5c928deb97a652e78c0f0581ec09d7caa050`
 - Required execution invariant: READ → VERIFY → PARALLELIZE → EXECUTE → CAPTURE → CLASSIFY → IMPROVE PROTOCOL → PERSIST STATE → RECONCILE → REPORT
