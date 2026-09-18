@@ -397,7 +397,7 @@ NO
 
 | Front | State | Evidence |
 |---|---|---|
-| Fresh Local Storage adversarial | FAIL | 35290655695 / 105432550436; repeated 35290658368 / 105432559523; same-SHA rerun 105446382106 IN_PROGRESS; rerun 105446481693 QUEUED |
+| Fresh Local Storage adversarial | FAIL | Candidate 466857aa…: runs 35290655695 / 35290658368 and same-SHA reruns 105446382106 / 105446481693 all FAIL; diagnostic proof branch 6583b91… run 35298202228 / job 105455032168 RUNNING |
 | Fresh Browser PR | FAIL | storage boundary failure repeated |
 | Deployment Browser | BLOCKED/FAIL | 35290689616 / 105441117323 |
 | Final Regression | NOT_PROVEN | blocked by unresolved fronts |
@@ -645,6 +645,16 @@ Only when all required gates are proven.
 - Live remains old SHA and therefore NOT_PROVEN.
 - Production was not touched.
 - Final regression and evidence reconciliation remain open.
+
+### 2026-09-18 — Live/Main reconciliation + diagnostic proof branch
+
+- GitHub `main` was re-verified and is `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`; the previous `MAIN=fb6700…` entry was stale.
+- Vercel production-target deployment `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5` is READY at `b102ce5e…`; the project root `build-meta.json` also returned `git_sha=b102ce5e…` HTTP 200. The previous `LIVE SHA=efb30…` entry was stale.
+- Candidate remains frozen at `466857aa…`; no candidate Product SHA was created.
+- Storage observability defect was already proven. An isolated proof-only branch `execution/proof-storage-observability-20260918` was created from the candidate and changed only `.github/workflows/browser-e2e-local-fresh.yml` to emit safe HTTP diagnostics without changing assertions.
+- Diagnostic proof SHA: `6583b91ce35cacd2f7185858b426eeee6044c3ed`; this SHA is **NOT** the release candidate and its evidence must not be transferred to the candidate.
+- Diagnostic Storage run: `35298202228` / `105455032168` is currently RUNNING at fresh local Supabase startup; no Storage result yet.
+- Deployment Browser remains `BLOCKED — CREDENTIAL BOUNDARY`; GitHub connector does not expose Actions secrets APIs and Vercel connector exposes no safe secret-provisioning mutation.
 
 ### Mandatory next-run start point
 
