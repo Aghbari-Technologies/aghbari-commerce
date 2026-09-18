@@ -180,3 +180,14 @@ On tooling head `1830e3a109a9e0605f5306b2ddc8f308457fb375`, Gitleaks run `353014
 - Formal authenticated E2E remains a separate gate because runtime credentials and the approved automation-bypass credential boundary are still unavailable through the connected mutation surface.
 - Tooling PR #72 was actively hardened on its actual current head, now ffdf0b3e6d34adef11a198c8263a9fa9760188b8. Mutable GitHub Action tags were pinned to verified commit SHAs; Dependabot cooldown was added; Release Audit dynamic RegExp was replaced with parsed-function-name matching.
 - Fresh CI was triggered on ffdf0b3e6d34adef11a198c8263a9fa9760188b8. No result is considered PASS until a terminal run proves it.
+
+
+## 19. CURRENT EXECUTION RECONCILIATION — 2026-09-18
+
+- PR #72 current head: `b9a585aa64058feaff9bd5f65476f52863d2a503`. Earlier tooling SHAs are historical only.
+- Exact-head tooling PASS: Gitleaks `35304530215`; Semgrep `35304530295`; CodeQL `35304530253`; Trivy `35304530237`; security-audit `35304530280`; application-quality `35304530205`; G1 Domain `35304530524`.
+- Gitleaks uses a narrow fixture allowlist; it was not globally disabled. Current exact-head result is PASS.
+- Obsolete repair automation is removed from both main and tooling branch.
+- Candidate remains frozen at `4d5057d7952e213d6b5328a80f0229f1ff9fb861`; production remains `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497` and untouched.
+- Read-only candidate browser proof is PASS via TinyFish `604c8f4a-19f1-4357-b380-9b2c816937fb`; authenticated E2E and Formal Final Regression remain unresolved.
+- Migration-proof run `35304530279` is still RUNNING at local Supabase startup; no terminal result is inferred.
