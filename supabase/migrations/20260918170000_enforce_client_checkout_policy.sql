@@ -1,5 +1,9 @@
 begin;
 
+-- Remove the legacy 3-argument overload so authenticated callers cannot bypass
+-- the server-authoritative payment-method policy through RPC overload resolution.
+drop function if exists public.create_order(text, uuid, jsonb);
+
 -- Payment-method schema authority is established by
 -- 20260918124842_order_payment_method_authority_20260918.sql.
 -- This migration owns only the dynamic checkout-policy behavior.
