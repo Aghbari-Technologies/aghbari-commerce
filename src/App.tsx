@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from 'react';
+import { useCallback, useEffect, useMemo, useState, useRef, type ChangeEvent, type FormEvent } from 'react';
 import readXlsxFile from './lib/read-excel-file-browser';
 import type { CartLine, Product, OrderStatus } from './domain/types';
 import { calculateClientPreviewTotal } from './domain/order';
@@ -42,7 +42,7 @@ export default function App() {
   const [customerName, setCustomerName] = useState('تاجر الأغبري'); const [customerTier, setCustomerTier] = useState('wholesale'); const [orders, setOrders] = useState<CustomerOrderSummary[]>([]); const [ordersLoading, setOrdersLoading] = useState(false); const [ordersError, setOrdersError] = useState<string | null>(null);
   const [finance, setFinance] = useState<Finance | null>(null); const [financeLoading, setFinanceLoading] = useState(false); const [templates, setTemplates] = useState<OrderTemplate[]>([]); const [templateName, setTemplateName] = useState('');
   const [quickOrderOpen, setQuickOrderOpen] = useState(false); const [cartOpen, setCartOpen] = useState(false); const [section, setSection] = useState<'catalog' | 'orders' | 'finance' | 'templates'>('catalog'); const [uiConfig, setUiConfig] = useState<ClientUiConfig>(DEFAULT_UI_CONFIG);
-  const [runtimeError, setRuntimeError] = useState<string | null>(null); const [orderBusy, setOrderBusy] = useState(false); const [orderResult, setOrderResult] = useState<string | null>(null); const [isOnline, setIsOnline] = useState(() => typeof navigator === 'undefined' ? true : navigator.onLine);
+  const [runtimeError, setRuntimeError] = useState<string | null>(null); const [orderBusy, setOrderBusy] = useState(false); const [orderResult, setOrderResult] = useState<string | null>(null); const [isOnline, setIsOnline] = useState(() => typeof navigator === 'undefined' ? true : navigator.onLine); const searchInputRef = useRef<HTMLInputElement>(null);
 
   const loadIdentity = useCallback(async (userId: string) => {
     if (!supabase) return;
@@ -68,6 +68,7 @@ export default function App() {
   }, [loadIdentity]);
   useEffect(() => { const on = () => setIsOnline(true); const off = () => setIsOnline(false); window.addEventListener('online', on); window.addEventListener('offline', off); return () => { window.removeEventListener('online', on); window.removeEventListener('offline', off); }; }, []);
   useEffect(() => { if (!signedIn || !uiConfig.showSearch) return; const timer = window.setTimeout(() => setCatalogSearch(query.trim()), 220); return () => window.clearTimeout(timer); }, [query, signedIn, uiConfig.showSearch]);
+  useEffect(() => { if (!signedIn || !uiConfig.showSearch) return; const onKeyDown = (event: KeyboardEvent) => { if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); searchInputRef.current?.focus(); searchInputRef.current?.select(); } if (event.key === 'Escape' && document.activeElement === searchInputRef.current) searchInputRef.current?.blur(); }; window.addEventListener('keydown', onKeyDown); return () => window.removeEventListener('keydown', onKeyDown); }, [signedIn, uiConfig.showSearch]);
 
   useEffect(() => {
     if (!signedIn || !supabase || !isOnline || STAFF_ROLES.has(role)) return; let cancelled = false;
@@ -113,7 +114,7 @@ export default function App() {
   if (STAFF_ROLES.has(role)) return <div className="app-shell"><AdminPanel role={role}/><ClientControlPanel role={role}/></div>;
 
   return <div className="customer-app" dir="rtl">
-    <header className="customer-topbar"><div className="customer-brand"><span className="brand-mark">أ</span><div><strong>بوابة الأغبري التجارية</strong><small>منصة الجملة والطلبات الذكية</small></div></div>{uiConfig.showSearch ? <label className="global-search"><span>⌕</span><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="ابحث عن المنتج، SKU أو الباركود..." aria-label="بحث المنتج"/><kbd>Ctrl K</kbd></label> : <div/>}<div className="customer-actions"><button onClick={() => setSection('orders')} className="icon-action">طلباتي</button><button onClick={() => setCartOpen(true)} className="cart-action">السلة <b>{cartCount}</b></button><button onClick={() => void handleSignOut()} className="signout">خروج</button></div></header>
+    <header className="customer-topbar"><div className="customer-brand"><span className="brand-mark">أ</span><div><strong>بوابة الأغبري التجارية</strong><small>منصة الجملة والطلبات الذكية</small></div></div>{uiConfig.showSearch ? <label className="global-search"><span aria-hidden="true">⌕</span><input ref={searchInputRef} value={query} onChange={(e) => setQuery(e.target.value)} placeholder="ابحث عن المنتج، SKU أو الباركود..." aria-label="بحث المنتج"/><kbd>Ctrl K</kbd></label> : <div/>}<div className="customer-actions"><button onClick={() => setSection('orders')} className="icon-action">طلباتي</button><button onClick={() => setCartOpen(true)} className="cart-action">السلة <b>{cartCount}</b></button><button onClick={() => void handleSignOut()} className="signout">خروج</button></div></header>
     {!isOnline && <div className="offline-banner">أنت دون اتصال. يمكن تعديل السلة محليًا، أما إرسال الطلب فيحتاج اتصالًا.</div>}
     <main className="customer-main">
       <section className="customer-welcome"><div><span className="eyebrow">مرحبًا، {customerName}</span><h1>احتياج متجرك<br/><em>جاهز للطلب.</em></h1><p>أسعار الجملة والمخزون والخصومات المصرح بها لحسابك في مكان واحد.</p><div className="welcome-actions">{uiConfig.showQuickOrder && <button onClick={() => setQuickOrderOpen(true)}>⚡ طلب سريع</button>}{uiConfig.showTemplates && <button className="secondary" onClick={() => setSection('templates')}>↻ إعادة طلب محفوظ</button>}</div></div>{uiConfig.showCredit && <div className="credit-mini"><span>المتاح الائتماني</span><strong>{finance ? formatMoney(finance.available) : '—'}</strong><small>{finance ? `من حد ${formatMoney(finance.creditLimit)} ${currencyLabel(finance.currency)}` : 'المعلومات المالية ستظهر بعد مزامنة المركز المالي'}</small></div>}</section>
