@@ -22,29 +22,33 @@
 
 ## Current candidate
 
-- SHA: `9dc6bd3e3bed86bfcbca29ff2538dfd30ebcd218`
+- SHA: `290e3cf958d779196de1095e17c4bd8fcbb86a95`
 - Branch: `certification/final-candidate-20260918`
 - PR: #83 (OPEN, non-draft, mergeable)
 - Base: `main @ 427ff0801544449f432290205b2a29f2508541f3`
-- Candidate lineage: checkout-policy hardening + proof-fixture repair + restoration of the missing historical `orders.payment_method` schema migration + parser-safe cleanup.
-- Current exact-head CI suite: 11 named gates newly created for this HEAD; all currently queued at latest read. No PASS is transferred from prior candidate heads.
-- Prior b05 migration-proof failure is historical: fresh DB lacked `orders.payment_method` at checkout-policy test line 22. The repository was missing historical migration version `20260918124842` present in live ledger/schema.
-- Current source normalization: payment-method schema authority is isolated in `20260918124842_order_payment_method_authority_20260918.sql`; `20260918170000_enforce_client_checkout_policy.sql` contains only checkout policy/function behavior and has a clean function terminator.
-- Candidate deployment: NOT_AVAILABLE — no Vercel deployment matching `9dc6bd3e3bed86bfcbca29ff2538dfd30ebcd218`.
+- Candidate lineage: checkout-policy hardening + payment/catalog correctness + notification schema/RLS + E2E cart isolation + offline reconnect synchronization + reporting gateway CORS/idempotency/recovery hardening.
+- Current exact-head CI suite: 11 named gates created for `290e3cf...`; all queued at latest read. No PASS is transferred from prior candidate heads.
+- Fresh-head forensic repairs immediately preceding this SHA:
+  - `85c289fa...`: corrected pgTAP `set_config` syntax in notification RLS proof.
+  - `744e294a...`: restored missing customer-portal offline sync imports/state declarations.
+  - `8479c16e...`: restored missing `MAX_ORDER_QUANTITY_PER_LINE` import in offline queue.
+  - `290e3cf...`: made reporting delivery state request-scoped so concurrent requests cannot share acceptance state.
+- Candidate deployment: NOT_AVAILABLE — no Vercel deployment matching `290e3cf958d779196de1095e17c4bd8fcbb86a95`.
 - Candidate deployed-browser proof: NOT_PROVEN. Real browser runtime evidence exists on a separate operational deployment only and is non-transferable.
-- Formal Final Regression: NOT_PROVEN because connected GitHub mutation surface has no workflow_dispatch operation.
+- Formal Final Regression: NOT_PROVEN because connected GitHub mutation surface has no workflow-dispatch operation.
 - Certification: NO.
 - Production: NO TOUCH.
+
+
 # Main / Live / Production
 
-- Main SHA: `8ab9cc24f012d93a69a98bb561cd6c6642c9ae6f`
+- Main SHA: `427ff0801544449f432290205b2a29f2508541f3`
 - Live/Production source SHA: `a7953a62e601eb12322fbbd902c0790c7a3921b1`
-- Production deployment: `dpl_AmTBr8X9qBGCLdngxirQgdRM4Xjo` READY (current Vercel Production deployment; Git-linked from `main`)
-- Production: NO TOUCH
+- Production deployment: `dpl_AmTBr8X9qBGCLdngxirQgdRM4Xjo` READY; Production = NO TOUCH
 - Promotion: NOT PERFORMED
-- No production migration, alias switch, or manual promotion/runtime mutation was performed by this execution. Vercel currently shows a Git-triggered Production deployment from `main`; this is recorded as observed external platform state, not as an action taken here.
+- No production migration, alias switch, manual promotion, Auth/RLS/data mutation, or Edge Function deployment was performed in this execution.
 
-## Exact-SHA candidate proof currently recorded
+## Historical exact-SHA candidate proof (superseded)
 
 Current candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b` terminal PASS (13/13):
 - Order Workflow Proof: `35321683922`
@@ -65,15 +69,14 @@ All 13 PASS results are tied to the exact current candidate SHA and independentl
 
 ## Release blockers
 
-1. Candidate Deployment: BLOCKED — Vercel exact-SHA commit status remains "Deployment rate limited — retry in 24 hours"; no current-SHA deployment exists.
-2. Deployment Browser: BLOCKED — `VERCEL_AUTOMATION_BYPASS_SECRET` unavailable; fail-closed validation prevents authenticated browser execution.
-3. Formal Final Regression: NOT_PROVEN — repository workflows contain dispatch triggers, but the connected GitHub mutation surface cannot invoke `workflow_dispatch`; browser inspection was unauthenticated.
-4. Final Evidence Reconciliation: OPEN.
-5. Certification: NO.
-6. Live alignment to candidate: NOT_PROVEN; no promotion.
-7. Workflow safety: CANDIDATE CLOSED — 15 workflow files audited at exact SHA, 0 `contents: write`, 0 `git push`.
-8. Tooling PR #72: OPEN / NOT_PROVEN — exact current head `d884f90fcdcb95eeceb47e78d8f36792268f830d`, isolated.
-9. PgTAP diagnostic PR #73: OPEN / isolated diagnostic lane, exact head `e62cb960dfb17204074914b4a3dd5a13abcb333f`; provenance comparison proves this branch stops before multiple candidate-era corrective migrations, so its pgTAP failures are stale-source diagnostic evidence and are not transferable to candidate certification.
+1. Candidate Deployment: BLOCKED — no Vercel deployment record matches the current candidate `290e3cf...`; Vercel has also reported the existing free deployment-rate ceiling in PR #83.
+2. Deployment Browser: NOT_PROVEN — exact candidate deployment is absent; do not transfer browser evidence from another SHA.
+3. Formal Final Regression: NOT_PROVEN — the repository has dispatch-capable workflow definitions, but the connected GitHub mutation surface exposes no workflow-dispatch operation.
+4. Exact-head CI: RUNNING/QUEUED — 11 required gates are queued for `290e3cf...`; no terminal result has been inferred.
+5. Final Evidence Reconciliation: OPEN.
+6. Certification: NO.
+7. Live alignment to candidate: NOT_PROVEN; no promotion.
+8. Production safety: CLOSED boundary — production remains NO TOUCH.
 
 ## Connected tooling
 
@@ -93,19 +96,17 @@ All 13 PASS results are tied to the exact current candidate SHA and independentl
 ## Next execution queue
 
 ### P0
-- Preserve candidate `5b9f2a…` as certification subject; do not create a new SHA without a proven defect.
-- Preserve Vercel rate-limit blocker and re-check only when platform allows; never reuse an older deployment.
-- Obtain the owner-controlled Vercel automation-bypass secret through the approved secret path; do not weaken protection or store the value in repository files.
-- Obtain a dispatch-capable execution path for Formal Final Regression.
-- Reconcile all release evidence strictly to `5b9f2a…`.
+- Inspect the first terminal failure on exact candidate `290e3cf...`; repair only proven defects and then reassess all evidence on the new exact SHA.
+- Preserve the Vercel deployment-rate blocker; never manufacture a deployment or reuse another SHA.
+- Obtain an authorized exact-SHA browser/deployment proof path before certification closure.
+- Maintain Production = NO TOUCH until certification evidence is complete.
 
 ### P1
-- Keep workflow-safety hardening and isolated tooling PR #72/#73 separate from candidate certification.
-- Re-run only evidence invalidated by a candidate SHA change or proven dependency defect.
+- Continue only independent, non-speculative source/security/proof audits while CI is queued.
+- Keep superseded PR lanes closed and preserve their branches/evidence as historical.
 
 ### P2
-- Live alignment only after mandatory candidate evidence is PROVEN.
-- Certification and production release remain gated until exact-SHA deployment/browser/regression evidence is complete.
+- Final regression and live alignment only after mandatory candidate gates are PROVEN.
 
 ## Last execution record
 
