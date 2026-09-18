@@ -248,3 +248,22 @@ test('catalog progressive browsing exposes bounded loading when more products ex
     await expect.poll(async () => page.locator('.product-card').count()).toBeGreaterThan(before);
   }
 });
+
+test('inline product quantity controls preserve a single cart line', async ({ page }) => {
+  const email = process.env.E2E_EMAIL;
+  const password = process.env.E2E_PASSWORD;
+  if (!email || !password) throw new Error('E2E_EMAIL and E2E_PASSWORD are required for quantity-control proof.');
+  await login(page, email, password);
+  const card = page.locator('.product-card').first();
+  await expect(card).toBeVisible();
+  const addButton = card.getByRole('button', { name: 'إضافة للسلة' });
+  if (await addButton.count()) {
+    await addButton.click();
+    await expect(card.locator('.product-qty-control')).toBeVisible();
+    await expect(card.locator('.product-qty-control output')).toHaveText('1');
+    await card.getByRole('button', { name: /زيادة/ }).click();
+    await expect(card.locator('.product-qty-control output')).toHaveText('2');
+    await card.getByRole('button', { name: /إنقاص/ }).click();
+    await expect(card.locator('.product-qty-control output')).toHaveText('1');
+  }
+});
