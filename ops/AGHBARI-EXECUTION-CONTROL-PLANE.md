@@ -32,25 +32,22 @@
 
 # 0A. AUTHORITATIVE LIVE EXECUTION STATE — 2026-09-18 — CURRENT RECONCILIATION
 
-- CURRENT CANDIDATE: `0fb5a17bcb65816963056112f5a41ccbb4ae3106` on `certification/final-candidate-20260918`; PR #83 OPEN / non-draft / mergeable.
+- CURRENT CANDIDATE: `b05adb77567e527313dfa5ed5c66fbae8c5fb870` on `certification/final-candidate-20260918`; PR #83 OPEN / non-draft / mergeable.
 - CANDIDATE BASE: `main @ 427ff0801544449f432290205b2a29f2508541f3`.
-- CANDIDATE CONTENT: checkout-policy hardening is already on main; candidate adds the final certification checkpoint and is intentionally frozen.
+- CANDIDATE CHANGE: one proven Test-the-Test fixture correction after old SHA `0fb5a17...` failed before executing test 028's eight assertions.
 - MAIN: `427ff0801544449f432290205b2a29f2508541f3`.
-- LIVE/PRODUCTION: `a7953a62e601eb12322fbbd902c0790c7a3921b1`; current Vercel Production deployment `dpl_AmTBr8X9qBGCLdngxirQgdRM4Xjo` is READY and Git-linked from main; Production = NO TOUCH.
-- CANDIDATE CI: 11 named pull_request verification runs are currently queued on exact SHA `0fb5a17...`; no current candidate terminal PASS/FAIL results are being fabricated from queued state.
-- CANDIDATE DEPLOYMENT: NOT_AVAILABLE. Canonical Vercel project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm` has no deployment whose recorded Git SHA equals `0fb5a17...`.
-- REAL BROWSER HEALTH: a live Firecrawl browser session successfully rendered the deployed Aghbari application at `https://aghbari-commerce-c2dd.vercel.app/`; observed RTL, `AGHBARI B2B`, `بوابة الأغبري التجارية`, login controls, and no visible runtime error. The observed READY deployment carries operational SHA `cf82b754fae55ddf11ab30cbeaa7738c1c5ab619`, so this evidence is deployment-specific and is NOT candidate evidence.
-- VERCEL RUNTIME HEALTH: project runtime-error aggregation returned no runtime errors in the selected 6-hour window. This corroborates live runtime health but is not candidate proof.
-- FORMAL FINAL REGRESSION: NOT_PROVEN. The repository has dispatchable workflows, but the connected GitHub mutation surface exposes no workflow-dispatch operation.
-- DEPLOYMENT BROWSER: NOT_PROVEN for candidate; exact candidate deployment does not exist. Approved bypass credential path remains unavailable.
-- WORKFLOW SAFETY: candidate-side workflow safety remains closed from its prior exact-source audit; no production-touch path was added.
+- LIVE/PRODUCTION: `a7953a62e601eb12322fbbd902c0790c7a3921b1`; Vercel Production deployment `dpl_AmTBr8X9qBGCLdngxirQgdRM4Xjo` READY; Production = NO TOUCH.
+- CANDIDATE CI: fresh exact-head check suite exists for `b05adb77...`; current snapshot shows 11 unique named gates queued, plus a duplicate cancelled entry. No new terminal PASS is claimed until jobs finish.
+- CANDIDATE DEPLOYMENT: NOT_AVAILABLE; canonical Vercel project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm` has no deployment whose recorded Git SHA equals `b05adb77...`.
+- DEPLOYED BROWSER: real browser capability is available and was successfully exercised on an operational deployment, but that deployment is SHA `cf82b754...`; evidence is deployment-specific and non-transferable to the candidate.
+- FORMAL FINAL REGRESSION: NOT_PROVEN; connected GitHub mutation surface exposes no workflow_dispatch execution operation.
+- WORKFLOW SAFETY: current candidate workflow source remains read-only with no proven repository push/write behavior.
 - CERTIFICATION: NO.
-- PR #84: OPEN / non-certifying, exact HEAD `3c78047737618cba39936b1fb46350bf833c4d9a`; six commits ahead of main. It contains two proven product defects/fixes: customer payment-method propagation and authorized catalog-price fallback. Its current Actions runs are queued; do not merge until exact-head verification exists.
-- PR #82: MERGED into main at merge commit `d8fdb226866a2563164816066cdecc8e08549bae`; its UI hardening is therefore already part of main.
-- PR #81: CLOSED as superseded by #82.
-- PR #74: CLOSED as superseded by #83; its exact-SHA PASS history remains historical audit evidence only.
-- Production: NO TOUCH; no promotion, migration, alias switch, or runtime mutation performed.
-
+- PR #84: OPEN/non-certifying, exact HEAD `3c78047737618cba39936b1fb46350bf833c4d9a`; payment-selection propagation and authorized catalog-price fallback fixes; CI queued.
+- PR #85: OPEN/non-certifying, exact HEAD `2048afeac23c06d4826780ee8ff82cb8bd90cd35`; offline cart reconnect synchronization fix; CI queued.
+- PR #82: MERGED into main at `d8fdb226866a2563164816066cdecc8e08549bae`.
+- PR #81 and #74: CLOSED as superseded; historical evidence retained, not reusable for certification.
+- Production: NO TOUCH.
 # 0B. AUTONOMOUS MEMORY + SELF-IMPROVEMENT PROTOCOL
 
 The control plane is a living execution system, not a static instruction sheet.
@@ -1604,3 +1601,10 @@ These rules were applied immediately on non-certifying PR #81; no certification 
 - Real browser capability is available through Firecrawl even when the metered TinyFish browser wallet is unavailable; however, browser evidence remains non-transferable unless deployment Git SHA exactly matches the claim.
 - A live browser/runtime success on SHA `cf82b754...` must never be converted into candidate PASS for `0fb5a17...`.
 - PR cleanup rule strengthened operationally: close superseded implementation/certification lanes once their successor is explicit, while retaining their evidence in history.
+
+
+### 2026-09-18 — Control Plane Evolution — candidate proof repair discipline
+
+- A candidate SHA change caused by a proven test-harness defect invalidates all prior candidate PASS evidence. The corrected candidate must rebuild the complete mandatory evidence set from its own SHA.
+- Fixture repairs must prefer established sibling-test patterns and schema defaults, and must not reduce the semantic assertions being proved.
+- Queue saturation does not justify weakening proof; use the waiting capacity to execute independent product audits and preserve exact state.
