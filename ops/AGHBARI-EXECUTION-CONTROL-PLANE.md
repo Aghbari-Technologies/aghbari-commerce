@@ -30,22 +30,22 @@
 
 ---
 
-# 0A. AUTHORITATIVE LIVE EXECUTION STATE — 2026-09-18 RECONCILED 07:37 +03
+# 0A. AUTHORITATIVE LIVE EXECUTION STATE — 2026-09-18 — CURRENT RECONCILIATION
 
 - CURRENT CANDIDATE: `4d5057d7952e213d6b5328a80f0229f1ff9fb861` on `execution/closure-hammer-20260918b`; frozen.
-- MAIN: `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; Production remains untouched.
-- LIVE/PRODUCTION: `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`; Production = NO TOUCH; no promotion.
-- CANDIDATE DEPLOYMENT: `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32` READY and exact-SHA aligned. Read-only TinyFish browser proof: `408aa66a-c613-4f9d-b3c7-49ab08f6639a` completed; authenticated Deployment Browser remains BLOCKED by protected Vercel access/approved credential boundary.
-- CANDIDATE EXACT-SHA GATES: previously proven evidence on frozen candidate remains intact; no candidate mutation occurred.
-- FORMAL FINAL REGRESSION: NOT_PROVEN — connected GitHub mutation surface exposes no workflow-dispatch capability.
-- TOOLING PR #72: actual current head `ddd00fc142ef60bc99e5fe8ebc63d4c53caaed94`, draft, base main.
-- TOOLING CI on exact head: Gitleaks `35307503455` PASS; security-audit `35307503508` PASS; G1 `35307503543` PASS; Semgrep `35307503464` PASS; Trivy `35307503456` PASS; application-quality `35307503487` PASS; CodeQL `35307503481` PASS; migration-proof `35307503570` FAIL in pgTAP.
-- TOOLING MIGRATION FORENSICS: empty-database migration apply PASS; pgTAP FAIL due stale/mismatched test-suite assumptions. This is classified as tooling/proof-baseline incompatibility, not a candidate product defect.
-- DIAGNOSTIC BRANCH WORK: temporary candidate-test synchronization was attempted to isolate the cause, then fully reverted. Tooling branch now contains only the original baseline tree plus the revert history; no candidate migration was imported.
-- CANONICAL VERCEL PROJECT: `aghbari-commerce-c2dd` / `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`, linked to `Aghbari-Technologies/aghbari-commerce`.
-- SUPABASE LIVE PROJECT: `mrcyqezbhpncuvaehwgf` ACTIVE_HEALTHY; no live mutation performed.
-- PRODUCTION RUNTIME: no runtime error clusters and no error/fatal logs in inspected 24h window.
-- CERTIFICATION: NO. FINAL EVIDENCE RECONCILIATION remains OPEN.
+- MAIN: `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; verified from GitHub; no source drift detected during this reconciliation.
+- LIVE/PRODUCTION: `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`; Production = NO TOUCH; no promotion or mutation.
+- CANDIDATE DEPLOYMENT: `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32` READY and exact-SHA aligned. Fresh read-only TinyFish proof `683148ee-b515-4e81-a2cb-ff4fa4a07ca0` passed page load, Arabic RTL, brand visibility, login landing page visibility, and no visible errors/broken links/images.
+- AUTHENTICATED DEPLOYMENT BROWSER: BLOCKED. Exact candidate browser job `105458885469` stopped at credential validation because `VERCEL_AUTOMATION_BYPASS_SECRET` is unavailable. No credential or protection bypass was fabricated.
+- FORMAL FINAL REGRESSION: NOT_PROVEN — connected GitHub mutation surface does not expose workflow dispatch.
+- TOOLING PR #72: exact current head `92fa7bffb8971eecb10d91fe588709da0e06675a`, draft, base `main @ 4505bcb655c0b747aeea7e1cc526a94f93270d3d`.
+- TOOLING CI ON EXACT HEAD: 11 terminal PASS gates: Application Quality `35308340448`; Bootstrap Release Lockfile `35308340467`; G1 `35308340484`; Intelligence `35308340474`; Order Workflow `35308340482`; Order Invariant `35308340457`; CodeQL `35308340483`; Gitleaks `35308340477`; Semgrep CE `35308340528`; Trivy `35308340452`; Security Audit `35308340469`.
+- TOOLING MIGRATION PROOF: `35308340466` FAIL only in pgTAP after empty-DB migration application PASS. This is not branch contamination.
+- PGTAP BASELINE DIAGNOSTIC PR #73: exact head `cf7db1c376e40c44ed0cec1956c9b59ee8f5d7f0`; test-harness-only. After harness corrections, 12 assertions still fail across five product/schema contract areas: storage boundary (5), receipt outbox (1), expense cash balance (1), transfer search_path (1), remaining SECURITY DEFINER search_paths (4).
+- LIVE SUPABASE: project `mrcyqezbhpncuvaehwgf` is ACTIVE_HEALTHY. Production migration history independently contains corresponding hardening migrations; this is observation-only. Current advisors report 1 anon-executable SECURITY DEFINER and 58 authenticated-executable SECURITY DEFINER findings; no live mutation was performed.
+- CANONICAL VERCEL: project `aghbari-commerce-c2dd` / `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`, linked to `Aghbari-Technologies/aghbari-commerce`.
+- CERTIFICATION: NO. FINAL EVIDENCE RECONCILIATION: OPEN. LIVE ALIGNMENT TO CANDIDATE: NOT_PROVEN.
+
 
 # 0B. AUTONOMOUS MEMORY + SELF-IMPROVEMENT PROTOCOL
 
