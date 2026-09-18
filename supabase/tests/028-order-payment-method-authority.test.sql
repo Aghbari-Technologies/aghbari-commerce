@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(19);
+select plan(20);
 
 select is(
   (select data_type from information_schema.columns
@@ -143,7 +143,7 @@ select is(
 );
 
 select is(
-  (select count(*) from public.notifications where entity_id=(select order_id from cash_order) and kind='order' and title='تحديث حالة الطلب%'),
+  (select count(*) from public.notifications where entity_id=(select order_id from cash_order) and kind='order' and title like 'تحديث حالة الطلب%'),
   0::bigint,
   'initial pending history does not emit a fake status notification'
 );
