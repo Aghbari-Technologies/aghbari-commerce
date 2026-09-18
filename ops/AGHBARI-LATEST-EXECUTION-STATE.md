@@ -430,3 +430,15 @@ RESULT: candidate PR #74 remains OPEN/DRAFT/MERGEABLE at the same SHA. The 12 re
 ROOT CAUSE: exact-SHA deployment and authenticated regression capability remain externally blocked; no current product defect was found that justifies a new candidate SHA.
 ARTIFACT: candidate runs `35310025140;35310025100;35310025210;35310025147;35310025098;35310025169;35310025159;35310025067;35310024991;35310025060;35310025041;35310025032`; local browser job `105490749871`; Vercel project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`; Production `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5`.
 NEXT ACTION: preserve candidate; do not create speculative SHA or deployment artifact. Resume exact-SHA deployment, authenticated browser E2E, and Formal Final Regression only through an approved capable path. Production remains NO TOUCH.
+
+
+### 2026-09-18 — Command 1 — Vercel Git-source connector boundary + tooling lane
+
+RUN: exact candidate deployment-path probe; candidate status/deployment recheck; PR #72 exact-head migration-proof log review
+JOB: unresolved release evidence / connector capability / isolated tooling
+SHA: candidate `4753cc3319f551aeccbe2bd081b988fa68df8e87`; tooling `92fa7bffb8971eecb10d91fe588709da0e06675a`; production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
+FRONT: candidate Deployment, Deployment Browser, Formal Final Regression, tooling #72
+RESULT: Vercel's documented `gitSource` path was tested, but the connected deploy wrapper rejects it before API execution because `files[]` is required; no deployment was created. Candidate status still contains only the Vercel deployment-rate-limit failure, and the canonical project still has zero candidate-SHA matches. PR #72 migration proof `35308340466` remains an isolated FAIL caused by baseline pgTAP failures; no source mutation was made.
+ROOT CAUSE: connector capability boundary, plus existing tooling-lane database-proof baseline failures.
+ARTIFACT: `ops/evidence/20260918-command1-vercel-gitsource-tool-boundary.md`
+NEXT ACTION: keep candidate frozen; do not construct a partial deployment payload. Continue only through an approved exact-SHA Git-linked deployment path, then authenticated runtime E2E and Formal Final Regression. Production remains NO TOUCH.

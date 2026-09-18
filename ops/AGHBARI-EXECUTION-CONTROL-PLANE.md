@@ -1382,3 +1382,23 @@ RESULT: candidate remains frozen with terminal exact-SHA CI PASS; 15 candidate w
 ROOT CAUSE: deployment quota/candidate deployment availability and authenticated GitHub/Vercel execution authority remain the blocking external boundaries.
 ARTIFACT: candidate runs `35310025140;35310025100;35310025210;35310025147;35310025098;35310025169;35310025159;35310025067;35310024991;35310025060;35310025041;35310025032`; Vercel project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`.
 NEXT ACTION: preserve candidate and continue only through approved exact-SHA deployment/authenticated regression paths; do not weaken controls or touch Production.
+
+
+### 2026-09-18 — Control Plane Evolution — Vercel Git-source connector boundary
+
+LESSON: Vercel's deployment API supports GitHub `gitSource`, but the connected `deploy_to_vercel` wrapper currently rejects a git-source-only request before API execution because it requires `files[]`. A validation failure is not a deployment result.
+
+RULE: when exact-SHA deployment is required, do not add partial/reconstructed `files[]` merely to satisfy the wrapper schema. Prefer a Git-linked deployment path or a complete exact-source upload with independently verifiable identity. Record schema rejection as a connector capability boundary and preserve the candidate.
+
+EVIDENCE: Vercel documentation for deployment creation describes `gitSource` as an alternative to `files`; exact tool probe for candidate branch `execution/closure-hammer-20260918c` returned `INVALID_ARGUMENT: files: expected array, received undefined`. No deployment mutation occurred.
+
+### 2026-09-18 — Command 1 — tool capability + independent tooling lane
+
+RUN: GitHub PR #72 exact-head/run-log review; Vercel Git-source deployment-path probe; candidate status/deployment recheck
+JOB: unresolved release evidence + tooling isolation + capability reconciliation
+SHA: candidate `4753cc3319f551aeccbe2bd081b988fa68df8e87`; tooling `92fa7bffb8971eecb10d91fe588709da0e06675a`; production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
+FRONT: candidate deployment; authenticated deployment browser; Formal Final Regression; isolated tooling PR #72
+RESULT: candidate remained unchanged; 12 exact-SHA candidate verification runs remain terminal PASS; no candidate Vercel deployment exists; Vercel git-source deployment path is blocked at connector schema validation; PR #72 migration proof remains isolated FAIL on baseline pgTAP assertions; no candidate or Production mutation occurred.
+ROOT CAUSE: Vercel connector does not expose the Git-source deployment form and instead requires `files[]`; authenticated deployment/browser and workflow-dispatch capabilities remain unavailable.
+ARTIFACT: `ops/evidence/20260918-command1-vercel-gitsource-tool-boundary.md`; PR #72 run `35308340466` / job `105485106791`; candidate status/deployment sweep; Vercel project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`.
+NEXT ACTION: preserve candidate `4753cc3…`; use only an approved exact-SHA Git-linked deployment path when available, then run authenticated Runtime E2E and Formal Final Regression. Production remains NO TOUCH.
