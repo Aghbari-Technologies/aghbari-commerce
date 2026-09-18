@@ -79,8 +79,10 @@ jobs:
             else { for(const item of Object.values(value)){ const found=walk(item); if(found) return found; } }
             return null;
           }
-          const url=walk(data);
-          if(!url) throw new Error('No HTTPS deploy URL in Netlify JSON: '+raw.slice(0,2000));
+          const preferredSite = data.site_url || data.siteUrl || null;
+          const url = preferredSite ? preferredSite.replace(/^http:\/\//,'https://') : walk(data);
+          if(!url || !/^https:\/\//.test(url)) throw new Error('No HTTPS deploy URL in Netlify JSON: '+raw.slice(0,2000));
+          if(typeof data.password==='string' && data.password) fs.appendFileSync(process.env.GITHUB_ENV,'DROP_PASSWORD='+data.password+'\n');
           fs.appendFileSync(process.env.GITHUB_ENV,'E2E_BASE_URL='+url+'\n');
           fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,'### Exact anonymous preview\n'+url+'\n');
           console.log('ANONYMOUS_PREVIEW_URL='+url);
@@ -112,6 +114,15 @@ jobs:
           page.on('console',m=>{if(m.type()==='error') failures.push('console: '+m.text())});
           page.on('response',r=>{if(r.status()>=400 && !r.url().endsWith('/favicon.ico')) failures.push(r.status()+' '+r.request().method()+' '+r.url())});
           await page.goto(url,{waitUntil:'networkidle',timeout:30000});
+          const passwordGate=await page.locator('input[type="password"]').count();
+          if(passwordGate){
+            const password=process.env.DROP_PASSWORD;
+            if(!password) throw new Error('Netlify anonymous password gate detected but password was not returned by CLI');
+            await page.locator('input[type="password"]').fill(password);
+            const submit=page.getByRole('button',{name:/Submit|إرسال|دخول|متابعة/i}).first();
+            await submit.click();
+            await page.waitForLoadState('networkidle');
+          }
           if(!(await page.locator('h1').filter({hasText:'بوابة الأغبري التجارية'}).count())) throw new Error('Aghbari landing heading missing');
           if(await page.getByText('العامري',{exact:false}).count()) throw new Error('Legacy branding detected');
           const dir=await page.locator('html').getAttribute('dir');
