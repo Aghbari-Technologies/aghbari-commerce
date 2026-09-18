@@ -13,6 +13,14 @@ insert into public.profiles (id, organization_id, role) values ('88888888-8888-4
 insert into public.inventory_balances(organization_id,warehouse_id,product_id,quantity)
 values ('67676767-6767-4676-8676-676767676767','67676767-6767-4676-8676-676767676769','67676767-6767-4676-8676-676767676770',10);
 
+
+insert into auth.users (id, email) values ('99999999-9999-4999-8999-999999999999', 'stock-count-other-tenant@test.local');
+insert into public.organizations (id, name) values ('78787878-7878-4787-8787-787878787878', 'Other Tenant');
+insert into public.branches (id, organization_id, name) values ('78787878-7878-4787-8787-787878787879', '78787878-7878-4787-8787-787878787878', 'Other Branch');
+insert into public.warehouses (id, organization_id, branch_id, name) values ('78787878-7878-4787-8787-787878787880', '78787878-7878-4787-8787-787878787878', '78787878-7878-4787-8787-787878787879', 'Other Warehouse');
+insert into public.products (id, organization_id, sku, name, unit) values ('78787878-7878-4787-8787-787878787881', '78787878-7878-4787-8787-787878787878', 'COUNT-OTHER', 'Other Count Product', 'carton');
+insert into public.profiles (id, organization_id, role) values ('99999999-9999-4999-8999-999999999999', '78787878-7878-4787-8787-787878787878', 'admin');
+
 set local role authenticated;
 set local request.jwt.claim.sub = '88888888-8888-4888-8888-888888888888';
 
@@ -33,12 +41,6 @@ select is((select count(*) from public.inventory_movements where source_type='st
 select is((select variance from public.stock_count_lines where session_id=(select id from public.stock_count_sessions where idempotency_key='stock-count-idem-01')),-3,'Variance is recorded against the balance at completion');
 select is((select row_to_json(public.start_stock_count('67676767-6767-4676-8676-676767676769','stock-count-idem-01'))->>'status'),'completed','Replaying the same start key is idempotent and returns the completed session');
 
-insert into auth.users (id, email) values ('99999999-9999-4999-8999-999999999999', 'stock-count-other-tenant@test.local');
-insert into public.organizations (id, name) values ('78787878-7878-4787-8787-787878787878', 'Other Tenant');
-insert into public.branches (id, organization_id, name) values ('78787878-7878-4787-8787-787878787879', '78787878-7878-4787-8787-787878787878', 'Other Branch');
-insert into public.warehouses (id, organization_id, branch_id, name) values ('78787878-7878-4787-8787-787878787880', '78787878-7878-4787-8787-787878787878', '78787878-7878-4787-8787-787878787879', 'Other Warehouse');
-insert into public.products (id, organization_id, sku, name, unit) values ('78787878-7878-4787-8787-787878787881', '78787878-7878-4787-8787-787878787878', 'COUNT-OTHER', 'Other Count Product', 'carton');
-insert into public.profiles (id, organization_id, role) values ('99999999-9999-4999-8999-999999999999', '78787878-7878-4787-8787-787878787878', 'admin');
 set local request.jwt.claim.sub = '99999999-9999-4999-8999-999999999999';
 select throws_ok(
   $$select public.set_stock_count_line((select id from public.stock_count_sessions where idempotency_key='stock-count-idem-01'),'67676767-6767-4676-8676-676767676770',4)$$,
