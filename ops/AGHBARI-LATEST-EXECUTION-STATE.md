@@ -15,9 +15,11 @@
 - SHA: 4753cc3319f551aeccbe2bd081b988fa68df8e87
 - Branch: execution/closure-hammer-20260918c
 - Candidate deployment: NOT_AVAILABLE — Vercel deployment rate-limited
-- Candidate deployment evidence: exact SHA status reports FAILURE — Deployment rate limited — retry in 24 hours; no deployment for this SHA is present in the canonical Vercel project deployment list.
+- Candidate deployment evidence: exact SHA status remains FAILURE — Deployment rate limited — retry in 24 hours; no deployment for this SHA is present in the canonical project deployment list.
 - Candidate authenticated browser certification: BLOCKED — approved E2E credentials / Vercel automation-bypass boundary unavailable.
-- Prior candidate 4d5057… deployment and browser evidence are historical and are not transferable to this SHA.
+- Prior candidate 4d5057… deployment and browser evidence are historical and not transferable.
+
+
 ## Main / Live / Production
 
 - Main SHA: `4505bcb655c0b747aeea7e1cc526a94f93270d3d`
@@ -31,21 +33,24 @@
 
 ## Exact-SHA candidate proof currently recorded
 
-- Historical evidence tied to candidate 4d5057d7952e213d6b5328a80f0229f1ff9fb861 is INVALID for current candidate 4753cc3319f551aeccbe2bd081b988fa68df8e87.
-- Current candidate terminal PASS at exact SHA: application-quality run 35310025067; G1 Domain Proof 35310025098; bootstrap-release-lockfile 35310025140; security-audit 35310025100; Order Workflow Proof 35310025147; order-invariant-contract 35310025210; Browser E2E / Exact Deployment PR-side contract run 35310024991.
-- Current candidate still non-terminal: supabase-migration-proof 35310025169; Fresh Local Browser 35310025060; Test-the-Test 35310025041; Local Production Browser 35310025159; Concurrency 35310025032.
-- The Browser E2E / Exact Deployment PASS above is the PR-side exact-source contract stage only; it is not authenticated runtime browser proof because there is no current-SHA Vercel deployment.
+- Current candidate 4753cc3319f551aeccbe2bd081b988fa68df8e87 terminal PASS:
+  application-quality 35310025067; G1 35310025098; bootstrap-release-lockfile 35310025140; security-audit 35310025100; Order Workflow 35310025147; order-invariant 35310025210; supabase-migration-proof 35310025169; Fresh Local Browser 35310025060; Test-the-Test 35310025041; Concurrency 35310025032.
+- Browser E2E / Exact Deployment run 35310024991 has browser-contract PASS but the actual browser-e2e job is SKIPPED because no current-SHA Vercel deployment exists.
+- Browser E2E / Local Production Artifact run 35310025159 / job 105490749871 remains IN_PROGRESS at isolated local Supabase startup.
+- All evidence tied to previous candidate 4d5057… is historical and invalidated for the current candidate.
+
 
 ## Release blockers
 
 1. Candidate Deployment: BLOCKED — Vercel exact-SHA status is "Deployment rate limited — retry in 24 hours"; no current-SHA deployment is available.
-2. Deployment Browser: BLOCKED — approved automation bypass credential unavailable through current connected mutation tools.
-3. Formal Final Regression: NOT_PROVEN — workflow dispatch unavailable through connected GitHub mutation surface; TinyFish GitHub UI inspection also found the browser session unauthenticated and no Run workflow control.
+2. Deployment Browser: BLOCKED — approved automation bypass credential unavailable.
+3. Formal Final Regression: NOT_PROVEN — workflow dispatch unavailable; browser UI check was unauthenticated.
 4. Final Evidence Reconciliation: OPEN.
 5. Certification: NO.
 6. Live alignment to candidate: NOT_PROVEN / no promotion.
-7. Workflow safety: CANDIDATE CLOSED — current candidate has no workflow with write permissions or git push; the three previously identified self-mutating paths were removed/reworked. Main still contains the legacy write workflows until the release candidate is merged.
-8. Tooling PR #72: OPEN / NOT_PROVEN. Current head remains 92fa7bffb8971eecb10d91fe588709da0e06675a; migration proof 35308340466 is terminal FAIL in pgTAP after empty-database migration apply.
+7. Workflow safety: CANDIDATE CLOSED — 15 current workflow files, zero contents: write declarations, zero git push commands.
+8. Tooling PR #72: OPEN / NOT_PROVEN. Exact current head 92fa7bff… remains isolated; migration proof 35308340466 is pgTAP FAIL after empty-DB apply.
+
 
 ## Connected tooling
 
@@ -186,7 +191,7 @@ Never record a PASS unless a real run/job/artifact proves it.
 - Previous Control Plane evolution commit: `ba34d9660b0ace297e55411bdc24ff43c53bc718`
 - Fast entry point latest main commit: `29aa5c928deb97a652e78c0f0581ec09d7caa050`
 - Required execution invariant: READ → VERIFY → PARALLELIZE → EXECUTE → CAPTURE → CLASSIFY → IMPROVE PROTOCOL → PERSIST STATE → RECONCILE → REPORT
-- Latest evidence artifact commit: `977207b49f46dcb89bdfa64b9ab7bdb0880be8ba`. The programmer must update this latest-state file before declaring the round complete.
+- Latest evidence artifact commit: `efe9af1b00b153cedf0941a356493c39f5435ee6`. The programmer must update this latest-state file before declaring the round complete.
 
 
 ### 2026-09-18 — Command 1 execution reconciliation
@@ -260,7 +265,18 @@ ROOT CAUSE: approved Vercel automation-bypass credential is still unavailable.
 ARTIFACT: `ops/evidence/20260918-command1-browser-credential-boundary-recheck.md` commit `54e8c69ef9c7a572b793b611847b643bbcd66490`.
 NEXT ACTION: obtain the approved automation-bypass credential through the owner-controlled Vercel/GitHub secret path; do not disable protection or store the secret in repository files.
 
-### 2026-09-18 — Command 1 — current candidate terminal checkpoint
+### 2026-09-18 — Command 1 — latest execution update
+
+RUN: 35310025169;35310025060;35310025041;35310025032;35310025159; Vercel exact-SHA reconciliation
+JOB: current candidate closure / deployment gate
+SHA: 4753cc3319f551aeccbe2bd081b988fa68df8e87
+FRONT: CI closure / deployment / browser / release safety
+RESULT: ten candidate PR-side verification fronts are now terminal PASS on the exact SHA; only Local Production Artifact remains in progress. Vercel reports a 24-hour deployment rate limit, so no current-SHA deployment exists. Authenticated browser and Formal Final Regression remain blocked/not-proven. Production untouched.
+ROOT CAUSE: current-SHA deployment is externally rate-limited; browser credential path and workflow dispatch remain unavailable.
+ARTIFACT: ops/evidence/20260918-command1-current-candidate-update.md commit efe9af1b00b153cedf0941a356493c39f5435ee6
+NEXT ACTION: reconcile Local Production Artifact when terminal; preserve all external blockers and never transfer historical evidence.
+
+
 
 RUN: 35310025067;35310025098;35310025140;35310025100;35310025147;35310025210;35310024991
 JOB: candidate exact-SHA CI checkpoint
