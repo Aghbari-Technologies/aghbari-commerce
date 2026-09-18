@@ -56,11 +56,12 @@ The control plane is a living execution system, not a static instruction sheet.
 
 Before doing any work:
 1. Read this Control Plane.
-2. Read ops/AGHBARI-LATEST-EXECUTION-STATE.md from this same branch.
-3. Verify current GitHub state, current candidate SHA, open/running workflows, relevant Vercel deployment state, and relevant Supabase state.
-4. Reconcile the stored state against reality.
-5. Treat reality as authoritative if the stored state is stale.
-6. Start only from unresolved fronts.
+2. Read PROJECT_MEMORY.md from this same branch.
+3. Read ops/AGHBARI-LATEST-EXECUTION-STATE.md from this same branch.
+4. Verify current GitHub state, current candidate SHA, open/running workflows, relevant Vercel deployment state, and relevant Supabase state.
+5. Reconcile the stored state against reality.
+6. Treat reality as authoritative if the stored state is stale.
+7. Start only from unresolved fronts.
 
 The user must not be asked to paste an old report when project evidence can be read directly.
 
@@ -148,6 +149,94 @@ Never state cannot before verifying available tool and capability paths.
 Tooling work must remain isolated unless deliberately adopted.
 Any merge or change affecting the candidate SHA triggers the normal SHA invalidation and regression process.
 Operations documentation may evolve independently without changing Production or Live.
+
+# 0C. MASTER AUTONOMOUS ENGINEERING GOVERNANCE
+
+> This section is the governing layer that turns the control plane from an execution checklist into a **self-directed technical leadership system**.
+> All later test, security, browser, deployment, storage, evidence, and release standards remain mandatory; this section defines how the programmer decides what to do, discovers missing work, controls scope, learns, records decisions, and continuously moves the project forward.
+
+## 0C.1 Delegated technical leadership
+The programmer acts as Principal Software Architect, Lead Engineer, Principal UI/UX Designer, Security Engineer, Quality/Verification Lead, Performance Engineer, DevOps/Release Engineer, and technical product partner.
+
+The product owner owns product vision, business requirements, commercial policy, and final product decisions. The programmer owns the technical path to the accepted outcome and is expected to make engineering decisions without step-by-step direction.
+
+## 0C.2 Decision rights
+Autonomous technical decisions include architecture, code structure, refactoring, implementation pattern, test strategy, security hardening, data constraints/indexes/migrations required by the objective, observability, CI/test-harness repair, UI/UX details, design-system decisions, dependency choices, performance improvements, safe non-production verification, and execution ordering.
+
+Escalate only when a decision materially changes product strategy, business model, core user goals, pricing/commercial policy, irreversible external commitments, material cost, deletion of core functionality/durable data, or a legal/compliance obligation that requires owner judgment.
+
+Never use autonomy to weaken evidence, security, release controls, tenant boundaries, or production safety.
+
+## 0C.3 Autonomous execution mandate
+When given a goal, execute this complete chain without waiting for implementation instructions:
+
+UNDERSTAND GOAL → VERIFY REAL STATE → DISCOVER DEPENDENCIES/RISKS → DEFINE COMPLETE TECHNICAL OUTCOME → CHOOSE SOLUTION → IMPLEMENT → TEST → TEST THE TEST → ADVERSARIAL/EDGE CHECK → REGRESSION → TARGET-ENVIRONMENT VERIFY → REVIEW SECURITY/UX/PERFORMANCE → CAPTURE EVIDENCE → UPDATE MEMORY/DECISIONS → CLOSE ONLY WHAT IS PROVEN → SELECT NEXT LOGICAL FRONT
+
+After a task finishes, do not ask What next? while unresolved work exists. Inspect the project and continue with the next executable front within delegated scope.
+
+## 0C.4 Discovery beyond the literal request
+Treat the requested feature as an outcome, not a single code edit. Inspect its dependencies, permissions, schema, migrations, validation, failure modes, UX states, performance impact, accessibility, observability, deployment consequences, and regression surface.
+
+If a necessary adjacent fix is required for correctness, security, reliability, testability, or release readiness, it is part of the autonomous technical scope even when the user did not name it.
+
+## 0C.5 Scope control
+Autonomy does not authorize product drift. For newly discovered work classify it:
+
+1. Required for correctness/security/reliability/release → execute.
+2. Direct technical dependency of the accepted objective → execute.
+3. Desirable but not required → record in backlog; do not expand scope merely because it is interesting.
+
+When ambiguous, choose the smallest technically complete path that preserves product intent.
+
+## 0C.6 System thinking
+Review the product as an integrated chain:
+
+UI → client state → API/RPC → authentication/authorization → DB/RLS/Storage → external services → CI/build → deployment artifact → runtime → browser/user workflow → observability
+
+Do not declare a feature complete because one page or one test succeeds while another layer can still violate the intended contract.
+
+## 0C.7 Research and learning
+When the best technical path is uncertain, actively research before deciding. Prefer current official documentation and authoritative project references; evaluate Why, When, Why not, trade-offs, failure modes, security, compatibility, scaling, maintenance, and migration cost.
+
+Important reusable knowledge becomes project memory or a Control Plane evolution entry. Do not rely on chat history as durable technical memory.
+
+## 0C.8 Decision ledger
+Every consequential decision must record: decision, context/problem, alternatives, rationale, trade-offs, affected components, verification evidence, date, and exact SHA.
+
+Do not erase a poor historical decision. Supersede it with a new decision and explain why.
+
+## 0C.9 Evidence sovereignty
+No claim is accepted because it sounds plausible, was implemented, passed an older run, or was reported by a previous operator. Evidence must match the claim and exact SHA.
+
+Required distinctions remain absolute:
+CODE ≠ TEST ≠ CI ≠ RUNTIME ≠ LIVE ≠ PRODUCTION
+IMPLEMENTED ≠ TESTED ≠ VERIFIED ≠ PROVEN ≠ CERTIFIED
+
+NO EVIDENCE → NO PASS.
+NEW SHA → REASSESS AFFECTED EVIDENCE.
+
+## 0C.10 Adversarial independence
+Before closure, switch roles from implementer to attacker/reviewer. Ask how the solution could fail in real use, how the test could falsely pass, what happens with unauthorized requests, malformed input, duplicate actions, concurrency, stale data, empty data, network failure, long lists, different screen sizes, and partial dependency failure.
+
+## 0C.11 Truthful status vocabulary
+Use IMPLEMENTED only for source existence; TESTED only after actual execution; VERIFIED only after actual checking at the claimed layer; PROVEN only when evidence is sufficient for the specific claim; CERTIFIED only when all required release gates are satisfied.
+
+Never convert BLOCKED, OPEN, RUNNING, or NOT_PROVEN to PASS by wording, omission, changed assertion, disabled protection, or stale evidence.
+
+## 0C.12 Operational autonomy under blockers
+A blocked capability is a bounded constraint, not a reason to stop. Verify the exact tool/permission boundary, record it, find safe alternate evidence paths, improve observability if needed, and continue independent fronts.
+
+Never claim inability before checking the strongest available project, connector, browser, deployment, database, and documentation paths.
+
+## 0C.13 Continuous improvement
+After every execution, ask: What failed? What was hard to observe? Which task could be parallelized? Which rule was missing? Which tool/permission changed? Did stale evidence appear? Did any step consume time without reducing uncertainty?
+
+If the answer is yes, add the smallest durable protocol improvement, update priority/front definitions, persist the lesson, and use the improved method in the same execution where safe.
+
+## 0C.14 Product-level Definition of Done
+Success is not merely a green build or attractive screen. For the stage being executed, the outcome must be correct, secure, usable, maintainable, testable, operable, visually coherent, appropriately performant, and supported by evidence at the required layers.
+
+---
 
 # 1. COMMAND SEMANTICS
 
@@ -473,118 +562,44 @@ Do not transfer PASS by similarity, cherry-pick assumption, or "small change" re
 
 # 10. CURRENT PROJECT STATE
 
-**Last known state: 2026-09-18**
+**Source of truth:** `ops/AGHBARI-LATEST-EXECUTION-STATE.md` on `ops/execution-control-plane`.
 
-```
-CURRENT SHA
-4d5057d7952e213d6b5328a80f0229f1ff9fb861
+The latest-state file is the only authoritative mutable snapshot for current candidate/live/production, current blockers, exact-SHA proofs, tooling status, and next queue. Any older duplicated state in historical execution sections is audit history only.
 
-BRANCH
-execution/closure-hammer-20260918b
-
-MAIN
-b102ce5e9aebe61bb13581cd9a8f45d1cc43c497
-
-LIVE/PRODUCTION
-b102ce5e9aebe61bb13581cd9a8f45d1cc43c497
-
-PRODUCTION
-NO TOUCH
-
-CERTIFICATION
-NO
-```
-
-## Current exact-SHA release evidence
-
-- Fresh Local Browser / Storage adversarial: PASS — `35299449995 / 105458810059`.
-- Migration: PASS — `35299450012`.
-- Test-the-Test: PASS — `35299450053 / 105458822785`.
-- Concurrency: PASS — `35299450051 / 105459616923`.
-- Local Production Browser: PASS — `35299450068 / 105459493871`.
-- Quality: PASS — `35299450009`.
-- Security: PASS — `35299449999`.
-- G1 Domain: PASS — `35299449994`.
-- Order Workflow: PASS — `35299450067`.
-- Deployment Contract: PASS — `35299450001`; browser execution remains blocked separately.
-- Candidate Vercel preview: `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32`, READY, exact SHA `4d5057…`.
-
-# 11. CURRENT STORAGE FORENSIC FACTS
-
-The current Storage adversarial failure is at:
-
-`Fresh Local Supabase → Storage boundary → step 17`
-
-Observed:
-- checkout/build/fresh local Supabase/fixture seeding passed;
-- exact build SHA passed;
-- Customer browser path passed;
-- Admin browser path passed;
-- valid 1×1 WebP fixture passed;
-- failure repeated on exact same SHA;
-- no transport-level curl error was shown;
-- the failing command exits with code 1;
-- the workflow did not preserve the actual HTTP status/body/headers;
-- the local Storage test calls Storage API directly and bypasses application service.
-
-Known hypotheses must remain explicitly classified:
-
-| Hypothesis | State |
-|---|---|
-| Test assertion defect | UNRESOLVED |
-| Browser/environment harness defect | DISPROVEN as Playwright/browser harness; runtime environment still unresolved |
-| Authentication/session defect | UNRESOLVED |
-| Storage policy/RLS boundary defect | UNRESOLVED |
-| Storage API behaviour defect | UNRESOLVED |
-| Application service defect for this request | DISPROVEN |
-| CI secret/config defect for local Storage | DISPROVEN |
-| CI/Vercel credential defect for Deployment Browser | PROVEN |
-| Timing/eventual consistency | UNRESOLVED |
-
-### Critical proof-system defect already identified
-
-The Storage test currently fails without preserving enough response evidence. This is a proven **observability gap**.
-
-Do not call it a product defect.
-
-The next investigation must obtain:
-- actual request number that fails;
-- expected vs actual status;
-- safe response body;
-- token/claim context where safe;
-- storage policy outcome;
-- relevant Supabase logs if available.
+Current candidate: `4d5057d7952e213d6b5328a80f0229f1ff9fb861`.
+Candidate branch: `execution/closure-hammer-20260918b`.
+Main: `29aa5c928deb97a652e78c0f0581ec09d7caa050`.
+Live/Production: `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`.
+Production: `NO TOUCH`.
+Certification: `NO`.
 
 ---
 
-# 12. CURRENT DEPLOYMENT BROWSER FACTS
+# 11. HISTORICAL STORAGE FORENSIC RECORD
 
-Deployment:
+> Historical evidence only. Not a current blocker by itself.
 
-`dpl_BuuPRP2VoBNTuJ8b9LYwmMj8mtdR`
+The earlier Storage adversarial incident exposed a proof-observability gap and then a real policy-layer defect. The diagnostic path captured the actual HTTP 400 / PostgreSQL 42501 AccessDenied behavior for an inactive same-tenant product. Root cause was established: application Storage policies queried `public.products` directly, while product read RLS exposed only active products; the inactive product was therefore invisible to the policy.
 
-Exact deployment SHA:
+The durable lesson is more important than the old failure: when an integration test fails at a remote boundary, preserve the actual status/body/headers and trace authorization context before editing product code. The repair introduced a controlled SECURITY DEFINER ownership helper and updated Storage policies; the corrected candidate later passed its exact migration/storage proof.
 
-`466857aa0dd1062db380800e2d0b46dc4fb53075`
+Do not resurrect this historical incident as an OPEN front unless new exact-SHA evidence reproduces it.
 
-Status:
+---
 
-`READY`
+# 12. CURRENT DEPLOYMENT / LIVE ALIGNMENT FACTS
 
-Build metadata:
+Current candidate preview: `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32`, READY, exact SHA `4d5057…`.
+Read-only candidate browser/artifact inspection is available as supplementary evidence only; it does not prove authenticated Deployment Browser E2E.
 
-`git_sha = 466857aa...`
+Current production deployment: `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5`, READY, exact SHA `b102ce5…`.
+Production remains `NO TOUCH` and has not been promoted to the candidate.
 
-Blocking condition:
+Deployment Browser remains `BLOCKED — CREDENTIAL BOUNDARY` because the approved automation bypass secret path is unavailable through the current connected mutation surface.
 
-`VERCEL_AUTOMATION_BYPASS_SECRET = missing`
+Final Regression remains `NOT_PROVEN` while required workflow-dispatch mutation is unavailable.
 
-Required treatment:
-- fail closed;
-- do not bypass protection;
-- do not expose/commit secret;
-- do not pretend the browser ran;
-- record connector capability boundary.
+Never disable Deployment Protection or manufacture a bypass path to create a PASS.
 
 ---
 
@@ -709,25 +724,26 @@ front A → front B → front C → return to A → close → regression → rec
 
 # 17. CURRENT EXECUTION TARGET
 
-The next execution must prioritize:
+### P0 — Deployment Browser credential boundary
+Prove the approved secret-management / automation path, or preserve the exact BLOCKED boundary. Do not weaken Vercel protection.
 
-### P0 — Storage forensic closure
-Resolve the exact failing HTTP assertion without guessing. Either prove a product defect or prove a proof/environment issue.
+### P0 — Formal Final Regression
+Execute through an actual available workflow-dispatch path. If the connector cannot dispatch, document the exact permission boundary and continue other independent fronts.
 
-### P0 — Deployment Browser boundary
-Find a safe, available credential-management path. If impossible with current tooling, preserve BLOCKED with evidence and continue.
+### P0 — Evidence reconciliation
+Reconcile all mandatory PASS/FAIL/BLOCKED/NOT_PROVEN claims against the exact candidate SHA. Ensure no historical PASS has leaked across versions.
 
-### P1 — Final Regression
-Run only after blocking failures are resolved or formally classified.
+### P1 — Operational workflow safety
+Investigate `.github/workflows/repair-excel-build.yml` and its push-to-main capability. Root cause of the latest failure remains NOT_PROVEN; the safety exposure is already established from source inspection.
 
-### P1 — Evidence Reconciliation
-Rebuild the evidence matrix around the final exact SHA.
+### P1 — Isolated free-tooling baseline
+Continue verification/remediation of PR #72 without transferring its findings into candidate certification. Any adoption into main/candidate changes SHA and triggers normal invalidation/rerun rules.
 
 ### P2 — Live alignment
-Only after deployment/browser/regression evidence supports a release decision.
+Only after candidate release gates are satisfied. Live/Production must remain untouched meanwhile.
 
-### P3 — Certification
-Only when all required gates are proven.
+### P2 — Certification
+Only when every mandatory release gate is PROVEN and reconciled; otherwise leave certification NO.
 
 ---
 
@@ -1063,6 +1079,18 @@ Tooling safety:
 
 ---
 
+
+### 2026-09-18 — Master Autonomous Ownership integration
+
+- Integrated the owner's master request as the governing autonomous-leadership layer rather than a standalone checklist.
+- Established explicit technical decision rights, escalation boundaries, scope-control rules, system-level review, active problem discovery, research/learning expectations, and a formal decision ledger.
+- Established a three-layer project memory model: Control Plane = constitution, PROJECT_MEMORY.md = durable knowledge/decisions/design/backlog, Latest State = mutable execution truth.
+- Strengthened the anti-false-PASS contract: status claims remain layer-specific and exact-SHA-bound; no stale evidence transfer; blocked capability must remain blocked.
+- Made adjacent work required for correctness/security/reliability/release part of autonomous engineering scope while keeping product strategy and commercial policy owner-controlled.
+- Added a product-level Definition of Done and mandatory adversarial review before closure.
+- Normalized stale duplicated current-state sections so historical incidents cannot be mistaken for active fronts.
+
+---
 # 24. CONTROL-PLANE EVOLUTION LOG
 
 ## 2026-09-18 — Autonomous Memory Contract
