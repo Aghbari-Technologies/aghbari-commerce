@@ -32,11 +32,11 @@
 
 # 0A. AUTHORITATIVE LIVE EXECUTION STATE — 2026-09-18 — CURRENT RECONCILIATION
 
-- CURRENT CANDIDATE: `64f5283e7b3f893de72dac9ea4d0bf5c3eef4b8d` on `execution/closure-hammer-20260918c`; PR #74 open/draft/mergeable.
-- Proof-integrity correction now applied: candidate advanced to `64f5283e7b3f893de72dac9ea4d0bf5c3eef4b8d` after proven pull_request exact-SHA defects in G1 and Security Audit; Intelligence Contract Proof was corrected in the same focused change.
+- CURRENT CANDIDATE: `5b9f2a76615e76bb6444c81f39e02f3479c0704b` on `execution/closure-hammer-20260918c`; PR #74 open/draft/mergeable.
+- Proof-integrity correction now applied: candidate advanced to `5b9f2a76615e76bb6444c81f39e02f3479c0704b` after an exhaustive pull_request checkout audit fixed G1, Security Audit, Intelligence Contract Proof, and Bootstrap Release Lockfile exact-SHA semantics.
 - MAIN: `4505bcb655c0b747aeea7e1cc526a94f93270d3d`.
 - LIVE/PRODUCTION: `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`; Production = NO TOUCH; no promotion or mutation.
-- CURRENT CANDIDATE CI: fresh verification is executing on `64f5283…`; 8 pull_request gates are terminal PASS so far (application-quality, G1, bootstrap-release-lockfile, security-audit, Order Workflow Proof, order-invariant, Intelligence Contract Proof, Browser E2E / Exact Deployment); Supabase Migration Proof, Test-the-Test, Fresh Local Browser, Concurrency, and Local Production Artifact remain RUNNING/PENDING at this checkpoint.
+- CURRENT CANDIDATE CI: fresh verification is executing on `5b9f2a…`; prior `64f5283…` evidence is invalidated. Current runs are queued/running and no new PASS is admitted until terminal exact-SHA evidence is captured.
 - LOCAL PRODUCTION ARTIFACT PROOF: prior run on `4753cc…` is historical/invalidated; fresh candidate run `35321399240` is pending on `64f5283…`.
 - CANDIDATE DEPLOYMENT: NOT_AVAILABLE; GitHub Vercel status is FAILURE — "Deployment rate limited — retry in 24 hours"; no candidate-SHA deployment appears in canonical Vercel deployment list.
 - CANDIDATE DEPLOYMENT BROWSER: browser-contract PASS in run `35310024991`; actual browser-e2e SKIPPED because no candidate deployment. Authenticated deployment browser remains BLOCKED because `VERCEL_AUTOMATION_BYPASS_SECRET` is unavailable.
@@ -1434,3 +1434,11 @@ LESSON: `github.sha` inside pull_request workflows can resolve to the synthetic 
 RULE: every pull_request verification workflow that claims source-head evidence must resolve TARGET_SHA from `inputs.exact_sha || github.event.pull_request.head.sha || github.sha`, check out that exact SHA, and assert the PR-head equality when not manually dispatched.
 
 EVIDENCE: previous candidate `4753cc3...` G1 run `35310025098` and Security Audit run `35310025100` checked out merge commit `7b4da729...`; candidate was advanced to `64f5283...` with focused three-workflow correction. No product source, migration, or test-fixture change was included in this correction.
+
+### 2026-09-18 — Control Plane Evolution — exhaustive PR checkout rule
+
+LESSON: exact-SHA integrity requires auditing both explicit SHA expressions and implicit checkout behavior. A pull_request workflow with actions/checkout and no `ref` can silently test GitHub's synthetic merge commit even when the run's head_sha identifies the PR source head.
+
+RULE: every pull_request workflow with release/security/proof significance must explicitly bind checkout to the PR head SHA (or a validated manual exact SHA) and assert the resulting HEAD. This was applied across the candidate's full pull_request workflow surface; exhaustive scan at `5b9f2a…` reports zero default checkouts, zero `contents: write`, and zero `git push` commands.
+
+EVIDENCE: candidate `4753cc…` G1/Security Audit logged merge commit `7b4da729…`; later audit found `bootstrap-release-lockfile.yml` also used implicit checkout. Candidate is now `5b9f2a…` with all identified proof-surface defects repaired.
