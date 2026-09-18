@@ -4,7 +4,6 @@ begin;
 -- 20260918124842_order_payment_method_authority_20260918.sql.
 -- This migration owns only the dynamic checkout-policy behavior.
 -- Server-authoritative enforcement for the merchant's dynamic checkout policy.
- enforcement for the merchant's dynamic checkout policy.
 CREATE OR REPLACE FUNCTION public.create_order(p_idempotency_key text, p_warehouse_id uuid, p_lines jsonb, p_payment_method text)
  RETURNS TABLE(order_id uuid, order_number bigint, status order_status, total numeric)
  LANGUAGE plpgsql
