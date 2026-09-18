@@ -16,7 +16,7 @@
 - Branch: `execution/closure-hammer-20260918c`
 - PR: #74 (open, draft, mergeable)
 - Base: `main @ 4505bcb655c0b747aeea7e1cc526a94f93270d3d`
-- Candidate deployment: NOT_AVAILABLE — exact-SHA Vercel deployment is not proven. Canonical project `aghbari-commerce-c2dd` currently has zero deployments matching candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b`; latest READY deployment observed is `dpl_F54C7KZc1UDsFbqrJgtgrWbDeLQh` for `ops/execution-control-plane` commit `b967ebc4a7a571684f163534a2c96aa992db2a51`, while the prior tooling READY deployment is `dpl_7ihytJd8vEfQMvCnsNqghQyNUgsN` for older tooling commit `337b8c787c4f4d35de957214ad5596e87cc27eb4`. Neither is candidate evidence. Candidate GitHub status remains Vercel FAILURE on the build-rate-limit target.
+- Candidate deployment: NOT_AVAILABLE — exact-SHA Vercel deployment is not proven. Canonical project `aghbari-commerce-c2dd` currently has zero deployments matching candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b`; newest observed READY deployments are operational-branch deployments `dpl_76mAoUmtvT2a3UaQcPtfh9NxSs63` (SHA `de3161cccddecb2adde9c6493d091cb5dd2b6132`) and `dpl_7YKTr8FGbCFTPU8GiJ8obyJBd1bp` (SHA `a12ee10d94d58d3d94dc9b7c3f178913a8ee620b`), both on `ops/execution-control-plane`. Earlier tooling deployment `dpl_7ihytJd8vEfQMvCnsNqghQyNUgsN` is SHA `337b8c787c4f4d35de957214ad5596e87cc27eb4`. None is candidate evidence. Candidate GitHub status remains Vercel FAILURE on the build-rate-limit target.
 - Candidate authenticated browser certification: BLOCKED — approved Vercel automation-bypass credential is unavailable.
 - Evidence for `64f5283…` is also now historical/invalidated because the bootstrap release proof exposed the same pull_request merge-ref flaw; the current candidate is `5b9f2a…`.
 
@@ -550,3 +550,15 @@ RESULT: candidate unchanged; all 13 candidate proof runs remain terminal PASS on
 ROOT CAUSE: remaining release blockers are external evidence/credential boundaries (exact candidate deployment, authenticated Deployment Browser, Formal Final Regression dispatch). Tooling pgTAP remains an isolated baseline-contract failure after clean migration application.
 ARTIFACT: candidate run set `35321683922;35321683893;35321683989;35321683986;35321683999;35321683950;35321683916;35321684096;35321683994;35321683953;35321683815;35321684089;35321683806`; tooling migration run `35322281510` / job `105527257696`; latest Vercel READY `dpl_F54C7KZc1UDsFbqrJgtgrWbDeLQh` recorded as `b967ebc4a7a571684f163534a2c96aa992db2a51`.
 NEXT ACTION: preserve candidate freeze; do not retry Vercel while the build-rate limit is active; obtain the approved automation-bypass secret and dispatch-capable regression path; continue only non-conflicting evidence work; keep Production NO TOUCH.
+
+
+### 2026-09-18 — Command 1 — closure hammer re-entry final record
+
+RUN: GitHub PR/head/status sweep; candidate exact-SHA run reconciliation; Vercel project/deployment sweep and terminal state check; Supabase health/advisor/migration read-only reconciliation
+JOB: candidate 13/13 PASS; tooling migration proof FAIL in pgTAP after clean migration apply; Vercel operational deployments terminal READY; no candidate deployment
+SHA: candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b`; tooling `d884f90fcdcb95eeceb47e78d8f36792268f830d`; diagnostic `e62cb960dfb17204074914b4a3dd5a13abcb333f`; main `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
+FRONT: release closure / exact-SHA evidence / deployment integrity / isolated tooling / production safety
+RESULT: no candidate SHA change and no Production mutation. Candidate remains certification subject with 13/13 exact-SHA terminal PASS. Vercel READY deployments created by control-plane documentation commits were reconciled and classified as non-candidate evidence. No authenticated deployment browser or workflow_dispatch execution capability became available.
+ROOT CAUSE: remaining release blockers remain external: exact candidate Vercel deployment availability, approved automation-bypass credential for authenticated browser proof, and connected GitHub workflow-dispatch capability. Tooling pgTAP failure remains isolated/non-certifying.
+ARTIFACT: Vercel `dpl_7YKTr8FGbCFTPU8GiJ8obyJBd1bp` READY @ `a12ee10d94d58d3d94dc9b7c3f178913a8ee620b`; Vercel `dpl_76mAoUmtvT2a3UaQcPtfh9NxSs63` READY @ `de3161cccddecb2adde9c6493d091cb5dd2b6132`; candidate exact run set unchanged; tooling migration `35322281510` / `105527257696`.
+NEXT ACTION: preserve candidate freeze; do not retry/consume deployment quota while candidate deployment remains rate-limited; resolve owner-controlled credential and dispatch path, then run authenticated deployment/browser and final regression on exact candidate SHA. Keep Production NO TOUCH.
