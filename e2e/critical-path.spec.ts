@@ -116,11 +116,13 @@ test('authenticated customer completes real search → catalog → cart → orde
   await expect(page.locator('.order-timeline .timeline-item').first()).toBeVisible();
 
   const notifications = page.getByRole('button', { name: 'التنبيهات' });
-  await expect(notifications).toContainText('1');
   await notifications.click();
-  await expect(page.getByText('تم استلام طلبك', { exact: true })).toBeVisible();
-  await page.getByText('تم استلام طلبك', { exact: true }).click();
-  await expect(notifications).toContainText('0');
+  const orderNotification = page.getByRole('button').filter({ hasText: 'تم استلام طلبك' }).last();
+  await expect(orderNotification).toBeVisible();
+  await expect(orderNotification).toContainText(orderNumber);
+  await expect(orderNotification).toContainText('جديد');
+  await orderNotification.click();
+  await expect(orderNotification).not.toContainText('جديد');
   await page.keyboard.press('Escape');
 
   await page.reload();
