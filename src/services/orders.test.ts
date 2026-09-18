@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { assertCreatedOrderReference, assertOrderTransitionInput } from './orders';
+import { assertCreatedOrderReference, assertOrderTransitionInput, assertPaymentMethod } from './orders';
 
 describe('create-order response contract', () => {
   it('accepts a valid persisted order reference', () => {
@@ -43,4 +43,10 @@ describe('order-transition input contract', () => {
   ])('rejects unsafe transition input: %j', (orderId, status) => {
     expect(() => assertOrderTransitionInput(orderId, status)).toThrow(/(معرّف الطلب|حالة الطلب)/);
   });
+});
+
+
+describe('order payment-method contract', () => {
+  it.each(['credit', 'cash', 'transfer'])('accepts supported payment method: %s', (value) => expect(assertPaymentMethod(value)).toBe(value));
+  it.each(['', 'bitcoin', null, undefined, 42])('rejects unsupported payment method: %j', (value) => expect(() => assertPaymentMethod(value)).toThrow('طريقة الدفع غير صالحة'));
 });
