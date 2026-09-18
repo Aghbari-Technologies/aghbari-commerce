@@ -189,12 +189,12 @@ Never record a PASS unless a real run/job/artifact proves it.
 ## Protocol state
 
 - Control Plane latest commit: `92edbfb5cdbb8b9ffdc0f6107f69111c73e257ea`
-- Project Memory latest commit: `52c7f29fa2304f11c56ca89825bf72348ee513c8`
+- Project Memory latest commit: `855772a62d27fc4a0aaa99445b7e061e58490b34`
 - Fast entry point latest main commit: `93ad1933804ca2cba6cc2a051b2906dc979176e9`
 - Previous Control Plane evolution commit: `ba34d9660b0ace297e55411bdc24ff43c53bc718`
 - Fast entry point latest main commit: `29aa5c928deb97a652e78c0f0581ec09d7caa050`
 - Required execution invariant: READ → VERIFY → PARALLELIZE → EXECUTE → CAPTURE → CLASSIFY → IMPROVE PROTOCOL → PERSIST STATE → RECONCILE → REPORT
-- Latest evidence artifact commit: `efe9af1b00b153cedf0941a356493c39f5435ee6`. The programmer must update this latest-state file before declaring the round complete.
+- Latest evidence artifact commit: `f1bc47e1687fd759390f536775e567ae5446ab00`. The programmer must update this latest-state file before declaring the round complete.
 
 
 ### 2026-09-18 — Command 1 execution reconciliation
