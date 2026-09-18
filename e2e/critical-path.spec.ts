@@ -93,6 +93,10 @@ test('authenticated customer completes real search → catalog → cart → orde
   await quantityConfirmation.click();
   await expect(page.getByRole('button', { name: '✓ معتمد', exact: true })).toBeVisible();
 
+  const cashPayment = page.getByRole('radio', { name: 'نقدي' });
+  await expect(cashPayment).toBeVisible();
+  await cashPayment.check();
+
   const checkout = page.getByRole('button', { name: 'تأكيد وإرسال الطلب', exact: true });
   await expect(checkout).toBeEnabled();
   await checkout.click();
@@ -106,6 +110,7 @@ test('authenticated customer completes real search → catalog → cart → orde
 
   await expect(page.getByRole('button', { name: 'طلباتي', exact: true })).toBeVisible();
   await expect(page.getByText(`طلب #${orderNumber}`, { exact: true })).toBeVisible();
+  await expect(page.getByText('الدفع: نقدي', { exact: true })).toBeVisible();
   await page.reload();
   await expect(page.getByRole('button', { name: 'طلباتي', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'طلباتي', exact: true }).click();
