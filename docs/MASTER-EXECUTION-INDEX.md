@@ -103,3 +103,16 @@ RESULT: exact candidate CI remains terminal PASS across the recorded candidate r
 ROOT CAUSE: Vercel Hobby deployment quota remains exhausted; GitHub browser session is unauthenticated and connected mutation surface has no workflow-dispatch operation.
 ARTIFACT: candidate status; Vercel project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`; Runtime E2E source; TinyFish capability run `d6315349-d551-473c-b108-997141884371`.
 NEXT ACTION: preserve `4753cc3…`. Resume exact-SHA deployment + authenticated runtime certification only through an approved authenticated Vercel/GitHub path. Production remains NO TOUCH.
+
+
+## Latest Exact-Head / External Boundary Reconciliation — 2026-09-18 — Command 1
+
+- Single certification candidate remains `4753cc3319f551aeccbe2bd081b988fa68df8e87`; PR #74 remains OPEN/DRAFT/MERGEABLE.
+- All recorded exact-SHA candidate verification runs are terminal PASS, including Local Production Artifact Browser E2E `35310025159` / job `105490749871`.
+- The local artifact job log proves exact SHA identity plus 3 customer tests and 1 admin test; it does not prove the separate authenticated deployed Runtime E2E suite.
+- Vercel canonical project `aghbari-commerce-c2dd` has no deployment for the candidate SHA; recent READY deployments are for other refs, including `ops/execution-control-plane`.
+- GitHub status on the candidate has only the Vercel deployment-rate-limit failure. The source of `.github/workflows/runtime-e2e.yml` contains `workflow_dispatch` with required `base_url` and `exact_sha`; execution remains unavailable through the current connected dispatch surface.
+- Supabase project `mrcyqezbhpncuvaehwgf` is ACTIVE_HEALTHY. The organization is on the Free plan; official Supabase documentation states leaked-password protection is available on Pro and above.
+- Supabase performance advisor currently reports 2 informational unindexed foreign keys on `customer_invitations`; these are not promoted into the frozen candidate without workload evidence.
+- Certification remains NOT PROVEN. Production remains NO TOUCH.
+- Operational lesson: batch control-plane state updates into the minimum number of commits because this branch is generating Vercel deployments and consuming deployment quota.
