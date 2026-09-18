@@ -1251,3 +1251,32 @@ CURRENT PROOF:
 ADDITIONAL LIVE READ-ONLY SECURITY AUDIT:
 - Only one SECURITY DEFINER function is currently executable by `anon` in live production: `get_customer_invitation_for_acceptance(text)`, with strict 64-hex token validation, SHA-256 hash matching, unaccepted/unrevoked/unerexpired checks.
 - Live production still contains the legacy 3-argument `create_order` overload; it is not modified. Candidate migration revokes client-role EXECUTE on it.
+
+
+## 2026-09-18 — Command 1 — Exact candidate recovered and deployment boundary rechecked
+
+- LIVE certification candidate: `certification/final-candidate-20260918`
+- EXACT CANDIDATE SHA: `2263648fbbbd0d480b37401795ac16c2b5764da6`
+- PR: #83, base `main` at `427ff0801544449f432290205b2a29f2508541f3`
+- The candidate advanced from the previously failing `61e06987a...` through 11 commits that repaired the migration-proof authority check, concurrency proof, and stale source-contract/pgTAP coverage.
+- Current exact-head GitHub check inventory: 20 check-runs are attached to this SHA; the substantive certification gates are PASS, including application quality, security, G1 domain invariants, order workflow, Supabase migration proof, fresh/local browser proof, local production artifact proof, concurrency proof, and test-the-test.
+- Exact Vercel candidate deployment exists now: `dpl_DsZ3vCJi5ik2LayyshG6ywxAabCZ`, READY, Git-linked to branch `certification/final-candidate-20260918`, and its recorded Git SHA is exactly `2263648fbbbd0d480b37401795ac16c2b5764da6`.
+- Vercel build logs show checkout of commit `2263648`, `npm ci`, TypeScript check, Vite production build, and successful deployment completion.
+- Vercel project runtime-error scan for the current period is clean.
+- Public browser entry was independently reachable through a temporary Vercel access grant and rendered the Arabic customer login surface with no visible application error banner. This proves entry-surface reachability only; it is not authenticated E2E evidence.
+- The deployment-triggered browser E2E job did start against this exact deployed URL but failed closed before Playwright because `VERCEL_AUTOMATION_BYPASS_SECRET` is missing. GitHub Actions currently exposes customer E2E secrets `E2E_EMAIL`, `E2E_PASSWORD`, `E2E_EMAIL_B`, and `E2E_PASSWORD_B`, but `E2E_ADMIN_EMAIL`, `E2E_ADMIN_PASSWORD`, and `VERCEL_AUTOMATION_BYPASS_SECRET` are absent.
+- The formal `runtime-e2e.yml` workflow remains a workflow_dispatch-only certification path; the connected GitHub action surface does not expose workflow dispatch creation. No authenticated production/candidate browser PASS may be claimed without that exact run.
+- Production remains NO TOUCH. The current production deployment is still the older `main` deployment and is not being promoted or mutated by this execution.
+
+### Current release state
+
+CERTIFICATION CANDIDATE: **NOT CERTIFIED YET**
+
+IMPLEMENTATION / CI / LOCAL E2E / EXACT VERCEL DEPLOYMENT: **PROVEN on 2263648f...**
+AUTHENTICATED DEPLOYED BROWSER E2E: **BLOCKED by missing Vercel automation-bypass secret and missing admin E2E credentials**
+FORMAL FINAL RUNTIME REGRESSION: **NOT EXECUTED**
+PRODUCTION RELEASE: **NO TOUCH / NOT PROMOTED**
+
+### Next executable closure gate
+
+Provide the existing Vercel Automation Bypass secret to the repository and provision the admin E2E account credentials; then trigger `browser-e2e-exact.yml` and `runtime-e2e.yml` against the exact deployment URL and exact SHA `2263648fbbbd0d480b37401795ac16c2b5764da6`. After both authenticated browser proofs pass, recheck the complete exact-head gate inventory and only then evaluate production promotion.
