@@ -16,7 +16,7 @@
 - Branch: `execution/closure-hammer-20260918c`
 - PR: #74 (open, draft, mergeable)
 - Base: `main @ 4505bcb655c0b747aeea7e1cc526a94f93270d3d`
-- Candidate deployment: NOT_AVAILABLE — Vercel exact-SHA status is FAILURE: "Deployment rate limited — retry in 24 hours"; no deployment for this SHA is present in the canonical project deployment list.
+- Candidate deployment: NOT_AVAILABLE — Vercel exact-SHA status is FAILURE due deployment rate limiting; no deployment for this SHA is present in the canonical project deployment list. The latest READY deployment observed is for an `ops/execution-control-plane` commit, not the candidate.
 - Candidate authenticated browser certification: BLOCKED — approved Vercel automation-bypass credential is unavailable.
 - Previous candidate evidence for `4d5057…` is historical and not transferable.
 
@@ -70,6 +70,8 @@ Current candidate `4753cc3319f551aeccbe2bd081b988fa68df8e87` terminal PASS:
 - Codex Security: NOT CONNECTED
 - Datadog: NOT CONNECTED
 - Workflow-dispatch execution through connected GitHub surface: NOT AVAILABLE
+- Supabase organization plan: Free; current official Supabase documentation states leaked-password protection is available on Pro and above, so this control is plan-gated here.
+- Supabase performance advisor: 2 informational unindexed-FK findings remain on `customer_invitations`; unused-index observations are not being removed blindly.
 
 ## Next execution queue
 
@@ -356,3 +358,15 @@ RESULT: exact candidate CI remains terminal PASS across the recorded candidate r
 ROOT CAUSE: Vercel Hobby deployment quota remains exhausted; GitHub browser session is unauthenticated and connected mutation surface has no workflow-dispatch operation.
 ARTIFACT: candidate status; Vercel project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`; Runtime E2E source; TinyFish capability run `d6315349-d551-473c-b108-997141884371`.
 NEXT ACTION: preserve `4753cc3…`. Resume exact-SHA deployment + authenticated runtime certification only through an approved authenticated Vercel/GitHub path. Production remains NO TOUCH.
+
+
+### 2026-09-18 — Command 1 — current external-boundary recheck
+
+RUN: Vercel project/deployment reconciliation; GitHub exact-SHA status + workflow-source recheck; Supabase advisor/project-plan recheck
+JOB: candidate deployment / formal runtime dispatch / live security and performance boundary
+SHA: candidate `4753cc3319f551aeccbe2bd081b988fa68df8e87`; main `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
+FRONT: P0 external release blockers plus non-blocking live advisor observations
+RESULT: PR #74 remains OPEN/DRAFT/MERGEABLE at the exact candidate SHA. All recorded candidate verification runs remain terminal PASS. Vercel still has no candidate-SHA deployment; recent READY deployments are for other SHAs, including `ops/execution-control-plane` commits. Candidate combined status has only the Vercel failure, indicating deployment-rate limiting. `runtime-e2e.yml` still contains `workflow_dispatch` with `base_url` + `exact_sha`; the connected GitHub dispatch surface remains unavailable. Supabase is ACTIVE_HEALTHY on the Free plan. Security advisor still reports the intentional pre-auth invitation SECURITY DEFINER plus authenticated SECURITY DEFINER surface; performance advisor reports 2 informational unindexed FKs on `customer_invitations`. No candidate source mutation and no production mutation occurred.
+ROOT CAUSE: remaining certification blockers are external deployment quota and execution-credential/dispatch boundaries; Supabase leaked-password protection is plan-gated on the current Free organization and cannot be enabled through the connected Supabase mutation surface. Performance findings are informational and are not being promoted into a new candidate without workload evidence.
+ARTIFACT: candidate combined status; PR #74; canonical Vercel project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`; Runtime E2E workflow source; Supabase project `mrcyqezbhpncuvaehwgf`.
+NEXT ACTION: preserve candidate `4753cc3…`; once an approved Vercel deployment window and authenticated GitHub dispatch path are available, create/test the exact candidate deployment and execute `runtime-e2e.yml`. Obtain `VERCEL_AUTOMATION_BYPASS_SECRET` through the approved secret path. Production remains NO TOUCH.
