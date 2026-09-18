@@ -168,8 +168,8 @@ Never record a PASS unless a real run/job/artifact proves it.
 
 ## Protocol state
 
-- Control Plane latest commit: `296ffa932d9ada1f1258420c3754d437b7ec9467`
-- Project Memory latest commit: `e5fccfa93135591c1b6d124c331975ee379b7ace`
+- Control Plane latest commit: `9c7b04ef5269b7956ad290734b15c71f012745ea`
+- Project Memory latest commit: `ac0d63d630a406d21e6a634c7b8d436415b5848f`
 - Fast entry point latest main commit: `93ad1933804ca2cba6cc2a051b2906dc979176e9`
 - Previous Control Plane evolution commit: `ba34d9660b0ace297e55411bdc24ff43c53bc718`
 - Fast entry point latest main commit: `29aa5c928deb97a652e78c0f0581ec09d7caa050`
