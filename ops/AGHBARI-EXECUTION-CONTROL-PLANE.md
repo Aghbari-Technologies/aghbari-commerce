@@ -1402,3 +1402,15 @@ RESULT: candidate remained unchanged; 12 exact-SHA candidate verification runs r
 ROOT CAUSE: Vercel connector does not expose the Git-source deployment form and instead requires `files[]`; authenticated deployment/browser and workflow-dispatch capabilities remain unavailable.
 ARTIFACT: `ops/evidence/20260918-command1-vercel-gitsource-tool-boundary.md`; PR #72 run `35308340466` / job `105485106791`; candidate status/deployment sweep; Vercel project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`.
 NEXT ACTION: preserve candidate `4753cc3…`; use only an approved exact-SHA Git-linked deployment path when available, then run authenticated Runtime E2E and Formal Final Regression. Production remains NO TOUCH.
+
+
+### 2026-09-18 — Command 1 — live deployment-capability recheck 10:35 +03
+
+RUN: Vercel team/project/deployment sweep; GitHub PR #74/head/status reconciliation
+JOB: exact-SHA deployment availability / certification boundary recheck
+SHA: candidate `4753cc3319f551aeccbe2bd081b988fa68df8e87`; ops `d4cf850264a788cd299a672bc65554a6971519cd`; production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
+FRONT: candidate deployment / authenticated browser / final regression / evidence reconciliation
+RESULT: PR #74 remains OPEN/DRAFT/MERGEABLE at the same candidate SHA. Exact candidate combined status still has only Vercel FAILURE with target `upgradeToPro=build-rate-limit`. Canonical Vercel project `aghbari-commerce-c2dd` / `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm` is confirmed under the Aghbari-Technologies Hobby team; the current deployment page contains 20 deployments, all observed READY activity belongs to operational/tooling commits, and candidate match count remains zero. No candidate or Production mutation occurred.
+ROOT CAUSE: Vercel deployment quota/rate-limit remains the external deployment blocker; connected deployment wrapper still cannot provide the Git-linked `gitSource` path; authenticated browser and workflow-dispatch authority remain unavailable.
+ARTIFACT: PR #74 head verification; exact combined status; Vercel project/team/deployment sweep.
+NEXT ACTION: keep candidate frozen. Do not spend another deployment attempt until the approved exact-SHA Git-linked deployment path or complete exact-source deployment path is available. Then execute authenticated Runtime E2E and Formal Final Regression on the same SHA. Production remains NO TOUCH.
