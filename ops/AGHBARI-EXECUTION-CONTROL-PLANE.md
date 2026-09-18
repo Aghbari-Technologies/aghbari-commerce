@@ -1526,3 +1526,47 @@ This rule strengthens evidence sovereignty without weakening tests or changing c
 ## 0E. QUOTA-PRESERVING EVIDENCE PERSISTENCE — 2026-09-18
 
 Operational-state writes can themselves trigger connected Vercel Git deployments. Therefore evidence persistence must be coalesced: persist a control-plane/state commit when it records a material state transition, durable rule, new failure mode, or new evidence boundary; do not create no-op or duplicate state commits merely to satisfy a narrative cadence. Re-read remote source-of-truth on every execution, but only create a Vercel-triggering operational commit when the persisted state materially changes or a durable lesson is worth storing. This rule never permits omission of a required certification fact; it only prevents redundant quota-consuming writes.
+
+## MARKET-LED DIFFERENTIATION EVOLUTION — 2026-09-18
+
+Aghbari's market strategy is now governed by an additional evidence-first rule:
+
+**Market signal → product-fit requirement → relevant workflow → differentiator → proof artifact → measurable milestone.**
+
+Do not:
+- expand scope solely because an Upwork posting contains a feature;
+- compete by raw feature count;
+- make a commercial claim without matching evidence;
+- build portfolio artifacts that overstate production status.
+
+Do:
+- identify the client's exact pain point;
+- map the opportunity to existing proven capability first;
+- select one primary differentiator;
+- select one relevant proof artifact;
+- define a bounded first milestone;
+- convert durable product-fit gaps into tracked backlog fronts;
+- keep optional/provider-specific items separate from certification.
+
+The current differentiation library includes:
+1. Evidence-First / Trust Layer
+2. Fast B2B Order workflows
+3. Arabic/RTL-first UX
+4. Excel/legacy/Onyx migration bridge
+5. Integration reliability (outbox/idempotency/retry)
+6. Takeover-ready architecture for existing/AI-generated code
+7. Low-bandwidth/offline discipline
+8. Operations command center
+9. Sanitized demo and evidence-backed portfolio
+10. Recovery/observability
+
+Durable implementation backlog opened in GitHub:
+#75 Demo Mode and Portfolio Proof Pack
+#76 Command Palette and Bulk Action Center
+#77 Conflict Center and Recovery Center
+#78 Low-Bandwidth and Barcode-First Operations
+#79 Migration Bridge Hardening
+#80 Trust Layer and Explainable Operational State
+
+These remain backlog states, not implementation PASS. They must pass the normal exact-SHA evidence pipeline before closure.
+
