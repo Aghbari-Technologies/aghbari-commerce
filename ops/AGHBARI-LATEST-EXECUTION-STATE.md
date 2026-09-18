@@ -662,3 +662,14 @@ RESULT: PR #73 is proven stale relative to candidate migrations. Its tree ends a
 ROOT CAUSE: diagnostic branch has materially older migration provenance; candidate-era corrective migrations are absent from PR #73.
 ARTIFACT: candidate migration-proof job `105525366076`; diagnostic migration run `35321127066` / job `105541794663`; candidate migration files `20260916201000`, `20260917090000`, `20260917151000`, `20260917171000`, `20260918020000`, `20260918030000`.
 NEXT ACTION: keep PR #73 isolated/non-certifying and apply the provenance check before interpreting any future diagnostic pgTAP result. Preserve candidate freeze and await exact-SHA deployment, authenticated browser secret, and dispatch-capable final regression path.
+
+
+### 2026-09-18 — Command 1 — latest closure reconciliation
+RUN: `candidate SHA / CI / Vercel / runtime / release-boundary sweep`
+JOB: closure recheck
+SHA: candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b`; main `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
+FRONT: exact-SHA certification / deployment / final regression
+RESULT: candidate PR #74 remains OPEN/DRAFT/MERGEABLE; all 13 recorded candidate proof runs remain terminal PASS on the exact candidate SHA. Canonical Vercel project still has zero deployments matching candidate SHA and the candidate status remains FAILURE on `api-deployments-free-per-day`. Vercel runtime-error scan remains clean. No workflow-dispatch execution capability is exposed through the connected GitHub mutation surface; authenticated deployed-browser proof remains unavailable. Production remains untouched.
+ROOT CAUSE: unchanged external capability boundaries; no new candidate defect found and no new SHA justified.
+ARTIFACT: candidate runs `35321683922;35321683893;35321683989;35321683986;35321683999;35321683950;35321683916;35321684096;35321683994;35321683953;35321683815;35321684089;35321683806`; Vercel deployment/status sweep; runtime-error scan.
+NEXT ACTION: preserve candidate freeze; do not consume synthetic/quota probes; resume only when exact-SHA deployment, authenticated browser, and dispatch-capable final regression paths are available.
