@@ -8,8 +8,14 @@ const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
 const REPORT_ADVISOR_URL = (Deno.env.get('REPORT_ADVISOR_URL') ?? '').replace(/\/$/, '');
 const REPORT_ADVISOR_INGEST_TOKEN = Deno.env.get('REPORT_ADVISOR_INGEST_TOKEN') ?? '';
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, idempotency-key, x-aghbari-tenant, x-aghbari-contract',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Cache-Control': 'no-store'
+};
 const admin = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, { auth: { persistSession: false, autoRefreshToken: false } });
-function json(body: unknown, status = 200) { return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'Access-Control-Allow-Origin': '*' } }); }
+function json(body: unknown, status = 200) { return new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }); }
 function bearer(request: Request) { const value = request.headers.get('authorization') ?? ''; return value.startsWith('Bearer ') ? value.slice(7).trim() : null; }
 async function requireAdmin(request: Request) { const token = bearer(request); if (!token) throw new Error('authentication required'); const client = createClient(SUPABASE_URL, ANON_KEY, { global: { headers: { Authorization: `Bearer ${token}` } }, auth: { persistSession: false, autoRefreshToken: false } }); const { data: { user }, error } = await client.auth.getUser(token); if (error || !user) throw new Error('authentication required'); const { data: profile, error: profileError } = await admin.from('profiles').select('organization_id,role').eq('id', user.id).single(); if (profileError || !profile || !['owner', 'admin'].includes(String(profile.role))) throw new Error('reporting publication requires owner or admin role'); return { user, organizationId: String(profile.organization_id), client }; }
 function validateVersion(value: unknown, field: string) { if (typeof value !== 'string' || value.length === 0 || value.length > 128) throw new Error(`invalid ${field}`); return value.trim(); }
