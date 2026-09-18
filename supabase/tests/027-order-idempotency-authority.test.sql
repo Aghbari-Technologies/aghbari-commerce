@@ -53,7 +53,7 @@ create temp table first_order as
 select * from public.create_order(
   'order-idem-adversarial-001',
   (select warehouse_id from fixture),
-  jsonb_build_array(jsonb_build_object('product_id',(select product_id from fixture),'quantity',2))
+  jsonb_build_array(jsonb_build_object('product_id',(select product_id from fixture),'quantity',2)),'credit'
 );
 
 select is((select count(*) from first_order),1::bigint,'First order creates exactly one canonical result');
@@ -83,7 +83,7 @@ select throws_ok(
   $$select * from public.create_order(
     'order-idem-adversarial-001',
     (select warehouse_id from fixture),
-    jsonb_build_array(jsonb_build_object('product_id',(select product_id from fixture),'quantity',3))
+    jsonb_build_array(jsonb_build_object('product_id',(select product_id from fixture),'quantity',3)),'credit'
   )$$,
   '40001',
   'idempotency key payload conflict',
@@ -95,7 +95,7 @@ select throws_ok(
   $$select * from public.create_order(
     'order-idem-failure-retry-001',
     (select warehouse_id from fixture),
-    jsonb_build_array(jsonb_build_object('product_id',(select product_id from fixture),'quantity',99))
+    jsonb_build_array(jsonb_build_object('product_id',(select product_id from fixture),'quantity',99)),'credit'
   )$$,
   'P0001',
   'insufficient stock',
@@ -110,7 +110,7 @@ create temp table retry_after_failure as
 select * from public.create_order(
   'order-idem-failure-retry-001',
   (select warehouse_id from fixture),
-  jsonb_build_array(jsonb_build_object('product_id',(select product_id from fixture),'quantity',1))
+  jsonb_build_array(jsonb_build_object('product_id',(select product_id from fixture),'quantity',1)),'credit'
 );
 select is((select count(*) from retry_after_failure),1::bigint,'Retry after failed transaction succeeds');
 set local role postgres;

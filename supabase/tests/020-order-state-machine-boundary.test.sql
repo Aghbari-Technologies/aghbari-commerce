@@ -36,7 +36,7 @@ select org_a,(select id from public.price_lists where organization_id=org_a),pro
 set local role authenticated;
 select set_config('request.jwt.claim.role','authenticated',true);
 select set_config('request.jwt.claim.sub',(select user_a::text from fixture),true);
-select ok(public.create_order('state-machine-a-0001',(select warehouse_a from fixture),jsonb_build_array(jsonb_build_object('product_id',(select product_a from fixture),'quantity',1))) is not null,'Tenant A creates its own order');
+select ok(public.create_order('state-machine-a-0001',(select warehouse_a from fixture),jsonb_build_array(jsonb_build_object('product_id',(select product_a from fixture),'quantity',1)),'credit') is not null,'Tenant A creates its own order');
 select throws_ok(format('select public.transition_order(%L,%L)',(select id from public.orders where organization_id=(select org_a from fixture) order by created_at desc limit 1),'cancelled'),'42501','order transition not authorized','viewer cannot transition order');
 
 select set_config('request.jwt.claim.sub',(select user_b::text from fixture),true);
