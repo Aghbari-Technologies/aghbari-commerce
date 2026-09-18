@@ -804,3 +804,24 @@ FRONT: exact-SHA deployment existence / quota-preserving evidence
 RESULT: Six consecutive Vercel deployment pages were inspected through the historical pagination boundary, covering deployments back through 2026-09-17T01:33Z; zero deployment records had `meta.githubCommitSha` equal to candidate `5b9f2a…`. This materially strengthens the existing zero-match conclusion without creating a deployment or changing the candidate.
 ARTIFACT: Vercel project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`; six paginated read-only deployment queries; candidate combined status remains Vercel FAILURE on `build-rate-limit`.
 NEXT ACTION: keep candidate frozen; only an approved targeted deployment path can create admissible candidate runtime evidence.
+
+### 2026-09-18 — Command 1 — comprehensive closure continuation 15:05 +03
+
+RUN: exact-candidate evidence reconciliation + live release capability sweep + source/advisor forensic review
+JOB: drain all safe executable fronts while preserving candidate SHA and Production NO TOUCH
+SHA: candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b`; main `8ab9cc24f012d93a69a98bb561cd6c6642c9ae6f`; observed Production `a7953a62e601eb12322fbbd902c0790c7a3921b1`
+FRONT: exact-SHA CI / deployed-browser / Vercel / Supabase live / stale-index reconciliation / quota preservation
+RESULT:
+- Candidate branch `execution/closure-hammer-20260918c` is byte-for-byte identical to candidate SHA; no source mutation made.
+- Exact candidate GitHub evidence is terminal PASS across the 13 mandatory gates checked: application-quality `35321683950`, G1 `35321684096`, migration proof `35321683953`, security `35321683893`, concurrency `35321683806`, test-the-test `35321684089`, order workflow `35321683922`, intelligence contract `35321683986`, order invariant `35321683989`, bootstrap lockfile `35321683999`, local-production artifact browser `35321683815`, fresh-local browser `35321683994`, exact-deployment browser-contract `35321683916`.
+- Exact deployed-browser gate is NOT_PROVEN: `35321683916` has browser-contract PASS but its real `browser-e2e` job is SKIPPED because no exact candidate deployment exists.
+- Real Customer/Admin browser E2E is PROVEN only against fresh/local Supabase and local production artifact on the same candidate SHA (`35321683994`, `35321683815`); this does not transfer to Production.
+- Canonical Vercel project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm` remains linked to `Aghbari-Technologies/aghbari-commerce`; historical deployment reads and the current window show zero deployment with Git SHA `5b9f2a...`. Candidate GitHub Vercel status remains FAILURE on `api-deployments-free-per-day`.
+- Current Production deployment is READY `dpl_AmTBr8X9qBGCLdngxirQgdRM4Xjo` on main SHA `a7953a62...`; read-only build-meta confirms that SHA, and a 24h Vercel runtime-error scan is clean. Production was not touched.
+- Public production page smoke is healthy and presents `بوابة الأغبري التجارية`; static build-meta is current, but static fetch is not accepted as browser certification.
+- TinyFish interactive browser run could not start because the connected automation wallet balance is insufficient; no retry was made. This is an external browser-capability boundary, not a product failure.
+- Supabase `mrcyqezbhpncuvaehwgf` is ACTIVE_HEALTHY. Live advisors currently report security: 1 intentional anon-executable SECURITY DEFINER invitation-token lookup, 58 authenticated-executable SECURITY DEFINER functions, and 1 leaked-password-protection warning; performance: 2 unindexed-FK INFO findings and 83 unused-index INFO findings. The candidate source migration explicitly documents the invitation lookup as intentionally callable by anon; no live DB mutation was performed.
+- The candidate-to-main divergence remains documentation/tooling-only at the file-diff level; no product/runtime/database/security delta justified rebasing or mutating the candidate.
+ROOT CAUSE: remaining certification gaps are external proof/capability boundaries (exact candidate Vercel deployment, authenticated deployed-browser credentials/bypass, workflow-dispatch execution authority, and plan/config-dependent leaked-password protection), not a newly proven defect in candidate code.
+ARTIFACT: candidate runs above; Vercel project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`; Production `dpl_AmTBr8X9qBGCLdngxirQgdRM4Xjo`; Supabase `mrcyqezbhpncuvaehwgf`.
+NEXT ACTION: preserve candidate and Production. Resume only through an approved exact-SHA Git/Vercel deployment path, then run authenticated deployed browser E2E and formal final regression on that exact deployment. Do not create no-op candidate commits or consume Vercel quota to manufacture evidence.
