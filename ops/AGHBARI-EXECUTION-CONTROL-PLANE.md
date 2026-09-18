@@ -1343,3 +1343,23 @@ SHA: candidate `4753cc3319f551aeccbe2bd081b988fa68df8e87`
 FRONT: P0 external certification blockers
 RESULT: candidate exact-SHA CI remains terminal PASS; Vercel candidate deployment remains unavailable and exact commit status remains FAILURE due deployment rate limiting; `runtime-e2e.yml` contains `workflow_dispatch` but connected dispatch capability is unavailable; Supabase project is ACTIVE_HEALTHY on Free plan and official docs confirm leaked-password protection is Pro+; performance advisor has 2 informational unindexed FK findings on `customer_invitations`. No candidate or Production mutation.
 NEXT ACTION: preserve candidate; resolve approved deployment + authenticated dispatch + automation-bypass secret paths before attempting final runtime certification.
+
+
+### 2026-09-18 — Control Plane Evolution — live external-boundary verification
+
+LESSON: repeated read-only reconciliation must filter Vercel deployments by exact candidate SHA rather than infer candidate readiness from recent READY activity on operational branches. At the same time, GitHub source-level dispatch support and operator/session dispatch authority are separate facts.
+
+RULE: for every closure recheck, query the canonical deployment list and exact candidate commit status independently; record candidate-match count. Record GitHub workflow source dispatch separately from connected-session authentication/dispatch authority. Do not consume quota with synthetic candidate commits.
+
+EVIDENCE: canonical Vercel project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`; latest READY deployment `dpl_EsRYS1as7Ak584g4YSyXqkucT27r` is `ops/execution-control-plane`, while candidate `4753cc3319f551aeccbe2bd081b988fa68df8e87` has zero deployment matches. TinyFish `d4bb72d6-c9a5-4068-94f5-8225e889f8bd` shows unauthenticated GitHub Actions session and no Run workflow control. Production error/fatal scan is clean for the current production deployment.
+
+### 2026-09-18 — Command 1 — live boundary recheck 10:02 +03
+
+RUN: Vercel deployment list/status; Vercel production runtime-error scan; GitHub exact-SHA workflow/status fetch; TinyFish GitHub Actions authentication check; Supabase project/advisor/migration recheck
+JOB: external release-boundary reconciliation
+SHA: candidate `4753cc3319f551aeccbe2bd081b988fa68df8e87`; main `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
+FRONT: candidate deployment / authenticated deployed-browser / Formal Final Regression / production safety
+RESULT: no candidate source mutation; exact-SHA CI evidence remains valid; no candidate Vercel deployment; dispatch remains unavailable through connected GitHub session; production error/fatal scan clean; no Production mutation.
+ROOT CAUSE: external deployment quota and authentication/dispatch capability boundaries.
+ARTIFACT: `ops/evidence/20260918-command1-live-boundary-recheck-1002.md`
+NEXT ACTION: preserve candidate; continue only when the approved Vercel credential and dispatch-capable path are available; never weaken protection or transfer stale evidence.

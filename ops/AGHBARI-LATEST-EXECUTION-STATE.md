@@ -16,7 +16,7 @@
 - Branch: `execution/closure-hammer-20260918c`
 - PR: #74 (open, draft, mergeable)
 - Base: `main @ 4505bcb655c0b747aeea7e1cc526a94f93270d3d`
-- Candidate deployment: NOT_AVAILABLE — Vercel exact-SHA status is FAILURE due deployment rate limiting; no deployment for this SHA is present in the canonical project deployment list. The latest READY deployment observed is for an `ops/execution-control-plane` commit, not the candidate.
+- Candidate deployment: NOT_AVAILABLE — Vercel exact-SHA status is FAILURE due deployment rate limiting; no deployment for this SHA is present in the canonical project deployment list. The latest READY deployment observed is for an `ops/execution-control-plane` commit, not the candidate. Latest observed canonical READY deployment: `dpl_EsRYS1as7Ak584g4YSyXqkucT27r` at `ops/execution-control-plane` commit `9b2ff5dca88bf679c82ce1ce9872d69c8bab7964` (read-only reconciliation 2026-09-18).
 - Candidate authenticated browser certification: BLOCKED — approved Vercel automation-bypass credential is unavailable.
 - Previous candidate evidence for `4d5057…` is historical and not transferable.
 
@@ -370,3 +370,15 @@ RESULT: PR #74 remains OPEN/DRAFT/MERGEABLE at the exact candidate SHA. All reco
 ROOT CAUSE: remaining certification blockers are external deployment quota and execution-credential/dispatch boundaries; Supabase leaked-password protection is plan-gated on the current Free organization and cannot be enabled through the connected Supabase mutation surface. Performance findings are informational and are not being promoted into a new candidate without workload evidence.
 ARTIFACT: candidate combined status; PR #74; canonical Vercel project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`; Runtime E2E workflow source; Supabase project `mrcyqezbhpncuvaehwgf`.
 NEXT ACTION: preserve candidate `4753cc3…`; once an approved Vercel deployment window and authenticated GitHub dispatch path are available, create/test the exact candidate deployment and execute `runtime-e2e.yml`. Obtain `VERCEL_AUTOMATION_BYPASS_SECRET` through the approved secret path. Production remains NO TOUCH.
+
+
+### 2026-09-18 — Command 1 — live boundary recheck 10:02 +03
+
+RUN: Vercel deployment list/status; Vercel production runtime-error scan; GitHub exact-SHA workflow/status fetch; TinyFish GitHub Actions authentication check; Supabase project/advisor/migration recheck
+JOB: exact candidate release boundary reconciliation
+SHA: candidate `4753cc3319f551aeccbe2bd081b988fa68df8e87`; main `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
+FRONT: candidate deployment / authenticated deployed-browser / Formal Final Regression / production safety
+RESULT: candidate remains frozen and exact-SHA CI remains terminal PASS. Canonical Vercel project has no deployment matching candidate SHA; latest READY deployment observed is `dpl_EsRYS1as7Ak584g4YSyXqkucT27r` for `ops/execution-control-plane`. Candidate GitHub status remains Vercel failure on the deployment-rate-limit target. TinyFish `d4bb72d6-c9a5-4068-94f5-8225e889f8bd` again proves the connected GitHub browser session is unauthenticated and exposes no Run workflow control. Production runtime error/fatal scan for the current production deployment returned no logs.
+ROOT CAUSE: unresolved capability boundaries are external to the candidate source: exact-SHA deployment quota, authenticated Vercel bypass credential, and authenticated GitHub workflow-dispatch authority.
+ARTIFACT: `ops/evidence/20260918-command1-live-boundary-recheck-1002.md`
+NEXT ACTION: preserve candidate and Production NO TOUCH; resolve owner-controlled Vercel automation credential and dispatch-capable GitHub path; do not transfer older deployment/runtime evidence or alter workflow protections.
