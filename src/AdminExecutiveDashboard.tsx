@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { getStaffOrders, type StaffOrderSummary } from './services/staffOrders';
 import { formatMoney } from './domain/pricing';
 import { supabase } from './lib/supabase';
+import { buildSevenDaySales, calculateSevenDaySales, type DashboardSaleRow } from './domain/adminDashboard';
 
 type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer';
 
@@ -18,7 +19,6 @@ interface DashboardSnapshot {
 const EMPTY: DashboardSnapshot = { products: 0, customers: 0, orders: 0, stockItems: 0, receivables: 0, availableCredit: 0, sales7d: 0 };
 const STATUS_LABELS: Record<string, string> = { pending: 'قيد المراجعة', confirmed: 'مؤكد', preparing: 'قيد التجهيز', ready: 'جاهز', completed: 'مكتمل', cancelled: 'ملغي', draft: 'مسودة' };
 
-function dayKey(date: Date) { return date.toISOString().slice(0, 10); }
 function money(value: number) { return `${formatMoney(value)} ر.ي`; }
 
 export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
@@ -27,7 +27,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [salesRows, setSalesRows] = useState<Array<{ status: string; total: number; created_at: string }>>([]);
+  const [salesRows, setSalesRows] = useState<DashboardSaleRow[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -47,8 +47,8 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
         ]);
         const firstError = productsResult.error ?? customersResult.error ?? ordersResult.error ?? stockResult.error ?? creditResult.error ?? salesResult.error;
         if (firstError) throw firstError;
-        const salesRowsData = (salesResult.data ?? []).map((row) => ({ status: String(row.status), total: Number(row.total ?? 0), created_at: String(row.created_at) }));
-        const sales7d = salesRowsData.filter((order) => order.status !== 'cancelled' && order.status !== 'draft').reduce((sum, order) => sum + order.total, 0);
+        const salesRowsData: DashboardSaleRow[] = (salesResult.data ?? []).map((row) => ({ status: String(row.status), total: Number(row.total ?? 0), created_at: String(row.created_at) }));
+        const sales7d = calculateSevenDaySales(salesRowsData, new Date());
         const creditRows = creditResult.data ?? [];
         if (!cancelled) {
           setSnapshot({
@@ -73,12 +73,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
     return () => { cancelled = true; window.clearInterval(timer); };
   }, []);
 
-  const salesByDay = useMemo(() => {
-    const days = Array.from({ length: 7 }, (_, index) => { const d = new Date(); d.setDate(d.getDate() - (6 - index)); return { key: dayKey(d), label: d.toLocaleDateString('ar', { weekday: 'short' }), value: 0 }; });
-    const map = new Map(days.map((day) => [day.key, day]));
-    for (const order of salesRows) { if (order.status === 'cancelled' || order.status === 'draft') continue; const day = map.get(dayKey(new Date(order.created_at))); if (day) day.value += order.total; }
-    return days;
-  }, [salesRows]);
+  const salesByDay = useMemo(() => buildSevenDaySales(salesRows), [salesRows]);
   const maxSales = Math.max(...salesByDay.map((day) => day.value), 1);
   const statusCounts = useMemo(() => Object.entries(STATUS_LABELS).map(([status, label]) => ({ status, label, count: orders.filter((order) => order.status === status).length })).filter((item) => item.count > 0), [orders]);
   const latestOrders = orders.slice(0, 5);
