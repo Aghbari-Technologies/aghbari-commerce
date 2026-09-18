@@ -33,6 +33,7 @@
 # 0A. AUTHORITATIVE LIVE EXECUTION STATE — 2026-09-18 — CURRENT RECONCILIATION
 
 - CURRENT CANDIDATE: `4753cc3319f551aeccbe2bd081b988fa68df8e87` on `execution/closure-hammer-20260918c`; PR #74 open/draft/mergeable.
+- Proof-integrity correction now applied: candidate advanced to `64f5283e7b3f893de72dac9ea4d0bf5c3eef4b8d` after proven pull_request exact-SHA defects in G1 and Security Audit; Intelligence Contract Proof was corrected in the same focused change.
 - MAIN: `4505bcb655c0b747aeea7e1cc526a94f93270d3d`.
 - LIVE/PRODUCTION: `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`; Production = NO TOUCH; no promotion or mutation.
 - CURRENT CANDIDATE CI: terminal PASS on application-quality, G1, bootstrap-release-lockfile, security-audit, Order Workflow Proof, order-invariant, Supabase Migration Proof, Fresh Local Browser, Test-the-Test, Concurrency, and Local Production Artifact.
@@ -1424,3 +1425,12 @@ NEXT ACTION: terminalize rerun when the external job completes; if it fails, ret
 LESSON: the connected GitHub mutation surface can rerun failed workflow jobs/runs even though it cannot invoke `workflow_dispatch` manually.
 RULE: distinguish three layers: workflow source dispatch capability, manual dispatch authority, and rerun authority. A rerun of an already-created isolated diagnostic run may be used when it does not mutate the candidate or Production, but its result must remain tied to the exact original SHA and be treated as diagnostic until terminal evidence is captured.
 EVIDENCE: rerun request succeeded for run `35308829558`; GitHub reports `run_attempt=2` and status `in_progress` on exact SHA `cf7db1c376e40c44ed0cec1956c9b59ee8f5d7f0`.
+
+
+### 2026-09-18 — Control Plane Evolution — pull_request exact-SHA proof integrity
+
+LESSON: `github.sha` inside pull_request workflows can resolve to the synthetic merge commit, while the workflow run metadata still reports the PR head. Exact-SHA claims based on `inputs.exact_sha || github.sha` are therefore unsound for pull_request execution.
+
+RULE: every pull_request verification workflow that claims source-head evidence must resolve TARGET_SHA from `inputs.exact_sha || github.event.pull_request.head.sha || github.sha`, check out that exact SHA, and assert the PR-head equality when not manually dispatched.
+
+EVIDENCE: previous candidate `4753cc3...` G1 run `35310025098` and Security Audit run `35310025100` checked out merge commit `7b4da729...`; candidate was advanced to `64f5283...` with focused three-workflow correction. No product source, migration, or test-fixture change was included in this correction.
