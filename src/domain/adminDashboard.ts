@@ -34,7 +34,9 @@ export function buildSevenDaySales(rows: DashboardSaleRow[], now = new Date()): 
   const byKey = new Map(days.map((day) => [day.key, day]));
   for (const row of rows) {
     if (!includedSale(row)) continue;
-    const key = localDayKey(new Date(row.created_at));
+    const created = new Date(row.created_at);
+    if (created > now) continue;
+    const key = localDayKey(created);
     const day = byKey.get(key);
     if (day) day.value += row.total;
   }
