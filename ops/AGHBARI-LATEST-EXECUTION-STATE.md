@@ -219,6 +219,19 @@ ROOT CAUSE: strategic differentiation without an executable backlog risks becomi
 ARTIFACT: GitHub issues #75, #76, #77, #78, #79, #80; master index commit `539a5f629e048f1a6bc9d59747eb02a8748142e7`.
 NEXT ACTION: when the certification boundary is legitimately advanced, select the highest-value unblocked moat front and execute it through the standard protocol. Keep commercial backlog separate from release blockers.
 
+
+
+### 2026-09-18 — Six-lane competitive hunt strategy
+
+RUN: `narrow market strategy → hunt-lane design → durable memory`
+JOB: constrain Upwork search to competitive niches with strongest Aghbari evidence leverage
+SHA: certification candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b` unchanged; Production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497` unchanged
+FRONT: commercial strategy / market focus / portfolio proof
+RESULT: established six default hunt lanes: Supabase Multi-Tenant Security/RLS; B2B Commerce/Order & Inventory; Arabic/RTL B2B SaaS; Next.js/Supabase Production Rescue/Takeover; Data Migration/Excel/Legacy; Integration Reliability/Webhooks/Outbox/Recovery. Each lane has target jobs, win message, proof threshold, and skip criteria.
+ROOT CAUSE: broad market search dilutes proposal quality and does not exploit the strongest Aghbari evidence; narrow lanes allow one problem, one differentiator, one proof asset, and one measurable first milestone.
+ARTIFACT: `docs/UPWORK-COMPETITIVE-HUNT-LANES-20260918.md`; Bid Engine update `8ab9cc24...`; Master Index `886d23f6...`; Project Memory `23776f2e...`.
+NEXT ACTION: when commercial execution is authorized and the Upwork account capability is available, monitor these six lanes, classify opportunities, and build the portfolio proof pack around the same six lanes. Do not expand to generic Full-Stack search by default.
+
 ## State update contract
 
 Every run must replace this file's current-state sections with the newest verified facts, then append one compact entry below in this format:
