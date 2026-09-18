@@ -584,3 +584,14 @@ RESULT: no Node-version incompatibility defect. Canonical Vercel project reports
 ROOT CAUSE: none; project-level Node setting is overridden by the package engine contract at build time.
 ARTIFACT: Vercel build logs for `dpl_76mAoUmtvT2a3UaQcPtfh9NxSs63`.
 NEXT ACTION: do not create a candidate SHA for Node configuration. Preserve the actual remaining blockers: exact candidate deployment availability, approved Vercel automation-bypass credential, and authenticated workflow-dispatch path.
+
+
+### 2026-09-18 — Command 1 — live Supabase contract verification
+RUN: Supabase read-only SQL contract audit
+JOB: independent live database security-boundary verification
+SHA: release candidate subject `5b9f2a76615e76bb6444c81f39e02f3479c0704b`; live DB ref `mrcyqezbhpncuvaehwgf`
+FRONT: live security / database hardening / release evidence
+RESULT: live DB is ACTIVE_HEALTHY. Read-only inspection confirmed the target SECURITY DEFINER RPCs `get_catalog`, `stage_product_import`, `commit_product_import`, `transfer_inventory`, and `record_expense` all pin `search_path=""` and deny anon EXECUTE while retaining authenticated EXECUTE. The intentional pre-auth `get_customer_invitation_for_acceptance` remains executable by anon. The inspected DB currently reports 58 RLS-enabled public tables. This corroborates live DB hardening only; it does not prove candidate application deployment alignment.
+ROOT CAUSE: none; verification-only front.
+ARTIFACT: Supabase project `mrcyqezbhpncuvaehwgf`; read-only SQL result captured during Command 1.
+NEXT ACTION: preserve candidate freeze. Remaining certification work is exact-SHA deployment, authenticated deployed-browser proof, and Formal Final Regression execution.
