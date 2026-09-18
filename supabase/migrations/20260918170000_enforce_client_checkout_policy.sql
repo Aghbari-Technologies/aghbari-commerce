@@ -1,8 +1,10 @@
 begin;
 
--- Remove the legacy 3-argument overload so authenticated callers cannot bypass
--- the server-authoritative payment-method policy through RPC overload resolution.
-drop function if exists public.create_order(text, uuid, jsonb);
+-- Retain the legacy overload only as an internal compatibility artifact, but remove
+-- every client role's EXECUTE privilege so RPC overload resolution cannot bypass
+-- the server-authoritative payment-method policy.
+
+revoke all on function public.create_order(text, uuid, jsonb) from public, anon, authenticated;
 
 -- Payment-method schema authority is established by
 -- 20260918124842_order_payment_method_authority_20260918.sql.
