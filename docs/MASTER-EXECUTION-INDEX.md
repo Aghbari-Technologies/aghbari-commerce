@@ -68,3 +68,14 @@ Only evidence produced against the exact certification candidate SHA may advance
 - `Runtime E2E Certification` is dispatchable in source as `.github/workflows/runtime-e2e.yml`, requiring `base_url` and `exact_sha`; browser dispatch is blocked by authentication in the connected session.
 - `Production Smoke / Exact Artifact` is verification-only; no Vercel deployment workflow exists in the repository.
 - Certification remains NOT PROVEN. Production remains NO TOUCH.
+
+
+## Latest Closure Reconciliation — 2026-09-18 — Command 1 continuation
+
+- Exact candidate remains `4753cc3319f551aeccbe2bd081b988fa68df8e87`.
+- Local Production Artifact run `35310025159` / job `105490749871` successfully executed 3 customer tests and 1 admin test against an exact-SHA production build/local Supabase environment. This proves the scoped local customer/admin journey and Tenant-A/B UI isolation, not the complete `runtime-e2e.yml` suite.
+- Formal `Runtime E2E Certification` has **no run on the exact candidate SHA**. Its historical runs are on earlier SHAs and cannot transfer.
+- The complete runtime suite contains additional release-critical coverage such as invitation journey and customer template persistence; these remain unproven at runtime on the candidate.
+- Direct Vercel deployment creation was attempted and failed with HTTP 402 `api-deployments-free-per-day` after exhausting the free deployment quota. No candidate deployment was created.
+- Supabase advisor warning for `get_customer_invitation_for_acceptance` was reconciled as intentional pre-auth invitation-token lookup: the candidate source explicitly grants `anon` execution after revocation. This is not classified as a defect without contrary product/security evidence.
+- Certification remains **NOT PROVEN**. Production remains **NO TOUCH**.
