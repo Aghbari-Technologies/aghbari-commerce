@@ -348,3 +348,10 @@ PR #72 remains an isolated tooling lane at its current head; PR #73 remains an i
 
 - A Vercel deployment marked READY on a branch may point to an older commit than that branch's current GitHub HEAD. Therefore deployment evidence is admissible only when the deployment's recorded Git SHA exactly matches the claim under verification; "latest deployment" or branch name alone is never sufficient.
 - Current observed example: tooling branch HEAD is `d884f90fcdcb95eeceb47e78d8f36792268f830d`, while the latest observed Vercel deployment for that branch is commit `337b8c787c4f4d35de957214ad5596e87cc27eb4`. The deployment is valid historical evidence for that older commit, not evidence for current tooling HEAD and never evidence for candidate #74.
+
+
+## 2026-09-18 — Durable execution lesson: READY deployment is not candidate delivery
+
+A canonical Vercel project may receive a newer READY deployment from an operational branch while the release candidate has no deployment. Deployment admissibility is determined by the deployment's recorded Git SHA, not by recency, branch naming, project name, or READY state. For the current certification subject `5b9f2a76615e76bb6444c81f39e02f3479c0704b`, the reconciled canonical Vercel project has no exact-SHA deployment; the newest READY deployment observed is an `ops/execution-control-plane` commit and is operational evidence only.
+
+Operational state was reconciled on 2026-09-18 without changing the candidate or Production. Candidate exact-SHA proof remains terminal PASS across all 13 mandatory gates; deployment browser and formal final regression remain unresolved external capability boundaries. Tooling PR #72 migration proof remains a separate pgTAP baseline failure and must not be mixed into candidate certification.
