@@ -172,3 +172,11 @@ The canonical org-linked Vercel project is `aghbari-commerce-c2dd` under `Aghbar
 
 ### 17.5 Current tooling findings are real proof-system inputs
 On tooling head `1830e3a109a9e0605f5306b2ddc8f308457fb375`, Gitleaks run `35301488345` produced 61 `generic-api-key` findings (artifact `10529832877`), and Semgrep run `35301488324` produced 36 blocking findings (artifact `10530271974`). The Gitleaks findings are concentrated in deterministic test fixtures and proof scripts, so they require classification against source before any allowlist is introduced; they are not automatically safe and are not candidate certification evidence.
+
+
+## 18. COMMAND 1 — CONTINUED EXECUTION FINDINGS — 2026-09-18
+
+- Vercel provides a temporary access-link mechanism for protected deployments. It was used only for read-only verification of the non-production candidate; protection was not weakened. TinyFish verified `AGHBARI B2B`, `بوابة الأغبري التجارية`, RTL/Arabic, and exact candidate `git_sha` 4d5057d7952e213d6b5328a80f0229f1ff9fb861.
+- Formal authenticated E2E remains a separate gate because runtime credentials and the approved automation-bypass credential boundary are still unavailable through the connected mutation surface.
+- Tooling PR #72 was actively hardened on its actual current head, now ffdf0b3e6d34adef11a198c8263a9fa9760188b8. Mutable GitHub Action tags were pinned to verified commit SHAs; Dependabot cooldown was added; Release Audit dynamic RegExp was replaced with parsed-function-name matching.
+- Fresh CI was triggered on ffdf0b3e6d34adef11a198c8263a9fa9760188b8. No result is considered PASS until a terminal run proves it.
