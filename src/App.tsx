@@ -15,6 +15,7 @@ import AdminPanel from './AdminPanel';
 import ClientControlPanel from './ClientControlPanel';
 import './styles.css';
 import './customer-portal-v3.css';
+import './ui-polish.css';
 
 type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer';
 const STAFF_ROLES = new Set<UserRole>(['owner', 'admin', 'sales', 'warehouse']);
