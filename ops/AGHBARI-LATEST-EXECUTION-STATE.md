@@ -1094,3 +1094,12 @@ NEW PROVEN FINDINGS / FIXES:
 
 PRODUCTION: NO TOUCH.
 NEXT: inspect terminal current-head CI; if candidate Fresh DB/browser passes, continue exact-head certification. If a new concrete failure appears, repair source and invalidate predecessor evidence. Do not consume Vercel quota with synthetic deployments.
+
+
+### 2026-09-18 — Command 1 — LIVE corroboration checkpoint
+
+LIVE URL: `https://aghbari-commerce-c2dd.vercel.app/`
+Observed: HTTP 200; `lang=ar`, `dir=rtl`; title `بوابة الأغبري التجارية`; PWA manifest present; production CSP/HSTS/X-Frame-Options/nosniff headers present.
+Vercel production runtime: no runtime errors and no error/fatal logs in the selected last-24h window.
+Evidence class: LIVE/PRODUCTION corroboration only for the actual deployed production SHA; not candidate certification. Production remains NO TOUCH.
+Candidate #83 current exact head remains separate and must pass its own exact-head CI and matching deployment/browser proof.
