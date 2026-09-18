@@ -8,9 +8,9 @@ select is(has_function_privilege('public', 'public.adjust_inventory(uuid,uuid,in
 select is(has_function_privilege('anon', 'public.clear_cart()', 'execute'), false, 'anon cannot execute clear_cart');
 select is(has_function_privilege('authenticated', 'public.clear_cart()', 'execute'), true, 'authenticated can execute clear_cart');
 select is(has_function_privilege('public', 'public.clear_cart()', 'execute'), false, 'PUBLIC cannot execute clear_cart');
-select is(has_function_privilege('anon', 'public.create_order(text,uuid,jsonb)', 'execute'), false, 'anon cannot execute create_order');
-select is(has_function_privilege('authenticated', 'public.create_order(text,uuid,jsonb)', 'execute'), true, 'authenticated can execute create_order');
-select is(has_function_privilege('public', 'public.create_order(text,uuid,jsonb)', 'execute'), false, 'PUBLIC cannot execute create_order');
+select is(has_function_privilege('anon', 'public.create_order(text,uuid,jsonb,text)', 'execute'), false, 'anon cannot execute authoritative create_order');
+select is(has_function_privilege('authenticated', 'public.create_order(text,uuid,jsonb,text)', 'execute'), true, 'authenticated can execute authoritative create_order');
+select is(has_function_privilege('public', 'public.create_order(text,uuid,jsonb,text)', 'execute'), false, 'PUBLIC cannot execute authoritative create_order');
 select is(has_function_privilege('anon', 'public.get_cart()', 'execute'), false, 'anon cannot execute get_cart');
 select is(has_function_privilege('authenticated', 'public.get_cart()', 'execute'), true, 'authenticated can execute get_cart');
 select is(has_function_privilege('public', 'public.get_cart()', 'execute'), false, 'PUBLIC cannot execute get_cart');

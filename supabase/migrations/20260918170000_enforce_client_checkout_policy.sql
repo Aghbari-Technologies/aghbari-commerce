@@ -1,5 +1,14 @@
 begin;
 
+-- Retain the legacy overload only as an internal compatibility artifact, but remove
+-- every client role's EXECUTE privilege so RPC overload resolution cannot bypass
+-- the server-authoritative payment-method policy.
+
+revoke all on function public.create_order(text, uuid, jsonb) from public, anon, authenticated;
+
+-- Payment-method schema authority is established by
+-- 20260918124842_order_payment_method_authority_20260918.sql.
+-- This migration owns only the dynamic checkout-policy behavior.
 -- Server-authoritative enforcement for the merchant's dynamic checkout policy.
 CREATE OR REPLACE FUNCTION public.create_order(p_idempotency_key text, p_warehouse_id uuid, p_lines jsonb, p_payment_method text)
  RETURNS TABLE(order_id uuid, order_number bigint, status order_status, total numeric)
@@ -255,7 +264,7 @@ BEGIN
 
   RETURN QUERY SELECT v_order.id,v_order.order_number,v_order.status,v_order.total;
 END;
-$function$
+$function$;
 
 revoke all on function public.create_order(text,uuid,jsonb,text) from public, anon;
 grant execute on function public.create_order(text,uuid,jsonb,text) to authenticated;

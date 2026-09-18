@@ -73,7 +73,7 @@ set local role authenticated;
 select set_config('request.jwt.claim.role', 'authenticated', true);
 select set_config('request.jwt.claim.sub', (select user_a::text from fixture), true);
 
-select ok(public.create_order('cart-boundary-a-0010', (select warehouse_a from fixture), jsonb_build_array(jsonb_build_object('product_id', (select product_a from fixture), 'quantity', 1))) is not null, 'Tenant A can create its own order');
+select ok(public.create_order('cart-boundary-a-0010', (select warehouse_a from fixture), jsonb_build_array(jsonb_build_object('product_id', (select product_a from fixture), 'quantity', 1)),'credit') is not null, 'Tenant A can create its own order');
 
 select throws_ok(
   format('select public.set_cart_item(%L, 1)', (select product_b from fixture)),
@@ -83,7 +83,7 @@ select throws_ok(
 );
 
 select throws_ok(
-  format('select public.create_order(%L, %L, %L)', 'cross-tenant-order-0010', (select warehouse_b from fixture), jsonb_build_array(jsonb_build_object('product_id', (select product_b from fixture), 'quantity', 1))),
+  format('select public.create_order(%L, %L, %L, %L)', 'cross-tenant-order-0010', (select warehouse_b from fixture), jsonb_build_array(jsonb_build_object('product_id', (select product_b from fixture), 'quantity', 1)), 'credit'),
   '42501',
   'warehouse not available',
   'Tenant A cannot create order against Tenant B warehouse'
@@ -91,7 +91,7 @@ select throws_ok(
 
 select set_config('request.jwt.claim.sub', (select user_b::text from fixture), true);
 
-select ok(public.create_order('cart-boundary-b-0010', (select warehouse_b from fixture), jsonb_build_array(jsonb_build_object('product_id', (select product_b from fixture), 'quantity', 1))) is not null, 'Tenant B can create its own order');
+select ok(public.create_order('cart-boundary-b-0010', (select warehouse_b from fixture), jsonb_build_array(jsonb_build_object('product_id', (select product_b from fixture), 'quantity', 1)),'credit') is not null, 'Tenant B can create its own order');
 
 select throws_ok(
   format('select public.transition_order(%L, %L)',

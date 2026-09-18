@@ -1,6 +1,6 @@
 begin;
 
-select plan(15);
+select plan(16);
 
 insert into auth.users (id,email) values ('31313131-3131-4131-8131-313131313131','report-owner@test.local'),('32323232-3232-4232-8232-323232323232','report-admin@test.local'),('33333333-3333-4333-8333-333333333333','report-sales@test.local'),('36363636-3636-4363-8363-363636363636','report-owner-b@test.local');
 insert into public.organizations(id,name,is_active) values ('34343434-3434-4434-8434-343434343434','Reporting Tenant A',true),('35353535-3535-4535-8535-353535353535','Reporting Tenant B',true);
@@ -16,6 +16,7 @@ select is((public.request_reporting_export('sales-2026-09','2026.09','1.0','repo
 select is((select count(*) from public.reporting_exports where organization_id='34343434-3434-4434-8434-343434343434'),1::bigint,'Exactly one publication exists for the idempotency key');
 select is((public.request_reporting_export('sales-2026-09','2026.09','1.0','report-key-0001','2026-09-01','2026-09-16')).id,(select id from public.reporting_exports where idempotency_key='report-key-0001'),'Exact replay returns the original publication');
 select throws_ok($$select public.request_reporting_export('sales-2026-10','2026.10','1.0','report-key-0001')$$,'40001',null,'Changed source payload with the same key is rejected');
+select throws_ok($$select public.request_reporting_export('sales-2026-09','2026.09','1.0','report-key-0001','2026-10-01','2026-10-31')$$,'40001',null,'Same idempotency key with a different data period is rejected');
 select throws_ok($$select public.request_reporting_export('sales-2026-09','2026.09','2.0','report-key-0002')$$,'22023',null,'Unsupported schema versions are rejected');
 select throws_ok($$select public.request_reporting_export('sales-2026-09','2026.09','1.0','bad')$$,'22023',null,'Short/invalid idempotency keys are rejected');
 select throws_ok($$select public.request_reporting_export('sales-2026-09','2026.09','1.0','report-key-period','2026-09-16','2026-09-01')$$,'22023',null,'Invalid data period is rejected');

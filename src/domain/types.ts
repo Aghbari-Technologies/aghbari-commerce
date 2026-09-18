@@ -12,6 +12,9 @@ export interface Product {
   description?: string;
   availableQuantity: number;
   status: 'active' | 'inactive';
+  /** Server-authorized display price/currency returned by get_catalog. */
+  authorizedPrice?: number;
+  currency?: string;
 }
 
 export interface ProductPrice {

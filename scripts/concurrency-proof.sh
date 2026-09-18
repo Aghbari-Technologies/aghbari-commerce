@@ -37,7 +37,7 @@ begin;
 set local role authenticated;
 select set_config('request.jwt.claim.role','authenticated',true);
 select set_config('request.jwt.claim.sub','$USER_ID',true);
-select * from public.create_order('concurrent-idem-key-000001','$WAREHOUSE_ID'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT_ID'::uuid,'quantity',6)));
+select * from public.create_order('concurrent-idem-key-000001','$WAREHOUSE_ID'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT_ID'::uuid,'quantity',6)),'credit');
 commit;
 SQL
 ) & PID1=$!
@@ -47,7 +47,7 @@ begin;
 set local role authenticated;
 select set_config('request.jwt.claim.role','authenticated',true);
 select set_config('request.jwt.claim.sub','$USER_ID',true);
-select * from public.create_order('concurrent-idem-key-000001','$WAREHOUSE_ID'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT_ID'::uuid,'quantity',6)));
+select * from public.create_order('concurrent-idem-key-000001','$WAREHOUSE_ID'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT_ID'::uuid,'quantity',6)),'credit');
 commit;
 SQL
 ) & PID2=$!
@@ -60,6 +60,11 @@ STOCK=$("${PSQL[@]}" -tAc "select quantity from public.inventory_balances where 
 OUTBOX=$("${PSQL[@]}" -tAc "select count(*) from public.outbox_events where organization_id='$ORG_ID' and event_type='order.created' and aggregate_id in (select id from public.orders where organization_id='$ORG_ID' and idempotency_key='concurrent-idem-key-000001');")
 HISTORY=$("${PSQL[@]}" -tAc "select count(*) from public.order_status_history where organization_id='$ORG_ID' and order_id in (select id from public.orders where organization_id='$ORG_ID' and idempotency_key='concurrent-idem-key-000001');")
 MOVES=$("${PSQL[@]}" -tAc "select count(*) from public.inventory_movements where organization_id='$ORG_ID' and source_type='order' and source_id in (select id from public.orders where organization_id='$ORG_ID' and idempotency_key='concurrent-idem-key-000001');")
+LEGACY_EXECUTE=$("${PSQL[@]}" -tAc "select has_function_privilege('authenticated','public.create_order(text,uuid,jsonb)','EXECUTE');")
+AUTHORITATIVE_EXECUTE=$("${PSQL[@]}" -tAc "select has_function_privilege('authenticated','public.create_order(text,uuid,jsonb,text)','EXECUTE');")
+
+[ "$LEGACY_EXECUTE" = "f" ] || { echo "FAIL: legacy 3-argument create_order remains executable"; cat "$OUT1" "$OUT2"; exit 1; }
+[ "$AUTHORITATIVE_EXECUTE" = "t" ] || { echo "FAIL: authoritative 4-argument create_order is not executable"; cat "$OUT1" "$OUT2"; exit 1; }
 
 [ "$ORDERS" = "1" ] || { echo "FAIL: expected exactly one concurrent order, got $ORDERS"; cat "$OUT1" "$OUT2"; exit 1; }
 [ "$STOCK" = "4" ] || { echo "FAIL: expected remaining stock 4 after one quantity-6 effect, got $STOCK"; cat "$OUT1" "$OUT2"; exit 1; }

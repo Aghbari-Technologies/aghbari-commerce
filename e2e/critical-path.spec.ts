@@ -21,14 +21,36 @@ async function login(page: Page, email: string, password: string) {
 
   await expect(portal).toBeVisible();
   await expect(page.getByRole('button', { name: /السلة/ })).toBeVisible();
+  await clearCustomerCart(page);
 }
+
+
+async function clearCustomerCart(page: Page) {
+  const cartButton = page.getByRole('button', { name: /السلة/ });
+  await expect(cartButton).toBeVisible();
+  await cartButton.click();
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    const decrement = page.getByRole('button', { name: '−', exact: true }).first();
+    if (!(await decrement.isVisible().catch(() => false))) break;
+    await decrement.click();
+  }
+  const close = page.getByRole('button', { name: '×', exact: true }).last();
+  if (await close.isVisible().catch(() => false)) await close.click();
+}
+
+const EXPECTED_VERCEL_TOOLBAR_CSP_ERROR =
+  'Loading the script \'https://vercel.live/_next-live/feedback/feedback.js\' violates the following Content Security Policy directive: "script-src \'self\'". Note that \'script-src-elem\' was not explicitly set, so \'script-src\' is used as a fallback. The action has been blocked.';
 
 function captureBrowserFailures(page: Page) {
   const pageErrors: string[] = [];
   const consoleErrors: string[] = [];
   const failedResponses: string[] = [];
   page.on('pageerror', (error) => pageErrors.push(error.message));
-  page.on('console', (message) => { if (message.type() === 'error') consoleErrors.push(message.text()); });
+  page.on('console', (message) => {
+    if (message.type() === 'error' && message.text() !== EXPECTED_VERCEL_TOOLBAR_CSP_ERROR) {
+      consoleErrors.push(message.text());
+    }
+  });
   page.on('response', (response) => { const status = response.status(); if (status >= 400 && !response.url().endsWith('/favicon.ico')) failedResponses.push(`${status} ${response.request().method()} ${response.url()}`); });
   return { pageErrors, consoleErrors, failedResponses };
 }
@@ -39,7 +61,7 @@ async function assertCleanBrowser(failures: ReturnType<typeof captureBrowserFail
     : failures.failedResponses;
   const hasAllowedResponse = allowedResponse ? failures.failedResponses.some((entry) => allowedResponse.test(entry)) : false;
   const unexpectedConsoleErrors = hasAllowedResponse
-    ? failures.consoleErrors.filter((message) => !/Failed to load resource: the server responded with a status of 400 \(Bad Request\)/.test(message))
+    ? failures.consoleErrors.filter((message) => !/^Failed to load resource: the server responded with a status of 400 \((?:Bad Request)?\)$/.test(message))
     : failures.consoleErrors;
   expect(failures.pageErrors, `Uncaught browser errors: ${failures.pageErrors.join(' | ')}`).toEqual([]);
   expect(unexpectedConsoleErrors, `Browser console errors: ${unexpectedConsoleErrors.join(' | ')}`).toEqual([]);

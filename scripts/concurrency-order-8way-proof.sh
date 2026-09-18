@@ -40,7 +40,7 @@ begin;
 set local role authenticated;
 set local request.jwt.claim.role='authenticated';
 set local request.jwt.claim.sub='$USER';
-select * from public.create_order('$KEY','$WAREHOUSE'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT'::uuid,'quantity',2)));
+select * from public.create_order('$KEY','$WAREHOUSE'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT'::uuid,'quantity',2)),'credit');
 commit;
 SQL
   ) & pids+=("$!")
@@ -76,7 +76,7 @@ begin;
 set local role authenticated;
 set local request.jwt.claim.role='authenticated';
 set local request.jwt.claim.sub='$USER';
-select * from public.create_order('$KEY','$WAREHOUSE'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT'::uuid,'quantity',2)));
+select * from public.create_order('$KEY','$WAREHOUSE'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT'::uuid,'quantity',2)),'credit');
 commit;
 SQL
   ) & pids+=("$!")
@@ -107,7 +107,7 @@ begin;
 set local role authenticated;
 set local request.jwt.claim.role='authenticated';
 set local request.jwt.claim.sub='$USER';
-select * from public.create_order('$FAIL_KEY','$WAREHOUSE'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT'::uuid,'quantity',99)));
+select * from public.create_order('$FAIL_KEY','$WAREHOUSE'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT'::uuid,'quantity',99)),'credit');
 commit;
 SQL
   ) & failure_pids+=("$!")
@@ -136,7 +136,7 @@ begin;
 set local role authenticated;
 set local request.jwt.claim.role='authenticated';
 set local request.jwt.claim.sub='$USER';
-select * from public.create_order('$FAIL_KEY','$WAREHOUSE'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT'::uuid,'quantity',1)));
+select * from public.create_order('$FAIL_KEY','$WAREHOUSE'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT'::uuid,'quantity',1)),'credit');
 commit;
 SQL
   ) & retry_pids+=("$!")

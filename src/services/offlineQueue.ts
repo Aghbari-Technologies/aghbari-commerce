@@ -1,3 +1,5 @@
+import { MAX_ORDER_QUANTITY_PER_LINE } from '../domain/order';
+
 export const OFFLINE_CART_SET_ITEM = 'cart:set_item';
 export const OFFLINE_CART_REMOVE_ITEM = 'cart:remove_item';
 export const OFFLINE_SAFE_OPERATION_TYPES = new Set([OFFLINE_CART_SET_ITEM, OFFLINE_CART_REMOVE_ITEM]);
@@ -34,7 +36,7 @@ function isSafePayload(type: string, payload: unknown): boolean {
   const value = payload as Record<string, unknown>;
   if (typeof value.productId !== 'string' || !UUID_PATTERN.test(value.productId.trim())) return false;
   if (type === OFFLINE_CART_SET_ITEM) {
-    return Number.isSafeInteger(value.quantity) && (value.quantity as number) > 0;
+    return Number.isSafeInteger(value.quantity) && (value.quantity as number) > 0 && (value.quantity as number) <= MAX_ORDER_QUANTITY_PER_LINE;
   }
   return type === OFFLINE_CART_REMOVE_ITEM;
 }

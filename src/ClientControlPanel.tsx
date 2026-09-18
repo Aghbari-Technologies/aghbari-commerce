@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { getOrCreateReportingAttempt, type ReportingAttempt } from './domain/reportingGateway';
 import { supabase } from './lib/supabase';
 
 type ClientUiConfig = {
@@ -20,11 +21,25 @@ const BOOLEAN_LABELS: Array<[keyof ClientUiConfig, string, string]> = [
 const PAYMENT_LABELS: Array<[keyof ClientUiConfig, string]> = [['paymentOnCredit','آجل / ائتمان'],['paymentCash','نقدي'],['paymentTransfer','حوالة']];
 
 export default function ClientControlPanel({ role }: { role: string }) {
-  const [config,setConfig]=useState(DEFAULT_CONFIG); const [organizationId,setOrganizationId]=useState<string|null>(null); const [message,setMessage]=useState(''); const [error,setError]=useState(''); const [busy,setBusy]=useState(false); const [analysisBusy,setAnalysisBusy]=useState(false);
+  const [config,setConfig]=useState(DEFAULT_CONFIG); const [organizationId,setOrganizationId]=useState<string|null>(null); const [message,setMessage]=useState(''); const [error,setError]=useState(''); const [busy,setBusy]=useState(false); const [analysisBusy,setAnalysisBusy]=useState(false); const [analysisAttempt,setAnalysisAttempt]=useState<ReportingAttempt|null>(null);
   useEffect(()=>{if(!supabase||!['owner','admin'].includes(role))return;void(async()=>{const session=await supabase!.auth.getSession();const userId=session.data.session?.user.id;if(!userId)return;const {data:profile}=await supabase!.from('profiles').select('organization_id').eq('id',userId).maybeSingle();if(!profile?.organization_id)return;setOrganizationId(profile.organization_id);const {data}=await supabase!.from('client_ui_settings').select('config').eq('organization_id',profile.organization_id).maybeSingle();if(data?.config)setConfig({...DEFAULT_CONFIG,...(data.config as Partial<ClientUiConfig>)});})();},[role]);
   if(!['owner','admin'].includes(role))return null;
   async function save(){if(!supabase||!organizationId)return;setBusy(true);setMessage('');setError('');try{const {error}=await supabase.from('client_ui_settings').upsert({organization_id:organizationId,config,updated_at:new Date().toISOString()},{onConflict:'organization_id'});if(error)throw error;setMessage('تم حفظ إعدادات واجهة العميل فورياً.');}catch(e){setError(e instanceof Error?e.message:'تعذر حفظ إعدادات الواجهة.');}finally{setBusy(false);}}
-  async function requestAnalysis(){if(!supabase){setError('خدمة البيانات غير متاحة.');return;}setAnalysisBusy(true);setMessage('');setError('');try{const idempotencyKey=crypto.randomUUID();const {data,error:invokeError}=await supabase.functions.invoke('reporting-gateway',{body:{source_dataset_id:`commerce-${new Date().toISOString().slice(0,10)}`,source_version:'0.1.0',schema_version:'1.0',idempotency_key:idempotencyKey,data_period_start:new Date(new Date().getFullYear(),new Date().getMonth(),1).toISOString().slice(0,10),data_period_end:new Date().toISOString().slice(0,10)}});if(invokeError)throw invokeError;if(!data?.ok){throw new Error(String(data?.reason??data?.error??'تعذر إرسال بيانات المتجر إلى بوابة التقارير.'));}setMessage('تم تمرير لقطة بيانات المتجر إلى بوابة التقارير بنجاح، مع بقاء Commerce مصدر الحقيقة التشغيلي.');}catch(e){setError(e instanceof Error?`بوابة التقارير: ${e.message}`:'بوابة التقارير غير متاحة حالياً؛ لم يتم تعديل بيانات التشغيل.');}finally{setAnalysisBusy(false);}}
+  async function requestAnalysis(){
+    if(!supabase){setError('خدمة البيانات غير متاحة.');return;}
+    const periodStart=new Date(new Date().getFullYear(),new Date().getMonth(),1).toISOString().slice(0,10);
+    const periodEnd=new Date().toISOString().slice(0,10);
+    const attempt=getOrCreateReportingAttempt(analysisAttempt,periodStart,periodEnd,()=>crypto.randomUUID());
+    setAnalysisAttempt(attempt);setAnalysisBusy(true);setMessage('');setError('');
+    try{
+      const {data,error:invokeError}=await supabase.functions.invoke('reporting-gateway',{body:{source_dataset_id:'commerce-'+periodEnd,source_version:'0.1.0',schema_version:'1.0',idempotency_key:attempt.idempotencyKey,data_period_start:attempt.periodStart,data_period_end:attempt.periodEnd}});
+      if(invokeError)throw invokeError;
+      if(!data?.ok)throw new Error(String(data?.reason??data?.error??'تعذر إرسال بيانات المتجر إلى بوابة التقارير.'));
+      setAnalysisAttempt(null);
+      setMessage('تم تمرير لقطة بيانات المتجر إلى بوابة التقارير بنجاح، مع بقاء Commerce مصدر الحقيقة التشغيلي.');
+    }catch(e){const raw=e instanceof Error?e.message:'بوابة التقارير غير متاحة حالياً؛ لم يتم تعديل بيانات التشغيل.';setError(/not found|404|function.*not.*found|FunctionsFetchError/i.test(raw)?'بوابة التقارير غير مفعّلة على بيئة التشغيل الحالية؛ لم يتم تعديل بيانات Commerce.':raw);}
+    finally{setAnalysisBusy(false);}
+  }
   function updateBoolean(key:keyof ClientUiConfig,checked:boolean){setConfig(current=>({...current,[key]:checked}));}
   function updateNumber(key:keyof ClientUiConfig,value:string){const parsed=Number(value);setConfig(current=>({...current,[key]:Number.isFinite(parsed)&&parsed>=0?parsed:0}));}
   return <section className="admin-panel client-control-panel"><div className="section-heading"><div><span className="eyebrow">Dynamic CMS</span><h2>التحكم الديناميكي بتطبيق العميل</h2></div><span>كل تغيير محفوظ في الإعدادات الموحدة دون تعديل الكود</span></div>

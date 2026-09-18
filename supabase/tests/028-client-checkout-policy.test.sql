@@ -1,13 +1,13 @@
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(8);
+select plan(10);
 insert into auth.users(id,instance_id,aud,role,email,encrypted_password,created_at,updated_at)
 values ('28282828-2828-4282-8282-282828282828','00000000-0000-0000-0000-000000000000','authenticated','authenticated','checkout-policy@fixture.invalid','x',now(),now());
 insert into public.organizations(id,name,is_active) values ('28282828-2828-4282-8282-282828282829','Checkout Policy Tenant',true);
 insert into public.customers(id,organization_id,name,tier,is_active) values ('28282828-2828-4282-8282-282828282830','28282828-2828-4282-8282-282828282829','Checkout Policy Customer','wholesale'::customer_tier,true);
 insert into public.profiles(id,organization_id,customer_id,role) values ('28282828-2828-4282-8282-282828282828','28282828-2828-4282-8282-282828282829','28282828-2828-4282-8282-282828282830','viewer'::user_role);
 insert into public.branches(id,organization_id,name,is_active) values ('28282828-2828-4282-8282-282828282831','28282828-2828-4282-8282-282828282829','Checkout Policy Branch',true);
-insert into public.warehouses(id,organization_id,branch_id,name,is_active) values ('28282828-2828-4282-8282-282828282832','28282828-2828-4282-8282-282828282831','Checkout Policy Warehouse',true);
+insert into public.warehouses(id,organization_id,branch_id,name) values ('28282828-2828-4282-8282-282828282832','28282828-2828-4282-8282-282828282829','28282828-2828-4282-8282-282828282831','Checkout Policy Warehouse');
 insert into public.products(id,organization_id,sku,name,unit,status) values ('28282828-2828-4282-8282-282828282833','28282828-2828-4282-8282-282828282829','CHECKOUT-001','Checkout Policy Product','unit','active');
 insert into public.price_lists(id,organization_id,tier,name,currency,is_active) values ('28282828-2828-4282-8282-282828282834','28282828-2828-4282-8282-282828282829','wholesale'::customer_tier,'Checkout Wholesale','YER',true);
 insert into public.product_prices(organization_id,price_list_id,product_id,amount,valid_from) values ('28282828-2828-4282-8282-282828282829','28282828-2828-4282-8282-282828282834','28282828-2828-4282-8282-282828282833',10,now());
@@ -16,6 +16,8 @@ insert into public.client_ui_settings(organization_id,config) values ('28282828-
 set local role authenticated;
 select set_config('request.jwt.claim.role','authenticated',true);
 select set_config('request.jwt.claim.sub','28282828-2828-4282-8282-282828282828',true);
+select is((select has_function_privilege('authenticated','public.create_order(text,uuid,jsonb)','EXECUTE')),false,'Authenticated customers cannot execute the legacy 3-argument order RPC');
+select is((select has_function_privilege('authenticated','public.create_order(text,uuid,jsonb,text)','EXECUTE')),true,'Authenticated customers execute the 4-argument authoritative order RPC');
 select throws_ok($$select * from public.create_order('checkout-policy-cash-001',(select id from public.warehouses where id='28282828-2828-4282-8282-282828282832'),jsonb_build_array(jsonb_build_object('product_id','28282828-2828-4282-8282-282828282833','quantity',4)),'cash')$$,'42501','payment method not enabled','Disabled payment method is blocked server-side');
 select throws_ok($$select * from public.create_order('checkout-policy-min-001',(select id from public.warehouses where id='28282828-2828-4282-8282-282828282832'),jsonb_build_array(jsonb_build_object('product_id','28282828-2828-4282-8282-282828282833','quantity',2)),'credit')$$,'P0001','minimum order value not met','Minimum order value is enforced server-side');
 select throws_ok($$select * from public.create_order('checkout-policy-max-001',(select id from public.warehouses where id='28282828-2828-4282-8282-282828282832'),jsonb_build_array(jsonb_build_object('product_id','28282828-2828-4282-8282-282828282833','quantity',5)),'credit')$$,'P0001','maximum order value exceeded','Maximum order value is enforced server-side');
