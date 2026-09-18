@@ -38,7 +38,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
           supabase.from('products').select('id', { count: 'exact', head: true }).eq('status', 'active'),
           supabase.from('customers').select('id', { count: 'exact', head: true }),
           supabase.from('orders').select('id', { count: 'exact', head: true }),
-          supabase.from('inventory').select('product_id', { count: 'exact', head: true }),
+          supabase.from('inventory_balances').select('product_id', { count: 'exact', head: true }),
           supabase.from('customer_credit_accounts').select('outstanding_balance,available_credit'),
           getStaffOrders(100),
         ]);
@@ -95,9 +95,9 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
       <aside className="executive-sidebar">
         <div className="executive-brand"><span>أ</span><div><strong>الأغبري</strong><small>Enterprise B2B</small></div></div>
         <nav aria-label="أقسام الإدارة">
-          {['الرئيسية', 'المبيعات', 'المشتريات', 'المخزون', 'العملاء والتجار', 'الموردين', 'الحسابات والمالية', 'التقارير والتحليلات', 'إدارة النظام'].map((item, index) => <a key={item} className={index === 0 ? 'active' : ''} href={index === 0 ? '#admin-dashboard' : '#account'}>{index === 0 ? '⌂' : ['↗', '□', '▣', '♙', '▱', '◫', '▤', '⚙'][index - 1]}<span>{item}</span></a>)}
+          {[['الرئيسية','#admin-dashboard'],['الطلبات','#admin-orders'],['المخزون','#admin-inventory'],['العملاء والتجار','#admin-customers'],['الموردين','#admin-purchasing'],['الحسابات والمالية','#admin-finance'],['الإعدادات','#admin-settings']].map(([item,target], index) => <a key={item} className={index === 0 ? 'active' : ''} href={target}>{['⌂','↗','□','♙','▱','◫','⚙'][index]}<span>{item}</span></a>)}
         </nav>
-        <div className="executive-sidebar-section"><small>أدوات ذكية</small><a href="#account">✦ مساعد الأغبري الذكي</a><a href="#account">⌁ تحليل السوق</a><a href="#account">◈ التوصيات الذكية</a></div>
+        <div className="executive-sidebar-section"><small>تشغيل سريع</small><a href="#admin-orders">↗ متابعة الطلبات</a><a href="#admin-inventory">□ إدارة المخزون</a><a href="#admin-customers">♙ إدارة العملاء</a></div>
       </aside>
 
       <div className="executive-content" id="admin-dashboard">
