@@ -651,3 +651,14 @@ FRONT: isolated pgTAP baseline / candidate proof integrity
 RESULT: PR #73 stops its migration tree at `20260915052000_fix_transfer_return_parameter_ambiguity.sql`, while the candidate contains subsequent corrective migrations including `20260916201000_harden_remaining_security_definer_search_paths.sql`, `20260917090000_canonicalize_product_media_storage_boundary.sql`, `20260917151000_restore_purchase_receipt_outbox_contract.sql`, and later runtime restorations/hardening. Candidate migration-proof run `35321683953` / job `105525366076` executed 36 files / 421 tests and ended PASS, including storage, purchasing, cash-expense, core-definer and security-definer suites. Therefore the observed PR #73 pgTAP failures are not transferable to candidate certification; they are a stale-source diagnostic result against an earlier migration state.
 ROOT CAUSE: diagnostic branch provenance differs materially from the frozen candidate; candidate-era corrective migrations are absent from PR #73.
 NEXT ACTION: classify PR #73 as isolated/non-certifying provenance diagnostic. Any future pgTAP repair must declare its migration provenance and must be compared against the candidate tree before defect classification.
+
+
+### 2026-09-18 — Diagnostic provenance reconciliation
+RUN: candidate/diagnostic migration-tree comparison; candidate migration-proof job-log verification; Vercel/GitHub/Supabase boundary recheck
+JOB: pgTAP classification / candidate proof integrity / release closure
+SHA: candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b`; diagnostic PR #73 `e62cb960dfb17204074914b4a3dd5a13abcb333f`
+FRONT: isolated pgTAP baseline vs frozen candidate
+RESULT: PR #73 is proven stale relative to candidate migrations. Its tree ends at `20260915052000`, while candidate adds subsequent corrective migrations. Candidate migration-proof run `35321683953` / job `105525366076` executed 36 files / 421 tests and passed, including storage, purchasing, cash-expense, core-definer, and security-definer suites. Candidate SHA remains unchanged with 13/13 exact-SHA gates PASS. Vercel still has zero candidate-SHA deployments and GitHub still reports the deployment-rate-limit failure. No alternate workflow-dispatch capability or authenticated browser capability is exposed. Production remains untouched.
+ROOT CAUSE: diagnostic branch has materially older migration provenance; candidate-era corrective migrations are absent from PR #73.
+ARTIFACT: candidate migration-proof job `105525366076`; diagnostic migration run `35321127066` / job `105541794663`; candidate migration files `20260916201000`, `20260917090000`, `20260917151000`, `20260917171000`, `20260918020000`, `20260918030000`.
+NEXT ACTION: keep PR #73 isolated/non-certifying and apply the provenance check before interpreting any future diagnostic pgTAP result. Preserve candidate freeze and await exact-SHA deployment, authenticated browser secret, and dispatch-capable final regression path.
