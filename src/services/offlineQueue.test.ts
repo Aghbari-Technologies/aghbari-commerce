@@ -1,4 +1,5 @@
 import appSource from '../AppV3Fixed.tsx?raw';
+import { MAX_ORDER_QUANTITY_PER_LINE } from '../domain/order';
 import { beforeEach, describe, expect, it } from 'vitest';
 import {
   clearOfflineQueue,
