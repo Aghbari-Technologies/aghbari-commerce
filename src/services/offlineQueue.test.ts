@@ -1,4 +1,5 @@
 import appSource from '../AppV3Fixed.tsx?raw';
+import { MAX_ORDER_QUANTITY_PER_LINE } from '../domain/order';
 import { beforeEach, describe, expect, it } from 'vitest';
 import {
   clearOfflineQueue,
@@ -49,7 +50,7 @@ describe('offline operation queue', () => {
     expect(appSource).toContain("window.addEventListener('online',online)");
     expect(appSource).toContain("void flushOfflineCart()");
     expect(appSource).toContain('syncingOfflineRef.current');
-    expect(appSource).toContain('[signedIn,customerId]);');
+    expect(appSource).toContain('[signedIn,customerId,refreshOfflineState]);');
   });
 
   it('requires a valid authenticated user scope', () => {
@@ -221,5 +222,16 @@ describe('offline operation queue', () => {
     expect(pendingOfflineOperations()).toHaveLength(2);
     expect(pendingOfflineOperations(' ')).toHaveLength(0);
     expect(pendingOfflineOperations('not-a-user')).toHaveLength(0);
+  });
+});
+
+
+describe('offline queue safety boundaries', () => {
+  it('offline queue rejects unauthorized operation types', () => {
+    expect(() => enqueueOfflineOperation('00000000-0000-4000-8000-000000000001', 'orders:create', { productId: '00000000-0000-4000-8000-000000000002', quantity: 1 })).toThrow();
+  });
+
+  it('offline queue enforces quantity bounds', () => {
+    expect(() => enqueueOfflineOperation('00000000-0000-4000-8000-000000000001', OFFLINE_CART_SET_ITEM, { productId: '00000000-0000-4000-8000-000000000002', quantity: MAX_ORDER_QUANTITY_PER_LINE + 1 })).toThrow();
   });
 });
