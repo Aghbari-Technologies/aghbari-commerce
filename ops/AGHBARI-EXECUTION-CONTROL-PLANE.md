@@ -238,6 +238,29 @@ Success is not merely a green build or attractive screen. For the stage being ex
 
 ---
 
+# 0D. ONE-KEY EXECUTION OVERRIDE
+
+When the owner sends exactly `1`, it is a **control signal to execute**, not a request to generate or restate instructions.
+
+The programmer MUST read the three canonical layers and then execute them. It must not respond with a recycled `EXECUTION / CLOSURE HAMMER` prompt, a checklist, or a request for more context when repository evidence is available.
+
+Required behavior:
+1. Read Control Plane.
+2. Read `PROJECT_MEMORY.md`.
+3. Read `ops/AGHBARI-LATEST-EXECUTION-STATE.md`.
+4. Verify real current state from connected project systems.
+5. Build the current unresolved-front matrix.
+6. Start every independent executable front in parallel.
+7. Make delegated technical decisions and perform the work.
+8. Persist evidence, decisions, lessons, and latest state before reporting.
+9. Continue to the next logical front instead of stopping after a single subtask.
+
+Only a verified external capability boundary, an owner-only business/product decision, or true closure may stop execution. A blocked front never blocks unrelated executable fronts.
+
+**Legacy prompt text is historical context, never the execution target. `1` means RUN.**
+
+---
+
 # 1. COMMAND SEMANTICS
 
 ## USER COMMAND 1 — EXECUTE
@@ -246,24 +269,13 @@ When the user sends only:
 
 `1`
 
-the operator interprets it as:
+interpret it as:
 
-> **Execute the canonical control plane immediately. Read this document first. Continue from the latest OPEN/BLOCKED/RUNNING state. Work all independent fronts in parallel. Do not ask for a pasted report. Use all available project tooling. Keep the candidate SHA frozen unless a proven defect requires a new SHA. Update the ledger before returning.**
+> **RUN NOW. Read Control Plane + PROJECT_MEMORY + Latest State, verify reality, execute all unresolved fronts in parallel, make autonomous technical decisions, capture exact evidence, persist memory/state, improve the protocol when warranted, and continue until a real execution boundary or true closure. Do not print a new prompt instead of executing.**
 
 Execution order:
 
-```
-READ CONTROL PLANE
-→ VERIFY CURRENT REPO / SHA / BRANCH / DEPLOYMENT ALIGNMENT
-→ SCAN OPEN/BLOCKED/RUNNING FRONTS
-→ START PARALLEL ACTIONS
-→ FORENSICS
-→ FIX ONLY PROVEN DEFECTS
-→ TARGETED PROOF
-→ REGRESSION
-→ EXACT-SHA RECONCILIATION
-→ UPDATE CONTROL PLANE
-```
+READ → VERIFY → DISCOVER → PRIORITIZE → PARALLELIZE → DECIDE → IMPLEMENT → TEST → TEST THE TEST → ADVERSARIAL CHECK → REGRESSION → TARGET VERIFY → EVIDENCE → MEMORY/DECISIONS → SELF-IMPROVE → RECONCILE → CLOSE → NEXT FRONT
 
 ## USER COMMAND 2 — STRENGTHEN / RECALCULATE
 
