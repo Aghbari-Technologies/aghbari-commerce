@@ -488,3 +488,12 @@ Market demand can become a product backlog item only through:
 `market signal → product-fit gap → controlled backlog → implementation → exact evidence → portfolio artifact → targeted proposal`
 
 No market-derived requirement may weaken security, exact-SHA evidence, release gates, tenant isolation, or Production NO TOUCH.
+
+
+## 2026-09-18 UI quality decision
+
+- **Decision:** Customer order-template persistence is PostgreSQL-authoritative end to end; browser `localStorage` is not an authoritative template store.
+- **Reason:** the backend already provides normalized `order_templates` + `order_template_lines`, RLS, atomic apply, idempotency, and authorization. Keeping a parallel browser source creates drift and violates the system's trust model.
+- **UI rule:** visible keyboard shortcuts must have real behavior; navigation items must target implemented work areas; dashboard data queries must reference live canonical schema.
+- **Deployment rule:** maintain a provider-neutral static deployment path. Netlify configuration is now present for the Vite SPA; provider integration must not receive secrets in source and must remain independent of the frozen certification candidate.
+- **Scope:** implemented on non-certifying UI branch `enhancement/ui-command-center-20260918`; certification candidate `5b9f2a...` remains unchanged.
