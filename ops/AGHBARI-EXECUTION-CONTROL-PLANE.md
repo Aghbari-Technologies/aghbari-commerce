@@ -32,20 +32,24 @@
 
 # 0A. AUTHORITATIVE LIVE EXECUTION STATE — 2026-09-18 — CURRENT RECONCILIATION
 
-- CURRENT CANDIDATE: `5b9f2a76615e76bb6444c81f39e02f3479c0704b` on `execution/closure-hammer-20260918c`; PR #74 open/draft/mergeable.
-- Proof-integrity correction now applied: candidate advanced to `5b9f2a76615e76bb6444c81f39e02f3479c0704b` after an exhaustive pull_request checkout audit fixed G1, Security Audit, Intelligence Contract Proof, and Bootstrap Release Lockfile exact-SHA semantics.
-- MAIN: `8ab9cc24f012d93a69a98bb561cd6c6642c9ae6f`.
-- LIVE/PRODUCTION: `a7953a62e601eb12322fbbd902c0790c7a3921b1`; current Vercel Production deployment is `dpl_AmTBr8X9qBGCLdngxirQgdRM4Xjo` (READY, Git-linked from `main`); Production = NO TOUCH from this execution.
-- CURRENT CANDIDATE CI: 13 mandatory pull_request gates are terminal PASS on `5b9f2a…`; all current PASS evidence is exact-SHA verified.
-- LOCAL PRODUCTION ARTIFACT PROOF: current candidate run `35321683815` / job `105526067670` is PASS; exact candidate/build SHA matched; customer suite 3/3 and admin suite 1/1 passed; artifact `10537173227`.
-- CANDIDATE DEPLOYMENT: NOT_AVAILABLE; candidate SHA still has zero exact-SHA Vercel deployments. GitHub Vercel status remains FAILURE with the historical rate-limit target, but later Git-linked `main` deployments are succeeding; therefore a current global quota outage is NOT_PROVEN.
-- CANDIDATE DEPLOYMENT BROWSER: browser-contract PASS in run `35310024991`; actual browser-e2e SKIPPED because no candidate deployment. Authenticated deployment browser remains BLOCKED because `VERCEL_AUTOMATION_BYPASS_SECRET` is unavailable.
-- FORMAL FINAL REGRESSION: NOT_PROVEN. The candidate repository contains `workflow_dispatch` on 13 of 15 workflows, but the connected GitHub mutation surface exposes no workflow-dispatch execution capability. Prior browser inspection of GitHub Actions was unauthenticated.
-- WORKFLOW SAFETY: CLOSED on current candidate — 15 workflow files audited; 0 `contents: write`; 0 `git push`.
+- CURRENT CANDIDATE: `0fb5a17bcb65816963056112f5a41ccbb4ae3106` on `certification/final-candidate-20260918`; PR #83 OPEN / non-draft / mergeable.
+- CANDIDATE BASE: `main @ 427ff0801544449f432290205b2a29f2508541f3`.
+- CANDIDATE CONTENT: checkout-policy hardening is already on main; candidate adds the final certification checkpoint and is intentionally frozen.
+- MAIN: `427ff0801544449f432290205b2a29f2508541f3`.
+- LIVE/PRODUCTION: `a7953a62e601eb12322fbbd902c0790c7a3921b1`; current Vercel Production deployment `dpl_AmTBr8X9qBGCLdngxirQgdRM4Xjo` is READY and Git-linked from main; Production = NO TOUCH.
+- CANDIDATE CI: 11 named pull_request verification runs are currently queued on exact SHA `0fb5a17...`; no current candidate terminal PASS/FAIL results are being fabricated from queued state.
+- CANDIDATE DEPLOYMENT: NOT_AVAILABLE. Canonical Vercel project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm` has no deployment whose recorded Git SHA equals `0fb5a17...`.
+- REAL BROWSER HEALTH: a live Firecrawl browser session successfully rendered the deployed Aghbari application at `https://aghbari-commerce-c2dd.vercel.app/`; observed RTL, `AGHBARI B2B`, `بوابة الأغبري التجارية`, login controls, and no visible runtime error. The observed READY deployment carries operational SHA `cf82b754fae55ddf11ab30cbeaa7738c1c5ab619`, so this evidence is deployment-specific and is NOT candidate evidence.
+- VERCEL RUNTIME HEALTH: project runtime-error aggregation returned no runtime errors in the selected 6-hour window. This corroborates live runtime health but is not candidate proof.
+- FORMAL FINAL REGRESSION: NOT_PROVEN. The repository has dispatchable workflows, but the connected GitHub mutation surface exposes no workflow-dispatch operation.
+- DEPLOYMENT BROWSER: NOT_PROVEN for candidate; exact candidate deployment does not exist. Approved bypass credential path remains unavailable.
+- WORKFLOW SAFETY: candidate-side workflow safety remains closed from its prior exact-source audit; no production-touch path was added.
 - CERTIFICATION: NO.
-- TOOLING PR #72: exact head `d884f90fcdcb95eeceb47e78d8f36792268f830d`, isolated/non-certifying; Semgrep, Trivy, Gitleaks, CodeQL, Security Audit, G1, Application Quality, Order, Intelligence, and Bootstrap are terminal PASS; Supabase Migration Proof is terminal FAIL only in pgTAP baseline assertions.
-- PGTAP DIAGNOSTIC PR #73: exact head `e62cb960dfb17204074914b4a3dd5a13abcb333f`, isolated diagnostic lane; exact-head migration workflow fails 12 known product/schema contract assertions after migrations apply cleanly.
-
+- PR #84: OPEN / non-certifying, exact HEAD `3c78047737618cba39936b1fb46350bf833c4d9a`; six commits ahead of main. It contains two proven product defects/fixes: customer payment-method propagation and authorized catalog-price fallback. Its current Actions runs are queued; do not merge until exact-head verification exists.
+- PR #82: MERGED into main at merge commit `d8fdb226866a2563164816066cdecc8e08549bae`; its UI hardening is therefore already part of main.
+- PR #81: CLOSED as superseded by #82.
+- PR #74: CLOSED as superseded by #83; its exact-SHA PASS history remains historical audit evidence only.
+- Production: NO TOUCH; no promotion, migration, alias switch, or runtime mutation performed.
 
 # 0B. AUTONOMOUS MEMORY + SELF-IMPROVEMENT PROTOCOL
 
@@ -1593,3 +1597,10 @@ Observed improvement requirements from Command 1:
 4. Provider-neutral deployment preparation is valid scope when it reduces an external deployment bottleneck, but deployment existence remains a separate evidence layer from source configuration.
 
 These rules were applied immediately on non-certifying PR #81; no certification candidate or Production mutation occurred.
+
+### 2026-09-18 — Control Plane Evolution — stale candidate pointer + browser capability lesson
+
+- The top authoritative state had fallen behind a later exact candidate (`0fb5a17...`) and continued naming superseded PR #74. This has been corrected so future command `1` executions start from the real current candidate.
+- Real browser capability is available through Firecrawl even when the metered TinyFish browser wallet is unavailable; however, browser evidence remains non-transferable unless deployment Git SHA exactly matches the claim.
+- A live browser/runtime success on SHA `cf82b754...` must never be converted into candidate PASS for `0fb5a17...`.
+- PR cleanup rule strengthened operationally: close superseded implementation/certification lanes once their successor is explicit, while retaining their evidence in history.
