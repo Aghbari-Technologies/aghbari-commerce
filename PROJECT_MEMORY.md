@@ -228,3 +228,16 @@ On tooling head `1830e3a109a9e0605f5306b2ddc8f308457fb375`, Gitleaks run `353014
 
 Decision:
 Tooling PR #72 stays isolated and non-certifying until its baseline contract is intentionally reconciled. PR #73 remains a diagnostic/test-only lane. No production promotion or protection weakening is permitted.
+
+## 22. COMMAND 1 — 2026-09-18 — AUTHENTICATED BROWSER BOUNDARY RECHECK
+
+- Candidate deployment `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32` remains READY and exact-SHA aligned to `4d5057d7952e213d6b5328a80f0229f1ff9fb861`.
+- Re-running the exact candidate browser job produced job `105488272913` under run `35299467671`; it failed closed before browser execution because `VERCEL_AUTOMATION_BYPASS_SECRET` is empty. `E2E_BASE_URL` and `EXPECTED_SHA` were present and valid.
+- This confirms the authenticated browser blocker is a persistent credential-boundary condition, not an intermittent browser/application failure.
+- TinyFish read-only browser run `683148ee-b515-4e81-a2cb-ff4fa4a07ca0` remains separate PASS evidence for page/RTL/brand health only.
+- Vercel canonical project is on the Hobby plan. No protection was disabled, no secret was generated or exposed, and no repository secret was stored.
+- Formal Final Regression remains NOT_PROVEN due unavailable workflow dispatch. Candidate remains frozen and Production remains untouched.
+- Evidence artifact: `ops/evidence/20260918-command1-browser-credential-boundary-recheck.md`.
+
+Durable rule:
+When an authenticated browser gate is blocked by a missing secret, re-running the exact SHA is valid diagnostic evidence only; do not work around the secret by weakening deployment protection, using a share link as a substitute, or fabricating credentials.
