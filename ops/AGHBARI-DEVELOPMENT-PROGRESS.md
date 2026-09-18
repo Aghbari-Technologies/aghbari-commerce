@@ -159,6 +159,14 @@ Do not restart discovery of these failures unless a new regression proves the re
 - DECISIONS: do not create a new product SHA merely to manufacture a green gate; do not transfer development PASS to certification; do not bypass authenticated workflow or Vercel protection.
 - NEXT: resolve an authorized workflow-dispatch path and approved authenticated deployed-browser path; then run the formal regression against the exact release SHA. Until that capability exists, keep the current development checkpoint closed and do not repeat the cart-fixture repair.
 
+
+### POST-RECONCILIATION NOTE — RUN-2026-09-19-EXEC-003
+
+- Netlify read-only verification shows project `aghbari-commerce-web` currentDeploy `6aadaea0475017968f71cfda` is READY and is the current deployment for the primary site.
+- The deploy is recorded by Netlify with `context=production`, and public `build-meta.json` reports exact SHA `cb2707b8005ac8237b06a7c89cc9bcf68dc50061`.
+- This production-state fact predates RUN-2026-09-19-EXEC-003; no production mutation or rollback was performed during this run.
+- The older shorthand `Production: NO TOUCH` is therefore incomplete as a statement of current production identity. Current policy remains **NO NEW PRODUCTION MUTATION** until the release owner deliberately decides how the already-published development SHA should be handled after formal certification.
+
 # 3. CONTINUOUS APPEND TEMPLATE
 
 ## RUN-YYYY-MM-DD-XXX
