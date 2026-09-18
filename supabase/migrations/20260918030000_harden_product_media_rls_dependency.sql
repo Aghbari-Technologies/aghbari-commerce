@@ -10,12 +10,13 @@ STABLE
 SECURITY DEFINER
 SET search_path = ''
 AS $$
-  SELECT EXISTS (
-    SELECT 1
-    FROM public.products p
-    WHERE p.id = p_product_id
-      AND p.organization_id = public.current_organization_id()
-  );
+  SELECT public.is_staff()
+     AND EXISTS (
+       SELECT 1
+       FROM public.products p
+       WHERE p.id = p_product_id
+         AND p.organization_id = public.current_organization_id()
+     );
 $$;
 
 REVOKE EXECUTE ON FUNCTION public.product_belongs_to_current_organization(uuid) FROM PUBLIC, anon;
