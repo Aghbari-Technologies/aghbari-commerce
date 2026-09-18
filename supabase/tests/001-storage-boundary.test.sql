@@ -20,7 +20,7 @@ select throws_ok($$insert into storage.objects(bucket_id,name,owner_id,metadata)
 select results_eq($$select count(*) from storage.objects where name='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa99/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa29.webp'$$,$$values (0::bigint)$$,'Orphan product path is not readable');
 select throws_ok($$insert into storage.objects(bucket_id,name,owner_id,metadata) values ('product-media','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbb11/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa33.webp','11111111-1111-4111-8111-111111111111','{"mimetype":"image/webp","size":2048}'::jsonb)$$,'42501',null,'Tenant A cannot upload into Tenant B organization prefix');
 create temp table storage_update_probe(ok boolean);
-do $
+DO $
 begin
   begin
     update storage.objects
@@ -32,7 +32,7 @@ begin
   when others then
     insert into storage_update_probe values(false);
   end;
-end $;
+END $;
 select is((select ok from storage_update_probe limit 1),true,'Direct storage object UPDATE is not an application capability');
 select lives_ok($$select public.register_product_media('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11'::uuid,'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa31.webp','image/webp',1200,900,2048)$$,'Server registers a valid owned WebP object');
 select throws_ok($$select public.register_product_media('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa11'::uuid,'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa31/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaa35.webp','image/webp',1200,900,2048)$$,'42501',null,'Server rejects a product ID from another tenant');
