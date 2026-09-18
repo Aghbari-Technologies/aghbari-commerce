@@ -193,6 +193,19 @@ ROOT CAUSE: the remaining release-layer blocker is the absence of a valid exact-
 ARTIFACT: invalid probe `dpl_9TXFomQ7i286qAiGGEFDD2jBc7hp` ERROR; operational `dpl_3CThAUEVsB4hGcrM2JjqqiGijpdK` BUILDING on `b1c4663...`; candidate exact proof set unchanged.
 NEXT ACTION: no further deployment mutation in this round. Preserve candidate `5b9f2a...` unchanged. Resume only through an approved Git-linked exact-SHA deployment path and authenticated regression authority. Production remains NO TOUCH.
 
+
+
+### 2026-09-18 — Market-led differentiation and Upwork leadership integration
+
+RUN: `market research → requirements → bid engine → competitive moat → memory reconciliation`
+JOB: convert live Upwork demand into Aghbari product acceptance, differentiation, portfolio, and opportunity-screening rules
+SHA: certification candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b` unchanged; Production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497` unchanged; main documentation advanced separately to `eeac57f43738b48e45486b143047f21f42e81573`
+FRONT: commercial strategy / market-fit / product differentiation / durable memory
+RESULT: added Upwork market baseline (28 MKT requirements), Bid Engine with fit/proof/differentiation gates, and Competitive Moat & Portfolio system with evidence-backed positioning, demo strategy, trust UX, migration/integration moat, low-bandwidth/offline discipline, and priority differentiator backlog. Master Execution Index links all three.
+ROOT CAUSE: market requirements alone do not create competitive advantage; the project needed a durable mechanism that maps each job to one client problem, one relevant proof asset, one differentiator, and one bounded milestone without uncontrolled product scope.
+ARTIFACT: `docs/UPWORK-MARKET-REQUIREMENTS-20260918.md`; `docs/UPWORK-BID-ENGINE-20260918.md`; `docs/COMPETITIVE-MOAT-AND-PORTFOLIO-20260918.md`; main index `eeac57f...`; PROJECT_MEMORY decision commit `52539ab...`
+NEXT ACTION: build the real portfolio proof pack and sanitized demo from already-proven Aghbari capabilities, then use the Bid Engine to classify live opportunities. Do not mutate the frozen certification candidate solely to mirror market postings.
+
 ## State update contract
 
 Every run must replace this file's current-state sections with the newest verified facts, then append one compact entry below in this format:
