@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(10);
+select plan(8);
 
 select ok(
   exists(
@@ -60,8 +60,7 @@ set local role postgres;
 insert into public.orders(id,organization_id,customer_id,warehouse_id,status,currency,subtotal,total,idempotency_key,created_by)
 select gen_random_uuid(),org_id,customer_id,warehouse_id,'pending','YER',25,25,'notification-contract-create-'||replace(gen_random_uuid()::text,'-',''),user_id
 from notification_fixture
-returning id;
--- The exact row is looked up by the idempotency prefix above.
+;
 select ok(
   exists(select 1 from public.notifications n where n.customer_id=(select customer_id from notification_fixture) and n.kind='order' and n.title='تم استلام طلبك'),
   'order insert creates customer notification'
