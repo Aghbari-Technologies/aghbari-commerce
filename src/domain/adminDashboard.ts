@@ -1,10 +1,16 @@
 export interface DashboardSaleRow { status: string; total: number; created_at: string; }
 
+export const DASHBOARD_TIME_ZONE = 'Asia/Aden';
+
+function zonedParts(date: Date) {
+  const parts = new Intl.DateTimeFormat('en-CA', { timeZone: DASHBOARD_TIME_ZONE, year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(date);
+  const values = Object.fromEntries(parts.filter((part) => part.type !== 'literal').map((part) => [part.type, part.value]));
+  return { year: Number(values.year), month: Number(values.month), day: Number(values.day) };
+}
+
 function localDayKey(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+  const { year, month, day } = zonedParts(date);
+  return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 }
 
 function includedSale(row: DashboardSaleRow): boolean {
@@ -22,13 +28,12 @@ export function calculateSevenDaySales(rows: DashboardSaleRow[], now = new Date(
 }
 
 export function buildSevenDaySales(rows: DashboardSaleRow[], now = new Date()): Array<{ key: string; label: string; value: number }> {
-  const start = new Date(now);
-  start.setHours(0, 0, 0, 0);
-  start.setDate(start.getDate() - 6);
+  const parts = zonedParts(now);
+  const start = new Date(Date.UTC(parts.year, parts.month - 1, parts.day - 6, 12));
   const days = Array.from({ length: 7 }, (_, index) => {
     const day = new Date(start);
-    day.setDate(start.getDate() + index);
-    return { key: localDayKey(day), label: day.toLocaleDateString('ar', { weekday: 'short' }), value: 0 };
+    day.setUTCDate(start.getUTCDate() + index);
+    return { key: localDayKey(day), label: day.toLocaleDateString('ar', { timeZone: DASHBOARD_TIME_ZONE, weekday: 'short' }), value: 0 };
   });
   const byKey = new Map(days.map((day) => [day.key, day]));
   for (const row of rows) {
