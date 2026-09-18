@@ -11,7 +11,7 @@
 - Development PR: `#88` — OPEN / DRAFT / MERGEABLE
 
 ## Current development checkpoint
-- RUN: `RUN-2026-09-19-EXEC-002`
+- RUN: `RUN-2026-09-19-EXEC-003`
 - HEAD: `cb2707b8005ac8237b06a7c89cc9bcf68dc50061`
 - Previous checkpoint: `4d7fbe9e6f0ff977f2829ef91e07d290c6d83554`
 - Lane: non-certifying development only
@@ -43,6 +43,7 @@ This was classified as a proof/test defect, not a product or security defect.
 
 ## Current open boundary
 - Formal Final Regression: NOT_PROVEN — connected GitHub mutation surface exposes no workflow-dispatch operation.
+- Alternate authenticated browser-dispatch path: BLOCKED before start by external automation wallet capacity; no browser execution occurred through that path.
 - Certification: NO.
 - Production: NO TOUCH.
 
@@ -51,7 +52,7 @@ No product or security implementation change is currently required from the comp
 ## Next resume queue
 1. On command `1`, verify current HEAD and reconcile the exact development evidence; do not repeat the cart-fixture repair.
 2. Compare any genuinely remaining market-ready gaps against Project Memory and execute only correctness/security/reliability/release-required work.
-3. When an authorized workflow-dispatch path becomes available, execute Formal Final Regression against the exact release SHA and reconcile its evidence.
+3. Resolve an authorized workflow-dispatch path and approved authenticated browser path; the alternate automation route must not be retried until its external capability is restored, then execute Formal Final Regression against the exact release SHA.
 4. Keep PR #88 isolated from the frozen certification candidate until deliberate release promotion.
 5. Keep Production NO TOUCH.
 
