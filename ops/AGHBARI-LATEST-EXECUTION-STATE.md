@@ -31,9 +31,10 @@
 
 ## Exact-SHA candidate proof currently recorded
 
-- HISTORICAL EVIDENCE INVALIDATED: all PASS records tied to candidate 4d5057d7952e213d6b5328a80f0229f1ff9fb861 are not evidence for current candidate 4753cc3319f551aeccbe2bd081b988fa68df8e87.
-- Current candidate exact-SHA CI was freshly triggered by the workflow-hardening commits; terminal results are not yet available at this checkpoint.
-- An intermediate current-SHA failure occurred on 70bd9bd9d7df6e0dd889dff189698841096fd116 because bootstrap-release-lockfile.yml was missing after deletion. This was repaired on current candidate 4753cc3319f551aeccbe2bd081b988fa68df8e87 by restoring it as read-only validation.
+- Historical evidence tied to candidate 4d5057d7952e213d6b5328a80f0229f1ff9fb861 is INVALID for current candidate 4753cc3319f551aeccbe2bd081b988fa68df8e87.
+- Current candidate terminal PASS at exact SHA: application-quality run 35310025067; G1 Domain Proof 35310025098; bootstrap-release-lockfile 35310025140; security-audit 35310025100; Order Workflow Proof 35310025147; order-invariant-contract 35310025210; Browser E2E / Exact Deployment PR-side contract run 35310024991.
+- Current candidate still non-terminal: supabase-migration-proof 35310025169; Fresh Local Browser 35310025060; Test-the-Test 35310025041; Local Production Browser 35310025159; Concurrency 35310025032.
+- The Browser E2E / Exact Deployment PASS above is the PR-side exact-source contract stage only; it is not authenticated runtime browser proof because there is no current-SHA Vercel deployment.
 
 ## Release blockers
 
@@ -185,7 +186,7 @@ Never record a PASS unless a real run/job/artifact proves it.
 - Previous Control Plane evolution commit: `ba34d9660b0ace297e55411bdc24ff43c53bc718`
 - Fast entry point latest main commit: `29aa5c928deb97a652e78c0f0581ec09d7caa050`
 - Required execution invariant: READ → VERIFY → PARALLELIZE → EXECUTE → CAPTURE → CLASSIFY → IMPROVE PROTOCOL → PERSIST STATE → RECONCILE → REPORT
-- Latest evidence artifact commit: `828414c5414fb09d05a8efb092c3ebbf1adb51bc`. The programmer must update this latest-state file before declaring the round complete.
+- Latest evidence artifact commit: `977207b49f46dcb89bdfa64b9ab7bdb0880be8ba`. The programmer must update this latest-state file before declaring the round complete.
 
 
 ### 2026-09-18 — Command 1 execution reconciliation
@@ -259,13 +260,14 @@ ROOT CAUSE: approved Vercel automation-bypass credential is still unavailable.
 ARTIFACT: `ops/evidence/20260918-command1-browser-credential-boundary-recheck.md` commit `54e8c69ef9c7a572b793b611847b643bbcd66490`.
 NEXT ACTION: obtain the approved automation-bypass credential through the owner-controlled Vercel/GitHub secret path; do not disable protection or store the secret in repository files.
 
-### 2026-09-18 — Command 1 — workflow safety and release-gate reconciliation
+### 2026-09-18 — Command 1 — current candidate terminal checkpoint
 
-RUN: 35310025169;35310025060;35310025041;35310025159;35310025032;35310025100;35310025098;35310025147;35310025210;35310025067; Vercel exact-SHA status; TinyFish 20d96519-64ea-4767-83ed-d55676b2b6f1
-JOB: candidate workflow safety / exact-SHA CI / deployment rate-limit / authenticated browser boundary / formal regression capability
-SHA: candidate 4753cc3319f551aeccbe2bd081b988fa68df8e87; previous candidate 4d5057d…; main 4505bcb655c0b747aeea7e1cc526a94f93270d3d; production b102ce5e9aebe61bb13581cd9a8f45d1cc43c497
-FRONT: operational workflow safety; release audit contract; Vercel deployment; browser credentials; workflow dispatch
-RESULT: candidate hardened so no workflow file contains write permissions or git push; the required bootstrap release workflow remains present but read-only. Candidate CI is running/pending at checkpoint. Vercel exact-SHA deployment is blocked by the platform's reported 24-hour rate limit. Authenticated browser and formal Final Regression remain blocked by external capability/credential boundaries. No Production mutation or promotion.
-ROOT CAUSE: self-mutating automation was broader than initially scoped; deleting the release-lockfile workflow alone violated the explicit release-audit contract; Vercel deployment quota and unauthenticated GitHub UI prevent the remaining external proof paths.
-ARTIFACT: PR #74 head 4753cc3319f551aeccbe2bd081b988fa68df8e87; evidence ops/evidence/20260918-command1-workflow-safety-release-gates.md
-NEXT ACTION: terminalize current-SHA CI; retry Vercel only when platform permits; preserve browser/Final Regression boundaries; do not transfer historical evidence.
+RUN: 35310025067;35310025098;35310025140;35310025100;35310025147;35310025210;35310024991
+JOB: candidate exact-SHA CI checkpoint
+SHA: 4753cc3319f551aeccbe2bd081b988fa68df8e87
+FRONT: release CI / workflow safety / deployment evidence
+RESULT: 7 PR-side gates are terminal PASS. Five candidate gates remain non-terminal. Candidate workflow safety is closed at this SHA: 15 workflow files scanned, zero contents: write, zero git push.
+ROOT CAUSE: external Vercel deployment rate limit prevents current-SHA deployment; several local proof jobs are still running/pending.
+ARTIFACT: ops/evidence/20260918-command1-current-candidate-terminal-checkpoint.md commit 977207b49f46dcb89bdfa64b9ab7bdb0880be8ba
+NEXT ACTION: terminalize the remaining current-SHA CI fronts if/when they execute; do not reuse historical evidence or touch Production.
+
