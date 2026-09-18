@@ -1074,3 +1074,23 @@ CLOSURE:
 - Production is NO TOUCH.
 
 NEXT: inspect terminal CI on the current heads; integrate only proven fixes; then construct one consolidated candidate from the proven main lineage and re-run exact-SHA certification.
+
+
+### 2026-09-18 — Command 1 — current exact-head status after E2E forensic repair
+
+CURRENT CANDIDATE: `85c289fa62598d140a87ab37fec173b5f2962b3f` (PR #83)
+MAIN: `427ff0801544449f432290205b2a29f2508541f3`
+PR #84: `34f4fba2d69ceae00b30ea40565a966c2914d488`
+PR #86: `10dac1d629c8804c048efcd626cfe4e71f4cda6a`
+PR #87: `71fb3fa267f4d5b3b80a9e77b2e2afa4cb5d51b4`
+
+NEW PROVEN FINDINGS / FIXES:
+- Fresh exact-head browser E2E on predecessor PR #84 proved the production build/artifact was correct but customer order creation failed. Artifact/log evidence pointed to `create_order` inserting into missing `public.notifications` on Fresh DB. The missing schema contract was added to candidate and all active fix lanes with tenant RLS + regression coverage; the implementation was not weakened.
+- The same E2E run exposed retry-state contamination: browser retries reused a persisted customer cart, producing counts 2/3/4 and masking the real order path. The exact test harness was repaired to clear the customer's cart through the UI after login, keeping the test authoritative and avoiding SQL backdoors.
+- Candidate PR #83 had exact-head G1 PASS and Security PASS on predecessor `9dc6bd3...`, but those results are invalid for the current `85c289fa...` head and must not be transferred.
+- Current candidate run set for `85c289fa...` is queued; no exact-head certification is claimed yet.
+- Supabase account has no dedicated Commerce staging project. Existing healthy `Report-Advisor-P0-2-Staging` is a different product and is not used as Commerce staging. Production project `mrcyqezbhpncuvaehwgf` remains read-only.
+- Reporting Gateway source remains non-production: live Supabase inspection shows the Edge Function is not deployed. PR #87 hardens browser CORS, period-bound idempotency, remote-accepted/local-finalize recovery, and admin error messaging; no Production deployment was attempted.
+
+PRODUCTION: NO TOUCH.
+NEXT: inspect terminal current-head CI; if candidate Fresh DB/browser passes, continue exact-head certification. If a new concrete failure appears, repair source and invalidate predecessor evidence. Do not consume Vercel quota with synthetic deployments.
