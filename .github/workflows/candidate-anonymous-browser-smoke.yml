@@ -69,8 +69,18 @@ jobs:
           const fs=require('node:fs');
           const raw=fs.readFileSync('anonymous-deploy.json','utf8').trim();
           const data=JSON.parse(raw);
-          const url=data.deploy_url || data.deployUrl || data.url;
-          if(!url || !/^https:\/\//.test(url)) throw new Error('No HTTPS anonymous deploy URL');
+          const preferredKeys=['deploy_url','deployUrl','deploy_ssl_url','deploySslUrl','ssl_url','sslUrl','url'];
+          function walk(value){
+            if(!value || typeof value!=='object') return null;
+            for(const key of preferredKeys){
+              if(typeof value[key]==='string' && /^https:\/\//.test(value[key])) return value[key];
+            }
+            if(Array.isArray(value)){ for(const item of value){ const found=walk(item); if(found) return found; } }
+            else { for(const item of Object.values(value)){ const found=walk(item); if(found) return found; } }
+            return null;
+          }
+          const url=walk(data);
+          if(!url) throw new Error('No HTTPS deploy URL in Netlify JSON: '+raw.slice(0,2000));
           fs.appendFileSync(process.env.GITHUB_ENV,'E2E_BASE_URL='+url+'\n');
           fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,'### Exact anonymous preview\n'+url+'\n');
           console.log('ANONYMOUS_PREVIEW_URL='+url);
