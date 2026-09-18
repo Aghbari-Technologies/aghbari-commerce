@@ -1502,3 +1502,14 @@ NEXT ACTION: keep candidate frozen; do not spend deployment quota while Vercel r
 - Do not satisfy a deployment connector that requires `files[]` by uploading an incomplete project merely to bypass a Git-source limitation. An incomplete deployment is invalid evidence and can create a misleading READY/ERROR artifact.
 - A GitHub Actions browser artifact is not assumed deployable unless the complete required `dist/` tree is present. Artifact `10537173227` was explicitly inspected and classified as evidence-only because it contains build metadata/hash/preview log and Playwright evidence, not the complete build output.
 - Creating a no-code branch at the frozen candidate SHA is an allowed alternate-path probe only when it cannot change the candidate commit; absence of a resulting deployment must be recorded, and the branch must never be mistaken for candidate deployment evidence.
+
+
+### 2026-09-18 — Control Plane Evolution — deployment-probe mutation safety
+
+LESSON: `mcp__Vercel__deploy_to_vercel` is a mutating operation, not a dry-run validator. Submitting a minimally valid `files[]` payload creates a real preview deployment even when the payload is intentionally incomplete.
+
+OBSERVATION: a capability probe with one empty `index.html` created `dpl_9TXFomQ7i286qAiGGEFDD2jBc7hp`, which terminalized `ERROR` at `vite build` with `ENOENT` because `vite` was not present in the incomplete deployment. It had no Git SHA metadata and is not candidate evidence.
+
+RULE: never use `deploy_to_vercel` with synthetic/minimal files as a capability probe. Treat every accepted payload as a real deployment mutation. For exact-SHA release evidence, use only a complete exact-source payload or a Git-linked deployment path whose source identity can be independently verified. A validation probe that creates an artifact is itself a deployment side effect and must be recorded explicitly.
+
+SAFETY: no candidate SHA, Production deployment, alias, migration, or protection was modified by this probe.
