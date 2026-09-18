@@ -30,10 +30,15 @@ async function clearCustomerCart(page: Page) {
   await expect(cartButton).toBeVisible();
   await cartButton.click();
   for (let attempt = 0; attempt < 100; attempt += 1) {
+    const countText = (await cartButton.innerText()).match(/(\d+)$/)?.[1];
+    const count = countText ? Number(countText) : 0;
+    if (count <= 0) break;
     const decrement = page.getByRole('button', { name: '−', exact: true }).first();
-    if (!(await decrement.isVisible().catch(() => false))) break;
+    await expect(decrement).toBeVisible();
     await decrement.click();
+    await expect.poll(async () => Number(((await cartButton.innerText()).match(/(\d+)$/)?.[1]) ?? 0), { timeout: 5000 }).toBeLessThan(count);
   }
+  await expect.poll(async () => Number(((await cartButton.innerText()).match(/(\d+)$/)?.[1]) ?? 0), { timeout: 5000 }).toBe(0);
   const close = page.getByRole('button', { name: '×', exact: true }).last();
   if (await close.isVisible().catch(() => false)) await close.click();
 }
