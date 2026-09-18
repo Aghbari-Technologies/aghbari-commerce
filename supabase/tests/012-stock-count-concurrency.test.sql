@@ -38,7 +38,7 @@ select public.complete_stock_count(
 );
 
 select throws_ok(
-  $$select public.set_stock_count_line((select id from public.stock_count_sessions where organization_id='22222222-2222-4222-222222222222' and status='completed'),'25252525-2525-4252-8252-252525252525',13)$$,
+  $$select public.set_stock_count_line((select id from public.stock_count_sessions where organization_id='22222222-2222-4222-8222-222222222222' and status='completed'),'25252525-2525-4252-8252-252525252525',13)$$,
   '22023','stock count is not open',
   'Completed stock counts cannot be modified'
 );
