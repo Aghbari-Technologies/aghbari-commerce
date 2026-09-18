@@ -994,3 +994,27 @@ RESULT:
 - This is a proof-system/test-fixture defect, not a proven product failure. Because the candidate source changed, all prior candidate PASS evidence is invalidated and must be re-established against `b05adb77...`.
 - GitHub created a fresh exact-head check suite (16 check-runs; 11 unique named gates currently queued, one duplicate cancelled). No PASS is transferred from `0fb5a17...`.
 - Production remains NO TOUCH; Vercel candidate deployment remains absent.
+
+
+### 2026-09-18 — Command 1 — deep correctness closure / schema + offline fronts
+
+RUN: exact-head CI forensic continuation + non-certifying product audit
+JOB: repair proven Fresh-DB contract defects; strengthen offline runtime; preserve candidate evidence integrity
+CURRENT CANDIDATE: `e8a0e802f1ef12832d518dfbf43e5026e5811851` (PR #83)
+MAIN: `427ff0801544449f432290205b2a29f2508541f3`
+PR #84: latest observed head `0b3e540a90e1e9e0d5992febbf18c4c59561547e` (payment/catalog fix lane; exact-head CI queued)
+PR #86: latest observed head `6f6fc1188a165796d42a13354b4ecc0b68b50fa2` (offline correctness/runtime integration; exact-head CI queued)
+RESULT:
+- Candidate Fresh-DB migration proof exposed a real syntax failure in migration `20260918124842_order_payment_method_authority_20260918.sql`; the dollar-quoted DO block was replaced with parser-safe direct constraint DDL.
+- Candidate checkout-policy migration previously duplicated payment-method schema ownership; the duplicate column/constraint block was removed so the earlier authority migration is the single owner.
+- Candidate #83 received a new exact-head run set after these repairs; no prior PASS is transferred across the new SHA. Current newest runs are queued at exact head `e8a0e802...`.
+- Application Quality on the prior repaired candidate checkpoint passed, but current-head certification remains OPEN until all required exact-head gates terminalize.
+- PR #84 payment/catalog fix lane now contains parser-safe schema correction, server-authorized pricing fallback, payment selection wiring, and Vite raw-source regression instead of Node fs typing dependency. Current exact-head CI is queued.
+- PR #86 offline lane now rejects quantities above canonical order ceiling, auto-drains the offline cart on reconnect, shows connection/sync state in the customer portal, and tests runtime wiring. Current exact-head CI is queued.
+- Real browser/runtime health was previously verified on an operational Vercel deployment at a different SHA; this remains deployment-specific and non-transferable to candidate #83.
+- Production remains NO TOUCH.
+LESSONS:
+- Schema contracts used by a new RPC must be owned by a single explicit migration before the RPC migration is proven; otherwise Fresh DB catches cross-migration drift.
+- Offline capability is not complete when a queue exists; the actual product runtime must invoke drain/re-auth/revalidation on reconnect and expose the state to the operator/customer.
+ARTIFACTS: candidate head `e8a0e802...`; failing job `105628578364`; parser failure source migration `20260918124842_order_payment_method_authority_20260918.sql`; PR #84; PR #86.
+NEXT ACTION: inspect terminal results on current exact heads; repair only proven failures; once PR #84/#86 exact-head evidence is complete, integrate the proven fixes into the release candidate via a new exact-SHA certification subject. Keep Production NO TOUCH and do not manufacture Vercel deployments.
