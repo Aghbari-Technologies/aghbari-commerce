@@ -23,7 +23,7 @@ test('customer order template survives reload, re-login, apply, and delete', asy
   const templateName = `E2E مسحة ${Date.now()}`;
   await page.getByPlaceholder('حفظ كمسحة').fill(templateName);
   await page.getByRole('button', { name: 'حفظ' }).click();
-  await expect(page.getByText('تم حفظ المسحة بنجاح.')).toBeVisible({ timeout: 10000 });
+  await expect(page.getByRole('status')).toContainText('تم حفظ المسحة', { timeout: 10000 });
 
   await page.getByRole('button', { name: 'المسحات' }).click();
   await expect(page.getByText('المسحات الجاهزة')).toBeVisible({ timeout: 10000 });
