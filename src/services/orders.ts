@@ -1,16 +1,22 @@
 import { requireSupabase } from '../lib/supabase';
-import type { OrderDraft } from '../domain/types';
+import type { OrderDraft, PaymentMethod } from '../domain/types';
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const ORDER_STATUSES = new Set(['draft', 'pending', 'confirmed', 'preparing', 'ready', 'completed', 'cancelled']);
 const MAX_IDEMPOTENCY_KEY_LENGTH = 128;
 const MAX_ORDER_LINES = 100;
+const PAYMENT_METHODS: ReadonlySet<PaymentMethod> = new Set(['credit', 'cash', 'transfer']);
 
 function assertUuid(value: unknown, operation: string) {
   if (typeof value !== 'string') throw new Error(`معرّف ${operation} غير صالح.`);
   const normalized = value.trim();
   if (!UUID_PATTERN.test(normalized)) throw new Error(`معرّف ${operation} غير صالح.`);
   return normalized;
+}
+
+export function assertPaymentMethod(value: unknown): PaymentMethod {
+  if (typeof value !== 'string' || !PAYMENT_METHODS.has(value as PaymentMethod)) throw new Error('طريقة الدفع غير صالحة.');
+  return value as PaymentMethod;
 }
 
 function assertIdempotencyKey(value: unknown) {
@@ -76,7 +82,8 @@ export async function createOrder(draft: OrderDraft, warehouseId?: unknown) {
   const idempotencyKey = assertIdempotencyKey(candidate.idempotencyKey);
   const normalizedWarehouseId = warehouseId == null ? await resolveOperationalWarehouse() : assertUuid(warehouseId, 'المستودع');
   const lines = assertOrderLines(candidate.lines);
-  const { data, error } = await requireSupabase().rpc('create_order', { p_idempotency_key: idempotencyKey, p_warehouse_id: normalizedWarehouseId, p_lines: lines.map(({ productId, quantity }) => ({ product_id: productId, quantity })) });
+  const paymentMethod = assertPaymentMethod(candidate.paymentMethod ?? 'credit');
+  const { data, error } = await requireSupabase().rpc('create_order', { p_idempotency_key: idempotencyKey, p_warehouse_id: normalizedWarehouseId, p_lines: lines.map(({ productId, quantity }) => ({ product_id: productId, quantity })), p_payment_method: paymentMethod });
   if (error) throw error;
   const row = data?.[0] as { order_id?: unknown; order_number?: unknown } | undefined;
   return assertCreatedOrderReference({ id: row?.order_id, order_number: row?.order_number });
