@@ -12,17 +12,16 @@
 
 ## Current candidate
 
-- SHA: `4d5057d7952e213d6b5328a80f0229f1ff9fb861`
-- Branch: `execution/closure-hammer-20260918b`
-- Candidate deployment: `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32`
-- Candidate deployment state: READY
-- Candidate authenticated browser certification: BLOCKED — approved E2E credentials/bypass boundary unavailable.
-- Read-only candidate browser inspection: PASS via TinyFish 604c8f4a-19f1-4357-b380-9b2c816937fb using temporary Vercel access link; app brand/RTL/Arabic verified and /build-meta.json matched exact candidate SHA.
-
+- SHA: 4753cc3319f551aeccbe2bd081b988fa68df8e87
+- Branch: execution/closure-hammer-20260918c
+- Candidate deployment: NOT_AVAILABLE — Vercel deployment rate-limited
+- Candidate deployment evidence: exact SHA status reports FAILURE — Deployment rate limited — retry in 24 hours; no deployment for this SHA is present in the canonical Vercel project deployment list.
+- Candidate authenticated browser certification: BLOCKED — approved E2E credentials / Vercel automation-bypass boundary unavailable.
+- Prior candidate 4d5057… deployment and browser evidence are historical and are not transferable to this SHA.
 ## Main / Live / Production
 
 - Main SHA: `4505bcb655c0b747aeea7e1cc526a94f93270d3d`
-- Main change: removed obsolete self-mutating `repair-excel-build.yml` after proving its intended source repairs were already present.
+- Main change: security-only deletion of obsolete self-mutating repair-excel-build.yml; main still retains legacy bootstrap write workflows pending candidate integration.
 - Live/Production SHA: `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
 - Main delta from previous live/main `b102ce5…`: security-only deletion of `.github/workflows/repair-excel-build.yml`.
 - Production: NO TOUCH
