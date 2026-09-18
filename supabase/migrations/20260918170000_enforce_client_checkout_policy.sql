@@ -1,25 +1,8 @@
 begin;
 
--- The checkout-policy contract persists the selected payment method on orders.
--- Existing orders remain backward-compatible through the credit default.
-ALTER TABLE public.orders
-  ADD COLUMN IF NOT EXISTS payment_method text NOT NULL DEFAULT 'credit';
-
-DO $
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1
-    FROM pg_constraint
-    WHERE conname = 'orders_payment_method_check'
-      AND conrelid = 'public.orders'::regclass
-  ) THEN
-    ALTER TABLE public.orders
-      ADD CONSTRAINT orders_payment_method_check
-      CHECK (payment_method IN ('credit', 'cash', 'transfer'));
-  END IF;
-END
-$;
-
+-- Payment-method schema authority is established by
+-- 20260918124842_order_payment_method_authority_20260918.sql.
+-- This migration owns only the dynamic checkout-policy behavior.
 -- Server-authoritative enforcement for the merchant's dynamic checkout policy.
  enforcement for the merchant's dynamic checkout policy.
 CREATE OR REPLACE FUNCTION public.create_order(p_idempotency_key text, p_warehouse_id uuid, p_lines jsonb, p_payment_method text)
