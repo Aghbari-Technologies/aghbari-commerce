@@ -297,3 +297,14 @@ RESULT: all listed candidate verification runs are terminal PASS, including Loca
 ROOT CAUSE: remaining blockers are external evidence-capability boundaries, not a current candidate code failure.
 ARTIFACT: `ops/evidence/20260918-command1-current-candidate-closure.md` commit `14800754e7e379f6abdf8b4dce1528fc5b3120c6`
 NEXT ACTION: preserve candidate and Production NO TOUCH; resolve approved deployment credential and dispatch capability without weakening controls.
+
+### 2026-09-18 — Command 1 continued execution — deployment/dispatch reconciliation
+
+RUN: TinyFish `cef567c7-c485-472e-a2bd-7d90ae5f7228`; TinyFish `333d215e-3601-4204-a643-45e3eac973a9`; Vercel project/deployment reconciliation
+JOB: exact candidate deployment path / formal regression dispatch capability / release evidence
+SHA: candidate `4753cc3319f551aeccbe2bd081b988fa68df8e87`
+FRONT: Vercel exact-SHA deployment; authenticated deployed browser; formal regression
+RESULT: no current-SHA deployment exists. Canonical Vercel project `aghbari-commerce-c2dd` is linked to `Aghbari-Technologies/aghbari-commerce`, but its latest observed READY deployment is for a different SHA. GitHub source contains dispatchable `runtime-e2e.yml` with required `base_url` and `exact_sha`, but the connected browser session is not authenticated for dispatch. `production-smoke.yml` is verification-only and also requires an already-deployed exact artifact; no Vercel deployment workflow exists in the repository.
+ROOT CAUSE: deployment creation remains outside the connected Vercel mutation surface; authenticated GitHub dispatch remains unavailable in the connected browser/session. Do not substitute an older deployment URL for the current candidate.
+ARTIFACT: Runtime E2E workflow `.github/workflows/runtime-e2e.yml`; Production Smoke `.github/workflows/production-smoke.yml`; Vercel project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`.
+NEXT ACTION: preserve candidate; retry Vercel only when a supported authenticated deployment path/rate-limit window permits exact-SHA preview deployment. Then dispatch Runtime E2E with the exact candidate SHA and matching deployment URL. Production remains NO TOUCH.
