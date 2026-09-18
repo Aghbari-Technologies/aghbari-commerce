@@ -22,13 +22,21 @@ async function clearCustomerCart(page: Page) {
   await expect(cartButton).toBeVisible();
   await cartButton.click();
   const lines = page.locator('.cart-drawer .drawer-line');
-  for (let attempt = 0; attempt < 100; attempt += 1) {
+  for (let attempt = 0; attempt < 500; attempt += 1) {
     const lineCount = await lines.count();
     if (lineCount === 0) break;
-    const decrement = page.locator('.cart-drawer').getByRole('button', { name: '−', exact: true }).first();
+    const line = lines.first();
+    const quantityOutput = line.locator('.quantity span');
+    const beforeQuantity = Number((await quantityOutput.innerText()).trim());
+    expect(Number.isSafeInteger(beforeQuantity) && beforeQuantity > 0).toBeTruthy();
+    const decrement = line.getByRole('button', { name: '−', exact: true });
     await expect(decrement).toBeVisible();
     await decrement.click();
-    await expect.poll(() => lines.count(), { timeout: 5000 }).toBeLessThan(lineCount);
+    if (beforeQuantity > 1) {
+      await expect.poll(async () => Number((await quantityOutput.innerText()).trim()), { timeout: 5000 }).toBeLessThan(beforeQuantity);
+    } else {
+      await expect.poll(() => lines.count(), { timeout: 5000 }).toBeLessThan(lineCount);
+    }
   }
   await expect(lines).toHaveCount(0, { timeout: 5000 });
   const close = page.locator('.cart-drawer').getByRole('button', { name: '×', exact: true });
