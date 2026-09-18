@@ -1,0 +1,150 @@
+name: Candidate Netlify Browser Smoke v9
+
+on:
+  push:
+    branches:
+      - execution/closure-war-room-20260917
+  workflow_dispatch:
+    inputs:
+      exact_sha:
+        description: Exact SHA to build and smoke-test
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: aghbari-candidate-netlify-browser-smoke-v9
+  cancel-in-progress: false
+
+env:
+  SUPABASE_URL: https://mrcyqezbhpncuvaehwgf.supabase.co
+  SUPABASE_PUBLISHABLE_KEY: sb_publishable_WVcYLR2Evhr75RAmUHQBGg_BPkZEnNW
+  TARGET_SHA: ${{ inputs.exact_sha || github.sha }}
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Validate exact SHA
+        run: echo "$TARGET_SHA" | grep -Eq '^[0-9a-f]{40}$'
+
+      - name: Checkout exact candidate
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 1
+
+      - name: Verify exact candidate HEAD
+        run: test "$(git rev-parse HEAD)" = "$TARGET_SHA"
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Build exact candidate
+        run: npm run build
+        env:
+          VITE_BUILD_SHA: ${{ env.TARGET_SHA }}
+          VITE_SUPABASE_URL: ${{ env.SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ env.SUPABASE_PUBLISHABLE_KEY }}
+
+      - name: Verify local build identity
+        run: |
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const m = JSON.parse(fs.readFileSync('dist/build-meta.json', 'utf8'));
+          if (m.product !== 'aghbari-commerce') throw new Error('Invalid product marker');
+          if (m.git_sha !== process.env.TARGET_SHA) throw new Error('LOCAL SHA MISMATCH: ' + m.git_sha);
+          NODE
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Deploy temporary anonymous Netlify preview
+        run: npx --yes netlify-cli deploy --dir=dist --allow-anonymous --no-build --json > anonymous-deploy.json
+
+      - name: Set exact preview environment
+        shell: bash
+        run: |
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const data = JSON.parse(fs.readFileSync('anonymous-deploy.json', 'utf8'));
+          const site = data.site_url || data.siteUrl;
+          if (!site) throw new Error('Netlify response has no site_url');
+          const url = site.replace(/^http:\/\//, 'https://');
+          fs.appendFileSync(process.env.GITHUB_ENV, 'E2E_BASE_URL=' + url + '\n');
+          if (typeof data.password === 'string' && data.password) {
+            console.log('::add-mask::' + data.password);
+            fs.appendFileSync(process.env.GITHUB_ENV, 'DROP_PASSWORD=' + data.password + '\n');
+          }
+          console.log('NETLIFY_PREVIEW_URL=' + url);
+          NODE
+
+      - name: Create browser smoke spec
+        shell: bash
+        run: |
+          cat > candidate-public-smoke-v9.spec.js <<'TEST'
+          import { test, expect } from '@playwright/test';
+
+          test('public exact candidate browser smoke', async ({ page }) => {
+            const url = process.env.E2E_BASE_URL;
+            const expected = process.env.TARGET_SHA;
+            const password = process.env.DROP_PASSWORD || '';
+            if (!url || !expected) throw new Error('Smoke environment missing');
+
+            const failures = [];
+            page.on('pageerror', e => failures.push('pageerror: ' + e.message));
+            page.on('console', m => { if (m.type() === 'error') failures.push('console: ' + m.text()); });
+            page.on('response', r => {
+              if (r.status() >= 400 && !r.url().endsWith('/favicon.ico')) {
+                failures.push(r.status() + ' ' + r.request().method() + ' ' + r.url());
+              }
+            });
+
+            await page.goto(url, { waitUntil: 'networkidle', timeout: 30000 });
+
+            const gate = page.locator('input[type="password"]');
+            if (await gate.count()) {
+              if (!password) throw new Error('Netlify password gate present without deploy password');
+              await gate.fill(password);
+              await page.getByRole('button', { name: /Submit|إرسال|دخول|متابعة/i }).first().click();
+              await page.waitForLoadState('networkidle');
+            }
+
+            await expect(page.locator('h1').filter({ hasText: 'بوابة الأغبري التجارية' })).toBeVisible();
+            expect(await page.getByText('العامري', { exact: false }).count()).toBe(0);
+            expect(await page.locator('html').getAttribute('dir')).toBe('rtl');
+
+            const meta = await page.evaluate(async () => (await fetch('/build-meta.json', { cache: 'no-store' })).json());
+            expect(meta.product).toBe('aghbari-commerce');
+            expect(meta.git_sha).toBe(expected);
+
+            const manifest = await page.request.get(new URL('/manifest.webmanifest', url).toString());
+            expect(manifest.ok()).toBeTruthy();
+
+            const unexpectedFailures = password ? failures.filter(f => !f.startsWith('401 GET ' + url) && !f.startsWith('console: Failed to load resource: the server responded with a status of 401 ()')) : failures;
+            expect(unexpectedFailures).toEqual([]);
+          });
+          TEST
+
+      - name: Run browser smoke
+        run: npx playwright test candidate-public-smoke-v9.spec.js --project=chromium --reporter=list
+
+      - name: Upload browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: candidate-netlify-browser-smoke-v9-${{ env.TARGET_SHA }}
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 7
