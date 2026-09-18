@@ -560,3 +560,275 @@ PRODUCTION RELEASE: **NO TOUCH / NOT PROMOTED**
 ### Next executable closure gate
 
 Provide the existing Vercel Automation Bypass secret to the repository and provision the admin E2E account credentials; then trigger `browser-e2e-exact.yml` and `runtime-e2e.yml` against the exact deployment URL and exact SHA `2263648fbbbd0d480b37401795ac16c2b5764da6`. After both authenticated browser proofs pass, recheck the complete exact-head gate inventory and only then evaluate production promotion.
+
+
+---
+
+## 24. LIVE REQUIREMENTS HUB — SINGLE MEMORY LOCATION — 2026-09-18
+
+> **This section is the canonical live-memory consolidation of accepted Aghbari Commerce requirements.**
+>
+> The detailed specification files remain supporting references, but the next execution MUST begin from this hub so product requirements are not scattered across chat history or disconnected notes.
+>
+> Rule: when a requirement is added, corrected, or superseded, update this hub in the same execution and identify the companion detailed source when one exists. Do not leave a newly accepted requirement only in chat.
+
+### 24.1 Product identity and mission
+- Product identity: **الأغبري**.
+- Canonical customer-facing identity: **بوابة الأغبري للمواد الغذائية** / Aghbari Commerce.
+- Legacy identity **العامري** must not appear in current product UI, metadata, documentation, tests, or release artifacts except explicit historical/reference context.
+- Product is a reliable Arabic RTL-first B2B wholesale commerce / operational system of record.
+- Product is designed for medium traders that need a practical alternative to heavyweight ERP systems.
+- Operational truth belongs to the server/database; client state is never authoritative for money, stock, permissions, tiers, totals, order acceptance, or integration completion.
+- Report-Advisor remains the separate analytical/BI layer. Do not duplicate BI dashboards, forecasting, decision intelligence, or executive analytical reporting inside Aghbari.
+- Data sent through the Report-Advisor gateway must not remain as a competing reporting-data source in Aghbari or alter store transactions after handoff.
+
+### 24.2 Mandatory operational modules
+1. Authentication and identity
+   - Secure session handling.
+   - Customer/staff separation.
+   - Server-side tenant context and authorization.
+   - Customer approval, activation, suspension, reactivation.
+   - Staff roles and least privilege.
+   - Session expiry/re-authentication.
+   - Unauthorized/expired-session handling.
+2. Organizations / branches / warehouses
+   - Tenant isolation.
+   - Branches and warehouses.
+   - Warehouse-scoped inventory.
+   - Scope-aware staff permissions.
+   - Cross-tenant/cross-warehouse rejection.
+3. Customers
+   - Create/manage/approve/activate/suspend/reactivate.
+   - Contact and operational account state.
+   - Customer tier assignment.
+   - Server-side authorized-price resolution.
+   - Customer-facing UI must not expose internal tier metadata.
+4. Suppliers
+   - Supplier master data and lifecycle.
+   - Purchasing linkage.
+   - Tenant-scoped authorized access.
+5. Catalog
+   - Categories, products, UUID identity, SKU/item number/barcode, units, status, descriptions/metadata.
+   - Product media/images.
+   - Search, filtering, categories, pagination.
+   - Measured/appropriate indexes and explicit freshness policy.
+6. Product media
+   - First-class media entity separate from product identity.
+   - Stable product UUID across media replacement.
+   - Multiple images and explicit primary image.
+   - Safe MIME/type/size validation; no executable content.
+   - Authorized tenant-scoped media operations.
+   - Graceful missing/broken images.
+   - Private-object access must remain authorized.
+   - Never use media as price/stock/SKU truth.
+7. Pricing
+   - Customer pricing tiers.
+   - Product price per tier.
+   - Server-side effective-price selection.
+   - Effective dates/versioning where required.
+   - Price-change audit.
+   - Promotions as separate bounded context.
+   - Deterministic promotion precedence.
+   - Bulk price update with validation/preview.
+   - Customer sees only authorized price.
+8. Cart
+   - One logical active cart per customer context.
+   - At most one active line per product/cart.
+   - Set quantity/remove/repeated-operation determinism.
+   - Quantity/UUID/payload bounds.
+   - Safe bounded offline support.
+   - Cart is not final order truth.
+9. Orders
+   - Server-generated canonical order ID and order number.
+   - Transactional creation.
+   - Authorized price/quantity/customer snapshots as required.
+   - Server-calculated totals.
+   - Explicit lifecycle/state machine and status history.
+   - Notes/amendments/fulfillment/delivery/invoice where required.
+   - Search/filter.
+   - Duplicate-submission prevention and idempotency.
+   - Concurrency protection and audit trail.
+10. Inventory
+   - Balance by product/warehouse.
+   - Movement ledger, receipts, adjustments, reconciliation, thresholds, reservations.
+   - Lot/batch/expiry/traceability where required.
+   - Receiving provenance and blocked/expired/quarantined stock states where applicable.
+   - FEFO when enabled.
+   - No direct ad-hoc balance edits.
+   - Every material mutation carries actor, reason, source/reference, timestamp.
+   - No overselling, lost update, double mutation, or partial transactional mutation.
+11. Purchasing and receiving
+   - Suppliers, purchase orders/lines, approval/submission lifecycle.
+   - Idempotent creation and exact-payload replay.
+   - Changed-payload conflict rejection.
+   - Finite numeric validation; reject NaN/Infinity/-Infinity.
+   - Receiving events.
+   - Inventory changes only through domain operations.
+   - Receipt idempotency and transactional inventory/outbox/audit effects where required.
+12. Promotions
+   - Separate from base pricing.
+   - Deterministic eligibility and precedence.
+   - Server calculation.
+   - Financially material result persisted/audited.
+13. Imports
+   - Upload → Quarantine → Parse → Schema Validation → Business Validation → Preview → Approval → Atomic Commit → Evidence.
+   - Untrusted-file boundary.
+   - Type/size validation, safe parser, malformed numeric rejection.
+   - No SQL injection or cross-tenant import.
+   - Actionable row errors, duplicates, fingerprinting/idempotency.
+   - No mutation before approval.
+   - Atomic/auditable commit with rollback/recovery semantics.
+14. Exports
+   - Authorized canonical reads only.
+   - Tenant scope.
+   - Versioned contract and exact column order where required.
+   - No customer-data leakage.
+   - Export audit.
+   - Onyx contract isolated from core domain.
+15. Notifications
+   - Intent, recipient, channel, delivery state, attempts, provider reference.
+   - Retryable vs terminal failure.
+   - Never block the core transaction.
+16. Outbox/integrations
+   - Business Transaction → Commit → Durable Outbox → Worker → Adapter → Provider → Delivery Record → Retry/Backoff → Terminal Failure/DLQ.
+   - Onyx Pro, WhatsApp provider, Report-Advisor bridge.
+   - External systems never write canonical Aghbari tables directly.
+   - Idempotency key + correlation ID per delivery.
+   - Attempt/status/timestamps/provider reference/error classification.
+   - At-least-once consumers must be idempotent.
+   - Queueing/adapter existence is not delivery proof.
+17. Audit
+   - Authentication/security changes.
+   - Customer lifecycle.
+   - Price changes.
+   - Orders/status changes.
+   - Inventory/purchasing/receipts.
+   - Import/export.
+   - Integration retries/replays.
+   - Privileged administrative actions.
+   - Scope-aware, append-oriented, tamper-resistant within application trust model.
+   - Do not store secrets unnecessarily.
+18. Offline/PWA
+   - Convenience/resilience only; never operational authority.
+   - Safe catalog cache, authorized price cache where policy permits, limited customer cache, cart drafting, bounded queued submissions.
+   - Never authoritative offline: inventory truth, price mutation, roles/permissions, final stock commit, final order acceptance.
+   - Reconnect: re-authenticate → re-authorize → revalidate → transaction → idempotency → ACK/CONFLICT/TERMINAL_FAILURE.
+   - Bounded queue size/attempts, UUID validation, payload limits, malformed-record eviction, exact removal after success, preservation of concurrent additions, no duplicate business effects.
+
+### 24.3 Core security requirements
+- Defense in depth: UI restrictions never substitute for server/database authorization.
+- Strict tenant / organization / branch / warehouse isolation.
+- RLS and least-privilege RPC/function execution.
+- Sensitive SECURITY DEFINER functions must have justified grants, correct search_path, safe input validation, and adversarial tests.
+- Anonymous/pre-auth paths are explicit exceptions only when product flow requires them and must be tightly constrained.
+- Never expose service_role or other private secrets to browser/source.
+- Never weaken security controls to make tests pass.
+- Cross-tenant, cross-scope, unauthorized-RPC and storage adversarial tests are required.
+- Security proof is exact-SHA and layer-specific.
+
+### 24.4 UI/UX requirements — final visual/product layer
+- Arabic-first RTL, professional, modern, calm, clean, responsive, mobile/desktop/PWA ready.
+- One coherent Aghbari design system: design tokens, colors, typography, spacing, radius/elevation, icons, buttons, inputs, tables, cards, dialogs, navigation.
+- Consistent loading, empty, error, success, confirmation, disabled, validation, retry and offline/sync states.
+- Keyboard/focus/accessibility behavior must be real, not decorative.
+- No Lovable-style copied surface and no visual duplication of other products.
+- Final customer portal must cover:
+  catalog, search/filter, authorized pricing, product detail/media, cart, checkout/order flow, order history/status, account/profile, financial/customer statement where enabled, reorder/order templates, Excel quick-order import/review/commit, connection/sync feedback.
+- Final admin control plane must cover:
+  products, categories, prices, media, unified import center, inventory/warehouse operations, orders, customers, suppliers, purchasing, finance/operational statements, roles/permissions, settings.
+- Unified settings must include identity/branding, theme/colors, preferences and operational configuration where supported.
+- Navigation/quick actions must not expose actionable links to unavailable role-specific areas.
+- Business-day/date logic must use explicit product timezone policy; current product context uses Asia/Aden where applicable.
+- Dashboard/command-center UI is operational, not a replacement BI layer.
+- UI upgrades extend existing workflows; do not replatform/rewrite working surfaces without necessity and evidence.
+- Visible shortcuts must execute real actions.
+- Broken/missing media must degrade gracefully.
+- UX must include low-bandwidth/offline recovery signals where applicable.
+
+### 24.5 Data/import/reporting/integration separation
+- Aghbari is the operational source of truth.
+- Reporting/BI data is handed off through a bounded Report-Advisor gateway.
+- Gateway requests need CORS correctness, period-bound idempotency, safe retry semantics, clear unavailable-state handling, and request-scoped acceptance/recovery state.
+- External delivery must not corrupt or partially mutate the operational transaction.
+- Integration and report publication evidence must be distinguished from queued-only state.
+
+### 24.6 Reliability / correctness / concurrency requirements
+- Transactional business mutations.
+- Deterministic idempotency.
+- Same-key exact-payload replay succeeds deterministically; same-key changed payload is rejected.
+- Concurrency controls prevent oversell, duplicate mutation and lost updates.
+- State-machine transitions are explicit and denied when invalid.
+- Numeric finiteness and payload/quantity bounds are enforced at canonical domain/server layers.
+- Offline replay has conflict/terminal-failure paths and re-entry protection.
+- Recovery workers require retry/backoff and terminal/DLQ semantics.
+- Observability must identify the first real failure layer without masking downstream symptoms.
+
+### 24.7 UX/product differentiation and commercial requirements adopted today
+- Differentiate through workflow depth, trust/security proof, Arabic/RTL quality, migration readiness, integration reliability, offline/low-bandwidth behavior, production observability/recovery, and evidence-backed demos/case studies—not feature-count claims.
+- Major client-visible capabilities should be convertible into honest proof-backed case studies.
+- Priority workflow stories:
+  first B2B order; repeat/reorder; Excel/legacy onboarding; warehouse/order processing; tenant onboarding; integration failure/retry/recovery.
+- Candidate differentiator backlog:
+  Command Palette; Bulk Action Center; Smart Reorder; Barcode-first operations; Explainable Business State; Conflict Center; Recovery Center; Tenant Onboarding Wizard; Saved Views; keyboard-first desktop workflow; sanitized Demo Mode; capability/evidence cards.
+- Commercial/Upwork hunt lanes:
+  1) Supabase Multi-Tenant Security / RLS
+  2) B2B Commerce / Order & Inventory Operations
+  3) Arabic/RTL B2B SaaS
+  4) Next.js/Supabase production rescue/takeover
+  5) Data migration / Excel / legacy-to-SaaS onboarding
+  6) Integration reliability / webhooks / outbox / recovery
+- Commercial unit:
+  CLIENT PAIN → RELEVANT AGHBARI WORKFLOW → PROOF → DIFFERENTIATOR → BOUNDED MILESTONE.
+- One opportunity should map to one lane + one primary moat + one proof asset + one measurable first milestone.
+- Market signals may create backlog only through:
+  market signal → product-fit gap → controlled backlog → implementation → exact evidence → portfolio artifact → targeted proposal.
+- Do not make unsupported production/commercial claims.
+
+### 24.8 Release/evidence requirements
+- CODE ≠ TEST ≠ CI ≠ RUNTIME ≠ LIVE ≠ PRODUCTION.
+- IMPLEMENTED ≠ VERIFIED ≠ PROVEN ≠ CERTIFIED.
+- Every PASS/claim is exact-SHA scoped.
+- New source SHA invalidates affected prior certification evidence.
+- Test-the-test is mandatory for material claims.
+- Adversarial/bypass/edge/regression checks are mandatory before closure where risk warrants.
+- Runtime/browser proof must execute against the claimed deployment and SHA.
+- Deployment proof requires exact source/build identity.
+- Formal runtime workflows are separate gates when specified.
+- Never substitute predecessor deployment, old PASS, static code inspection, or local-only proof for a required live/runtime layer.
+- Production remains **NO TOUCH** until the release decision is reached after certification.
+- Operational documentation may evolve independently of product candidate; candidate/source changes create a new evidence subject.
+
+### 24.9 Current approved execution behavior
+- On every execution, read Control Plane + PROJECT_MEMORY + Latest Execution State first.
+- Identify OPEN/BLOCKED/RUNNING/NOT_PROVEN fronts.
+- Work independent fronts in parallel.
+- Make delegated technical decisions autonomously.
+- Inspect the integrated chain: UI → client state → API/RPC → auth → DB/RLS/storage → external services → build/CI → artifact → runtime → browser → observability.
+- Repair concrete defects; do not make speculative commits.
+- Store compact evidence pointers, not giant logs.
+- Persist important decisions, lessons, requirements, and state before reporting.
+- Treat remote system reality as authoritative over stale narrative.
+- Never ask the owner to reconstruct context that already exists in project memory/evidence.
+- Command `1` means execute now; it is not a request to rewrite instructions.
+- Command `2` means strengthen/recalculate closure and target only remaining work.
+
+### 24.10 Canonical companion references
+- Execution constitution: `ops/AGHBARI-EXECUTION-CONTROL-PLANE.md`
+- Current state: `ops/AGHBARI-LATEST-EXECUTION-STATE.md`
+- Detailed master product specification: `docs/MASTER-EXECUTABLE-PRODUCT-SPECIFICATION-FOR-DEVELOPER.md`
+- Execution index: `docs/MASTER-EXECUTION-INDEX.md`
+- Roadmap: `docs/IMPLEMENTATION-ROADMAP-V1.md`
+- Readiness register: `docs/IMPLEMENTATION-READINESS-REGISTER-V1.md`
+- Intelligence/reporting contract: `docs/INTELLIGENCE-INTEGRATION-CONTRACT-V1.md`
+- Security/RBAC/RLS contract: `docs/RBAC-RLS-POLICY-MATRIX-V1.md`
+- Release gates: `docs/RELEASE-GATES-V1.md`
+- Upwork/market requirements and bid engine: `docs/UPWORK-MARKET-REQUIREMENTS-20260918.md`, `docs/UPWORK-BID-ENGINE-20260918.md`, `docs/UPWORK-COMPETITIVE-HUNT-LANES-20260918.md`, `docs/COMPETITIVE-MOAT-AND-PORTFOLIO-20260918.md`
+
+### 24.11 Single-source update rule
+When a new requirement is accepted:
+1. Add it to this LIVE REQUIREMENTS HUB first.
+2. Place implementation-specific detail in the appropriate companion document.
+3. Link the companion from this hub.
+4. Mark superseded requirements rather than silently deleting them.
+5. Reconcile current state and exact-SHA evidence before treating the new requirement as implemented/proven.
+
