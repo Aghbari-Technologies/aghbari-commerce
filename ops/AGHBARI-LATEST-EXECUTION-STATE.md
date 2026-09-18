@@ -22,17 +22,19 @@
 
 ## Current candidate
 
-- SHA: `b05adb77567e527313dfa5ed5c66fbae8c5fb870`
+- SHA: `9dc6bd3e3bed86bfcbca29ff2538dfd30ebcd218`
 - Branch: `certification/final-candidate-20260918`
 - PR: #83 (OPEN, non-draft, mergeable)
 - Base: `main @ 427ff0801544449f432290205b2a29f2508541f3`
-- Candidate change from prior head `0fb5a17b...`: proven Test-the-Test fixture defect fix only. `supabase/tests/028-client-checkout-policy.test.sql` now relies on the schema default `is_active=true` for the warehouse fixture, matching established fixture patterns elsewhere.
-- Candidate CI: 16 exact-head check-runs created after the fix; current snapshot shows all 11 unique named gates queued, plus a duplicate cancelled entry. No new PASS is claimed from queued state.
-- Prior failed evidence at old SHA `0fb5a17b...`: Test-the-Test run `35349927329` / job `105615357821` failed before executing any of the 8 planned cases because test 028 line 10 produced PostgreSQL `INSERT has more target columns than expressions`. This failure is now historical because the candidate SHA changed.
-- Candidate deployment: NOT_AVAILABLE — no Vercel deployment matches `b05adb77...`.
-- Candidate deployed-browser proof: NOT_PROVEN. Real browser capability is available on other deployments, but evidence cannot transfer across deployment SHAs.
-- Formal Final Regression: NOT_PROVEN because connected GitHub mutation surface exposes no workflow_dispatch execution.
+- Candidate lineage: checkout-policy hardening + proof-fixture repair + restoration of the missing historical `orders.payment_method` schema migration + parser-safe cleanup.
+- Current exact-head CI suite: 11 named gates newly created for this HEAD; all currently queued at latest read. No PASS is transferred from prior candidate heads.
+- Prior b05 migration-proof failure is historical: fresh DB lacked `orders.payment_method` at checkout-policy test line 22. The repository was missing historical migration version `20260918124842` present in live ledger/schema.
+- Current source normalization: payment-method schema authority is isolated in `20260918124842_order_payment_method_authority_20260918.sql`; `20260918170000_enforce_client_checkout_policy.sql` contains only checkout policy/function behavior and has a clean function terminator.
+- Candidate deployment: NOT_AVAILABLE — no Vercel deployment matching `9dc6bd3e3bed86bfcbca29ff2538dfd30ebcd218`.
+- Candidate deployed-browser proof: NOT_PROVEN. Real browser runtime evidence exists on a separate operational deployment only and is non-transferable.
+- Formal Final Regression: NOT_PROVEN because connected GitHub mutation surface has no workflow_dispatch operation.
 - Certification: NO.
+- Production: NO TOUCH.
 # Main / Live / Production
 
 - Main SHA: `8ab9cc24f012d93a69a98bb561cd6c6642c9ae6f`
@@ -1018,3 +1020,20 @@ LESSONS:
 - Offline capability is not complete when a queue exists; the actual product runtime must invoke drain/re-auth/revalidation on reconnect and expose the state to the operator/customer.
 ARTIFACTS: candidate head `e8a0e802...`; failing job `105628578364`; parser failure source migration `20260918124842_order_payment_method_authority_20260918.sql`; PR #84; PR #86.
 NEXT ACTION: inspect terminal results on current exact heads; repair only proven failures; once PR #84/#86 exact-head evidence is complete, integrate the proven fixes into the release candidate via a new exact-SHA certification subject. Keep Production NO TOUCH and do not manufacture Vercel deployments.
+
+
+### 2026-09-18 — Command 1 — current-head provenance after checkout-policy schema repair
+
+RUN: candidate head reconciliation + migration source normalization + Vercel/Netlify capability recheck
+JOB: preserve exact-SHA evidence integrity while removing proven schema/proof defects
+SHA: candidate `9dc6bd3e3bed86bfcbca29ff2538dfd30ebcd218`
+RESULT:
+- Current PR #83 HEAD is `9dc6bd3e3bed86bfcbca29ff2538dfd30ebcd218`; prior `03eaabc...` is superseded and must not be used for evidence.
+- The historical payment-method schema migration is now restored in the candidate source and the checkout-policy migration no longer duplicates schema authority.
+- Current exact-head CI suite has 11 named gates queued; no terminal PASS is claimed at this SHA yet.
+- Vercel has no deployment matching the current candidate. Vercel supports targeted deployment from a specific commit/SHA in the Dashboard, but that authenticated operation is not exposed by the connected execution surface.
+- Netlify fallback site remains configured, but its branch URL returned 404 and currentDeploy metadata is empty; no Netlify deployment is claimed.
+- Real Firecrawl browser smoke on the live operational Vercel URL succeeded, including negative login with synthetic invalid credentials; evidence is retained as operational runtime only and not transferred to candidate.
+- Supabase live project remains ACTIVE_HEALTHY and unchanged; no Production SQL was executed.
+ARTIFACTS: PR #83; candidate 9dc6bd3e3bed86bfcbca29ff2538dfd30ebcd218; Vercel project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`; Netlify site `6c515d48-3385-46eb-958c-3ff2ee17e95e`; Firecrawl sessions `01a0b4d4-9744-71cd-b5eb-29a8ae38ec9e`.
+NEXT ACTION: await terminal candidate evidence on `9dc6bd3e3bed86bfcbca29ff2538dfd30ebcd218`; inspect first terminal failures at exact head; execute candidate browser/final regression only after an exact deployment exists. Production remains NO TOUCH.
