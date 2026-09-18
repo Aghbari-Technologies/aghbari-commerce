@@ -223,3 +223,14 @@ describe('offline operation queue', () => {
     expect(pendingOfflineOperations('not-a-user')).toHaveLength(0);
   });
 });
+
+
+describe('offline queue safety boundaries', () => {
+  it('offline queue rejects unauthorized operation types', () => {
+    expect(() => enqueueOfflineOperation('00000000-0000-4000-8000-000000000001', 'orders:create', { productId: '00000000-0000-4000-8000-000000000002', quantity: 1 })).toThrow();
+  });
+
+  it('offline queue enforces quantity bounds', () => {
+    expect(() => enqueueOfflineOperation('00000000-0000-4000-8000-000000000001', OFFLINE_CART_SET_ITEM, { productId: '00000000-0000-4000-8000-000000000002', quantity: MAX_ORDER_QUANTITY_PER_LINE + 1 })).toThrow();
+  });
+});
