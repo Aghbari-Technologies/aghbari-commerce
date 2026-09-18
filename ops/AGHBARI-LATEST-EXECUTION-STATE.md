@@ -573,3 +573,14 @@ RESULT: PR #74 has zero submitted reviews and zero review threads; no additional
 ROOT CAUSE: none; review surface is clean. External release blockers remain unchanged.
 ARTIFACT: GitHub PR #74 review list + review-thread list, reconciled 2026-09-18.
 NEXT ACTION: preserve candidate freeze; resolve exact-SHA deployment availability, approved Vercel automation-bypass credential, and authenticated workflow-dispatch path before final certification.
+
+
+### 2026-09-18 — Command 1 — Vercel effective Node runtime verification
+RUN: Vercel build-log inspection for latest canonical operational deployment
+JOB: deployment-runtime configuration compatibility check
+SHA: candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b`; inspected operational deployment SHA `de3161cccddecb2adde9c6493d091cb5dd2b6132`
+FRONT: candidate deployment prerequisite / Node runtime configuration
+RESULT: no Node-version incompatibility defect. Canonical Vercel project reports Node `24.x` in settings, but Vercel explicitly honors the repository `package.json` engine `>=22 <23` and uses Node `22.x`; the inspected build completed typecheck + Vite production build successfully and deployed READY. This is corroborating environment behavior only, not candidate evidence.
+ROOT CAUSE: none; project-level Node setting is overridden by the package engine contract at build time.
+ARTIFACT: Vercel build logs for `dpl_76mAoUmtvT2a3UaQcPtfh9NxSs63`.
+NEXT ACTION: do not create a candidate SHA for Node configuration. Preserve the actual remaining blockers: exact candidate deployment availability, approved Vercel automation-bypass credential, and authenticated workflow-dispatch path.
