@@ -1055,3 +1055,22 @@ Tooling safety:
 - No secret values stored.
 - Tool availability/configuration never counts as PASS without an observed result.
 - Any merge of tooling into main/candidate changes SHA and triggers evidence invalidation/rerun rules.
+
+---
+
+# 24. CONTROL-PLANE EVOLUTION LOG
+
+## 2026-09-18 — Autonomous Memory Contract
+- Added mandatory start/end transactions.
+- Added mutable latest-state file: `ops/AGHBARI-LATEST-EXECUTION-STATE.md`.
+- Added self-improvement check after every run.
+- Added rule that the programmer must derive current state from GitHub/project evidence rather than waiting for a user-pasted report.
+- Added rule that proven workflow/observability improvements must be encoded into the Control Plane during the same execution when safe.
+- Added active-context compression so only current state plus compact history is retained.
+- Added explicit tool escalation ladder.
+- Added prohibition on silent protocol weakening.
+- Added requirement to persist the state before sending the user-facing completion report.
+
+### Current operating invariant
+`READ → VERIFY → PARALLELIZE → EXECUTE → CAPTURE → CLASSIFY → IMPROVE PROTOCOL → PERSIST STATE → RECONCILE → REPORT`
+
