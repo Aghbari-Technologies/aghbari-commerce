@@ -10,6 +10,21 @@
 - Durable project memory: `PROJECT_MEMORY.md`
 - Fast entry point on main: `AGHBARI-EXECUTION-START.md`
 
+## CURRENT NON-CERTIFYING DEVELOPMENT LANE — 2026-09-18
+
+- Development branch: `enhancement/market-ready-v4-20260918`
+- Development PR: #88 — OPEN / DRAFT / MERGEABLE
+- Development HEAD: `27ab5c3798c0294a026d2e96050c8eaea15a4234`
+- Durable progress ledger: `ops/AGHBARI-DEVELOPMENT-PROGRESS.md`
+- Last persisted run: `RUN-2026-09-18-UI-001`
+- This lane is non-certifying and must not mutate the frozen certification candidate.
+- Proven on this exact development SHA: Application Quality, Security Audit, and G1 Domain Proof.
+- Running at latest reconciliation: Test-the-Test `35394271014`, Supabase Migration Proof `35394271490`, Netlify Exact-SHA `35394270995`.
+- Netlify run had already passed exact checkout, exact build, artifact identity and required credential checks before the deployment step at the latest observation.
+- Implemented capabilities: Command Center, Smart Reorder, scanner-friendly Quick Order, Arabic order timeline, role-aware admin bulk actions, persisted theme/density settings, Offline Recovery Center, catalog pagination, inline quantity controls, product detail view, debounced search, Asia/Aden business-time consistency, and exact-SHA Netlify verification workflow.
+- Next resume point is the progress ledger queue, not a reimplementation of completed items.
+- Production: NO TOUCH.
+
 ## CURRENT RECONCILED STATE — 2026-09-18 20:05 +03
 
 ### Candidate
