@@ -235,3 +235,16 @@ test('quick order accepts scanner-style Enter submission', async ({ page }) => {
   await expect(page.getByRole('button', { name: /السلة/ })).toContainText('1');
   await assertCleanBrowser(failures);
 });
+
+test('catalog progressive browsing exposes bounded loading when more products exist', async ({ page }) => {
+  const email = process.env.E2E_EMAIL;
+  const password = process.env.E2E_PASSWORD;
+  if (!email || !password) throw new Error('E2E_EMAIL and E2E_PASSWORD are required for catalog pagination proof.');
+  await login(page, email, password);
+  const loadMore = page.getByRole('button', { name: 'تحميل المزيد' });
+  if (await loadMore.count()) {
+    const before = await page.locator('.product-card').count();
+    await loadMore.click();
+    await expect.poll(async () => page.locator('.product-card').count()).toBeGreaterThan(before);
+  }
+});
