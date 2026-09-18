@@ -37,7 +37,7 @@ begin;
 set local role authenticated;
 select set_config('request.jwt.claim.role','authenticated',true);
 select set_config('request.jwt.claim.sub','$USER_ID',true);
-select * from public.create_order('concurrent-idem-key-000001','$WAREHOUSE_ID'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT_ID'::uuid,'quantity',6)));
+select * from public.create_order('concurrent-idem-key-000001','$WAREHOUSE_ID'::uuid,jsonb_build_array(jsonb_build_object('product_id','$PRODUCT_ID'::uuid,'quantity',6)),'credit');
 commit;
 SQL
 ) & PID1=$!
