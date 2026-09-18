@@ -22,15 +22,17 @@
 
 ## Current candidate
 
-- SHA: `5b9f2a76615e76bb6444c81f39e02f3479c0704b`
-- Branch: `execution/closure-hammer-20260918c`
-- PR: #74 (open, draft, mergeable)
-- Base: `main @ 4505bcb655c0b747aeea7e1cc526a94f93270d3d`
-- Candidate deployment: NOT_AVAILABLE — exact-SHA Vercel deployment is not proven. Canonical project `aghbari-commerce-c2dd` / `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm` has zero deployments matching candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b`. Latest observed Vercel deployment is `dpl_AmTBr8X9qBGCLdngxirQgdRM4Xjo`, READY, target=Production, Git-linked from `main` at `a7953a62e601eb12322fbbd902c0790c7a3921b1`; it is unrelated to candidate evidence. The immediately preceding synthetic deployment probe `dpl_9TXFomQ7i286qAiGGEFDD2jBc7hp` terminalized ERROR (`vite: command not found`) and has empty Git metadata; it is explicitly invalid/non-certifying. Candidate GitHub status remains Vercel FAILURE on the build-rate-limit target.
-- Candidate authenticated browser certification: BLOCKED — approved Vercel automation-bypass credential is unavailable.
-- Evidence for `64f5283…` is also now historical/invalidated because the bootstrap release proof exposed the same pull_request merge-ref flaw; the current candidate is `5b9f2a…`.
+- SHA: `0fb5a17bcb65816963056112f5a41ccbb4ae3106`
+- Branch: `certification/final-candidate-20260918`
+- PR: #83 (OPEN, non-draft, mergeable)
+- Base: `main @ 427ff0801544449f432290205b2a29f2508541f3`
+- Candidate deployment: NOT_AVAILABLE — canonical Vercel project has zero deployments matching `0fb5a17...`.
+- Candidate CI: 11 named verification runs currently queued on exact SHA; no terminal result is claimed from queued state.
+- Candidate authenticated browser certification: NOT_PROVEN because no exact candidate deployment exists and the approved Vercel bypass credential path is unavailable.
+- Formal Final Regression: NOT_PROVEN because the connected GitHub mutation surface has no workflow-dispatch capability.
+- Certification: NO.
 
-## Main / Live / Production
+# Main / Live / Production
 
 - Main SHA: `8ab9cc24f012d93a69a98bb561cd6c6642c9ae6f`
 - Live/Production source SHA: `a7953a62e601eb12322fbbd902c0790c7a3921b1`
