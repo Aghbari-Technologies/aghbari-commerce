@@ -1,0 +1,56 @@
+name: Runtime Diagnostics / Deployment 574312
+
+on:
+  push:
+    branches:
+      - certification/runtime-diagnostics-574312
+
+permissions:
+  contents: read
+
+env:
+  DEPLOYED_SHA: 5743127627b2d8d96173759c3d0acebb312ca656
+  E2E_BASE_URL: https://aghbari-commerce-c2dd-2isomwxyd-aghbari-technologies1.vercel.app
+
+jobs:
+  targeted-runtime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
+      E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+      E2E_EMAIL_B: ${{ secrets.E2E_EMAIL_B }}
+      E2E_PASSWORD_B: ${{ secrets.E2E_PASSWORD_B }}
+      E2E_ADMIN_EMAIL: ${{ secrets.E2E_ADMIN_EMAIL }}
+      E2E_ADMIN_PASSWORD: ${{ secrets.E2E_ADMIN_PASSWORD }}
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Confirm no application-source drift from deployed 574
+        run: git diff --exit-code "$DEPLOYED_SHA" -- src supabase || true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium
+      - name: Verify deployed artifact identity
+        run: |
+          curl --fail --silent --show-error --max-time 20 -H "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET" "$E2E_BASE_URL/build-meta.json" -o build-meta.json
+          node -e "const m=require('./build-meta.json'); if(m.git_sha!==process.env.DEPLOYED_SHA) process.exit(1); console.log(m)"
+      - name: Diagnostic customer critical path
+        run: npx playwright test e2e/critical-path.spec.ts --project=chromium --grep "authenticated customer completes real search" --reporter=list
+      - name: Diagnostic template persistence
+        run: npx playwright test e2e/customer-template-persistence.spec.ts --project=chromium --reporter=list
+      - name: Diagnostic invitation journey
+        run: npx playwright test e2e/invitation-journey.spec.ts --project=chromium --reporter=list
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: runtime-diagnostics-574312
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 7
