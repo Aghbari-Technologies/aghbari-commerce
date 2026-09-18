@@ -198,7 +198,6 @@ Do not declare a feature complete because one page or one test succeeds while an
 When the best technical path is uncertain, actively research before deciding. Prefer current official documentation and authoritative project references; evaluate Why, When, Why not, trade-offs, failure modes, security, compatibility, scaling, maintenance, and migration cost.
 
 Important reusable knowledge becomes project memory or a Control Plane evolution entry. Do not rely on chat history as durable technical memory.
-
 ## 0C.8 Decision ledger
 Every consequential decision must record: decision, context/problem, alternatives, rationale, trade-offs, affected components, verification evidence, date, and exact SHA.
 
@@ -397,7 +396,6 @@ Proves the behaviour at runtime.
 
 ### Deployment Artifact
 Proves the deployed build corresponds to an exact source SHA.
-
 ### Browser
 Proves the user-facing runtime path actually works.
 
@@ -597,7 +595,6 @@ The durable lesson is more important than the old failure: when an integration t
 Do not resurrect this historical incident as an OPEN front unless new exact-SHA evidence reproduces it.
 
 ---
-
 # 12. CURRENT DEPLOYMENT / LIVE ALIGNMENT FACTS
 
 Current candidate: branch execution/closure-hammer-20260918c, exact SHA 4753cc3319f551aeccbe2bd081b988fa68df8e87.
@@ -798,7 +795,6 @@ Only when every mandatory release gate is PROVEN and reconciled; otherwise leave
 - The repair SHA is NOT YET PROMOTED to the release candidate. Exact-SHA targeted CI is running and must pass before candidate promotion.
 
 ### 2026-09-18 — Storage repair tightening and proof-harness correction
-
 - Intermediate repair SHA e04e83ca56a778a1db82e5a75f59300b064a057e is INVALIDATED: its pgTAP regression was malformed by dollar-quoting and its evidence is not reusable.
 - Intermediate repair SHA b45fc8a0a77d35f6479e52adb6be62964230550b is INVALIDATED as a release proof SHA because the subsequent pgTAP run exposed the malformed regression test; its Product migration remains the basis of the current repair branch but final proof must use the newest SHA.
 - Final current repair/proof SHA is 4d5057d7952e213d6b5328a80f0229f1ff9fb861 on execution/fix-storage-inactive-rls-20260918.
@@ -997,7 +993,6 @@ Keep this advisory as documented/intentional. Do not modify the DB during certif
 ---
 
 # 22. TOOLING EXECUTION — 2026-09-18
-
 ## Playwright
 - **Status: PRESENT / VERIFIED IN SOURCE**
 - Package: `@playwright/test 1.63.0`
@@ -1199,7 +1194,6 @@ ROOT CAUSE: unsafe obsolete self-mutating CI, protected deployment access bounda
 ARTIFACT: main safety commit `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; Gitleaks artifact `10529832877`; Semgrep artifact `10530271974`; TinyFish run `9cf69038-40b0-4f33-8365-322abe4c8146`.
 NEXT ACTION: continue exact-SHA tooling remediation/verification and protected Deployment Browser/Final Regression paths; reconcile live/canonical Vercel identity before release.
 
-
 ## 0F. CURRENT EXECUTION RECONCILIATION — 2026-09-18
 
 - Tooling PR #72 actual current head: `b9a585aa64058feaff9bd5f65476f52863d2a503`.
@@ -1397,8 +1391,7 @@ EVIDENCE: Vercel documentation for deployment creation describes `gitSource` as 
 RUN: GitHub PR #72 exact-head/run-log review; Vercel Git-source deployment-path probe; candidate status/deployment recheck
 JOB: unresolved release evidence + tooling isolation + capability reconciliation
 SHA: candidate `4753cc3319f551aeccbe2bd081b988fa68df8e87`; tooling `92fa7bffb8971eecb10d91fe588709da0e06675a`; production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
-FRONT: candidate deployment; authenticated deployment browser; Formal Final Regression; isolated tooling PR #72
-RESULT: candidate remained unchanged; 12 exact-SHA candidate verification runs remain terminal PASS; no candidate Vercel deployment exists; Vercel git-source deployment path is blocked at connector schema validation; PR #72 migration proof remains isolated FAIL on baseline pgTAP assertions; no candidate or Production mutation occurred.
+FRONT: candidate deployment; authenticated deployment browser; Formal Final Regression; isolated tooling PR #72RESULT: candidate remained unchanged; 12 exact-SHA candidate verification runs remain terminal PASS; no candidate Vercel deployment exists; Vercel git-source deployment path is blocked at connector schema validation; PR #72 migration proof remains isolated FAIL on baseline pgTAP assertions; no candidate or Production mutation occurred.
 ROOT CAUSE: Vercel connector does not expose the Git-source deployment form and instead requires `files[]`; authenticated deployment/browser and workflow-dispatch capabilities remain unavailable.
 ARTIFACT: `ops/evidence/20260918-command1-vercel-gitsource-tool-boundary.md`; PR #72 run `35308340466` / job `105485106791`; candidate status/deployment sweep; Vercel project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`.
 NEXT ACTION: preserve candidate `4753cc3…`; use only an approved exact-SHA Git-linked deployment path when available, then run authenticated Runtime E2E and Formal Final Regression. Production remains NO TOUCH.
@@ -1414,3 +1407,20 @@ RESULT: PR #74 remains OPEN/DRAFT/MERGEABLE at the same candidate SHA. Exact can
 ROOT CAUSE: Vercel deployment quota/rate-limit remains the external deployment blocker; connected deployment wrapper still cannot provide the Git-linked `gitSource` path; authenticated browser and workflow-dispatch authority remain unavailable.
 ARTIFACT: PR #74 head verification; exact combined status; Vercel project/team/deployment sweep.
 NEXT ACTION: keep candidate frozen. Do not spend another deployment attempt until the approved exact-SHA Git-linked deployment path or complete exact-source deployment path is available. Then execute authenticated Runtime E2E and Formal Final Regression on the same SHA. Production remains NO TOUCH.
+
+### 2026-09-18 — Command 1 — isolated tooling rerun + live capability update
+
+RUN: GitHub Actions rerun of failed isolated tooling job 35308829558; live run-state inspection; Vercel production runtime-error scan
+JOB: isolated PR #73 pgTAP diagnostic rerun / tooling capability / production safety
+SHA: candidate `4753cc3319f551aeccbe2bd081b988fa68df8e87`; tooling/diagnostic `cf7db1c376e40c44ed0cec1956c9b59ee8f5d7f0`; production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
+FRONT: isolated tooling proof / deployment boundary / production runtime
+RESULT: GitHub connected mutation surface successfully re-ran the failed PR #73 migration-proof workflow as run `35308829558`, attempt 2, without changing SHA. At checkpoint the rerun is IN_PROGRESS at local Supabase startup; no terminal PASS/FAIL is inferred. Vercel canonical project remains free/Hobby with no candidate deployment; selected production runtime-error scan returned no runtime error clusters. Candidate and Production were untouched.
+ROOT CAUSE: isolated tooling pgTAP lane requires a fresh terminal result; deployment/authenticated-regression blockers remain external to candidate source.
+ARTIFACT: PR #73; rerun `35308829558` attempt 2; job currently in progress; Vercel production runtime-error scan.
+NEXT ACTION: terminalize rerun when the external job completes; if it fails, retain exact failure and decide whether the isolated baseline needs another targeted repair. Candidate remains frozen; no production mutation.
+
+### 2026-09-18 — Control Plane Evolution — GitHub Actions rerun capability
+
+LESSON: the connected GitHub mutation surface can rerun failed workflow jobs/runs even though it cannot invoke `workflow_dispatch` manually.
+RULE: distinguish three layers: workflow source dispatch capability, manual dispatch authority, and rerun authority. A rerun of an already-created isolated diagnostic run may be used when it does not mutate the candidate or Production, but its result must remain tied to the exact original SHA and be treated as diagnostic until terminal evidence is captured.
+EVIDENCE: rerun request succeeded for run `35308829558`; GitHub reports `run_attempt=2` and status `in_progress` on exact SHA `cf7db1c376e40c44ed0cec1956c9b59ee8f5d7f0`.

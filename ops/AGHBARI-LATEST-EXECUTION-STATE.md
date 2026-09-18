@@ -197,8 +197,7 @@ Never record a PASS unless a real run/job/artifact proves it.
 
 ### 2026-09-18 — Command 1 execution reconciliation
 
-RUN: `35299450012; 35299449995; 35299450009; 35299450053; 35299450051; 35299450067; 35299450068; 35299450001; 35299449999; 35299449994; 35301488324; 35301488345; 9cf69038-40b0-4f33-8365-322abe4c8146`
-JOB: candidate exact-SHA gates; tooling Semgrep/Gitleaks; TinyFish read-only candidate browser
+RUN: `35299450012; 35299449995; 35299450009; 35299450053; 35299450051; 35299450067; 35299450068; 35299450001; 35299449999; 35299449994; 35301488324; 35301488345; 9cf69038-40b0-4f33-8365-322abe4c8146`JOB: candidate exact-SHA gates; tooling Semgrep/Gitleaks; TinyFish read-only candidate browser
 SHA: candidate `4d5057d7952e213d6b5328a80f0229f1ff9fb861`; tooling `1830e3a109a9e0605f5306b2ddc8f308457fb375`; main `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
 FRONT: closure / tooling / deployment browser / operational safety / evidence reconciliation
 RESULT: candidate remained unchanged and all previously proven candidate gates remained exact-SHA PASS; self-mutating repair workflow was removed; candidate browser remained NOT_PROVEN because Vercel SSO blocked both page and build metadata; tooling current head has real Gitleaks and Semgrep failures.
@@ -397,7 +396,6 @@ NEXT ACTION: preserve candidate; retry candidate deployment only through an appr
 
 
 ### 2026-09-18 — Command 1 — current boundary and tooling reconciliation
-
 RUN: GitHub candidate/PR/head reconciliation; Vercel deployment sweep; Vercel deployment-tool schema probe; Supabase advisor; pgTAP diagnostic run head verification
 JOB: unresolved evidence + tooling boundaries
 SHA: candidate `4753cc3319f551aeccbe2bd081b988fa68df8e87`; tooling #72 `92fa7bffb8971eecb10d91fe588709da0e06675a`; diagnostic #73 `cf7db1c376e40c44ed0cec1956c9b59ee8f5d7f0`; production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
@@ -454,3 +452,20 @@ RESULT: PR #74 remains OPEN/DRAFT/MERGEABLE at the same candidate SHA. Exact can
 ROOT CAUSE: Vercel deployment quota/rate-limit remains the external deployment blocker; connected deployment wrapper still cannot provide the Git-linked `gitSource` path; authenticated browser and workflow-dispatch authority remain unavailable.
 ARTIFACT: PR #74 head verification; exact combined status; Vercel project/team/deployment sweep.
 NEXT ACTION: keep candidate frozen. Do not spend another deployment attempt until the approved exact-SHA Git-linked deployment path or complete exact-source deployment path is available. Then execute authenticated Runtime E2E and Formal Final Regression on the same SHA. Production remains NO TOUCH.
+
+### 2026-09-18 — Command 1 — isolated tooling rerun + live capability update
+
+RUN: GitHub Actions rerun of failed isolated tooling job 35308829558; live run-state inspection; Vercel production runtime-error scan
+JOB: isolated PR #73 pgTAP diagnostic rerun / tooling capability / production safety
+SHA: candidate `4753cc3319f551aeccbe2bd081b988fa68df8e87`; tooling/diagnostic `cf7db1c376e40c44ed0cec1956c9b59ee8f5d7f0`; production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
+FRONT: isolated tooling proof / deployment boundary / production runtime
+RESULT: GitHub connected mutation surface successfully re-ran the failed PR #73 migration-proof workflow as run `35308829558`, attempt 2, without changing SHA. At checkpoint the rerun is IN_PROGRESS at local Supabase startup; no terminal PASS/FAIL is inferred. Vercel canonical project remains free/Hobby with no candidate deployment; selected production runtime-error scan returned no runtime error clusters. Candidate and Production were untouched.
+ROOT CAUSE: isolated tooling pgTAP lane requires a fresh terminal result; deployment/authenticated-regression blockers remain external to candidate source.
+ARTIFACT: PR #73; rerun `35308829558` attempt 2; job currently in progress; Vercel production runtime-error scan.
+NEXT ACTION: terminalize rerun when the external job completes; if it fails, retain exact failure and decide whether the isolated baseline needs another targeted repair. Candidate remains frozen; no production mutation.
+
+### 2026-09-18 — Control Plane Evolution — GitHub Actions rerun capability
+
+LESSON: the connected GitHub mutation surface can rerun failed workflow jobs/runs even though it cannot invoke `workflow_dispatch` manually.
+RULE: distinguish three layers: workflow source dispatch capability, manual dispatch authority, and rerun authority. A rerun of an already-created isolated diagnostic run may be used when it does not mutate the candidate or Production, but its result must remain tied to the exact original SHA and be treated as diagnostic until terminal evidence is captured.
+EVIDENCE: rerun request succeeded for run `35308829558`; GitHub reports `run_attempt=2` and status `in_progress` on exact SHA `cf7db1c376e40c44ed0cec1956c9b59ee8f5d7f0`.
