@@ -18,6 +18,7 @@ const buildMetadataPlugin = (): Plugin => ({
         version,
         git_sha: gitSha,
         built_at: builtAt,
+        build_time: builtAt,
       }, null, 2) + '\n',
     });
   },
