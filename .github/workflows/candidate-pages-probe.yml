@@ -1,0 +1,63 @@
+name: Candidate Pages Deploy / Exact SHA
+
+on:
+  push:
+    branches:
+      - execution/pages-probe-2facceb3
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-probe-2facceb3
+  cancel-in-progress: false
+
+env:
+  EXACT_SHA: 2facceb39aaa826413f20245a6f20b6c2ff7cd34
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.EXACT_SHA }}
+          fetch-depth: 1
+      - name: Verify exact candidate
+        run: |
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$EXACT_SHA"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run build
+        env:
+          VITE_BUILD_SHA: ${{ env.EXACT_SHA }}
+      - name: Verify artifact identity
+        run: |
+          node - <<'NODE'
+          const fs=require('node:fs');
+          const m=JSON.parse(fs.readFileSync('dist/build-meta.json','utf8'));
+          if(m.git_sha!==process.env.EXACT_SHA) throw new Error('artifact SHA mismatch');
+          console.log(JSON.stringify(m));
+          NODE
+      - name: Add Pages SPA fallback
+        run: cp dist/index.html dist/404.html
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
