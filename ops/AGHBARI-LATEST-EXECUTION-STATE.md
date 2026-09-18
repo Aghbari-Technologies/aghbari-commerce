@@ -10,6 +10,16 @@
 - Durable project memory: `PROJECT_MEMORY.md`
 - Fast entry point on main: `AGHBARI-EXECUTION-START.md`
 
+## Current non-certifying UI / deployment lane — 2026-09-18
+
+- PR #81: OPEN / MERGEABLE / non-certifying; current HEAD: `384a0f494702e942fdc23d9f0a0981cff8d277fd`.
+- Scope: preserve existing customer/admin interfaces and harden them in place; server-authoritative order templates, working keyboard search, canonical inventory source, role-aware navigation/actions, visual polish, and testable business-day dashboard metrics.
+- Exact PR #81 CI on current HEAD: Application Quality `35344749035` PASS; Security Audit `35344749074` PASS; G1 `35344749058` PASS; Order Workflow `35344749021` PASS; Bootstrap Lockfile `35344749034` PASS; Supabase Migration Proof `35344749011` RUNNING at empty-database migration application.
+- A prior Application Quality failure `35344606022` was a real defect in the newly added test: the test incorrectly assumed the runner timezone. The implementation was corrected to explicit business timezone `Asia/Aden`, then the replacement current-head suite passed through typecheck, 23 test files / 179 tests, lint, build, and release audit.
+- Netlify fallback project created: `aghbari-commerce-web`, site `6c515d48-3385-46eb-958c-3ff2ee17e95e`. Public password/SSO gating disabled for this site. Production build env configured with the Supabase URL and publishable key; no secret/server key stored.
+- Netlify source deployment is still NOT_PROVEN: the connected deployment surface returns a CLI deployment command rather than performing source upload directly. TinyFish interactive browser execution is unavailable because wallet balance is insufficient; no credential workaround was used.
+- Certification candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b` and Production `a7953a62e601eb12322fbbd902c0790c7a3921b1` remain untouched.
+
 ## Current candidate
 
 - SHA: `5b9f2a76615e76bb6444c81f39e02f3479c0704b`
@@ -838,3 +848,15 @@ ROOT CAUSE: UI had accumulated presentation-only affordances and one stale schem
 ACTION: opened non-certifying PR #81; all changes isolated from candidate.
 VERIFICATION: GitHub Actions are executing on PR #81 HEAD `b8d4931...`; bootstrap-release-lockfile PASS `35343916541`, Order Workflow Proof PASS `35343916438`, security-audit PASS `35343907896`; G1/application-quality/supabase migration were still running/pending at last read. No production deployment attempted.
 NEXT ACTION: finish remaining PR #81 CI gates; then perform browser visual verification on the improvement branch through an authenticated browser path when available; once CI/browser evidence is sufficient, merge only PR #81, not PR #74. Configure/trigger Netlify deployment through the connected Netlify integration when its deployment controls are exposed; retain Vercel as a secondary provider rather than forcing quota-consuming candidate redeployments.
+
+
+### 2026-09-18 — Command 1 — UI closure / Netlify failover / exact-head CI
+
+RUN: `autonomous UI continuation`
+JOB: existing-interface hardening + dashboard correctness + business-timezone proof + Vercel-independent hosting preparation
+SHA: UI PR #81 `384a0f494702e942fdc23d9f0a0981cff8d277fd`; candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b`; production `a7953a62e601eb12322fbbd902c0790c7a3921b1`
+FRONT: UI/UX / admin navigation / dashboard metrics / CI / Netlify failover
+RESULT: Existing interfaces were preserved and upgraded in place. Added visual polish, server-authoritative templates, functional Ctrl/Cmd+K, canonical inventory source, role-aware admin navigation/actions, and explicit `Asia/Aden` business-day dashboard metrics with dedicated unit coverage. Current-head CI has terminal PASS on Application Quality, Security, G1, Order Workflow, and Bootstrap Lockfile; Supabase Migration Proof remains RUNNING during empty-database migration apply. Netlify fallback project `aghbari-commerce-web` exists with site id `6c515d48-3385-46eb-958c-3ff2ee17e95e`; required public Supabase client configuration is set for production builds; actual source deployment remains NOT_PROVEN because the connected deployment surface does not upload the repository directly. Candidate and Production remain untouched.
+ROOT CAUSE: one newly introduced test exposed that business-day grouping must not depend on CI runner timezone. The defect was in proof coverage/implementation boundary and was corrected explicitly rather than weakening the test.
+ARTIFACT: UI PR #81; Application Quality `35344749035`; Security `35344749074`; G1 `35344749058`; Order `35344749021`; Bootstrap `35344749034`; Migration Proof `35344749011` RUNNING; Netlify site `6c515d48-3385-46eb-958c-3ff2ee17e95e`.
+NEXT ACTION: finish Migration Proof on exact HEAD; after all CI is terminal, perform the strongest available browser verification for the UI branch and only then decide whether PR #81 should be merged. Keep certification candidate frozen and do not consume Vercel quota for UI validation.
