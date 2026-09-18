@@ -108,3 +108,10 @@ NEXT ACTION:
 ```
 
 Never record a PASS unless a real run/job/artifact proves it.
+
+## Protocol state
+
+- Control Plane latest evolution commit: `acedbc99add67ad046aa09a87d8154c4b4ceb8e2`
+- Fast entry point latest main commit: `29aa5c928deb97a652e78c0f0581ec09d7caa050`
+- Required execution invariant: READ → VERIFY → PARALLELIZE → EXECUTE → CAPTURE → CLASSIFY → IMPROVE PROTOCOL → PERSIST STATE → RECONCILE → REPORT
+- The programmer must update this latest-state file before declaring the round complete.
