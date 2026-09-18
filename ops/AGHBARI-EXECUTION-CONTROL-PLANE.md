@@ -599,13 +599,13 @@ Do not resurrect this historical incident as an OPEN front unless new exact-SHA 
 
 # 12. CURRENT DEPLOYMENT / LIVE ALIGNMENT FACTS
 
-Current candidate preview: `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32`, READY, exact SHA `4d5057…`.
+Current candidate: branch execution/closure-hammer-20260918c, exact SHA 4753cc3319f551aeccbe2bd081b988fa68df8e87.
 Read-only candidate browser/artifact inspection is available as supplementary evidence only; it does not prove authenticated Deployment Browser E2E.
 
-Current production deployment: `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5`, READY, exact SHA `b102ce5…`.
+Current production deployment: dpl_FSaJrfHRZibMBUA1wUXieYBH98b5, READY, exact SHA b102ce5…. Production remains NO TOUCH.
 Production remains `NO TOUCH` and has not been promoted to the candidate.
 
-Deployment Browser remains `BLOCKED — CREDENTIAL BOUNDARY` because the approved automation bypass secret path is unavailable through the current connected mutation surface.
+Candidate deployment is BLOCKED by Vercel rate limiting (`Deployment rate limited — retry in 24 hours`). Deployment Browser also remains BLOCKED because the approved automation bypass secret path is unavailable through the current connected mutation surface.
 
 Final Regression remains `NOT_PROVEN` while required workflow-dispatch mutation is unavailable.
 
@@ -744,7 +744,7 @@ Execute through an actual available workflow-dispatch path. If the connector can
 Reconcile all mandatory PASS/FAIL/BLOCKED/NOT_PROVEN claims against the exact candidate SHA. Ensure no historical PASS has leaked across versions.
 
 ### P1 — Operational workflow safety
-Investigate `.github/workflows/repair-excel-build.yml` and its push-to-main capability. Root cause of the latest failure remains NOT_PROVEN; the safety exposure is already established from source inspection.
+Audit ALL workflow files for repository write permissions and git-push behavior, not only previously named repair workflows. On current candidate 4753cc3319f551aeccbe2bd081b988fa68df8e87, the exhaustive 15-workflow scan is clean: no contents: write permission and no git push command. Keep this closed on candidate; do not reintroduce self-mutating automation.
 
 ### P1 — Isolated free-tooling baseline
 Continue verification/remediation of PR #72 without transferring its findings into candidate certification. Any adoption into main/candidate changes SHA and triggers normal invalidation/rerun rules.
@@ -1240,3 +1240,34 @@ NEXT ACTION: continue exact-SHA tooling remediation/verification and protected D
 
 NEXT ACTION:
 Keep tooling isolated; use PR #73 as the clean baseline diagnosis. The candidate remains the certification subject. Do not weaken gates or touch Production. Continue with the authenticated browser credential path and formal final-regression capability; only product changes on a new candidate may consume the five identified main-branch contract gaps.
+
+
+# 2026-09-18 — Durable execution rule: exhaustive workflow authority audit
+
+For every release-candidate security review, enumerate every file under .github/workflows and check both permission declarations (especially contents: write) and commands that can push to repository branches. A named workflow is not an adequate security scope.
+
+Current candidate 4753cc3319f551aeccbe2bd081b988fa68df8e87:
+- repair-excel-build.yml removed;
+- bootstrap-lockfile.yml removed;
+- bootstrap-release-lockfile.yml retained only as read-only lockfile validation;
+- exhaustive workflow scan: 15 workflows, zero write-permission findings, zero git-push findings;
+- intermediate SHA 70bd9bd9d7df6e0dd889dff189698841096fd116 exposed that deleting bootstrap-release-lockfile.yml broke the explicit Release Audit required-workflow contract; the safe repair restored the file without restoring write authority.
+
+Deployment boundary:
+- Vercel exact-SHA status for 4753cc3319f551aeccbe2bd081b988fa68df8e87 is FAILURE — Deployment rate limited — retry in 24 hours. No current-SHA deployment was available in the canonical project list.
+- Do not use an older READY deployment as evidence for the new candidate.
+
+Browser / Final Regression boundary:
+- TinyFish GitHub Actions inspection run 20d96519-64ea-4767-83ed-d55676b2b6f1 found the browser session unauthenticated and no Run workflow control. Formal Final Regression remains NOT_PROVEN.
+- Authenticated Deployment Browser remains BLOCKED until the approved Vercel automation-bypass secret path is configured. No protection was weakened and no secrets were generated or stored.
+
+### 2026-09-18 — Command 1 execution log
+
+RUN: 35310025169;35310025060;35310025041;35310025159;35310025032;35310025100;35310025098;35310025147;35310025210;35310025067
+JOB: current candidate exact-SHA CI and workflow safety
+SHA: 4753cc3319f551aeccbe2bd081b988fa68df8e87
+FRONT: workflow safety / release audit / CI / deployment / browser / final regression
+RESULT: workflow safety is closed on the current candidate; current candidate CI was still queued/running at checkpoint; Vercel deployment blocked by platform rate limit; authenticated browser blocked by credential boundary; Final Regression not proven.
+ROOT CAUSE: repository write/push automation was broader than initially scoped; release audit explicitly requires bootstrap-release-lockfile.yml; Vercel and GitHub browser capabilities remain externally blocked.
+ARTIFACT: PR #74; ops/evidence/20260918-command1-workflow-safety-release-gates.md
+NEXT ACTION: terminalize current-SHA CI and reconcile exact evidence; preserve external blockers; no production mutation or promotion.
