@@ -30,23 +30,22 @@
 
 ---
 
-# 0A. AUTHORITATIVE LIVE EXECUTION STATE — 2026-09-18
+# 0A. AUTHORITATIVE LIVE EXECUTION STATE — 2026-09-18 RECONCILED 07:26 +03
 
-- CURRENT CANDIDATE: `4d5057d7952e213d6b5328a80f0229f1ff9fb861` on `execution/closure-hammer-20260918b`.
-- MAIN: `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; delta from previous `b102ce5…` is removal of obsolete self-mutating `.github/workflows/repair-excel-build.yml`.
-- LIVE/PRODUCTION: `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`.
-- PRODUCTION: NO TOUCH; candidate not promoted and no alias/migration/live mutation performed.
-- CANDIDATE EXACT-SHA GATES: Fresh Local+Storage, Migration, Test-the-Test, Concurrency, Local Production Browser, Quality, Security, G1, Order Workflow, Deployment Contract, Order Invariant, Bootstrap Lockfile = PASS.
-- CANDIDATE PREVIEW: `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32` READY exact `4d5057…`. TinyFish `604c8f4a-19f1-4357-b380-9b2c816937fb` verified the application through a temporary Vercel access link, including brand/RTL/Arabic and exact `build-meta.json` SHA. This is read-only proof only.
-- DEPLOYMENT BROWSER: BLOCKED — approved Vercel automation bypass/E2E credentials are unavailable; TinyFish independently confirmed the candidate deployment is behind Vercel SSO.
-- LIVE/PRODUCTION DEPLOYMENT: `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5` READY exact `b102ce5…`, target production. Production error/fatal inspection over 24h found none.
-- FINAL REGRESSION: NOT_PROVEN / TOOL BOUNDARY — required workflow dispatch is unavailable.
-- EVIDENCE RECONCILIATION: OPEN for Deployment Browser, Live Alignment, Final Regression, and operational/tooling reconciliation.
-- TOOLING PR #72: current head `ffdf0b3e6d34adef11a198c8263a9fa9760188b8`, draft, isolated. Older heads are historical only.
-- TOOLING #72 current-head results on `1830e3a…`: Gitleaks FAIL — run `35301488345`, 61 `generic-api-key` findings, artifact `10529832877`; Semgrep FAIL — run `35301488324`, 36 blocking findings, artifact `10530271974`. No tooling result is transferred to candidate certification.
-- TOOLING CI DEFECTS FIXED: Gitleaks expression/artifact escaping on `15511628…`; ZAP shell-input handling + action pinning on `1830e3a…`.
-- TOOLING MIGRATION FAILURE CLASSIFICATION: NOT CANDIDATE DEFECT. Empty-database migration apply passed, then 31 pgTAP files produced multiple stale/mismatched expectations (e.g. missing RPC, missing inventory_changed, expected search_path metadata false, operational FK index assertions, storage test mismatches). Candidate’s own exact migration proof remains PASS and is separate.
-- OPERATIONAL LANE: `.github/workflows/repair-excel-build.yml` remains OPEN safety risk; source blob `68fcca2124145651e648f05b97318dcfea5dc45e` confirms `contents: write`, push trigger, and `git push origin HEAD:main`. Failure `35296779614` has zero exposed job records; root cause NOT_PROVEN.
+- CURRENT CANDIDATE: `4d5057d7952e213d6b5328a80f0229f1ff9fb861` on `execution/closure-hammer-20260918b`; frozen.
+- MAIN: `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; obsolete self-mutating `repair-excel-build.yml` removed.
+- LIVE/PRODUCTION: `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`; Production = NO TOUCH, no promotion.
+- CANDIDATE DEPLOYMENT: `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32` READY, exact candidate SHA. Read-only browser proof remains PASS via TinyFish `604c8f4a-19f1-4357-b380-9b2c816937fb`; authenticated Deployment Browser remains BLOCKED by Vercel SSO/approved credential boundary.
+- CANDIDATE EXACT-SHA GATES previously proven on `4d5057d…` remain valid because candidate SHA is frozen; no candidate mutation occurred in this execution.
+- FORMAL FINAL REGRESSION: NOT_PROVEN — connected GitHub mutation surface exposes no workflow-dispatch capability.
+- TOOLING PR #72: actual current head is `bc40f6b04ca974d6f7aed9daf5c581e18ca710d8`, draft, base `main`. Prior tooling heads and their evidence are historical only.
+- TOOLING #72 CURRENT-HEAD EVIDENCE: no associated PR workflow runs are exposed for `bc40f6b0`; therefore previous tooling PASSes do not transfer and current tooling verification is NOT_PROVEN.
+- TOOLING #72 COMBINED STATUS: Vercel failure points to `upgradeToPro=build-rate-limit`; this is tooling/deployment infrastructure evidence, not candidate product evidence.
+- CANONICAL VERCEL PROJECT: `aghbari-commerce-c2dd` / `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`, linked to `Aghbari-Technologies/aghbari-commerce`. Its latest deployment is tooling SHA `0aee3ff7…`, not candidate evidence.
+- SUPABASE LIVE PROJECT: `mrcyqezbhpncuvaehwgf` ACTIVE_HEALTHY. Security advisor currently exposes 1 anon-executable SECURITY DEFINER finding for `get_customer_invitation_for_acceptance(p_token text)` plus 58 authenticated-executable SECURITY DEFINER findings. No live mutation performed under Production = NO TOUCH.
+- SUPABASE PERFORMANCE: unused-index observations exist; no index removal performed without workload evidence and release authorization.
+- EVIDENCE RECONCILIATION: OPEN for Deployment Browser, Final Regression, tooling current-head verification, and live/candidate alignment.
+- CERTIFICATION: NO.
 
 # 0B. AUTONOMOUS MEMORY + SELF-IMPROVEMENT PROTOCOL
 
@@ -1210,3 +1209,12 @@ NEXT ACTION: continue exact-SHA tooling remediation/verification and protected D
 - Candidate `4d5057d7952e213d6b5328a80f0229f1ff9fb861` remains frozen; production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497` remains untouched.
 - Candidate read-only browser proof PASS: TinyFish `604c8f4a-19f1-4357-b380-9b2c816937fb`; authenticated E2E remains separate and unresolved.
 - Migration-proof `35304530279` remains RUNNING; certification must not infer a terminal result.
+
+
+## 0G. EVOLUTION ENTRY — 2026-09-18 AUTONOMOUS RECONCILIATION 07:26 +03
+
+- Re-read GitHub PR #72 before trusting stored tooling state; actual head `bc40f6b04ca974d6f7aed9daf5c581e18ca710d8` supersedes all prior tooling evidence.
+- Enforced the exact-SHA rule: prior tooling PASSes on `b9a585aa…` and earlier heads are historical and cannot certify `bc40f6b0`.
+- Reconciled the canonical Vercel project identity and confirmed the frozen candidate deployment is separate from the current tooling deployment.
+- Rechecked live Supabase advisors but made no Production changes; advisor findings remain observations requiring deliberate release-safe remediation.
+- Durable rule: a newly pushed tooling head with no fresh terminal CI evidence is NOT_PROVEN even if its predecessor had complete PASS evidence.
