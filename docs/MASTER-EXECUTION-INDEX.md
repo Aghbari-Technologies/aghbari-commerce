@@ -91,3 +91,15 @@ RESULT: browser automation confirmed the connected GitHub session is unauthentic
 ROOT CAUSE: GitHub browser-session authentication is unavailable through the current connected automation session; candidate deployment is separately blocked by Vercel free-plan deployment quota exhaustion.
 ARTIFACT: TinyFish run `d6315349-d551-473c-b108-997141884371`; exact workflow source `.github/workflows/runtime-e2e.yml`; canonical Vercel project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`.
 NEXT ACTION: preserve candidate `4753cc3…`; when an approved authenticated GitHub dispatch path and an exact-SHA Vercel deployment are available, dispatch Runtime E2E with matching `base_url` + `exact_sha`; Production remains NO TOUCH.
+
+
+### 2026-09-18 — Command 1 — external-boundary recheck
+
+RUN: Vercel project/deployment recheck; GitHub exact-SHA status/workflow recheck; Supabase security-advisor recheck
+JOB: candidate deployment / authenticated deployment browser / formal runtime dispatch / live security boundary
+SHA: candidate `4753cc3319f551aeccbe2bd081b988fa68df8e87`; main `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
+FRONT: P0 external release blockers
+RESULT: exact candidate CI remains terminal PASS across the recorded candidate runs; Vercel combined status remains FAILURE with build-rate-limit target and canonical project has no deployment for `4753cc3…`. Runtime E2E source still contains `workflow_dispatch`, while connected GitHub browser authentication is absent, so formal dispatch remains unavailable. Supabase live project remains ACTIVE_HEALTHY; security advisor continues to report the intentional pre-auth invitation lookup warning plus authenticated SECURITY DEFINER surface. No candidate source mutation, no production mutation, and no protection weakening occurred.
+ROOT CAUSE: Vercel Hobby deployment quota remains exhausted; GitHub browser session is unauthenticated and connected mutation surface has no workflow-dispatch operation.
+ARTIFACT: candidate status; Vercel project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`; Runtime E2E source; TinyFish capability run `d6315349-d551-473c-b108-997141884371`.
+NEXT ACTION: preserve `4753cc3…`. Resume exact-SHA deployment + authenticated runtime certification only through an approved authenticated Vercel/GitHub path. Production remains NO TOUCH.
