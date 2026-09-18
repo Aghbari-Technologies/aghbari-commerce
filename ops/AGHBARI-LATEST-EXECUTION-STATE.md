@@ -129,6 +129,16 @@ RESULT: current-state references normalized; PROJECT_MEMORY and master autonomy 
 ROOT CAUSE: duplicated current-state references and old tooling-head references could mislead future execution even though the top-level state was newer
 ARTIFACT: PROJECT_MEMORY.md; Control Plane master governance; updated main launch router; GitHub-verified PR #72 current head `93552ada…`
 NEXT ACTION: next command 1 should operate from the three-layer memory model and treat current-head evidence as the only admissible tooling evidence
+### 2026-09-18 — Tooling-head stale-evidence hardening
+
+RUN: current PR-head reconciliation
+JOB: GitHub PR #72 source-of-truth re-read
+SHA: tooling current `93552ada…`; candidate `4d5057…`
+FRONT: tooling evidence integrity / stale-PASS prevention
+RESULT: current PR head confirmed as `93552ada…`; prior `1830e3a…` scan results reclassified as historical and barred from current-head or candidate certification
+ROOT CAUSE: latest-state/control-plane wording could have caused historical tooling findings to be interpreted as current-head evidence
+ARTIFACT: GitHub PR #72 verified from repository; control plane and latest state normalized
+NEXT ACTION: execute or inspect fresh CI evidence on current head before assigning any tooling result
 ## State update contract
 
 Every run must replace this file's current-state sections with the newest verified facts, then append one compact entry below in this format:
@@ -148,7 +158,7 @@ Never record a PASS unless a real run/job/artifact proves it.
 
 ## Protocol state
 
-- Control Plane latest commit: `8f22adaf84a0d4ae6ed9d4091151b3f30dc2a589`
+- Control Plane latest commit: `51e3870fc56a1949257e1ae277bb27397ca5d670`
 - Project Memory latest commit: `b446418682c18036328380e96d13c51f05f0e54a`
 - Fast entry point latest main commit: `b29ae9c22c09582774edfcb0e28d692f643dc9dc`
 - Previous Control Plane evolution commit: `ba34d9660b0ace297e55411bdc24ff43c53bc718`
