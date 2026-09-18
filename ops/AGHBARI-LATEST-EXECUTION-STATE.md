@@ -210,14 +210,15 @@ NEXT ACTION: terminalize fresh tooling CI; resolve any remaining Gitleaks findin
 
 ## CURRENT VERIFIED OVERLAY — 2026-09-18 — LATEST
 
-- Candidate `4d5057d7952e213d6b5328a80f0229f1ff9fb861` is frozen; deployment `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32` is READY and exact-SHA aligned.
-- Fresh read-only browser proof: TinyFish `683148ee-b515-4e81-a2cb-ff4fa4a07ca0` = PASS for page load, Arabic RTL, `بوابة الأغبري التجارية`, login landing page, and no visible errors/broken links/images.
-- Authenticated Deployment Browser is BLOCKED by missing `VERCEL_AUTOMATION_BYPASS_SECRET`; exact failing job `105458885469`. Formal Final Regression is NOT_PROVEN because workflow dispatch is unavailable.
-- Main `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`; Production = NO TOUCH.
-- Tooling PR #72 = `92fa7bffb8971eecb10d91fe588709da0e06675a`; 11 exact-head terminal gates PASS, Migration Proof `35308340466` FAIL only in pgTAP after migrations applied successfully.
-- PR #73 diagnostic harness head `cf7db1c376e40c44ed0cec1956c9b59ee8f5d7f0` leaves 12 real product/schema contract failures in five files: storage, purchase-receipt outbox, expense balance, transfer search_path, and remaining SECURITY DEFINER search_paths.
-- Live Supabase migration history contains corresponding hardening migrations; this is read-only corroboration, not a reason to mutate Production.
-- Certification remains NO; final reconciliation OPEN; live alignment to candidate NOT_PROVEN.
+- Candidate `4d5057d7952e213d6b5328a80f0229f1ff9fb861` remains frozen; deployment `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32` is READY and exact-SHA aligned.
+- Read-only browser proof PASS: TinyFish `683148ee-b515-4e81-a2cb-ff4fa4a07ca0`.
+- Authenticated browser rerun job `105488272913` failed closed at credential validation because `VERCEL_AUTOMATION_BYPASS_SECRET` is empty; no browser E2E executed.
+- Main `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; Production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`; Production NO TOUCH.
+- Tooling #72 `92fa7bffb8971eecb10d91fe588709da0e06675a`: 11 terminal PASS gates; migration proof `35308340466` FAIL only in pgTAP after empty-DB migration apply succeeds.
+- PgTAP repair PR #73 `cf7db1c376e40c44ed0cec1956c9b59ee8f5d7f0`: 12 remaining product/schema contract assertions.
+- Formal Final Regression remains NOT_PROVEN because dispatch is unavailable.
+- Certification remains NO; final evidence reconciliation OPEN; live alignment NOT_PROVEN.
+
 
 ### 2026-09-18 — Command 1 autonomous execution reconciliation
 
@@ -241,3 +242,15 @@ RESULT: tooling PR #72 has 11 terminal PASS gates; migration proof fails only in
 ROOT CAUSE: tooling baseline was previously contaminated; after isolation/pinning, the clean remaining failure is current main's unaligned database contracts. Authenticated browser and Formal Final Regression remain external capability boundaries.
 ARTIFACT: `ops/evidence/20260918-command1-tooling-pgtap-browser-reconciliation.md`; TinyFish `683148ee-b515-4e81-a2cb-ff4fa4a07ca0`; PR #72; PR #73.
 NEXT ACTION: preserve the candidate freeze and Production NO TOUCH. Resolve only the authenticated browser credential path and formal regression dispatch, while keeping product-gap remediation on a separate future candidate branch.
+
+
+### 2026-09-18 — Command 1 — authenticated browser boundary recheck
+
+RUN: `35299467671` rerun; job `105488272913`; TinyFish `683148ee-b515-4e81-a2cb-ff4fa4a07ca0`
+JOB: exact candidate deployment browser validation
+SHA: candidate `4d5057d7952e213d6b5328a80f0229f1ff9fb861`
+FRONT: authenticated browser certification
+RESULT: BLOCKED again at fail-closed credential validation; `E2E_BASE_URL` and `EXPECTED_SHA` are valid, but `VERCEL_AUTOMATION_BYPASS_SECRET` is empty. Read-only browser proof remains PASS separately.
+ROOT CAUSE: approved Vercel automation-bypass credential is still unavailable.
+ARTIFACT: `ops/evidence/20260918-command1-browser-credential-boundary-recheck.md` commit `54e8c69ef9c7a572b793b611847b643bbcd66490`.
+NEXT ACTION: obtain the approved automation-bypass credential through the owner-controlled Vercel/GitHub secret path; do not disable protection or store the secret in repository files.
