@@ -20,6 +20,9 @@ const EMPTY: DashboardSnapshot = { products: 0, customers: 0, orders: 0, stockIt
 const STATUS_LABELS: Record<string, string> = { pending: 'قيد المراجعة', confirmed: 'مؤكد', preparing: 'قيد التجهيز', ready: 'جاهز', completed: 'مكتمل', cancelled: 'ملغي', draft: 'مسودة' };
 
 function money(value: number) { return `${formatMoney(value)} ر.ي`; }
+const DASHBOARD_TIME_ZONE = 'Asia/Aden';
+function formatBusinessDate(value: string | Date) { return new Intl.DateTimeFormat('ar-YE', { timeZone: DASHBOARD_TIME_ZONE, dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value)); }
+function formatBusinessTime(value: Date) { return new Intl.DateTimeFormat('ar-YE', { timeZone: DASHBOARD_TIME_ZONE, timeStyle: 'short' }).format(value); }
 
 export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
   const [snapshot, setSnapshot] = useState<DashboardSnapshot>(EMPTY);
@@ -113,11 +116,11 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
         </div>
 
         <div className="executive-grid-two bottom-grid">
-          <article className="executive-card"><div className="executive-card-title"><div><span>التشغيل</span><h2>أحدث الطلبات</h2></div>{['owner','admin','sales','warehouse'].includes(role) && <a href="#admin-orders">عرض الكل ←</a>}</div>{latestOrders.length ? <div className="executive-orders">{latestOrders.map((order) => <div key={order.id}><span>#{order.order_number}</span><div><strong>{order.customer_name}</strong><small>{new Date(order.created_at).toLocaleString('ar')}</small></div><b>{money(order.total)}</b><em>{STATUS_LABELS[order.status] ?? order.status}</em></div>)}</div> : <p className="executive-empty">لا توجد طلبات بعد.</p>}</article>
+          <article className="executive-card"><div className="executive-card-title"><div><span>التشغيل</span><h2>أحدث الطلبات</h2></div>{['owner','admin','sales','warehouse'].includes(role) && <a href="#admin-orders">عرض الكل ←</a>}</div>{latestOrders.length ? <div className="executive-orders">{latestOrders.map((order) => <div key={order.id}><span>#{order.order_number}</span><div><strong>{order.customer_name}</strong><small>{formatBusinessDate(order.created_at)}</small></div><b>{money(order.total)}</b><em>{STATUS_LABELS[order.status] ?? order.status}</em></div>)}</div> : <p className="executive-empty">لا توجد طلبات بعد.</p>}</article>
           <article className="executive-card smart-card"><div className="executive-card-title"><div><span>أدوات الإدارة</span><h2>أوامر سريعة</h2></div><span>تشغيل مباشر</span></div><div className="quick-actions">{['owner','admin','sales'].includes(role) && <a href="#admin-product-create">＋ إضافة منتج</a>}{['owner','admin','sales','warehouse'].includes(role) && <a href="#admin-orders">▤ إدارة الطلبات</a>}{['owner','admin','sales'].includes(role) && <a href="#admin-customers">▣ إدارة العملاء</a>}{['owner','admin','warehouse'].includes(role) && <a href="#admin-inventory">▥ إدارة المخزون</a>}{['owner','admin','sales'].includes(role) && <a href="#admin-finance">◫ الحسابات والمالية</a>}{['owner','admin'].includes(role) && <a href="#admin-settings">⚙ إعدادات التحكم</a>}</div><div className="credit-summary"><span>الائتمان المتاح</span><strong>{money(snapshot.availableCredit)}</strong></div></article>
         </div>
 
-        <footer className="executive-footer"><span>دورك الحالي: {role}</span><span>{lastUpdated ? `آخر تحديث ${lastUpdated.toLocaleTimeString('ar')}` : 'جارٍ التحديث…'}</span><span>التحديث التلقائي كل 60 ثانية</span></footer>
+        <footer className="executive-footer"><span>دورك الحالي: {role}</span><span>{lastUpdated ? `آخر تحديث ${formatBusinessTime(lastUpdated)}` : 'جارٍ التحديث…'}</span><span>التحديث التلقائي كل 60 ثانية</span></footer>
       </div>
     </div>
   </section>;
