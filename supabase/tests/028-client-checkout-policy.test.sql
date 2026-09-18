@@ -1,6 +1,6 @@
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(8);
+select plan(10);
 insert into auth.users(id,instance_id,aud,role,email,encrypted_password,created_at,updated_at)
 values ('28282828-2828-4282-8282-282828282828','00000000-0000-0000-0000-000000000000','authenticated','authenticated','checkout-policy@fixture.invalid','x',now(),now());
 insert into public.organizations(id,name,is_active) values ('28282828-2828-4282-8282-282828282829','Checkout Policy Tenant',true);
@@ -16,6 +16,8 @@ insert into public.client_ui_settings(organization_id,config) values ('28282828-
 set local role authenticated;
 select set_config('request.jwt.claim.role','authenticated',true);
 select set_config('request.jwt.claim.sub','28282828-2828-4282-8282-282828282828',true);
+select is((select count(*) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='public' and p.proname='create_order' and pg_get_function_identity_arguments(p.oid)='p_idempotency_key text, p_warehouse_id uuid, p_lines jsonb'),0::bigint,'Legacy 3-argument create_order overload is removed');
+select is((select has_function_privilege('authenticated','public.create_order(text,uuid,jsonb,text)','EXECUTE')),true,'Authenticated customers execute only the 4-argument authoritative order RPC');
 select throws_ok($$select * from public.create_order('checkout-policy-cash-001',(select id from public.warehouses where id='28282828-2828-4282-8282-282828282832'),jsonb_build_array(jsonb_build_object('product_id','28282828-2828-4282-8282-282828282833','quantity',4)),'cash')$$,'42501','payment method not enabled','Disabled payment method is blocked server-side');
 select throws_ok($$select * from public.create_order('checkout-policy-min-001',(select id from public.warehouses where id='28282828-2828-4282-8282-282828282832'),jsonb_build_array(jsonb_build_object('product_id','28282828-2828-4282-8282-282828282833','quantity',2)),'credit')$$,'P0001','minimum order value not met','Minimum order value is enforced server-side');
 select throws_ok($$select * from public.create_order('checkout-policy-max-001',(select id from public.warehouses where id='28282828-2828-4282-8282-282828282832'),jsonb_build_array(jsonb_build_object('product_id','28282828-2828-4282-8282-282828282833','quantity',5)),'credit')$$,'P0001','maximum order value exceeded','Maximum order value is enforced server-side');
