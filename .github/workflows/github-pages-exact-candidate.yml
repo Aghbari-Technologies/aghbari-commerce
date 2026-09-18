@@ -1,0 +1,153 @@
+name: Exact Candidate GitHub Pages Recovery
+
+on:
+  push:
+    branches:
+      - execution/github-pages-candidate-20260918
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: aghbari-pages-exact-candidate
+  cancel-in-progress: false
+
+env:
+  EXPECTED_SHA: 2facceb39aaa826413f20245a6f20b6c2ff7cd34
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXPECTED_SHA }}
+          fetch-depth: 1
+
+      - name: Verify exact source
+        shell: bash
+        run: |
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$EXPECTED_SHA" || { echo "SHA mismatch: expected=$EXPECTED_SHA actual=$actual"; exit 1; }
+
+      - uses: actions/setup-node@49933ea5288caeca8642ad1e84afbd3f7d6820020
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Clean deterministic install
+        run: |
+          rm -rf node_modules dist
+          npm ci --no-audit --no-fund
+
+      - name: Recover public Supabase client configuration from current public product
+        shell: bash
+        run: |
+          set -euo pipefail
+          html="$(curl -fsSL --max-time 30 https://aghbari-commerce-c2dd.vercel.app/)"
+          asset="$(printf '%s' "$html" | grep -oE 'assets/[^"]+\.js' | head -n1)"
+          test -n "$asset"
+          curl -fsSL --max-time 30 "https://aghbari-commerce-c2dd.vercel.app/$asset" -o /tmp/current-app.js
+          node <<'NODE'
+          const fs = require('node:fs');
+          const text = fs.readFileSync('/tmp/current-app.js', 'utf8');
+          const url = text.match(/https:\/\/[a-z0-9]+\.supabase\.co/);
+          if (!url || url[0] !== 'https://mrcyqezbhpncuvaehwgf.supabase.co') {
+            throw new Error('Expected canonical Supabase URL was not recovered');
+          }
+          const jwt = text.match(/eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/);
+          if (!jwt || jwt[0].length < 100) throw new Error('Supabase publishable JWT was not recovered');
+          fs.appendFileSync(process.env.GITHUB_ENV, `VITE_SUPABASE_URL=${url[0]}\nVITE_SUPABASE_PUBLISHABLE_KEY=${jwt[0]}\n`);
+          console.log('Recovered public Supabase client configuration for build');
+          NODE
+
+      - name: Typecheck exact candidate
+        run: npm run typecheck
+
+      - name: Build exact candidate for GitHub Pages
+        run: |
+          export VITE_BUILD_SHA="$EXPECTED_SHA"
+          npx vite build --base=./
+
+      - name: Verify exact build artifact
+        shell: bash
+        run: |
+          test -s dist/build-meta.json
+          node <<'NODE'
+          const fs = require('node:fs');
+          const meta = JSON.parse(fs.readFileSync('dist/build-meta.json','utf8'));
+          if (meta.product !== 'aghbari-commerce') throw new Error('Unexpected product');
+          if (meta.git_sha !== process.env.EXPECTED_SHA) throw new Error(`Build SHA mismatch: ${meta.git_sha}`);
+          if (!meta.version) throw new Error('Missing version');
+          console.log(`Exact build verified: ${meta.git_sha}`);
+          NODE
+
+      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b
+      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e
+
+  browser-e2e:
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      E2E_BASE_URL: ${{ needs.deploy.outputs.page_url }}
+      E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
+      E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+      E2E_EMAIL_B: ${{ secrets.E2E_EMAIL_B }}
+      E2E_PASSWORD_B: ${{ secrets.E2E_PASSWORD_B }}
+      E2E_ADMIN_EMAIL: ${{ secrets.E2E_ADMIN_EMAIL }}
+      E2E_ADMIN_PASSWORD: ${{ secrets.E2E_ADMIN_PASSWORD }}
+      EXPECTED_SHA: ${{ env.EXPECTED_SHA }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ env.EXPECTED_SHA }}
+          fetch-depth: 1
+      - uses: actions/setup-node@49933ea5288caeca8642ad1e84afbd3f7d6820020
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium
+      - name: Verify deployed exact build
+        shell: bash
+        run: |
+          test -n "$E2E_BASE_URL"
+          curl --fail --silent --show-error "$E2E_BASE_URL/build-meta.json" -o /tmp/pages-meta.json
+          node <<'NODE'
+          const fs = require('node:fs');
+          const meta = JSON.parse(fs.readFileSync('/tmp/pages-meta.json','utf8'));
+          if (meta.product !== 'aghbari-commerce') throw new Error('Unexpected product');
+          if (meta.git_sha !== process.env.EXPECTED_SHA) throw new Error(`Deployed SHA mismatch: ${meta.git_sha}`);
+          console.log(`Exact deployed Pages SHA: ${meta.git_sha}`);
+          NODE
+      - name: Run customer browser E2E
+        run: npx playwright test e2e/critical-path.spec.ts --project=chromium
+      - name: Run admin browser E2E
+        run: npx playwright test e2e/admin-control-plane.spec.ts --project=chromium
+      - name: Upload browser evidence
+        if: always()
+        uses: actions/upload-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa
+        with:
+          name: pages-browser-e2e-${{ env.EXPECTED_SHA }}
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 7
