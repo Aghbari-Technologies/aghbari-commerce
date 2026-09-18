@@ -860,3 +860,15 @@ RESULT: Existing interfaces were preserved and upgraded in place. Added visual p
 ROOT CAUSE: one newly introduced test exposed that business-day grouping must not depend on CI runner timezone. The defect was in proof coverage/implementation boundary and was corrected explicitly rather than weakening the test.
 ARTIFACT: UI PR #81; Application Quality `35344749035`; Security `35344749074`; G1 `35344749058`; Order `35344749021`; Bootstrap `35344749034`; Migration Proof `35344749011` RUNNING; Netlify site `6c515d48-3385-46eb-958c-3ff2ee17e95e`.
 NEXT ACTION: finish Migration Proof on exact HEAD; after all CI is terminal, perform the strongest available browser verification for the UI branch and only then decide whether PR #81 should be merged. Keep certification candidate frozen and do not consume Vercel quota for UI validation.
+
+
+### 2026-09-18 — Release Integration Layer
+
+- Created isolated release branch `release/ui-over-certified-candidate-20260918` from frozen candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b`.
+- Integrated the UI hardening set over the candidate base while preserving the candidate-only authentication behavior in `src/App.tsx`.
+- Exact branch HEAD: `a85926c2ec4ff781f03b230e929b0a1ecb5bfafe`.
+- Branch differs from the frozen candidate by exactly 7 intended files/commits: `netlify.toml`, `src/AdminExecutiveDashboard.tsx`, `src/AdminPanel.tsx`, `src/App.tsx`, `src/domain/adminDashboard.ts`, `src/domain/adminDashboard.test.ts`, `src/ui-polish.css`.
+- PR #82 to main is DRAFT/non-production. It is the release integration lane; merging is not authorized until the resulting exact merge SHA completes the required evidence gates.
+- PR #82 current completed PASS gates: Order Workflow, G1 Domain, Intelligence Contract, Order Invariant, Application Quality, Security Audit, Bootstrap Lockfile. Browser/Local Artifact, Test-the-Test, Concurrency, and Supabase Migration Proof remain in progress at the current checkpoint; Exact Deployment contract PASS has the real browser subjob skipped unless an exact deployment exists.
+- The earlier UI-on-main migration-proof failure is superseded as a release-path signal: comparison showed the frozen candidate contains additional database migrations/tests that main lacked. The integration branch intentionally starts from the candidate so backend hardening and UI are tested together.
+- Frozen candidate and Production remain untouched.
