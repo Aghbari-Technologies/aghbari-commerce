@@ -33,17 +33,16 @@
 # 0A. AUTHORITATIVE LIVE EXECUTION STATE — 2026-09-18 — CURRENT RECONCILIATION
 
 - CURRENT CANDIDATE: `4d5057d7952e213d6b5328a80f0229f1ff9fb861` on `execution/closure-hammer-20260918b`; frozen.
-- MAIN: `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; verified from GitHub; no source drift detected during this reconciliation.
-- LIVE/PRODUCTION: `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`; Production = NO TOUCH; no promotion or mutation.
-- CANDIDATE DEPLOYMENT: `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32` READY and exact-SHA aligned. Fresh read-only TinyFish proof `683148ee-b515-4e81-a2cb-ff4fa4a07ca0` passed page load, Arabic RTL, brand visibility, login landing page visibility, and no visible errors/broken links/images.
-- AUTHENTICATED DEPLOYMENT BROWSER: BLOCKED. Exact candidate browser job `105458885469` stopped at credential validation because `VERCEL_AUTOMATION_BYPASS_SECRET` is unavailable. No credential or protection bypass was fabricated.
-- FORMAL FINAL REGRESSION: NOT_PROVEN — connected GitHub mutation surface does not expose workflow dispatch.
-- TOOLING PR #72: exact current head `92fa7bffb8971eecb10d91fe588709da0e06675a`, draft, base `main @ 4505bcb655c0b747aeea7e1cc526a94f93270d3d`.
-- TOOLING CI ON EXACT HEAD: 11 terminal PASS gates: Application Quality `35308340448`; Bootstrap Release Lockfile `35308340467`; G1 `35308340484`; Intelligence `35308340474`; Order Workflow `35308340482`; Order Invariant `35308340457`; CodeQL `35308340483`; Gitleaks `35308340477`; Semgrep CE `35308340528`; Trivy `35308340452`; Security Audit `35308340469`.
-- TOOLING MIGRATION PROOF: `35308340466` FAIL only in pgTAP after empty-DB migration application PASS. This is not branch contamination.
-- PGTAP BASELINE DIAGNOSTIC PR #73: exact head `cf7db1c376e40c44ed0cec1956c9b59ee8f5d7f0`; test-harness-only. After harness corrections, 12 assertions still fail across five product/schema contract areas: storage boundary (5), receipt outbox (1), expense cash balance (1), transfer search_path (1), remaining SECURITY DEFINER search_paths (4).
-- LIVE SUPABASE: project `mrcyqezbhpncuvaehwgf` is ACTIVE_HEALTHY. Production migration history independently contains corresponding hardening migrations; this is observation-only. Current advisors report 1 anon-executable SECURITY DEFINER and 58 authenticated-executable SECURITY DEFINER findings; no live mutation was performed.
-- CANONICAL VERCEL: project `aghbari-commerce-c2dd` / `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`, linked to `Aghbari-Technologies/aghbari-commerce`.
+- MAIN: `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; verified from GitHub.
+- LIVE/PRODUCTION: `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`; Production = NO TOUCH; no promotion/mutation.
+- CANDIDATE DEPLOYMENT: `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32` READY and exact-SHA aligned.
+- READ-ONLY CANDIDATE BROWSER: TinyFish `683148ee-b515-4e81-a2cb-ff4fa4a07ca0` PASS: page load, Arabic RTL, `بوابة الأغبري التجارية`, login landing page, no visible errors/broken links/images.
+- AUTHENTICATED DEPLOYMENT BROWSER: BLOCKED. Rerun job `105488272913` / run `35299467671` fail-closed because `VERCEL_AUTOMATION_BYPASS_SECRET` is empty. `E2E_BASE_URL` and `EXPECTED_SHA` were present; browser execution did not start.
+- FORMAL FINAL REGRESSION: NOT_PROVEN — no executable workflow-dispatch capability exposed through the connected GitHub mutation surface.
+- TOOLING PR #72: current exact head `92fa7bffb8971eecb10d91fe588709da0e06675a`, draft, base `main @ 4505bcb655c0b747aeea7e1cc526a94f93270d3d`. Eleven terminal CI gates PASS; migration-proof `35308340466` FAIL only in pgTAP after empty-DB migration apply PASS.
+- PGTAP DIAGNOSTIC PR #73: `cf7db1c376e40c44ed0cec1956c9b59ee8f5d7f0`; 12 assertions remain across five product/schema contract gaps after test-harness repair.
+- VERCEL PROJECT: `aghbari-commerce-c2dd` / `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`, linked to `Aghbari-Technologies/aghbari-commerce`; team plan observed as Hobby.
+- SUPABASE LIVE: `mrcyqezbhpncuvaehwgf` ACTIVE_HEALTHY; live advisor findings are observation-only.
 - CERTIFICATION: NO. FINAL EVIDENCE RECONCILIATION: OPEN. LIVE ALIGNMENT TO CANDIDATE: NOT_PROVEN.
 
 
