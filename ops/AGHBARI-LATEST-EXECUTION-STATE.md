@@ -206,6 +206,19 @@ ROOT CAUSE: market requirements alone do not create competitive advantage; the p
 ARTIFACT: `docs/UPWORK-MARKET-REQUIREMENTS-20260918.md`; `docs/UPWORK-BID-ENGINE-20260918.md`; `docs/COMPETITIVE-MOAT-AND-PORTFOLIO-20260918.md`; main index `eeac57f...`; PROJECT_MEMORY decision commit `52539ab...`
 NEXT ACTION: build the real portfolio proof pack and sanitized demo from already-proven Aghbari capabilities, then use the Bid Engine to classify live opportunities. Do not mutate the frozen certification candidate solely to mirror market postings.
 
+
+
+### 2026-09-18 — Competitive moat backlog operationalization (reconciled)
+
+RUN: `market-led differentiation → executable GitHub fronts`
+JOB: convert competitive strategy into bounded, traceable product/design backlog
+SHA: certification candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b` unchanged; Production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497` unchanged
+FRONT: demo/portfolio, operational speed, conflict/recovery, low-bandwidth/barcode, migration bridge, trust/provenance
+RESULT: created issues #75–#80 with explicit acceptance criteria and evidence boundaries. Master Execution Index links the executable fronts. No issue is treated as implemented until the normal exact-SHA execution and proof pipeline runs.
+ROOT CAUSE: strategic differentiation without an executable backlog risks becoming aspirational documentation rather than delivered capability.
+ARTIFACT: GitHub issues #75, #76, #77, #78, #79, #80; master index commit `539a5f629e048f1a6bc9d59747eb02a8748142e7`.
+NEXT ACTION: when the certification boundary is legitimately advanced, select the highest-value unblocked moat front and execute it through the standard protocol. Keep commercial backlog separate from release blockers.
+
 ## State update contract
 
 Every run must replace this file's current-state sections with the newest verified facts, then append one compact entry below in this format:
