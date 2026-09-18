@@ -255,7 +255,7 @@ BEGIN
 
   RETURN QUERY SELECT v_order.id,v_order.order_number,v_order.status,v_order.total;
 END;
-$function$
+$function$;
 
 revoke all on function public.create_order(text,uuid,jsonb,text) from public, anon;
 grant execute on function public.create_order(text,uuid,jsonb,text) to authenticated;
