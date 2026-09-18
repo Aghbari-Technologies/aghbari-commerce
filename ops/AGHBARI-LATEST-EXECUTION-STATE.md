@@ -41,6 +41,13 @@ Commit `cb2707...` corrected the test fixture only:
 
 This was classified as a proof/test defect, not a product or security defect.
 
+## Production identity reconciliation
+- Netlify project `aghbari-commerce-web` reports currentDeploy `6aadaea0475017968f71cfda`, READY, for the primary site `https://aghbari-commerce-web.netlify.app`.
+- Netlify records that deploy with `context=production`; public `build-meta.json` reports exact Git SHA `cb2707b8005ac8237b06a7c89cc9bcf68dc50061`.
+- Therefore the current primary production artifact is the development SHA `cb2707b...`, not the frozen certification candidate `2facceb3...`.
+- This state predates RUN-2026-09-19-EXEC-003. No production mutation, rollback, promotion, or alias switch was performed in this run.
+- The prior `Production: NO TOUCH` shorthand is stale/incomplete as a current-identity statement. Treat Production as **HOLD / NO NEW TOUCH** until the release owner deliberately resolves the already-published development artifact after formal certification.
+
 ## Current open boundary
 - Formal Final Regression: NOT_PROVEN — connected GitHub mutation surface exposes no workflow-dispatch operation.
 - Alternate authenticated browser-dispatch path: BLOCKED before start by external automation wallet capacity; no browser execution occurred through that path.
