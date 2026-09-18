@@ -34,7 +34,9 @@ jobs:
           fetch-depth: 1
       - name: Verify exact checked-out HEAD
         shell: bash
-        run: test "$(git rev-parse HEAD)" = "$TARGET_SHA"
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          test "$(git rev-parse HEAD)" = "$TARGET_SHA"
       - name: Run Semgrep CE
         shell: bash
         run: semgrep scan --config auto --error --json --output semgrep-results.json .
