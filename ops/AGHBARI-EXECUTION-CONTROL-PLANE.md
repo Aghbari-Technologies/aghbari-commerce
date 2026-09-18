@@ -1271,3 +1271,15 @@ RESULT: workflow safety is closed on the current candidate; current candidate CI
 ROOT CAUSE: repository write/push automation was broader than initially scoped; release audit explicitly requires bootstrap-release-lockfile.yml; Vercel and GitHub browser capabilities remain externally blocked.
 ARTIFACT: PR #74; ops/evidence/20260918-command1-workflow-safety-release-gates.md
 NEXT ACTION: terminalize current-SHA CI and reconcile exact evidence; preserve external blockers; no production mutation or promotion.
+
+
+## 2026-09-18 — Command 1 continuation: candidate CI closure
+
+RUN: 35310025169; 35310025060; 35310025041; 35310025032; 35310025159
+JOB: exact candidate verification
+SHA: 4753cc3319f551aeccbe2bd081b988fa68df8e87
+FRONT: migration / fresh browser / test-the-test / concurrency / local production browser
+RESULT: Migration, Fresh Browser, Test-the-Test, and Concurrency are terminal PASS on exact current candidate SHA. Local Production Artifact remains IN_PROGRESS at isolated local Supabase startup. Browser Exact Deployment run 35310024991 has browser-contract PASS but runtime browser execution SKIPPED because no current-SHA Vercel deployment exists.
+ROOT CAUSE: current candidate deployment is blocked by Vercel rate limiting; this prevents authenticated deployment-browser proof.
+ARTIFACT: ops/evidence/20260918-command1-current-candidate-update.md
+NEXT ACTION: close Local Production Artifact when terminal; then reconcile all mandatory gates. Preserve deployment/browser/final-regression blockers and Production NO TOUCH.
