@@ -37,7 +37,7 @@ export default function ClientControlPanel({ role }: { role: string }) {
       if(!data?.ok)throw new Error(String(data?.reason??data?.error??'تعذر إرسال بيانات المتجر إلى بوابة التقارير.'));
       setAnalysisAttempt(null);
       setMessage('تم تمرير لقطة بيانات المتجر إلى بوابة التقارير بنجاح، مع بقاء Commerce مصدر الحقيقة التشغيلي.');
-    }catch(e){setError(e instanceof Error?e.message:'بوابة التقارير غير متاحة حالياً؛ لم يتم تعديل بيانات التشغيل.');}
+    }catch(e){const raw=e instanceof Error?e.message:'بوابة التقارير غير متاحة حالياً؛ لم يتم تعديل بيانات التشغيل.';setError(/not found|404|function.*not.*found|FunctionsFetchError/i.test(raw)?'بوابة التقارير غير مفعّلة على بيئة التشغيل الحالية؛ لم يتم تعديل بيانات Commerce.':raw);}
     finally{setAnalysisBusy(false);}
   }
   function updateBoolean(key:keyof ClientUiConfig,checked:boolean){setConfig(current=>({...current,[key]:checked}));}
