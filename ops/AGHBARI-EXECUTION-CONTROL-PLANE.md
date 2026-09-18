@@ -32,21 +32,20 @@
 
 # 0A. AUTHORITATIVE LIVE EXECUTION STATE — 2026-09-18 — CURRENT RECONCILIATION
 
-- CURRENT CANDIDATE: `85c289fa62598d140a87ab37fec173b5f2962b3f` on `certification/final-candidate-20260918`; PR #83 OPEN / non-draft / mergeable.
+- CURRENT CANDIDATE: `e3eafd7582f4d8ce26c94e90d073c98c5e7284b7` on `certification/final-candidate-20260918`; PR #83 OPEN / non-draft / mergeable.
 - CANDIDATE BASE: `main @ 427ff0801544449f432290205b2a29f2508541f3`.
-- CANDIDATE STATUS: Fresh-DB/browser proof is being regenerated after real schema defects were found and fixed. Prior candidate PASS evidence belongs to predecessor SHAs and is invalidated.
+- CANDIDATE STATUS: Fresh-DB/browser proof is being regenerated after concrete source/proof defects were found and repaired. Prior candidate PASS evidence is SHA-invalid.
 - MAIN: `427ff0801544449f432290205b2a29f2508541f3`.
 - PRODUCTION: `a7953a62e601eb12322fbbd902c0790c7a3921b1`; Vercel Production `dpl_AmTBr8X9qBGCLdngxirQgdRM4Xjo` READY; Production = NO TOUCH.
-- CANDIDATE DEPLOYMENT: NOT_AVAILABLE — no Vercel deployment record matches `85c289fa...`.
+- CANDIDATE DEPLOYMENT: NOT_AVAILABLE — no Vercel deployment matches `e3eafd758...`.
 - CANDIDATE BROWSER: NOT_PROVEN — exact deployment is absent.
 - FORMAL FINAL REGRESSION: NOT_PROVEN — connected GitHub surface has no workflow-dispatch mutation.
-- REAL BROWSER HEALTH: verified separately on operational deployment SHA `cf82b754...`; evidence is deployment-specific/non-candidate.
-- PR #84: OPEN/non-certifying, latest HEAD `3ce43ff36a44b0e27dca7aa1adb34cabe46c08a9`; payment selection, tier pricing, payment schema, notification schema, E2E cart isolation. Current exact-head CI queued.
-- PR #86: OPEN/non-certifying, latest HEAD `10dac1d629c8804c048efcd626cfe4e71f4cda6a`; offline quantity boundary, reconnect sync, visible connection state, re-entry guard, notification schema, E2E cart isolation. Current exact-head CI queued.
-- PR #87: OPEN/non-certifying, latest HEAD `71fb3fa267f4d5b3b80a9e77b2e2afa4cb5d51b4`; reporting CORS, idempotent retries, remote-accepted recovery, notification schema, E2E cart isolation. Current exact-head CI queued.
-- PR #82: MERGED into main at `d8fdb226866a2563164816066cdecc8e08549bae`.
-- PR #74/#81: CLOSED as superseded; historical evidence only.
+- CURRENT EXACT CI: 11 required gates queued for `e3eafd758...`; no terminal result inferred.
+- LIVE BROWSER HEALTH: previously verified on non-candidate operational deployment only; no cross-SHA transfer.
+- LIVE READ-ONLY SECURITY FINDING: Production currently has legacy `create_order(text,uuid,jsonb)` executable by `authenticated`; candidate closes client execution via migration without mutating Production.
 - CERTIFICATION: NO. Production remains untouched.
+
+
 # 0B. AUTONOMOUS MEMORY + SELF-IMPROVEMENT PROTOCOL
 
 The control plane is a living execution system, not a static instruction sheet.
