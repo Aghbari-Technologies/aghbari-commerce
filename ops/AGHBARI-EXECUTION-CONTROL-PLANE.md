@@ -33,17 +33,17 @@
 # 0A. AUTHORITATIVE LIVE EXECUTION STATE — 2026-09-18
 
 - CURRENT CANDIDATE: `4d5057d7952e213d6b5328a80f0229f1ff9fb861` on `execution/closure-hammer-20260918b`.
-- MAIN: `b29ae9c22c09582774edfcb0e28d692f643dc9dc`; delta from previous `b102ce5…` is documentation-only in `AGHBARI-EXECUTION-START.md`.
+- MAIN: `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; delta from previous `b102ce5…` is removal of obsolete self-mutating `.github/workflows/repair-excel-build.yml`.
 - LIVE/PRODUCTION: `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`.
 - PRODUCTION: NO TOUCH; candidate not promoted and no alias/migration/live mutation performed.
 - CANDIDATE EXACT-SHA GATES: Fresh Local+Storage, Migration, Test-the-Test, Concurrency, Local Production Browser, Quality, Security, G1, Order Workflow, Deployment Contract, Order Invariant, Bootstrap Lockfile = PASS.
-- CANDIDATE PREVIEW: `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32` READY exact `4d5057…`. TinyFish `549b9736-f328-44f6-bd4f-e11818e8489b` verified page render and exact `build-meta.json`; not authenticated Deployment Browser E2E.
-- DEPLOYMENT BROWSER: BLOCKED — `35298902449 / 105457162861` stopped at credential validation because approved Vercel bypass/E2E credential boundary is unavailable.
+- CANDIDATE PREVIEW: `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32` READY exact `4d5057…`. TinyFish `9cf69038-40b0-4f33-8365-322abe4c8146` executed read-only browser verification, but Vercel SSO blocked the app and `/build-meta.json`; therefore no browser/app/SHA proof was obtained.
+- DEPLOYMENT BROWSER: BLOCKED — approved Vercel automation bypass/E2E credentials are unavailable; TinyFish independently confirmed the candidate deployment is behind Vercel SSO.
 - LIVE/PRODUCTION DEPLOYMENT: `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5` READY exact `b102ce5…`, target production. Production error/fatal inspection over 24h found none.
 - FINAL REGRESSION: NOT_PROVEN / TOOL BOUNDARY — required workflow dispatch is unavailable.
 - EVIDENCE RECONCILIATION: OPEN for Deployment Browser, Live Alignment, Final Regression, and operational/tooling reconciliation.
-- TOOLING PR #72: current head `93552ada8b7cc33e0d1d3960a428566e378ef486`, draft, isolated. Earlier tooling findings recorded on `1830e3a…` are historical and do not transfer to the current PR head.
-- TOOLING #72 historical results on `1830e3a…`: Gitleaks FAIL (61 historical `generic-api-key` findings); Semgrep FAIL (36 findings); Trivy PASS; security/quality/G1/CodeQL/Vercel Preview Comments PASS; migration-proof FAIL in pgTAP phase. These results do not certify current head `93552ada…`; fresh current-head evidence is required.
+- TOOLING PR #72: current head `1830e3a109a9e0605f5306b2ddc8f308457fb375`, draft, isolated. Previous references to `93552ada…` are stale and are not current-head evidence.
+- TOOLING #72 current-head results on `1830e3a…`: Gitleaks FAIL — run `35301488345`, 61 `generic-api-key` findings, artifact `10529832877`; Semgrep FAIL — run `35301488324`, 36 blocking findings, artifact `10530271974`. No tooling result is transferred to candidate certification.
 - TOOLING CI DEFECTS FIXED: Gitleaks expression/artifact escaping on `15511628…`; ZAP shell-input handling + action pinning on `1830e3a…`.
 - TOOLING MIGRATION FAILURE CLASSIFICATION: NOT CANDIDATE DEFECT. Empty-database migration apply passed, then 31 pgTAP files produced multiple stale/mismatched expectations (e.g. missing RPC, missing inventory_changed, expected search_path metadata false, operational FK index assertions, storage test mismatches). Candidate’s own exact migration proof remains PASS and is separate.
 - OPERATIONAL LANE: `.github/workflows/repair-excel-build.yml` remains OPEN safety risk; source blob `68fcca2124145651e648f05b97318dcfea5dc45e` confirms `contents: write`, push trigger, and `git push origin HEAD:main`. Failure `35296779614` has zero exposed job records; root cause NOT_PROVEN.
@@ -1179,3 +1179,23 @@ Keep Production NO TOUCH. Continue only on the unresolved external/evidence fron
 - Historical Gitleaks scan at `1830e3a…` reported 61 `generic-api-key` findings. Because findings span historical test/fixture commits, no blanket ignore/allowlist was introduced. Current PR head `93552ada…` requires its own scan before any status is assigned.
 - Historical Semgrep evidence at `1830e3a…` reported 33 mutable GitHub Action refs plus Dependabot cooldown and non-literal RegExp findings. These are not certification evidence for candidate `4d5057…` or current tooling head `93552ada…`.
 - Candidate release lane remains frozen while external evidence boundaries are unresolved.
+
+
+## 0D. EVOLUTION ENTRY — 2026-09-18 COMMAND 1
+
+- Verify the actual PR head before trusting stored tooling state or transferring evidence.
+- Remove obsolete self-mutating repair automation rather than retaining write-to-main automation after its repair purpose is complete.
+- Treat Vercel SSO/authentication as a real access boundary; never weaken deployment protection to manufacture browser PASS.
+- Reconcile Vercel project identity by project linkage/owner/repository, not project name alone.
+- Keep current tooling findings isolated from the candidate; current head `1830e3a…` has real Gitleaks and Semgrep failures.
+
+### 2026-09-18 — Command 1 execution record
+
+RUN: `35301488324; 35301488345; 9cf69038-40b0-4f33-8365-322abe4c8146`
+JOB: Semgrep / Gitleaks / TinyFish candidate browser
+SHA: candidate `4d5057d…`; tooling `1830e3a…`; main `4505bcb…`; production `b102ce5…`
+FRONT: tooling integrity / browser deployment proof / operational safety / stale-state reconciliation
+RESULT: main safety risk removed; candidate untouched; browser remains NOT_PROVEN due SSO; tooling current head remains FAIL on Gitleaks and Semgrep.
+ROOT CAUSE: unsafe obsolete self-mutating CI, protected deployment access boundary, stale PR-head references, and unresolved tooling findings.
+ARTIFACT: main safety commit `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; Gitleaks artifact `10529832877`; Semgrep artifact `10530271974`; TinyFish run `9cf69038-40b0-4f33-8365-322abe4c8146`.
+NEXT ACTION: continue exact-SHA tooling remediation/verification and protected Deployment Browser/Final Regression paths; reconcile live/canonical Vercel identity before release.
