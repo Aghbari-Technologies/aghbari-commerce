@@ -17,7 +17,7 @@ select set_config('request.jwt.claim.sub',(select admin_id::text from fixture),t
 
 select is((select inventory_changed from public.commit_product_import(public.stage_product_import('one.xlsx',repeat('d',64),'[{"sku":"DELTA-TEST","name":"Delta Test","unit":"unit","category":"Delta","quantity":4,"prices":{"retail":10,"wholesale":9,"distributor":8}}]'::jsonb),(select warehouse_id from fixture))),1,'First import records one inventory change');
 select is((select quantity from public.inventory_balances where organization_id=(select org_id from fixture) and warehouse_id=(select warehouse_id from fixture)),4,'First import sets inventory to four');
-select is((select delta from public.inventory_movements where organization_id=(select org_id from fixture) order by id desc limit 1),4,'First import records exact delta of four');
+select is((select delta from public.inventory_movements where organization_id=(select org_id from fixture) order by created_at desc, id desc limit 1),4,'First import records exact delta of four');
 
 select is((select inventory_changed from public.commit_product_import(public.stage_product_import('two.xlsx',repeat('e',64),'[{"sku":"DELTA-TEST","name":"Delta Test","unit":"unit","category":"Delta","quantity":7,"prices":{"retail":10,"wholesale":9,"distributor":8}}]'::jsonb),(select warehouse_id from fixture))),1,'Second import records one inventory change');
 select is((select quantity from public.inventory_balances where organization_id=(select org_id from fixture) and warehouse_id=(select warehouse_id from fixture)),7,'Second import sets inventory to seven');
