@@ -264,3 +264,36 @@ Production remains b102ce5e9aebe61bb13581cd9a8f45d1cc43c497 and NO TOUCH. No pro
 
 ### Evidence artifact
 ops/evidence/20260918-command1-workflow-safety-release-gates.md
+
+
+## 2026-09-18 — Command 1 — current candidate closure
+
+Current certification candidate:
+- SHA `4753cc3319f551aeccbe2bd081b988fa68df8e87`
+- Branch `execution/closure-hammer-20260918c`
+- PR #74, open/draft/mergeable
+- Main `4505bcb655c0b747aeea7e1cc526a94f93270d3d`
+- Production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`, NO TOUCH
+
+Current exact-SHA proof:
+- Application Quality `35310025067` PASS
+- G1 `35310025098` PASS
+- Bootstrap Release Lockfile `35310025140` PASS
+- Security Audit `35310025100` PASS
+- Order Workflow Proof `35310025147` PASS
+- Order Invariant Contract `35310025210` PASS
+- Supabase Migration Proof `35310025169` PASS
+- Fresh Local Browser `35310025060` PASS
+- Test-the-Test `35310025041` PASS
+- Concurrency Proof `35310025032` PASS
+- Local Production Artifact `35310025159` / job `105490749871` PASS, including exact-SHA artifact build/checksum and customer/admin browser E2E against isolated local Supabase.
+
+Release evidence state:
+- Vercel candidate deployment is unavailable because exact-SHA status reports `Deployment rate limited — retry in 24 hours`; no candidate deployment exists in the canonical deployment list.
+- Authenticated Deployment Browser remains BLOCKED because `VERCEL_AUTOMATION_BYPASS_SECRET` is unavailable. No secret was generated, printed, committed, or exposed; protection remains intact.
+- Formal Final Regression remains NOT_PROVEN. The candidate repository contains `workflow_dispatch` on 13 of 15 workflows, but the connected GitHub mutation surface cannot invoke workflow dispatch. This is an execution-capability boundary, not evidence that the source workflows lack dispatch support.
+- Workflow safety is CLOSED on the candidate: 15 workflow files audited, 0 `contents: write`, 0 `git push`.
+- Certification remains NO; final evidence reconciliation is OPEN.
+
+Durable lesson:
+Do not conflate a workflow's source-level `workflow_dispatch` declaration with the operator's ability to execute it. Do not add speculative workflows or weaken security controls merely to compensate for a connector limitation. Preserve exact-SHA evidence and Production NO TOUCH.
