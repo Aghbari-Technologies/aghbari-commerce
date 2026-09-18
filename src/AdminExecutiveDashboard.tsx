@@ -38,7 +38,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
           supabase.from('products').select('id', { count: 'exact', head: true }).eq('status', 'active'),
           supabase.from('customers').select('id', { count: 'exact', head: true }),
           supabase.from('orders').select('id', { count: 'exact', head: true }),
-          supabase.from('inventory').select('product_id', { count: 'exact', head: true }),
+          supabase.from('inventory_balances').select('product_id', { count: 'exact', head: true }),
           supabase.from('customer_credit_accounts').select('outstanding_balance,available_credit'),
           getStaffOrders(100),
         ]);
