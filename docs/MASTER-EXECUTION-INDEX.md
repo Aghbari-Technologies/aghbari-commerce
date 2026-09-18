@@ -76,6 +76,23 @@ For market-facing production credibility, applicable flows should be supported b
 
 Market research does **not** override the existing Evidence-First rules, Release Gates, exact-SHA law, or Production-NO-TOUCH boundary.
 
+## Upwork commercial operating layer — added 2026-09-18
+
+The market baseline is now paired with a dedicated Bid Engine:
+
+- `docs/UPWORK-BID-ENGINE-20260918.md`
+
+The Bid Engine converts each live job into:
+`SCREEN → FIT-MAP → PROOF-MAP → COMMERCIAL CHECK → TAILORED PROPOSAL → FOLLOW-UP → INTERVIEW PREP → CONTRACT REVIEW → DELIVERY → PORTFOLIO UPDATE`
+
+Its core rule is:
+
+**Exact client problem + relevant Aghbari proof + bounded implementation path > generic stack matching.**
+
+Every opportunity receives a structured `PURSUE | WATCH | SKIP` decision only after checking the job's problem fit, proof fit, stack fit, scope, client/activity signals, and Connects economics.
+
+Upwork's current documentation states that Connects are required for proposals, that required Connects can change with job size/scope/market demand, and that freelancers should examine client history and job activity before spending Connects. Upwork also states that Specialized Profiles were deprecated on May 28, 2026 and the main profile now dynamically highlights relevant work and skills. The project's commercial layer therefore uses one evidence-rich primary profile plus job-specific proposals rather than obsolete specialized-profile copies.
+
 ## Remaining blockers
 1. Finish fresh CI/migration/G1 proofs on the exact active certification candidate maintained by the canonical control plane.
 2. Execute real authenticated browser E2E for catalog/pricing/cart/checkout/order persistence, templates and Excel review/commit.
@@ -86,6 +103,7 @@ Market research does **not** override the existing Evidence-First rules, Release
 7. Execute/prove outbox delivery/retry/terminal failure, invitation E2E, dynamic-admin behavior, RBAC direct-RPC denial, finance statement E2E, offline/recovery and import/export adversarial flows where not already covered by exact-head tests.
 8. Resolve remaining RLS init-plan warnings only where workload-safe; no blanket rewrite without evidence.
 9. Promote P1 market-fit extensions only through an explicit scope decision; do not mutate a frozen certification candidate merely to mirror an Upwork posting.
+10. Build the portfolio proof pack and opportunity funnel required by the Bid Engine before making commercial claims based on Aghbari.
 
 ## No-false-closure
 `CODE != TEST != CI != RUNTIME != LIVE != PRODUCTION`
