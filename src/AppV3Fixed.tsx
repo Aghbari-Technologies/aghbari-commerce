@@ -11,6 +11,7 @@ import { applyQuickOrder } from './services/quickOrder';
 import type { CustomerOrderSummary } from './services/customerOrders';
 import { getSession, signIn, signOut } from './services/auth';
 import { createOrderTemplate, deleteOrderTemplate, getOrderTemplates, applyOrderTemplate, type OrderTemplate } from './services/orderTemplates';
+import { syncOfflineCart } from './services/offlineQueue';
 import { supabase } from './lib/supabase';
 import AdminPanel from './AdminPanel';
 import './styles.css';
