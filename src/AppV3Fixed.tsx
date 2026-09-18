@@ -5,7 +5,7 @@ import { calculateClientPreviewTotal } from './domain/order';
 import { formatMoney } from './domain/pricing';
 import { getCatalog, getProductImageUrls, type CatalogItem } from './services/catalog';
 import { getCategories, type CategoryOption } from './services/categories';
-import { getCart, removeCartItem, setCartItem } from './services/cart';
+import { getCart, removeCartItem, setCartItem, syncOfflineCart } from './services/cart';
 import { createOrder } from './services/orders';
 import { applyQuickOrder } from './services/quickOrder';
 import type { CustomerOrderSummary } from './services/customerOrders';
@@ -42,6 +42,21 @@ export default function AppV3Fixed(){
   useEffect(()=>{if(!signedIn||!organizationId||!supabase)return;const channel=supabase.channel(`b2b-ui-${organizationId}`).on('postgres_changes',{event:'*',schema:'public',table:'client_ui_settings',filter:`organization_id=eq.${organizationId}`},()=>void loadConfig(organizationId));channel.subscribe();const timer=window.setInterval(()=>void loadConfig(organizationId),15000);return()=>{supabase.removeChannel(channel);window.clearInterval(timer);};},[signedIn,organizationId,loadConfig]);
   const loadData=useCallback(async()=>{if(!signedIn||!customerId||!supabase)return;setLoading(true);setError('');try{const [items,saved,cats]=await Promise.all([getCatalog(query,categoryId,60,0,warehouseId??undefined),getCart(),getCategories()]);const cmap=new Map(cats.map(c=>[c.id,c.name]));const urls=await getProductImageUrls(items.map(i=>i.image_path));const mapped=items.map(i=>mapProduct(i,cmap.get(i.category_id??'')??'أصناف',i.image_path?urls.get(i.image_path):undefined));setProducts(mapped);setCategories(cats);setCart(saved.map(i=>{const p=mapped.find(x=>x.id===i.product_id)??({id:i.product_id,sku:i.sku,name:i.name,unit:i.unit,category:'أصناف',availableQuantity:0,status:'active'} as Product);return{product:p,quantity:i.quantity,unitPrice:i.authorized_price??0};}));if(items.length){const {data:rows,error:tiersError}=await supabase.from('customer_price_tiers').select('product_id,min_quantity,unit_price,currency').eq('customer_id',customerId).in('product_id',items.map(i=>i.id)).order('min_quantity');if(tiersError)throw tiersError;const grouped:Record<string,PriceTier[]>={};for(const row of rows??[])(grouped[row.product_id]??=[]).push({min_quantity:Number(row.min_quantity),unit_price:Number(row.unit_price),currency:row.currency});setTiers(grouped);}const [{data:orderRows,error:ordersError},{data:account,error:accountError},{data:ledger,error:ledgerError}]=await Promise.all([supabase.from('orders').select('id,order_number,total,currency,status,created_at').eq('customer_id',customerId).order('created_at',{ascending:false}).limit(30),supabase.from('customer_credit_accounts').select('currency,credit_limit,outstanding_balance,available_credit').eq('customer_id',customerId).maybeSingle(),supabase.from('customer_ledger_entries').select('id,reference,description,debit,credit,due_date,status,created_at').eq('customer_id',customerId).order('created_at',{ascending:false}).limit(50)]);if(ordersError||accountError||ledgerError)throw ordersError??accountError??ledgerError;setOrders((orderRows??[]) as CustomerOrderSummary[]);setFinance(account?{currency:account.currency,creditLimit:Number(account.credit_limit),outstanding:Number(account.outstanding_balance),available:Number(account.available_credit),entries:(ledger??[]).map(e=>({...e,debit:Number(e.debit),credit:Number(e.credit)}))}:null);}catch(e){setError(e instanceof Error?e.message:'تعذر تحميل المتجر.');}finally{setLoading(false);}},[signedIn,customerId,warehouseId,query,categoryId]);
   useEffect(()=>{void loadData();},[loadData]);
+  useEffect(()=>{
+    if(!signedIn||!customerId||typeof window==='undefined') return;
+    let dead=false;
+    const sync=async()=>{
+      try{
+        const result=await syncOfflineCart();
+        if(dead)return;
+        if(result.processed>0){setMessage(`تمت مزامنة ${result.processed} عملية محفوظة بعد عودة الاتصال.`);void loadData();}
+        if(result.failed>0){setError(`تعذر مزامنة ${result.failed} عملية غير متصلة؛ ستتم إعادة المحاولة تلقائياً.`);}
+      }catch(e){if(!dead)setError(e instanceof Error?`تعذر مزامنة العمليات المحفوظة: ${e.message}`:'تعذر مزامنة العمليات المحفوظة.');}
+    };
+    window.addEventListener('online',sync);
+    void sync();
+    return()=>{dead=true;window.removeEventListener('online',sync);};
+  },[signedIn,customerId,loadData]);
   const total=calculateClientPreviewTotal(cart);const cartCount=cart.reduce((s,l)=>s+l.quantity,0);const categoriesView=useMemo(()=>[{id:null,name:'الكل'},...categories],[categories]);
   function effectivePrice(p:Product,q:number){const list=tiers[p.id]??[];return [...list].sort((a,b)=>b.min_quantity-a.min_quantity).find(x=>q>=x.min_quantity)?.unit_price??0;}
   function nextTier(p:Product,q:number){return (tiers[p.id]??[]).filter(x=>x.min_quantity>q).sort((a,b)=>a.min_quantity-b.min_quantity)[0];}
