@@ -1,3 +1,4 @@
+import appSource from '../AppV3Fixed.tsx?raw';
 import { beforeEach, describe, expect, it } from 'vitest';
 import {
   clearOfflineQueue,
@@ -41,6 +42,12 @@ describe('offline operation queue', () => {
   it('rejects cart quantities above the canonical order ceiling before persistence', () => {
     expect(() => enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: 10001 })).toThrow('بيانات العملية غير المتصلة غير صالحة');
     expect(pendingOfflineOperations(USER_A)).toHaveLength(0);
+  });
+
+  it('wires reconnect-driven offline cart synchronization into the runtime portal', () => {
+    expect(appSource).toContain("syncOfflineCart");
+    expect(appSource).toContain("window.addEventListener('online',online)");
+    expect(appSource).toContain("void flushOfflineCart()");
   });
 
   it('requires a valid authenticated user scope', () => {
