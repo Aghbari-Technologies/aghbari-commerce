@@ -355,3 +355,87 @@ PR #72 remains an isolated tooling lane at its current head; PR #73 remains an i
 A canonical Vercel project may receive a newer READY deployment from an operational branch while the release candidate has no deployment. Deployment admissibility is determined by the deployment's recorded Git SHA, not by recency, branch naming, project name, or READY state. For the current certification subject `5b9f2a76615e76bb6444c81f39e02f3479c0704b`, the reconciled canonical Vercel project has no exact-SHA deployment; the newest READY deployment observed is an `ops/execution-control-plane` commit and is operational evidence only.
 
 Operational state was reconciled on 2026-09-18 without changing the candidate or Production. Candidate exact-SHA proof remains terminal PASS across all 13 mandatory gates; deployment browser and formal final regression remain unresolved external capability boundaries. Tooling PR #72 migration proof remains a separate pgTAP baseline failure and must not be mixed into candidate certification.
+## 22. MARKET-LED PRODUCT DIFFERENTIATION DECISION — 2026-09-18
+
+### Decision
+Adopt a permanent Market-Led / Evidence-First differentiation layer for Aghbari Commerce.
+
+The product is not optimized to win by copying the largest competitor's feature count. It is optimized to create defensible client value through:
+- B2B operational workflow depth;
+- Arabic/RTL-first UX;
+- tenant isolation, RLS and RBAC;
+- explainable operational state and provenance;
+- Excel/legacy/Onyx migration readiness;
+- inventory/order concurrency and idempotency;
+- reliable webhook/outbox/retry integrations;
+- bounded offline/low-bandwidth behavior;
+- takeover-ready architecture for existing/AI-generated codebases;
+- production-grade observability, recovery and evidence;
+- sanitized demo and proof-backed portfolio artifacts.
+
+### Product moat
+The strongest reusable moat is:
+
+CLIENT PROBLEM → WORKFLOW → TRUST → RELIABILITY → PROOF
+
+not:
+
+FEATURE COUNT → SCREEN COUNT → TECHNOLOGY LIST
+
+### New durable requirement
+Every major product capability that can be shown to a prospective client should be capable of being converted into a proof-backed case study without fabricating results.
+
+Case-study evidence should distinguish:
+IMPLEMENTED / TESTED / VERIFIED / PROVEN / PRODUCTION CERTIFIED
+
+### Competitive workflow requirements
+Priority workflows for product/portfolio depth:
+1. First B2B order.
+2. Repeat/reorder workflow.
+3. Excel/legacy data onboarding.
+4. Warehouse/order processing.
+5. Tenant onboarding.
+6. Integration failure/retry/recovery.
+
+### Differentiator backlog
+Track these as product/design candidates, executing only where evidence and scope justify them:
+- Command Palette;
+- Bulk Action Center;
+- Smart Reorder;
+- Barcode-first operations;
+- Explainable business state;
+- Conflict Center;
+- Recovery Center;
+- Tenant onboarding wizard;
+- Saved Views;
+- keyboard-first desktop workflow;
+- sanitized Demo Mode;
+- Capability Cards / evidence-backed case studies.
+
+### Market discipline
+Current Upwork research is an input to prioritization, not authority for uncontrolled scope expansion. A market request becomes a product requirement only when it:
+1. fits the Aghbari product boundary;
+2. improves a meaningful client workflow or release capability;
+3. can be implemented without weakening security/evidence/production safety;
+4. has a clear acceptance/evidence path.
+
+### Commercial operating decision
+Upwork opportunities are handled through:
+DISCOVER → SCREEN → FIT-MAP → PROOF-MAP → DIFFERENTIATOR-MAP → COMMERCIAL CHECK → PROPOSAL → FOLLOW-UP → INTERVIEW PREP → CONTRACT REVIEW → DELIVERY → PORTFOLIO UPDATE
+
+The portfolio is treated as an evidence surface for the engineering work, not as a source of unsupported claims.
+
+### Evidence source
+- docs/UPWORK-MARKET-REQUIREMENTS-20260918.md
+- docs/UPWORK-BID-ENGINE-20260918.md
+- docs/COMPETITIVE-MOAT-AND-PORTFOLIO-20260918.md
+- Main execution index linked to these documents.
+
+### Non-negotiables
+Market differentiation never overrides:
+- exact-SHA evidence;
+- security and tenant isolation;
+- Release Gates;
+- Production NO TOUCH;
+- no-false-closure;
+- honest portfolio and client claims.
