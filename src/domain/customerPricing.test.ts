@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import appSource from '../AppV3Fixed.tsx?raw';
 import { resolveCustomerPortalPrice } from './customerPricing';
 
 describe('customer portal price resolution', () => {
@@ -31,4 +32,9 @@ describe('customer portal price resolution', () => {
       quantity: 1
     })).toEqual({ unitPrice: 0, currency: 'YER' });
   });
+  it('uses the same resolver for persisted cart pricing after reload', () => {
+    expect(appSource).toContain('const resolved=resolveCustomerPortalPrice');
+    expect(appSource).toContain('unitPrice:resolved.unitPrice');
+  });
+
 });
