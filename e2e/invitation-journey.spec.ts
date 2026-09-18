@@ -30,9 +30,11 @@ test('real admin-to-customer invitation journey', async ({ page, context }) => {
   await expect(customerSection.getByText(customerName)).toBeVisible({ timeout: 10000 });
 
   const customerRow = customerSection.locator('article.cart-line', { hasText: customerName });
+  const invitationResponses: string[] = [];
+  page.on('response', async (response) => { if (response.url().includes('/functions/v1/customer-invitations')) { let body=''; try { body=await response.text(); } catch {} invitationResponses.push(`${response.status()} ${body}`); } });
   await customerRow.getByLabel(`بريد دعوة ${customerName}`).fill(inviteEmail);
   await customerRow.getByRole('button', { name: 'إرسال دعوة' }).click();
-  await expect(customerRow.getByRole('link', { name: 'فتح رابط الدعوة' })).toBeVisible({ timeout: 15000 });
+  try { await expect(customerRow.getByRole('link', { name: 'فتح رابط الدعوة' })).toBeVisible({ timeout: 15000 }); } catch (error) { throw new Error(`Invitation link missing. Function responses: ${invitationResponses.join(' || ')}. Original: ${error instanceof Error ? error.message : String(error)}`); }
 
   const inviteUrl = await customerRow.getByRole('link', { name: 'فتح رابط الدعوة' }).getAttribute('href');
   expect(inviteUrl).toMatch(/\?invite=[0-9a-f]{64}$/i);
