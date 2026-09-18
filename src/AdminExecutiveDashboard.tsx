@@ -27,6 +27,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [salesRows, setSalesRows] = useState<Array<{ status: string; total: number; created_at: string }>>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -34,18 +35,20 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
       if (!supabase) { setLoading(false); setError('قاعدة البيانات غير مهيأة في هذه البيئة.'); return; }
       setLoading(true); setError(null);
       try {
-        const [productsResult, customersResult, ordersResult, stockResult, creditResult, staffOrders] = await Promise.all([
+        const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 7);
+        const [productsResult, customersResult, ordersResult, stockResult, creditResult, staffOrders, salesResult] = await Promise.all([
           supabase.from('products').select('id', { count: 'exact', head: true }).eq('status', 'active'),
           supabase.from('customers').select('id', { count: 'exact', head: true }),
           supabase.from('orders').select('id', { count: 'exact', head: true }),
           supabase.from('inventory_balances').select('product_id', { count: 'exact', head: true }),
           supabase.from('customer_credit_accounts').select('outstanding_balance,available_credit'),
           getStaffOrders(100),
+          supabase.from('orders').select('status,total,created_at').gte('created_at', cutoff.toISOString()).order('created_at', { ascending: true }).limit(1000),
         ]);
-        const firstError = productsResult.error ?? customersResult.error ?? ordersResult.error ?? stockResult.error ?? creditResult.error;
+        const firstError = productsResult.error ?? customersResult.error ?? ordersResult.error ?? stockResult.error ?? creditResult.error ?? salesResult.error;
         if (firstError) throw firstError;
-        const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 7);
-        const sales7d = staffOrders.filter((order) => new Date(order.created_at) >= cutoff && order.status !== 'cancelled' && order.status !== 'draft').reduce((sum, order) => sum + order.total, 0);
+        const salesRowsData = (salesResult.data ?? []).map((row) => ({ status: String(row.status), total: Number(row.total ?? 0), created_at: String(row.created_at) }));
+        const sales7d = salesRowsData.filter((order) => order.status !== 'cancelled' && order.status !== 'draft').reduce((sum, order) => sum + order.total, 0);
         const creditRows = creditResult.data ?? [];
         if (!cancelled) {
           setSnapshot({
@@ -58,6 +61,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
             sales7d,
           });
           setOrders(staffOrders);
+          setSalesRows(salesRowsData);
           setLastUpdated(new Date());
         }
       } catch (cause) {
@@ -72,9 +76,9 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
   const salesByDay = useMemo(() => {
     const days = Array.from({ length: 7 }, (_, index) => { const d = new Date(); d.setDate(d.getDate() - (6 - index)); return { key: dayKey(d), label: d.toLocaleDateString('ar', { weekday: 'short' }), value: 0 }; });
     const map = new Map(days.map((day) => [day.key, day]));
-    for (const order of orders) { if (order.status === 'cancelled' || order.status === 'draft') continue; const day = map.get(dayKey(new Date(order.created_at))); if (day) day.value += order.total; }
+    for (const order of salesRows) { if (order.status === 'cancelled' || order.status === 'draft') continue; const day = map.get(dayKey(new Date(order.created_at))); if (day) day.value += order.total; }
     return days;
-  }, [orders]);
+  }, [salesRows]);
   const maxSales = Math.max(...salesByDay.map((day) => day.value), 1);
   const statusCounts = useMemo(() => Object.entries(STATUS_LABELS).map(([status, label]) => ({ status, label, count: orders.filter((order) => order.status === status).length })).filter((item) => item.count > 0), [orders]);
   const latestOrders = orders.slice(0, 5);
@@ -114,8 +118,8 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
         </div>
 
         <div className="executive-grid-two bottom-grid">
-          <article className="executive-card"><div className="executive-card-title"><div><span>التشغيل</span><h2>أحدث الطلبات</h2></div><a href="#account">عرض الكل ←</a></div>{latestOrders.length ? <div className="executive-orders">{latestOrders.map((order) => <div key={order.id}><span>#{order.order_number}</span><div><strong>{order.customer_name}</strong><small>{new Date(order.created_at).toLocaleString('ar')}</small></div><b>{money(order.total)}</b><em>{STATUS_LABELS[order.status] ?? order.status}</em></div>)}</div> : <p className="executive-empty">لا توجد طلبات بعد.</p>}</article>
-          <article className="executive-card smart-card"><div className="executive-card-title"><div><span>أدوات الإدارة</span><h2>أوامر سريعة</h2></div><span>تشغيل مباشر</span></div><div className="quick-actions"><a href="#account">＋ إضافة منتج</a><a href="#account">▤ إدارة الطلبات</a><a href="#account">▣ إدارة العملاء</a><a href="#account">▥ إدارة المخزون</a><a href="#account">◫ الحسابات والمالية</a><a href="#account">✦ مساعد الأغبري</a></div><div className="credit-summary"><span>الائتمان المتاح</span><strong>{money(snapshot.availableCredit)}</strong></div></article>
+          <article className="executive-card"><div className="executive-card-title"><div><span>التشغيل</span><h2>أحدث الطلبات</h2></div><a href="#admin-orders">عرض الكل ←</a></div>{latestOrders.length ? <div className="executive-orders">{latestOrders.map((order) => <div key={order.id}><span>#{order.order_number}</span><div><strong>{order.customer_name}</strong><small>{new Date(order.created_at).toLocaleString('ar')}</small></div><b>{money(order.total)}</b><em>{STATUS_LABELS[order.status] ?? order.status}</em></div>)}</div> : <p className="executive-empty">لا توجد طلبات بعد.</p>}</article>
+          <article className="executive-card smart-card"><div className="executive-card-title"><div><span>أدوات الإدارة</span><h2>أوامر سريعة</h2></div><span>تشغيل مباشر</span></div><div className="quick-actions"><a href="#admin-product-create">＋ إضافة منتج</a><a href="#admin-orders">▤ إدارة الطلبات</a><a href="#admin-customers">▣ إدارة العملاء</a><a href="#admin-inventory">▥ إدارة المخزون</a><a href="#admin-finance">◫ الحسابات والمالية</a><a href="#admin-settings">⚙ إعدادات التحكم</a></div><div className="credit-summary"><span>الائتمان المتاح</span><strong>{money(snapshot.availableCredit)}</strong></div></article>
         </div>
 
         <footer className="executive-footer"><span>دورك الحالي: {role}</span><span>{lastUpdated ? `آخر تحديث ${lastUpdated.toLocaleTimeString('ar')}` : 'جارٍ التحديث…'}</span><span>التحديث التلقائي كل 60 ثانية</span></footer>
