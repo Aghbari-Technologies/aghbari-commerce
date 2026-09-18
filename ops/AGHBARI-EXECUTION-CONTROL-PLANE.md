@@ -1325,3 +1325,21 @@ RESULT: job logs explicitly show EXPECTED_SHA = VITE_BUILD_SHA = candidate SHA, 
 ROOT CAUSE: none; this was evidence strengthening only.
 ARTIFACT: run `35310025159`; job `105490749871`; artifact `10532997772`.
 NEXT ACTION: preserve candidate; do not rerun this closed front unless the candidate or dependency changes. Continue only the external deployment/authentication/dispatch fronts.
+
+
+## 0G. EVOLUTION ENTRY — 2026-09-18 — OPS BRANCH DEPLOYMENT QUOTA OBSERVATION
+
+LESSON: the canonical Vercel Git integration is producing READY deployments for `ops/execution-control-plane` commits. Because this branch is used for mandatory operational-memory persistence, repeated state commits can consume deployment quota even though they do not modify the product candidate.
+
+RULE: batch mandatory operational-file updates into the minimum number of commits, prefer one combined ops commit per execution boundary, and never create synthetic candidate changes merely to obtain deployment evidence. Treat deployment-quota consumption by operational commits as an infrastructure constraint, not a product defect.
+
+EVIDENCE: current canonical Vercel deployment list includes recent READY deployments whose `githubCommitRef` is `ops/execution-control-plane`; candidate `4753cc3…` has no deployment.
+
+## 2026-09-18 — Command 1 — current boundary recheck
+
+RUN: Vercel/GitHub/Supabase recheck
+JOB: exact candidate deployment; workflow dispatch capability; Supabase plan/advisor
+SHA: candidate `4753cc3319f551aeccbe2bd081b988fa68df8e87`
+FRONT: P0 external certification blockers
+RESULT: candidate exact-SHA CI remains terminal PASS; Vercel candidate deployment remains unavailable and exact commit status remains FAILURE due deployment rate limiting; `runtime-e2e.yml` contains `workflow_dispatch` but connected dispatch capability is unavailable; Supabase project is ACTIVE_HEALTHY on Free plan and official docs confirm leaked-password protection is Pro+; performance advisor has 2 informational unindexed FK findings on `customer_invitations`. No candidate or Production mutation.
+NEXT ACTION: preserve candidate; resolve approved deployment + authenticated dispatch + automation-bypass secret paths before attempting final runtime certification.
