@@ -905,3 +905,17 @@ RESULT:
 - Live Aghbari Supabase ref is `mrcyqezbhpncuvaehwgf`, ACTIVE_HEALTHY. Current Security Advisor reports 1 intentional anon-executable invitation-token SECURITY DEFINER warning and 59 authenticated-executable SECURITY DEFINER warnings; performance findings are INFO-level. The candidate checkout-policy migration is not yet in the live production migration history, as expected under Production-NO-TOUCH.
 ROOT CAUSE: current release gap is execution capacity / external deployment-and-runtime proof, not a newly proven candidate code defect.
 ACTION: candidate and Production preserved. State is now reconciled against live GitHub/Vercel/Supabase sources; next resume starts from candidate `0fb5a17...` and the currently queued exact-head evidence, not from the older `5b9f2a...` candidate.
+
+### 2026-09-18 — Independent product defect found during continuation
+
+RUN: static customer-portal wiring audit (non-certifying)
+JOB: payment-authority UI → transactional RPC consistency
+BASE: `427ff0801544449f432290205b2a29f2508541f3`
+FIX BRANCH: `fix/customer-payment-selection-20260918`
+FIX HEAD: `83bc916e78b0d6ecc9eea88519e5a1c59b94130e`
+RESULT:
+- Runtime entrypoint `src/main.tsx` imports `AppV3Fixed`, not the separate `App.tsx` implementation.
+- `AppV3Fixed.submit()` previously validated the selected payment method but called `createOrder()` without the `paymentMethod` option, while the service defaults to `credit`; this could persist a different payment method than the user's explicit UI selection.
+- Corrected the real runtime path to pass `{ paymentMethod: payment }` and added a regression test that guards the wiring.
+- Certification candidate `0fb5a17bcb65816963056112f5a41ccbb4ae3106` was not modified. Production was not modified.
+VERIFICATION: implementation is committed on the isolated fix branch; CI/E2E verification is intentionally deferred until opening its PR does not create another redundant Actions burst during the current repository-wide queue saturation.
