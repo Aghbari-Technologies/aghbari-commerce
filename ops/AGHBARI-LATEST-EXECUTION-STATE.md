@@ -50,8 +50,8 @@
 3. Final Evidence Reconciliation: OPEN.
 4. Certification: NO.
 5. Live alignment to candidate: NOT_PROVEN / no promotion.
-6. `repair-excel-build.yml`: OPEN operational-safety risk; latest failure `35296779614`, job evidence unavailable.
-7. Tooling PR #72: OPEN / NOT_PROVEN. Head `1830e3a…`; Gitleaks 61 findings, Semgrep 36 findings, migration-proof pgTAP FAIL; no tooling result is transferred to candidate certification.
+6. `repair-excel-build.yml`: CLOSED on both main and tooling branch; removed because it was obsolete and self-mutating with write-to-main authority.
+7. Tooling PR #72: OPEN / NOT_PROVEN. Current head `b9a585aa64058feaff9bd5f65476f52863d2a503`; Gitleaks, Semgrep, CodeQL, Trivy, security-audit, G1, and application-quality are terminal PASS on this exact head; Supabase migration-proof is still RUNNING.
 
 ## Connected tooling
 
@@ -59,10 +59,10 @@
 - Vercel: CONNECTED
 - Supabase: CONNECTED
 - Playwright: PRESENT in project, `@playwright/test 1.63.0`
-- Gitleaks: IMPLEMENTED on isolated tooling PR #72; CI verification pending
-- CodeQL: IMPLEMENTED on isolated tooling PR #72; verification pending
-- Semgrep CE: IMPLEMENTED on isolated tooling PR #72; verification pending
-- Trivy: IMPLEMENTED on isolated tooling PR #72; verification pending
+- Gitleaks: IMPLEMENTED on isolated tooling PR #72; current exact-head CI PASS on `b9a585aa…`
+- CodeQL: IMPLEMENTED on isolated tooling PR #72; current exact-head CI PASS on `b9a585aa…`
+- Semgrep CE: IMPLEMENTED on isolated tooling PR #72; current exact-head CI PASS on `b9a585aa…`
+- Trivy: IMPLEMENTED on isolated tooling PR #72; current exact-head CI PASS on `b9a585aa…`
 - OWASP ZAP: IMPLEMENTED as manual-only baseline on isolated tooling PR #72; verification pending
 - Dependabot: IMPLEMENTED on isolated tooling PR #72
 - OpenSSF Scorecard: IMPLEMENTED on isolated tooling PR #72; verification pending
@@ -94,8 +94,8 @@
 - Candidate SHA remained `4d5057d7952e213d6b5328a80f0229f1ff9fb861`.
 - No candidate SHA change.
 - Candidate exact-SHA gates remain PASS and untouched.
-- Main is now `b29ae9c…`; production remains `b102ce5…`.
-- Tooling PR #72 remains isolated; actual current head is `1830e3a109a9e0605f5306b2ddc8f308457fb375`. Prior references to `93552ada…` are stale and are not used as current-head evidence.
+- Main is now `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; production remains `b102ce5…`.
+- Tooling PR #72 remains isolated; actual current head is `b9a585aa64058feaff9bd5f65476f52863d2a503`. Prior `93552ada…` and `1830e3a…` references are historical only.
 - Deployment Browser remains BLOCKED; Final Regression remains NOT_PROVEN; Production remains untouched.
 
 ### 2026-09-18 — Command 1 current record
@@ -199,3 +199,16 @@ RESULT: read-only candidate deployment proof PASS with exact build SHA; authenti
 ROOT CAUSE: Vercel access protection required approved temporary share access for non-authenticated proof; tooling had mutable action tags, missing Dependabot cooldown, and dynamic regex static-analysis finding.
 ARTIFACT: TinyFish run 604c8f4a-19f1-4357-b380-9b2c816937fb; tooling head ffdf0b3e6d34adef11a198c8263a9fa9760188b8.
 NEXT ACTION: terminalize fresh tooling CI; resolve any remaining Gitleaks findings without broad suppressions; preserve authenticated Deployment Browser and Final Regression as separate release gates.
+
+
+## CURRENT VERIFIED OVERLAY — 2026-09-18
+
+- Candidate: `4d5057d7952e213d6b5328a80f0229f1ff9fb861` — frozen; no candidate mutation.
+- Main: `4505bcb655c0b747aeea7e1cc526a94f93270d3d` — obsolete self-mutating repair workflow removed.
+- Production: `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497` — untouched; deployment `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5` READY; no inspected runtime errors in 24h.
+- Tooling PR #72 current head: `b9a585aa64058feaff9bd5f65476f52863d2a503`.
+- Tooling exact-head terminal PASS: Gitleaks `35304530215`; Semgrep CE `35304530295`; CodeQL `35304530253`; Trivy `35304530237`; security-audit `35304530280`; application-quality `35304530205`; G1 Domain Proof `35304530524`.
+- Tooling migration-proof: `35304530279` still RUNNING at Start local Supabase; no status assigned until terminal.
+- Read-only candidate browser proof: PASS — TinyFish `604c8f4a-19f1-4357-b380-9b2c816937fb`; exact build SHA confirmed; authenticated E2E remains BLOCKED.
+- Formal Final Regression: NOT_PROVEN because connected GitHub mutation tools still lack workflow dispatch.
+- Release status: NOT CERTIFIED; no promotion.
