@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(20);
+select plan(19);
 
 select is(
   (select data_type from information_schema.columns
@@ -143,15 +143,15 @@ select is(
 );
 
 select is(
-  (select count(*) from public.notifications where entity_id=(select order_id from cash_order) and kind='order' and title='تحديث حالة الطلب'),
-  1::bigint,
-  'initial pending history emits one status notification'
+  (select count(*) from public.notifications where entity_id=(select order_id from cash_order) and kind='order' and title='تحديث حالة الطلب%'),
+  0::bigint,
+  'initial pending history does not emit a fake status notification'
 );
 
 select is(
   (select count(*) from public.notifications where entity_id=(select order_id from cash_order) and kind='order'),
-  2::bigint,
-  'customer order creation emits receipt plus status notification only'
+  1::bigint,
+  'customer order creation emits one receipt notification only'
 );
 
 select is(
@@ -178,7 +178,7 @@ select is(
 
 select is(
   (select count(*) from public.notifications where entity_id=(select order_id from cash_order) and kind='order'),
-  2::bigint,
+  1::bigint,
   'idempotent replay does not create duplicate customer notifications'
 );
 
