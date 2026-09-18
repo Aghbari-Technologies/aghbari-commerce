@@ -234,3 +234,15 @@ RESULT: stale operational references were detected and reclassified; candidate r
 ROOT CAUSE: PR #72 advanced after the stored tooling PASS evidence, while the operational memory still named an older tooling SHA; current connected GitHub mutation surface also lacks workflow dispatch.
 ARTIFACT: PR #72 head `bc40f6b04ca974d6f7aed9daf5c581e18ca710d8`; candidate deployment `dpl_5TaJDPGjjqT9asUJSnS9YDnxvH32`; production deployment `dpl_FSaJrfHRZibMBUA1wUXieYBH98b5`; canonical project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`.
 NEXT ACTION: obtain fresh terminal tooling runs for `bc40f6b0`, resolve protected authenticated Deployment Browser and Final Regression capability boundaries, then reconcile exact-SHA evidence. Do not promote or mutate Production.
+
+
+### 2026-09-18 — Command 1 — latest verified reconciliation
+
+RUN: `35308340448;35308340467;35308340484;35308340474;35308340482;35308340457;35308340483;35308340477;35308340528;35308340452;35308340469;35308340466;35308829558;683148ee-b515-4e81-a2cb-ff4fa4a07ca0`
+JOB: tooling PR #72 exact-head CI; pgTAP baseline diagnosis PR #73; candidate read-only browser
+SHA: candidate `4d5057d7952e213d6b5328a80f0229f1ff9fb861`; tooling `92fa7bffb8971eecb10d91fe588709da0e06675a`; pgTAP repair `cf7db1c376e40c44ed0cec1956c9b59ee8f5d7f0`; main `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
+FRONT: tooling integrity / pgTAP baseline / candidate browser / certification evidence
+RESULT: tooling PR #72 has 11 terminal PASS gates; migration proof fails only in pgTAP after migrations apply cleanly. PR #73 proves the remaining 12 failures are five product/schema contract gaps on main after test-harness corrections. Fresh candidate browser read-only proof PASS. No candidate SHA change and no Production mutation.
+ROOT CAUSE: tooling baseline was previously contaminated; after isolation/pinning, the clean remaining failure is current main's unaligned database contracts. Authenticated browser and Formal Final Regression remain external capability boundaries.
+ARTIFACT: `ops/evidence/20260918-command1-tooling-pgtap-browser-reconciliation.md`; TinyFish `683148ee-b515-4e81-a2cb-ff4fa4a07ca0`; PR #72; PR #73.
+NEXT ACTION: preserve the candidate freeze and Production NO TOUCH. Resolve only the authenticated browser credential path and formal regression dispatch, while keeping product-gap remediation on a separate future candidate branch.
