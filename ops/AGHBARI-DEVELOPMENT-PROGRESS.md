@@ -139,6 +139,26 @@ Do not restart discovery of these failures unless a new regression proves the re
 - NEXT: resume from browser/heavy-gate terminal states; first failure only if any.
 - MEMORY_LESSON: browser E2E assertions are evidence contracts and must match actual accessible UI semantics without hiding genuine product failures.
 
+
+## RUN-2026-09-19-EXEC-003
+
+- START_CONTEXT: Command `1`; resumed from the durable checkpoint and performed a fresh exact-SHA/state reconciliation.
+- START_SHA: cb2707b8005ac8237b06a7c89cc9bcf68dc50061
+- END_SHA: cb2707b8005ac8237b06a7c89cc9bcf68dc50061
+- BRANCH: enhancement/market-ready-v4-20260918
+- PR: #88 — OPEN / DRAFT / MERGEABLE
+- FRONT: current-head reconciliation; market-ready P0/P1/P2 gap check against Project Memory; Formal Final Regression capability boundary; release-safety verification.
+- IMPLEMENTED: no product-source change; no speculative commit. Revalidated the durable execution chain, current PR/branch relationship, exact development evidence set, exact Netlify deployment identity, and the formal runtime workflow contract. Independently attempted an alternate authenticated-browser dispatch path; it did not start because the automation channel has insufficient wallet credit.
+- TESTED: GitHub repository/branch/PR state inspection; exact-SHA workflow inventory; runtime-e2e workflow source inspection; Netlify exact-deploy read-only inspection.
+- PROVEN: existing exact-SHA PASS set on cb2707b... remains the controlling development evidence: Quality 35397451577, Security 35397451588, G1 35397451545 + 35397455871, Migration 35397451566, Test-the-Test 35397451567, Netlify deployed-browser 35397451565 with customer/admin E2E, artifact 10569735072, deploy 6aadaea0475017968f71cfda. Netlify deploy is READY and reports no deploy error.
+- FAILED/BLOCKED/RUNNING: Formal Final Regression remains NOT_PROVEN because the connected GitHub mutation surface has no workflow-dispatch operation. The alternate browser automation path was BLOCKED before execution by its external wallet boundary; no browser regression was falsely claimed from it.
+- ROOT_CAUSE: release-layer operator capability boundary, not a product defect. No new product root cause was established on cb2707b....
+- EVIDENCE: current Control Plane/Latest State/Project Memory reconciliation; PR #88 state; current exact development evidence listed above; exact runtime-e2e workflow requiring `base_url` + `exact_sha`.
+- PRODUCTION: NO TOUCH.
+- CERTIFICATION: NO; candidate 2facceb39aaa826413f20245a6f20b6c2ff7cd34 remains FROZEN / NO TOUCH.
+- DECISIONS: do not create a new product SHA merely to manufacture a green gate; do not transfer development PASS to certification; do not bypass authenticated workflow or Vercel protection.
+- NEXT: resolve an authorized workflow-dispatch path and approved authenticated deployed-browser path; then run the formal regression against the exact release SHA. Until that capability exists, keep the current development checkpoint closed and do not repeat the cart-fixture repair.
+
 # 3. CONTINUOUS APPEND TEMPLATE
 
 ## RUN-YYYY-MM-DD-XXX
