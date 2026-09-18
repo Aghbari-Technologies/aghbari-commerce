@@ -5,7 +5,7 @@ insert into auth.users(id,instance_id,aud,role,email,encrypted_password,created_
 values ('28282828-2828-4282-8282-282828282828','00000000-0000-0000-0000-000000000000','authenticated','authenticated','checkout-policy@fixture.invalid','x',now(),now());
 insert into public.organizations(id,name,is_active) values ('28282828-2828-4282-8282-282828282829','Checkout Policy Tenant',true);
 insert into public.customers(id,organization_id,name,tier,is_active) values ('28282828-2828-4282-8282-282828282830','28282828-2828-4282-8282-282828282829','Checkout Policy Customer','wholesale'::customer_tier,true);
-insert into public.profiles(id,organization_id,customer_id,role) values ('28282828-2828-4282-8282-282828282828','28282828-2828-4282-8282-282828282830','28282828-2828-4282-8282-282828282830','viewer'::user_role);
+insert into public.profiles(id,organization_id,customer_id,role) values ('28282828-2828-4282-8282-282828282828','28282828-2828-4282-8282-282828282829','28282828-2828-4282-8282-282828282830','viewer'::user_role);
 insert into public.branches(id,organization_id,name,is_active) values ('28282828-2828-4282-8282-282828282831','28282828-2828-4282-8282-282828282829','Checkout Policy Branch',true);
 insert into public.warehouses(id,organization_id,branch_id,name,is_active) values ('28282828-2828-4282-8282-282828282832','28282828-2828-4282-8282-282828282831','Checkout Policy Warehouse',true);
 insert into public.products(id,organization_id,sku,name,unit,status) values ('28282828-2828-4282-8282-282828282833','28282828-2828-4282-8282-282828282829','CHECKOUT-001','Checkout Policy Product','unit','active');
