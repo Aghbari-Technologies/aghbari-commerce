@@ -1176,3 +1176,24 @@ NEXT ACTION:
 - Reconcile whether GitHub has created the fresh exact-head workflow suite for `c5b88ac0...`.
 - Inspect the first terminal failure only; repair only concrete failures.
 - When all exact-head gates are terminal PASS, obtain matching candidate deployment/browser evidence. Until then certification remains NO and Production remains NO TOUCH.
+
+
+### 2026-09-18 — Command 1 — offline runtime wiring forensic repair
+
+CURRENT CANDIDATE: `744e294a9e78210c37dce4d723c094c4b0302136` on `certification/final-candidate-20260918`; PR #83 remains OPEN / non-draft.
+
+FORENSIC FINDING:
+- Source audit after the notification-proof repair found that the customer portal referenced `syncOfflineCart`, `useRef`, `isOnline`, `syncingOffline`, and related setters without retaining the required import/state declarations from the offline lane.
+- `src/services/cart.ts` is the canonical exporter of `syncOfflineCart`.
+- Repair committed as `744e294a...`: restored `useRef`, imported `syncOfflineCart` from `./services/cart`, and restored the connection/sync state plus re-entry guard declarations in `AppV3Fixed.tsx`.
+- This is a real source/build defect, not a production defect; no production system was modified.
+- All evidence attached to `c5b88ac0...` and predecessors is invalidated by the new candidate SHA.
+
+CURRENT PROOF STATE:
+- Fresh exact-head workflow discovery was empty immediately after `744e294a...`; no PASS inferred.
+- Candidate Vercel deployment matching `744e294a...` remains absent.
+- Production remains NO TOUCH.
+
+NEXT ACTION:
+- Reconcile fresh exact-head CI for `744e294a...` and inspect the first terminal failure.
+- Continue independent source/security/release audits while CI is queued; no synthetic deployment attempts.
