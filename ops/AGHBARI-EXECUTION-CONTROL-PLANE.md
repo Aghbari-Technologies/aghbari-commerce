@@ -32,20 +32,20 @@
 
 # 0A. AUTHORITATIVE LIVE EXECUTION STATE — 2026-09-18 — CURRENT RECONCILIATION
 
-- CURRENT CANDIDATE: `9dc6bd3e3bed86bfcbca29ff2538dfd30ebcd218` on `certification/final-candidate-20260918`; PR #83 OPEN / non-draft / mergeable.
+- CURRENT CANDIDATE: `85c289fa62598d140a87ab37fec173b5f2962b3f` on `certification/final-candidate-20260918`; PR #83 OPEN / non-draft / mergeable.
+- CANDIDATE BASE: `main @ 427ff0801544449f432290205b2a29f2508541f3`.
+- CANDIDATE STATUS: Fresh-DB/browser proof is being regenerated after real schema defects were found and fixed. Prior candidate PASS evidence belongs to predecessor SHAs and is invalidated.
 - MAIN: `427ff0801544449f432290205b2a29f2508541f3`.
-- LIVE/PRODUCTION: `a7953a62e601eb12322fbbd902c0790c7a3921b1`; Vercel deployment `dpl_AmTBr8X9qBGCLdngxirQgdRM4Xjo` READY, Git-linked from main; Production = NO TOUCH.
-- CANDIDATE CI: current exact-head run set exists but remains queued/pending; no prior SHA evidence is transferred.
-- CANDIDATE DEPLOYMENT: NOT_AVAILABLE — no Vercel deployment record matches candidate `9dc6bd3...`.
-- CANDIDATE BROWSER: NOT_PROVEN — exact deployment/browser proof requires a matching candidate deployment.
-- FORMAL FINAL REGRESSION: NOT_PROVEN — no connected workflow-dispatch mutation path.
-- REAL BROWSER HEALTH: Firecrawl verified the live Aghbari application on a separate operational deployment; observed RTL, `AGHBARI B2B`, `بوابة الأغبري التجارية`, login controls, and no visible error. This evidence is explicitly non-transferable to candidate #83.
-- SERVER RUNTIME HEALTH: Vercel runtime-error aggregation returned no errors in the selected recent window for the observed project state; non-candidate corroboration only.
-- PR #84: OPEN/non-certifying, current HEAD `0b3e540a90e1e9e0d5992febbf18c4c59561547e`; payment selection + authorized catalog pricing + payment-method schema hardening; exact-head CI queued.
-- PR #86: OPEN/non-certifying, current HEAD `661b797cc195fb5664d304921d5ebf59a3cc2490`; offline quantity ceiling + reconnect sync + visible connection state + re-entry-loop guard; exact-head CI queued.
-- PR #87: OPEN/non-certifying, current HEAD `ef26828b672ac01f922df9b3b6042a8063c76822`; reporting-gateway browser CORS + retry idempotency hardening; live function currently not deployed; exact-head CI queued.
+- PRODUCTION: `a7953a62e601eb12322fbbd902c0790c7a3921b1`; Vercel Production `dpl_AmTBr8X9qBGCLdngxirQgdRM4Xjo` READY; Production = NO TOUCH.
+- CANDIDATE DEPLOYMENT: NOT_AVAILABLE — no Vercel deployment record matches `85c289fa...`.
+- CANDIDATE BROWSER: NOT_PROVEN — exact deployment is absent.
+- FORMAL FINAL REGRESSION: NOT_PROVEN — connected GitHub surface has no workflow-dispatch mutation.
+- REAL BROWSER HEALTH: verified separately on operational deployment SHA `cf82b754...`; evidence is deployment-specific/non-candidate.
+- PR #84: OPEN/non-certifying, latest HEAD `3ce43ff36a44b0e27dca7aa1adb34cabe46c08a9`; payment selection, tier pricing, payment schema, notification schema, E2E cart isolation. Current exact-head CI queued.
+- PR #86: OPEN/non-certifying, latest HEAD `10dac1d629c8804c048efcd626cfe4e71f4cda6a`; offline quantity boundary, reconnect sync, visible connection state, re-entry guard, notification schema, E2E cart isolation. Current exact-head CI queued.
+- PR #87: OPEN/non-certifying, latest HEAD `71fb3fa267f4d5b3b80a9e77b2e2afa4cb5d51b4`; reporting CORS, idempotent retries, remote-accepted recovery, notification schema, E2E cart isolation. Current exact-head CI queued.
 - PR #82: MERGED into main at `d8fdb226866a2563164816066cdecc8e08549bae`.
-- PR #74 and PR #81: CLOSED as superseded; historical evidence retained only.
+- PR #74/#81: CLOSED as superseded; historical evidence only.
 - CERTIFICATION: NO. Production remains untouched.
 # 0B. AUTONOMOUS MEMORY + SELF-IMPROVEMENT PROTOCOL
 
@@ -1613,3 +1613,10 @@ These rules were applied immediately on non-certifying PR #81; no certification 
 
 - A release migration that creates a schema contract must be the sole owner of that schema contract. Later behavior migrations should consume it, not re-create the same column/constraint.
 - When a live migration ledger contains a version missing from the repository, restore that historical migration on the candidate rather than weakening tests or embedding an alternative duplicate migration.
+
+
+### 2026-09-18 — Control Plane Evolution — order notification schema + E2E retry isolation
+
+- Fresh-DB browser proof exposed a real missing dependency: the restored `create_order` contract inserts `public.notifications`, but the schema had no notification table. The product fix is to create the table with indexes, authenticated read RLS, and no direct authenticated writes; deleting the notification insert would weaken the user-facing order contract.
+- Browser E2E retries were found to reuse persisted server cart state. The proof suite now clears the customer cart after successful login using the real UI, preventing retry contamination while preserving the actual checkout path.
+- Current exact-head evidence is invalidated whenever these proof changes alter the SHA; only the newest head may be certified.
