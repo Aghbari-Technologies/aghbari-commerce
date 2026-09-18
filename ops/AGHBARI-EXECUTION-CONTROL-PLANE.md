@@ -1721,3 +1721,16 @@ Durable rule:
 - The repaired exact development SHA is `cb2707b8005ac8237b06a7c89cc9bcf68dc50061`, and the full exact deployed browser suite subsequently passed.
 
 This rule is now part of the permanent evidence-fixture standard and prevents false cross-test contamination.
+
+
+## CONTROL-PLANE EVOLUTION — 2026-09-19 — Alternate browser-dispatch capability boundary
+
+The operator tested an independent browser automation route for the GitHub Runtime E2E dispatch surface. The run did not start because the connected automation channel lacked sufficient wallet capacity.
+
+Durable rule:
+- Treat third-party automation-wallet exhaustion as an external capability boundary, not as application/runtime evidence.
+- Do not retry that route until the capability is restored.
+- Never downgrade to unauthenticated browsing and classify it as authenticated proof.
+- Continue repository, CI, deployment, and documentation reconciliation through available native/read-only paths while the boundary remains blocked.
+
+No candidate or Production mutation occurred.
