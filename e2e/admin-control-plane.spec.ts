@@ -14,6 +14,7 @@ test.describe('Admin control plane exact browser path', () => {
     await loginForm.getByRole('button', { name: 'دخول آمن' }).click();
 
     await expect(page.getByRole('heading', { name: 'مركز التحكم' }).first()).toBeVisible();
+    await expect(page.locator('.executive-error')).toHaveCount(0);
     await expect(page.getByText('الصلاحيات تُفرض على الخادم أيضًا')).toBeVisible();
     await expect(page.getByRole('heading', { name: 'إدارة الطلبات' })).toBeVisible();
     await expect(page.getByText('مركز التشغيل التفصيلي وإدارة البيانات')).toBeVisible();
