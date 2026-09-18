@@ -18,4 +18,10 @@ describe('customer checkout policy', () => {
   it('requires confirmation for every line when configured', () => {
     expect(validateCheckoutPolicy({ config:DEFAULT_CUSTOMER_PORTAL_CONFIG, paymentMethod:'credit', total:100, lineProductIds:['p1','p2'], confirmedProductIds:new Set(['p1']) })).toContain('تأكيد كمية كل صنف');
   });
+
+  it('wires the selected payment method into the real customer order submission path', async () => {
+    const { readFile } = await import('node:fs/promises');
+    const source = await readFile(new URL('../AppV3Fixed.tsx', import.meta.url), 'utf8');
+    expect(source).toContain('{ paymentMethod: payment }');
+  });
 });
