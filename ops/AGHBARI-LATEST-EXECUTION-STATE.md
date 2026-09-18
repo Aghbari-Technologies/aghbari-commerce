@@ -1197,3 +1197,22 @@ CURRENT PROOF STATE:
 NEXT ACTION:
 - Reconcile fresh exact-head CI for `744e294a...` and inspect the first terminal failure.
 - Continue independent source/security/release audits while CI is queued; no synthetic deployment attempts.
+
+
+### 2026-09-18 — Command 1 — offline queue dependency repair
+
+CURRENT CANDIDATE: `8479c16e516415e7167b3d6843556775de76d40a` on `certification/final-candidate-20260918`; PR #83 OPEN / non-draft.
+
+FORENSIC FINDING:
+- Follow-up source inspection found `src/services/offlineQueue.ts` referenced the canonical `MAX_ORDER_QUANTITY_PER_LINE` constant without importing it.
+- This was an actual unresolved-symbol/build defect introduced during offline-lane consolidation.
+- Repair committed as `8479c16e...`: restored `import { MAX_ORDER_QUANTITY_PER_LINE } from '../domain/order';`.
+- Predecessor evidence on `744e294a...` and earlier SHAs is invalidated by this change.
+
+CURRENT PROOF STATE:
+- Fresh workflow discovery is not yet populated immediately after the commit; no PASS inferred.
+- No Vercel deployment matches `8479c16e...`; Production remains NO TOUCH.
+
+NEXT ACTION:
+- Reconcile the 11 exact-head gates for `8479c16e...` when attached; inspect first terminal failures only.
+- Continue safe independent source/security checks without creating duplicate deployments or speculative commits.
