@@ -344,3 +344,15 @@ RESULT: raw job log confirms `EXPECTED_SHA = VITE_BUILD_SHA = 4753cc3…`, exact
 ROOT CAUSE: none; evidence verification only.
 ARTIFACT: run `35310025159`; job `105490749871`; artifact `10532997772`.
 NEXT ACTION: no rerun of this closed front unless candidate/dependency changes. Keep deployment, authenticated browser, formal dispatch, and final evidence reconciliation unresolved until independently proven.
+
+
+### 2026-09-18 — Command 1 — external-boundary recheck
+
+RUN: Vercel project/deployment recheck; GitHub exact-SHA status/workflow recheck; Supabase security-advisor recheck
+JOB: candidate deployment / authenticated deployment browser / formal runtime dispatch / live security boundary
+SHA: candidate `4753cc3319f551aeccbe2bd081b988fa68df8e87`; main `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
+FRONT: P0 external release blockers
+RESULT: exact candidate CI remains terminal PASS across the recorded candidate runs; Vercel combined status remains FAILURE with build-rate-limit target and canonical project has no deployment for `4753cc3…`. Runtime E2E source still contains `workflow_dispatch`, while connected GitHub browser authentication is absent, so formal dispatch remains unavailable. Supabase live project remains ACTIVE_HEALTHY; security advisor continues to report the intentional pre-auth invitation lookup warning plus authenticated SECURITY DEFINER surface. No candidate source mutation, no production mutation, and no protection weakening occurred.
+ROOT CAUSE: Vercel Hobby deployment quota remains exhausted; GitHub browser session is unauthenticated and connected mutation surface has no workflow-dispatch operation.
+ARTIFACT: candidate status; Vercel project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`; Runtime E2E source; TinyFish capability run `d6315349-d551-473c-b108-997141884371`.
+NEXT ACTION: preserve `4753cc3…`. Resume exact-SHA deployment + authenticated runtime certification only through an approved authenticated Vercel/GitHub path. Production remains NO TOUCH.
