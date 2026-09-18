@@ -321,3 +321,18 @@ Do not conflate a workflow's source-level `workflow_dispatch` declaration with t
 - `.github/workflows/runtime-e2e.yml` was independently fetched at the exact candidate and confirmed to contain `workflow_dispatch` with required `base_url` and `exact_sha` inputs. TinyFish run `d6315349-d551-473c-b108-997141884371` confirmed the connected GitHub browser session is unauthenticated and shows Sign in; absence of the Run workflow control is therefore an authentication boundary, not evidence that the workflow lacks dispatch support.
 - Durable rule: classify source workflow dispatch capability and operator/session dispatch authority as separate proof facts. Never modify workflows or weaken controls to compensate for a connector authentication limitation.
 - Canonical Vercel project remains `aghbari-commerce-c2dd` / `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`; candidate deployment is still unavailable because the Hobby deployment quota returned HTTP 402 `api-deployments-free-per-day`.
+
+
+## 23. FINAL EXACT-SHA PROOF CLOSURE — 2026-09-18
+
+### 23.1 Candidate proof integrity
+Candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b` is the current certification subject. Its 13 verification gates are terminal PASS on the exact SHA. The candidate was advanced from `4753cc...` only after a proven proof-system defect showed pull_request workflows using synthetic merge refs; the final exhaustive audit also removed implicit checkout from bootstrap release verification.
+
+### 23.2 Durable workflow rule
+For any pull_request verification workflow, exact-SHA proof requires explicit source-head resolution via `github.event.pull_request.head.sha` (or validated manual input), explicit checkout ref, and an exact HEAD assertion. Merely observing the workflow run's `head_sha` is insufficient.
+
+### 23.3 Final release boundary
+Current candidate CI closure does not equal deployed-runtime certification. Exact Vercel deployment, authenticated browser runtime proof, and Formal Final Regression remain separate mandatory evidence layers. Candidate deployment currently has zero canonical Vercel matches because of the platform deployment-rate-limit boundary. Production remains untouched.
+
+### 23.4 Tooling isolation
+PR #72 remains an isolated tooling lane at its current head; PR #73 remains an isolated pgTAP diagnostic lane. Their findings and PASS states do not transfer into candidate certification. Never import candidate migrations/contracts into a tooling baseline merely to obtain green status.
