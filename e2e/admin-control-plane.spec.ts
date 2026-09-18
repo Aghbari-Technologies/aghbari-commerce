@@ -29,6 +29,9 @@ test.describe('Admin control plane exact browser path', () => {
     await palette.getByRole('menuitem', { name: /إدارة الطلبات/ }).click();
     await expect(page.getByRole('textbox', { name: 'البحث في الطلبات' })).toBeVisible();
     await expect(page.getByRole('combobox', { name: 'تصفية حالة الطلب' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'الهوية والمظهر' })).toBeVisible();
+    await expect(page.locator('input[type="color"][aria-label="لون الواجهة الرئيسي"]')).toBeVisible();
+    await expect(page.getByText('كثافة مدمجة', { exact: true })).toBeVisible();
 
     await expect(page.getByText('العامري', { exact: false })).toHaveCount(0);
     await expect(page.getByText('الأغبري', { exact: false }).first()).toBeVisible();
