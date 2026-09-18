@@ -67,7 +67,9 @@ begin
   if found then
     if v_existing.source_dataset_id = p_source_dataset_id
        and v_existing.source_version = p_source_version
-       and v_existing.schema_version = p_schema_version then
+       and v_existing.schema_version = p_schema_version
+       and v_existing.data_period_start is not distinct from p_data_period_start
+       and v_existing.data_period_end is not distinct from p_data_period_end then
       return v_existing;
     end if;
     raise exception 'Reporting idempotency key payload conflict' using errcode = '40001';
