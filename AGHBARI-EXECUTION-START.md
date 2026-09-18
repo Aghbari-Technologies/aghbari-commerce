@@ -1,104 +1,119 @@
-# الأغبري | EXECUTION START HERE
+# الأغبري | EXECUTION START — AUTONOMOUS ENGINEERING CONTROL
 
-هذا الملف هو **نقطة الدخول السريعة**. المرجع التشغيلي الكامل موجود في:
+> **Fast launch router.** This file does not contain the whole protocol. It routes every execution to the canonical Control Plane, durable Project Memory, and mutable Latest Execution State.
 
-`ops/AGHBARI-EXECUTION-CONTROL-PLANE.md`
-على الفرع:
-`ops/execution-control-plane`
+## Canonical operating layers
 
-الحالة الحية المختصرة موجودة في:
+1. `ops/AGHBARI-EXECUTION-CONTROL-PLANE.md` on `ops/execution-control-plane` = constitution, decision authority, proof rules, release safety, and self-improvement.
+2. `PROJECT_MEMORY.md` on `ops/execution-control-plane` = durable architecture, engineering standards, design system, decisions, backlog, lessons, and verification vocabulary.
+3. `ops/AGHBARI-LATEST-EXECUTION-STATE.md` on `ops/execution-control-plane` = current candidate/live/production state, blockers, exact evidence, tooling status, and next queue.
+4. This file on `main` = launch router only.
 
-`ops/AGHBARI-LATEST-EXECUTION-STATE.md`
-على الفرع:
-`ops/execution-control-plane`
+## User command `1` — EXECUTE AUTONOMOUSLY
 
-**القاعدة: اقرأ الاثنين في بداية كل تشغيل؛ الـLatest State للحالة الحالية والـControl Plane للقواعد والتطورات.**
+When the user sends only `1`, execute immediately. Do not ask for the previous report when repository evidence can provide it.
 
-## عند إرسال المستخدم `1`
+READ CONTROL PLANE + PROJECT MEMORY + LATEST STATE
+→ VERIFY REAL GITHUB / VERCEL / SUPABASE STATE
+→ RECONCILE STORED STATE VS REALITY
+→ IDENTIFY ALL OPEN / BLOCKED / RUNNING / NOT_PROVEN FRONTS
+→ CLASSIFY BY RISK, VALUE, DEPENDENCY
+→ START INDEPENDENT FRONTS IN PARALLEL
+→ DISCOVER REQUIRED ADJACENT WORK
+→ MAKE AUTONOMOUS ENGINEERING DECISIONS WITHIN SCOPE
+→ RESEARCH OFFICIAL SOURCES WHEN TECHNICAL UNCERTAINTY EXISTS
+→ IMPLEMENT ONLY PROVEN / NECESSARY CHANGES
+→ TEST + TEST THE TEST
+→ BREAK WITH EDGE / NEGATIVE / SECURITY / CONCURRENCY CHECKS
+→ REGRESSION
+→ VERIFY TARGET ENVIRONMENT / ARTIFACT / BROWSER / LIVE WHEN APPLICABLE
+→ REVIEW ARCHITECTURE + SECURITY + DATA + UX/UI + PERFORMANCE + RELIABILITY
+→ CAPTURE EXACT-SHA EVIDENCE
+→ UPDATE PROJECT MEMORY / DECISION LOG / LATEST STATE
+→ IMPROVE THE PROTOCOL WHEN THE RUN REVEALS A DURABLE LESSON
+→ RECONCILE EVERY STATUS
+→ CLOSE ONLY WHAT IS PROVEN
+→ MOVE TO THE NEXT LOGICAL FRONT
 
-نفّذ فورًا:
-1. اقرأ Control Plane الكامل.
-2. اقرأ أحدث Execution Log.
-3. تحقق من CURRENT SHA وLIVE وPRODUCTION.
-4. احصر فقط OPEN / BLOCKED / RUNNING / NOT_PROVEN.
-5. ابدأ كل الجبهات المستقلة بالتوازي.
-6. لا تعيد Front مغلقًا دون سبب invalidation.
-7. لا تنشئ SHA جديدًا دون Defect مثبت.
-8. احفظ كل نتيجة جديدة أولًا في `ops/AGHBARI-LATEST-EXECUTION-STATE.md`.
-9. طابق الحالة مع Control Plane، ثم أضف سجل الجولة المختصر إلى الاثنين عند الحاجة.
-10. نفّذ exact-SHA reconciliation.
-11. طوّر Control Plane في نفس الجولة إذا كشفت النتائج قاعدة أفضل أو نقصًا في الـproof/observability أو تغيرًا في الأدوات.
-12. لا ترسل تقرير الخروج قبل حفظ الحالة الجديدة.
+### Command 1 autonomy rules
 
-## عند إرسال المستخدم `2`
+- The programmer leads technical architecture, implementation, refactoring, testing, security, UI/UX, performance, CI/CD, observability, and release engineering.
+- Do not wait for file names, component names, implementation details, colors, spacing, test cases, or the next technical step when expert judgment is sufficient.
+- Discover and execute necessary work required for correctness, security, reliability, testability, or release readiness.
+- Do not expand into optional product features without owner adoption.
+- Escalate only material product, commercial, irreversible, cost, core-feature, or legal/compliance decisions that require owner judgment.
 
-نفّذ فورًا:
-1. اقرأ آخر تقرير للمبرمج إن كان موجودًا في المحادثة.
-2. اقرأ Control Plane.
-3. افحص GitHub/Vercel/Supabase والأدلة الحالية بدل الاعتماد على التقرير وحده.
-4. أعد حساب الحالة الحقيقية.
-5. اكشف أي stale PASS أو missing proof أو hidden blocker أو skipped front.
-6. أطلق أقوى مسار تنفيذي ممكن على المتبقي، بالتوازي.
-7. لا تعِد صياغة الأمر السابق شكليًا.
-8. لا تسمح بـPASS غير مثبت.
-9. حدّث Latest Execution State بالحالة الجديدة.
-10. طوّر Control Plane في نفس الجولة إذا أثبتت النتائج حاجة مستدامة لتغيير القواعد أو الأولويات.
-11. لا تُعد المستخدم إلى دور مدير ذاكرة؛ GitHub هو سجل الحالة.
+## User command `2` — STRENGTHEN / RE-CALCULATE
 
-## قواعد ثابتة
+When the user sends only `2`, treat the latest programmer result as an input, not as truth.
+
+READ NEWEST RESULT + CONTROL PLANE + PROJECT MEMORY + LATEST STATE
+→ RE-QUERY ACTUAL PROJECT EVIDENCE
+→ DETECT STALE PASS / MISSING PROOF / HIDDEN BLOCKER / SKIPPED FRONT / WEAK TEST / SCOPE DRIFT
+→ IDENTIFY ROOT CAUSE
+→ SEPARATE PRODUCT DEFECT FROM PROOF / CI / ENVIRONMENT DEFECT
+→ RE-PRIORITIZE AND PARALLELIZE
+→ ISSUE / EXECUTE A STRONGER NEXT ACTION
+→ PERSIST THE NEW STATE BEFORE REPORTING
+
+Do not merely rewrite the previous command. Remove redundant work, demand missing proof, increase forensic precision, and preserve all safety boundaries.
+
+## Hard invariants
 
 - `CODE ≠ TEST ≠ CI ≠ RUNTIME ≠ LIVE ≠ PRODUCTION`
-- `IMPLEMENTED ≠ VERIFIED ≠ PROVEN ≠ CERTIFIED`
-- PASS لا ينتقل بين SHAs.
-- Production = NO TOUCH حتى تصدر مرحلة الإصدار قرارًا مستندًا إلى الأدلة.
-- Live لا يستخدم كبديل عن candidate proof.
-- لا secrets في المصدر أو السجلات أو Control Plane.
-- العائق في أداة أو صلاحية يُسجل BLOCKED ويستمر العمل على جميع الجبهات الأخرى.
-- عند فشل الاختبار، ابدأ بالـForensics والـobservability قبل اتهام Product Code.
+- `IMPLEMENTED ≠ TESTED ≠ VERIFIED ≠ PROVEN ≠ CERTIFIED`
+- `NO EVIDENCE → NO PASS`
+- Evidence belongs to the exact SHA that produced it.
+- New SHA means affected old evidence must be revalidated; no PASS transfer by similarity or smallness.
+- Production remains `NO TOUCH` until the release protocol permits a change.
+- A blocked tool/credential boundary is recorded as BLOCKED; it is never converted into PASS by workaround theater.
+- No invented secrets, credentials, logs, screenshots, statuses, runtime claims, or test results.
+- A test that cannot expose the claimed defect is not accepted merely because CI is green.
 
-## حالة المرجع الحالية
+## Current toolset available to the operator
 
-`CURRENT SHA = 466857aa0dd1062db380800e2d0b46dc4fb53075`
-`LIVE SHA = efb30b3d23a7a9fcef22d028c33017eeab0855af`
-`PRODUCTION = NO TOUCH`
-`CERTIFICATION = NO`
+Core: GitHub, Vercel, Supabase.
+Connected accelerators: Firecrawl, TinyFish, PostHog.
+Project proof/security tools: Playwright, Gitleaks, CodeQL, Semgrep CE, Trivy, OWASP ZAP, Dependabot, OpenSSF Scorecard.
+Additional connectors may be used when actually connected and relevant; capability must be verified before being treated as evidence.
 
-## قاعدة الذاكرة والتطوير الذاتي
+## Required completion transaction
 
-- لا تنتظر من المستخدم إعادة إرسال التقرير السابق.
-- افحص `ops/AGHBARI-LATEST-EXECUTION-STATE.md` أولًا ثم الأدلة الفعلية.
-- بعد كل جولة: احفظ آخر النتائج، ثم اسأل: ما الذي تعلمناه؟ ما القاعدة التي تمنع تكرار المشكلة؟ ما الخطوة التي يمكن جعلها متوازية أو آلية؟
-- إذا وُجد تحسين مثبت، عدّل Control Plane وأضف سجل Evolution مختصرًا.
-- لا تحذف التاريخ لإخفاء فشل؛ احتفظ بالحالة الحالية وسبب التغير.
+Before the programmer reports completion:
+1. Save newest verified state to `ops/AGHBARI-LATEST-EXECUTION-STATE.md`.
+2. Record the compact run/job/SHA/front/result/root-cause/artifact/next-action entry.
+3. Record consequential decisions in `PROJECT_MEMORY.md`.
+4. Add a Control Plane evolution entry when a durable lesson, tool change, proof weakness, or safer procedure was discovered.
+5. Reconcile exact-SHA evidence and release blockers.
+6. Only then report the result to the user.
 
-## الأدوات
+## Exit format
 
-الأساس:
-- GitHub
-- Vercel
-- Supabase
+CURRENT STATE
+Current SHA / Branch / Objective
 
-المسرعات المتصلة:
-- Firecrawl — متصل
-- TinyFish — متصل
-- PostHog — متصل
+DISCOVERED
+What was found?
 
-أدوات بانتظار الاتصال:
-- Codex Security
-- Datadog
+ROOT CAUSE
+What was actually wrong?
 
-أدوات Proof/Security الموجودة في المشروع أو مسار الأدوات:
-- Playwright — @playwright/test 1.63.0
-- Gitleaks
-- CodeQL
-- Semgrep CE
-- Trivy
-- OWASP ZAP
-- Dependabot
-- OpenSSF Scorecard
+ACTION
+What changed?
 
-## ملاحظة Vercel
+TESTS
+What actually ran?
 
-Vercel يوفّر Protection Bypass for Automation عبر سرّ `VERCEL_AUTOMATION_BYPASS_SECRET`، ويُستخدم ضمن CI كسرّ، مع إبقاء حماية الـdeployment فعالة. لا يتم تجاوز الحماية يدويًا فقط لصناعة PASS.
+VERIFICATION
+What was actually proven, and at which layer?
 
-**لا تعتبر هذا الملف بديلًا عن Control Plane الكامل. ابدأ دائمًا بقراءته.**
+EVIDENCE
+Exact run/job/artifact references.
+
+REMAINING
+Only genuine OPEN / BLOCKED / RUNNING / NOT_PROVEN work.
+
+NEXT ACTION
+The next logical executable front.
+
+**The project advances by initiative + execution + evidence, not by waiting for the owner to manage technical details.**
