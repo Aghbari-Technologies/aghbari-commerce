@@ -1,5 +1,6 @@
 import { requireSupabase } from '../lib/supabase';
 import type { OrderDraft } from '../domain/types';
+import type { PaymentMethod } from '../domain/customerPolicy';
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const ORDER_STATUSES = new Set(['draft', 'pending', 'confirmed', 'preparing', 'ready', 'completed', 'cancelled']);
@@ -70,13 +71,13 @@ async function resolveOperationalWarehouse(): Promise<string> {
   return assertUuid(warehouse.id, 'المستودع');
 }
 
-export async function createOrder(draft: OrderDraft, warehouseId?: unknown) {
+export async function createOrder(draft: OrderDraft, warehouseId?: unknown, options: { paymentMethod?: PaymentMethod } = {}) {
   if (!draft || typeof draft !== 'object') throw new Error('بيانات الطلب غير صالحة.');
   const candidate = draft as Partial<OrderDraft>;
   const idempotencyKey = assertIdempotencyKey(candidate.idempotencyKey);
   const normalizedWarehouseId = warehouseId == null ? await resolveOperationalWarehouse() : assertUuid(warehouseId, 'المستودع');
   const lines = assertOrderLines(candidate.lines);
-  const { data, error } = await requireSupabase().rpc('create_order', { p_idempotency_key: idempotencyKey, p_warehouse_id: normalizedWarehouseId, p_lines: lines.map(({ productId, quantity }) => ({ product_id: productId, quantity })) });
+  const { data, error } = await requireSupabase().rpc('create_order', { p_idempotency_key: idempotencyKey, p_warehouse_id: normalizedWarehouseId, p_lines: lines.map(({ productId, quantity }) => ({ product_id: productId, quantity })), p_payment_method: options.paymentMethod ?? 'credit' });
   if (error) throw error;
   const row = data?.[0] as { order_id?: unknown; order_number?: unknown } | undefined;
   return assertCreatedOrderReference({ id: row?.order_id, order_number: row?.order_number });

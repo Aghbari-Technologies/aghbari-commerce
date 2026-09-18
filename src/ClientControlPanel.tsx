@@ -13,9 +13,9 @@ const DEFAULT_CONFIG: ClientUiConfig = {
 };
 const BOOLEAN_LABELS: Array<[keyof ClientUiConfig, string, string]> = [
   ['showSearch','شريط البحث','البحث بالاسم وSKU والباركود'],['showCategories','التصنيفات','فلاتر التصنيفات في الكتالوج'],['showExcel','رفع Excel','الطلب الجماعي من ملف Excel'],['showQuickOrder','الطلب السريع','إدخال SKU والكمية بسرعة'],
-  ['showTemplates','المسحات','قوائم الطلبات المتكررة'],['showCredit','المركز المالي','الائتمان وكشف الحساب'],['showInventory','إظهار المخزون','حالة التوفر والكمية'],['showRetailPrice','إظهار سعر التجزئة','عرض سعر التجزئة للعميل'],
+  ['showTemplates','المسحات','قوائم الطلبات المتكررة'],['showCredit','المركز المالي','الائتمان وكشف الحساب'],['showInventory','إظهار المخزون','حالة التوفر والكمية'],
   ['requireQuantityConfirmation','اعتماد الكمية','إلزام العميل بتأكيد الكمية قبل الإرسال'],['showTieredPricing','شرائح أسعار الجملة','إظهار مستويات السعر حسب الكمية'],['showSavingsCalculator','حاسبة التوفير','إظهار المتبقي للشريحة التالية'],
-  ['showImageSearch','البحث بالصور','تفعيل نقطة البحث بالصور'],['showVoiceSearch','البحث الصوتي','تفعيل نقطة البحث الصوتي'],['showPaymentMethods','وسائل الدفع','إظهار خيارات الدفع المتاحة']
+  ['showPaymentMethods','وسائل الدفع','إظهار خيارات الدفع المتاحة']
 ];
 const PAYMENT_LABELS: Array<[keyof ClientUiConfig, string]> = [['paymentOnCredit','آجل / ائتمان'],['paymentCash','نقدي'],['paymentTransfer','حوالة']];
 
