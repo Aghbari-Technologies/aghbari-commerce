@@ -54,6 +54,19 @@
 - Obtain authorized dispatch for `runtime-e2e.yml` against the same exact deployment URL + SHA.
 - Reconcile all exact-SHA evidence, then evaluate release promotion. Until then, Certification remains NO and Production remains NO TOUCH.
 
+## 2026-09-18 — Command 1 — autonomous closure sweep (current exact candidate)
+
+- EXACT CANDIDATE SHA: `2facceb39aaa826413f20245a6f20b6c2ff7cd34` on `certification/final-candidate-20260918`; PR #83 remains OPEN / non-draft / mergeable.
+- Exact candidate workflow inventory: 11 associated terminal-success workflow runs. The `Browser E2E / Exact Deployment` contract job PASSed, but its actual `browser-e2e` execution job was SKIPPED because no exact candidate deployment event was available. Therefore deployed authenticated browser proof remains NOT_PROVEN.
+- Local Production Artifact proof on the exact candidate is terminal PASS: run `35374002373`, job `105694309280`, artifact `10559612730` (`browser-local-2facceb39aaa826413f20245a6f20b6c2ff7cd34`). Build metadata and local browser execution were tied to the exact SHA; Customer and Admin local E2E both completed successfully.
+- Candidate `dist` is build output, not repository source; `dist/index.html` is absent at the candidate SHA. No local developer workspace is required from the owner.
+- Canonical Vercel project has no deployment recorded for `2facceb39aaa826413f20245a6f20b6c2ff7cd34`. Current Vercel status remains blocked by the deployment/build-rate boundary. Existing READY deployments are historical or operational-branch evidence and are not transferable.
+- Netlify fallback project `aghbari-commerce-web` exists, but its public URL and branch URL currently return Netlify 404. The connected Netlify deploy operation currently returns a CLI upload command rather than performing the source upload itself; no deployment PASS is claimed.
+- Direct Supabase reconciliation: project `mrcyqezbhpncuvaehwgf` is ACTIVE_HEALTHY. Security advisors currently report 1 anonymous SECURITY DEFINER warning and 59 authenticated SECURITY DEFINER warnings. Direct privilege inspection confirms the anonymous execution is limited to `get_customer_invitation_for_acceptance(text)`; the candidate migration explicitly documents token lookup as intentionally callable by `anon`. Other checked sensitive RPCs (including both `create_order` signatures, `set_cart_item`, `transition_order`, and `consume_customer_invitation`) are not executable by `anon`.
+- CERTIFICATION: NO. PRODUCTION: NO TOUCH.
+- NEW DURABLE LESSON: a successful deployment-contract workflow is not deployed-browser proof; and a provisioned Netlify site is not a deployment until its public URL serves the product.
+- NEXT REQUIRED EXTERNAL GATES: exact candidate deployment, authenticated deployed browser E2E with exact build metadata, and formal `runtime-e2e.yml` execution against the same URL/SHA. Do not promote Production before those gates are proven.
+
 ## Current non-certifying UI / deployment lane — 2026-09-18 (historical state)
 
 
