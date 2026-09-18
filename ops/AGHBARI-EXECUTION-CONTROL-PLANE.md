@@ -1638,3 +1638,12 @@ Observed after consolidating the offline lane into the certification candidate: 
 Durable rule: when consolidating a lane, verify symbol ownership end-to-end (import/export plus declaration/use). Source-contract tests that only assert textual presence are insufficient; a compile/typecheck gate must remain the authoritative proof for unresolved-symbol failures.
 
 Applied immediately on candidate `744e294a0adc...` with production untouched.
+
+
+## EVOLUTION — 2026-09-18 — Offline lane symbol dependency check
+
+Observed a second consolidation defect: `offlineQueue.ts` referenced the canonical order quantity constant without importing it. This would evade a text-only runtime wiring assertion but fail compilation/typechecking.
+
+Durable rule: every consolidated module must be checked for imported ownership of shared constants/helpers, not merely for textual references. Prefer compiler/typecheck evidence over string-presence assertions for symbol integrity.
+
+Applied on candidate `8479c16e...`; no production mutation.
