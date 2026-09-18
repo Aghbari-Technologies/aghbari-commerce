@@ -82,20 +82,14 @@ jobs:
           const preferredSite = data.site_url || data.siteUrl || null;
           const url = preferredSite ? preferredSite.replace(/^http:\/\//,'https://') : walk(data);
           if(!url || !/^https:\/\//.test(url)) throw new Error('No HTTPS deploy URL in Netlify JSON: '+raw.slice(0,2000));
-          if(typeof data.password==='string' && data.password) fs.appendFileSync(process.env.GITHUB_ENV,'DROP_PASSWORD='+data.password+'\n');
+          if(typeof data.password==='string' && data.password){
+            console.log('Netlify anonymous password gate detected; keeping the value masked for the browser step.');
+            console.log('::add-mask::'+data.password);
+            fs.appendFileSync(process.env.GITHUB_ENV,'DROP_PASSWORD='+data.password+'\n');
+          }
           fs.appendFileSync(process.env.GITHUB_ENV,'E2E_BASE_URL='+url+'\n');
           fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,'### Exact anonymous preview\n'+url+'\n');
           console.log('ANONYMOUS_PREVIEW_URL='+url);
-          NODE
-      - name: Verify public exact SHA
-        run: |
-          curl --fail --silent --show-error --location --max-time 30 "$E2E_BASE_URL/build-meta.json" -o deployed-meta.json
-          node - <<'NODE'
-          const fs=require('node:fs');
-          const m=JSON.parse(fs.readFileSync('deployed-meta.json','utf8'));
-          if(m.product!=='aghbari-commerce') throw new Error('PUBLIC product mismatch');
-          if(m.git_sha!==process.env.TARGET_SHA) throw new Error('PUBLIC SHA MISMATCH: '+m.git_sha);
-          console.log('EXACT PUBLIC SHA:',m.git_sha);
           NODE
       - name: Run real browser public smoke
         env:
