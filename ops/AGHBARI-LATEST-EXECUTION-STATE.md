@@ -31,22 +31,22 @@
 
 ## Exact-SHA candidate proof currently recorded
 
-Current candidate `4753cc3319f551aeccbe2bd081b988fa68df8e87` terminal PASS:
-- application-quality: `35310025067`
-- G1 Domain Proof: `35310025098`
-- bootstrap-release-lockfile: `35310025140`
-- security-audit: `35310025100`
-- Order Workflow Proof: `35310025147`
-- order-invariant-contract: `35310025210`
-- supabase-migration-proof: `35310025169`
-- Browser E2E / Fresh Local Supabase: `35310025060`
-- Test-the-Test / Exact SHA: `35310025041`
-- Concurrency Proof / Exact SHA: `35310025032`
-- Browser E2E / Local Production Artifact: `35310025159` / job `105490749871` — PASS. It executed exact-SHA checkout, clean install, isolated Supabase, production build, artifact identity/checksum, Chromium, customer E2E, admin E2E, evidence upload, and cleanup.
-- Browser E2E / Exact Deployment: `35310024991` — browser-contract PASS; browser-e2e child SKIPPED because no current-SHA Vercel deployment exists.
-- All prior candidate `4d5057…` evidence is historical and invalidated for the current candidate.
+Current candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b` terminal PASS:
+- Order Workflow Proof: `35321683922`
+- security-audit: `35321683893`
+- order-invariant-contract: `35321683989`
+- Intelligence Contract Proof: `35321683986`
+- bootstrap-release-lockfile: `35321683999`
+- application-quality: `35321683950`
+- Browser E2E / Exact Deployment: `35321683916` — browser-contract PASS; runtime browser remains skipped until a current-SHA deployment exists.
+- G1 Domain Proof: `35321684096`
+- Browser E2E / Fresh Local Supabase: `35321683994`
+- supabase-migration-proof: `35321683953`
+- Browser E2E / Local Production Artifact: `35321683815` / job `105526067670` — PASS. Exact candidate/build SHA matched; local production artifact browser proof executed customer suite 3/3 and admin suite 1/1, with artifact `10537173227`.
+- Test-the-Test / Exact SHA: `35321684089` — RUNNING at last checkpoint.
+- Concurrency Proof / Exact SHA: `35321683806` — RUNNING at last checkpoint.
 
-## Release blockers
+All recorded PASS evidence above belongs to the exact current candidate SHA.## Release blockers
 
 1. Candidate Deployment: BLOCKED — Vercel exact-SHA commit status remains "Deployment rate limited — retry in 24 hours"; no current-SHA deployment exists.
 2. Deployment Browser: BLOCKED — `VERCEL_AUTOMATION_BYPASS_SECRET` unavailable; fail-closed validation prevents authenticated browser execution.
@@ -55,8 +55,8 @@ Current candidate `4753cc3319f551aeccbe2bd081b988fa68df8e87` terminal PASS:
 5. Certification: NO.
 6. Live alignment to candidate: NOT_PROVEN; no promotion.
 7. Workflow safety: CANDIDATE CLOSED — 15 workflow files audited at exact SHA, 0 `contents: write`, 0 `git push`.
-8. Tooling PR #72: OPEN / NOT_PROVEN — exact current head `92fa7bffb8971eecb10d91fe588709da0e06675a`, isolated.
-9. PgTAP diagnostic PR #73: OPEN / test-harness/product-contract diagnostic lane, exact head `cf7db1c376e40c44ed0cec1956c9b59ee8f5d7f0`.
+8. Tooling PR #72: OPEN / NOT_PROVEN — exact current head `d884f90fcdcb95eeceb47e78d8f36792268f830d`, isolated.
+9. PgTAP diagnostic PR #73: OPEN / test-harness/product-contract diagnostic lane, exact head `e62cb960dfb17204074914b4a3dd5a13abcb333f`; exact PR-head migration proof fails 12 isolated pgTAP product/schema contracts.
 
 ## Connected tooling
 
@@ -492,3 +492,15 @@ RESULT: after correcting G1, Security Audit, and Intelligence Contract Proof, th
 ROOT CAUSE: GitHub pull_request synthetic merge refs can silently invalidate source-head evidence even when run metadata names the PR head.
 ARTIFACT: exhaustive scan at `5b9f2a…`; compare from prior `64f5283…` shows only `bootstrap-release-lockfile.yml` changed in this final correction.
 NEXT ACTION: terminalize current candidate CI and verify corrected runs log exact candidate SHA. Then rebuild release evidence; Vercel deployment/authenticated browser/formal regression remain separate blockers. Production NO TOUCH.
+
+
+### 2026-09-18 — Command 1 — current candidate evidence checkpoint
+
+RUN: exact current-candidate CI reconciliation; local artifact log verification; Vercel deployment/runtime boundary recheck; tooling head reconciliation
+JOB: candidate proof closure / release blockers / tooling isolation
+SHA: candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b`; tooling `d884f90fcdcb95eeceb47e78d8f36792268f830d`; diagnostic `e62cb960dfb17204074914b4a3dd5a13abcb333f`; production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
+FRONT: exact-SHA candidate proof / tooling proof integrity / deployment / production safety
+RESULT: 10 candidate pull_request verification gates are terminal PASS on exact current SHA, including migration, fresh local browser, application quality, G1, security, order, intelligence, lockfile, exact deployment contract, and local production artifact. Local production artifact job `105526067670` proves exact SHA plus customer 3/3 and admin 1/1 browser execution and artifact `10537173227`. Test-the-Test and Concurrency remain running at checkpoint. Candidate Vercel deployment match count remains zero and combined status remains the Vercel build-rate-limit failure. Production runtime-error scan for selected 24h range is clean. Tooling PR #72 is isolated at `d884f90f...`; PR #73 is isolated at `e62cb960...` with exact-head pgTAP failure evidence.
+ROOT CAUSE: remaining candidate release blockers are external deployment availability, authenticated browser credential, and manual workflow-dispatch capability. Tooling also has an isolated Semgrep container safe-directory repair now under fresh CI.
+ARTIFACT: candidate runs `35321683922;35321683893;35321683989;35321683986;35321683999;35321683950;35321683916;35321684096;35321683994;35321683953;35321683815`; local artifact job `105526067670`; Vercel canonical project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`.
+NEXT ACTION: terminalize Test-the-Test and Concurrency on `5b9f2a...`; then perform final exact-SHA reconciliation. Preserve candidate, no synthetic deployment, no Production touch.
