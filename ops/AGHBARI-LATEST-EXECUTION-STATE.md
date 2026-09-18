@@ -794,3 +794,13 @@ RESULT: Candidate remains frozen with 13/13 exact-SHA terminal PASS and only the
 ROOT CAUSE: remaining certification blockers are external execution/authentication capability boundaries, not a proven candidate defect.
 ARTIFACT: candidate runs `35321683922;35321683893;35321683989;35321683986;35321683999;35321683950;35321683916;35321684096;35321683994;35321683953;35321683815;35321684089;35321683806`; Vercel Production `dpl_AmTBr8X9qBGCLdngxirQgdRM4Xjo`; latest operational deployment `dpl_Hn1mNtq1YMnzqq9KXNKJaB3DqNcB`; Supabase `mrcyqezbhpncuvaehwg`.
 NEXT ACTION: preserve candidate SHA. Use an authenticated Vercel Dashboard targeted deployment for `5b9f2a…` when the external browser credential/wallet boundary permits; then execute authenticated browser proof and dispatch final regression against that exact URL/SHA. Do not create no-op commits or synthetic deployments solely to force Vercel.
+
+### 2026-09-18 — Command 1 — Vercel historical deployment exhaustion check
+
+RUN: read-only Vercel deployment pagination audit
+JOB: verify candidate deployment absence beyond the first deployment page
+SHA: candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b`
+FRONT: exact-SHA deployment existence / quota-preserving evidence
+RESULT: Six consecutive Vercel deployment pages were inspected through the historical pagination boundary, covering deployments back through 2026-09-17T01:33Z; zero deployment records had `meta.githubCommitSha` equal to candidate `5b9f2a…`. This materially strengthens the existing zero-match conclusion without creating a deployment or changing the candidate.
+ARTIFACT: Vercel project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`; six paginated read-only deployment queries; candidate combined status remains Vercel FAILURE on `build-rate-limit`.
+NEXT ACTION: keep candidate frozen; only an approved targeted deployment path can create admissible candidate runtime evidence.
