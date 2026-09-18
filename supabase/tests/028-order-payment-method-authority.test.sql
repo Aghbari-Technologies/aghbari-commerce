@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(19);
+select plan(20);
 
 select is(
   (select data_type from information_schema.columns
@@ -161,6 +161,20 @@ select is(
 );
 
 set local role authenticated;
+
+create temp table replay_order as
+select * from public.create_order(
+  'payment-authority-key-001',
+  (select warehouse_id from payment_fixture),
+  jsonb_build_array(jsonb_build_object('product_id',(select product_id from payment_fixture),'quantity',2)),
+  'cash'
+);
+
+select is(
+  (select order_id from replay_order),
+  (select order_id from cash_order),
+  'idempotent replay returns the original order'
+);
 
 select is(
   (select count(*) from public.notifications where entity_id=(select order_id from cash_order) and kind='order'),
