@@ -641,3 +641,13 @@ RESULT: candidate PR #74 remains OPEN/DRAFT/MERGEABLE and unchanged. Candidate e
 ROOT CAUSE: remaining release blockers are unchanged external capability boundaries: exact candidate deployment availability, approved Vercel automation-bypass credential, and connected GitHub workflow-dispatch execution. No new candidate defect was found; no new candidate SHA is justified.
 ARTIFACT: candidate run set `35321683922;35321683893;35321683989;35321683986;35321683999;35321683950;35321683916;35321684096;35321683994;35321683953;35321683815;35321684089;35321683806`; Vercel deployment sweep; runtime-error scan; Supabase advisor/migration inventory; TinyFish wallet.
 NEXT ACTION: preserve candidate freeze and Production NO TOUCH. Do not perform synthetic or quota-consuming deployment probes. Resume the certifying path only when an approved exact-SHA deployment route, authenticated browser secret, and dispatch-capable final regression path are available.
+
+
+### 2026-09-18 — Diagnostic provenance rule — candidate vs PR #73
+RUN: exact-tree provenance reconciliation + candidate migration-proof forensic comparison
+JOB: pgTAP diagnostic classification / proof-integrity hardening
+SHA: candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b`; diagnostic PR #73 `e62cb960dfb17204074914b4a3dd5a13abcb333f`
+FRONT: isolated pgTAP baseline / candidate proof integrity
+RESULT: PR #73 stops its migration tree at `20260915052000_fix_transfer_return_parameter_ambiguity.sql`, while the candidate contains subsequent corrective migrations including `20260916201000_harden_remaining_security_definer_search_paths.sql`, `20260917090000_canonicalize_product_media_storage_boundary.sql`, `20260917151000_restore_purchase_receipt_outbox_contract.sql`, and later runtime restorations/hardening. Candidate migration-proof run `35321683953` / job `105525366076` executed 36 files / 421 tests and ended PASS, including storage, purchasing, cash-expense, core-definer and security-definer suites. Therefore the observed PR #73 pgTAP failures are not transferable to candidate certification; they are a stale-source diagnostic result against an earlier migration state.
+ROOT CAUSE: diagnostic branch provenance differs materially from the frozen candidate; candidate-era corrective migrations are absent from PR #73.
+NEXT ACTION: classify PR #73 as isolated/non-certifying provenance diagnostic. Any future pgTAP repair must declare its migration provenance and must be compared against the candidate tree before defect classification.
