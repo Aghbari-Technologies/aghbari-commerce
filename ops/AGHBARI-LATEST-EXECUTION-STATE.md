@@ -8,49 +8,53 @@
 - Durable project memory: `PROJECT_MEMORY.md`
 - Fast entry point: `AGHBARI-EXECUTION-START.md`
 - Development branch: `enhancement/market-ready-v4-20260918`
-- Development PR: `#88`
+- Development PR: `#88` — OPEN / DRAFT / MERGEABLE
 
 ## Current development checkpoint
-- RUN: `RUN-2026-09-19-EXEC-001`
-- HEAD: `4d7fbe9e6f0ff977f2829ef91e07d290c6d83554`
-- Previous checkpoint: `27ab5c3798c0294a026d2e96050c8eaea15a4234`
+- RUN: `RUN-2026-09-19-EXEC-002`
+- HEAD: `cb2707b8005ac8237b06a7c89cc9bcf68dc50061`
+- Previous checkpoint: `4d7fbe9e6f0ff977f2829ef91e07d290c6d83554`
 - Lane: non-certifying development only
 - Certification candidate: `2facceb39aaa826413f20245a6f20b6c2ff7cd34` — FROZEN / NO TOUCH
 - Production: NO TOUCH
 
-## Proven on current development SHA
-- Build: PASS
-- Exact build metadata identity: PASS
-- G1 Domain Proof run `35395387584`: PASS
-- Netlify deployment: PASS
-- Public exact-SHA verification: PASS
-- Netlify browser E2E: RUNNING in `35395387603`; customer/admin terminal result not yet proven.
+## Proven on exact development SHA cb2707b...
+- Application Quality: PASS — run `35397451577`
+- Security Audit: PASS — run `35397451588`
+- G1 Domain Proof: PASS — runs `35397451545` and `35397455871`
+- Supabase Migration Proof: PASS — run `35397451566`
+- Test-the-Test / Sensitivity: PASS — run `35397451567`, five adversarial mutations detected and restored
+- Netlify Exact-SHA deployed browser: PASS — run `35397451565`, customer E2E PASS + admin E2E PASS
+- Exact deploy: `6aadaea0475017968f71cfda`
+- Exact deploy URL: `https://6aadaea0475017968f71cfda--aghbari-commerce-web.netlify.app`
+- Public build metadata: exact `cb2707b8005ac8237b06a7c89cc9bcf68dc50061`
+- Browser evidence artifact: `10569735072`
 
-## Current repair
-Prior exact deployed-browser run on `27ab5c3...` found four repeatable E2E contract failures:
-1. Cart cleanup could race persisted UI state.
-2. Duplicate catalog navigation caused strict locator resolution.
-3. Command Center reopen assertion contradicted the reset behavior.
-4. Product-detail assertion expected a heading while the UI exposes the label as customer-visible text.
+## Final development repair
+The previous exact-SHA browser run exposed a proof-fixture defect: cart cleanup assumed every persisted cart line had quantity 1. Multi-quantity rows survived one decrement and contaminated subsequent scenarios.
 
-Commit `4d7fbe9...` hardened the E2E contract without weakening product/security behavior. No certification or production code was touched.
+Commit `cb2707...` corrected the test fixture only:
+- decrement until quantity reaches zero;
+- assert the real quantity/removal transition;
+- reload and rehydrate;
+- verify the server-side cart is empty before the next scenario.
 
-## Running / not proven
-- Netlify customer browser E2E: RUNNING.
-- Netlify admin browser E2E: pending behind customer suite.
-- Test-the-Test exact-SHA: not yet reconciled to terminal state in this checkpoint.
-- Supabase Migration Proof exact-SHA: not yet reconciled to terminal state in this checkpoint.
+This was classified as a proof/test defect, not a product or security defect.
+
+## Current open boundary
+- Formal Final Regression: NOT_PROVEN — connected GitHub mutation surface exposes no workflow-dispatch operation.
 - Certification: NO.
 - Production: NO TOUCH.
 
+No product or security implementation change is currently required from the completed development lane. Do not create speculative code solely to manufacture a new green gate.
+
 ## Next resume queue
-1. Inspect terminal state of `35395387603` first; if failed, use the first exact failure only.
-2. Inspect terminal Test-the-Test and Supabase Migration Proof runs for the same development SHA.
-3. Do not reuse historical PASS across SHA.
-4. If browser proof passes, record exact deploy URL/ID and evidence.
-5. Only after all development gates terminalize, compare remaining gaps with Project Memory requirements.
-6. Keep candidate `2facceb3...` and Production untouched.
+1. On command `1`, verify current HEAD and reconcile the exact development evidence; do not repeat the cart-fixture repair.
+2. Compare any genuinely remaining market-ready gaps against Project Memory and execute only correctness/security/reliability/release-required work.
+3. When an authorized workflow-dispatch path becomes available, execute Formal Final Regression against the exact release SHA and reconcile its evidence.
+4. Keep PR #88 isolated from the frozen certification candidate until deliberate release promotion.
+5. Keep Production NO TOUCH.
 
 ## Last durable memory write
-- Progress ledger updated on `ops/execution-control-plane` at commit `a8cf60c07c4ee36481a846f060479693cda745e4`.
-- The ledger records `RUN-2026-09-19-EXEC-001` and checkpoint `4d7fbe9...`.
+- Development Progress Ledger commit: `0969f701a346003390bff88cc32dc1b93ab65792`
+- Current exact development checkpoint: `cb2707b8005ac8237b06a7c89cc9bcf68dc50061`
