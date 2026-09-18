@@ -16,6 +16,8 @@ env:
   EXACT_SHA: 2facceb39aaa826413f20245a6f20b6c2ff7cd34
   NETLIFY_SITE_ID: 6c515d48-3385-46eb-958c-3ff2ee17e95e
   NETLIFY_SITE_URL: https://aghbari-commerce-web.netlify.app
+  SUPABASE_URL: https://mrcyqezbhpncuvaehwgf.supabase.co
+  SUPABASE_PUBLISHABLE_KEY: sb_publishable_WVcYLR2Evhr75RAmUHQBGg_BPkZEnNW
 
 jobs:
   deploy-and-verify:
@@ -48,6 +50,8 @@ jobs:
         run: npm run build
         env:
           VITE_BUILD_SHA: ${{ env.EXACT_SHA }}
+          VITE_SUPABASE_URL: ${{ env.SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ env.SUPABASE_PUBLISHABLE_KEY }}
       - name: Verify exact artifact
         run: |
           node - <<'NODE'
