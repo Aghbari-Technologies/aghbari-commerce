@@ -11,26 +11,38 @@ async function login(page: Page, email: string, password: string) {
   await Promise.race([portal.waitFor({ state: 'visible', timeout: 5000 }), error.waitFor({ state: 'visible', timeout: 5000 })]).catch(() => undefined);
   if (await error.isVisible().catch(() => false)) throw new Error('Login/bootstrap failed: ' + await error.innerText());
   await expect(portal).toBeVisible();
-  await expect(page.getByRole('button', { name: /السلة/ })).toBeVisible();
+  await expect(page.locator('.portal-loading')).toHaveCount(0, { timeout: 15000 });
+  await expect(page.getByRole('banner').getByRole('button', { name: /السلة/ })).toBeVisible();
   await clearCustomerCart(page);
 }
 
 async function clearCustomerCart(page: Page) {
-  const cartButton = page.getByRole('button', { name: /السلة/ });
+  await expect(page.locator('.portal-loading')).toHaveCount(0, { timeout: 15000 });
+  const cartButton = page.getByRole('banner').getByRole('button', { name: /السلة/ });
   await expect(cartButton).toBeVisible();
   await cartButton.click();
+  const lines = page.locator('.cart-drawer .drawer-line');
   for (let attempt = 0; attempt < 100; attempt += 1) {
-    const lines = page.locator('.drawer-line');
     const lineCount = await lines.count();
     if (lineCount === 0) break;
-    const decrement = page.getByRole('button', { name: '−', exact: true }).first();
+    const decrement = page.locator('.cart-drawer').getByRole('button', { name: '−', exact: true }).first();
     await expect(decrement).toBeVisible();
     await decrement.click();
     await expect.poll(() => lines.count(), { timeout: 5000 }).toBeLessThan(lineCount);
   }
-  await expect(page.locator('.drawer-line')).toHaveCount(0, { timeout: 5000 });
-  const close = page.getByRole('button', { name: '×', exact: true }).last();
+  await expect(lines).toHaveCount(0, { timeout: 5000 });
+  const close = page.locator('.cart-drawer').getByRole('button', { name: '×', exact: true });
   if (await close.isVisible().catch(() => false)) await close.click();
+
+  // Rehydrate from the server and verify cleanup persisted; never trust only client state.
+  await page.reload();
+  await expect(page.locator('.customer-shell')).toBeVisible();
+  await expect(page.locator('.portal-loading')).toHaveCount(0, { timeout: 15000 });
+  const verifyCartButton = page.getByRole('banner').getByRole('button', { name: /السلة/ });
+  await verifyCartButton.click();
+  await expect(page.locator('.cart-drawer .drawer-line')).toHaveCount(0, { timeout: 5000 });
+  const verifyClose = page.locator('.cart-drawer').getByRole('button', { name: '×', exact: true });
+  if (await verifyClose.isVisible().catch(() => false)) await verifyClose.click();
 }
 
 const EXPECTED_VERCEL_TOOLBAR_CSP_ERROR = 'Loading the script \'https://vercel.live/_next-live/feedback/feedback.js\' violates the following Content Security Policy directive: "script-src \'self\'". Note that \'script-src-elem\' was not explicitly set, so \'script-src\' is used as a fallback. The action has been blocked.';
@@ -71,7 +83,7 @@ test('authenticated customer completes real search → catalog → cart → orde
   const firstCard = page.locator('.product-card').first(); await expect(firstCard).toBeVisible(); const productName = (await firstCard.getByRole('heading').first().innerText()).trim();
   const search = page.getByRole('textbox', { name: 'البحث في الكتالوج' }); await expect(search).toBeVisible(); await search.fill(productName); await expect(page.locator('.product-card')).toHaveCount(1);
   await expect(page.locator('.product-card').first().getByRole('heading', { name: productName, exact: true })).toBeVisible(); await search.fill('');
-  const addButton = page.getByRole('button', { name: 'إضافة للسلة', exact: true }).first(); await expect(addButton).toBeEnabled(); await addButton.click(); await expect(page.getByRole('button', { name: /السلة/ })).toContainText('1');
+  const addButton = page.getByRole('button', { name: 'إضافة للسلة', exact: true }).first(); await expect(addButton).toBeEnabled(); await addButton.click(); await expect(page.getByRole('banner').getByRole('button', { name: /السلة/ })).toHaveText(/السلة\s+1/);
   const quantityConfirmation = page.getByRole('button', { name: 'اعتماد الكمية', exact: true }).first(); await expect(quantityConfirmation).toBeEnabled(); await quantityConfirmation.click(); await expect(page.getByRole('button', { name: '✓ معتمد', exact: true })).toBeVisible();
   const checkout = page.getByRole('button', { name: 'تأكيد وإرسال الطلب', exact: true }); await expect(checkout).toBeEnabled(); await checkout.click();
   const success = page.locator('.success').filter({ hasText: 'تم إرسال الطلب #' }).last(); await expect(success).toBeVisible(); const successText = await success.innerText(); const orderNumberMatch = successText.match(/طلب #([^\s]+) بنجاح/);
