@@ -872,3 +872,19 @@ NEXT ACTION: finish Migration Proof on exact HEAD; after all CI is terminal, per
 - PR #82 current completed PASS gates: Order Workflow, G1 Domain, Intelligence Contract, Order Invariant, Application Quality, Security Audit, Bootstrap Lockfile. Browser/Local Artifact, Test-the-Test, Concurrency, and Supabase Migration Proof remain in progress at the current checkpoint; Exact Deployment contract PASS has the real browser subjob skipped unless an exact deployment exists.
 - The earlier UI-on-main migration-proof failure is superseded as a release-path signal: comparison showed the frozen candidate contains additional database migrations/tests that main lacked. The integration branch intentionally starts from the candidate so backend hardening and UI are tested together.
 - Frozen candidate and Production remain untouched.
+
+
+### 2026-09-18 — Release Integration Verification CLOSED
+
+- Integrated release branch: `release/ui-over-certified-candidate-20260918`.
+- Exact branch HEAD: `a85926c2ec4ff781f03b230e929b0a1ecb5bfafe`.
+- PR #82: DRAFT / non-production integration lane; base `main`; head is the candidate-derived release branch.
+- Terminal PASS on this exact integration subject: Bootstrap Lockfile `35345495899`; Order Workflow `35345495844`; G1 `35345495666`; Intelligence Contract `35345495709`; Order Invariant `35345495766`; Application Quality `35345495775`; Security Audit `35345495866`; Supabase Migration Proof `35345495929`; Browser E2E / Fresh Local Supabase `35345495803`; Browser E2E / Local Production Artifact `35345495722`; Concurrency Proof `35345495814`; Test-the-Test / Exact SHA `35345495847`; Browser E2E / Exact Deployment contract `35345495799`.
+- Fresh Local Browser E2E PASS includes exact artifact identity, real Customer browser E2E, real Admin browser E2E, and storage adversarial runtime against fresh local Supabase.
+- Local Production Artifact Browser E2E PASS includes clean dependency state, production build from exact SHA, artifact checksum/identity, local production server, real Customer + Admin browser E2E, and uploaded local browser evidence.
+- Supabase Migration Proof PASS includes empty-database migrations, final order-authority verification, pgTAP, and migration inventory.
+- Test-the-Test PASS completed all five security mutations with clean restoration after each.
+- Exact Deployment browser-contract PASS, but its real external deployment browser subjob remains SKIPPED because no exact external deployment exists; this is intentionally not converted into live-production evidence.
+- Vercel continues to report `api-deployments-free-per-day` on deployment attempts; no quota-burning retries were made.
+- Netlify fallback project `aghbari-commerce-web` exists and is configured, but source deployment remains NOT_PROVEN because the available connected deployment operation returned a CLI upload command instead of performing source upload.
+- Frozen original candidate `5b9f2a...` and Production `a7953a62...` remain untouched.
