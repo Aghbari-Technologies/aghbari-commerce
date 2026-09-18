@@ -16,9 +16,14 @@ select is(
 );
 
 select is(
-  (select count(*) from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'public' and has_function_privilege('anon', p.oid, 'execute')),
+  (select count(*)
+     from pg_proc p
+     join pg_namespace n on n.oid = p.pronamespace
+    where n.nspname = 'public'
+      and has_function_privilege('anon', p.oid, 'execute')
+      and not (p.proname = 'get_customer_invitation_for_acceptance' and pg_get_function_identity_arguments(p.oid) = 'p_token text')),
   0::bigint,
-  'No public function is directly executable by anon'
+  'No public function is directly executable by anon except the token-only invitation acceptance lookup'
 );
 
 select is(

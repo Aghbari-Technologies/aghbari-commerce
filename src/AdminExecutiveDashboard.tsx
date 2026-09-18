@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { getStaffOrders, type StaffOrderSummary } from './services/staffOrders';
 import { formatMoney } from './domain/pricing';
 import { supabase } from './lib/supabase';
+import { buildSevenDaySales, calculateSevenDaySales, type DashboardSaleRow } from './domain/adminDashboard';
 
 type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer';
 
@@ -18,7 +19,6 @@ interface DashboardSnapshot {
 const EMPTY: DashboardSnapshot = { products: 0, customers: 0, orders: 0, stockItems: 0, receivables: 0, availableCredit: 0, sales7d: 0 };
 const STATUS_LABELS: Record<string, string> = { pending: 'قيد المراجعة', confirmed: 'مؤكد', preparing: 'قيد التجهيز', ready: 'جاهز', completed: 'مكتمل', cancelled: 'ملغي', draft: 'مسودة' };
 
-function dayKey(date: Date) { return date.toISOString().slice(0, 10); }
 function money(value: number) { return `${formatMoney(value)} ر.ي`; }
 
 export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
@@ -27,6 +27,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [salesRows, setSalesRows] = useState<DashboardSaleRow[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -34,18 +35,20 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
       if (!supabase) { setLoading(false); setError('قاعدة البيانات غير مهيأة في هذه البيئة.'); return; }
       setLoading(true); setError(null);
       try {
-        const [productsResult, customersResult, ordersResult, stockResult, creditResult, staffOrders] = await Promise.all([
+        const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 7);
+        const [productsResult, customersResult, ordersResult, stockResult, creditResult, staffOrders, salesResult] = await Promise.all([
           supabase.from('products').select('id', { count: 'exact', head: true }).eq('status', 'active'),
           supabase.from('customers').select('id', { count: 'exact', head: true }),
           supabase.from('orders').select('id', { count: 'exact', head: true }),
-          supabase.from('inventory').select('product_id', { count: 'exact', head: true }),
+          supabase.from('inventory_balances').select('product_id', { count: 'exact', head: true }),
           supabase.from('customer_credit_accounts').select('outstanding_balance,available_credit'),
           getStaffOrders(100),
+          supabase.from('orders').select('status,total,created_at').gte('created_at', cutoff.toISOString()).order('created_at', { ascending: true }).limit(1000),
         ]);
-        const firstError = productsResult.error ?? customersResult.error ?? ordersResult.error ?? stockResult.error ?? creditResult.error;
+        const firstError = productsResult.error ?? customersResult.error ?? ordersResult.error ?? stockResult.error ?? creditResult.error ?? salesResult.error;
         if (firstError) throw firstError;
-        const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 7);
-        const sales7d = staffOrders.filter((order) => new Date(order.created_at) >= cutoff && order.status !== 'cancelled' && order.status !== 'draft').reduce((sum, order) => sum + order.total, 0);
+        const salesRowsData: DashboardSaleRow[] = (salesResult.data ?? []).map((row) => ({ status: String(row.status), total: Number(row.total ?? 0), created_at: String(row.created_at) }));
+        const sales7d = calculateSevenDaySales(salesRowsData, new Date());
         const creditRows = creditResult.data ?? [];
         if (!cancelled) {
           setSnapshot({
@@ -58,6 +61,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
             sales7d,
           });
           setOrders(staffOrders);
+          setSalesRows(salesRowsData);
           setLastUpdated(new Date());
         }
       } catch (cause) {
@@ -69,12 +73,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
     return () => { cancelled = true; window.clearInterval(timer); };
   }, []);
 
-  const salesByDay = useMemo(() => {
-    const days = Array.from({ length: 7 }, (_, index) => { const d = new Date(); d.setDate(d.getDate() - (6 - index)); return { key: dayKey(d), label: d.toLocaleDateString('ar', { weekday: 'short' }), value: 0 }; });
-    const map = new Map(days.map((day) => [day.key, day]));
-    for (const order of orders) { if (order.status === 'cancelled' || order.status === 'draft') continue; const day = map.get(dayKey(new Date(order.created_at))); if (day) day.value += order.total; }
-    return days;
-  }, [orders]);
+  const salesByDay = useMemo(() => buildSevenDaySales(salesRows), [salesRows]);
   const maxSales = Math.max(...salesByDay.map((day) => day.value), 1);
   const statusCounts = useMemo(() => Object.entries(STATUS_LABELS).map(([status, label]) => ({ status, label, count: orders.filter((order) => order.status === status).length })).filter((item) => item.count > 0), [orders]);
   const latestOrders = orders.slice(0, 5);
@@ -95,9 +94,9 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
       <aside className="executive-sidebar">
         <div className="executive-brand"><span>أ</span><div><strong>الأغبري</strong><small>Enterprise B2B</small></div></div>
         <nav aria-label="أقسام الإدارة">
-          {['الرئيسية', 'المبيعات', 'المشتريات', 'المخزون', 'العملاء والتجار', 'الموردين', 'الحسابات والمالية', 'التقارير والتحليلات', 'إدارة النظام'].map((item, index) => <a key={item} className={index === 0 ? 'active' : ''} href={index === 0 ? '#admin-dashboard' : '#account'}>{index === 0 ? '⌂' : ['↗', '□', '▣', '♙', '▱', '◫', '▤', '⚙'][index - 1]}<span>{item}</span></a>)}
+          {[['الرئيسية','#admin-dashboard',true],['الطلبات','#admin-orders',['owner','admin','sales','warehouse'].includes(role)],['المخزون','#admin-inventory',['owner','admin','warehouse'].includes(role)],['العملاء والتجار','#admin-customers',['owner','admin','sales'].includes(role)],['الموردين','#admin-purchasing',['owner','admin','warehouse'].includes(role)],['الحسابات والمالية','#admin-finance',['owner','admin','sales'].includes(role)],['الإعدادات','#admin-settings',['owner','admin'].includes(role)]].filter(([, , can]) => can).map(([item,target], index) => <a key={item as string} className={index === 0 ? 'active' : ''} href={target as string}>{['⌂','↗','□','♙','▱','◫','⚙'][index]}<span>{item as string}</span></a>)}
         </nav>
-        <div className="executive-sidebar-section"><small>أدوات ذكية</small><a href="#account">✦ مساعد الأغبري الذكي</a><a href="#account">⌁ تحليل السوق</a><a href="#account">◈ التوصيات الذكية</a></div>
+        <div className="executive-sidebar-section"><small>تشغيل سريع</small><a href="#admin-orders">↗ متابعة الطلبات</a><a href="#admin-inventory">□ إدارة المخزون</a><a href="#admin-customers">♙ إدارة العملاء</a></div>
       </aside>
 
       <div className="executive-content" id="admin-dashboard">
@@ -114,8 +113,8 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
         </div>
 
         <div className="executive-grid-two bottom-grid">
-          <article className="executive-card"><div className="executive-card-title"><div><span>التشغيل</span><h2>أحدث الطلبات</h2></div><a href="#account">عرض الكل ←</a></div>{latestOrders.length ? <div className="executive-orders">{latestOrders.map((order) => <div key={order.id}><span>#{order.order_number}</span><div><strong>{order.customer_name}</strong><small>{new Date(order.created_at).toLocaleString('ar')}</small></div><b>{money(order.total)}</b><em>{STATUS_LABELS[order.status] ?? order.status}</em></div>)}</div> : <p className="executive-empty">لا توجد طلبات بعد.</p>}</article>
-          <article className="executive-card smart-card"><div className="executive-card-title"><div><span>أدوات الإدارة</span><h2>أوامر سريعة</h2></div><span>تشغيل مباشر</span></div><div className="quick-actions"><a href="#account">＋ إضافة منتج</a><a href="#account">▤ إدارة الطلبات</a><a href="#account">▣ إدارة العملاء</a><a href="#account">▥ إدارة المخزون</a><a href="#account">◫ الحسابات والمالية</a><a href="#account">✦ مساعد الأغبري</a></div><div className="credit-summary"><span>الائتمان المتاح</span><strong>{money(snapshot.availableCredit)}</strong></div></article>
+          <article className="executive-card"><div className="executive-card-title"><div><span>التشغيل</span><h2>أحدث الطلبات</h2></div>{['owner','admin','sales','warehouse'].includes(role) && <a href="#admin-orders">عرض الكل ←</a>}</div>{latestOrders.length ? <div className="executive-orders">{latestOrders.map((order) => <div key={order.id}><span>#{order.order_number}</span><div><strong>{order.customer_name}</strong><small>{new Date(order.created_at).toLocaleString('ar')}</small></div><b>{money(order.total)}</b><em>{STATUS_LABELS[order.status] ?? order.status}</em></div>)}</div> : <p className="executive-empty">لا توجد طلبات بعد.</p>}</article>
+          <article className="executive-card smart-card"><div className="executive-card-title"><div><span>أدوات الإدارة</span><h2>أوامر سريعة</h2></div><span>تشغيل مباشر</span></div><div className="quick-actions">{['owner','admin','sales'].includes(role) && <a href="#admin-product-create">＋ إضافة منتج</a>}{['owner','admin','sales','warehouse'].includes(role) && <a href="#admin-orders">▤ إدارة الطلبات</a>}{['owner','admin','sales'].includes(role) && <a href="#admin-customers">▣ إدارة العملاء</a>}{['owner','admin','warehouse'].includes(role) && <a href="#admin-inventory">▥ إدارة المخزون</a>}{['owner','admin','sales'].includes(role) && <a href="#admin-finance">◫ الحسابات والمالية</a>}{['owner','admin'].includes(role) && <a href="#admin-settings">⚙ إعدادات التحكم</a>}</div><div className="credit-summary"><span>الائتمان المتاح</span><strong>{money(snapshot.availableCredit)}</strong></div></article>
         </div>
 
         <footer className="executive-footer"><span>دورك الحالي: {role}</span><span>{lastUpdated ? `آخر تحديث ${lastUpdated.toLocaleTimeString('ar')}` : 'جارٍ التحديث…'}</span><span>التحديث التلقائي كل 60 ثانية</span></footer>

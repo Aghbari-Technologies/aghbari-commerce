@@ -76,9 +76,10 @@ export async function createOrder(draft: OrderDraft, warehouseId?: unknown) {
   const idempotencyKey = assertIdempotencyKey(candidate.idempotencyKey);
   const normalizedWarehouseId = warehouseId == null ? await resolveOperationalWarehouse() : assertUuid(warehouseId, 'المستودع');
   const lines = assertOrderLines(candidate.lines);
-  const { data, error } = await requireSupabase().rpc('create_order', { p_idempotency_key: idempotencyKey, p_warehouse_id: normalizedWarehouseId, p_lines: lines });
+  const { data, error } = await requireSupabase().rpc('create_order', { p_idempotency_key: idempotencyKey, p_warehouse_id: normalizedWarehouseId, p_lines: lines.map(({ productId, quantity }) => ({ product_id: productId, quantity })) });
   if (error) throw error;
-  return assertCreatedOrderReference(data?.[0]);
+  const row = data?.[0] as { order_id?: unknown; order_number?: unknown } | undefined;
+  return assertCreatedOrderReference({ id: row?.order_id, order_number: row?.order_number });
 }
 
 export async function transitionOrder(orderId: string, status: string) {

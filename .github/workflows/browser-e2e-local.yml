@@ -1,0 +1,183 @@
+name: Browser E2E / Local Production Artifact
+
+on:
+  push:
+    branches:
+      - 'execution/**'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      exact_sha:
+        description: 'Exact Git SHA to verify'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+env:
+  EXPECTED_SHA: ${{ inputs.exact_sha || github.event.pull_request.head.sha || github.sha }}
+  VITE_BUILD_SHA: ${{ inputs.exact_sha || github.event.pull_request.head.sha || github.sha }}
+
+concurrency:
+  group: aghbari-browser-local-${{ github.event.pull_request.head.sha || inputs.exact_sha || github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  local-browser-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Validate exact SHA
+        shell: bash
+        run: echo "$EXPECTED_SHA" | grep -Eq '^[0-9a-f]{40}$'
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.EXPECTED_SHA }}
+          fetch-depth: 1
+
+      - name: Verify exact checkout
+        shell: bash
+        run: |
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$EXPECTED_SHA" || {
+            echo "EXACT LOCAL BROWSER SHA MISMATCH expected=$EXPECTED_SHA actual=$actual"
+            exit 1
+          }
+          echo "EXACT LOCAL BROWSER SHA: $actual"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.117.0
+
+      - name: Clean dependency state
+        shell: bash
+        run: |
+          rm -rf node_modules dist playwright-report test-results
+          test -s package-lock.json
+
+      - name: Deterministic clean install
+        run: npm ci --no-audit --no-fund
+
+      - name: Prove Vite is installed in clean build environment
+        shell: bash
+        run: |
+          node -p "require.resolve('vite/package.json')"
+          test -x node_modules/.bin/vite
+          node_modules/.bin/vite --version
+
+      - name: Start isolated local Supabase
+        run: supabase start
+
+      - name: Load isolated local Supabase connection values
+        shell: bash
+        run: |
+          supabase status -o env > /tmp/supabase.env
+          source /tmp/supabase.env
+          {
+            echo "VITE_SUPABASE_URL=$API_URL"
+            echo "VITE_SUPABASE_PUBLISHABLE_KEY=$ANON_KEY"
+            echo "LOCAL_DB_URL=$DB_URL"
+            echo "LOCAL_ANON_KEY=$ANON_KEY"
+            echo "LOCAL_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY"
+          } >> "$GITHUB_ENV"
+
+      - name: Seed isolated browser fixtures
+        shell: bash
+        run: |
+          sudo apt-get update -y >/dev/null
+          sudo apt-get install -y postgresql-client >/dev/null
+          create_user() {
+            local email="$1"
+            local body
+            body="$(printf '{"email":"%s","password":"AghbariE2E!2026","email_confirm":true,"user_metadata":{}}' "$email")"
+            code="$(curl -sS -o /tmp/auth-user.out -w '%{http_code}' -X POST "$VITE_SUPABASE_URL/auth/v1/admin/users" -H "apikey: $LOCAL_SERVICE_ROLE_KEY" -H "Authorization: Bearer $LOCAL_SERVICE_ROLE_KEY" -H 'Content-Type: application/json' --data "$body")"
+            [[ "$code" =~ ^2[0-9][0-9]$ ]] || { cat /tmp/auth-user.out; exit 1; }
+          }
+          create_user customer-a@test.local
+          create_user customer-b@test.local
+          create_user admin-a@test.local
+          create_user admin-b@test.local
+          psql "$LOCAL_DB_URL" -v ON_ERROR_STOP=1 -f scripts/browser-e2e-seed.sql
+
+      - name: Production build from exact SHA
+        run: npm run build
+
+      - name: Verify local artifact identity and checksum
+        shell: bash
+        run: |
+          test -s dist/build-meta.json
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const meta = JSON.parse(fs.readFileSync('dist/build-meta.json', 'utf8'));
+          const expected = process.env.EXPECTED_SHA;
+          if (meta.product !== 'aghbari-commerce') throw new Error(`Unexpected product: ${meta.product}`);
+          if (meta.git_sha !== expected) throw new Error(`BUILD SHA MISMATCH expected=${expected} actual=${meta.git_sha}`);
+          if (!meta.version) throw new Error('Missing build version');
+          console.log(`LOCAL ARTIFACT PRODUCT: ${meta.product}`);
+          console.log(`LOCAL ARTIFACT SHA: ${meta.git_sha}`);
+          console.log(`LOCAL ARTIFACT VERSION: ${meta.version}`);
+          NODE
+          sha256sum dist/build-meta.json
+          find dist -type f -print0 | sort -z | xargs -0 sha256sum > dist.sha256
+          sha256sum dist.sha256
+
+      - name: Start local production server
+        shell: bash
+        run: |
+          nohup npm run preview -- --host 127.0.0.1 --port 4173 > preview.log 2>&1 &
+          for i in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4173/build-meta.json > /tmp/local-meta.json; then
+              break
+            fi
+            sleep 1
+          done
+          test -s /tmp/local-meta.json
+          diff -u dist/build-meta.json /tmp/local-meta.json
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run customer browser E2E against exact local artifact
+        env:
+          E2E_BASE_URL: http://127.0.0.1:4173
+          E2E_EMAIL: customer-a@test.local
+          E2E_PASSWORD: AghbariE2E!2026
+          E2E_EMAIL_B: customer-b@test.local
+          E2E_PASSWORD_B: AghbariE2E!2026
+          EXPECTED_SHA: ${{ env.EXPECTED_SHA }}
+        run: npx playwright test e2e/critical-path.spec.ts --project=chromium
+
+      - name: Run admin browser E2E against exact local artifact
+        env:
+          E2E_BASE_URL: http://127.0.0.1:4173
+          E2E_ADMIN_EMAIL: admin-a@test.local
+          E2E_ADMIN_PASSWORD: AghbariE2E!2026
+          EXPECTED_SHA: ${{ env.EXPECTED_SHA }}
+        run: npx playwright test e2e/admin-control-plane.spec.ts --project=chromium
+
+      - name: Upload local browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-local-${{ env.EXPECTED_SHA }}
+          path: |
+            dist/build-meta.json
+            dist.sha256
+            preview.log
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Stop isolated local Supabase
+        if: always()
+        shell: bash
+        run: supabase stop || true

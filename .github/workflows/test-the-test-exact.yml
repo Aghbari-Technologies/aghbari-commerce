@@ -1,0 +1,117 @@
+name: Test-the-Test / Exact SHA
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      exact_sha:
+        description: 'Exact Git SHA to verify'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: aghbari-test-the-test-${{ github.event.pull_request.head.sha || inputs.exact_sha || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  sensitivity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    env:
+      TARGET_SHA: ${{ inputs.exact_sha || github.event.pull_request.head.sha || github.sha }}
+      DB_URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
+    steps:
+      - name: Validate exact SHA
+        shell: bash
+        run: echo "$TARGET_SHA" | grep -Eq '^[0-9a-f]{40}$'
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 1
+      - name: Verify exact HEAD
+        shell: bash
+        run: |
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$TARGET_SHA" || exit 1
+          echo "EXACT TEST-THE-TEST SHA: $actual"
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.117.0
+      - name: Start local Supabase and reset from zero
+        run: |
+          supabase start
+          supabase db reset --local
+      - name: Baseline sensitive suite must PASS
+        run: supabase test db --local
+      - name: Mutation 1 — remove product tenant RLS
+        shell: bash
+        run: |
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -c "alter table public.products disable row level security;"
+          set +e
+          supabase test db --local > mutated-products-rls.log 2>&1
+          rc=$?
+          cat mutated-products-rls.log
+          set -e
+          test "$rc" -ne 0 || { echo 'TEST-THE-TEST FAILURE: product tenant RLS removal was not detected'; exit 1; }
+          echo "PASS: product tenant-RLS mutation detected (exit=$rc)"
+      - name: Restore implementation from zero
+        run: supabase db reset --local
+      - name: Mutation 2 — grant sensitive order RPC to anon
+        shell: bash
+        run: |
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -c "grant execute on function public.create_order(text,uuid,jsonb) to anon;"
+          set +e
+          supabase test db --local > mutated-anon-rpc.log 2>&1
+          rc=$?
+          cat mutated-anon-rpc.log
+          set -e
+          test "$rc" -ne 0 || { echo 'TEST-THE-TEST FAILURE: anon EXECUTE grant was not detected'; exit 1; }
+          echo "PASS: anon-RPC privilege mutation detected (exit=$rc)"
+      - name: Restore implementation from zero
+        run: supabase db reset --local
+      - name: Mutation 3 — break storage registration authorization
+        shell: bash
+        run: |
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -c "revoke execute on function public.register_product_media(uuid,text,text,integer,integer,bigint) from authenticated;"
+          set +e
+          supabase test db --local > mutated-storage-boundary.log 2>&1
+          rc=$?
+          cat mutated-storage-boundary.log
+          set -e
+          test "$rc" -ne 0 || { echo 'TEST-THE-TEST FAILURE: storage registration authorization mutation was not detected'; exit 1; }
+          echo "PASS: storage-boundary mutation detected (exit=$rc)"
+      - name: Restore implementation from zero
+        run: supabase db reset --local
+      - name: Mutation 4 — remove inventory tenant RLS
+        shell: bash
+        run: |
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -c "alter table public.inventory_balances disable row level security;"
+          set +e
+          supabase test db --local > mutated-inventory-rls.log 2>&1
+          rc=$?
+          cat mutated-inventory-rls.log
+          set -e
+          test "$rc" -ne 0 || { echo 'TEST-THE-TEST FAILURE: inventory RLS removal was not detected'; exit 1; }
+          echo "PASS: inventory RLS mutation detected (exit=$rc)"
+      - name: Restore implementation from zero
+        run: supabase db reset --local
+      - name: Mutation 5 — remove authenticated access to order transition RPC
+        shell: bash
+        run: |
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -c "revoke execute on function public.transition_order(uuid,public.order_status) from authenticated;"
+          set +e
+          supabase test db --local > mutated-order-rpc-grant.log 2>&1
+          rc=$?
+          cat mutated-order-rpc-grant.log
+          set -e
+          test "$rc" -ne 0 || { echo 'TEST-THE-TEST FAILURE: sensitive order-transition EXECUTE removal was not detected'; exit 1; }
+          echo "PASS: order-transition privilege mutation detected (exit=$rc)"
+      - name: Stop local Supabase
+        if: always()
+        run: supabase stop --no-backup

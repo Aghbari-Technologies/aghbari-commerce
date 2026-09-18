@@ -5,12 +5,14 @@ on:
     branches: [main]
     paths:
       - 'supabase/migrations/0025_idempotency_race_authority_hardening.sql'
+      - 'supabase/migrations/20260918010000_restore_order_idempotency_authority.sql'
       - 'scripts/check-order-invariants.mjs'
       - '.github/workflows/order-invariant-contract.yml'
   pull_request:
     branches: [main]
     paths:
       - 'supabase/migrations/0025_idempotency_race_authority_hardening.sql'
+      - 'supabase/migrations/20260918010000_restore_order_idempotency_authority.sql'
       - 'scripts/check-order-invariants.mjs'
       - '.github/workflows/order-invariant-contract.yml'
 

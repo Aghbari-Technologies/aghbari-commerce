@@ -90,7 +90,8 @@ begin
     raise exception using errcode='42501', message='authenticated customer context required';
   end if;
   select id into v_cart from public.carts
-  where organization_id=v_org and customer_id=v_customer and status='active';
+  where organization_id=v_org and customer_id=v_customer and status='active'
+  for update;
   if v_cart is null then return; end if;
   delete from public.cart_items
   where organization_id=v_org and cart_id=v_cart and product_id=p_product_id;

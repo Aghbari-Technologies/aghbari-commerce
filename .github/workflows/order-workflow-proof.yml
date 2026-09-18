@@ -2,7 +2,9 @@ name: Order Workflow Proof
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - 'execution/**'
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -15,12 +17,16 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: aghbari-order-workflow-${{ inputs.exact_sha || github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+
 jobs:
   order-workflow-proof:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      TARGET_SHA: ${{ inputs.exact_sha || github.sha }}
+      TARGET_SHA: ${{ inputs.exact_sha || github.event.pull_request.head.sha || github.sha }}
     steps:
       - name: Validate exact SHA input
         shell: bash
@@ -28,7 +34,7 @@ jobs:
       - name: Checkout exact target SHA
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.exact_sha || github.sha }}
+          ref: ${{ env.TARGET_SHA }}
           fetch-depth: 1
       - name: Verify exact target HEAD
         shell: bash
