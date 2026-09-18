@@ -38,7 +38,8 @@ async function clearCustomerCart(page: Page) {
   if (await close.isVisible().catch(() => false)) await close.click();
 }
 
-const EXPECTED_VERCEL_TOOLBAR_CSP_ERROR = /Loading the script 'https:\/\/vercel\\.live\/_next-live\/feedback\/feedback\\.js' violates the following Content Security Policy directive: "script-src 'self'"/;
+const EXPECTED_VERCEL_TOOLBAR_CSP_ERROR =
+  'Loading the script \'https://vercel.live/_next-live/feedback/feedback.js\' violates the following Content Security Policy directive: "script-src \'self\'". Note that \'script-src-elem\' was not explicitly set, so \'script-src\' is used as a fallback. The action has been blocked.';
 
 function captureBrowserFailures(page: Page) {
   const pageErrors: string[] = [];
@@ -46,7 +47,7 @@ function captureBrowserFailures(page: Page) {
   const failedResponses: string[] = [];
   page.on('pageerror', (error) => pageErrors.push(error.message));
   page.on('console', (message) => {
-    if (message.type() === 'error' && !EXPECTED_VERCEL_TOOLBAR_CSP_ERROR.test(message.text())) {
+    if (message.type() === 'error' && message.text() !== EXPECTED_VERCEL_TOOLBAR_CSP_ERROR) {
       consoleErrors.push(message.text());
     }
   });
