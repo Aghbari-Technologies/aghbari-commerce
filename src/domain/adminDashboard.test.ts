@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildSevenDaySales, calculateSevenDaySales, type DashboardSaleRow } from './adminDashboard';
+import { DASHBOARD_TIME_ZONE, buildSevenDaySales, calculateSevenDaySales, type DashboardSaleRow } from './adminDashboard';
 
 const row = (created_at: string, total: number, status = 'completed'): DashboardSaleRow => ({ created_at, total, status });
 
@@ -24,6 +24,10 @@ describe('dashboard sales metrics', () => {
     const byLabel = new Map(days.map((item) => [item.key, item.value]));
     expect(byLabel.get('2026-09-17')).toBe(25);
     expect(byLabel.get('2026-09-18')).toBe(35);
+  });
+
+  it('uses the configured business timezone rather than the runner timezone', () => {
+    expect(DASHBOARD_TIME_ZONE).toBe('Asia/Aden');
   });
 
   it('returns exactly seven local calendar days in ascending order', () => {
