@@ -656,6 +656,19 @@ Only when all required gates are proven.
 - Diagnostic Storage run: `35298202228` / `105455032168` is currently RUNNING at fresh local Supabase startup; no Storage result yet.
 - Deployment Browser remains `BLOCKED — CREDENTIAL BOUNDARY`; GitHub connector does not expose Actions secrets APIs and Vercel connector exposes no safe secret-provisioning mutation.
 
+### 2026-09-18 — Storage root-cause proven and repair candidate opened
+
+- Diagnostic proof branch execution/proof-storage-observability-20260918 / SHA 6583b91ce35cacd2f7185858b426eeee6044c3ed captured the first failing request exactly.
+- First failing assertion: index 7 inactive-product-create. Expected HTTP 200/201; actual HTTP 400 with Storage AccessDenied and underlying PostgreSQL 42501 RLS failure (new row violates row-level security policy). Curl RC was 0.
+- Requests 1–6 proved authenticated active-product create/read and negative cross-user/cross-path cases as expected. Storage logs showed role=authenticated and the correct authenticated owner IDs for both users; this disproves a generic auth transport failure.
+- Root cause: public.products has products_read RLS organization_id = current_organization_id() AND status='active'. The Storage product_media_insert/delete policies query public.products directly for organization ownership. Those subqueries inherit products_read RLS, so an inactive same-tenant product is invisible to the policy even though the Storage write/delete contract does not require active status.
+- This is a real RLS/Storage policy product defect, not merely a test observability defect. The old workflow observability gap is separately proven.
+- Repair branch execution/fix-storage-inactive-rls-20260918 is based directly on candidate 466857aa…
+- Repair SHA: e04e83ca56a778a1db82e5a75f59300b064a057e
+- Repair contents: new SECURITY DEFINER boolean ownership helper public.product_belongs_to_current_organization(uuid) with search_path='', authenticated-only execute; Storage INSERT and DELETE policies now call the helper instead of an RLS-filtered direct products subquery; pgTAP adds an explicit inactive-product insert regression case.
+- Compare 466857aa… to e04e83ca… shows only the new migration plus the Storage test modification; no unrelated Product/UI changes.
+- The repair SHA is NOT YET PROMOTED to the release candidate. Exact-SHA targeted CI is running and must pass before candidate promotion.
+
 ### Mandatory next-run start point
 
 ```
