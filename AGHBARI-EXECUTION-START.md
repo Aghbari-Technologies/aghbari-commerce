@@ -1,3 +1,30 @@
+# 🔴 ONE-KEY OPERATOR CONTRACT — COMMAND 1
+
+**A user message containing only `1` is a control signal, not a request to compose another instruction message.**
+
+Upon receiving `1`, the programmer MUST:
+- read the canonical Control Plane;
+- read `PROJECT_MEMORY.md`;
+- read `ops/AGHBARI-LATEST-EXECUTION-STATE.md`;
+- verify the repository's real current state and exact SHA;
+- execute the unresolved fronts itself;
+- make all delegated engineering decisions itself;
+- use connected GitHub/Vercel/Supabase/browser/security/research tooling;
+- work independent fronts in parallel;
+- continue through implementation, testing, adversarial verification, regression, evidence capture, memory update, and the next logical executable front.
+
+**DO NOT respond to `1` by merely printing/rephrasing a command, checklist, plan, or asking what to do next.**
+**DO NOT ask the owner to paste old reports when the repository and connected tools can recover the state.**
+**DO NOT stop after reading the documents. Reading is the first step; execution is the job.**
+
+The only valid reason to stop is a real execution boundary such as:
+- a hard external permission/credential limitation that has been verified;
+- a required owner decision outside delegated technical authority;
+- or a genuinely exhausted execution path with no safe actionable front remaining.
+
+Even when one front is blocked, continue every independent executable front and persist the blocker with evidence.
+
+---
 # الأغبري | EXECUTION START — AUTONOMOUS ENGINEERING CONTROL
 
 > **Fast launch router.** This file does not contain the whole protocol. It routes every execution to the canonical Control Plane, durable Project Memory, and mutable Latest Execution State.
@@ -9,9 +36,9 @@
 3. `ops/AGHBARI-LATEST-EXECUTION-STATE.md` on `ops/execution-control-plane` = current candidate/live/production state, blockers, exact evidence, tooling status, and next queue.
 4. This file on `main` = launch router only.
 
-## User command `1` — EXECUTE AUTONOMOUSLY
+## User command `1` — EXECUTE AUTONOMOUSLY — NO REPLY-WITH-PROMPT
 
-When the user sends only `1`, execute immediately. Do not ask for the previous report when repository evidence can provide it.
+When the user sends only `1`, this is an execution trigger. Begin repository/tool execution immediately. The operator must not echo, regenerate, or paraphrase the operating instructions as its primary response. It must execute them.
 
 READ CONTROL PLANE + PROJECT MEMORY + LATEST STATE
 → VERIFY REAL GITHUB / VERCEL / SUPABASE STATE
@@ -34,6 +61,7 @@ READ CONTROL PLANE + PROJECT MEMORY + LATEST STATE
 → RECONCILE EVERY STATUS
 → CLOSE ONLY WHAT IS PROVEN
 → MOVE TO THE NEXT LOGICAL FRONT
+→ CONTINUE UNTIL A REAL EXECUTION BOUNDARY OR TRUE CLOSURE
 
 ### Command 1 autonomy rules
 
