@@ -36,16 +36,15 @@
 - Proof-integrity correction now applied: candidate advanced to `5b9f2a76615e76bb6444c81f39e02f3479c0704b` after an exhaustive pull_request checkout audit fixed G1, Security Audit, Intelligence Contract Proof, and Bootstrap Release Lockfile exact-SHA semantics.
 - MAIN: `4505bcb655c0b747aeea7e1cc526a94f93270d3d`.
 - LIVE/PRODUCTION: `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`; Production = NO TOUCH; no promotion or mutation.
-- CURRENT CANDIDATE CI: fresh verification is executing on `5b9f2a…`; prior `64f5283…` evidence is invalidated. Current runs are queued/running and no new PASS is admitted until terminal exact-SHA evidence is captured.
-- LOCAL PRODUCTION ARTIFACT PROOF: prior run on `4753cc…` is historical/invalidated; fresh candidate run `35321399240` is pending on `64f5283…`.
+- CURRENT CANDIDATE CI: 10 mandatory pull_request gates are terminal PASS on `5b9f2a…`; Test-the-Test `35321684089` and Concurrency `35321683806` remain RUNNING. All current PASS evidence is exact-SHA verified.
+- LOCAL PRODUCTION ARTIFACT PROOF: current candidate run `35321683815` / job `105526067670` is PASS; exact candidate/build SHA matched and customer/admin browser suites passed.
 - CANDIDATE DEPLOYMENT: NOT_AVAILABLE; GitHub Vercel status is FAILURE — "Deployment rate limited — retry in 24 hours"; no candidate-SHA deployment appears in canonical Vercel deployment list.
 - CANDIDATE DEPLOYMENT BROWSER: browser-contract PASS in run `35310024991`; actual browser-e2e SKIPPED because no candidate deployment. Authenticated deployment browser remains BLOCKED because `VERCEL_AUTOMATION_BYPASS_SECRET` is unavailable.
 - FORMAL FINAL REGRESSION: NOT_PROVEN. The candidate repository contains `workflow_dispatch` on 13 of 15 workflows, but the connected GitHub mutation surface exposes no workflow-dispatch execution capability. Prior browser inspection of GitHub Actions was unauthenticated.
 - WORKFLOW SAFETY: CLOSED on current candidate — 15 workflow files audited; 0 `contents: write`; 0 `git push`.
-NaN
 - CERTIFICATION: NO.
-- TOOLING PR #72: exact head `92fa7bffb8971eecb10d91fe588709da0e06675a`, isolated/non-certifying.
-- PGTAP DIAGNOSTIC PR #73: exact head `cf7db1c376e40c44ed0cec1956c9b59ee8f5d7f0`, isolated diagnostic lane.
+- TOOLING PR #72: exact head `d884f90fcdcb95eeceb47e78d8f36792268f830d`, isolated/non-certifying; fresh Semgrep safe-directory repair is under CI.
+- PGTAP DIAGNOSTIC PR #73: exact head `e62cb960dfb17204074914b4a3dd5a13abcb333f`, isolated diagnostic lane; exact-head migration workflow fails 12 known product/schema contract assertions after migrations apply cleanly.
 
 
 # 0B. AUTONOMOUS MEMORY + SELF-IMPROVEMENT PROTOCOL
@@ -1442,3 +1441,15 @@ LESSON: exact-SHA integrity requires auditing both explicit SHA expressions and 
 RULE: every pull_request workflow with release/security/proof significance must explicitly bind checkout to the PR head SHA (or a validated manual exact SHA) and assert the resulting HEAD. This was applied across the candidate's full pull_request workflow surface; exhaustive scan at `5b9f2a…` reports zero default checkouts, zero `contents: write`, and zero `git push` commands.
 
 EVIDENCE: candidate `4753cc…` G1/Security Audit logged merge commit `7b4da729…`; later audit found `bootstrap-release-lockfile.yml` also used implicit checkout. Candidate is now `5b9f2a…` with all identified proof-surface defects repaired.
+
+
+### 2026-09-18 — Command 1 — proof-integrity closure checkpoint
+
+RUN: current candidate exact-SHA evidence reconciliation; exhaustive PR checkout audit; tooling/diagnostic head reconciliation
+JOB: release proof integrity / candidate protection / stale-state elimination
+SHA: candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b`
+FRONT: candidate CI / local artifact / tooling #72 / pgTAP #73
+RESULT: candidate has 10 terminal PASS gates on exact source head, plus Test-the-Test and Concurrency still running. Local Production Artifact `35321683815` / job `105526067670` proves exact SHA, production artifact identity, customer 3/3 and admin 1/1 browser execution, artifact `10537173227`. Exhaustive candidate scan found 15 workflows, zero contents:write and zero git-push, and no pull_request workflow with implicit checkout remains. PR #72 is isolated at `d884f90f...`; PR #73 is isolated at `e62cb960...`. Vercel candidate deployment remains unavailable; production remains untouched.
+ROOT CAUSE: candidate source proof integrity is now hardened; remaining candidate release blockers are deployment/authentication/dispatch boundaries rather than a current product defect.
+ARTIFACT: candidate runs `35321683922;35321683893;35321683989;35321683986;35321683999;35321683950;35321683916;35321684096;35321683994;35321683953;35321683815`.
+NEXT ACTION: terminalize Test-the-Test and Concurrency; then reconcile final candidate evidence and preserve the three external release blockers.
