@@ -888,3 +888,20 @@ NEXT ACTION: finish Migration Proof on exact HEAD; after all CI is terminal, per
 - Vercel continues to report `api-deployments-free-per-day` on deployment attempts; no quota-burning retries were made.
 - Netlify fallback project `aghbari-commerce-web` exists and is configured, but source deployment remains NOT_PROVEN because the available connected deployment operation returned a CLI upload command instead of performing source upload.
 - Frozen original candidate `5b9f2a...` and Production `a7953a62...` remain untouched.
+
+### 2026-09-18 — Command 1 continuation — exact-head candidate reconciliation
+
+RUN: resumed from persisted repository state after ChatGPT transport interruption
+JOB: exact candidate discovery / CI queue diagnosis / Vercel deployment identity / Supabase live boundary
+SHA: main `427ff0801544449f432290205b2a29f2508541f3`; candidate PR #83 `certification/final-candidate-20260918` HEAD `0fb5a17bcb65816963056112f5a41ccbb4ae3106`
+FRONT: release evidence preservation + no-production-touch + quota-safe continuation
+RESULT:
+- The previously reported `427ff080...` is still main HEAD; two real product commits are present: checkout-policy hardening `d7958513...` and its fixture correction `427ff080...`.
+- Final certification PR #83 is OPEN / non-draft / mergeable-state unstable. Its exact HEAD is `0fb5a17bcb65816963056112f5a41ccbb4ae3106`; the branch is exactly two commits ahead of main and changes only the certification checkpoint plus the checkout-policy migration correction.
+- Exact-head GitHub Actions currently exposes 16 check-runs for the candidate: 15 queued plus 1 cancelled duplicate; the active named gates are not yet terminal. Repository-wide queue pressure is material: 19 runs are in_progress and 311 are queued. No cancellation capability is exposed through the connected GitHub execution surface, so no destructive queue mutation was attempted.
+- Candidate workflow source audit confirms the exact-SHA checkout contract is present on Intelligence and Order-Invariant workflows. Those workflows were not triggered here because the candidate diff does not touch their path filters; this is not treated as missing evidence.
+- Vercel project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm` is healthy enough to produce READY deployments on other refs, but no deployment with Git SHA `0fb5a17...` is present. The candidate's GitHub Vercel status remains FAILURE on the `api-deployments-free-per-day` target. No synthetic/incomplete candidate deployment was created.
+- Netlify fallback project `aghbari-commerce-web` remains available, but its connected deployment operation returns a CLI upload command rather than performing the source upload; therefore no deployment evidence is claimed.
+- Live Aghbari Supabase ref is `mrcyqezbhpncuvaehwgf`, ACTIVE_HEALTHY. Current Security Advisor reports 1 intentional anon-executable invitation-token SECURITY DEFINER warning and 59 authenticated-executable SECURITY DEFINER warnings; performance findings are INFO-level. The candidate checkout-policy migration is not yet in the live production migration history, as expected under Production-NO-TOUCH.
+ROOT CAUSE: current release gap is execution capacity / external deployment-and-runtime proof, not a newly proven candidate code defect.
+ACTION: candidate and Production preserved. State is now reconciled against live GitHub/Vercel/Supabase sources; next resume starts from candidate `0fb5a17...` and the currently queued exact-head evidence, not from the older `5b9f2a...` candidate.
