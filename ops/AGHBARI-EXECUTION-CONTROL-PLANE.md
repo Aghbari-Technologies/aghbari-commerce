@@ -1629,3 +1629,12 @@ Observed failure on exact candidate `85c289fa62598d140a87ab37fec173b5f2962b3f`: 
 Durable rule: PostgreSQL session-setting functions inside SQL proof fixtures must be invoked as expressions (for example `select set_config(...)`) unless executed inside a procedural block. A proof fixture parse error is a release-blocking proof defect and must be repaired at source; never reduce the assertion plan or bypass the failing line merely to obtain green CI.
 
 Applied immediately on candidate as `c5b88ac0adc12560731254333cf1eb345e9a297e`; predecessor evidence remains invalid by exact-SHA policy.
+
+
+## EVOLUTION — 2026-09-18 — Integrated-lane source completeness
+
+Observed after consolidating the offline lane into the certification candidate: the runtime file retained references to a helper and state variables while the corresponding imports/declarations were missing. String-presence source tests did not detect these unresolved symbols.
+
+Durable rule: when consolidating a lane, verify symbol ownership end-to-end (import/export plus declaration/use). Source-contract tests that only assert textual presence are insufficient; a compile/typecheck gate must remain the authoritative proof for unresolved-symbol failures.
+
+Applied immediately on candidate `744e294a0adc...` with production untouched.
