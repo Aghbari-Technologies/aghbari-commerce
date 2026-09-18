@@ -78,7 +78,7 @@ All 13 PASS results are tied to the exact current candidate SHA and independentl
 ## Next execution queue
 
 ### P0
-- Preserve candidate `4753cc…` as certification subject; do not create a new SHA without a proven defect.
+- Preserve candidate `5b9f2a…` as certification subject; do not create a new SHA without a proven defect.
 - Preserve Vercel rate-limit blocker and re-check only when platform allows; never reuse an older deployment.
 - Obtain the owner-controlled Vercel automation-bypass secret through the approved secret path; do not weaken protection or store the value in repository files.
 - Obtain a dispatch-capable execution path for Formal Final Regression.
@@ -516,3 +516,14 @@ RESULT: 13/13 candidate verification gates are terminal PASS on the exact candid
 ROOT CAUSE: candidate source and CI proof are closed; remaining certification gaps are external deployment/authentication/dispatch evidence only.
 ARTIFACT: `ops/evidence/20260918-command1-final-candidate-5b9-closure.md`
 NEXT ACTION: obtain approved exact-SHA Vercel deployment, authenticated browser credential, and dispatch-capable Formal Final Regression path; then reconcile final release evidence. Production remains NO TOUCH.
+
+### 2026-09-18 — Command 1 — final exact-SHA closure + tooling hardening reconciliation
+
+RUN: `35321683922;35321683893;35321683989;35321683986;35321683999;35321683950;35321683916;35321684096;35321683994;35321683953;35321683815;35321684089;35321683806;35322281665;35322281677;35322281717;35322281706;35322281510`
+JOB: candidate terminal closure / tooling security hardening / final evidence reconciliation
+SHA: candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b`; tooling `d884f90fcdcb95eeceb47e78d8f36792268f830d`; production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
+FRONT: exact-SHA candidate certification evidence / tooling integrity / deployment boundary / production safety
+RESULT: candidate is terminal PASS 13/13 on the exact SHA. Concurrency and Test-the-Test both terminalized PASS, including adversarial mutation detection/restoration and concurrency/replay proof. Local Production Artifact remains exact-SHA PASS with Customer 3/3, Admin 1/1, artifact `10537173227`. Tooling PR #72 current security runs for Gitleaks, Semgrep, CodeQL, and Trivy are PASS on its exact current head; migration proof still FAILS only in pgTAP after clean empty-database migration application and remains isolated/non-certifying. Candidate combined status still has only Vercel build-rate-limit FAILURE; canonical Vercel has no deployment matching candidate SHA. Production remains READY and untouched.
+ROOT CAUSE: candidate source and internal proof system are closed; remaining release blockers are external exact-SHA deployment availability, approved Vercel automation-bypass credential, and authenticated GitHub workflow-dispatch capability. Tooling pgTAP failures are an isolated baseline compatibility lane and are not being suppressed or transferred into candidate certification.
+ARTIFACT: `ops/evidence/20260918-command1-final-closure-reconciliation.md` (control-plane commit `f1bc47e1687fd759390f536775e567ae5446ab00`); candidate runs `35321683922,35321683893,35321683989,35321683986,35321683999,35321683950,35321683916,35321684096,35321683994,35321683953,35321683815,35321684089,35321683806`; tooling runs `35322281665,35322281677,35322281717,35322281706,35322281510`.
+NEXT ACTION: keep `5b9f2a…` frozen. Do not create a new candidate or spend deployment quota speculatively. When approved deployment + authenticated dispatch are available, run deployed authenticated Runtime E2E and Formal Final Regression on the same SHA, then perform final evidence reconciliation. Production remains NO TOUCH.
