@@ -32,26 +32,20 @@
 
 ## Exact-SHA candidate proof currently recorded
 
-- Fresh Local Browser + Storage: PASS — `35299449995 / 105458810059`
-- Test-the-Test: PASS — `35299450053 / 105458822785`
-- Concurrency: PASS — `35299450051 / 105459616923`
-- Local Production Browser: PASS — `35299450068 / 105459493871`
-- Quality: PASS — `35299450009`
-- Security: PASS — `35299449999`
-- G1 Domain: PASS — `35299449994`
-- Order Workflow: PASS — `35299450067`
-- Migration: PASS — `35299450012`
-- Deployment contract: PASS — `35299450001`
+- HISTORICAL EVIDENCE INVALIDATED: all PASS records tied to candidate 4d5057d7952e213d6b5328a80f0229f1ff9fb861 are not evidence for current candidate 4753cc3319f551aeccbe2bd081b988fa68df8e87.
+- Current candidate exact-SHA CI was freshly triggered by the workflow-hardening commits; terminal results are not yet available at this checkpoint.
+- An intermediate current-SHA failure occurred on 70bd9bd9d7df6e0dd889dff189698841096fd116 because bootstrap-release-lockfile.yml was missing after deletion. This was repaired on current candidate 4753cc3319f551aeccbe2bd081b988fa68df8e87 by restoring it as read-only validation.
 
 ## Release blockers
 
-1. Deployment Browser: BLOCKED — approved automation bypass credential unavailable through current connected mutation tools.
-2. Formal Final Regression: NOT_PROVEN — workflow dispatch unavailable through connected GitHub mutation surface.
-3. Final Evidence Reconciliation: OPEN.
-4. Certification: NO.
-5. Live alignment to candidate: NOT_PROVEN / no promotion.
-6. `repair-excel-build.yml`: CLOSED on both main and tooling branch; removed because it was obsolete and self-mutating with write-to-main authority.
-7. Tooling PR #72: OPEN / NOT_PROVEN. Current head `ddd00fc142ef60bc99e5fe8ebc63d4c53caaed94`; Gitleaks `35307503455`, Semgrep `35307503464`, CodeQL `35307503481`, Trivy `35307503456`, security-audit `35307503508`, G1 `35307503543`, and application-quality `35307503487` are terminal PASS on this exact head. Supabase migration-proof `35307503570` is terminal FAIL in pgTAP after empty-database migration apply succeeded.
+1. Candidate Deployment: BLOCKED — Vercel exact-SHA status is "Deployment rate limited — retry in 24 hours"; no current-SHA deployment is available.
+2. Deployment Browser: BLOCKED — approved automation bypass credential unavailable through current connected mutation tools.
+3. Formal Final Regression: NOT_PROVEN — workflow dispatch unavailable through connected GitHub mutation surface; TinyFish GitHub UI inspection also found the browser session unauthenticated and no Run workflow control.
+4. Final Evidence Reconciliation: OPEN.
+5. Certification: NO.
+6. Live alignment to candidate: NOT_PROVEN / no promotion.
+7. Workflow safety: CANDIDATE CLOSED — current candidate has no workflow with write permissions or git push; the three previously identified self-mutating paths were removed/reworked. Main still contains the legacy write workflows until the release candidate is merged.
+8. Tooling PR #72: OPEN / NOT_PROVEN. Current head remains 92fa7bffb8971eecb10d91fe588709da0e06675a; migration proof 35308340466 is terminal FAIL in pgTAP after empty-database migration apply.
 
 ## Connected tooling
 
@@ -75,21 +69,23 @@
 ## Next execution queue
 
 ### P0
-- Finish Deployment Browser credential-boundary investigation without weakening protection.
-- Finish formal Final Regression using an actual executable workflow path.
-- Reconcile candidate evidence strictly by exact SHA.
-- Resolve/close the repair-excel operational workflow risk or prove it is unrelated and safely contained.
+- Reconcile terminal CI on candidate 4753cc3319f551aeccbe2bd081b988fa68df8e87.
+- Re-check Vercel candidate deployment availability without bypassing the rate limit.
+- Preserve Deployment Browser BLOCKED until owner-controlled automation credentials exist.
+- Preserve Formal Final Regression NOT_PROVEN until an actual dispatch-capable path exists.
+- Reconcile all evidence strictly to the current candidate SHA.
 
 ### P1
-- Run/verify the isolated free security tooling suite before admitting it to certification evidence.
-- Improve any missing observability uncovered by failed runs.
-- Continue independent fronts in parallel.
+- Keep workflow safety hardening in the candidate; do not restore repository write/push automation.
+- Continue isolated tooling #72/#73 without transferring findings into candidate certification.
+- Improve any real observability gaps uncovered by terminal current-SHA runs.
 
 ### P2
-- Live alignment only after candidate release gates are proven.
-- Certification only after all mandatory gates are PASS.
+- Live alignment only after every mandatory candidate gate is PROVEN.
+- Certification only after complete exact-SHA evidence reconciliation and release safety approval.
 
 ## Last execution record
+
 
 - Candidate SHA remained `4d5057d7952e213d6b5328a80f0229f1ff9fb861`.
 - No candidate SHA change.
@@ -115,6 +111,15 @@ RESULT: no candidate defect; no candidate SHA change; tooling remains non-certif
 ROOT CAUSE: tooling baseline incompatibility for pgTAP; full-history secret findings; mutable action references and two remaining Semgrep hardening categories
 ARTIFACT: Gitleaks artifact `10529832877`; Semgrep artifact `10530271974`; candidate preview READY exact `4d5057…`
 NEXT ACTION: keep candidate frozen; continue only unresolved external evidence and explicitly scoped tooling remediation; never promote or weaken controls
+
+### 2026-09-18 — Current Command 1 execution record
+
+- Candidate changed to 4753cc3319f551aeccbe2bd081b988fa68df8e87 after proven workflow-safety findings.
+- Candidate PR: #74, branch execution/closure-hammer-20260918c.
+- Removed repair-excel-build.yml and bootstrap-lockfile.yml; converted bootstrap-release-lockfile.yml to read-only validation after Release Audit exposed its required-file contract.
+- Exhaustive current-candidate workflow scan: 15 workflow files, 0 contents: write permissions, 0 git push commands.
+- Current candidate Vercel deployment is unavailable; exact-SHA status reports a 24-hour rate limit.
+- Production b102ce5… remains untouched.
 
 ### 2026-09-18 — Master autonomous leadership integration
 
@@ -254,3 +259,14 @@ RESULT: BLOCKED again at fail-closed credential validation; `E2E_BASE_URL` and `
 ROOT CAUSE: approved Vercel automation-bypass credential is still unavailable.
 ARTIFACT: `ops/evidence/20260918-command1-browser-credential-boundary-recheck.md` commit `54e8c69ef9c7a572b793b611847b643bbcd66490`.
 NEXT ACTION: obtain the approved automation-bypass credential through the owner-controlled Vercel/GitHub secret path; do not disable protection or store the secret in repository files.
+
+### 2026-09-18 — Command 1 — workflow safety and release-gate reconciliation
+
+RUN: 35310025169;35310025060;35310025041;35310025159;35310025032;35310025100;35310025098;35310025147;35310025210;35310025067; Vercel exact-SHA status; TinyFish 20d96519-64ea-4767-83ed-d55676b2b6f1
+JOB: candidate workflow safety / exact-SHA CI / deployment rate-limit / authenticated browser boundary / formal regression capability
+SHA: candidate 4753cc3319f551aeccbe2bd081b988fa68df8e87; previous candidate 4d5057d…; main 4505bcb655c0b747aeea7e1cc526a94f93270d3d; production b102ce5e9aebe61bb13581cd9a8f45d1cc43c497
+FRONT: operational workflow safety; release audit contract; Vercel deployment; browser credentials; workflow dispatch
+RESULT: candidate hardened so no workflow file contains write permissions or git push; the required bootstrap release workflow remains present but read-only. Candidate CI is running/pending at checkpoint. Vercel exact-SHA deployment is blocked by the platform's reported 24-hour rate limit. Authenticated browser and formal Final Regression remain blocked by external capability/credential boundaries. No Production mutation or promotion.
+ROOT CAUSE: self-mutating automation was broader than initially scoped; deleting the release-lockfile workflow alone violated the explicit release-audit contract; Vercel deployment quota and unauthenticated GitHub UI prevent the remaining external proof paths.
+ARTIFACT: PR #74 head 4753cc3319f551aeccbe2bd081b988fa68df8e87; evidence ops/evidence/20260918-command1-workflow-safety-release-gates.md
+NEXT ACTION: terminalize current-SHA CI; retry Vercel only when platform permits; preserve browser/Final Regression boundaries; do not transfer historical evidence.
