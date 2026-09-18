@@ -38,7 +38,8 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
       if (!supabase) { setLoading(false); setError('قاعدة البيانات غير مهيأة في هذه البيئة.'); return; }
       setLoading(true); setError(null);
       try {
-        const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 7);
+        // Read a wider window than the seven-day presentation window so browser/runner timezone cannot under-fetch the first included business day. The domain calculator performs the exact Asia/Aden day filter.
+        const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 10);
         const [productsResult, customersResult, ordersResult, stockResult, creditResult, staffOrders, salesResult] = await Promise.all([
           supabase.from('products').select('id', { count: 'exact', head: true }).eq('status', 'active'),
           supabase.from('customers').select('id', { count: 'exact', head: true }),
