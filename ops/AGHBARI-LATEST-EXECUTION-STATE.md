@@ -16,7 +16,7 @@
 - Branch: `execution/closure-hammer-20260918c`
 - PR: #74 (open, draft, mergeable)
 - Base: `main @ 4505bcb655c0b747aeea7e1cc526a94f93270d3d`
-- Candidate deployment: NOT_AVAILABLE — exact-SHA Vercel deployment is not proven. Canonical project `aghbari-commerce-c2dd` currently has zero deployments matching candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b`; latest READY activity is operational/tooling only. Latest observed deployment is `dpl_7ihytJd8vEfQMvCnsNqghQyNUgsN` for tooling commit `337b8c787c4f4d35de957214ad5596e87cc27eb4`, which predates tooling HEAD `d884f90f...` and is not candidate evidence. Candidate GitHub status remains Vercel FAILURE on the build-rate-limit target.
+- Candidate deployment: NOT_AVAILABLE — exact-SHA Vercel deployment is not proven. Canonical project `aghbari-commerce-c2dd` currently has zero deployments matching candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b`; latest READY deployment observed is `dpl_F54C7KZc1UDsFbqrJgtgrWbDeLQh` for `ops/execution-control-plane` commit `b967ebc4a7a571684f163534a2c96aa992db2a51`, while the prior tooling READY deployment is `dpl_7ihytJd8vEfQMvCnsNqghQyNUgsN` for older tooling commit `337b8c787c4f4d35de957214ad5596e87cc27eb4`. Neither is candidate evidence. Candidate GitHub status remains Vercel FAILURE on the build-rate-limit target.
 - Candidate authenticated browser certification: BLOCKED — approved Vercel automation-bypass credential is unavailable.
 - Evidence for `64f5283…` is also now historical/invalidated because the bootstrap release proof exposed the same pull_request merge-ref flaw; the current candidate is `5b9f2a…`.
 
@@ -538,3 +538,15 @@ RESULT: candidate head and PR #74 remain unchanged. All 13 candidate gates remai
 ROOT CAUSE: external deployment quota and credential/dispatch boundaries remain unresolved; tooling pgTAP baseline does not match the main database contract and must remain isolated/non-certifying.
 ARTIFACT: Vercel project/deployment sweep; candidate combined status; migration-proof job `105527257696` logs; Supabase project/advisors/migration inventory; TinyFish recheck was not started because the connected wallet balance is insufficient.
 NEXT ACTION: keep candidate frozen and Production untouched. Do not spend deployment quota speculatively. Resolve approved exact-SHA deployment + authenticated runtime credential + workflow-dispatch execution path; tooling pgTAP remediation remains separate from candidate.
+
+
+### 2026-09-18 — Command 1 live reconciliation re-entry
+
+RUN: GitHub exact-head reconciliation; candidate workflow/status recheck; Vercel project/deployment reconciliation; tooling pgTAP forensic recheck
+JOB: candidate 13/13 terminal PASS; tooling migration proof terminal FAIL in pgTAP only; PR #72 exact head verified; PR #74 exact head verified
+SHA: candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b`; tooling `d884f90fcdcb95eeceb47e78d8f36792268f830d`; pgTAP diagnostic `e62cb960dfb17204074914b4a3dd5a13abcb333f`; main `4505bcb655c0b747aeea7e1cc526a94f93270d3d`; production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
+FRONT: certification closure / deployment evidence / tooling baseline / evidence reconciliation
+RESULT: candidate unchanged; all 13 candidate proof runs remain terminal PASS on exact SHA; candidate deployment remains unavailable; latest Vercel READY activity is operational-documentation deployment, not candidate evidence; no production mutation or promotion.
+ROOT CAUSE: remaining release blockers are external evidence/credential boundaries (exact candidate deployment, authenticated Deployment Browser, Formal Final Regression dispatch). Tooling pgTAP remains an isolated baseline-contract failure after clean migration application.
+ARTIFACT: candidate run set `35321683922;35321683893;35321683989;35321683986;35321683999;35321683950;35321683916;35321684096;35321683994;35321683953;35321683815;35321684089;35321683806`; tooling migration run `35322281510` / job `105527257696`; latest Vercel READY `dpl_F54C7KZc1UDsFbqrJgtgrWbDeLQh` recorded as `b967ebc4a7a571684f163534a2c96aa992db2a51`.
+NEXT ACTION: preserve candidate freeze; do not retry Vercel while the build-rate limit is active; obtain the approved automation-bypass secret and dispatch-capable regression path; continue only non-conflicting evidence work; keep Production NO TOUCH.
