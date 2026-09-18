@@ -1521,3 +1521,8 @@ A new durable rule is added from the PR #73 investigation:
 **Diagnostic migration-proof results are valid only for the exact migration tree they execute. Before transferring or comparing any pgTAP/clean-DB failure to the release candidate, reconcile the migration-file set and effective final definitions (functions/policies/grants) against the candidate SHA. A diagnostic branch missing candidate-era corrective migrations is stale-source evidence, not candidate defect evidence.**
 
 This rule strengthens evidence sovereignty without weakening tests or changing candidate/Production.
+
+
+## 0E. QUOTA-PRESERVING EVIDENCE PERSISTENCE — 2026-09-18
+
+Operational-state writes can themselves trigger connected Vercel Git deployments. Therefore evidence persistence must be coalesced: persist a control-plane/state commit when it records a material state transition, durable rule, new failure mode, or new evidence boundary; do not create no-op or duplicate state commits merely to satisfy a narrative cadence. Re-read remote source-of-truth on every execution, but only create a Vercel-triggering operational commit when the persisted state materially changes or a durable lesson is worth storing. This rule never permits omission of a required certification fact; it only prevents redundant quota-consuming writes.
