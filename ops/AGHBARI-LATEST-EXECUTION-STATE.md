@@ -1376,3 +1376,15 @@ EVIDENCE:
 - No `NETLIFY_AUTH_TOKEN`/existing Netlify deploy workflow was found in repository source.
 - Therefore no Netlify deployment was claimed, no fake SHA mapping was created, and Vercel Production was untouched.
 NEXT: preserve exact candidate; when a connected Netlify upload/build channel with source access exists, deploy candidate source and verify `build-meta.json` exact SHA before using it for Runtime E2E.
+
+
+## 2026-09-18 — Command 1 — exact-SHA closure hammer / deployment path reconciliation
+
+- Candidate remains `2facceb39aaa826413f20245a6f20b6c2ff7cd34`; PR #83 OPEN / non-draft. No candidate source commit was created.
+- Ref-only re-push of the exact candidate SHA successfully triggered fresh GitHub Actions runs on the same SHA. Latest push-triggered gates observed: Application Quality PASS, Security PASS, G1 PASS, Order Workflow PASS; other duplicate exact-SHA gates are queued/in progress and must not be inferred PASS until terminal.
+- Browser E2E / Exact Deployment contract job PASS on the exact SHA; the actual browser-e2e job remains SKIPPED on push because it requires a successful `deployment_status` or manual dispatch.
+- Vercel canonical project `aghbari-commerce-c2dd` now accepts deployments again. A ref-only probe produced a READY deployment for predecessor `93591bb...`, but did not produce one for candidate `2facceb3...`. Therefore the remaining deployment gap is trigger/source-path behavior, not the previously observed deployment-rate ceiling.
+- Historical deployed-browser run `35380270517` proves the Vercel automation-bypass secret and customer E2E credentials are present and accepted. The run failed only at the predecessor's invalid-login browser assertion; candidate `2facceb3...` contains the proven assertion fix. Admin credential execution was skipped because the predecessor customer suite failed first; no admin runtime PASS is claimed.
+- Candidate `2facceb3...` vs deployed `2263648...` differs only in `.github/workflows/browser-e2e-exact.yml` and `e2e/critical-path.spec.ts`; no product-source file differs. This is useful runtime correlation only and is not exact-SHA deployment evidence.
+- Production remains unchanged / NO TOUCH. Vercel runtime-error scan for the canonical project over the selected 24h window is clean.
+- Certification remains NO until an exact candidate deployment is recorded by Vercel and its authenticated customer + admin browser E2E, plus formal `runtime-e2e.yml`, run on that exact deployment/SHA.
