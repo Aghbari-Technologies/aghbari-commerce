@@ -1057,3 +1057,20 @@ RESULT:
 - Production remains NO TOUCH.
 - Real browser proof remains valid only for the observed non-candidate deployment SHA and is not transferred to the candidate.
 NEXT ACTION: inspect newly terminal exact-head CI; merge only proven isolated fixes; then create the next single release candidate from the proven main lineage so payment/catalog/offline fixes are all represented by one exact SHA before final certification.
+
+
+### 2026-09-18 — Command 1 — final state synchronization
+
+CURRENT CANDIDATE: `9dc6bd3e3bed86bfcbca29ff2538dfd30ebcd218`
+MAIN: `427ff0801544449f432290205b2a29f2508541f3`
+PR #84: `0b3e540a90e1e9e0d5992febbf18c4c59561547e` — queued exact-head CI
+PR #86: `661b797cc195fb5664d304921d5ebf59a3cc2490` — queued exact-head CI
+PR #87: `ef26828b672ac01f922df9b3b6042a8063c76822` — queued exact-head CI
+
+CLOSURE:
+- Candidate #83 remains frozen at the latest exact SHA and has no matching Vercel deployment; previous migration-parser failures were repaired on-source and predecessor evidence is invalidated.
+- #84 payment/catalog correctness, #86 offline runtime correctness, and #87 reporting gateway/CORS/idempotency correctness are separate non-certifying lanes and remain unmerged until their current heads are proven.
+- Real browser verification of the live operational deployment remains proven only for its own Git SHA; no cross-SHA transfer.
+- Production is NO TOUCH.
+
+NEXT: inspect terminal CI on the current heads; integrate only proven fixes; then construct one consolidated candidate from the proven main lineage and re-run exact-SHA certification.
