@@ -72,15 +72,17 @@ jobs:
             fn_count integer;
             auth_ok boolean;
             anon_ok boolean;
+            auth4_ok boolean;
+            anon4_ok boolean;
           BEGIN
             SELECT count(*) INTO fn_count
             FROM pg_proc p
             JOIN pg_namespace n ON n.oid = p.pronamespace
             WHERE n.nspname = 'public'
               AND p.proname = 'create_order'
-              AND pg_get_function_identity_arguments(p.oid) = 'p_idempotency_key text, p_warehouse_id uuid, p_lines jsonb';
+              AND pg_get_function_identity_arguments(p.oid) = 'p_idempotency_key text, p_warehouse_id uuid, p_lines jsonb, p_payment_method text';
             IF fn_count <> 1 THEN
-              RAISE EXCEPTION 'effective create_order signature count=%', fn_count;
+              RAISE EXCEPTION 'effective four-argument create_order signature count=%', fn_count;
             END IF;
 
             SELECT pg_get_functiondef(p.oid) INTO fn
@@ -88,36 +90,41 @@ jobs:
             JOIN pg_namespace n ON n.oid = p.pronamespace
             WHERE n.nspname = 'public'
               AND p.proname = 'create_order'
-              AND pg_get_function_identity_arguments(p.oid) = 'p_idempotency_key text, p_warehouse_id uuid, p_lines jsonb';
+              AND pg_get_function_identity_arguments(p.oid) = 'p_idempotency_key text, p_warehouse_id uuid, p_lines jsonb, p_payment_method text';
 
             IF fn NOT LIKE '%pg_catalog.pg_advisory_xact_lock%' OR fn NOT LIKE '%v_requested_key%' THEN
-              RAISE EXCEPTION 'effective create_order is missing same-key serialization';
+              RAISE EXCEPTION 'effective create_order authority is missing same-key serialization';
             END IF;
             IF fn NOT LIKE '%c.organization_id = v_org%' OR fn NOT LIKE '%c.customer_id = v_customer%' OR fn NOT LIKE '%c.status = ''active''%' THEN
-              RAISE EXCEPTION 'effective create_order is missing atomic active-cart lock';
+              RAISE EXCEPTION 'effective create_order authority is missing active-customer tenant guard';
             END IF;
-            IF fn NOT LIKE '%SET status = ''converted'', updated_at = pg_catalog.now()%' THEN
-              RAISE EXCEPTION 'effective create_order is missing atomic cart conversion';
+            IF fn NOT LIKE '%SET status=''converted'',updated_at=pg_catalog.now()%' AND fn NOT LIKE '%SET status = ''converted'', updated_at = pg_catalog.now()%' THEN
+              RAISE EXCEPTION 'effective create_order authority is missing atomic cart conversion';
             END IF;
             IF fn NOT LIKE '%idempotency key payload conflict%' OR fn NOT LIKE '%errcode=''40001''%' THEN
-              RAISE EXCEPTION 'effective create_order is missing payload-conflict fail-closed contract';
+              RAISE EXCEPTION 'effective create_order authority is missing payload-conflict fail-closed contract';
+            END IF;
+            IF fn NOT LIKE '%payment_method%' OR fn NOT LIKE '%v_requested_payment%' THEN
+              RAISE EXCEPTION 'effective create_order authority is missing persisted payment-method contract';
             END IF;
             IF fn NOT LIKE '%SET search_path TO ''''%' AND fn NOT LIKE '%SET search_path = ''''%' THEN
-              RAISE EXCEPTION 'effective create_order is missing empty search_path';
+              RAISE EXCEPTION 'effective create_order authority is missing empty search_path';
             END IF;
             IF fn LIKE '%EXCEPTION WHEN unique_violation THEN%' THEN
-              RAISE EXCEPTION 'effective create_order contains unsafe generic unique_violation success recovery';
+              RAISE EXCEPTION 'effective create_order authority contains unsafe generic unique_violation success recovery';
             END IF;
 
             SELECT has_function_privilege('authenticated', 'public.create_order(text,uuid,jsonb)', 'EXECUTE') INTO auth_ok;
             SELECT has_function_privilege('anon', 'public.create_order(text,uuid,jsonb)', 'EXECUTE') INTO anon_ok;
-            IF NOT auth_ok THEN
-              RAISE EXCEPTION 'authenticated must retain create_order EXECUTE';
+            SELECT has_function_privilege('authenticated', 'public.create_order(text,uuid,jsonb,text)', 'EXECUTE') INTO auth4_ok;
+            SELECT has_function_privilege('anon', 'public.create_order(text,uuid,jsonb,text)', 'EXECUTE') INTO anon4_ok;
+            IF NOT auth_ok OR NOT auth4_ok THEN
+              RAISE EXCEPTION 'authenticated must retain create_order EXECUTE on legacy and authoritative signatures';
             END IF;
-            IF anon_ok THEN
+            IF anon_ok OR anon4_ok THEN
               RAISE EXCEPTION 'anon/PUBLIC must not retain create_order EXECUTE';
             END IF;
-          END $$;
+          END $;
           SELECT 'Fresh DB effective create_order authority: PASS' AS evidence;
           SQL
       - name: Run database pgTAP proofs
