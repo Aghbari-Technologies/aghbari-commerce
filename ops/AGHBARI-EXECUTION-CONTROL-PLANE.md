@@ -706,3 +706,25 @@ OPEN
 ```
 
 with no hidden assumptions, no stale evidence, no speculative fixes, and no safety boundary violations.
+
+
+---
+
+# 21. TOOLING VERIFICATION — 2026-09-18
+
+- **Firecrawl** is now connected and available for live technical research, documentation retrieval, and targeted web verification.
+- Vercel's official documentation confirms that Protection Bypass for Automation uses a valid bypass secret and that `VERCEL_AUTOMATION_BYPASS_SECRET` can be used by CI; this does not justify disabling Deployment Protection.
+- GitHub documents repository/org/environment Actions Secrets as the supported secret-management boundary for workflows.
+- **TinyFish**, **Codex Security**, **Datadog**, and **PostHog** were identified as useful accelerators but remain pending user connection; do not assume their capabilities are available until connected.
+- Tool availability must be checked at the start of each relevant task; never claim a connector can perform a mutation it does not expose.
+
+### Reference entry point
+
+The fast discovery index is on `main`:
+
+`AGHBARI-EXECUTION-START.md`
+
+The full canonical execution protocol remains on:
+
+`ops/execution-control-plane/ops/AGHBARI-EXECUTION-CONTROL-PLANE.md`
+
