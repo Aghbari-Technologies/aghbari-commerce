@@ -258,50 +258,21 @@ Use the moat library from `COMPETITIVE-MOAT-AND-PORTFOLIO-20260918.md` as the so
 
 Priority differentiators:
 1. **Evidence-First / Trust Layer** for security and correctness jobs.
-2. **Fast B2B Order OS** for commerce/order-management jobs.
-3. **Arabic/RTL First** for Arabic SaaS jobs.
-4. **Migration Bridge** for legacy/Excel/Onyx/data jobs.
-5. **Integration Reliability** for webhook/automation jobs.
-6. **Takeover-Ready Codebase** for broken/AI-generated SaaS jobs.
-7. **Low-Bandwidth/Offline discipline** for field/distributed environments.
-8. **Operations Command Center** for admin/operations systems.
 
-One job → one primary moat → one proof → one measurable milestone.
+## 19. Narrow competitive hunt policy — added 2026-09-18
 
-## 16. Strategic rule: beat specialists with evidence, not with claims
+Default Upwork coverage is restricted to six lanes defined in:
+`docs/UPWORK-COMPETITIVE-HUNT-LANES-20260918.md`
 
-When a job attracts deep specialists:
-- narrow the proposal to the client's failure mode;
-- expose the relevant evidence;
-- show the smallest safe first milestone;
-- make the verification method explicit;
-- avoid claiming superiority without measurable evidence.
+| Lane | Primary proof to lead with |
+|---|---|
+| Supabase Multi-Tenant Security / RLS | tenant isolation + RLS/RBAC + adversarial denial |
+| B2B Commerce / Order & Inventory | order/inventory workflows + concurrency/idempotency |
+| Arabic/RTL B2B SaaS | Arabic-first customer/admin workflow + RTL proof |
+| Next.js/Supabase Production Rescue | root-cause diagnosis + minimal repair + regression |
+| Data Migration / Excel / Legacy SaaS | quarantine/validation/preview/commit + reconciliation |
+| Integration Reliability | outbox + retry + idempotency + failure recovery |
 
-The objective is not to look bigger than the specialist. It is to make the client's risk smaller.
+**One opportunity → one lane → one primary moat → one proof asset → one measurable first milestone.**
 
-## 17. Current commercial positioning
-
-Primary capability family:
-**Production-grade Arabic B2B SaaS / Commerce Systems**
-
-Core proof vocabulary:
-`React/TypeScript + Supabase/PostgreSQL + Auth/RLS + Multi-Tenant + RBAC + Catalog + Pricing + Inventory + Orders + Excel + API/Webhooks + Outbox/Retry + E2E + Production Hardening + Arabic/RTL`
-
-Secondary sellable capabilities:
-- Supabase/RLS security review
-- Multi-tenant architecture repair
-- SaaS production hardening
-- B2B order/inventory systems
-- Arabic RTL business applications
-- Excel/data import pipelines
-- Integration/webhook reliability
-- Legacy/AI-generated code takeover
-
-## 18. Non-negotiable truth rule
-
-The commercial system must never make the profile stronger than the evidence.
-
-**No proof → no claim.**
-**No relevant artifact → no specific experience claim.**
-**No contract → no promise of outcome.**
-**No hiring guarantee.**
+Do not scatter proposals across generic full-stack jobs. Out-of-lane opportunities require an explicit exception because they must offer a stronger problem-to-proof fit than these specialized lanes.
