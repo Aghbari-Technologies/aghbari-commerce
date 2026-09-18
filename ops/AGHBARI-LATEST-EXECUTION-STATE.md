@@ -919,3 +919,18 @@ RESULT:
 - Corrected the real runtime path to pass `{ paymentMethod: payment }` and added a regression test that guards the wiring.
 - Certification candidate `0fb5a17bcb65816963056112f5a41ccbb4ae3106` was not modified. Production was not modified.
 VERIFICATION: implementation is committed on the isolated fix branch; CI/E2E verification is intentionally deferred until opening its PR does not create another redundant Actions burst during the current repository-wide queue saturation.
+
+### 2026-09-18 — Independent product defect #2 — catalog price fallback
+
+RUN: static + live-data customer portal audit (non-certifying)
+JOB: catalog display/add-to-cart price correctness
+BASE: `427ff0801544449f432290205b2a29f2508541f3`
+FIX BRANCH: `fix/customer-payment-selection-20260918`
+FIX HEAD: `3c78047737618cba39936b1fb46350bf833c4d9a`
+RESULT:
+- Live Aghbari Commerce data has 2 active products, 2 active product-price rows and 0 `customer_price_tiers` rows.
+- `get_catalog` already returns the server-authorized base `authorized_price` and currency. The actual runtime `AppV3Fixed` was discarding those fields and only using optional `customer_price_tiers` rows; without a matching tier, displayed price became zero and the product could not be added to the cart.
+- The fix branch now carries `authorizedPrice`/currency on the product model, resolves the highest applicable customer tier with safe fallback to the server-authorized base price, and adds dedicated unit coverage for no-tier, tier precedence, and missing-price cases.
+- This defect was independently established from live non-production-read evidence; no Production data was changed.
+- Certification candidate `0fb5a17bcb65816963056112f5a41ccbb4ae3106` remains untouched.
+VERIFICATION: fix branch is 6 commits ahead of main, clean diff limited to customer-portal pricing/payment wiring plus tests. CI verification is deferred while repository-wide Actions queue saturation remains active, to avoid multiplying queued runs without execution capacity.
