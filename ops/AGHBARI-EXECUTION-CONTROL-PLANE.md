@@ -715,12 +715,14 @@ with no hidden assumptions, no stale evidence, no speculative fixes, and no safe
 - **Firecrawl** is now connected and available for live technical research, documentation retrieval, and targeted web verification.
 - Vercel's official documentation confirms that Protection Bypass for Automation uses a valid bypass secret and that `VERCEL_AUTOMATION_BYPASS_SECRET` can be used by CI; this does not justify disabling Deployment Protection.
 - GitHub documents repository/org/environment Actions Secrets as the supported secret-management boundary for workflows.
-- **TinyFish**, **Codex Security**, **Datadog**, and **PostHog** were identified as useful accelerators but remain pending user connection; do not assume their capabilities are available until connected.
+- **TinyFish** is now connected and available for live browser workflows.
+- **Firecrawl** is now connected and available for live technical research and documentation retrieval.
+- **Codex Security**, **Datadog**, and **PostHog** remain pending user connection; do not assume their capabilities are available until connected.
 - Tool availability must be checked at the start of each relevant task; never claim a connector can perform a mutation it does not expose.
 
 ### Reference entry point
 
-The fast discovery index is on `main`:
+The fast discovery index is on `main` (`AGHBARI-EXECUTION-START.md`, latest start-index commit `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`):
 
 `AGHBARI-EXECUTION-START.md`
 
