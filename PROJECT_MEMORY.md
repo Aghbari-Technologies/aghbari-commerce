@@ -497,3 +497,12 @@ No market-derived requirement may weaken security, exact-SHA evidence, release g
 - **UI rule:** visible keyboard shortcuts must have real behavior; navigation items must target implemented work areas; dashboard data queries must reference live canonical schema.
 - **Deployment rule:** maintain a provider-neutral static deployment path. Netlify configuration is now present for the Vite SPA; provider integration must not receive secrets in source and must remain independent of the frozen certification candidate.
 - **Scope:** implemented on non-certifying UI branch `enhancement/ui-command-center-20260918`; certification candidate `5b9f2a...` remains unchanged.
+
+
+## 2026-09-18 — UI truth, business timezone, and provider-neutral delivery
+
+- UI upgrades must extend the existing customer/admin surfaces rather than replatforming or replacing already-implemented workflows without evidence of necessity.
+- Dashboard business-day metrics must use an explicit business timezone (`Asia/Aden` for the current product context), not the CI runner or browser machine timezone. The metric logic is isolated in `src/domain/adminDashboard.ts` and covered by `adminDashboard.test.ts`.
+- Admin navigation and quick actions are part of the authorization UX contract: a control that targets an unavailable role-specific work area must not be rendered as an actionable link.
+- Netlify failover is now provisioned as a separate static-hosting path (`aghbari-commerce-web`) with the production Supabase URL/publishable client configuration. Actual deployment remains a separate proof layer and must not be claimed until source upload succeeds.
+- Current scope is PR #81 at exact HEAD `384a0f494702e942fdc23d9f0a0981cff8d277fd`; certification candidate `5b9f2a...` remains unchanged.
