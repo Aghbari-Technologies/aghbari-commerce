@@ -38,6 +38,11 @@ describe('offline operation queue', () => {
     expect(pendingOfflineOperations(USER_A)).toHaveLength(1);
   });
 
+  it('rejects cart quantities above the canonical order ceiling before persistence', () => {
+    expect(() => enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: 10001 })).toThrow('بيانات العملية غير المتصلة غير صالحة');
+    expect(pendingOfflineOperations(USER_A)).toHaveLength(0);
+  });
+
   it('requires a valid authenticated user scope', () => {
     expect(() => enqueueOfflineOperation('not-a-user', OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: 1 })).toThrow('هوية المستخدم مطلوبة');
   });
