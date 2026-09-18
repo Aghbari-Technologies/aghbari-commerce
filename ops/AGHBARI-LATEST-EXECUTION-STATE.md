@@ -94,8 +94,8 @@
 - Candidate SHA remained `4d5057d7952e213d6b5328a80f0229f1ff9fb861`.
 - No candidate SHA change.
 - Candidate exact-SHA gates remain PASS and untouched.
-- Main is now `29aa5c9…`; production remains `b102ce5…`.
-- Tooling PR #72 hardened through two proven workflow fixes, then produced terminal Gitleaks/Semgrep/Migration findings; no candidate mutation made.
+- Main is now `b29ae9c…`; production remains `b102ce5…`.
+- Tooling PR #72 remains isolated; current head is `93552ada…`. Historical CI findings from `1830e3a…` are not reused as current-head evidence.
 - Deployment Browser remains BLOCKED; Final Regression remains NOT_PROVEN; Production remains untouched.
 
 ### 2026-09-18 — Command 1 current record
@@ -119,6 +119,16 @@ RESULT: integrated delegated technical leadership, autonomous decision rights, a
 ROOT CAUSE: existing protocol had strong execution/evidence rules but did not centralize full technical decision authority, durable architecture/decision memory, or explicit scope/escalation governance
 ARTIFACT: PROJECT_MEMORY.md created; Control Plane master governance layer added; AGHBARI-EXECUTION-START.md rewritten as launch router
 NEXT ACTION: future command 1 reads all three operational layers, verifies real state, executes unresolved fronts in parallel, persists evidence/decisions, and evolves the protocol when new durable lessons appear
+### 2026-09-18 — Post-integration reconciliation
+
+RUN: autonomous leadership memory integration + state normalization
+JOB: GitHub control-plane fetch/update; PR #72 head verification
+SHA: candidate `4d5057…`; main `b29ae9c…`; control plane `8f22ada…`; project memory `b446418…`
+FRONT: durable memory / decision authority / stale-state prevention / tooling-head reconciliation
+RESULT: current-state references normalized; PROJECT_MEMORY and master autonomy layer are now canonical; no candidate or production mutation
+ROOT CAUSE: duplicated current-state references and old tooling-head references could mislead future execution even though the top-level state was newer
+ARTIFACT: PROJECT_MEMORY.md; Control Plane master governance; updated main launch router; GitHub-verified PR #72 current head `93552ada…`
+NEXT ACTION: next command 1 should operate from the three-layer memory model and treat current-head evidence as the only admissible tooling evidence
 ## State update contract
 
 Every run must replace this file's current-state sections with the newest verified facts, then append one compact entry below in this format:
@@ -138,10 +148,10 @@ Never record a PASS unless a real run/job/artifact proves it.
 
 ## Protocol state
 
-- Control Plane latest commit: `ba34d9660b0ace297e55411bdc24ff43c53bc718`
+- Control Plane latest commit: `8f22adaf84a0d4ae6ed9d4091151b3f30dc2a589`
 - Project Memory latest commit: `b446418682c18036328380e96d13c51f05f0e54a`
 - Fast entry point latest main commit: `b29ae9c22c09582774edfcb0e28d692f643dc9dc`
-- Previous Control Plane evolution commit: `acedbc99add67ad046aa09a87d8154c4b4ceb8e2`
+- Previous Control Plane evolution commit: `ba34d9660b0ace297e55411bdc24ff43c53bc718`
 - Fast entry point latest main commit: `29aa5c928deb97a652e78c0f0581ec09d7caa050`
 - Required execution invariant: READ → VERIFY → PARALLELIZE → EXECUTE → CAPTURE → CLASSIFY → IMPROVE PROTOCOL → PERSIST STATE → RECONCILE → REPORT
 - The programmer must update this latest-state file before declaring the round complete.
