@@ -1463,3 +1463,14 @@ RESULT: 13/13 terminal PASS on the exact current candidate SHA. Test-the-Test an
 ROOT CAUSE: candidate source proof is closed; only deployment/authentication/dispatch evidence remains unresolved.
 ARTIFACT: ops/evidence/20260918-command1-final-candidate-5b9-closure.md
 NEXT ACTION: obtain approved exact-SHA Vercel deployment and authenticated regression/dispatch capability; then perform final evidence reconciliation.
+
+## 2026-09-18 — Command 1 — LIVE RECONCILIATION AFTER RE-ENTRY
+
+RUN: `35321683922;35321683893;35321683989;35321683986;35321683999;35321683950;35321683916;35321684096;35321683994;35321683953;35321683815;35321684089;35321683806;35322281665;35322281677;35322281717;35322281706;35322281510`
+JOB: exact candidate closure / tooling pgTAP forensics / Vercel + Supabase live reconciliation
+SHA: candidate `5b9f2a76615e76bb6444c81f39e02f3479c0704b`; tooling `d884f90fcdcb95eeceb47e78d8f36792268f830d`; diagnostic `e62cb960dfb17204074914b4a3dd5a13abcb333f`; production `b102ce5e9aebe61bb13581cd9a8f45d1cc43c497`
+FRONT: closure / tooling baseline / deployment boundary / production safety
+RESULT: candidate remains frozen with 13/13 terminal exact-SHA PASS. Tooling migration proof remains FAIL only in pgTAP after clean migrations; no candidate evidence transfer. Canonical Vercel has zero candidate-SHA deployments; the latest observed tooling deployment is commit `337b8c787c4f4d35de957214ad5596e87cc27eb4`, which predates tooling HEAD and is not current-head evidence. Production remains READY/untouched; selected runtime error scan is clean. Supabase remains ACTIVE_HEALTHY with the previously observed SECURITY DEFINER and informational performance findings.
+ROOT CAUSE: deployment quota / approved credential / workflow-dispatch boundaries remain external; tooling pgTAP baseline is not aligned with current main database contracts.
+ARTIFACT: migration-proof job `105527257696`; Vercel project/deployment sweep; candidate combined status; Supabase advisor/migration inventory.
+NEXT ACTION: preserve candidate and Production boundaries; resolve exact-SHA deployment, approved authenticated-browser credential path, and dispatch-capable final regression execution; keep tooling pgTAP remediation isolated.
