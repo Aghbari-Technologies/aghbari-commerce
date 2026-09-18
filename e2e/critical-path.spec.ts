@@ -21,6 +21,21 @@ async function login(page: Page, email: string, password: string) {
 
   await expect(portal).toBeVisible();
   await expect(page.getByRole('button', { name: /السلة/ })).toBeVisible();
+  await clearCustomerCart(page);
+}
+
+
+async function clearCustomerCart(page: Page) {
+  const cartButton = page.getByRole('button', { name: /السلة/ });
+  await expect(cartButton).toBeVisible();
+  await cartButton.click();
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    const decrement = page.getByRole('button', { name: '−', exact: true }).first();
+    if (!(await decrement.isVisible().catch(() => false))) break;
+    await decrement.click();
+  }
+  const close = page.getByRole('button', { name: '×', exact: true }).last();
+  if (await close.isVisible().catch(() => false)) await close.click();
 }
 
 function captureBrowserFailures(page: Page) {
