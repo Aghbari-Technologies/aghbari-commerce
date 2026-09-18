@@ -43,6 +43,107 @@
 - OPERATIONAL LANE: `.github/workflows/repair-excel-build.yml` remains OPEN/risk-not-closed. It has `contents: write` and `git push origin HEAD:main`; latest run `35296779614` on `b102ce5…` failed. Job details are unavailable through the current connector, so root cause is NOT_PROVEN. No mutation made.
 - RELEASE SAFETY: Production = NO TOUCH. No promotion, alias switch, production migration, or live mutation performed.
 
+# 0B. AUTONOMOUS MEMORY + SELF-IMPROVEMENT PROTOCOL
+
+The control plane is a living execution system, not a static instruction sheet.
+
+## A. Mandatory start transaction
+
+Before doing any work:
+1. Read this Control Plane.
+2. Read ops/AGHBARI-LATEST-EXECUTION-STATE.md from this same branch.
+3. Verify current GitHub state, current candidate SHA, open/running workflows, relevant Vercel deployment state, and relevant Supabase state.
+4. Reconcile the stored state against reality.
+5. Treat reality as authoritative if the stored state is stale.
+6. Start only from unresolved fronts.
+
+The user must not be asked to paste an old report when project evidence can be read directly.
+
+## B. Mandatory end transaction
+
+Before returning a completion report:
+1. Persist the newest verified state in ops/AGHBARI-LATEST-EXECUTION-STATE.md.
+2. Append a compact execution record with RUN/JOB/SHA/FRONT/RESULT/ROOT CAUSE/ARTIFACT/NEXT ACTION.
+3. Update the Control Plane when the run discovers a new rule, failure mode, tool capability, proof weakness, or safer execution technique.
+4. Reconcile every PASS/FAIL/BLOCKED/OPEN state against exact SHA.
+5. Only then send the user-facing exit report.
+
+A user-facing report is not the source of truth. The GitHub control files are.
+
+## C. Self-improvement requirement
+
+At every new execution, perform a short Control Plane Evolution Check:
+
+What did the last execution teach us?
+
+Check:
+- Did a failure reveal a missing observability rule?
+- Did a repeated task reveal a better parallelization strategy?
+- Did a tool capability change?
+- Did a connector permission boundary change?
+- Did a stale-state or duplicate-evidence pattern appear?
+- Did a test fail to prove what it claimed to prove?
+- Did a security or release boundary need strengthening?
+- Did any step consume time without reducing uncertainty?
+
+If any answer is YES:
+1. Add the smallest durable rule that prevents recurrence.
+2. Add or adjust the priority or front definition.
+3. Update the latest-state file.
+4. Append the evolution change to the Control Plane.
+5. Use the improved procedure immediately in the same execution when safe.
+
+Never weaken a rule to make a result pass.
+
+## D. No silent protocol drift
+
+The programmer must never silently rewrite the protocol to:
+- hide a failure;
+- avoid a difficult proof;
+- reduce required evidence;
+- bypass a permission boundary;
+- skip regression;
+- or classify an unresolved state as closed.
+
+Protocol changes must be concrete, justified by observed evidence, recorded in the evolution log, and conservative with respect to release safety.
+
+## E. Active-context compression
+
+Keep one authoritative current state plus compact history:
+- latest candidate SHA;
+- latest live/main SHA;
+- open/blocking fronts;
+- exact proof references;
+- latest root-cause findings;
+- tool status;
+- next actions.
+
+Do not copy raw logs into the control plane. Record Run/Job/Artifact identities instead.
+
+## F. Parallel surgeon loop
+
+The programmer must repeatedly cycle through:
+inspect → execute → capture evidence → classify → switch to independent front → return → close → regress → reconcile
+
+A blocker on one front is never permission to become idle on another independent front.
+
+## G. Tool escalation ladder
+
+For each unresolved problem:
+1. Use native project tools first.
+2. Use the strongest connected specialist tool next.
+3. Search official documentation when behavior or capability is uncertain.
+4. Try a safe alternate evidence path.
+5. If still blocked, record the exact capability boundary and continue unrelated fronts.
+
+Never state cannot before verifying available tool and capability paths.
+
+## H. Candidate protection
+
+Tooling work must remain isolated unless deliberately adopted.
+Any merge or change affecting the candidate SHA triggers the normal SHA invalidation and regression process.
+Operations documentation may evolve independently without changing Production or Live.
+
 # 1. COMMAND SEMANTICS
 
 ## USER COMMAND 1 — EXECUTE
