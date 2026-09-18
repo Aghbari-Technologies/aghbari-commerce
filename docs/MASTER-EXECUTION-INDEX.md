@@ -107,6 +107,23 @@ For market-facing credibility, applicable flows should be supported by exact-hea
 
 Market research does not override Evidence-First, exact-SHA, security, Release Gates, or Production-NO-TOUCH.
 
+
+
+## Competitive execution backlog — opened 2026-09-18
+
+The strategy is now executable through dedicated GitHub fronts:
+
+| Issue | Front | Purpose |
+|---|---|---|
+| #75 | Demo Mode + Portfolio Proof Pack | turn proven capabilities into a sanitized client/demo asset |
+| #76 | Command Palette + Bulk Action Center | improve operational speed and safe bulk workflows |
+| #77 | Conflict Center + Recovery Center | make failures/conflicts actionable and recoverable |
+| #78 | Low-Bandwidth + Barcode-First Operations | regional/warehouse differentiation without weakening server truth |
+| #79 | Migration Bridge Hardening | make Excel/legacy onboarding a reusable capability |
+| #80 | Trust Layer + Explainable Operational State | expose provenance/lifecycle state without creating a second source of truth |
+
+These are backlog fronts, not proof that they are implemented. They must enter the normal exact-SHA execution/evidence pipeline when selected.
+
 ## Remaining blockers
 1. Finish exact-SHA candidate evidence and reconcile current candidate from the canonical control plane.
 2. Execute authenticated deployed-browser E2E.
