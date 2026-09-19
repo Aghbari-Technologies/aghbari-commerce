@@ -1,59 +1,94 @@
-# الأغبري | Development Progress
-> Historical pointer only. Canonical startup knowledge is `PROJECT_MEMORY.md` on `ops/execution-control-plane`.
+# الأغبري | Memory Layer 03 — PROBLEM / PROGRESS LEDGER
 
-## Current checkpoint
+> **Execution-history and problem handoff layer.** Read after `PROJECT_MEMORY.md`.
+>
+> **HANDOFF:** `PROJECT_MEMORY (SPECIFICATIONS) → this file (PROBLEMS / FIXES / CLOSURES) → AGHBARI-LATEST-EXECUTION-STATE (LATEST RESULTS)`
+>
+> This file answers: **What problems were found? What was their root cause? What changed? What was proven? What remains open?**
+>
+> It is a compact ledger, not a raw log. Do not duplicate the full product specification here.
+
+## CURRENT CHECKPOINT
 - RUN: `RUN-2026-09-20-RESUME-006`
 - Development SHA: `4f0a0614ab94e1c2ebd61745aa915f6942b3c5a0`
+- Branch: `enhancement/market-ready-v4-20260918`
 - PR: #88 OPEN / DRAFT / MERGEABLE
-- Current exact Vercel deployment: `dpl_BCvmScQ6hMUQDppRXMCnGkkRV5hd` READY
-- Final Regression: `35477022465` SUCCESS
-- Netlify Exact SHA: `35477022463` BLOCKED by Netlify HTTP 403 account-credit exhaustion
-- Migration: `35477022461` IN PROGRESS
-- Test-the-Test: `35477022490` IN PROGRESS
-- Certification candidate: `2facceb39aaa826413f20245a6f20b6c2ff7cd34` frozen
+- Exact Vercel deployment: `dpl_BCvmScQ6hMUQDppRXMCnGkkRV5hd` READY
+- Final Regression: `35477022465` SUCCESS / PROVEN for current development SHA
+- Netlify Exact SHA: `35477022463` BLOCKED by HTTP 403 account-credit exhaustion
+- Migration: `35477022461` IN PROGRESS at last checkpoint
+- Test-the-Test: `35477022490` IN PROGRESS at last checkpoint
+- Certification candidate: `2facceb39aaa826413f20245a6f20b6c2ff7cd34` FROZEN / NO TOUCH
 - Production: HOLD / NO TOUCH
 
-## Resume record — 2026-09-20 / RUN-2026-09-20-RESUME-006
-- Current development SHA: `4f0a0614ab94e1c2ebd61745aa915f6942b3c5a0`; PR #88 OPEN / DRAFT / MERGEABLE; frozen candidate `2facceb39aaa826413f20245a6f20b6c2ff7cd34` remains untouched.
-- Final Regression / Exact Artifact `35477022465` SUCCESS on the exact Vercel Preview: checked-out SHA, deployed artifact identity, security headers, Arabic RTL shell, PWA manifest, and service worker.
-- Vercel deployment: `dpl_BCvmScQ6hMUQDppRXMCnGkkRV5hd` READY, exact Git SHA `4f0a0614ab94e1c2ebd61745aa915f6942b3c5a0`.
-- Quality `35477022455`, Security `35477022467`, G1 push `35477022486`, and G1 PR `35477025357` SUCCESS.
-- Fresh-DB migration `35477022461` and Test-the-Test `35477022490` remain IN PROGRESS at checkpoint time; no premature PASS claimed.
-- Netlify Exact SHA `35477022463` FAILED with HTTP 403 because the Netlify account exceeded credit usage; build/exact artifact completed before deployment attempt. No retry because the platform itself blocks new deploys.
-- Exact browser proof for current SHA: NOT_PROVEN. Prior `07c3cab...` browser proof is historical and not promoted to current-SHA PASS.
-- Formal Final Regression for current SHA: PROVEN by `35477022465`.
+## ACTIVE PROBLEMS / OPEN FRONTS
+1. Close current-SHA Migration proof.
+2. Close current-SHA Test-the-Test proof.
+3. Exact current-SHA Browser E2E is not yet proven; historical browser evidence from `07c3cab...` is not transferable.
+4. Reconcile development delta against frozen certification candidate without touching the candidate.
+5. Supabase Auth leaked-password protection remains an external configuration warning.
+6. Netlify is blocked by account-credit exhaustion; do not waste further deployment attempts until the platform permits them.
+7. Master-spec deferred areas remain not proven unless explicitly implemented: promotions, notification center/provider delivery, integration delivery records/adapters, lots/batches/expiry/FEFO, reservations, independent fulfillment records, WhatsApp/Onyx adapters, centralized bilingual locale architecture.
+
+## RECENT ROOT-CAUSE / FIX LEDGER
+
+### RUN-2026-09-20-RESUME-006
+- SHA: `4f0a0614ab94e1c2ebd61745aa915f6942b3c5a0`
+- Problem: current development SHA still had open Migration/Test-the-Test evidence at checkpoint; current-SHA browser suite had not been freshly proven.
+- Root cause: required workflows were still running / exact current-SHA browser proof had not yet been executed; historical browser evidence belonged to another SHA.
+- Implemented/verified: current exact Vercel deployment READY; Final Regression `35477022465` SUCCESS; Quality `35477022455`, Security `35477022467`, G1 push/PR `35477022486`/`35477025357` SUCCESS.
+- Blocked: Netlify `35477022463` by account-credit HTTP 403.
+- Status: Migration/Test-the-Test NOT_PROVEN until closed; Browser E2E NOT_PROVEN; Certification NO; Production HOLD.
+- Next: close remaining runs, then candidate reconciliation.
+
+### RUN-2026-09-20-RESUME-005
+- SHA: `07c3cab1724d54d34234d67250276ac12968e14e`
+- Problem: evidence needed to remain exact-SHA after repeated development changes.
+- Root cause/control lesson: browser/CI evidence from earlier SHA cannot be promoted to a newer SHA.
+- Proven on exact SHA: security 2756; quality 3066; G1 push/PR 2901/2902; migration 3041; Test-the-Test 666; Browser E2E 576; Netlify Exact SHA 35; Vercel exact deployment READY.
+- External warning: leaked-password protection remained unresolved.
 - Certification: NO. Production: HOLD / NO TOUCH.
-- Next: close the remaining migration/Test-the-Test runs, then reconcile the development delta against the frozen candidate and keep Netlify blocked without consuming further quota.
-## Resume record — 2026-09-20 / RUN-2026-09-20-RESUME-003
-- Reconciled GitHub reality: PR #88 head is `ff98a64ad2a547b6ac79b68cede121f5c5f0c8cb`, with 50 commits / 31 changed files; candidate base remains frozen.
-- Reconciled Vercel reality: exact development deployment `dpl_DYdizKuWnLDaRDmNA6Unbou9SDAj` is BUILDING for `fffff8c1a48c2da73f70fa79f766b1b116c9cf80`.
-- Reconciled Supabase reality: project `mrcyqezbhpncuvaehwgf` ACTIVE_HEALTHY; `is_staff()` unchanged and `is_staff_reader()` now provides viewer read-only scope.
-- Implemented frontend: viewer is routed to the staff portal via `isStaffPortalRole()`; unit role matrix test added.
-- Live database: viewer read-only helper and targeted SELECT policy updates are present; no write policy was changed to use the new helper.
-- Evidence on `ff98a64ad2a547b6ac79b68cede121f5c5f0c8cb`: application-quality 3054 SUCCESS; security-audit 2744 SUCCESS; G1 2885 SUCCESS; Vercel exact deploy READY; Browser E2E run 572 RUNNING after exact artifact identity and customer-secret prechecks.
-- Still running: migration-proof 3029 and Test-the-Test 662. Netlify 31 is pending but not required because exact Vercel deployment exists.
-- External warning unchanged: leaked-password protection remains a Supabase Auth configuration warning.
-- No production mutation performed; candidate untouched.
 
-## Resume rule
-Read Control Plane then `PROJECT_MEMORY.md`; verify reality; execute the highest-priority unresolved front. Never reuse stale PASS evidence across SHAs.
+### RUN-2026-09-20-RESUME-004
+- SHA: `fffff8c1a48c2da73f70fa79f766b1b116c9cf80`
+- Problem: viewer dashboard showed quick-action links to sections unavailable to viewer (`orders`, `inventory`, `customers`).
+- Root cause: quick-link visibility was not using the same role gates as the rendered sections.
+- Fix: `src/AdminExecutiveDashboard.tsx` now gates quick links with the same role rules and shows viewer read-only status.
+- Verification: exact Vercel deployment created for same SHA; security 2749 SUCCESS; application quality 3059 unit/integration + lint SUCCESS at checkpoint.
+- Browser proof was not claimed until exact deployment status was available.
 
-### Run appendix — RUN-2026-09-20-RESUME-003
+### RUN-2026-09-20-RESUME-003
 - SHA: `ff98a64ad2a547b6ac79b68cede121f5c5f0c8cb`
-- Implemented: viewer portal routing + read-only staff DB scope + exact role/migration tests.
-- Verified: exact Vercel deployment READY; application-quality/security/G1 current-SHA checks SUCCESS; live DB helper and three SELECT policies verified.
-- Proven: exact build artifact identity verified by Browser E2E run 572; customer credentials checks passed; customer critical-path execution remains RUNNING.
-- Blocked: none at product-code layer; formal dispatch regression remains unavailable through connector surface.
-- Certification: NO.
-- Production: HOLD / NO TOUCH.
-- Next: finish all running exact-SHA gates, then reconcile with frozen candidate.
+- Problem: viewer role required a safe read-only staff scope.
+- Root cause: existing `is_staff()` intentionally excluded viewer, while the viewer needed read-only access to selected staff-readable resources.
+- Fix: `is_staff_reader()` with empty search_path; anon execution revoked; authenticated execution granted; targeted SELECT policies updated; frontend role routing centralized through `isStaffPortalRole()`.
+- Verification: exact Vercel deployment and current-SHA application/security/G1 evidence; Browser run 572 verified artifact identity and customer credentials before continuing critical path.
+- Fresh-DB migration proof remained running at checkpoint.
 
+## CLOSED-WORK REUSE RULE
+Do not repeat a closed front unless:
+- SHA changed;
+- dependency changed;
+- evidence became invalid;
+- environment/runtime changed materially;
+- requirement changed;
+- security posture changed;
+- or a later proof shows the earlier proof was unsound.
 
-## Resume record — 2026-09-20 / RUN-2026-09-20-RESUME-004
-- SHA: `fffff8c1a48c2da73f70fa79f766b1b116c9cf80`; PR #88 remains OPEN / DRAFT / MERGEABLE; frozen certification candidate remains `2facceb39aaa826413f20245a6f20b6c2ff7cd34` and untouched.
-- Root cause found: the viewer dashboard rendered generic quick links for orders, inventory and customers even when those sections were hidden for viewer, producing dead/unavailable navigation.
-- Fix implemented: `src/AdminExecutiveDashboard.tsx` now applies the same role gates to those quick links and shows a read-only status for viewer.
-- Verification: exact source at `fffff8c1a48c2da73f70fa79f766b1b116c9cf80`; Vercel exact deployment `dpl_DYdizKuWnLDaRDmNA6Unbou9SDAj` created for the same SHA and currently BUILDING; application-quality 3059 has unit/integration + lint SUCCESS, production build RUNNING.
-- Current exact-SHA gates: security-audit 2749 SUCCESS; G1 push 2891 RUNNING; G1 PR 2892 RUNNING; migration-proof 3034 RUNNING; Test-the-Test 663 RUNNING; Netlify 32 PENDING; exact browser E2E awaits Vercel deployment-status success.
-- Proven: no runtime proof yet for the new UI fix. Formal Final Regression remains NOT_PROVEN. Certification NO. Production HOLD / NO TOUCH.
-- Next action: finish only the new SHA evidence; then recheck viewer runtime anchors and reconcile real deltas against the frozen candidate without touching it.
+Otherwise treat the closure as authoritative and move to the next unresolved front.
+
+## EVIDENCE RULE
+Every run record must retain:
+`RUN / SHA / BRANCH / PR / FRONT / ROOT CAUSE / ACTION / RESULT / EVIDENCE / BLOCKER / NEXT ACTION`
+
+Never transfer PASS across SHAs.
+
+## HANDOFF TO LATEST RESULTS
+After reading this ledger, continue immediately to:
+
+`ops/AGHBARI-LATEST-EXECUTION-STATE.md`
+
+That file is the **latest-results router** and contains the current exact state to execute against.
+
+## MANDATORY END-OF-RUN RULE
+Every execution must append exactly one compact run record here before the user-facing completion report. If the run discovers a durable product/architecture rule, also update `PROJECT_MEMORY.md`.
