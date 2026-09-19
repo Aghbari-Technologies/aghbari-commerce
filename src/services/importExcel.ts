@@ -1,5 +1,5 @@
 import readSheet from '../lib/read-excel-file-browser';
-import { fingerprintImport, MAX_IMPORT_ROWS, normalizeSku, validateImportRows, type ImportRow } from '../domain/import';
+import { fingerprintImport, MAX_IMPORT_ROWS, normalizeBarcode, normalizeSku, validateImportRows, type ImportRow } from '../domain/import';
 import { requireSupabase } from '../lib/supabase';
 
 const REQUIRED_HEADERS = ['SKU', 'Name', 'Unit', 'Category', 'Quantity', 'Retail Price', 'Wholesale Price', 'Distributor Price'];
@@ -57,6 +57,7 @@ export async function parseProductWorkbook(file: File) {
   if (data.length > MAX_DATA_ROWS) throw new Error(`ملف الاستيراد يتجاوز الحد الأقصى وهو ${MAX_DATA_ROWS.toLocaleString('ar-YE')} صف.`);
   const normalizedHeaders = header.map((cell: unknown) => String(cell ?? '').trim());
   const missing = REQUIRED_HEADERS.filter((name) => !normalizedHeaders.includes(name));
+  const barcodeIndex = normalizedHeaders.findIndex((name) => ['Barcode', 'BARCODE', 'الباركود'].includes(name));
   if (missing.length) throw new Error(`أعمدة ناقصة: ${missing.join(', ')}`);
 
   const index = (name: string) => normalizedHeaders.indexOf(name);
@@ -64,6 +65,7 @@ export async function parseProductWorkbook(file: File) {
   const parsed: ImportRow[] = data.map((row: unknown[], i: number) => ({
     rowNumber: i + 2,
     sku: normalizeSku(row[index('SKU')]),
+    ...(barcodeIndex >= 0 ? { barcode: normalizeBarcode(row[barcodeIndex]) } : {}),
     name: String(row[index('Name')] ?? '').trim(),
     unit: String(row[index('Unit')] ?? '').trim(),
     category: String(row[index('Category')] ?? '').trim(),

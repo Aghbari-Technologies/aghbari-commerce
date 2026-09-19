@@ -30,7 +30,7 @@ insert into public.warehouses(id,organization_id,branch_id,name,is_active) value
   ('90000000-0000-4000-8000-000000000402','90000000-0000-4000-8000-000000000102','90000000-0000-4000-8000-000000000302','Browser Warehouse B',true)
 on conflict (id) do nothing;
 
-insert into public.products(id,organization_id,sku,name,unit,status) values
+insert into public.products(id,organization_id,sku,barcode,name,unit,status) values
   ('90000000-0000-4000-8000-000000000501','90000000-0000-4000-8000-000000000101','BROW-001','Browser Product A','unit','active'),
   ('90000000-0000-4000-8000-000000000502','90000000-0000-4000-8000-000000000102','BROW-002','Browser Product B','unit','active'),
   ('90000000-0000-4000-8000-000000000503','90000000-0000-4000-8000-000000000101','BROW-INACTIVE','Inactive Product','unit','inactive')

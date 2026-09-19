@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { fingerprintImport, normalizeSku, validateImportRows, type ImportRow, MAX_IMPORT_CATEGORY_LENGTH, MAX_IMPORT_NAME_LENGTH, MAX_IMPORT_PRICE, MAX_IMPORT_QUANTITY, MAX_IMPORT_SKU_LENGTH } from './import';
+import { fingerprintImport, normalizeSku, validateImportRows, type ImportRow, MAX_IMPORT_BARCODE_LENGTH, MAX_IMPORT_CATEGORY_LENGTH, MAX_IMPORT_NAME_LENGTH, MAX_IMPORT_PRICE, MAX_IMPORT_QUANTITY, MAX_IMPORT_SKU_LENGTH } from './import';
 
 const validRow = (overrides: Partial<ImportRow> = {}): ImportRow => ({
   rowNumber: 2,
   sku: ' abc-001 ',
+  barcode: ' 6291234567890 ',
   name: 'منتج تجريبي',
   unit: 'كرتون',
   category: 'إلكترونيات',
@@ -35,6 +36,15 @@ describe('import domain', () => {
       { rowNumber: 2, field: 'price.retail', message: expect.stringContaining('non-negative') },
       { rowNumber: 2, field: 'price.distributor', message: expect.stringContaining('finite') }
     ]));
+  });
+
+  it('rejects duplicate and oversized barcodes', () => {
+    expect(validateImportRows([validRow(), validRow({ rowNumber: 3, barcode: '6291234567890' })])).toContainEqual({ rowNumber: 3, field: 'barcode', message: 'Duplicate barcode in file' });
+    expect(validateImportRows([validRow({ barcode: 'B'.repeat(MAX_IMPORT_BARCODE_LENGTH + 1) })])).toContainEqual({ rowNumber: 2, field: 'barcode', message: expect.stringContaining(`${MAX_IMPORT_BARCODE_LENGTH}`) });
+  });
+
+  it('changes the fingerprint when the barcode changes', async () => {
+    expect(await fingerprintImport([validRow({ barcode: '6291234567890' })])).not.toBe(await fingerprintImport([validRow({ barcode: '6291234567891' })]));
   });
 
   it('rejects oversized textual fields before staging', () => {

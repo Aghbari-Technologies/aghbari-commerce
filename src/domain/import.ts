@@ -1,6 +1,7 @@
 export interface ImportRow {
   rowNumber: number;
   sku: string;
+  barcode?: string;
   name: string;
   unit: string;
   category: string;
@@ -13,6 +14,7 @@ export interface ImportDiagnostic { rowNumber: number; field: string; message: s
 // The database staging boundary is 10,000 rows; keep browser validation identical.
 export const MAX_IMPORT_ROWS = 10_000;
 export const MAX_IMPORT_SKU_LENGTH = 80;
+export const MAX_IMPORT_BARCODE_LENGTH = 80;
 export const MAX_IMPORT_NAME_LENGTH = 240;
 export const MAX_IMPORT_UNIT_LENGTH = 80;
 export const MAX_IMPORT_CATEGORY_LENGTH = 120;
@@ -21,6 +23,10 @@ export const MAX_IMPORT_PRICE = 9_007_199_254_740_991 / 100;
 
 export function normalizeSku(value: unknown): string {
   return String(value ?? '').trim().toUpperCase();
+}
+
+export function normalizeBarcode(value: unknown): string {
+  return String(value ?? '').trim();
 }
 
 function isValidMoney(value: unknown): value is number {
@@ -39,15 +45,25 @@ export function validateImportRows(rows: ImportRow[]): ImportDiagnostic[] {
   }
 
   const seen = new Set<string>();
+  const seenBarcodes = new Set<string>();
   for (const row of rows) {
     const sku = normalizeSku(row.sku);
     const name = String(row.name ?? '').trim();
+    const barcode = normalizeBarcode(row.barcode);
     const unit = String(row.unit ?? '').trim();
     const category = String(row.category ?? '').trim();
     if (!sku) diagnostics.push({ rowNumber: row.rowNumber, field: 'sku', message: 'SKU is required' });
     else if (sku.length > MAX_IMPORT_SKU_LENGTH) diagnostics.push({ rowNumber: row.rowNumber, field: 'sku', message: `SKU cannot exceed ${MAX_IMPORT_SKU_LENGTH} characters` });
     else if (seen.has(sku)) diagnostics.push({ rowNumber: row.rowNumber, field: 'sku', message: 'Duplicate SKU in file' });
     else seen.add(sku);
+    if (barcode) {
+      if (barcode.length > MAX_IMPORT_BARCODE_LENGTH) diagnostics.push({ rowNumber: row.rowNumber, field: 'barcode', message: `Barcode cannot exceed ${MAX_IMPORT_BARCODE_LENGTH} characters` });
+      else {
+        const key = barcode.toLocaleLowerCase('en-US');
+        if (seenBarcodes.has(key)) diagnostics.push({ rowNumber: row.rowNumber, field: 'barcode', message: 'Duplicate barcode in file' });
+        else seenBarcodes.add(key);
+      }
+    }
     if (!name) diagnostics.push({ rowNumber: row.rowNumber, field: 'name', message: 'Name is required' });
     else if (name.length > MAX_IMPORT_NAME_LENGTH) diagnostics.push({ rowNumber: row.rowNumber, field: 'name', message: `Name cannot exceed ${MAX_IMPORT_NAME_LENGTH} characters` });
     if (!unit) diagnostics.push({ rowNumber: row.rowNumber, field: 'unit', message: 'Unit is required' });
@@ -67,6 +83,7 @@ function canonicalize(rows: ImportRow[]): string {
   return JSON.stringify([...rows]
     .map((row) => ({
       sku: normalizeSku(row.sku),
+      barcode: normalizeBarcode(row.barcode),
       name: String(row.name ?? '').trim(),
       unit: String(row.unit ?? '').trim(),
       category: String(row.category ?? '').trim(),

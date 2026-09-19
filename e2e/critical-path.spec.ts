@@ -132,6 +132,17 @@ test('quick order accepts scanner-style Enter submission', async ({ page }) => {
   await expect(page.getByRole('button', { name: /السلة/ })).toContainText('1'); await assertCleanBrowser(failures);
 });
 
+test('quick order accepts barcode identifiers', async ({ page }) => {
+  const email = process.env.E2E_EMAIL; const password = process.env.E2E_PASSWORD; if (!email || !password) throw new Error('E2E_EMAIL and E2E_PASSWORD are required for barcode quick-order proof.');
+  const failures = captureBrowserFailures(page); await login(page, email, password);
+  const barcode = (await page.locator('.product-card').first().getAttribute('data-barcode'))?.trim();
+  expect(barcode, 'A barcode must be provisioned on the browser fixture product.').toBeTruthy();
+  const quickButton = page.getByRole('button', { name: 'طلب سريع', exact: true }); await quickButton.click();
+  const identifierInput = page.getByRole('textbox', { name: 'SKU / الباركود' }); const qtyInput = page.getByRole('spinbutton', { name: 'كمية الطلب' });
+  await identifierInput.fill(barcode!); await qtyInput.fill('1'); await qtyInput.press('Enter');
+  await expect(page.getByRole('button', { name: /السلة/ })).toContainText('1'); await assertCleanBrowser(failures);
+});
+
 test('catalog progressive browsing exposes bounded loading when more products exist', async ({ page }) => {
   const email = process.env.E2E_EMAIL; const password = process.env.E2E_PASSWORD; if (!email || !password) throw new Error('E2E_EMAIL and E2E_PASSWORD are required for catalog pagination proof.'); await login(page, email, password);
   const loadMore = page.getByRole('button', { name: 'تحميل المزيد' }); if (await loadMore.count()) { const before = await page.locator('.product-card').count(); await loadMore.click(); await expect.poll(async () => page.locator('.product-card').count()).toBeGreaterThan(before); }
