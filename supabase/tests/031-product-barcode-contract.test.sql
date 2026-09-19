@@ -153,7 +153,8 @@ select is(
 
 select ok(
   (public.upsert_product(
-    'cccccccc-3333-4333-8333-cccccccc0130',
+    (select id from public.products
+     where organization_id='cccccccc-3333-4333-8333-cccccccc0100' and sku='BAR-001'),
     'BAR-001','Barcode Product','unit',null,null,'active','6299990000003'
   )).barcode='6299990000003',
   'barcode-aware update replaces barcode'
