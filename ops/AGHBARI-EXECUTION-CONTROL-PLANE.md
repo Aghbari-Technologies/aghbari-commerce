@@ -1,14 +1,15 @@
-# CURRENT EXECUTION REALITY — RUN-2026-09-20-RESUME-005
+# CURRENT EXECUTION REALITY — RUN-2026-09-20-RESUME-006
 - Development branch: `enhancement/market-ready-v4-20260918`
-- Current development SHA: `07c3cab1724d54d34234d67250276ac12968e14e`
-- PR #88: OPEN / DRAFT / MERGEABLE; base remains frozen certification candidate.
-- Exact Vercel deployment: `dpl_B7fY9FmRsoECLu7TLUWGxCPp3ALG` READY; exact Git SHA `07c3cab1724d54d34234d67250276ac12968e14e`.
-- Frozen certification candidate: `2facceb39aaa826413f20245a6f20b6c2ff7cd34` — NO TOUCH.
-- Production: HOLD / NO TOUCH.
-- Current exact-SHA gates: Security 2756 SUCCESS; Quality 3066 SUCCESS; G1 push 2901 SUCCESS; G1 PR 2902 SUCCESS; Migration 3041 SUCCESS; Test-the-Test 666 SUCCESS; Vercel Browser E2E 576 SUCCESS; Netlify Exact SHA 35 SUCCESS.
-- Supabase live: ACTIVE_HEALTHY; customer role separation is applied; no customer-linked profile remains viewer; invitation RPC remains service_role-only.
-- Fixture integrity: customer seed role and product column shape are corrected; non-production E2E Product A inventory was replenished only for deployed browser proof.
-- Formal Final Regression: NOT_PROVEN; production-smoke.yml is workflow_dispatch-only and connected GitHub tools do not expose dispatch.
+- Current development SHA: `4f0a0614ab94e1c2ebd61745aa915f6942b3c5a0`
+- PR #88: OPEN / DRAFT / MERGEABLE
+- Exact Vercel development deployment: `dpl_BCvmScQ6hMUQDppRXMCnGkkRV5hd` READY; exact Git SHA `4f0a0614ab94e1c2ebd61745aa915f6942b3c5a0`
+- Frozen certification candidate: `2facceb39aaa826413f20245a6f20b6c2ff7cd34` — NO TOUCH
+- Production: HOLD / NO TOUCH
+- Final Regression / Exact Artifact `35477022465`: SUCCESS on current SHA
+- Quality `35477022455`: SUCCESS; Security `35477022467`: SUCCESS; G1 push/PR `35477022486`/`35477025357`: SUCCESS
+- Migration `35477022461`: IN PROGRESS; Test-the-Test `35477022490`: IN PROGRESS
+- Netlify Exact SHA `35477022463`: BLOCKED, HTTP 403 account credit usage exceeded
+- Current browser E2E: NOT_PROVEN for `4f0a0614ab94e1c2ebd61745aa915f6942b3c5a0`; historical `07c3cab...` browser evidence is not transferred
 - This section is a live state overlay only; the execution constitution below remains authoritative.
 
 # الأغبري | Aghbari Commerce — Execution Control Plane
@@ -47,17 +48,19 @@
 
 # 0A. AUTHORITATIVE LIVE EXECUTION STATE — 2026-09-20 — CURRENT RECONCILIATION
 - DEVELOPMENT LANE: `enhancement/market-ready-v4-20260918`; PR #88 OPEN / DRAFT / MERGEABLE.
-- CURRENT DEVELOPMENT SHA: `07c3cab1724d54d34234d67250276ac12968e14e`.
-- EXACT VERCEL DEVELOPMENT DEPLOYMENT: `dpl_B7fY9FmRsoECLu7TLUWGxCPp3ALG`, READY; deployment metadata reports the same exact SHA.
-- CURRENT-SHA CI: security-audit 2756 SUCCESS; application-quality 3066 SUCCESS; G1 push 2901 SUCCESS; G1 PR 2902 SUCCESS; migration-proof 3041 SUCCESS; Test-the-Test 666 SUCCESS; Browser E2E 576 SUCCESS; Netlify Exact SHA 35 SUCCESS.
-- EXACT BROWSER EVIDENCE: Customer critical path + Admin control-plane passed on the exact Vercel deployment; Netlify exact customer/admin E2E also passed; exact artifacts are retained in GitHub Actions.
-- DATABASE/ROLE RECONCILIATION: `user_role` includes `customer`; no customer-linked profile remains `viewer`; `consume_customer_invitation` is service_role-only; customer/staff separation is proven by migration and deployed browser suites.
-- FIXTURE RECONCILIATION: live non-production E2E Product A stock was replenished before deployed proof because browser tests mutate stock; source seed now uses distinct customer role and valid product barcode column shape.
-- FORMAL FINAL REGRESSION: NOT_PROVEN. `.github/workflows/production-smoke.yml` is `workflow_dispatch` only; connected GitHub mutation surface lacks workflow-dispatch.
+- CURRENT DEVELOPMENT SHA: `4f0a0614ab94e1c2ebd61745aa915f6942b3c5a0`.
+- EXACT VERCEL DEVELOPMENT DEPLOYMENT: `dpl_BCvmScQ6hMUQDppRXMCnGkkRV5hd`, READY.
+- CURRENT-SHA FINAL REGRESSION: `35477022465` SUCCESS.
+- CURRENT-SHA QUALITY/SECURITY/G1: `35477022455`/`35477022467`/`35477022486`/`35477025357` SUCCESS.
+- CURRENT-SHA MIGRATION: `35477022461` IN PROGRESS.
+- CURRENT-SHA TEST-THE-TEST: `35477022490` IN PROGRESS.
+- NETLIFY EXACT-SHA: `35477022463` BLOCKED by external account-credit exhaustion (HTTP 403).
+- EXACT CURRENT-SHA BROWSER E2E: NOT_PROVEN.
+- FORMAL FINAL REGRESSION: PROVEN for current development SHA `4f0a0614ab94e1c2ebd61745aa915f6942b3c5a0` by `35477022465`.
 - CERTIFICATION: NO.
 - CERTIFICATION CANDIDATE: `2facceb39aaa826413f20245a6f20b6c2ff7cd34` — FROZEN / NO TOUCH.
 - PRODUCTION: NO TOUCH.
-- NEXT OPEN FRONT: reconcile the 54-commit development delta against the frozen candidate, prepare the exact candidate evidence path, and close the formal-regression tooling boundary without mutating candidate or Production.
+- NEXT OPEN FRONT: close Migration/Test-the-Test; then candidate reconciliation/evidence without candidate or Production mutation.
 
 # 0B. AUTONOMOUS MEMORY + SELF-IMPROVEMENT PROTOCOL
 
@@ -1774,3 +1777,10 @@ No production mutation was performed during this run.
 - Proof-system lesson: a test can fail because its fixture is malformed or exhausted while the product path is correct. Diagnose the runtime contract first; never weaken the assertion to obtain a green result.
 - Durable rule added: every customer-browser fixture must satisfy identity(role/customer link), authorized pricing, valid product shape, and positive stock preconditions before runtime proof; seed scripts must be treated as executable test infrastructure and validated on a fresh DB path.
 - Release boundary unchanged: development evidence is not candidate evidence; certification remains NO; Production remains NO TOUCH until exact candidate regression/certification gates are proven.
+
+
+## Evolution record — RUN-2026-09-20-RESUME-006
+- Release-proof contract corrected: application emits `built_at`; Final Regression now validates the canonical field (with backward-compatible fallback).
+- Automation proof corrected: exact Final Regression self-triggers on enhancement push and waits for a Vercel Preview artifact matching the exact SHA.
+- Netlify external blocker classified: deployment attempt returns HTTP 403 because account credits are exhausted; do not hide this as a test failure or retry against the same blocked account.
+- Evidence boundary: current development SHA is proven at Final Regression level; current browser E2E remains NOT_PROVEN; frozen candidate and Production remain untouched.
