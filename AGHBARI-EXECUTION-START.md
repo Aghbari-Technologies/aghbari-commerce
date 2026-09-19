@@ -13,4 +13,4 @@
 `1` = EXECUTE NOW.
 
 ## Current next fronts
-P0 invitation RPC boundary → viewer routing → barcode contract → final regression/proof → cleanup/consolidation.
+P0 candidate reconciliation → formal final-regression capability closure → certification evidence pack; viewer/customer role split and browser/fixture integrity are now proven on development SHA `07c3cab1724d54d34234d67250276ac12968e14e`.
