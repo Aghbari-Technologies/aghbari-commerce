@@ -44,7 +44,7 @@ insert into public.profiles(id,organization_id,customer_id,role) values
 insert into public.branches(id,organization_id,name,is_active)
 values('cccccccc-3333-4333-8333-cccccccc0110','cccccccc-3333-4333-8333-cccccccc0100','Barcode Branch',true);
 insert into public.warehouses(id,organization_id,branch_id,name,is_active)
-values('cccccccc-3333-4333-8333-cccccccc0120','cccccccc-3333-4333-8333-cccccccc0110','Barcode Warehouse',true);
+values('cccccccc-3333-4333-8333-cccccccc0100','cccccccc-3333-4333-8333-cccccccc0110','Barcode Warehouse',true);
 insert into public.price_lists(organization_id,tier,name,currency)
 values('cccccccc-3333-4333-8333-cccccccc0100','retail','Barcode Retail','YER')
 on conflict do nothing;
