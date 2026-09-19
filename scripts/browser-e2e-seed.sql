@@ -33,7 +33,7 @@ on conflict (id) do nothing;
 insert into public.products(id,organization_id,sku,barcode,name,unit,status) values
   ('90000000-0000-4000-8000-000000000501','90000000-0000-4000-8000-000000000101','BROW-001','6290000000101','Browser Product A','unit','active'),
   ('90000000-0000-4000-8000-000000000502','90000000-0000-4000-8000-000000000102','BROW-002','6290000000102','Browser Product B','unit','active'),
-  ('90000000-0000-4000-8000-000000000503','90000000-0000-4000-8000-000000000101','BROW-INACTIVE','Inactive Product','unit','inactive')
+  ('90000000-0000-4000-8000-000000000503','90000000-0000-4000-8000-000000000101','BROW-INACTIVE','6290000000199','Inactive Product','unit','inactive')
 on conflict (id) do nothing;
 
 insert into public.price_lists(organization_id,tier,name,currency) values
