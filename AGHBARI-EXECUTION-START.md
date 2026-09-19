@@ -1,153 +1,78 @@
-# 🔴 ONE-KEY OPERATOR CONTRACT — COMMAND 1
+# 🔴 AGHBARI COMMERCE — MASTER BOOT ROUTER
 
-**A user message containing only `1` is a control signal, not a request to compose another instruction message.**
+> **This is the only launch message a new session needs.** It is intentionally short. It does not contain project memory; it forces the programmer to read the live memory chain in order.
 
-Upon receiving `1`, the programmer MUST:
-- read the canonical Control Plane;
-- read `ops/AGHBARI-DEVELOPMENT-PROGRESS.md` — **MANDATORY RESUME CHECKPOINT; do not skip**;
-- read `PROJECT_MEMORY.md`;
-- read `ops/AGHBARI-LATEST-EXECUTION-STATE.md`;
-- verify the repository's real current state and exact SHA;
-- execute the unresolved fronts itself;
-- make all delegated engineering decisions itself;
-- use connected GitHub/Vercel/Supabase/browser/security/research tooling;
-- work independent fronts in parallel;
-- continue through implementation, testing, adversarial verification, regression, evidence capture, memory update, and the next logical executable front.
+## PROJECT
+**Aghbari Commerce | الأغبري**
 
-**DO NOT respond to `1` by merely printing/rephrasing a command, checklist, plan, or asking what to do next.**
-**DO NOT ask the owner to paste old reports when the repository and connected tools can recover the state.**
-**DO NOT stop after reading the documents. Reading is the first step; execution is the job.**
+Repository: `Aghbari-Technologies/aghbari-commerce`
 
-The only valid reason to stop is a real execution boundary such as:
-- a hard external permission/credential limitation that has been verified;
-- a required owner decision outside delegated technical authority;
-- or a genuinely exhausted execution path with no safe actionable front remaining.
+## 🔒 MANDATORY MEMORY CHAIN
 
-Even when one front is blocked, continue every independent executable front and persist the blocker with evidence.
+Do **not** start from chat history. Start here, then follow the chain exactly:
 
----
-# الأغبري | EXECUTION START — AUTONOMOUS ENGINEERING CONTROL
+```text
+00 START / ROUTER
+   ↓
+01 CONTROL PLANE — rules, authority, proof, safety
+   ↓
+02 PROJECT MEMORY — PRODUCT SPECIFICATIONS + permanent decisions
+   ↓
+03 DEVELOPMENT PROGRESS — PROBLEMS / fixes / closures / historical evidence
+   ↓
+04 LATEST EXECUTION STATE — LATEST RESULTS / current blockers / next action
+   ↓
+05 CURRENT REALITY — verify GitHub / CI / Supabase / deployment / runtime as required
+   ↓
+06 EXECUTE — highest-priority unresolved front
+```
 
-> **Fast launch router.** This file does not contain the whole protocol. It routes every execution to the canonical Control Plane, durable Project Memory, and mutable Latest Execution State.
+### Exact files
 
-## Canonical operating layers
+**01 — Constitution**
+`ops/AGHBARI-EXECUTION-CONTROL-PLANE.md`
 
-1. `ops/AGHBARI-EXECUTION-CONTROL-PLANE.md` on `ops/execution-control-plane` = constitution, decision authority, proof rules, release safety, and self-improvement.
-2. `PROJECT_MEMORY.md` on `ops/execution-control-plane` = durable architecture, engineering standards, design system, decisions, backlog, lessons, and verification vocabulary.
-3. `ops/AGHBARI-LATEST-EXECUTION-STATE.md` on `ops/execution-control-plane` = current candidate/live/production state, blockers, exact evidence, tooling status, and next queue.
-4. This file on `main` = launch router only.
+Read first after this router. It defines the operating rules, decision authority, proof hierarchy, security, certification, production safety, and execution protocol.
 
-## User command `1` — EXECUTE AUTONOMOUSLY — NO REPLY-WITH-PROMPT
+**02 — Specifications / Permanent Memory**
+`PROJECT_MEMORY.md`
 
-When the user sends only `1`, this is an execution trigger. Begin repository/tool execution immediately. The operator must not echo, regenerate, or paraphrase the operating instructions as its primary response. It must execute them.
+Read next. This is the durable product and engineering specification: scope, architecture, UX standards, boundaries, decisions, constraints, and long-lived knowledge.
 
-READ CONTROL PLANE + DEVELOPMENT PROGRESS LEDGER + PROJECT MEMORY + LATEST STATE
-→ RESOLVE LATEST CHECKPOINT → SKIP ALREADY-CLOSED WORK → VERIFY REAL GITHUB / VERCEL / SUPABASE STATE
-→ RECONCILE STORED STATE VS REALITY
-→ IDENTIFY ALL OPEN / BLOCKED / RUNNING / NOT_PROVEN FRONTS
-→ CLASSIFY BY RISK, VALUE, DEPENDENCY
-→ START INDEPENDENT FRONTS IN PARALLEL
-→ DISCOVER REQUIRED ADJACENT WORK
-→ MAKE AUTONOMOUS ENGINEERING DECISIONS WITHIN SCOPE
-→ RESEARCH OFFICIAL SOURCES WHEN TECHNICAL UNCERTAINTY EXISTS
-→ IMPLEMENT ONLY PROVEN / NECESSARY CHANGES
-→ TEST + TEST THE TEST
-→ BREAK WITH EDGE / NEGATIVE / SECURITY / CONCURRENCY CHECKS
-→ REGRESSION
-→ VERIFY TARGET ENVIRONMENT / ARTIFACT / BROWSER / LIVE WHEN APPLICABLE
-→ REVIEW ARCHITECTURE + SECURITY + DATA + UX/UI + PERFORMANCE + RELIABILITY
-→ CAPTURE EXACT-SHA EVIDENCE
-→ UPDATE PROJECT MEMORY / DECISION LOG / LATEST STATE
-→ IMPROVE THE PROTOCOL WHEN THE RUN REVEALS A DURABLE LESSON
-→ RECONCILE EVERY STATUS
-→ CLOSE ONLY WHAT IS PROVEN
-→ MOVE TO THE NEXT LOGICAL FRONT
-→ CONTINUE UNTIL A REAL EXECUTION BOUNDARY OR TRUE CLOSURE
+**03 — Problems / Progress Ledger**
+`ops/AGHBARI-DEVELOPMENT-PROGRESS.md`
 
-### Command 1 autonomy rules
+Read next. It carries the execution history as a compact problem/solution ledger: what was found, root cause, what changed, what was proven, what remains open, and why closed work must not be repeated.
 
-- The programmer leads technical architecture, implementation, refactoring, testing, security, UI/UX, performance, CI/CD, observability, and release engineering.
-- Do not wait for file names, component names, implementation details, colors, spacing, test cases, or the next technical step when expert judgment is sufficient.
-- Discover and execute necessary work required for correctness, security, reliability, testability, or release readiness.
-- Do not expand into optional product features without owner adoption.
-- Escalate only material product, commercial, irreversible, cost, core-feature, or legal/compliance decisions that require owner judgment.
+**04 — Latest Results / Current Router**
+`ops/AGHBARI-LATEST-EXECUTION-STATE.md`
 
-## User command `2` — STRENGTHEN / RE-CALCULATE
+Read last in the memory chain. It is the current checkpoint: exact SHA, branch, PR, candidate, production, latest evidence, active blockers, and the next executable front.
 
-When the user sends only `2`, treat the latest programmer result as an input, not as truth.
+## 🔁 HANDOFF RULE
 
-READ NEWEST RESULT + CONTROL PLANE + PROJECT MEMORY + LATEST STATE
-→ RE-QUERY ACTUAL PROJECT EVIDENCE
-→ DETECT STALE PASS / MISSING PROOF / HIDDEN BLOCKER / SKIPPED FRONT / WEAK TEST / SCOPE DRIFT
-→ IDENTIFY ROOT CAUSE
-→ SEPARATE PRODUCT DEFECT FROM PROOF / CI / ENVIRONMENT DEFECT
-→ RE-PRIORITIZE AND PARALLELIZE
-→ ISSUE / EXECUTE A STRONGER NEXT ACTION
-→ PERSIST THE NEW STATE BEFORE REPORTING
+Each layer hands the next layer only the information it needs:
 
-Do not merely rewrite the previous command. Remove redundant work, demand missing proof, increase forensic precision, and preserve all safety boundaries.
+`RULES → SPECIFICATION → PROBLEMS/HISTORY → LATEST RESULTS → CURRENT REALITY → EXECUTION`
 
-## Hard invariants
+Do not create another memory system. Do not ask the owner to reconstruct history that is already stored here.
 
-- `CODE ≠ TEST ≠ CI ≠ RUNTIME ≠ LIVE ≠ PRODUCTION`
-- `IMPLEMENTED ≠ TESTED ≠ VERIFIED ≠ PROVEN ≠ CERTIFIED`
-- `NO EVIDENCE → NO PASS`
-- Evidence belongs to the exact SHA that produced it.
-- New SHA means affected old evidence must be revalidated; no PASS transfer by similarity or smallness.
-- Production remains `NO TOUCH` until the release protocol permits a change.
-- A blocked tool/credential boundary is recorded as BLOCKED; it is never converted into PASS by workaround theater.
-- No invented secrets, credentials, logs, screenshots, statuses, runtime claims, or test results.
-- A test that cannot expose the claimed defect is not accepted merely because CI is green.
+## 🎯 EXECUTE NOW
 
-## Current toolset available to the operator
+After the complete chain is read:
 
-Core: GitHub, Vercel, Supabase.
-Connected accelerators: Firecrawl, TinyFish, PostHog.
-Project proof/security tools: Playwright, Gitleaks, CodeQL, Semgrep CE, Trivy, OWASP ZAP, Dependabot, OpenSSF Scorecard.
-Additional connectors may be used when actually connected and relevant; capability must be verified before being treated as evidence.
+`READ → RECONCILE → IDENTIFY OPEN FRONTS → PRIORITIZE → IMPLEMENT → TEST → VERIFY → PROVE → UPDATE MEMORY → CONTINUE`
 
-## Required completion transaction
+Do not reply with a new plan or repeat this protocol. **Execute.**
 
-Before the programmer reports completion:
-1. Save newest verified state to `ops/AGHBARI-LATEST-EXECUTION-STATE.md`.
-2. Append one run record to `ops/AGHBARI-DEVELOPMENT-PROGRESS.md` before reporting.
-3. Record the compact run/job/SHA/front/result/root-cause/artifact/next-action entry.
-3. Record consequential decisions in `PROJECT_MEMORY.md`.
-4. Add a Control Plane evolution entry when a durable lesson, tool change, proof weakness, or safer procedure was discovered.
-5. Reconcile exact-SHA evidence and release blockers.
-6. Only then report the result to the user.
+## 🔴 MANDATORY END GATE
 
-## Exit format
+No execution is complete until the existing live-memory files are updated:
 
-CURRENT STATE
-Current SHA / Branch / Objective
+1. `PROJECT_MEMORY.md` — only durable specifications/decisions/lessons.
+2. `ops/AGHBARI-DEVELOPMENT-PROGRESS.md` — one compact run/problem/result record.
+3. `ops/AGHBARI-LATEST-EXECUTION-STATE.md` — newest exact state, evidence, blockers, next action.
 
-DISCOVERED
-What was found?
+The next session must be able to resume from these files without asking what happened.
 
-ROOT CAUSE
-What was actually wrong?
-
-ACTION
-What changed?
-
-TESTS
-What actually ran?
-
-VERIFICATION
-What was actually proven, and at which layer?
-
-EVIDENCE
-Exact run/job/artifact references.
-
-REMAINING
-Only genuine OPEN / BLOCKED / RUNNING / NOT_PROVEN work.
-
-NEXT ACTION
-The next logical executable front.
-
-**The project advances by initiative + execution + evidence, not by waiting for the owner to manage technical details.**
-
-### Durable development memory gate
-
-**Before any code or test action, Command `1` must read `ops/AGHBARI-DEVELOPMENT-PROGRESS.md` and use its latest checkpoint as the resume point. After every execution, append exactly one run record there. A prior closed item must not be reimplemented unless the exact-SHA/dependency/evidence state invalidates its closure.**
+**USER COMMAND `1` = EXECUTE NOW.**
