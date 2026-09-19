@@ -1,3 +1,14 @@
+# CURRENT EXECUTION REALITY — RUN-2026-09-20-RESUME-003
+- Development branch: `enhancement/market-ready-v4-20260918`
+- Current development SHA: `ff98a64ad2a547b6ac79b68cede121f5c5f0c8cb`
+- PR #88: OPEN / DRAFT / MERGEABLE
+- Exact Vercel deployment: `dpl_2i86vekQXeYAKfgM2siKxsP4qr4g` READY
+- Frozen certification candidate: `2facceb39aaa826413f20245a6f20b6c2ff7cd34` — NO TOUCH
+- Production: HOLD / NO TOUCH
+- Current gates: application-quality 3054 SUCCESS; security-audit 2744 SUCCESS; G1 2885 SUCCESS; Browser E2E 572 RUNNING; migration-proof 3029 RUNNING; Test-the-Test 662 RUNNING.
+- Viewer front: implemented in frontend and database read-only scope; exact runtime closure still pending.
+- This section is a live state overlay only; the execution constitution below remains authoritative.
+
 # الأغبري | Aghbari Commerce — Execution Control Plane
 
 > **Canonical operating document for continuous execution, proof, reconciliation, and release closure.**
