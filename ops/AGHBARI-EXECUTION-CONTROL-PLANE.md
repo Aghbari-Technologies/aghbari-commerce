@@ -1,12 +1,14 @@
-# CURRENT EXECUTION REALITY — RUN-2026-09-20-RESUME-004
+# CURRENT EXECUTION REALITY — RUN-2026-09-20-RESUME-005
 - Development branch: `enhancement/market-ready-v4-20260918`
-- Current development SHA: `fffff8c1a48c2da73f70fa79f766b1b116c9cf80`
-- PR #88: OPEN / DRAFT / MERGEABLE
-- Exact Vercel deployment: `dpl_DYdizKuWnLDaRDmNA6Unbou9SDAj` BUILDING for the exact current SHA
-- Frozen certification candidate: `2facceb39aaa826413f20245a6f20b6c2ff7cd34` — NO TOUCH
-- Production: HOLD / NO TOUCH
-- Current gates: security-audit 2749 SUCCESS; application-quality 3059 RUNNING; G1 2891/2892 RUNNING; migration-proof 3034 RUNNING; Test-the-Test 663 RUNNING; Netlify 32 PENDING.
-- Viewer front: portal routing + read-only DB scope already implemented; current SHA adds role-aware quick-link closure; exact runtime/browser proof pending.
+- Current development SHA: `07c3cab1724d54d34234d67250276ac12968e14e`
+- PR #88: OPEN / DRAFT / MERGEABLE; base remains frozen certification candidate.
+- Exact Vercel deployment: `dpl_B7fY9FmRsoECLu7TLUWGxCPp3ALG` READY; exact Git SHA `07c3cab1724d54d34234d67250276ac12968e14e`.
+- Frozen certification candidate: `2facceb39aaa826413f20245a6f20b6c2ff7cd34` — NO TOUCH.
+- Production: HOLD / NO TOUCH.
+- Current exact-SHA gates: Security 2756 SUCCESS; Quality 3066 SUCCESS; G1 push 2901 SUCCESS; G1 PR 2902 SUCCESS; Migration 3041 SUCCESS; Test-the-Test 666 SUCCESS; Vercel Browser E2E 576 SUCCESS; Netlify Exact SHA 35 SUCCESS.
+- Supabase live: ACTIVE_HEALTHY; customer role separation is applied; no customer-linked profile remains viewer; invitation RPC remains service_role-only.
+- Fixture integrity: customer seed role and product column shape are corrected; non-production E2E Product A inventory was replenished only for deployed browser proof.
+- Formal Final Regression: NOT_PROVEN; production-smoke.yml is workflow_dispatch-only and connected GitHub tools do not expose dispatch.
 - This section is a live state overlay only; the execution constitution below remains authoritative.
 
 # الأغبري | Aghbari Commerce — Execution Control Plane
@@ -45,16 +47,17 @@
 
 # 0A. AUTHORITATIVE LIVE EXECUTION STATE — 2026-09-20 — CURRENT RECONCILIATION
 - DEVELOPMENT LANE: `enhancement/market-ready-v4-20260918`; PR #88 OPEN / DRAFT / MERGEABLE.
-- CURRENT DEVELOPMENT SHA: `fffff8c1a48c2da73f70fa79f766b1b116c9cf80`.
-- CURRENT UI FIX: viewer dashboard no longer renders quick-action anchors whose target sections are unavailable to viewer; viewer gets explicit read-only status instead.
-- EXACT VERCEL DEVELOPMENT DEPLOYMENT: `dpl_DYdizKuWnLDaRDmNA6Unbou9SDAj`, BUILDING; exact SHA `fffff8c1a48c2da73f70fa79f766b1b116c9cf80`.
-- CURRENT-SHA CI: security-audit 2749 SUCCESS; application-quality 3059 RUNNING after unit/integration + lint SUCCESS; G1 2891/2892 RUNNING; migration-proof 3034 RUNNING; Test-the-Test 663 RUNNING; Netlify 32 PENDING.
-- EXACT BROWSER PROOF: NOT_PROVEN for the new SHA pending Vercel deployment-status success and browser execution.
-- SUPABASE: `mrcyqezbhpncuvaehwgf` ACTIVE_HEALTHY; viewer read-only helper remains separate from write-sensitive `is_staff()`.
-- FORMAL FINAL REGRESSION: NOT_PROVEN — connected GitHub mutation surface still has no workflow-dispatch operation.
+- CURRENT DEVELOPMENT SHA: `07c3cab1724d54d34234d67250276ac12968e14e`.
+- EXACT VERCEL DEVELOPMENT DEPLOYMENT: `dpl_B7fY9FmRsoECLu7TLUWGxCPp3ALG`, READY; deployment metadata reports the same exact SHA.
+- CURRENT-SHA CI: security-audit 2756 SUCCESS; application-quality 3066 SUCCESS; G1 push 2901 SUCCESS; G1 PR 2902 SUCCESS; migration-proof 3041 SUCCESS; Test-the-Test 666 SUCCESS; Browser E2E 576 SUCCESS; Netlify Exact SHA 35 SUCCESS.
+- EXACT BROWSER EVIDENCE: Customer critical path + Admin control-plane passed on the exact Vercel deployment; Netlify exact customer/admin E2E also passed; exact artifacts are retained in GitHub Actions.
+- DATABASE/ROLE RECONCILIATION: `user_role` includes `customer`; no customer-linked profile remains `viewer`; `consume_customer_invitation` is service_role-only; customer/staff separation is proven by migration and deployed browser suites.
+- FIXTURE RECONCILIATION: live non-production E2E Product A stock was replenished before deployed proof because browser tests mutate stock; source seed now uses distinct customer role and valid product barcode column shape.
+- FORMAL FINAL REGRESSION: NOT_PROVEN. `.github/workflows/production-smoke.yml` is `workflow_dispatch` only; connected GitHub mutation surface lacks workflow-dispatch.
 - CERTIFICATION: NO.
 - CERTIFICATION CANDIDATE: `2facceb39aaa826413f20245a6f20b6c2ff7cd34` — FROZEN / NO TOUCH.
 - PRODUCTION: NO TOUCH.
+- NEXT OPEN FRONT: reconcile the 54-commit development delta against the frozen candidate, prepare the exact candidate evidence path, and close the formal-regression tooling boundary without mutating candidate or Production.
 
 # 0B. AUTONOMOUS MEMORY + SELF-IMPROVEMENT PROTOCOL
 
@@ -1763,3 +1766,11 @@ No production mutation was performed during this run.
 - Observed proof/UX defect: role routing was correct, but shared dashboard quick links were not role-gated, leaving viewer with dead anchors to unavailable sections.
 - Durable rule: every rendered navigation affordance must have a reachable target in the current role's rendered surface; role visibility and navigation targets must use the same permission predicate.
 - Action: fixed source on exact development lane; candidate and Production remained untouched. Runtime proof remains pending.
+
+
+## Evolution record — RUN-2026-09-20-RESUME-005
+- Root cause lesson: customer-facing identities and staff viewer identities must be distinct in the database enum, profile records, invitation RPC, seed fixtures, and UI routing. A frontend role value alone is insufficient when the database default/enum still maps customers to viewer.
+- Test-system lesson: deployed E2E data is mutable; stock-bearing fixtures can be consumed by successful tests. Future exact browser runs must verify/reset role, pricing, product-column, and minimum-stock invariants before execution rather than assuming persistent state.
+- Proof-system lesson: a test can fail because its fixture is malformed or exhausted while the product path is correct. Diagnose the runtime contract first; never weaken the assertion to obtain a green result.
+- Durable rule added: every customer-browser fixture must satisfy identity(role/customer link), authorized pricing, valid product shape, and positive stock preconditions before runtime proof; seed scripts must be treated as executable test infrastructure and validated on a fresh DB path.
+- Release boundary unchanged: development evidence is not candidate evidence; certification remains NO; Production remains NO TOUCH until exact candidate regression/certification gates are proven.
