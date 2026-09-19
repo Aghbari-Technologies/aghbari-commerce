@@ -74,6 +74,8 @@ select is(
   'product row retains barcode'
 );
 
+set local role postgres;
+
 insert into public.product_prices(organization_id,price_list_id,product_id,amount,valid_from)
 select
  'cccccccc-3333-4333-8333-cccccccc0100',
@@ -100,6 +102,10 @@ where organization_id='cccccccc-3333-4333-8333-cccccccc0100' and sku='BAR-001';
 
 set local request.jwt.claim.sub='cccccccc-3333-4333-8333-cccccccc0002';
 
+set local role authenticated;
+set local request.jwt.claim.role='authenticated';
+set local request.jwt.claim.sub='cccccccc-3333-4333-8333-cccccccc0002';
+
 select is(
   (select barcode
    from public.get_catalog_with_barcode(
@@ -109,6 +115,9 @@ select is(
   '6299990000001',
   'customer catalog projection returns barcode'
 );
+
+set local request.jwt.claim.role='authenticated';
+set local request.jwt.claim.sub='cccccccc-3333-4333-8333-cccccccc0001';
 
 set local request.jwt.claim.sub='cccccccc-3333-4333-8333-cccccccc0001';
 
