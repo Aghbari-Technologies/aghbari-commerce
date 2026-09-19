@@ -24,9 +24,9 @@
 - Repo: `Aghbari-Technologies/aghbari-commerce`.
 - Development branch: `enhancement/market-ready-v4-20260918`.
 - PR #88: OPEN / DRAFT / MERGEABLE; base is frozen certification candidate.
-- **Current development SHA: `07c3cab1724d54d34234d67250276ac12968e14e`** — latest commit `test(e2e): fix browser product fixture column shape`.
+- **Current development SHA: `4f0a0614ab94e1c2ebd61745aa915f6942b3c5a0`** — latest commit `test(release): align build metadata assertion with built_at contract`.
 - Frozen certification candidate: `2facceb39aaa826413f20245a6f20b6c2ff7cd34` — **FROZEN / NO TOUCH**.
-- Latest Vercel development deployment for exact current SHA: `dpl_B7fY9FmRsoECLu7TLUWGxCPp3ALG`, state READY, project `aghbari-commerce-c2dd`; Vercel metadata reports exact SHA `07c3cab1724d54d34234d67250276ac12968e14e`.
+- Latest Vercel development deployment for exact current SHA: `dpl_BCvmScQ6hMUQDppRXMCnGkkRV5hd`, state READY, exact Git SHA `4f0a0614ab94e1c2ebd61745aa915f6942b3c5a0`.
 - Earlier exact Netlify development proof remains valid only for its exact SHA `cb2707b8005ac8237b06a7c89cc9bcf68dc50061`; it is not evidence for the current SHA.
 - Formal Final Regression: **NOT_PROVEN** because the connected GitHub mutation surface does not expose workflow dispatch.
 - Certification: **NO**. Production: **HOLD / NO NEW TOUCH**.
@@ -38,7 +38,7 @@
 - **Invitation RPC boundary is now hardened live:** `consume_customer_invitation(text,uuid)` has `anon_execute=false`, `authenticated_execute=false`, `service_role_execute=true`.
 - **Barcode RPC boundary is now hardened live:** `get_catalog_with_barcode(...)` and both `upsert_product(...)` overloads have `anon_execute=false`, `authenticated_execute=true`, `service_role_execute=true`.
 - Latest barcode hardening source commit: `f7a0b9d6b5fe608da78f2881fc898bd922f0ff9d` with migration `supabase/migrations/20260920000210_harden_barcode_rpc_privileges.sql`.
-- Latest exact current-SHA workflow state: security-audit `2756` SUCCESS; application-quality `3066` SUCCESS; G1 push `2901` SUCCESS; G1 PR `2902` SUCCESS; migration-proof `3041` SUCCESS; Test-the-Test `666` SUCCESS; Vercel Browser E2E `576` SUCCESS; Netlify Exact SHA `35` SUCCESS.
+- Latest exact current-SHA workflow state: Final Regression `35477022465` SUCCESS; Quality `35477022455` SUCCESS; Security `35477022467` SUCCESS; G1 push/PR `35477022486`/`35477025357` SUCCESS; Migration `35477022461` IN PROGRESS; Test-the-Test `35477022490` IN PROGRESS; Netlify Exact SHA `35477022463` BLOCKED by account-credit 403.
 
 ## 5. VERIFIED PRODUCT CONTRACT PROGRESS
 ### Completed / proven on development lane
@@ -49,7 +49,7 @@
 - Vercel exact development deployment for current SHA is READY.
 
 ### Still OPEN / NOT_PROVEN
-1. **Viewer/customer routing:** PROVEN on development SHA `07c3cab...`; viewer is read-only staff, customer identities use distinct customer role, and deployed Customer + Admin browser E2E passed.
+1. **Viewer/customer routing:** PROVEN on development SHA `07c3cab...` and preserved by current `4f0a0614ab94e1c2ebd61745aa915f6942b3c5a0`; customer identities are distinct from staff viewer identities in schema, invitation RPC, fixture, and UI.
 2. **Formal Final Regression:** NOT_PROVEN due connector/workflow-dispatch boundary.
 3. **Certification:** NO; frozen candidate must not be modified or certified from development evidence.
 4. **Production:** NO TOUCH.
@@ -71,7 +71,7 @@
 
 ## 8. NEXT EXECUTION QUEUE
 ### P0
-1. Reconcile the 54-commit development delta against frozen candidate `2facceb...` and prepare the formal regression/certification evidence boundary.
+1. Close current-SHA Migration/Test-the-Test, then reconcile the development delta against frozen candidate `2facceb...` and prepare candidate evidence without touching it.
 2. Record exact current-SHA evidence and reconcile development against frozen candidate without touching the candidate.
 3. Do not rerun already-closed current-SHA fronts unless evidence becomes invalid; proceed to candidate reconciliation and the remaining formal regression capability boundary.
 
@@ -116,3 +116,12 @@ On command `1`, immediately read this hub and the Control Plane, reconcile curre
 - E2E lesson: non-production browser stock is mutable and was replenished only for test execution; current observed fixture stock is 96. Source fixture role and column-shape corrections are committed; local-browser workflow dispatch remains unavailable, so no local-browser PASS is claimed.
 - Auth leaked-password protection remains an external Supabase configuration warning.
 - Formal Final Regression: NOT_PROVEN because production-smoke.yml requires workflow_dispatch and the connected GitHub mutation surface exposes no dispatch. Certification NO. Production HOLD / NO TOUCH.
+
+
+## Reconciliation — 2026-09-20 / RUN-2026-09-20-RESUME-006
+- Current development HEAD is `4f0a0614ab94e1c2ebd61745aa915f6942b3c5a0`; exact Vercel deployment `dpl_BCvmScQ6hMUQDppRXMCnGkkRV5hd` is READY.
+- Current-SHA Final Regression `35477022465` is SUCCESS: exact checkout/deployed SHA, security headers, Arabic/RTL shell, PWA manifest, and service worker all verified.
+- Current-SHA quality/security/G1 proofs are SUCCESS. Migration/Test-the-Test are still IN PROGRESS and therefore remain NOT_PROVEN until their runs close.
+- Netlify Exact SHA `35477022463` is BLOCKED by Netlify account credit exhaustion (HTTP 403). This is an external platform quota blocker, not a product-test failure; no further Netlify deploy attempt should be made until the account is credited.
+- Exact current-SHA browser E2E is NOT_PROVEN; historical browser evidence on `07c3cab...` remains non-transferable by policy.
+- Formal Final Regression is now PROVEN on current development SHA `4f0a0614ab94e1c2ebd61745aa915f6942b3c5a0`; certification is still NO because the frozen candidate remains `2facceb...` and development evidence does not transfer. Production remains NO TOUCH.
