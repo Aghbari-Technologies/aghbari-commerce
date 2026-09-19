@@ -24,9 +24,9 @@
 - Repo: `Aghbari-Technologies/aghbari-commerce`.
 - Development branch: `enhancement/market-ready-v4-20260918`.
 - PR #88: OPEN / DRAFT / MERGEABLE; base is frozen certification candidate.
-- **Current development SHA: `f7a0b9d6b5fe608da78f2881fc898bd922f0ff9d`** — latest commit `fix(security): revoke implicit public barcode RPC execution`.
+- **Current development SHA: `fffff8c1a48c2da73f70fa79f766b1b116c9cf80`** — latest commit `fix(ui): hide unavailable viewer quick links`.
 - Frozen certification candidate: `2facceb39aaa826413f20245a6f20b6c2ff7cd34` — **FROZEN / NO TOUCH**.
-- Latest Vercel development deployment for exact current SHA: `dpl_48bgfhLNL5x3po2UNmB6NU6ghXfe`, state READY, project `aghbari-commerce-c2dd`; Vercel metadata reports exact SHA `f7a0b9d6...`.
+- Latest Vercel development deployment for exact current SHA: `dpl_DYdizKuWnLDaRDmNA6Unbou9SDAj`, state BUILDING, project `aghbari-commerce-c2dd`; Vercel metadata reports exact SHA `fffff8c1a48c2da73f70fa79f766b1b116c9cf80`.
 - Earlier exact Netlify development proof remains valid only for its exact SHA `cb2707b8005ac8237b06a7c89cc9bcf68dc50061`; it is not evidence for the current SHA.
 - Formal Final Regression: **NOT_PROVEN** because the connected GitHub mutation surface does not expose workflow dispatch.
 - Certification: **NO**. Production: **HOLD / NO NEW TOUCH**.
@@ -38,7 +38,7 @@
 - **Invitation RPC boundary is now hardened live:** `consume_customer_invitation(text,uuid)` has `anon_execute=false`, `authenticated_execute=false`, `service_role_execute=true`.
 - **Barcode RPC boundary is now hardened live:** `get_catalog_with_barcode(...)` and both `upsert_product(...)` overloads have `anon_execute=false`, `authenticated_execute=true`, `service_role_execute=true`.
 - Latest barcode hardening source commit: `f7a0b9d6b5fe608da78f2881fc898bd922f0ff9d` with migration `supabase/migrations/20260920000210_harden_barcode_rpc_privileges.sql`.
-- Latest workflow proof observed for current SHA: G1 Domain Proof run `35474365269`, conclusion `success`.
+- Latest current-SHA workflow state: security-audit `2749` SUCCESS; application-quality `3059` RUNNING after successful unit/integration + lint steps; G1 push `2891` RUNNING; G1 PR `2892` RUNNING; migration-proof `3034` RUNNING; Test-the-Test `663` RUNNING.
 
 ## 5. VERIFIED PRODUCT CONTRACT PROGRESS
 ### Completed / proven on development lane
@@ -49,7 +49,7 @@
 - Vercel exact development deployment for current SHA is READY.
 
 ### Still OPEN / NOT_PROVEN
-1. **Viewer routing:** IMPLEMENTED on the active frontend and backed by a dedicated read-only staff helper. Exact current-SHA browser proof is running; do not transfer historical evidence.
+1. **Viewer routing:** IMPLEMENTED on the active frontend and backed by a dedicated read-only staff helper. A UI defect in viewer quick navigation was fixed on the new SHA; exact runtime/browser proof is still pending.
 2. **Formal Final Regression:** NOT_PROVEN due connector/workflow-dispatch boundary.
 3. **Certification:** NO; frozen candidate must not be modified or certified from development evidence.
 4. **Production:** NO TOUCH.
@@ -71,9 +71,9 @@
 
 ## 8. NEXT EXECUTION QUEUE
 ### P0
-1. Complete current-SHA browser E2E and database/Test-the-Test runs for `ff98a64ad2a547b6ac79b68cede121f5c5f0c8cb`.
+1. Complete current-SHA browser E2E and database/Test-the-Test runs for `fffff8c1a48c2da73f70fa79f766b1b116c9cf80`.
 2. Record exact current-SHA evidence and reconcile development against frozen candidate without touching the candidate.
-3. Recheck the viewer dashboard for dead quick-action anchors after runtime proof.
+3. Verify the viewer dashboard quick-link fix at exact runtime and confirm no unavailable anchor targets are rendered.
 
 ### P1
 4. Reconcile master specification vs implementation/deferred capabilities.
@@ -96,3 +96,12 @@ On command `1`, immediately read this hub and the Control Plane, reconcile curre
 - Current exact Vercel deployment: `dpl_2i86vekQXeYAKfgM2siKxsP4qr4g` READY for `ff98a64ad2a547b6ac79b68cede121f5c5f0c8cb`. Browser run 572 has passed exact artifact identity and customer credentials checks and is executing the customer critical-path browser suite.
 - Current exact-SHA gates observed: application-quality run 3054 SUCCESS; security-audit 2744 SUCCESS; G1 push proof 2885 SUCCESS. Test-the-Test 662 and migration-proof 3029 remain RUNNING; Netlify exact-SHA run 31 is pending and not required while exact Vercel deployment is available.
 - Supabase security advisor state after the helper: 60 intentional/known authenticated SECURITY DEFINER warnings plus 1 external `auth_leaked_password_protection` warning. The new helper is deliberately read-only and does not replace the write-sensitive `is_staff()` contract.
+
+
+## Reconciliation — 2026-09-20 / RUN-2026-09-20-RESUME-004
+- Development HEAD is now `fffff8c1a48c2da73f70fa79f766b1b116c9cf80` on `enhancement/market-ready-v4-20260918`; PR #88 remains OPEN / DRAFT / MERGEABLE. Frozen candidate `2facceb39aaa826413f20245a6f20b6c2ff7cd34` remains untouched; Production remains HOLD / NO TOUCH.
+- Root cause: viewer could reach the staff dashboard correctly but still saw sidebar quick-action links for sections not rendered for that role (`orders`, `inventory`, `customers`). These were dead navigation affordances, not an authorization bypass.
+- Fix: `src/AdminExecutiveDashboard.tsx` gates each quick link by the same role rules used to render its target section and gives viewer an explicit read-only status.
+- New exact Vercel development deployment: `dpl_DYdizKuWnLDaRDmNA6Unbou9SDAj`, BUILDING at reconciliation time; no production mutation.
+- Current-SHA workflow evidence: security-audit `2749` SUCCESS; application-quality `3059` unit/integration + lint SUCCESS while production build was RUNNING; G1 `2891`/`2892`, migration `3034`, Test-the-Test `663` RUNNING; Netlify exact SHA `32` PENDING. Exact browser proof for this SHA is not yet proven because the Vercel deployment-status gate has not completed.
+- Test infrastructure note: direct container network access could not resolve GitHub, so local clone/build verification was unavailable; repository-native CI is the authoritative executable verification path for this SHA. No evidence was fabricated from that failed local attempt.
