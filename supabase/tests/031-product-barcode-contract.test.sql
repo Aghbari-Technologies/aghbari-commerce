@@ -1,6 +1,6 @@
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(14);
+select plan(15);
 
 select ok(
   has_function_privilege(
@@ -176,8 +176,8 @@ select is(
   'updated product row has new barcode'
 );
 
-select throws_ok(
-  $$select public.stage_product_import(
+select lives_ok(
+  $select public.stage_product_import(
     'duplicate-barcode.xlsx',repeat('d',64),
     jsonb_build_array(
       jsonb_build_object(
@@ -186,9 +186,13 @@ select throws_ok(
         'prices',jsonb_build_object('retail',10,'wholesale',9,'distributor',8)
       )
     )
-  )$$,
-  '22023',null,
-  'stage rejects barcode already used by another SKU'
+  )$,
+  'stage quarantines a barcode already used by another SKU'
+);
+select is(
+  (select invalid_rows from public.import_jobs where source_fingerprint=repeat('d',64)),
+  1,
+  'barcode conflict is recorded as an invalid import row'
 );
 
 select * from finish();
