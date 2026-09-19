@@ -4,6 +4,8 @@
 >
 > This document is intentionally kept on the dedicated branch `ops/execution-control-plane` so updating operational state does **not** modify the product candidate, invalidate candidate evidence, or touch Production.
 
+> **SINGLE SOURCE OF TRUTH:** `PROJECT_MEMORY.md` is the canonical durable context for product requirements, architecture, design standards, execution backlog, verified state, forensic findings, and market/language requirements. The Control Plane remains the constitution (rules only); Latest State and Development Progress are routers/history, not competing memory. Never rebuild context from raw historical logs during normal startup.
+
 ## 0. NON-NEGOTIABLE OPERATING CONTRACT
 
 1. The programmer must **start every execution by reading this document** and the latest state below. Do not ask the user to restate context that is already here.
