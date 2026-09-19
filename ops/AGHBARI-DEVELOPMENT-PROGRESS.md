@@ -2,23 +2,28 @@
 > Historical pointer only. Canonical startup knowledge is `PROJECT_MEMORY.md` on `ops/execution-control-plane`.
 
 ## Current checkpoint
-- RUN: `RUN-2026-09-20-RESUME-005`
-- Development SHA: `07c3cab1724d54d34234d67250276ac12968e14e`
+- RUN: `RUN-2026-09-20-RESUME-006`
+- Development SHA: `4f0a0614ab94e1c2ebd61745aa915f6942b3c5a0`
 - PR: #88 OPEN / DRAFT / MERGEABLE
-- Certification candidate: `2facceb39aaa826413f20245a6f20b6c2ff7cd34` — frozen
+- Current exact Vercel deployment: `dpl_BCvmScQ6hMUQDppRXMCnGkkRV5hd` READY
+- Final Regression: `35477022465` SUCCESS
+- Netlify Exact SHA: `35477022463` BLOCKED by Netlify HTTP 403 account-credit exhaustion
+- Migration: `35477022461` IN PROGRESS
+- Test-the-Test: `35477022490` IN PROGRESS
+- Certification candidate: `2facceb39aaa826413f20245a6f20b6c2ff7cd34` frozen
 - Production: HOLD / NO TOUCH
 
-## Resume record — 2026-09-20 / RUN-2026-09-20-RESUME-005
-- Development SHA: `07c3cab1724d54d34234d67250276ac12968e14e`; PR #88 OPEN / DRAFT / MERGEABLE; frozen candidate `2facceb39aaa826413f20245a6f20b6c2ff7cd34` untouched.
-- Root causes closed: customer accounts were encoded as staff viewer because the DB enum lacked customer; persistent E2E Product A stock had been exhausted; browser seed encoded customers as viewer; browser seed product rows had a malformed column shape.
-- Fixes: customer role added/migrated; customer invitation RPC now creates customer profiles; viewer quick links are role-gated; E2E seed uses customer roles and correct barcode/product columns; non-production E2E stock was replenished before deployed proof.
-- Exact current-SHA evidence: application-quality 3066 SUCCESS; security-audit 2756 SUCCESS; G1 push 2901 SUCCESS; G1 PR 2902 SUCCESS; supabase-migration-proof 3041 SUCCESS; Test-the-Test 666 SUCCESS; Vercel Browser E2E 576 SUCCESS; Netlify Exact SHA 35 SUCCESS.
-- Exact Vercel deployment: dpl_B7fY9FmRsoECLu7TLUWGxCPp3ALG READY and bound to the exact SHA.
-- Exact artifacts: Browser 10593514396; Netlify 10594935718.
-- Formal Final Regression: NOT_PROVEN. production-smoke.yml is workflow_dispatch-only and the connected GitHub mutation surface has no dispatch operation.
+## Resume record — 2026-09-20 / RUN-2026-09-20-RESUME-006
+- Current development SHA: `4f0a0614ab94e1c2ebd61745aa915f6942b3c5a0`; PR #88 OPEN / DRAFT / MERGEABLE; frozen candidate `2facceb39aaa826413f20245a6f20b6c2ff7cd34` remains untouched.
+- Final Regression / Exact Artifact `35477022465` SUCCESS on the exact Vercel Preview: checked-out SHA, deployed artifact identity, security headers, Arabic RTL shell, PWA manifest, and service worker.
+- Vercel deployment: `dpl_BCvmScQ6hMUQDppRXMCnGkkRV5hd` READY, exact Git SHA `4f0a0614ab94e1c2ebd61745aa915f6942b3c5a0`.
+- Quality `35477022455`, Security `35477022467`, G1 push `35477022486`, and G1 PR `35477025357` SUCCESS.
+- Fresh-DB migration `35477022461` and Test-the-Test `35477022490` remain IN PROGRESS at checkpoint time; no premature PASS claimed.
+- Netlify Exact SHA `35477022463` FAILED with HTTP 403 because the Netlify account exceeded credit usage; build/exact artifact completed before deployment attempt. No retry because the platform itself blocks new deploys.
+- Exact browser proof for current SHA: NOT_PROVEN. Prior `07c3cab...` browser proof is historical and not promoted to current-SHA PASS.
+- Formal Final Regression for current SHA: PROVEN by `35477022465`.
 - Certification: NO. Production: HOLD / NO TOUCH.
-- Next: reconcile the development delta against the frozen candidate and close the remaining formal-regression capability boundary without touching candidate or Production.
-
+- Next: close the remaining migration/Test-the-Test runs, then reconcile the development delta against the frozen candidate and keep Netlify blocked without consuming further quota.
 ## Resume record — 2026-09-20 / RUN-2026-09-20-RESUME-003
 - Reconciled GitHub reality: PR #88 head is `ff98a64ad2a547b6ac79b68cede121f5c5f0c8cb`, with 50 commits / 31 changed files; candidate base remains frozen.
 - Reconciled Vercel reality: exact development deployment `dpl_DYdizKuWnLDaRDmNA6Unbou9SDAj` is BUILDING for `fffff8c1a48c2da73f70fa79f766b1b116c9cf80`.
