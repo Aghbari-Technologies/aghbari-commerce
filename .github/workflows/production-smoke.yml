@@ -1,4 +1,4 @@
-name: Production Smoke / Exact Artifact
+name: Final Regression / Exact Artifact
 
 on:
   deployment_status:
@@ -17,7 +17,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: aghbari-production-smoke-${{ github.event.deployment.sha || inputs.exact_sha }}
+  group: aghbari-final-regression-${{ github.event.deployment.sha || inputs.exact_sha }}
   cancel-in-progress: false
 
 jobs:
@@ -27,10 +27,7 @@ jobs:
     if: >-
       (github.event_name == 'deployment_status' &&
        github.event.deployment_status.state == 'success' &&
-       startsWith(github.event.deployment.ref, 'enhancement/')) ||
-      (github.event_name == 'deployment_status' &&
-       github.event.deployment_status.state == 'success' &&
-       startsWith(github.event.deployment.ref, 'certification/')) ||
+       (startsWith(github.event.deployment.ref, 'enhancement/') || startsWith(github.event.deployment.ref, 'certification/'))) ||
       github.event_name == 'workflow_dispatch'
     env:
       BASE_URL: >-
@@ -40,7 +37,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.exact_sha }}
+          ref: ${{ env.EXPECTED_SHA }}
           fetch-depth: 1
       - name: Validate exact release inputs
         shell: bash
