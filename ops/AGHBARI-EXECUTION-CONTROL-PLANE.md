@@ -1,12 +1,12 @@
-# CURRENT EXECUTION REALITY — RUN-2026-09-20-RESUME-003
+# CURRENT EXECUTION REALITY — RUN-2026-09-20-RESUME-004
 - Development branch: `enhancement/market-ready-v4-20260918`
-- Current development SHA: `ff98a64ad2a547b6ac79b68cede121f5c5f0c8cb`
+- Current development SHA: `fffff8c1a48c2da73f70fa79f766b1b116c9cf80`
 - PR #88: OPEN / DRAFT / MERGEABLE
-- Exact Vercel deployment: `dpl_2i86vekQXeYAKfgM2siKxsP4qr4g` READY
+- Exact Vercel deployment: `dpl_DYdizKuWnLDaRDmNA6Unbou9SDAj` BUILDING for the exact current SHA
 - Frozen certification candidate: `2facceb39aaa826413f20245a6f20b6c2ff7cd34` — NO TOUCH
 - Production: HOLD / NO TOUCH
-- Current gates: application-quality 3054 SUCCESS; security-audit 2744 SUCCESS; G1 2885 SUCCESS; Browser E2E 572 RUNNING; migration-proof 3029 RUNNING; Test-the-Test 662 RUNNING.
-- Viewer front: implemented in frontend and database read-only scope; exact runtime closure still pending.
+- Current gates: security-audit 2749 SUCCESS; application-quality 3059 RUNNING; G1 2891/2892 RUNNING; migration-proof 3034 RUNNING; Test-the-Test 663 RUNNING; Netlify 32 PENDING.
+- Viewer front: portal routing + read-only DB scope already implemented; current SHA adds role-aware quick-link closure; exact runtime/browser proof pending.
 - This section is a live state overlay only; the execution constitution below remains authoritative.
 
 # الأغبري | Aghbari Commerce — Execution Control Plane
@@ -43,21 +43,18 @@
 
 ---
 
-# 0A. AUTHORITATIVE LIVE EXECUTION STATE — 2026-09-19 — CURRENT RECONCILIATION
-
+# 0A. AUTHORITATIVE LIVE EXECUTION STATE — 2026-09-20 — CURRENT RECONCILIATION
 - DEVELOPMENT LANE: `enhancement/market-ready-v4-20260918`; PR #88 OPEN / DRAFT / MERGEABLE.
-- CURRENT DEVELOPMENT SHA: `cb2707b8005ac8237b06a7c89cc9bcf68dc50061`.
-- DEVELOPMENT STATUS: required non-certifying quality/security/domain/migration/adversarial/deployed-browser gates are terminal PASS on this exact SHA.
-- EXACT NETLIFY DEPLOYMENT: `6aadaea0475017968f71cfda`, READY; unique URL `https://6aadaea0475017968f71cfda--aghbari-commerce-web.netlify.app`.
-- EXACT PUBLIC ARTIFACT: `build-meta.json` reports product `aghbari-commerce` and Git SHA `cb2707b8005ac8237b06a7c89cc9bcf68dc50061`.
-- DEPLOYED BROWSER PROOF: GitHub run `35397451565` / job `105769426008` terminal PASS; customer E2E PASS and admin E2E PASS.
-- BROWSER EVIDENCE ARTIFACT: `10569735072`.
-- EXACT-SHA CI: Quality `35397451577` PASS; Security `35397451588` PASS; G1 `35397451545` + `35397455871` PASS; Migration `35397451566` PASS; Sensitivity/Test-the-Test `35397451567` PASS.
-- FORMAL FINAL REGRESSION: NOT_PROVEN — the connected GitHub mutation surface exposes no workflow-dispatch operation.
+- CURRENT DEVELOPMENT SHA: `fffff8c1a48c2da73f70fa79f766b1b116c9cf80`.
+- CURRENT UI FIX: viewer dashboard no longer renders quick-action anchors whose target sections are unavailable to viewer; viewer gets explicit read-only status instead.
+- EXACT VERCEL DEVELOPMENT DEPLOYMENT: `dpl_DYdizKuWnLDaRDmNA6Unbou9SDAj`, BUILDING; exact SHA `fffff8c1a48c2da73f70fa79f766b1b116c9cf80`.
+- CURRENT-SHA CI: security-audit 2749 SUCCESS; application-quality 3059 RUNNING after unit/integration + lint SUCCESS; G1 2891/2892 RUNNING; migration-proof 3034 RUNNING; Test-the-Test 663 RUNNING; Netlify 32 PENDING.
+- EXACT BROWSER PROOF: NOT_PROVEN for the new SHA pending Vercel deployment-status success and browser execution.
+- SUPABASE: `mrcyqezbhpncuvaehwgf` ACTIVE_HEALTHY; viewer read-only helper remains separate from write-sensitive `is_staff()`.
+- FORMAL FINAL REGRESSION: NOT_PROVEN — connected GitHub mutation surface still has no workflow-dispatch operation.
 - CERTIFICATION: NO.
 - CERTIFICATION CANDIDATE: `2facceb39aaa826413f20245a6f20b6c2ff7cd34` — FROZEN / NO TOUCH.
-- PRODUCTION: NO TOUCH. No promotion, alias switch, production migration, or production runtime mutation was performed.
-
+- PRODUCTION: NO TOUCH.
 
 # 0B. AUTONOMOUS MEMORY + SELF-IMPROVEMENT PROTOCOL
 
@@ -1760,3 +1757,9 @@ Durable rule:
 - Future certification reports must distinguish "no production mutation in this run" from "production currently points to an approved/certified SHA".
 
 No production mutation was performed during this run.
+
+
+## Evolution record — RUN-2026-09-20-RESUME-004
+- Observed proof/UX defect: role routing was correct, but shared dashboard quick links were not role-gated, leaving viewer with dead anchors to unavailable sections.
+- Durable rule: every rendered navigation affordance must have a reachable target in the current role's rendered surface; role visibility and navigation targets must use the same permission predicate.
+- Action: fixed source on exact development lane; candidate and Production remained untouched. Runtime proof remains pending.
