@@ -5,6 +5,7 @@ import { retryRead } from '../lib/retry';
 export interface CatalogItem {
   id: string;
   sku: string;
+  barcode: string | null;
   name: string;
   unit: string;
   category_id: string | null;

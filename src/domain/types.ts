@@ -4,6 +4,8 @@ export type OrderStatus = 'draft' | 'pending' | 'confirmed' | 'preparing' | 'rea
 export interface Product {
   id: string;
   sku: string;
+  /** Optional server-authorized product barcode. */
+  barcode?: string;
   name: string;
   imageUrl?: string;
   unit: string;
