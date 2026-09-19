@@ -177,7 +177,7 @@ select is(
 );
 
 select lives_ok(
-  $select public.stage_product_import(
+  $func$select public.stage_product_import(
     'duplicate-barcode.xlsx',repeat('d',64),
     jsonb_build_array(
       jsonb_build_object(
@@ -186,7 +186,7 @@ select lives_ok(
         'prices',jsonb_build_object('retail',10,'wholesale',9,'distributor',8)
       )
     )
-  )$,
+  )$func$,
   'stage quarantines a barcode already used by another SKU'
 );
 select is(
