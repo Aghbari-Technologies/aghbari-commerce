@@ -86,10 +86,11 @@ jobs:
           if (meta.product !== 'aghbari-commerce') throw new Error(`Unexpected product: ${meta.product}`);
           if (meta.git_sha !== process.env.EXPECTED_SHA) throw new Error(`DEPLOYED SHA MISMATCH: expected=${process.env.EXPECTED_SHA} actual=${meta.git_sha}`);
           if (typeof meta.version !== 'string' || !meta.version.trim()) throw new Error('Missing deployed application version');
-          if (typeof meta.build_time !== 'string' || Number.isNaN(Date.parse(meta.build_time))) throw new Error('Invalid deployed build_time');
+          const buildAt = meta.built_at || meta.build_time;
+          if (typeof buildAt !== 'string' || Number.isNaN(Date.parse(buildAt))) throw new Error('Invalid deployed build timestamp');
           console.log(`EXACT DEPLOYED SHA: ${meta.git_sha}`);
           console.log(`DEPLOYED VERSION: ${meta.version}`);
-          console.log(`DEPLOYED BUILD TIME: ${meta.build_time}`);
+          console.log(`DEPLOYED BUILD TIME: ${buildAt}`);
           NODE
       - name: Verify security headers and hardening
         shell: bash
