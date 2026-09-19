@@ -100,7 +100,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
         <nav aria-label="أقسام الإدارة">
           {[['الرئيسية','#admin-dashboard',true],['الطلبات','#admin-orders',['owner','admin','sales','warehouse'].includes(role)],['المخزون','#admin-inventory',['owner','admin','warehouse'].includes(role)],['العملاء والتجار','#admin-customers',['owner','admin','sales'].includes(role)],['الموردين','#admin-purchasing',['owner','admin','warehouse'].includes(role)],['الحسابات والمالية','#admin-finance',['owner','admin','sales'].includes(role)],['الإعدادات','#admin-settings',['owner','admin'].includes(role)]].filter(([, , can]) => can).map(([item,target], index) => <a key={item as string} className={index === 0 ? 'active' : ''} href={target as string}>{['⌂','↗','□','♙','▱','◫','⚙'][index]}<span>{item as string}</span></a>)}
         </nav>
-        <div className="executive-sidebar-section"><small>تشغيل سريع</small><a href="#admin-orders">↗ متابعة الطلبات</a><a href="#admin-inventory">□ إدارة المخزون</a><a href="#admin-customers">♙ إدارة العملاء</a></div>
+        <div className="executive-sidebar-section"><small>تشغيل سريع</small>{["owner","admin","sales","warehouse"].includes(role) && <a href="#admin-orders">↗ متابعة الطلبات</a>}{["owner","admin","warehouse"].includes(role) && <a href="#admin-inventory">□ إدارة المخزون</a>}{["owner","admin","sales"].includes(role) && <a href="#admin-customers">♙ إدارة العملاء</a>}{role === "viewer" && <span>وصول قراءة فقط — لا توجد مهام تشغيلية متاحة لهذا الدور.</span>}</div>
       </aside>
 
       <div className="executive-content" id="admin-dashboard">
