@@ -11,8 +11,8 @@ insert into public.customers(id,organization_id,name,tier,is_active) values
 on conflict (id) do nothing;
 
 insert into public.profiles(id,organization_id,customer_id,role) values
-  ((select id from auth.users where email='customer-a@test.local'),'90000000-0000-4000-8000-000000000101','90000000-0000-4000-8000-000000000201','viewer'),
-  ((select id from auth.users where email='customer-b@test.local'),'90000000-0000-4000-8000-000000000102','90000000-0000-4000-8000-000000000202','viewer'),
+  ((select id from auth.users where email='customer-a@test.local'),'90000000-0000-4000-8000-000000000101','90000000-0000-4000-8000-000000000201','customer'),
+  ((select id from auth.users where email='customer-b@test.local'),'90000000-0000-4000-8000-000000000102','90000000-0000-4000-8000-000000000202','customer'),
   ((select id from auth.users where email='admin-a@test.local'),'90000000-0000-4000-8000-000000000101',null,'admin'),
   ((select id from auth.users where email='admin-b@test.local'),'90000000-0000-4000-8000-000000000102',null,'admin')
 on conflict (id) do update
