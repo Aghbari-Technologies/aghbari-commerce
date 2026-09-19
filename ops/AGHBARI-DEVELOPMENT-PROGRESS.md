@@ -2,11 +2,22 @@
 > Historical pointer only. Canonical startup knowledge is `PROJECT_MEMORY.md` on `ops/execution-control-plane`.
 
 ## Current checkpoint
-- RUN: `RUN-2026-09-20-RESUME-004`
-- Development SHA: `fffff8c1a48c2da73f70fa79f766b1b116c9cf80`
+- RUN: `RUN-2026-09-20-RESUME-005`
+- Development SHA: `07c3cab1724d54d34234d67250276ac12968e14e`
 - PR: #88 OPEN / DRAFT / MERGEABLE
 - Certification candidate: `2facceb39aaa826413f20245a6f20b6c2ff7cd34` — frozen
 - Production: HOLD / NO TOUCH
+
+## Resume record — 2026-09-20 / RUN-2026-09-20-RESUME-005
+- Development SHA: `07c3cab1724d54d34234d67250276ac12968e14e`; PR #88 OPEN / DRAFT / MERGEABLE; frozen candidate `2facceb39aaa826413f20245a6f20b6c2ff7cd34` untouched.
+- Root causes closed: customer accounts were encoded as staff viewer because the DB enum lacked customer; persistent E2E Product A stock had been exhausted; browser seed encoded customers as viewer; browser seed product rows had a malformed column shape.
+- Fixes: customer role added/migrated; customer invitation RPC now creates customer profiles; viewer quick links are role-gated; E2E seed uses customer roles and correct barcode/product columns; non-production E2E stock was replenished before deployed proof.
+- Exact current-SHA evidence: application-quality 3066 SUCCESS; security-audit 2756 SUCCESS; G1 push 2901 SUCCESS; G1 PR 2902 SUCCESS; supabase-migration-proof 3041 SUCCESS; Test-the-Test 666 SUCCESS; Vercel Browser E2E 576 SUCCESS; Netlify Exact SHA 35 SUCCESS.
+- Exact Vercel deployment: dpl_B7fY9FmRsoECLu7TLUWGxCPp3ALG READY and bound to the exact SHA.
+- Exact artifacts: Browser 10593514396; Netlify 10594935718.
+- Formal Final Regression: NOT_PROVEN. production-smoke.yml is workflow_dispatch-only and the connected GitHub mutation surface has no dispatch operation.
+- Certification: NO. Production: HOLD / NO TOUCH.
+- Next: reconcile the development delta against the frozen candidate and close the remaining formal-regression capability boundary without touching candidate or Production.
 
 ## Resume record — 2026-09-20 / RUN-2026-09-20-RESUME-003
 - Reconciled GitHub reality: PR #88 head is `ff98a64ad2a547b6ac79b68cede121f5c5f0c8cb`, with 50 commits / 31 changed files; candidate base remains frozen.
