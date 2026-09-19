@@ -1,68 +1,14 @@
 # الأغبري | Latest Execution State
+> **Router only.** Canonical durable context is `PROJECT_MEMORY.md`. Read the Control Plane then PROJECT_MEMORY; use this file only for the current checkpoint.
 
-> Mutable operational state. This file answers only: where execution is now, what is proven, what is running, and what must happen next. Historical detail belongs in the Development Progress Ledger.
-
-## Identity
-- Repository: `Aghbari-Technologies/aghbari-commerce`
-- Canonical control plane: `ops/AGHBARI-EXECUTION-CONTROL-PLANE.md`
-- Durable project memory: `PROJECT_MEMORY.md`
-- Fast entry point: `AGHBARI-EXECUTION-START.md`
-- Development branch: `enhancement/market-ready-v4-20260918`
-- Development PR: `#88` — OPEN / DRAFT / MERGEABLE
-
-## Current development checkpoint
-- RUN: `RUN-2026-09-19-EXEC-003`
-- HEAD: `cb2707b8005ac8237b06a7c89cc9bcf68dc50061`
-- Previous checkpoint: `4d7fbe9e6f0ff977f2829ef91e07d290c6d83554`
-- Lane: non-certifying development only
-- Certification candidate: `2facceb39aaa826413f20245a6f20b6c2ff7cd34` — FROZEN / NO TOUCH
-- Production: NO TOUCH
-
-## Proven on exact development SHA cb2707b...
-- Application Quality: PASS — run `35397451577`
-- Security Audit: PASS — run `35397451588`
-- G1 Domain Proof: PASS — runs `35397451545` and `35397455871`
-- Supabase Migration Proof: PASS — run `35397451566`
-- Test-the-Test / Sensitivity: PASS — run `35397451567`, five adversarial mutations detected and restored
-- Netlify Exact-SHA deployed browser: PASS — run `35397451565`, customer E2E PASS + admin E2E PASS
-- Exact deploy: `6aadaea0475017968f71cfda`
-- Exact deploy URL: `https://6aadaea0475017968f71cfda--aghbari-commerce-web.netlify.app`
-- Public build metadata: exact `cb2707b8005ac8237b06a7c89cc9bcf68dc50061`
-- Browser evidence artifact: `10569735072`
-
-## Final development repair
-The previous exact-SHA browser run exposed a proof-fixture defect: cart cleanup assumed every persisted cart line had quantity 1. Multi-quantity rows survived one decrement and contaminated subsequent scenarios.
-
-Commit `cb2707...` corrected the test fixture only:
-- decrement until quantity reaches zero;
-- assert the real quantity/removal transition;
-- reload and rehydrate;
-- verify the server-side cart is empty before the next scenario.
-
-This was classified as a proof/test defect, not a product or security defect.
-
-## Production identity reconciliation
-- Netlify project `aghbari-commerce-web` reports currentDeploy `6aadaea0475017968f71cfda`, READY, for the primary site `https://aghbari-commerce-web.netlify.app`.
-- Netlify records that deploy with `context=production`; public `build-meta.json` reports exact Git SHA `cb2707b8005ac8237b06a7c89cc9bcf68dc50061`.
-- Therefore the current primary production artifact is the development SHA `cb2707b...`, not the frozen certification candidate `2facceb3...`.
-- This state predates RUN-2026-09-19-EXEC-003. No production mutation, rollback, promotion, or alias switch was performed in this run.
-- The prior `Production: NO TOUCH` shorthand is stale/incomplete as a current-identity statement. Treat Production as **HOLD / NO NEW TOUCH** until the release owner deliberately resolves the already-published development artifact after formal certification.
-
-## Current open boundary
-- Formal Final Regression: NOT_PROVEN — connected GitHub mutation surface exposes no workflow-dispatch operation.
-- Alternate authenticated browser-dispatch path: BLOCKED before start by external automation wallet capacity; no browser execution occurred through that path.
-- Certification: NO.
-- Production: NO TOUCH.
-
-No product or security implementation change is currently required from the completed development lane. Do not create speculative code solely to manufacture a new green gate.
-
-## Next resume queue
-1. On command `1`, verify current HEAD and reconcile the exact development evidence; do not repeat the cart-fixture repair.
-2. Compare any genuinely remaining market-ready gaps against Project Memory and execute only correctness/security/reliability/release-required work.
-3. Resolve an authorized workflow-dispatch path and approved authenticated browser path; the alternate automation route must not be retried until its external capability is restored, then execute Formal Final Regression against the exact release SHA.
-4. Keep PR #88 isolated from the frozen certification candidate until deliberate release promotion.
-5. Keep Production NO TOUCH.
-
-## Last durable memory write
-- Development Progress Ledger commit: `0969f701a346003390bff88cc32dc1b93ab65792`
-- Current exact development checkpoint: `cb2707b8005ac8237b06a7c89cc9bcf68dc50061`
+- RUN: `RUN-2026-09-20-FORENSIC-001`
+- DEVELOPMENT BRANCH: `enhancement/market-ready-v4-20260918`
+- DEVELOPMENT SHA BEFORE THIS AUDIT: `cb2707b8005ac8237b06a7c89cc9bcf68dc50061`
+- PR: #88 OPEN / DRAFT / MERGEABLE
+- CERTIFICATION CANDIDATE: `2facceb39aaa826413f20245a6f20b6c2ff7cd34` — FROZEN / NO TOUCH
+- PRODUCTION: HOLD / NO NEW TOUCH
+- Current public exact development artifact: Netlify deploy `6aadaea0475017968f71cfda`
+- Formal Final Regression: NOT_PROVEN.
+- Forensic audit completed: repo structure, active entry path, duplicate/orphan candidates, branch/migration accumulation, live Supabase schema/security/performance state, Vercel projects/deployments, and product-contract gaps.
+- Canonical memory updated in `PROJECT_MEMORY.md` commit `3dffc3e9bddd475847d3178ce10121dbbc171181`.
+- NEXT: execute P0 invitation RPC hardening + viewer routing; then barcode contract; then only after proofs, cleanup/consolidation.
