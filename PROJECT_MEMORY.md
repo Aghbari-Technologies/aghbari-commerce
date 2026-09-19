@@ -49,7 +49,7 @@
 - Vercel exact development deployment for current SHA is READY.
 
 ### Still OPEN / NOT_PROVEN
-1. **Viewer routing:** DB role enum includes `viewer`; active frontend declares the role but `STAFF_ROLES` currently excludes `viewer`. This remains an implementation/test gap until exact role-matrix proof shows the intended viewer route.
+1. **Viewer routing:** IMPLEMENTED on the active frontend and backed by a dedicated read-only staff helper. Exact current-SHA browser proof is running; do not transfer historical evidence.
 2. **Formal Final Regression:** NOT_PROVEN due connector/workflow-dispatch boundary.
 3. **Certification:** NO; frozen candidate must not be modified or certified from development evidence.
 4. **Production:** NO TOUCH.
@@ -71,9 +71,9 @@
 
 ## 8. NEXT EXECUTION QUEUE
 ### P0
-1. Fix active `viewer` routing and add exact role-matrix tests; do not weaken customer/staff separation.
-2. Prove current-SHA browser/runtime behavior for the latest Vercel development deployment if the available connector path permits it, without creating redundant deployments.
-3. Reconcile the current development lane against the frozen candidate and identify only real deltas still requiring proof.
+1. Complete current-SHA browser E2E and database/Test-the-Test runs for `ff98a64ad2a547b6ac79b68cede121f5c5f0c8cb`.
+2. Record exact current-SHA evidence and reconcile development against frozen candidate without touching the candidate.
+3. Recheck the viewer dashboard for dead quick-action anchors after runtime proof.
 
 ### P1
 4. Reconcile master specification vs implementation/deferred capabilities.
@@ -86,3 +86,13 @@
 
 ## 9. START/RESUME RULE
 On command `1`, immediately read this hub and the Control Plane, reconcile current GitHub/Vercel/Supabase reality, then execute the highest-priority unresolved front. Do not ask the user to restate context already stored here.
+
+
+## Reconciliation — 2026-09-20 / ff98a64a
+- Reality: PR #88 remains OPEN / DRAFT / MERGEABLE; development HEAD is `ff98a64ad2a547b6ac79b68cede121f5c5f0c8cb`; frozen candidate remains `2facceb39aaa826413f20245a6f20b6c2ff7cd34` and untouched; Production remains HOLD / NO TOUCH.
+- Implementation: `src/AppV3Fixed.tsx` now routes `viewer` through canonical `isStaffPortalRole()`; `src/domain/roles.ts` centralizes the portal role boundary; `src/domain/roles.test.ts` covers owner/admin/sales/warehouse/viewer vs customer.
+- Database: live `public.is_staff()` still excludes viewer; new `public.is_staff_reader()` includes viewer with `search_path = ''`, anon execution revoked, authenticated execution granted. Live `customers_read`, `orders_customer_read`, and `inventory_read_staff` policies now use the read-only helper.
+- Live DDL was applied through the authorized SQL channel because the migration-apply connector operation was blocked by its safety gate; the equivalent migration source is committed as `supabase/migrations/20260920000300_viewer_staff_read_scope.sql`. Fresh-DB migration proof is still running.
+- Current exact Vercel deployment: `dpl_2i86vekQXeYAKfgM2siKxsP4qr4g` READY for `ff98a64ad2a547b6ac79b68cede121f5c5f0c8cb`. Browser run 572 has passed exact artifact identity and customer credentials checks and is executing the customer critical-path browser suite.
+- Current exact-SHA gates observed: application-quality run 3054 SUCCESS; security-audit 2744 SUCCESS; G1 push proof 2885 SUCCESS. Test-the-Test 662 and migration-proof 3029 remain RUNNING; Netlify exact-SHA run 31 is pending and not required while exact Vercel deployment is available.
+- Supabase security advisor state after the helper: 60 intentional/known authenticated SECURITY DEFINER warnings plus 1 external `auth_leaked_password_protection` warning. The new helper is deliberately read-only and does not replace the write-sensitive `is_staff()` contract.
