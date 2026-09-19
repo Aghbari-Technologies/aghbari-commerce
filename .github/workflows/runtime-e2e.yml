@@ -16,7 +16,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: aghbari-runtime-e2e-${{ github.workflow }}-${{ inputs.exact_sha }}
+  group: aghbari-remote-e2e-shared-accounts
   cancel-in-progress: false
 
 jobs:

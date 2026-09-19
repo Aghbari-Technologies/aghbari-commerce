@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: market-ready-netlify
+  group: aghbari-remote-e2e-shared-accounts
   cancel-in-progress: false
 
 env:
