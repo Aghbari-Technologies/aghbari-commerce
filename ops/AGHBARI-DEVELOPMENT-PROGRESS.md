@@ -355,3 +355,11 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 **Implemented:** customer directory search/status/tier filters; purchase-order search/status filters; Arabic localization of reporting/settings labels and removal of remaining legacy template wording in inspected customer/staff UI files.
 **Evidence:** exact active-branch source re-read after edits. Vercel prior READY evidence is not transferred to the current SHA. Current SHA verification runs are queued. Candidate and Production untouched.
 **Next:** reconcile terminal current-SHA gates and then authenticated browser visual proof; stop speculative UI commits while equivalent proof is pending.
+
+## RUN-2026-09-21-EXECUTE-UI-008
+**Date:** 2026-09-21
+**Exact SHA:** `41ee8dba7968124f2b6649e0b1347250c5a3a118`
+**Front:** interaction completeness / search UX
+**Implemented:** functional voice search in customer catalog with graceful capability/error handling; removed unimplemented image-search button; added active-state styling.
+**Evidence:** exact source re-read; Vercel is rate-limited and cannot provide current-SHA deployment proof; current-SHA CI created but remains queued at checkpoint; no PASS transferred.
+**Next:** exact-SHA terminal proof and valid non-production browser visual verification.
