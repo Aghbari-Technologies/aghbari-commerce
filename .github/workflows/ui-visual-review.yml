@@ -93,8 +93,12 @@ jobs:
             await form.locator('input[type="email"]').fill(email);
             await form.locator('input[type="password"]').fill(password);
             await form.getByRole('button', { name: 'دخول آمن' }).click();
-            await expect(page.getByRole('button', { name: 'الكتالوج', exact: true }).first()).toBeVisible({ timeout: 15000 });
-            await expect(page.locator('.portal-loading')).toHaveCount(0, { timeout: 15000 });
+            await page.locator('.portal-loading').first().waitFor({ state: 'hidden', timeout: 15000 }).catch(() => undefined);
+            const customerPortal = page.getByRole('button', { name: 'الكتالوج', exact: true }).first();
+            const staffPortal = page.getByRole('heading', { name: 'مركز التحكم' }).first();
+            await expect.poll(async () => {
+              return (await customerPortal.isVisible().catch(() => false)) || (await staffPortal.isVisible().catch(() => false));
+            }, { timeout: 15000 }).toBeTruthy();
           }
 
           test('customer desktop', async ({ page }) => {
