@@ -1,3 +1,16 @@
+## RUN-2026-09-21-EXECUTE-UI-005 — CURRENT AUTHORITATIVE RECONCILIATION
+- ACTIVE UI BRANCH: `execution/customer-ui-completion-20260920`
+- ACTIVE UI EXACT HEAD: `2490f7f47c2837aade96e854392ba297b94efdfb`
+- PR #100: OPEN / DRAFT / MERGEABLE; head matches this SHA.
+- EXECUTED UI CORRECTIONS: catalog hero metric now distinguishes loaded/visible count from a fully loaded catalog; customer order-reorder actions now have a per-order busy lock and release that lock in all success/error/early-return paths.
+- EXACT VERCEL DEPLOYMENT: `dpl_5SWnt86P56xTYZV8yxNSE3Jmtay9` is READY for the same exact SHA on project `aghbari-commerce-c2dd`; this is deployment/build evidence only.
+- RUNTIME ERRORS: latest project query returned no runtime errors in the selected 2-hour window.
+- EXACT-SHA CI: 12 fresh verification runs were created for this SHA; current observation is QUEUED for all of them. No PASS is claimed.
+- Browser proof: protected Vercel preview access still redirects to SSO through the available fetch path; no external browser visual PASS is inferred.
+- Candidate: `certification/final-candidate-20260920-v3` @ `1685836f4226fdcb3250a60eba7430ecf3e8f080` unchanged.
+- Production: HOLD / NO TOUCH.
+- NEXT RESUME: reconcile the existing exact-SHA CI queue/terminal states and obtain valid exact-SHA visual browser evidence; do not generate duplicate proof runs while equivalent runs for this SHA are already queued. Only merge PR #100 after required exact gates are terminal SUCCESS; then re-prove the resulting merge SHA from scratch.
+
 ## CURRENT AUTHORITATIVE RECONCILIATION — RUN-2026-09-21-EXECUTE-024C
 - ACTIVE UI BRANCH: `execution/customer-ui-completion-20260920`
 - ACTIVE UI EXACT HEAD: `0e23965179818904d62d7577abb919cca16593a6`
