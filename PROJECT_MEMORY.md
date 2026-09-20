@@ -227,3 +227,12 @@ RUN-2026-09-20-EXECUTE-022 — WORLD-CLASS UI/UX ADVANCEMENT
 - UI Visual Review run 35489157936 / job 106020938737 is IN_PROGRESS and has already proved exact checkout, clean npm install, and Supabase CLI setup; current step is isolated local Supabase startup.
 - Other fresh exact-SHA gates for this HEAD remain queued at this checkpoint; no terminal PASS is claimed.
 - PR #100 remains OPEN / DRAFT; candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 and Production remain untouched.
+
+
+## RUN-2026-09-20-EXECUTE-025 — VISUAL REVIEW DEFECT FIX
+- Exact UI fix SHA: 79267d3d8634ee2b65aab2763b7717eb503e2bcb.
+- Browser visual artifacts from exact SHA 97431d5 exposed a real defect: the legacy floating command launcher covered product content on desktop/mobile while the header/bottom navigation already exposed the same command center.
+- Root cause: duplicate fixed-position .command-launch control remained from an older command-palette implementation while AppV3Fixed also renders command-launch-button and mobile bottom-nav commands.
+- Fix: removed the redundant floating control from AppV3Fixed, removed its obsolete CSS, and added an exact UI regression assertion that .command-launch count is zero in both customer desktop/mobile visual tests.
+- Transactional/business logic and candidate/Production state were not changed.
+- Fresh exact-SHA verification was triggered for 79267d3; latest observed state is queued across all required gates. No PASS is claimed yet.
