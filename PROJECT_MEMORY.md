@@ -361,3 +361,11 @@ RUN-2026-09-20-EXECUTE-022 — WORLD-CLASS UI/UX ADVANCEMENT
 - Exact G1 remains queued; browser/CI proof is still separate from deployment status.
 - The UI lane now includes accessibility skip navigation, corrected Arabic template terminology, ES2024 language baseline, responsive RTL design system, and safe rendering/interaction improvements.
 - Candidate and Production remain untouched.
+
+## DURABLE UI RULE — B2B SURFACE COMPLETION / 2026-09-21
+- Customer home must expose real high-frequency B2B actions directly: Quick Order, Orders, Templates, Finance, and Excel ordering, while retaining structural navigation.
+- File-upload controls must not depend on an unrelated visibility toggle; the underlying accessible input must exist independently of the visual search/tool group.
+- Executive dashboard error handling must be truth-preserving: failed queries are rendered as unavailable/degraded, never as zero/healthy/empty-state conclusions.
+- Role-filtered navigation icons must be bound to the navigation item itself, not array position.
+- Secondary operational surfaces (Excel review, invitations, filter toolbars, responsive admin grids) require explicit layout selectors and mobile behavior.
+- Exact current UI checkpoint: `7ee608d77d32ef6804dd1d08086b14cf5ea795f5` on `execution/customer-ui-completion-20260920`; fresh exact-SHA verification remains the only valid proof unit.
