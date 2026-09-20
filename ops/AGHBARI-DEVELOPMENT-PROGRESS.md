@@ -277,3 +277,12 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 - Vercel previous UI SHA `255ee1484d0c0192034fe4a277ac27b4c7b875cc` was READY; current SHA needs independent exact-SHA validation.
 - No dependency upgrade is claimed; deterministic lockfile regeneration remains required before adopting the newer external package releases.
 - Candidate and Production unchanged.
+
+
+## RUN-2026-09-21-EXECUTE-UI-003 — ACCESSIBILITY + LANGUAGE POLISH
+- ACTIVE UI BRANCH/PR HEAD: `execution/customer-ui-completion-20260920` / `7f1b523319d74aa17f549c49db0f52482df5c00b`.
+- UI: added skip-to-content landmarks and focus behavior to customer/staff shells; corrected visible template label to `قوالب الطلبات`.
+- LANGUAGE: TypeScript target/lib = ES2024. Dependencies remain locked at the proven versions; latest external versions recorded as upgrade targets only.
+- VERCEL: deployment `dpl_Gs339VatHiPGCVhv46UF7ot1HiTE` for SHA `7f1b5233...` was QUEUED at the latest check.
+- CI: exact-SHA G1 run `35543639501` was QUEUED; no PASS claimed.
+- RELEASE SAFETY: Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain unchanged.
