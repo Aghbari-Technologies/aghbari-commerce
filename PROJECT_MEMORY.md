@@ -245,3 +245,11 @@ RUN-2026-09-20-EXECUTE-022 — WORLD-CLASS UI/UX ADVANCEMENT
 - Static UI coverage audit on this HEAD: 138 React class tokens checked across active UI stylesheets; missing styled classes = 0.
 - Fresh exact-SHA verification suite was triggered for this HEAD; latest checkpoint all runs are queued. No PASS or merge is claimed.
 - Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 and Production remain untouched.
+
+
+## RUN-2026-09-20-EXECUTE-027 — UI REGRESSION GUARDS
+- Exact UI HEAD: bc156704980a29d4fffa97f2e72db44beebe654b.
+- Added visual regression guards: desktop customer UI must hide portal-bottom-nav; mobile customer UI must show it; floating legacy command launcher must remain absent.
+- This specifically protects against the layering defect found in exact visual artifacts for 97431d5.
+- Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 and Production remain untouched.
+- Fresh exact-SHA verification suite for bc1567049 was created; latest observed state all queued. No PASS or merge is claimed.
