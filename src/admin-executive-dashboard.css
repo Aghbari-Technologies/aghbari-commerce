@@ -91,3 +91,69 @@
   .staff-actions button { min-height: 38px; }
   .staff-main > .admin-panel { margin-top: 10px; }
 }
+
+
+.staff-section-rail {
+  display: grid;
+  grid-template-columns: repeat(8,minmax(0,1fr));
+  gap: 8px;
+  margin: 14px 0 6px;
+}
+.staff-section-rail button {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas:
+    "icon title"
+    "icon hint";
+  align-items: center;
+  gap: 1px 7px;
+  padding: 10px 11px;
+  border: 1px solid #dbe7eb;
+  border-radius: 12px;
+  background: #fff;
+  color: #173e50;
+  text-align: start;
+  cursor: pointer;
+}
+.staff-section-rail button:hover {
+  border-color: #bad5dc;
+  background: #f7fbfc;
+  transform: translateY(-1px);
+}
+.staff-section-rail button > span {
+  grid-area: icon;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: #edf7f9;
+  color: #0d7182;
+  font-size: 13px;
+  font-weight: 900;
+}
+.staff-section-rail button strong {
+  grid-area: title;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+}
+.staff-section-rail button small {
+  grid-area: hint;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #80939c;
+  font-size: 9px;
+}
+@media (max-width: 1180px) {
+  .staff-section-rail { grid-template-columns: repeat(4,minmax(0,1fr)); }
+}
+@media (max-width: 650px) {
+  .staff-section-rail { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px; }
+  .staff-section-rail button { padding: 9px; }
+}
