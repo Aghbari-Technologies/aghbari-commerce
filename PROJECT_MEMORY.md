@@ -127,3 +127,12 @@ Unless explicitly implemented and proven, these remain backlog/deferred: promoti
 - Verification-only PR #94 and PR #95 were closed without merge. Production remains HOLD / NO TOUCH.
 - Durable UI rules strengthened: modal/dialog surfaces must manage focus containment, focus restoration, and background scroll; data-heavy catalog surfaces must make loading/empty/error/success states explicit and actionable.
 - Next concrete core-product gap identified for implementation, not yet changed in RUN-017: Quick Order resolves SKU/barcode only against the currently loaded catalog array. It should use a server-backed exact identifier fallback so scanner entry works even when the product is outside the first loaded catalog page. Keep this as an implementation front on development only; do not alter the frozen candidate or Production merely to address it.
+
+
+## 15. DURABLE EXECUTION CHECKPOINT — RUN-2026-09-20-EXECUTE-018
+- The next approved product front is server-backed Quick Order exact SKU/barcode fallback. Development implementation exists on branch `execution/quick-order-server-lookup-20260920`, rooted directly at verified development SHA `cc9f5e7e1906b553613bb2e8dee99dacd704491d`.
+- PR #96 is now correctly targeted at development branch `enhancement/market-ready-v4-20260918`; its exact compare is only 6 commits / 2 changed files (Quick Order UI lookup path + browser regression), with no candidate or Production changes.
+- The implementation uses the existing authorized `get_catalog_with_barcode` server path when the identifier is absent from the loaded page, preserving tenant/warehouse authorization rather than widening client-side visibility.
+- Exact-SHA verification is in progress on head `483f9722f226c5f295c96edde2be88d760ceb520`. Completed: Quality `35485184032`, Security `35485184013`, G1 `35485184157`, Order Workflow `35485184016`, Bootstrap `35485184015`, Fresh Local Browser `35485184014`. In progress: Test-the-Test `35485184023`, Concurrency `35485184025`, Local Production Artifact Browser `35485184035`.
+- Vercel status for this development PR is an external Free-plan `api-deployments-free-per-day` failure; it is not treated as a product failure and does not alter the certification candidate.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080`, candidate deployment `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C`, frozen historical candidate, and Production remain unchanged.
