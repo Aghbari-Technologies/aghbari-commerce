@@ -815,3 +815,12 @@ Keep promotions, provider notification delivery, integration delivery records/ad
 - Candidate Vercel `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` is READY, exact SHA matched, HTTP 200 shell verified, and no runtime error/fatal entries were found in the checked window.
 - Remaining release proof: full exact candidate Deployment Browser E2E + Final Regression. The GitHub connector exposes run/job inspection and rerun operations but no workflow-dispatch action; therefore these two proofs are NOT_PROVEN and are not claimed PASS. This is a tooling capability boundary, not a product failure.
 - Production remains NO TOUCH; no paid browser automation or Supabase upgrade was used.
+
+---
+## EVOLUTION / RUN-2026-09-20-EXECUTE-017
+- Development head is now `cc9f5e7e1906b553613bb2e8dee99dacd704491d` on `enhancement/market-ready-v4-20260918`, advanced through PR #93 after isolated core-UI hardening and full exact-SHA verification.
+- Run-017 introduced a durable UI acceptance rule: modal/dialog components must trap keyboard focus, restore invoking focus, and prevent background scroll while open; catalog surfaces must expose explicit actionable empty states.
+- `050d3ca...` and then the merged `cc9f5e7...` were each independently verified. For `cc9f5e7...`, Quality `35484382281`, Security `35484382222`, G1 `35484382254`, Order Workflow `35484382288`, Bootstrap `35484382245`, Migration `35484382233`, Concurrency `35484382276`, Test-the-Test `35484382253`, Fresh Local Browser `35484382220`, Local Production Artifact `35484382242`, and Exact Deployment Browser Contract `35484382224` are all terminal SUCCESS.
+- Certification candidate remains `certification/final-candidate-20260920-v3` at exact SHA `1685836f4226fdcb3250a60eba7430ecf3e8f080`; Vercel deployment `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` remains READY. Candidate source and Production were not touched.
+- Development Vercel remains constrained by the external Free-plan `build-rate-limit`; this is a deployment-platform constraint, not a product failure or certification result.
+- Next executable product front is Quick Order server-backed exact SKU/barcode fallback for products outside the currently loaded catalog page. This remains development-only until implemented and proven.
