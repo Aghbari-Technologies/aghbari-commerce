@@ -66,3 +66,17 @@ Candidate `1685836f...` and frozen candidate `2facceb...` are untouched. Product
 - Concurrency `35485184025` and Local Production Artifact Browser `35485184035` remain RUNNING; no PASS is asserted until terminal success is observed.
 - PR #96 remains OPEN, mergeable, development-targeted, 6 commits / 2 changed files. Vercel status remains the external Free-plan `api-deployments-free-per-day` failure.
 - Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain untouched.
+
+
+## CURRENT EXECUTION STATE — RUN-2026-09-20-EXECUTE-018
+- DEVELOPMENT BRANCH: `enhancement/market-ready-v4-20260918`
+- VERIFIED DEVELOPMENT SHA: `d8b627bd884c61c0f7f3a18dda1b0e880ef6735c`
+- ACTIVE IMPLEMENTATION BRANCH: `execution/quick-order-server-lookup-20260920`
+- IMPLEMENTED: server-backed Quick Order SKU/barcode fallback + same-tenant filtered-catalog browser regression + explicit lookup error handling.
+- MERGED: PR #97 into development; verification-only PR #98 to `main` closed after exact-SHA proof.
+- EXACT VERIFIED SUITE ON MERGED SHA: Quality `35485501859`; Security `35485501878`; G1 `35485501813`; Order `35485501833`; Bootstrap `35485501857`; Migration `35485501888`; Concurrency `35485501822`; Test-the-Test `35485501844`; Fresh Local Browser `35485501838`; Local Production Artifact `35485501817`; Deployment Browser `35485501836` — all SUCCESS.
+- ACTIVE CERTIFICATION CANDIDATE: `certification/final-candidate-20260920-v3` / `1685836f4226fdcb3250a60eba7430ecf3e8f080` — unchanged.
+- CANDIDATE VERCEL: `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` — READY, exact candidate SHA.
+- PRODUCTION: HOLD / NO TOUCH.
+- DEVELOPMENT VERCEL: Free-plan build-rate-limit remains external platform constraint.
+- NEXT CORE FRONT: high-frequency customer/admin transactional UI completion from verified development head; preserve explicit loading/empty/error/accessibility states and exact identifier/server-truth semantics.
