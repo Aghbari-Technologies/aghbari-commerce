@@ -1322,3 +1322,40 @@ svg {
     bottom: max(10px, env(safe-area-inset-bottom));
   }
 }
+
+
+/* ---------- Keyboard and landmark navigation ---------- */
+.skip-link {
+  position: fixed;
+  inset-inline-start: 16px;
+  top: -80px;
+  z-index: 2000;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 9px 14px;
+  border: 2px solid var(--ag-primary);
+  border-radius: 11px;
+  background: var(--ag-navy);
+  color: #fff;
+  font-weight: 900;
+  text-decoration: none;
+  box-shadow: var(--ag-shadow-lg);
+  transition: top .16s var(--ag-ease);
+}
+
+.skip-link:focus {
+  top: 16px;
+  outline: 3px solid rgba(15,145,165,.32);
+  outline-offset: 3px;
+}
+
+#customer-main-content:focus,
+#staff-main-content:focus {
+  outline: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skip-link { transition: none; }
+}
