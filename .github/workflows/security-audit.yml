@@ -2,7 +2,13 @@ name: security-audit
 
 on:
   push:
-    branches: ['**']
+    branches:
+      - main
+      - 'execution/**'
+      - 'enhancement/**'
+      - 'certification/**'
+      - 'proof/**'
+      - 'release/**'
   pull_request:
     branches: [main]
   workflow_dispatch:
