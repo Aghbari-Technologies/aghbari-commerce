@@ -79,3 +79,14 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 - Fresh Local Browser completed Customer E2E, Admin E2E, and storage adversarial runtime successfully.
 - Test-the-Test `35481150811` remains IN_PROGRESS. Baseline sensitive suite passed; Mutation 1 (remove product tenant RLS) was detected successfully; current step is the first Restore from zero. Active-job logs return GitHub `BlobNotFound`, so no further result is inferred.
 - Candidate `72d5dae...` and its proven Vercel deployment remain untouched; WIP is not promoted.
+
+
+## RUN-2026-09-20-EXECUTE-016
+- Objective: close the highest unresolved WIP front, promote only after exact proof, and restart candidate-specific deployment evidence on the promoted SHA.
+- WIP branch: `execution/bulk-actions-20260920`; exact SHA: `1685836f4226fdcb3250a60eba7430ecf3e8f080`.
+- Test-the-Test `35481150811` / job `105999082463` SUCCESS; baseline plus five adversarial mutation probes and restore cycles completed.
+- Exact-SHA SUCCESS: Quality `35481150809`; Security `35481150821`; G1 `35481150820`; Order Workflow `35481150804`; Deployment Browser Contract `35481150826`; Local Production Artifact Browser `35481150812`; Concurrency `35481150807`; Migration `35481150837`; Fresh Local Browser `35481150808`; Test-the-Test `35481150811`.
+- Candidate promotion: `certification/final-candidate-20260920-v3` fast-forwarded from `72d5dae...` to `1685836f4226fdcb3250a60eba7430ecf3e8f080`; frozen historical candidate `2facceb...` untouched.
+- Vercel exact candidate deployment: `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C`, BUILDING, exact ref `certification/final-candidate-20260920-v3`, exact SHA `1685836f4226fdcb3250a60eba7430ecf3e8f080`.
+- Result: source-level candidate gates PROVEN for `1685836f4226fdcb3250a60eba7430ecf3e8f080`; deployment browser/final-regression remain NOT_PROVEN until the new deployment reaches READY. Production remains NO TOUCH.
+- Next: exact candidate Deployment Browser + Final Regression against `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` and `1685836f4226fdcb3250a60eba7430ecf3e8f080` after READY.
