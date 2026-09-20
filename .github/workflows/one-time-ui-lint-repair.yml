@@ -1,0 +1,41 @@
+name: One-time UI lint repair
+
+on:
+  push:
+    branches:
+      - execution/customer-ui-completion-20260920
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    if: github.event.head_commit.message != 'fix(ui): resolve quality lint regression'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout pushed SHA
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+      - name: Repair exact lint finding and remove this one-time workflow
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path("src/AppV3Fixed.tsx")
+          text = path.read_text(encoding="utf-8")
+          old = "let grouped:Record<string,PriceTier[]>={};"
+          new = "const grouped:Record<string,PriceTier[]>={};"
+          count = text.count(old)
+          if count != 1:
+              raise SystemExit(f"FAIL-CLOSED: expected exactly one lint target, found {count}")
+          path.write_text(text.replace(old, new, 1), encoding="utf-8")
+          PY
+          git rm .github/workflows/one-time-ui-lint-repair.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/AppV3Fixed.tsx
+          git diff --cached --check
+          git commit -m "fix(ui): resolve quality lint regression"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
