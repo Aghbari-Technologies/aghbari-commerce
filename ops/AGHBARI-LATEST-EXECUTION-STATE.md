@@ -387,3 +387,17 @@ No Candidate mutation, no Production mutation, no paid Vercel/Supabase upgrade.
 - CANDIDATE: `1685836f4226fdcb3250a60eba7430ecf3e8f080` remains untouched.
 - PRODUCTION: HOLD / NO TOUCH.
 - RESUME POINTER: reconcile terminal exact-SHA CI for `7ee608d77d32ef6804dd1d08086b14cf5ea795f5`; inspect the first real failure by job/log, repair only the affected root cause, then re-run exact-SHA verification. Do not merge PR #100 or touch Candidate/Production before required proof closes.
+
+
+## RUN-2026-09-21-EXECUTE-UI-009 — DEEP TRANSACTIONAL UI
+- ACTIVE UI BRANCH: `execution/customer-ui-completion-20260920`.
+- EXACT CURRENT UI HEAD: `da7f3e1651354d397eb01ef2de68544d6e4e1f28`.
+- CUSTOMER DEPTH: added real order-detail dialog with server-side ownership verification before reading `order_items`; displays actual product, SKU, unit, quantity, unit price, line total, status, date, and order total.
+- STAFF DEPTH: added real administrative order-detail dialog using RLS-backed server reads; exposes actual order lines and totals without showing technical customer UUIDs.
+- UX: explicit responsive layouts for both order-detail surfaces; action buttons remain usable on mobile.
+- VISUAL/TEST COVERAGE: customer critical path now verifies persisted order details after a real submitted order; UI visual review captures customer detail/cart/orders/templates/finance and staff order detail when orders exist.
+- BRAND HYGIENE: repository search on the active UI branch returned no `العامري` references.
+- DATA SAFETY: no synthetic business data, no schema mutation, no pricing/tenant/reporting-boundary change.
+- PROOF STATUS: fresh exact-SHA verification is required for `da7f3e...`; no prior SHA evidence transfers.
+- CANDIDATE `1685836f...` and PRODUCTION remain untouched / HOLD.
+- RESUME POINTER: reconcile exact-SHA CI and exact Deployment for `da7f3e1651354d397eb01ef2de68544d6e4e1f28`; inspect the first terminal failure, repair only the proven root cause, then re-run the exact-SHA suite.
