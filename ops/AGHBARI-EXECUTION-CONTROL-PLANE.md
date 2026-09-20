@@ -841,3 +841,14 @@ Keep promotions, provider notification delivery, integration delivery records/ad
 - The Quick Order implementation preserves local-first matching and falls back to the existing authorized server catalog with active warehouse context; no new database privilege or tenant boundary is introduced by this front.
 - Evidence rule reinforced: completed checks on head `483f972...` do not prove a future merged SHA; merge creates a new verification unit.
 - Vercel Free-plan deployment quota failure is recorded as an external platform boundary only; it does not authorize a candidate mutation, Production action, or paid upgrade.
+
+
+---
+## EVOLUTION / RUN-2026-09-20-EXECUTE-018
+- Run-018 advanced the live development branch to merge SHA `d8b627bd884c61c0f7f3a18dda1b0e880ef6735c` via PR #97 after implementing server-backed Quick Order SKU/barcode resolution for products outside the loaded catalog page.
+- The implementation is active-warehouse scoped and uses authorized server catalog truth; it never broadens tenant visibility. A browser regression intentionally filtered the visible catalog to zero results and then resolved same-tenant SKU `BROW-001` through Quick Order.
+- A first browser regression using cross-tenant `BROW-002` failed as expected because the product belonged to the other tenant. The test was corrected rather than weakening authorization.
+- Final implementation SHA `483f9722f226c5f295c96edde2be88d760ceb520` and merged SHA `d8b627bd884c61c0f7f3a18dda1b0e880ef6735c` both received full exact-SHA verification; merged SHA runs: Quality `35485501859`; Security `35485501878`; G1 `35485501813`; Order `35485501833`; Bootstrap `35485501857`; Migration `35485501888`; Concurrency `35485501822`; Test-the-Test `35485501844`; Fresh Local Browser `35485501838`; Local Production Artifact `35485501817`; Deployment Browser Contract `35485501836` — all SUCCESS.
+- Candidate `certification/final-candidate-20260920-v3` at `1685836f4226fdcb3250a60eba7430ecf3e8f080`, candidate Vercel `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C`, and Production remain untouched.
+- Verification-only PR #98 was closed without merge.
+- Next executable front is core customer/admin transactional UI completion from development head, with explicit state handling, accessibility, and server-truth constraints.
