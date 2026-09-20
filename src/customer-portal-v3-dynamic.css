@@ -1214,40 +1214,13 @@
   line-height: 1.8;
 }
 
-.command-launch {
-  position: fixed;
-  inset-inline-start: 18px;
-  inset-block-end: 18px;
-  z-index: 36;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 42px;
-  padding: 0 13px;
-  border: 1px solid rgba(199,217,223,.95);
-  border-radius: 999px;
-  background: rgba(255,255,255,.94);
-  color: var(--ag-ink);
-  box-shadow: 0 14px 36px rgba(5,24,39,.13);
-  backdrop-filter: blur(16px);
-  font-weight: 900;
-  transition: transform .18s var(--ag-ease), box-shadow .18s var(--ag-ease);
-}
 
-.command-launch:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 18px 42px rgba(5,24,39,.16);
-}
 
-.command-launch span {
-  color: var(--ag-primary);
-  direction: ltr;
-  unicode-bidi: isolate;
-}
 
-.command-launch small {
-  color: var(--ag-muted);
-}
+
+
+
+
 
 @media (min-width: 1181px) {
   .portal-nav {
@@ -1347,10 +1320,7 @@
   .price-row strong {
     font-size: 19px;
   }
-  .command-launch {
-    inset-inline-start: 12px;
-    inset-block-end: 78px;
-  }
+  
   .staff-section-rail {
     grid-template-columns: 1fr 1fr;
   }
