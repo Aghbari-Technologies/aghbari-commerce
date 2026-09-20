@@ -303,3 +303,12 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 - Browser evidence boundary: unauthenticated preview access redirected to Vercel SSO; Vercel share-access was attempted but the fetch path still redirected. This is a platform access/proof boundary, not an application defect and not UI PASS.
 - Action/result: reconciled the living state to exact current GitHub/Vercel reality; preserved Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production HOLD / NO TOUCH.
 - Next: close the exact-SHA CI/browser verification unit from terminal evidence, then merge only after required release gates are terminal SUCCESS; re-prove the merge SHA as a new evidence unit.
+
+## RUN-2026-09-21-EXECUTE-024B
+- Root cause found: visible customer template flow mixed «قوالب الطلبات» with legacy «المسحة» wording in status messages, placeholders, and command keywords.
+- Action: updated `src/AppV3Fixed.tsx` only; user-visible terminology is now consistently «قالب الطلب/قوالب الطلبات». Exact source scan on `0e23965179818904d62d7577abb919cca16593a6` reports zero `مسحة` occurrences.
+- Exact source SHA: `0e23965179818904d62d7577abb919cca16593a6`.
+- Vercel deployment `dpl_5SWnt86P56xTYZV8yxNSE3Jmtay9` is BUILDING and reports the exact branch/SHA.
+- G1 run `35544020449` is QUEUED; no PASS.
+- Candidate and Production unchanged.
+- Next: exact-SHA deployment/browser/CI verification for `0e23965179818904d62d7577abb919cca16593a6`, then merge only after required gates are terminal SUCCESS.
