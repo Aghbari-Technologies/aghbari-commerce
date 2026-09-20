@@ -25,15 +25,17 @@
 ## 3. CURRENT RECONCILED REALITY — 2026-09-20
 - Repository: `Aghbari-Technologies/aghbari-commerce`.
 - Development branch: `enhancement/market-ready-v4-20260918`.
-- PR #88: OPEN / DRAFT; base is frozen candidate `2facceb39aaa826413f20245a6f20b6c2ff7cd34`.
-- **Current development SHA: `1366f8ea240f2b1c58d78a863aa7a5584be531fb`.**
-- Exact current development Vercel deployment: `dpl_DVpzzmGceQ8hSZkTMKHzDc9DCmCh`, READY.
-- New candidate branch: `certification/final-candidate-20260920-v3`, exact SHA `1366f8ea240f2b1c58d78a863aa7a5584be531fb`.
-- Candidate Vercel deployment: `dpl_72VRoKV9a71aY8JPtn7Pqsv5p18z`, READY, exact SHA `1366f8ea240f2b1c58d78a863aa7a5584be531fb`.
-- Candidate branch now has exact CI release gates running/closing against the same SHA; no evidence is transferred from other SHAs.
-- Frozen historical candidate `certification/final-candidate-20260918` remains at `2facceb39aaa826413f20245a6f20b6c2ff7cd34` and remains untouched.
+- Development SHA: `1366f8ea240f2b1c58d78a863aa7a5584be531fb`.
+- PR #88: OPEN / DRAFT / MERGEABLE; base remains frozen historical candidate `2facceb39aaa826413f20245a6f20b6c2ff7cd34`.
+- Active certification branch: `certification/final-candidate-20260920-v3`, exact SHA `1366f8ea240f2b1c58d78a863aa7a5584be531fb`.
+- Candidate Vercel deployment: `dpl_72VRoKV9a71aY8JPtn7Pqsv5p18z`, READY, exact SHA matches; runtime error query for this preview returned no error/fatal logs.
+- Candidate exact gates proven: Bootstrap 1067; Quality 3105; Security 2795; G1 2948; Order Workflow 1576; Migration 3080; Concurrency 573; Test-the-Test 682 attempt 2; Fresh Browser 400; Local Production Browser 406.
+- Candidate Deployment Browser proven independently by `Certification / Candidate Deployment Browser Proof` run `35478298905`, with exact artifact verification, Customer E2E, Admin E2E, and evidence artifact `10594833277`.
+- Candidate Final Regression proven independently by `Certification / Candidate Final Regression Proof` run `35478610589`, with exact artifact, security headers, Arabic/RTL shell, PWA manifest, service worker, and evidence artifact `10594688925`.
+- Frozen historical candidate `certification/final-candidate-20260918` remains exactly `2facceb39aaa826413f20245a6f20b6c2ff7cd34` and untouched.
 - Production remains HOLD / NO TOUCH.
-- Netlify exact-SHA remains externally blocked by HTTP 403 account-credit exhaustion.
+- Netlify exact-SHA deployment remains externally blocked by HTTP 403 account-credit exhaustion.
+- Auth leaked-password protection remains an explicit external Supabase Auth configuration warning.
 
 ## 4. LIVE SUPABASE TRUTH
 - Project: `aghbari-commerce`; ref `mrcyqezbhpncuvaehwgf`; status `ACTIVE_HEALTHY`; PostgreSQL `17.6.1.166`.
@@ -89,3 +91,8 @@ A single post-checkpoint commit can invalidate exact-SHA evidence even when the 
 ## 11. DURABLE CANDIDATE RELEASE LESSON — 2026-09-20
 - Creating a new certification branch from a proven development SHA preserves the frozen historical candidate while enabling exact candidate-specific CI. Candidate evidence is still environment-specific: local browser/CI proof does not become Deployment Browser proof merely because the source SHA matches.
 - Vercel Git integration produced a READY candidate deployment for the exact candidate SHA, but the repository Browser E2E workflow's authenticated job is conditional on `deployment_status` or manual dispatch. A pull-request-triggered browser-contract PASS therefore cannot be promoted to Deployment Browser PASS.
+
+
+## 12. DURABLE RELEASE-PROOF LESSON — 2026-09-20
+- Candidate browser and final-regression evidence can be proven safely without mutating the candidate by using isolated proof branches that explicitly checkout the candidate SHA and target the candidate's exact Vercel deployment. This is valid because both application source and deployment artifact identity are independently verified against the same exact SHA.
+- A workflow triggered by pull_request may legitimately produce a browser-contract PASS while skipping authenticated deployment E2E. The skipped job must not be promoted to Browser PASS; a dedicated exact-target proof path is required.
