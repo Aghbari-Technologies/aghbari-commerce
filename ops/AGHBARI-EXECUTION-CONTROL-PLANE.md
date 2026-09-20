@@ -844,3 +844,12 @@ Keep promotions, provider notification delivery, integration delivery records/ad
 ## RUN-2026-09-20-EXECUTE-020 EVOLUTION CHECK
 - Cart pricing integrity lesson: any customer-catalog refresh must fetch price tiers for both visible catalog products and all saved cart product IDs; otherwise a search transition can display a base price for an off-screen cart line.
 - Queue discipline lesson: exact-SHA proof remains the acceptance gate; queued GitHub Actions and Vercel Free-plan rate-limit failures are recorded as unresolved infrastructure states, never converted to product PASS.
+
+
+## CURRENT EXECUTION OVERRIDE — RUN-2026-09-20-EXECUTE-021
+- Active UI branch: `execution/customer-ui-completion-20260920`; exact HEAD `a9dd58a111138d8a0b12e5e5f5582b74395da79c`.
+- PR #100 remains OPEN / DRAFT and must not merge until all required exact-SHA gates are terminal SUCCESS.
+- Root-cause repair: prior UI SHA `2e714043...` failed Application Quality only on src/AppV3Fixed.tsx:59:543 (`prefer-const`). Direct source correction changed `let grouped` to `const grouped`.
+- All evidence tied to `2e714043...` is invalid for `a9dd58a...`; current exact-SHA checks are queued.
+- Netlify public URL currently reports old build SHA `07c3cab...`; Vercel is externally rate-limited by Free plan. Neither is new-UI proof.
+- Candidate `1685836f...` and Production remain protected / untouched.
