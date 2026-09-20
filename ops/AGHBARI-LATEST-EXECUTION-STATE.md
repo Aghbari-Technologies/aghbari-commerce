@@ -36,3 +36,22 @@ Never modify frozen historical candidate, never transfer PASS across SHA, and ne
 - Test-the-Test `35481150811` remains IN_PROGRESS; baseline sensitive suite passed and Mutation 1 detected successfully, then the job is currently at a restore step. GitHub does not expose logs for the active job; no PASS is claimed for the full Test-the-Test gate yet.
 - No new Vercel deployment exists for this WIP branch, and the proven candidate deployment remains unchanged.
 - Do not promote WIP to candidate until Test-the-Test is fully closed and the exact candidate deployment/browser/final-regression cycle is run against the promoted SHA.
+
+
+## CURRENT EXECUTION STATE — RUN-2026-09-20-EXECUTE-017
+- DEVELOPMENT BRANCH: `enhancement/market-ready-v4-20260918`
+- DEVELOPMENT SHA: `cc9f5e7e1906b553613bb2e8dee99dacd704491d` — independently re-proven across Quality, Security, G1, Order Workflow, Bootstrap, Migration, Concurrency, Test-the-Test, Fresh Local Browser, Local Production Artifact Browser, and Exact Deployment Browser Contract.
+- IMPLEMENTATION BRANCH: `execution/core-ui-20260920`; merged through PR #93. Core UI hardening includes Command Palette modal focus management and explicit customer catalog empty-state UX.
+- ACTIVE CERTIFICATION BRANCH: `certification/final-candidate-20260920-v3`
+- ACTIVE CANDIDATE SHA: `1685836f4226fdcb3250a60eba7430ecf3e8f080` — unchanged.
+- CANDIDATE VERCEL: `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` — READY, exact SHA matched.
+- DEVELOPMENT VERCEL: latest automated deployment path is externally rate-limited by Free-plan `build-rate-limit`; do not classify this as product failure.
+- PRODUCTION: HOLD / NO TOUCH.
+
+## RUN-017 EVIDENCE
+- `050d3ca...`: Quality `35484063305`; Security `35484063243`; G1 `35484063309`; Order Workflow `35484063323`; Bootstrap `35484063279`; Migration `35484063272`; Concurrency `35484063275`; Test-the-Test `35484063257`; Fresh Local Browser `35484063327`; Local Production Artifact `35484063291`; Exact Deployment Browser Contract `35484063261` — all SUCCESS.
+- `cc9f5e7...`: Quality `35484382281`; Security `35484382222`; G1 `35484382254`; Order Workflow `35484382288`; Bootstrap `35484382245`; Migration `35484382233`; Concurrency `35484382276`; Test-the-Test `35484382253`; Fresh Local Browser `35484382220`; Local Production Artifact `35484382242`; Exact Deployment Browser Contract `35484382224` — all SUCCESS.
+- Verification-only PR #94 and #95 were closed without merge.
+
+## NEXT CORE FRONT
+- Quick Order currently performs local SKU/barcode matching against the loaded catalog array. Next development-only front is a server-backed exact identifier fallback so scanner entry resolves products outside the first catalog page. Do not touch candidate/Production for this front unless a release correction is proven necessary.
