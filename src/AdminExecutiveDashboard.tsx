@@ -140,7 +140,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
           <article className="executive-card smart-card"><div className="executive-card-title"><div><span>أدوات الإدارة</span><h2>أوامر سريعة</h2></div><span>تشغيل مباشر</span></div><div className="quick-actions">{['owner','admin','sales'].includes(role) && <a href="#admin-product-create">＋ إضافة منتج</a>}{['owner','admin','sales','warehouse'].includes(role) && <a href="#admin-orders">▤ إدارة الطلبات</a>}{['owner','admin','sales'].includes(role) && <a href="#admin-customers">▣ إدارة العملاء</a>}{['owner','admin','warehouse'].includes(role) && <a href="#admin-inventory">▥ إدارة المخزون</a>}{['owner','admin','sales'].includes(role) && <a href="#admin-finance">◫ الحسابات والمالية</a>}{['owner','admin'].includes(role) && <a href="#admin-settings">⚙ إعدادات التحكم</a>}</div><div className="credit-summary"><span>الائتمان المتاح</span><strong>{money(snapshot.availableCredit)}</strong></div></article>
         </div>
 
-        <footer className="executive-footer"><span>دورك الحالي: {role}</span><span>{lastUpdated ? `آخر تحديث ${formatBusinessTime(lastUpdated)}` : 'جارٍ التحديث…'}</span><span>التحديث التلقائي كل 60 ثانية</span></footer>
+        <footer className="executive-footer"><span>دورك الحالي: {{owner:'مالك',admin:'مدير',sales:'مبيعات',warehouse:'مخزون',viewer:'قارئ'}[role] ?? role}</span><span>{lastUpdated ? `آخر تحديث ${formatBusinessTime(lastUpdated)}` : 'جارٍ التحديث…'}</span><span>التحديث التلقائي كل 60 ثانية</span></footer>
       </div>
     </div>
   </section>;
