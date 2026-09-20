@@ -1240,3 +1240,85 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 
 /* Prevent duplicate identity mark: the live staff shell renders its own brand mark. */
 .staff-shell .staff-topbar::before { display: none !important; }
+
+
+/* ---------- Modern browser performance + interaction baseline ---------- */
+html {
+  color-scheme: light;
+  scrollbar-gutter: stable;
+  text-size-adjust: 100%;
+}
+
+body {
+  font-synthesis: none;
+  overflow-wrap: anywhere;
+}
+
+h1, h2, h3, h4 {
+  text-wrap: balance;
+}
+
+.staff-shell,
+.customer-shell,
+.staff-console,
+.portal-main {
+  isolation: isolate;
+}
+
+.product-grid,
+.catalog-grid,
+.product-loading-grid,
+.template-grid,
+.orders-list,
+.executive-orders,
+.executive-kpis,
+.operational-insight-grid {
+  contain: layout paint;
+}
+
+.product-card,
+.b2b-product-card,
+.admin-card,
+.executive-card,
+.order-card,
+.template-card {
+  min-width: 0;
+}
+
+@supports (content-visibility: auto) {
+  .product-grid > *,
+  .catalog-grid > *,
+  .orders-list > *,
+  .template-grid > * {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 320px;
+  }
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--ag-primary);
+}
+
+button,
+a,
+[role="button"] {
+  touch-action: manipulation;
+}
+
+img,
+svg {
+  max-width: 100%;
+}
+
+@media (max-width: 560px) {
+  .customer-main,
+  .portal-body,
+  .staff-console {
+    padding-bottom: calc(60px + env(safe-area-inset-bottom));
+  }
+
+  .portal-bottom-nav {
+    bottom: max(10px, env(safe-area-inset-bottom));
+  }
+}
