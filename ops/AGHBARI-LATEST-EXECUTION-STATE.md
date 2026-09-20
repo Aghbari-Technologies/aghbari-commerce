@@ -13,10 +13,11 @@
 - Old candidate deployment/browser/final-regression evidence for `72d5dae...` is historical and cannot be transferred.
 
 ## NEXT EXECUTION ROUTER
-1. Recheck `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` until READY/failed.
-2. If READY, run exact candidate Deployment Browser proof and Final Regression for `1685836f4226fdcb3250a60eba7430ecf3e8f080` only.
-3. Reconcile runtime/errors for the exact new deployment.
-4. Preserve Production NO TOUCH and zero-cost Auth warning policy.
+1. Source-level exact-SHA candidate revalidation is CLOSED SUCCESS for `1685836f4226fdcb3250a60eba7430ecf3e8f080`.
+2. Candidate deployment `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` is READY and exact SHA matched; direct HTTP 200 shell/runtime checks are clean.
+3. Remaining proof front: full exact candidate Deployment Browser E2E + Final Regression. Do not label PASS without the exact workflow evidence.
+4. The connected GitHub capability does not expose workflow dispatch; record this as a bounded proof-tool limitation, not as a product defect. No paid browser automation is used under the zero-cost policy.
+5. Preserve Production NO TOUCH and the external Free-tier Auth warning policy.
 
 ## SAFETY
 Never modify frozen historical candidate, never transfer PASS across SHA, and never mutate Production for testing.
