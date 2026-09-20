@@ -2,7 +2,7 @@
 - Development branch: `enhancement/market-ready-v4-20260918`; CI hardening PR #99 is merged at exact merge SHA `35d95e5e140820c7e7a8e0a792f89b28eacfb8e8`.
 - Active UI implementation branch: `execution/customer-ui-completion-20260920`; current head `1c759469994ad4fa4cb85f8c9fd09add810466e0`; PR #100 is OPEN / DRAFT and contains customer/staff UI + data-fetch performance hardening.
 - UI work includes: separate catalog vs operational fetching, search reset/context, exact loading skeletons, accessible dialog semantics + Escape dismissal, product image alt text, responsive staff shell, role-aware staff section shortcuts, and browser coverage for the new UI paths.
-- Exact-SHA CI for UI head `1c759469994ad4fa4cb85f8c9fd09add810466e0` is currently queued on GitHub Actions; no PASS is claimed until every required exact-SHA workflow terminates SUCCESS.
+- Exact-SHA CI for UI head `2e714043e198feec70be226bc00e474d91a332d1` is currently queued on GitHub Actions; no PASS is claimed until every required exact-SHA workflow terminates SUCCESS.
 - Vercel status for UI head is externally rate-limited on the Free plan (`api-deployments-free-per-day` / retry later); this is an environment constraint, not proof of product behavior.
 - CI-hardening SHA `3aafdf19c8a8affc0af8cb0692d81a15e512dcd1` completed all 12 tracked exact-SHA workflows SUCCESS before merge, including Test-the-Test `35486034020`; merged development SHA is therefore `35d95e5e140820c7e7a8e0a792f89b28eacfb8e8`.
 - Certification candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080`, candidate Vercel `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C`, frozen historical candidate `2facceb39aaa826413f20245a6f20b6c2ff7cd34`, and Production remain untouched; Production is HOLD / NO TOUCH.
@@ -840,3 +840,7 @@ Keep promotions, provider notification delivery, integration delivery records/ad
 - Deployment artifact proof remains separate and is exercised only when a real deployment_status/manual deployment target is available and exact SHA identity can be proven.
 - CI-only correction is isolated on PR #99 at `3aafdf19c8a8affc0af8cb0692d81a15e512dcd1`; do not merge until its exact-SHA checks terminate SUCCESS.
 - Current Supabase advisor review found no new actionable performance/security defect: security findings are the known intentional SECURITY DEFINER execution pattern; performance findings are predominantly unused-index informational notices. No speculative DDL change is authorized.
+
+## RUN-2026-09-20-EXECUTE-020 EVOLUTION CHECK
+- Cart pricing integrity lesson: any customer-catalog refresh must fetch price tiers for both visible catalog products and all saved cart product IDs; otherwise a search transition can display a base price for an off-screen cart line.
+- Queue discipline lesson: exact-SHA proof remains the acceptance gate; queued GitHub Actions and Vercel Free-plan rate-limit failures are recorded as unresolved infrastructure states, never converted to product PASS.
