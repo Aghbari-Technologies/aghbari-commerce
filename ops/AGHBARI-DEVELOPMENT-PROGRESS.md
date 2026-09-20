@@ -129,3 +129,14 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 - Concurrency `35485184025` and Local Production Artifact Browser `35485184035` remain RUNNING; no PASS is asserted until terminal success is observed.
 - PR #96 remains OPEN, mergeable, development-targeted, 6 commits / 2 changed files. Vercel status remains the external Free-plan `api-deployments-free-per-day` failure.
 - Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain untouched.
+
+
+## RUN-2026-09-20-EXECUTE-018 — QUICK ORDER CORE ADVANCEMENT
+- Rooted at fully proven development SHA `cc9f5e7e1906b553613bb2e8dee99dacd704491d`.
+- Implemented Quick Order server-backed exact SKU/barcode fallback, active-warehouse scoped, with explicit lookup-error state.
+- Added and corrected Customer browser regression: visible catalog intentionally filtered to zero results, then same-tenant authorized `BROW-001` resolved via server-backed Quick Order.
+- Implementation SHA `483f9722f226c5f295c96edde2be88d760ceb520` full exact-SHA gates all SUCCESS; this included correction of one invalid cross-tenant test assumption and one lint-only obsolete variable.
+- Merged to development through PR #97 as merge SHA `d8b627bd884c61c0f7f3a18dda1b0e880ef6735c`.
+- Merged SHA full independent verification: Quality `35485501859`; Security `35485501878`; G1 `35485501813`; Order Workflow `35485501833`; Bootstrap `35485501857`; Migration `35485501888`; Concurrency `35485501822`; Test-the-Test `35485501844`; Fresh Local Browser `35485501838`; Local Production Artifact `35485501817`; Exact Deployment Browser `35485501836` — all SUCCESS.
+- Verification-only PR #98 was closed without merge after merged-SHA proof. Candidate and Production were untouched.
+- Next implementation front: continue core customer/admin UI completion from development head, prioritizing high-frequency transactional surfaces and durable empty/loading/error/accessibility states; never modify candidate/Production without release qualification.
