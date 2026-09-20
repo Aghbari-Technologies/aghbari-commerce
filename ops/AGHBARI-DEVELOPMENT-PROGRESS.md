@@ -64,3 +64,10 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 - External release blockers unchanged: Supabase Auth leaked-password protection remains an external configuration warning; Netlify remains externally blocked by account-credit HTTP 403; Production remains HOLD / NO TOUCH.
 - Result: strong new exact candidate evidence established, but certification remains NO while the exact Customer/Admin browser proof is still running and the external Auth warning is unresolved.
 - Next action: close candidate browser proof, capture exact artifact, then reconcile the complete evidence set. Do not transfer evidence across SHA and do not mutate Production.
+
+
+## RUN-2026-09-20-EXECUTE-015
+- Work branch: `execution/bulk-actions-20260920` from exact candidate SHA `72d5dae...`.
+- Implemented: permission-aware bulk order transition preview with explicit eligible/blocked counts and a second validation before mutation; added deterministic domain tests for role/state/empty-selection boundaries.
+- Implemented: import reconciliation result panel showing imported rows, created products, updated products, and inventory changes; stale prior report is cleared before staging a new file.
+- Verification status: awaiting exact-SHA CI after final WIP commit; no PASS is claimed yet and candidate/Production remain untouched.
