@@ -1,11 +1,11 @@
-# CURRENT EXECUTION REALITY — RUN-2026-09-20-EXECUTE-022
+# CURRENT EXECUTION REALITY — RUN-2026-09-20-EXECUTE-023
 - Development branch: `enhancement/market-ready-v4-20260918`; development merge SHA `35d95e5e140820c7e7a8e0a792f89b28eacfb8e8`.
-- Active UI branch: `execution/customer-ui-completion-20260920`; current HEAD `b4c6686761d56a4e3ddf813e30f0d80b654037d5`; PR #100 OPEN / DRAFT.
-- Current front: world-class customer/staff UI visual-system advancement.
-- New UI HEAD requires entirely fresh exact-SHA proof; no prior PASS transfer.
+- Active UI branch: `execution/customer-ui-completion-20260920`; current HEAD `bc3e66b8ef69c381d9750ef54551a9a526e88554`; PR #100 OPEN / DRAFT.
+- Current front: world-class customer/staff UI visual-system advancement with a verified header brand-mark layout stabilization.
+- New HEAD requires fresh exact-SHA proof; no prior PASS transfer.
 - Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain untouched; Production HOLD / NO TOUCH.
-- External deployment constraints: Vercel Free-plan deployment rate-limit; Netlify account-credit exhaustion. These are blockers for deployment evidence only and are not product PASS/FAIL.
-- Self-improvement: visual polish is now governed as a first-class product-quality surface, with explicit hierarchy, responsive behavior, interaction states, accessibility, and proof-by-artifact/browser after source changes.
+- External deployment limits remain Vercel Free-plan development-rate-limit and Netlify credit exhaustion.
+- Durable proof rule: visual CSS/layout changes can alter browser behavior and invalidate prior visual evidence; treat the resulting SHA as a fresh verification unit.
 
 # الأغبري | Aghbari Commerce — Execution Control Plane
 
@@ -857,3 +857,7 @@ Keep promotions, provider notification delivery, integration delivery records/ad
 ## RUN-022 CONTROL-PLANE EVOLUTION
 - Durable rule: a substantial visual-system change is a release-relevant UI surface even when source changes are CSS-only; it invalidates prior visual/browser evidence for the old SHA and requires fresh exact-SHA artifact/browser verification.
 - Execution decision: use the existing imported `customer-portal-v3-dynamic.css` as the visual-system integration point to minimize source churn and preserve application behavior while allowing comprehensive surface upgrades.
+
+## RUN-023 CONTROL-PLANE EVOLUTION
+- Root cause found during visual review: the brand mark pseudo-element was a floating layout participant. On a complex RTL header this can create alignment drift across responsive layout modes.
+- Preventive rule: brand/decoration pseudo-elements in structural headers must be absolutely positioned or otherwise removed from layout flow when they are decorative, with explicit reserved space for content.
