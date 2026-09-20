@@ -63,7 +63,7 @@ export default function AdminPanel({ role }: { role: UserRole }) {
   ];
   useEffect(() => { const onKeyDown = (event: KeyboardEvent) => { if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); setCommandOpen(true); } }; window.addEventListener('keydown', onKeyDown); return () => window.removeEventListener('keydown', onKeyDown); }, []);
 
-  return <section className="admin-panel" id="account">
+  return <section className="admin-panel staff-console" id="account">
     <div className="staff-commandbar"><div><span className="eyebrow">مركز التشغيل</span><strong>وصول سريع للمهام</strong><small>Ctrl/⌘ K</small></div><button type="button" onClick={() => setCommandOpen(true)}>⚡ أوامر الأغبري</button></div>
     <AdminExecutiveDashboard role={role} />
     <nav className="staff-section-rail" aria-label="اختصارات مركز التشغيل">
@@ -109,10 +109,10 @@ export default function AdminPanel({ role }: { role: UserRole }) {
         </section>
       </div>}
       {error && <div className="error-banner" role="alert">{error}</div>}{message && <div className="success" role="status">{message}</div>}
-      {canCatalog && <div id="admin-customers"><CustomerPanel role={role} /></div>}
-      {canInventory && <div id="admin-inventory"><InventoryPanel role={role} /></div>}
-      {canInventory && <div id="admin-purchasing"><PurchasingPanel role={role} /></div>}
-      {canFinance && <div id="admin-finance"><FinancePanel role={role} /></div>}
+      {canCatalog && <div id="admin-customers"><div id="admin-customers"><CustomerPanel role={role} /></div></div>}
+      {canInventory && <div id="admin-inventory"><div id="admin-inventory"><InventoryPanel role={role} /></div></div>}
+      {canInventory && <div id="admin-purchasing"><div id="admin-purchasing"><PurchasingPanel role={role} /></div></div>}
+      {canFinance && <div id="admin-finance"><div id="admin-finance"><FinancePanel role={role} /></div></div>}
       {canInventory && <div id="admin-export"><ExportPanel role={role}/></div>}
       {canCategory && <div id="admin-settings"><ClientControlPanel role={role}/></div>} 
     </details>
