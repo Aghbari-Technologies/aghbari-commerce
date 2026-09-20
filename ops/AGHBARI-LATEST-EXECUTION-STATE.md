@@ -272,3 +272,12 @@ No Candidate mutation, no Production mutation, no paid Vercel/Supabase upgrade.
 - CANDIDATE: `1685836f4226fdcb3250a60eba7430ecf3e8f080` unchanged.
 - PRODUCTION: NO TOUCH / HOLD.
 - NEXT EXECUTABLE TASK: reconcile exact-SHA CI + Vercel for `7f1b523319d74aa17f549c49db0f52482df5c00b`; once terminal, repair failures before additional scope.
+
+
+## LIVE RECONCILIATION — 2026-09-21T23:08Z
+- EXACT UI HEAD / PR HEAD: `7f1b523319d74aa17f549c49db0f52482df5c00b`.
+- EXACT VERCEL DEPLOYMENT: `dpl_Gs339VatHiPGCVhv46UF7ot1HiTE` — READY; commit SHA matches the UI head exactly.
+- EXACT G1 RUN: `35543639501` — QUEUED; job `106165620419` — QUEUED.
+- Vercel READY proves deployment of this SHA, not browser correctness or certification.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` remains untouched; Production remains NO TOUCH / HOLD.
+- NEXT EXECUTABLE TASK: reconcile the queued exact-SHA verification set for `7f1b523319d74aa17f549c49db0f52482df5c00b`; repair any terminal failure before merge/certification.
