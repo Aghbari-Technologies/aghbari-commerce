@@ -55,11 +55,11 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
     if (itemError) throw itemError;
     setProducts((productRows ?? []) as Product[]); setWarehouses((warehouseRows ?? []) as Warehouse[]); setSuppliers((supplierRows ?? []) as Supplier[]);
     const nextOrders = (orderRows ?? []) as PurchaseOrder[]; setOrders(nextOrders); setItems((itemRows ?? []) as PurchaseItem[]);
-    if (!warehouseId && warehouseRows?.[0]) setWarehouseId(warehouseRows[0].id);
-    if (!supplierId && supplierRows?.[0]) setSupplierId(supplierRows[0].id);
-    if (!productId && productRows?.[0]) setProductId(productRows[0].id);
-    if (!selectedOrderId) setSelectedOrderId(nextOrders.find((o) => o.status === 'approved' || o.status === 'partially_received')?.id ?? '');
-  }, [canManage, productId, selectedOrderId, supplierId, warehouseId]);
+    setWarehouseId((current) => current || warehouseRows?.[0]?.id || '');
+    setSupplierId((current) => current || supplierRows?.[0]?.id || '');
+    setProductId((current) => current || productRows?.[0]?.id || '');
+    setSelectedOrderId((current) => current || nextOrders.find((o) => o.status === 'approved' || o.status === 'partially_received')?.id || '');
+  }, [canManage]);
 
   useEffect(() => { void load().catch((e) => setError(e instanceof Error ? e.message : 'تعذر تحميل المشتريات.')); }, [load]);
 
