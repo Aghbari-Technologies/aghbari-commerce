@@ -27,8 +27,8 @@
 - Development branch: `enhancement/market-ready-v4-20260918`.
 - Development SHA: `72d5dae91ca7250c98ebb50d8b05409500f77c13`.
 - PR #88: OPEN / DRAFT / MERGEABLE; base remains frozen historical candidate `2facceb39aaa826413f20245a6f20b6c2ff7cd34`.
-- Active certification branch: `certification/final-candidate-20260920-v3`, exact SHA `72d5dae91ca7250c98ebb50d8b05409500f77c13`.
-- Vercel exact candidate deployment `dpl_DVfuqGzcMPBX3aTgaH64LdChES6Y` is READY and exact SHA matches. Development exact-SHA preview `dpl_2aas6bAdtyEjBT9GDabNKKmdo8gd` is also READY.
+- Active certification branch: `certification/final-candidate-20260920-v3`, promoted fast-forward to exact SHA `1685836f4226fdcb3250a60eba7430ecf3e8f080` after WIP proof closure.
+- Previous exact candidate deployment `dpl_DVfuqGzcMPBX3aTgaH64LdChES6Y` is historical for `72d5dae...`; new candidate deployment `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` is BUILDING and reports exact candidate SHA `1685836f4226fdcb3250a60eba7430ecf3e8f080`.
 - The previous candidate SHA `1366f8ea240f2b1c58d78a863aa7a5584be531fb` had complete technical evidence, but that evidence is historical and invalid for the new SHA.
 - Production remains HOLD / NO TOUCH.
 - Netlify exact-SHA deployment remains externally blocked by HTTP 403 account-credit exhaustion.
@@ -67,7 +67,10 @@ Unless explicitly implemented and proven, these remain backlog/deferred: promoti
 
 ## 8. NEXT EXECUTION QUEUE
 ### P0
-1. Candidate exact-SHA mandatory technical gates are complete for `72d5dae...`.
+1. WIP SHA `1685836f4226fdcb3250a60eba7430ecf3e8f080` passed the exact-SHA implementation/security/domain/order/migration/concurrency/browser/Test-the-Test gates and was promoted to the active certification branch.
+2. New exact candidate Vercel deployment `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` is BUILDING; old candidate deployment/browser/final-regression evidence for `72d5dae...` is not reusable.
+3. Run exact candidate Deployment Browser proof and Final Regression against `1685836f4226fdcb3250a60eba7430ecf3e8f080` only after `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` is READY.
+4. Preserve frozen historical candidate `2facceb...` and Production NO TOUCH.
 2. Candidate deployment browser proof is complete on exact Vercel deployment `dpl_DVfuqGzcMPBX3aTgaH64LdChES6Y` via `35479844177` / `105995552224`; Customer/Admin E2E both passed.
 3. Final Regression is complete on the exact candidate deployment via `35479844177` / `105995552370`.
 4. Preserve the evidence pack; certification remains a separate release-boundary decision and Production remains NO TOUCH.
@@ -102,3 +105,10 @@ Unless explicitly implemented and proven, these remain backlog/deferred: promoti
 - Vercel runtime verification must use the deployment's actual Vercel project ID; a stale project ID can produce a misleading 403 and must not be interpreted as application failure or proof of no logs.
 - The free-tier constraint is a release policy boundary: native Supabase leaked-password protection is an external paid-tier feature; do not create speculative architecture or a paid upgrade solely to clear that advisor.
 - Durable execution routers must be reconciled whenever a later run exposes stale top-level SHA/state. Current canonical candidate state is `72d5dae...`.
+
+
+## 12. DURABLE EXECUTION LESSON — RUN-2026-09-20-EXECUTE-016
+- Test-the-Test `35481150811` / job `105999082463` was actually terminal SUCCESS; the prior router had stale IN_PROGRESS wording. Job-level terminal evidence overrides stale prose.
+- Exact-SHA verification on `1685836f4226fdcb3250a60eba7430ecf3e8f080` succeeded across Quality `35481150809`, Security `35481150821`, G1 `35481150820`, Order Workflow `35481150804`, Deployment Browser Contract `35481150826`, Local Production Browser `35481150812`, Concurrency `35481150807`, Migration `35481150837`, Fresh Local Browser `35481150808`, and Test-the-Test `35481150811`.
+- Active certification branch was advanced fast-forward to `1685836f4226fdcb3250a60eba7430ecf3e8f080`; frozen historical candidate `2facceb...` was not modified.
+- Vercel created exact candidate deployment `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C`, currently BUILDING. This invalidates deployment/browser/final-regression evidence from `72d5dae...` for the new SHA.
