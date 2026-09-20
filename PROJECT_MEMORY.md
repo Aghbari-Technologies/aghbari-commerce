@@ -25,19 +25,15 @@
 ## 3. CURRENT RECONCILED REALITY — 2026-09-20
 - Repository: `Aghbari-Technologies/aghbari-commerce`.
 - Development branch: `enhancement/market-ready-v4-20260918`.
-- PR #88: OPEN / DRAFT / MERGEABLE; base is `certification/final-candidate-20260918`.
-- **Current development SHA: `9d2149de4bf3c491abad8460cab5df01c6faa4bd`.**
-- The previous checkpoint SHA was `4f0a0614ab94e1c2ebd61745aa915f6942b3c5a0`; current HEAD is exactly one commit ahead.
-- Exact delta from `4f0a0614...` to `9d2149de...`: only `scripts/browser-e2e-seed.sql`, fixing the inactive browser product barcode fixture.
-- Frozen candidate: `2facceb39aaa826413f20245a6f20b6c2ff7cd34` — FROZEN / NO TOUCH.
-- Production: HOLD / NO TOUCH.
-- Exact current Vercel preview: `dpl_GVNskevLQiUCxAwqiHjuadLMg1is`, READY, exact Git SHA `9d2149de4bf3c491abad8460cab5df01c6faa4bd`.
-- Exact current-SHA Browser E2E: SUCCESS — check `105988969179`, workflow run `35477420804`.
-- Browser-contract: SUCCESS in workflow run `35477420804`.
-- Vercel Preview Comments: SUCCESS, zero unresolved feedback — check `105988962012`.
-- Production-smoke for the preview is SKIPPED; it is not production evidence.
-- Previous exact `4f0a0614...` Migration `35477022461` and Test-the-Test `35477022490` both completed SUCCESS, but those PASSes are not automatically transferable to the newer `9d2149de...` SHA.
-- Netlify remains externally blocked by HTTP 403 account-credit exhaustion; do not waste further attempts until the platform permits them.
+- PR #88: OPEN / DRAFT; base is frozen candidate `2facceb39aaa826413f20245a6f20b6c2ff7cd34`.
+- **Current development SHA: `1366f8ea240f2b1c58d78a863aa7a5584be531fb`.**
+- Previous exact fix SHA: `2f1ad18f62a76ff82483b1753d18e96cb7bbf146`.
+- Exact current-SHA Final Regression `35477914059`: SUCCESS.
+- Exact current-SHA Security `35477914046`: SUCCESS; Application Quality `35477914032`: SUCCESS; G1 `35477914182`/`35477916774`: SUCCESS.
+- Exact current-SHA Test-the-Test `35477914073`, Concurrency `35477914055`, Migration `35477914025`, Browser Fresh Local `35477913975`, and Browser Local Production Artifact `35477913977` are RUNNING at this checkpoint.
+- Current Vercel preview deployment for `1366f8ea240f2b1c58d78a863aa7a5584be531fb` is building; previous exact fix deployment was READY.
+- Netlify Exact SHA `35477914057`: external HTTP 403 account-credit exhaustion; no product PASS is inferred.
+- Frozen candidate remains untouched; Production remains HOLD / NO TOUCH.
 
 ## 4. LIVE SUPABASE TRUTH
 - Project: `aghbari-commerce`; ref `mrcyqezbhpncuvaehwgf`; status `ACTIVE_HEALTHY`; PostgreSQL `17.6.1.166`.
@@ -81,3 +77,9 @@ Unless explicitly implemented and proven, these remain backlog/deferred: promoti
 
 ## 9. DURABLE EXECUTION LESSON — 2026-09-20
 A single post-checkpoint commit can invalidate exact-SHA evidence even when the code change is only a test fixture. The control protocol therefore treats **every SHA change as an evidence reconciliation event**, while allowing unaffected historical findings to remain audit context. Current exact-SHA browser proof must be established independently; no PASS is inherited merely because the delta appears low-risk.
+
+
+## 10. DURABLE EXECUTION LESSONS — 2026-09-20
+- A later role-split migration (`20260920000410_split_customer_profile_role.sql`) redefined a SECURITY DEFINER invitation function with `search_path=public` and unqualified `digest()`, regressing the earlier hardened `search_path='' + extensions.digest()` contract. The defect was exposed by the exact concurrency matrix on SHA `9d2149de...`.
+- Corrective migration `20260920000500_harden_customer_invitation_crypto.sql` restores empty search_path, schema-qualified crypto, customer role semantics, and service_role-only execution. Equivalent hardening was applied live and verified by effective function definition/privileges plus a safe invalid-token invocation that reached `invitation not found` rather than crypto-resolution failure.
+- Proof-system rule: when workflow dispatch is unavailable, critical exact-SHA local browser/concurrency workflows must have an automatic trigger path on the active development branch family. This is now covered by `enhancement/**` push triggers.
