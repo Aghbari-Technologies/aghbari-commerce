@@ -1,3 +1,16 @@
+## RUN-2026-09-21-EXECUTE-UI-006 — CURRENT AUTHORITATIVE RECONCILIATION
+- ACTIVE UI BRANCH: `execution/customer-ui-completion-20260920`
+- ACTIVE UI EXACT HEAD: `629ecad26367a6c860e10a668d5ec71f34ae9083`
+- PR #100: OPEN / DRAFT / MERGEABLE; PR head matches this SHA.
+- PRODUCT UI STATE: premium Arabic/RTL customer + staff/admin coverage is implemented; latest product interaction fixes are catalog-count truthfulness and per-order reorder busy/release handling.
+- CI HARDENING: five broad product verification workflows now exclude `ops/**` and run only on controlled product/development/certification/proof/release families plus their existing PR/manual paths. This prevents documentation commits on the control-plane branch from creating product proof noise.
+- EXACT VERCEL DEPLOYMENT: `dpl_4GPcZtQPW7Y9LYF1FV4Lyj4EBXtx` is READY and reports exact source SHA `629ecad26367a6c860e10a668d5ec71f34ae9083`; this is deployment/build evidence, not browser PASS.
+- GITHUB EXACT-SHA VERIFICATION: fresh required runs for this SHA exist but remain QUEUED/PENDING at the latest observation; no PASS is claimed.
+- BROWSER PROOF: protected preview access redirects to Vercel SSO through available fetch paths, so no external authenticated visual PASS has been inferred.
+- CANDIDATE: `certification/final-candidate-20260920-v3` @ `1685836f4226fdcb3250a60eba7430ecf3e8f080` unchanged.
+- PRODUCTION: HOLD / NO TOUCH.
+- CURRENT RESUME POINTER: reconcile the existing exact-SHA run set for `629ecad26367a6c860e10a668d5ec71f34ae9083`; when terminal SUCCESS evidence exists, perform exact-SHA authenticated/browser visual proof and only then consider PR #100 merge. Do not start duplicate proof runs while equivalent ones are already queued. After merge, re-prove the merge SHA from scratch.
+
 ## RUN-2026-09-21-EXECUTE-UI-005 — CURRENT AUTHORITATIVE RECONCILIATION
 - ACTIVE UI BRANCH: `execution/customer-ui-completion-20260920`
 - ACTIVE UI EXACT HEAD: `2490f7f47c2837aade96e854392ba297b94efdfb`
