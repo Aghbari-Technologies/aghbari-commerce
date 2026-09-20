@@ -1,3 +1,16 @@
+## CURRENT AUTHORITATIVE RECONCILIATION — RUN-2026-09-21-EXECUTE-024
+- ACTIVE UI BRANCH: `execution/customer-ui-completion-20260920`
+- ACTIVE UI EXACT HEAD: `7f1b523319d74aa17f549c49db0f52482df5c00b`
+- PR #100: OPEN / DRAFT / MERGEABLE; base `enhancement/market-ready-v4-20260918`.
+- Exact Vercel deployment: `dpl_Gs339VatHiPGCVhv46UF7ot1HiTE` is READY and its deployment metadata reports the exact UI SHA `7f1b523319d74aa17f549c49db0f52482df5c00b`.
+- Browser access boundary: direct unauthenticated access to `https://aghbari-commerce-c2dd-ccs8ay0ra-aghbari-technologies1.vercel.app/` redirected to Vercel SSO. A Vercel share URL was generated, but the fetch path still redirected to SSO; this is **not** browser PASS and no UI result is inferred from it.
+- Exact G1 Domain Proof: run `35543639501`, job `106165620419` remain QUEUED after repeated live polling; conclusion is null. No PASS.
+- Combined commit status currently exposes only the Vercel success context; absence of additional status contexts is not treated as PASS.
+- UI visual workflow exists at `.github/workflows/ui-visual-review.yml` and is exact-SHA capable; no terminal result is claimed until GitHub exposes the corresponding run/job.
+- CERTIFICATION CANDIDATE: `1685836f4226fdcb3250a60eba7430ecf3e8f080` — unchanged.
+- PRODUCTION: HOLD / NO TOUCH.
+- NEXT EXECUTABLE FRONT: reconcile the exact-SHA CI queue/terminal results; when browser proof becomes available, inspect the exact UI evidence pack (customer/staff desktop + mobile, RTL/overflow) before any merge. Do not transfer evidence across SHAs.
+
 ## CURRENT LIVE CI RECONCILIATION — RUN-2026-09-20-EXECUTE-023
 - ACTIVE UI SHA: `bc3e66b8ef69c381d9750ef54551a9a526e88554`
 
