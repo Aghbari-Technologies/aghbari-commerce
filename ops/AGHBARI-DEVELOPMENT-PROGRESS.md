@@ -1,18 +1,18 @@
 # الأغبري | Memory Layer 03 — PROBLEM / PROGRESS LEDGER
 
-## CURRENT CHECKPOINT — RUN-2026-09-20-EXECUTE-013
+## CURRENT CHECKPOINT — RUN-2026-09-20-EXECUTE-014
 - Development SHA: `72d5dae91ca7250c98ebb50d8b05409500f77c13`.
-- Certification candidate branch: `certification/final-candidate-20260920-v3`, advanced to the same exact SHA.
+- Certification candidate branch: `certification/final-candidate-20260920-v3`, exact SHA matches.
 - PR #88 remains OPEN / DRAFT / MERGEABLE; base remains frozen historical candidate `2facceb39aaa826413f20245a6f20b6c2ff7cd34`.
-- New Vercel candidate deployment `dpl_DVfuqGzcMPBX3aTgaH64LdChES6Y` is BUILDING for exact candidate SHA; the same SHA already has READY preview deployment `dpl_2aas6bAdtyEjBT9GDabNKKmdo8gd` on the development branch.
-- New SHA exact gates are still in progress; prior SHA evidence is intentionally invalidated for the changed candidate and is not carried forward.
-- Live Supabase migration `add_customer_invitation_fk_indexes` applied successfully.
-- Supabase performance advisor's two unindexed customer_invitations foreign keys were removed as findings by adding standalone indexes for `customer_id` and `created_by`.
-- Security advisor still reports the intentional SECURITY DEFINER/authenticated-RPC pattern plus the external Auth leaked-password-protection warning; neither is treated as an unverified PASS.
-- Frozen historical candidate remains untouched; Production remains HOLD / NO TOUCH.
+- Candidate Vercel deployment `dpl_DVfuqGzcMPBX3aTgaH64LdChES6Y` is READY and exact SHA matched.
+- All mandatory exact-SHA technical gates are SUCCESS for `72d5dae...`.
+- Exact candidate deployment browser proof run `35479844177` / job `105995552224` SUCCESS; Customer and Admin E2E completed; artifact `10596010632`.
+- Exact candidate Final Regression run `35479844177` / job `105995552370` SUCCESS; artifact `10595392644`.
+- Live Supabase performance hardening remains applied and the two unindexed invitation FK findings are gone.
+- Security advisor has only two WARN categories: intentional authenticated SECURITY DEFINER execution pattern and external `auth_leaked_password_protection` warning; no paid upgrade is authorized under the zero-cost constraint.
+- Netlify remains externally blocked by HTTP 403 account-credit exhaustion; Production remains HOLD / NO TOUCH.
 
-## RUN-2026-09-20-EXECUTE-012
-- Objective: continue execution rather than stop at the previous release boundary; inspect live security/performance advisories and fix an actionable database performance finding without weakening the product contract.
+## RUN-2026-09-20-EXECUTE-012- Objective: continue execution rather than stop at the previous release boundary; inspect live security/performance advisories and fix an actionable database performance finding without weakening the product contract.
 - Root cause: Supabase performance advisor identified two real unindexed foreign keys on `public.customer_invitations`: `customer_invitations_created_by_fkey` and `customer_invitations_customer_id_fkey`. The existing `(organization_id, customer_id, created_at)` index did not cover `customer_id` as a standalone leading FK index.
 - Action: added migration `supabase/migrations/20260920000600_add_customer_invitation_fk_indexes.sql` on development SHA `72d5dae91ca7250c98ebb50d8b05409500f77c13`, creating `customer_invitations_customer_id_fk_idx` and `customer_invitations_created_by_fk_idx`; applied the exact same DDL to live Supabase through the migration path.
 - Verification: performance advisor was rechecked immediately. The two `unindexed_foreign_keys` findings disappeared; only the expected unused-index informational findings remained, including the two new indexes because they have not yet accumulated workload.
