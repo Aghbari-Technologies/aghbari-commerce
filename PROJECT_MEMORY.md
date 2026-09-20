@@ -186,3 +186,13 @@ RUN-2026-09-20-EXECUTE-022 — WORLD-CLASS UI/UX ADVANCEMENT
 - CURRENT CI OBSERVATION: exact-SHA workflow runs for `b4c6686761d56a4e3ddf813e30f0d80b654037d5` have not yet produced a terminal proof set at the time of this record; prior commit `b4fc4fd...` had partial/active gates before this second UI commit. No certification PASS is claimed.
 - VERCEL / NETLIFY: known external free-tier deployment constraints remain unchanged; not converted into product proof.
 - CANDIDATE `1685836f4226fdcb3250a60eba7430ecf3e8f080` remains untouched. PRODUCTION remains HOLD / NO TOUCH.
+
+
+## RUN-2026-09-20-EXECUTE-023 — UI FINISHING FIX + EXACT-SHA RECONCILIATION
+- EXACT UI HEAD: `bc3e66b8ef69c381d9750ef54551a9a526e88554` on `execution/customer-ui-completion-20260920`; PR #100 OPEN / DRAFT → `35d95e5e140820c7e7a8e0a792f89b28eacfb8e8`.
+- ROOT FIX: the new header brand mark was changed from a floating pseudo-element to an absolutely positioned mark with reserved inline space, preventing accidental layout participation in the flex/grid header and stabilizing RTL/mobile rendering.
+- SOURCE SURFACE: `src/customer-portal-v3-dynamic.css` only in this finishing commit; no transactional logic, data model, pricing truth, permissions, or reporting-boundary change.
+- PROOF RULE: `bc3e66...` is a new SHA; no PASS transfers from `b4c668...`, `b4fc4fd...`, `006f5e98...`, or any earlier UI SHA.
+- CURRENT CI: fresh exact-SHA workflows for `bc3e66b8ef69c381d9750ef54551a9a526e88554` must be treated as the sole proof unit. No certification/merge PASS is claimed until required terminal checks are observed.
+- CANDIDATE `1685836f4226fdcb3250a60eba7430ecf3e8f080` remains untouched. PRODUCTION remains HOLD / NO TOUCH.
+- DEPLOYMENT CONSTRAINTS: Vercel Free-plan development deployment rate-limit and Netlify account-credit exhaustion remain external constraints; neither is used as product PASS/FAIL.
