@@ -1468,3 +1468,123 @@
     width: 100%;
   }
 }
+
+.order-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 12px;
+}
+.order-actions button {
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--ag-border);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--ag-primary-strong);
+  font-size: 11px;
+  font-weight: 850;
+}
+.order-actions button:last-child {
+  border-color: var(--ag-primary);
+  background: var(--ag-primary);
+  color: #fff;
+}
+.order-detail-modal {
+  width: min(780px, 100%);
+}
+.order-detail-meta {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 0;
+  border-bottom: 1px solid #edf2f4;
+}
+.order-detail-meta > strong {
+  justify-self: end;
+  color: var(--ag-primary-strong);
+  font-size: 20px;
+}
+.order-detail-meta > small {
+  color: var(--ag-muted);
+  font-size: 10px;
+}
+.order-detail-lines {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+.order-detail-line {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid #e2ecef;
+  border-radius: 12px;
+  background: #fbfdfe;
+}
+.order-detail-line > div {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+.order-detail-line strong {
+  font-size: 12px;
+  color: var(--ag-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.order-detail-line small,
+.order-detail-line > span {
+  color: var(--ag-muted);
+  font-size: 10px;
+}
+.order-detail-line > b {
+  min-width: 110px;
+  text-align: end;
+  color: var(--ag-ink);
+  font-size: 12px;
+}
+.order-detail-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #e7eef1;
+  color: var(--ag-muted);
+}
+.order-detail-footer strong {
+  color: var(--ag-primary-strong);
+  font-size: 18px;
+}
+@media (max-width: 620px) {
+  .order-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .order-actions button {
+    width: 100%;
+  }
+  .order-detail-meta {
+    grid-template-columns: 1fr auto;
+  }
+  .order-detail-meta > small {
+    grid-column: 1 / -1;
+  }
+  .order-detail-meta > strong {
+    justify-self: end;
+  }
+  .order-detail-line {
+    grid-template-columns: 1fr auto;
+  }
+  .order-detail-line > span {
+    grid-column: 1 / -1;
+  }
+  .order-detail-line > b {
+    min-width: auto;
+  }
+}
