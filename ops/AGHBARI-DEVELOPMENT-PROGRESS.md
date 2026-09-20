@@ -322,3 +322,19 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 - Result: product UI terminology correction is implemented and deployment-ready, but exact-SHA CI/browser proof is still OPEN/QUEUED.
 - Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain untouched.
 - Next: terminal exact-SHA proof, then merge/reprove; no evidence transfer across SHAs.
+
+## RUN-2026-09-21-EXECUTE-UI-005
+**Date:** 2026-09-21
+**Branch:** `execution/customer-ui-completion-20260920`
+**Exact SHA:** `2490f7f47c2837aade96e854392ba297b94efdfb`
+**Front:** UI truthfulness + customer reorder interaction hardening
+**Implemented:**
+- Clarified catalog hero count: `products.length` is presented as visible/loaded while pagination remains, avoiding a misleading total-available implication.
+- Added `reorderingOrderId` guard and per-order loading/disabled label; state is always released in `finally`, including empty/early-return and error paths.
+**Verification:**
+- GitHub exact source inspection confirmed the final code and commit SHA.
+- Vercel deployment `dpl_5SWnt86P56xTYZV8yxNSE3Jmtay9` is READY and metadata reports exact SHA `2490f7f47c2837aade96e854392ba297b94efdfb`.
+- Vercel project runtime-error query for the selected 2-hour window returned no runtime errors.
+- Exact-SHA CI runs: G1 35544372549 / 35544368562; Quality 35544368512; UI Visual Review 35544368533; Security 35544368431; Migration 35544368407; Concurrency 35544368481; Order 35544368499; Fresh Local 35544368483; Local Artifact 35544368465; Exact Deployment Browser 35544368474; Test-the-Test 35544368555 — all currently QUEUED at checkpoint; no PASS.
+**Candidate/Production:** candidate unchanged; Production NO TOUCH.
+**Next:** reconcile queued exact-SHA runs and obtain valid exact-SHA browser visual evidence before merge.
