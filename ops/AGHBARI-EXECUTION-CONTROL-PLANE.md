@@ -1,13 +1,16 @@
-# CURRENT EXECUTION REALITY — RUN-2026-09-20-EXECUTE-008
+# CURRENT EXECUTION REALITY — RUN-2026-09-20-EXECUTE-010
 - Development branch: `enhancement/market-ready-v4-20260918`
-- Current development SHA: `1366f8ea240f2b1c58d78a863aa7a5584be531fb`
-- PR #88: OPEN / DRAFT / base frozen candidate
-- Final Regression `35477914059`: SUCCESS; Quality `35477914032`: SUCCESS; Security `35477914046`: SUCCESS
-- G1 `35477914182`/`35477916774`: SUCCESS
-- Migration `35477914025`, Test-the-Test `35477914073`, Concurrency `35477914055`, Browser Fresh `35477913975`, Browser Local `35477913977`: RUNNING
-- Netlify `35477914057`: BLOCKED by external HTTP 403 account-credit exhaustion
-- Candidate `2facceb39aaa826413f20245a6f20b6c2ff7cd34`: FROZEN / NO TOUCH
+- Development SHA: `1366f8ea240f2b1c58d78a863aa7a5584be531fb`
+- Candidate branch: `certification/final-candidate-20260920-v3`, exact SHA matches
+- Candidate Vercel: `dpl_72VRoKV9a71aY8JPtn7Pqsv5p18z` READY
+- Candidate exact release gates: ALL CANDIDATE-SIDE TECHNICAL GATES PROVEN
+- Deployment Browser proof: `35478298905` SUCCESS
+- Final Regression proof: `35478610589` SUCCESS
+- Test-the-Test: `35478137938` attempt 2 SUCCESS
+- Frozen historical candidate `2facceb...`: FROZEN / NO TOUCH
 - Production: HOLD / NO TOUCH
+- Netlify: external HTTP 403 credit blocker
+- Auth leaked-password protection: external configuration warning
 
 # الأغبري | Aghbari Commerce — Execution Control Plane
 
@@ -620,16 +623,23 @@ Do not resurrect this historical incident as an OPEN front unless new exact-SHA 
 ---
 # 12. CURRENT DEPLOYMENT / LIVE ALIGNMENT FACTS
 
-Current development lane is `enhancement/market-ready-v4-20260918` at exact SHA `1366f8ea240f2b1c58d78a863aa7a5584be531fb`.
+Current active candidate lane:
+`certification/final-candidate-20260920-v3` at exact SHA `1366f8ea240f2b1c58d78a863aa7a5584be531fb`.
 
-Current exact Vercel development deployment:
-`dpl_DVpzzmGceQ8hSZkTMKHzDc9DCmCh` — READY — exact SHA matches.
+Current candidate Vercel deployment:
+`dpl_72VRoKV9a71aY8JPtn7Pqsv5p18z` — READY — exact SHA matches.
 
-Deployment Browser E2E is proven on the exact SHA by workflow `35477929768`; its authenticated customer and admin browser suites passed after exact artifact identity verification.
+Candidate Deployment Browser:
+`35478298905` — exact artifact verified; Customer/Admin E2E SUCCESS; evidence artifact `10594833277`.
 
-Netlify exact-SHA deployment remains externally blocked by account-credit exhaustion (HTTP 403) in run `35477914057`. Do not treat this as a product failure or waste further deploy attempts until the account permits deployments.
+Candidate Final Regression:
+`35478610589` — artifact/headers/RTL/PWA/service worker SUCCESS; evidence artifact `10594688925`.
 
-Frozen certification candidate remains `2facceb39aaa826413f20245a6f20b6c2ff7cd34` and must not be mutated. Production remains NO TOUCH.
+Preview runtime error/fatal query returned no entries in the checked 2-hour window.
+
+Netlify exact-SHA deployment remains blocked by external HTTP 403 account-credit exhaustion.
+
+LIVE/Production alignment is intentionally unproven because Production remains NO TOUCH.
 
 # 13. TOOLING OPERATING MODEL
 
@@ -752,17 +762,22 @@ front A → front B → front C → return to A → close → regression → rec
 
 # 17. CURRENT EXECUTION TARGET
 
-### P0 — Exact-SHA proof closure
-Close the remaining Test-the-Test run `35477914073`. Reconcile all mandatory exact-SHA evidence for `1366f8ea...`; no PASS transfers from older SHAs.
+### P0 — Preserve exact candidate evidence
+Candidate-side mandatory technical evidence is complete on exact SHA `1366f8...`. Do not mutate the candidate without a real release correction.
 
-### P0 — Candidate reconciliation
-Once all development gates are proven, reconcile the full 61-commit development delta against frozen candidate `2facceb39...` without changing that candidate. A new certification candidate may only be created as a separate ref after all required evidence is complete.
+### P0 — Formal release boundary
+LIVE/Production alignment is the remaining release boundary. Any Production action requires an explicit owner-approved release decision after candidate evidence review.
 
-### P0 — Release safety
-Certification remains NO until candidate-specific gates are proven. Production remains NO TOUCH.
+### P1 — External security configuration
+Resolve/reassess Supabase Auth leaked-password protection through an authorized configuration path. Do not fabricate completion.
 
-### P1 — External Auth configuration
-Reassess Supabase Auth leaked-password protection through an authorized configuration path. Current connected automation has an external capability/funding boundary, so do not fabricate completion.
+### P1 — External platform
+Keep Netlify blocked state recorded; no deployment attempts until the account permits them.
 
-### P1 — Deferred master-spec
-Keep promotions, notification provider delivery, integration delivery records/adapters, lots/batches/expiry/FEFO, reservations, independent fulfillment, WhatsApp/Onyx adapters, and centralized bilingual locale architecture deferred unless deliberately implemented and proven.
+### P1 — Product backlog
+Keep promotions, provider notification delivery, integration delivery records/adapters, lots/batches/expiry/FEFO, reservations, independent fulfillment, WhatsApp/Onyx adapters, and centralized bilingual locale architecture in deferred state unless deliberately implemented and proven.
+
+### EXECUTE-010 EVOLUTION
+- Added isolated exact-candidate proof patterns for Deployment Browser and Final Regression without candidate mutation.
+- Confirmed that workflow-contract PASS cannot stand in for authenticated Browser E2E.
+- Preserved strict environment/SHA separation while closing all candidate-side technical gates.
