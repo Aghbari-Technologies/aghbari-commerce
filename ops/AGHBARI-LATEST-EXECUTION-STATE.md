@@ -198,3 +198,13 @@ No Candidate mutation, no Production mutation, no paid Vercel/Supabase upgrade.
 - Implemented dashboard resilience: partial metric failures no longer collapse the whole dashboard into one red error state; failed metrics are labeled unavailable, successful metrics remain visible, and empty sales receive an intentional empty-state surface.
 - Exact-SHA suite for 75b0192 is newly queued across Visual Review, Security, Quality, Migration, Concurrency, Order, Fresh Browser, Local Browser Artifact, Deployment contract, G1, Test-the-Test.
 - Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 unchanged; Production HOLD / NO TOUCH.
+
+
+## CURRENT RECONCILED OVERRIDE — RUN-2026-09-20-EXECUTE-027
+- ACTIVE UI BRANCH: execution/customer-ui-completion-20260920.
+- EXACT UI HEAD: bc156704980a29d4fffa97f2e72db44beebe654b.
+- PR #100 OPEN / DRAFT / mergeable=true.
+- UI now includes premium system, completed secondary surfaces, resilient executive dashboard degraded states, and explicit responsive visual regression guards.
+- Static class-to-CSS audit remains clean from prior HEAD; this latest change is test-only.
+- Fresh exact-SHA CI for bc1567049 is queued across required gates. No PASS/certification/merge.
+- Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 unchanged; Production HOLD / NO TOUCH.
