@@ -380,3 +380,15 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 - Browser visual coverage: corrected the stale command-launch selector and expanded exact-SHA customer visual capture to product detail, cart, orders, templates, and finance; staff visual review now asserts core operational section presence.
 - No transactional schema, pricing authorization, tenant isolation, reporting boundary, Candidate, or Production was changed.
 - Exact-SHA CI for `7ee608d...` is currently queued; no UI PASS is claimed.
+
+
+## RUN-2026-09-21-EXECUTE-UI-010
+- FRONT: customer/staff UI completion — Purchasing panel runtime integrity.
+- SHA: `3a2901208c60507b791eceb0c113f9373adab036`; branch: `execution/customer-ui-completion-20260920`; PR: #100.
+- ROOT CAUSE: `visiblePurchaseOrders` referenced render helper `supplierNameFor` before its const initialization in `PurchasingPanel.tsx`, creating a TDZ `ReferenceError` during render.
+- ACTION: moved render helpers/derived receive state above the filtered-order computation; no transactional/security/reporting behavior changed.
+- SOURCE PROOF: exact commit diff `3a2901208c60507b791eceb0c113f9373adab036`; helper declaration now precedes first render-time call; duplicate declaration removed.
+- RESULT: PRODUCT DEFECT FIXED at source level; UI/browser/CI PASS is NOT claimed until exact-SHA terminal evidence exists.
+- DEPLOYMENT: no exact-SHA Vercel deployment proof; earlier deployments are SHA-mismatched and excluded.
+- CANDIDATE: `1685836f4226fdcb3250a60eba7430ecf3e8f080` unchanged. PRODUCTION: HOLD / NO TOUCH.
+- NEXT ACTION: exact-SHA UI/browser verification, then merge #100 only after required gates are terminal SUCCESS.
