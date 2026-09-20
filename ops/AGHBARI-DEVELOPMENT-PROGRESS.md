@@ -71,3 +71,11 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 - Implemented: permission-aware bulk order transition preview with explicit eligible/blocked counts and a second validation before mutation; added deterministic domain tests for role/state/empty-selection boundaries.
 - Implemented: import reconciliation result panel showing imported rows, created products, updated products, and inventory changes; stale prior report is cleared before staging a new file.
 - Verification status: awaiting exact-SHA CI after final WIP commit; no PASS is claimed yet and candidate/Production remain untouched.
+
+
+### RUN-2026-09-20-EXECUTE-015 — LIVE PROOF UPDATE
+- WIP SHA: `1685836f4226fdcb3250a60eba7430ecf3e8f080`; branch `execution/bulk-actions-20260920`.
+- SUCCESS exact-SHA runs: Quality `35481150809`; Security `35481150821`; G1 `35481150820`; Order Workflow `35481150804`; Exact Deployment Browser Contract `35481150826`; Local Production Artifact Browser `35481150812`; Concurrency `35481150807`; Supabase Migration `35481150837`; Fresh Local Browser `35481150808`.
+- Fresh Local Browser completed Customer E2E, Admin E2E, and storage adversarial runtime successfully.
+- Test-the-Test `35481150811` remains IN_PROGRESS. Baseline sensitive suite passed; Mutation 1 (remove product tenant RLS) was detected successfully; current step is the first Restore from zero. Active-job logs return GitHub `BlobNotFound`, so no further result is inferred.
+- Candidate `72d5dae...` and its proven Vercel deployment remain untouched; WIP is not promoted.
