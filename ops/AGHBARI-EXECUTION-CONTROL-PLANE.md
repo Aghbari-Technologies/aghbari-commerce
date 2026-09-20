@@ -1,3 +1,7 @@
+## CONTROL-PLANE EVOLUTION — RUN-2026-09-21-EXECUTE-UI-005
+- Queue-control rule strengthened: do not trigger another exact-SHA proof run when an equivalent required run for the same SHA is already QUEUED/IN_PROGRESS; reconcile existing runs first. Queue accumulation is tracked as an operational constraint, never converted to PASS or used to justify weakened gates.
+- UI truth rule strengthened: paginated counts must not be labeled as totals/availability unless the complete dataset is actually loaded.
+
 ## CONTROL-PLANE EVOLUTION — RUN-2026-09-21-EXECUTE-024
 - New proof lesson: Vercel `READY` is deployment/build evidence only. For this project, direct preview access can terminate at Vercel SSO, and the available share-access fetch path also redirected. Therefore no external fetch result is promoted to Browser PASS.
 - Required procedure: use the repository's exact-SHA browser/visual contracts and their artifacts for candidate/UI proof, or an authenticated platform path that explicitly exposes the protected deployment. Never record a visual PASS from a protected-route redirect.
