@@ -1,3 +1,8 @@
+## RUN-2026-09-21-EXECUTE-UI-007 — UI COMPLETION CHECKPOINT
+- Exact UI head is `a5369f4a17147c315f571c84743ed3682e4b2337` on `execution/customer-ui-completion-20260920`; PR #100 remains OPEN/DRAFT/MERGEABLE.
+- Implemented UI usability upgrades: customer directory filtering; purchase-order filtering; localized customer-facing operational terminology; reporting gateway action wording made explicit.
+- Product/business/candidate/production boundaries unchanged.
+- Verification status is SHA-bound: current branch has queued exact-SHA gates; no prior PASS is reused.
 ## RUN-2026-09-21-EXECUTE-UI-006 — AUTHORITATIVE UI/CI CHECKPOINT
 - Exact UI head: `629ecad26367a6c860e10a668d5ec71f34ae9083` on `execution/customer-ui-completion-20260920`; PR #100 remains OPEN / DRAFT / MERGEABLE.
 - Final UI code fixes in this lane: visible-vs-total catalog count wording; per-order reorder busy guard with guaranteed cleanup.
