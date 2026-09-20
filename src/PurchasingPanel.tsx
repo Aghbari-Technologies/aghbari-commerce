@@ -63,6 +63,10 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
 
   useEffect(() => { void load().catch((e) => setError(e instanceof Error ? e.message : 'تعذر تحميل المشتريات.')); }, [load]);
 
+  const supplierNameFor = (id: string) => suppliers.find((supplier) => supplier.id === id)?.name ?? 'مورد';
+  const productNameFor = (id: string) => products.find((product) => product.id === id)?.name ?? id;
+  const selectedOrderItems = items.filter((item) => item.purchase_order_id === selectedOrderId && item.quantity_received < item.quantity_ordered);
+  const selectedReceiveItem = selectedOrderItems.find((item) => item.id === receiveItemId) ?? selectedOrderItems[0];
   const visiblePurchaseOrders = orders.filter((order) => {
     const needle = purchaseQuery.trim().toLocaleLowerCase('ar');
     const supplier = supplierNameFor(order.supplier_id).toLocaleLowerCase('ar');
