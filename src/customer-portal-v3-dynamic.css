@@ -1245,3 +1245,10 @@
     width: 100%;
   }
 }
+
+.customer-app .voice-search-active {
+  border-color: #83c8d1;
+  background: #e9f8fa;
+  color: #08768a;
+  box-shadow: 0 0 0 3px rgba(13,145,165,.08);
+}
