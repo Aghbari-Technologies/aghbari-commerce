@@ -1,16 +1,13 @@
-# CURRENT EXECUTION REALITY — RUN-2026-09-20-RESUME-006
+# CURRENT EXECUTION REALITY — RUN-2026-09-20-EXECUTE-008
 - Development branch: `enhancement/market-ready-v4-20260918`
-- Current development SHA: `4f0a0614ab94e1c2ebd61745aa915f6942b3c5a0`
-- PR #88: OPEN / DRAFT / MERGEABLE
-- Exact Vercel development deployment: `dpl_BCvmScQ6hMUQDppRXMCnGkkRV5hd` READY; exact Git SHA `4f0a0614ab94e1c2ebd61745aa915f6942b3c5a0`
-- Frozen certification candidate: `2facceb39aaa826413f20245a6f20b6c2ff7cd34` — NO TOUCH
+- Current development SHA: `1366f8ea240f2b1c58d78a863aa7a5584be531fb`
+- PR #88: OPEN / DRAFT / base frozen candidate
+- Final Regression `35477914059`: SUCCESS; Quality `35477914032`: SUCCESS; Security `35477914046`: SUCCESS
+- G1 `35477914182`/`35477916774`: SUCCESS
+- Migration `35477914025`, Test-the-Test `35477914073`, Concurrency `35477914055`, Browser Fresh `35477913975`, Browser Local `35477913977`: RUNNING
+- Netlify `35477914057`: BLOCKED by external HTTP 403 account-credit exhaustion
+- Candidate `2facceb39aaa826413f20245a6f20b6c2ff7cd34`: FROZEN / NO TOUCH
 - Production: HOLD / NO TOUCH
-- Final Regression / Exact Artifact `35477022465`: SUCCESS on current SHA
-- Quality `35477022455`: SUCCESS; Security `35477022467`: SUCCESS; G1 push/PR `35477022486`/`35477025357`: SUCCESS
-- Migration `35477022461`: IN PROGRESS; Test-the-Test `35477022490`: IN PROGRESS
-- Netlify Exact SHA `35477022463`: BLOCKED, HTTP 403 account credit usage exceeded
-- Current browser E2E: NOT_PROVEN for `4f0a0614ab94e1c2ebd61745aa915f6942b3c5a0`; historical `07c3cab...` browser evidence is not transferred
-- This section is a live state overlay only; the execution constitution below remains authoritative.
 
 # الأغبري | Aghbari Commerce — Execution Control Plane
 
@@ -1784,3 +1781,8 @@ No production mutation was performed during this run.
 - Automation proof corrected: exact Final Regression self-triggers on enhancement push and waits for a Vercel Preview artifact matching the exact SHA.
 - Netlify external blocker classified: deployment attempt returns HTTP 403 because account credits are exhausted; do not hide this as a test failure or retry against the same blocked account.
 - Evidence boundary: current development SHA is proven at Final Regression level; current browser E2E remains NOT_PROVEN; frozen candidate and Production remain untouched.
+
+
+# EXECUTE-008 — CONTROL PLANE EVOLUTION
+- A later migration can silently regress a previously hardened SECURITY DEFINER function. Therefore every SECURITY DEFINER redefinition must preserve empty search_path and schema-qualified dependencies, with the final effective definition exercised in Fresh-DB proof.
+- When workflow_dispatch is unavailable, critical exact-SHA proof workflows must have an automatic trigger path on the active development branch family; `enhancement/**` triggers were added to the local browser and concurrency workflows.
