@@ -35,6 +35,7 @@ test.describe('Aghbari UI visual integrity', () => {
     await page.setViewportSize({ width: 1440, height: 1000 });
     await login(page, 'customer-a@test.local');
     await expect(page.locator('.portal-header')).toBeVisible();
+    await expect(page.locator('.command-launch')).toHaveCount(0);
     await expect(page.locator('.portal-nav')).toBeVisible();
     await expect(page.locator('.product-grid')).toBeVisible();
     await expect(page.locator('.hero-card')).toBeVisible();
