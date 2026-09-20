@@ -201,3 +201,12 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 ### RUN-2026-09-20-EXECUTE-023 LIVE CI RECONCILIATION
 - Latest exact-SHA CI observation for `bc3e66b8ef69c381d9750ef54551a9a526e88554`: G1 run 35488858872 SUCCESS; Order Workflow 35488856980 SUCCESS; Exact Deployment contract run 35488856986 SUCCESS with browser-e2e SKIPPED; Local Production Artifact 35488856969 RUNNING; Fresh Local Supabase 35488856975 RUNNING; Migration 35488856972 RUNNING; Concurrency 35488856971 RUNNING; Security 35488856994 QUEUED; Application Quality 35488856970 QUEUED; Test-the-Test 35488856978 QUEUED; second G1 run 35488856976 RUNNING. No certification/merge PASS is claimed.
 - Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and development SHA `35d95e5e140820c7e7a8e0a792f89b28eacfb8e8` independently rechecked and unchanged.
+
+## RUN-2026-09-20-EXECUTE-024 — UI COMPONENT COMPLETION + VISUAL REVIEW
+- Active front: premium B2B UI completion with exact visual evidence.
+- Exact UI SHA: `97431d5a39c28f03b77ad03717caa7c82c8ba621`.
+- Added secondary-surface styling in `src/customer-portal-v3-dynamic.css`; compare from `cde7bf7...` is exactly one file with +303 lines.
+- Added exact UI visual review spec + workflow; desktop/mobile customer and staff screenshots plus RTL/no-overflow invariants are now captured on the same SHA.
+- Static class-to-CSS audit across App/Admin/Executive JSX and active UI CSS returned `missing: []`.
+- Current fresh CI runs for this SHA are queued; do not treat queued as PASS and do not merge PR #100 until all required gates are terminal SUCCESS.
+- Candidate and Production remain untouched.
