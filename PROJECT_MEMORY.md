@@ -32,7 +32,7 @@
 - The previous candidate SHA `1366f8ea240f2b1c58d78a863aa7a5584be531fb` had complete technical evidence, but that evidence is historical and invalid for the new SHA.
 - Production remains HOLD / NO TOUCH.
 - Netlify exact-SHA deployment remains externally blocked by HTTP 403 account-credit exhaustion.
-- Auth leaked-password protection remains an external Supabase Auth configuration warning.
+- Auth leaked-password protection remains an external Supabase Auth configuration warning; under the zero-cost constraint, do not upgrade Supabase solely to enable it.
 
 ## 4. LIVE SUPABASE TRUTH
 - Project: `aghbari-commerce`; ref `mrcyqezbhpncuvaehwgf`; status `ACTIVE_HEALTHY`; PostgreSQL `17.6.1.166`.
@@ -67,15 +67,14 @@ Unless explicitly implemented and proven, these remain backlog/deferred: promoti
 
 ## 8. NEXT EXECUTION QUEUE
 ### P0
-1. Rebuild every mandatory exact-SHA gate for candidate SHA `72d5dae91ca7250c98ebb50d8b05409500f77c13` after the performance migration.
-2. Establish candidate deployment-browser proof on the exact new candidate deployment.
-3. Establish final regression proof on the exact new candidate SHA/deployment.
-4. Final Regression proof on the exact candidate deployment must be completed and retained; the isolated proof run already established the corrected manifest/service-worker/header contract, and the exact Customer/Admin browser job remains in progress.
-5. Recheck live security/performance advisors and record only exact current evidence.
-6. Certification remains NO until every mandatory release gate is proven on the new candidate and every external blocker is classified.
+1. Candidate exact-SHA mandatory technical gates are complete for `72d5dae...`.
+2. Candidate deployment browser proof is complete on exact Vercel deployment `dpl_DVfuqGzcMPBX3aTgaH64LdChES6Y` via `35479844177` / `105995552224`; Customer/Admin E2E both passed.
+3. Final Regression is complete on the exact candidate deployment via `35479844177` / `105995552370`.
+4. Preserve the evidence pack; certification remains a separate release-boundary decision and Production remains NO TOUCH.
+5. Continue only zero-cost required hardening or directly useful backlog work; do not create speculative SHA changes.
 
 ### P1
-6. Resolve/reassess Auth leaked-password protection through an authorized external configuration path.
+6. Reassess the external Auth leaked-password warning only through a free/authorized path; do not pay or weaken controls merely to clear the advisor.
 7. Reconcile deferred master-spec capabilities against product readiness.
 8. Consolidate frontend/CSS historical layers only after reference proof and exact regression.
 
@@ -97,3 +96,9 @@ Unless explicitly implemented and proven, these remain backlog/deferred: promoti
 - The isolated candidate Final Regression proof initially failed because the harness loaded `manifest.webmanifest` with Node `require()`, which treats the `.webmanifest` file as JavaScript instead of parsing JSON. This was a proof-system defect, not an application defect.
 - The harness was corrected to use `JSON.parse(fs.readFileSync(...))`. A new isolated proof run `35479844177` then passed deployed artifact identity, security headers, Arabic/RTL shell, PWA manifest, and service worker checks against the exact candidate deployment `dpl_DVfuqGzcMPBX3aTgaH64LdChES6Y` and exact product SHA `72d5dae91ca7250c98ebb50d8b05409500f77c13`.
 - The proof path deliberately lives on `proof/candidate-release-20260920-v2` and checks out the candidate SHA explicitly, so proof-harness commits do not mutate or invalidate the candidate source.
+
+## 11. DURABLE EXECUTION LESSON — RUN-2026-09-20-EXECUTE-014
+- Candidate browser proof is now fully closed: exact Customer/Admin E2E and Final Regression both succeeded against the exact Vercel candidate deployment and SHA `72d5dae...`.
+- Vercel runtime verification must use the deployment's actual Vercel project ID; a stale project ID can produce a misleading 403 and must not be interpreted as application failure or proof of no logs.
+- The free-tier constraint is a release policy boundary: native Supabase leaked-password protection is an external paid-tier feature; do not create speculative architecture or a paid upgrade solely to clear that advisor.
+- Durable execution routers must be reconciled whenever a later run exposes stale top-level SHA/state. Current canonical candidate state is `72d5dae...`.
