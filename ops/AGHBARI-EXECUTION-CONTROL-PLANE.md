@@ -1,3 +1,12 @@
+# CURRENT EXECUTION REALITY — RUN-2026-09-20-EXECUTE-018
+- Development branch: `enhancement/market-ready-v4-20260918`; verified development base SHA `cc9f5e7e1906b553613bb2e8dee99dacd704491d`.
+- Active development front: `execution/quick-order-server-lookup-20260920`, exact head `483f9722f226c5f295c96edde2be88d760ceb520`, PR #96 targeted at development and not merged.
+- PR #96 compare against dev: 6 commits / 2 changed files only.
+- Candidate: `certification/final-candidate-20260920-v3` at `1685836f4226fdcb3250a60eba7430ecf3e8f080`, unchanged; candidate Vercel `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` READY exact.
+- Production: HOLD / NO TOUCH.
+- Running exact-SHA fronts: Test-the-Test `35485184023`; Concurrency `35485184025`; Local Production Artifact Browser `35485184035`.
+- External Vercel status: Free-plan `api-deployments-free-per-day` failure on the development PR; no paid workaround authorized.
+
 # CURRENT EXECUTION REALITY — RUN-2026-09-20-EXECUTE-016
 - Active certification branch: `certification/final-candidate-20260920-v3`
 - Active candidate SHA: `1685836f4226fdcb3250a60eba7430ecf3e8f080`
@@ -20,7 +29,7 @@
 - Netlify: external HTTP 403 credit blocker
 - Supabase Auth leaked-password protection: external warning; FREE-TIER COST CONSTRAINT = DO NOT UPGRADE JUST FOR THIS
 
-# الأغبري | Aghbari Commerce — Execution Control Plane
+# الأغبري |# الأغبري | Aghbari Commerce — Execution Control Plane
 
 > **Canonical operating document for continuous execution, proof, reconciliation, and release closure.**
 >
@@ -824,3 +833,11 @@ Keep promotions, provider notification delivery, integration delivery records/ad
 - Certification candidate remains `certification/final-candidate-20260920-v3` at exact SHA `1685836f4226fdcb3250a60eba7430ecf3e8f080`; Vercel deployment `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` remains READY. Candidate source and Production were not touched.
 - Development Vercel remains constrained by the external Free-plan `build-rate-limit`; this is a deployment-platform constraint, not a product failure or certification result.
 - Next executable product front is Quick Order server-backed exact SKU/barcode fallback for products outside the currently loaded catalog page. This remains development-only until implemented and proven.
+
+
+## EVOLUTION / RUN-2026-09-20-EXECUTE-018
+- Startup reconciliation corrected stale router state: development had advanced to `cc9f5e7...`, and the next product front already existed as PR #96 rather than being an unimplemented backlog item.
+- PR #96 was retargeted from `main` to the actual development branch. Compare proof is exactly 6 commits / 2 files, eliminating the previous ambiguity caused by the PR's original main base.
+- The Quick Order implementation preserves local-first matching and falls back to the existing authorized server catalog with active warehouse context; no new database privilege or tenant boundary is introduced by this front.
+- Evidence rule reinforced: completed checks on head `483f972...` do not prove a future merged SHA; merge creates a new verification unit.
+- Vercel Free-plan deployment quota failure is recorded as an external platform boundary only; it does not authorize a candidate mutation, Production action, or paid upgrade.
