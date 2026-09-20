@@ -115,7 +115,8 @@ jobs:
         run: |
           curl --fail --silent --show-error --location --max-time 20             -H "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET"             "$CANDIDATE_URL/manifest.webmanifest" -o manifest.webmanifest
           node - <<'NODE'
-          const p=require('./manifest.webmanifest');
+          const fs=require('node:fs');
+          const p=JSON.parse(fs.readFileSync('./manifest.webmanifest','utf8'));
           if(!p.name || !p.short_name) throw new Error('PWA name missing');
           if(p.lang!=='ar' || p.dir!=='rtl') throw new Error('PWA locale mismatch');
           if(p.start_url!=='/' || p.scope!=='/' || p.display!=='standalone') throw new Error('PWA scope/display mismatch');
