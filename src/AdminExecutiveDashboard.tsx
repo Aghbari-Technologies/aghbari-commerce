@@ -3,6 +3,7 @@ import { getStaffOrders, type StaffOrderSummary } from './services/staffOrders';
 import { formatMoney } from './domain/pricing';
 import { supabase } from './lib/supabase';
 import { buildSevenDaySales, calculateSevenDaySales, type DashboardSaleRow } from './domain/adminDashboard';
+import { getLowStock, type LowStockRow } from './services/inventory';
 
 type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer';
 type DashboardMetric = 'products' | 'customers' | 'orders' | 'stockItems' | 'receivables' | 'availableCredit' | 'sales7d';
@@ -33,6 +34,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
   const [error, setError] = useState<string | null>(null);
   const [salesRows, setSalesRows] = useState<DashboardSaleRow[]>([]);
   const [metricErrors, setMetricErrors] = useState<Partial<Record<DashboardMetric, boolean>>>({});
+  const [lowStock, setLowStock] = useState<LowStockRow[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -63,6 +65,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
         const salesRowsData: DashboardSaleRow[] = (salesResult.data ?? []).map((row) => ({ status: String(row.status), total: Number(row.total ?? 0), created_at: String(row.created_at) }));
         const sales7d = calculateSevenDaySales(salesRowsData, new Date());
         const creditRows = creditResult.data ?? [];
+        const lowStockRows = ['owner', 'admin', 'warehouse'].includes(role) ? await getLowStock().catch(() => []) : [];
         if (!cancelled) {
           setSnapshot({
             products: productsResult.count ?? 0,
@@ -75,6 +78,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
           });
           setOrders(staffOrdersResult.data);
           setSalesRows(salesRowsData);
+          setLowStock(lowStockRows);
           setLastUpdated(new Date());
           setError(queryFailures.length ? 'تعذر تحديث بعض مناطق لوحة الإدارة؛ المناطق السليمة ما زالت تعرض آخر بيانات مؤكدة.' : null);
         }
@@ -124,6 +128,11 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
         <div className="executive-grid-two">
           <article className="executive-card sales-chart"><div className="executive-card-title"><div><span>المبيعات</span><h2>حركة المبيعات خلال آخر 7 أيام</h2></div><b>{metricErrors.sales7d ? 'غير متاح' : money(snapshot.sales7d)}</b></div>{snapshot.sales7d > 0 ? <div className="bars" aria-label="مخطط المبيعات لسبعة أيام">{salesByDay.map((day) => <div className="bar-column" key={day.key}><strong>{day.value ? formatMoney(day.value) : '0'}</strong><div className="bar" style={{ height: `${Math.max(8, (day.value / maxSales) * 150)}px` }} /><small>{day.label}</small></div>)}</div> : <div className="executive-empty-chart" role="status"><strong>لا توجد مبيعات مسجلة</strong><span>لم تُسجّل طلبات مكتملة خلال آخر 7 أيام.</span></div>}</article>
           <article className="executive-card"><div className="executive-card-title"><div><span>توزيع التشغيل</span><h2>حالة الطلبات</h2></div><b>{orders.length}</b></div><div className="status-list">{statusCounts.length ? statusCounts.map((item) => <div key={item.status}><span>{item.label}</span><strong>{item.count}</strong><div><i style={{ width: `${Math.min(100, (item.count / Math.max(orders.length, 1)) * 100)}%` }} /></div></div>) : <p className="executive-empty">لا توجد طلبات تشغيلية في العينة الحالية.</p>}</div></article>
+        </div>
+
+        <div className="executive-grid-two operational-insight-grid">
+          <article className="executive-card"><div className="executive-card-title"><div><span>إشارة المخزون</span><h2>أصناف تحتاج إجراء</h2></div><b>{lowStock.length}</b></div>{lowStock.length ? <div className="executive-alert-list">{lowStock.slice(0,5).map((row) => <div key={`${row.warehouse_id}:${row.product_id}`}><div><strong>{row.product_name}</strong><small>{row.sku} · {row.warehouse_name}</small></div><span><b>{row.current_quantity}</b><small>الحد {row.min_quantity}</small></span></div>)}</div> : <div className="executive-empty-chart"><strong>المخزون ضمن الحدود</strong><span>لا توجد أصناف تحت حد إعادة الطلب المعلن حاليًا.</span></div>}</article>
+          <article className="executive-card smart-card"><div className="executive-card-title"><div><span>مركز القرار</span><h2>توصيات تشغيلية</h2></div><span>مباشرة</span></div><div className="recommendation-list"><div><span>01</span><div><strong>{orders.filter((o) => o.status === 'pending').length} طلبات تحتاج مراجعة</strong><small>ابدأ بدورة الاعتماد من مركز الطلبات.</small></div></div><div><span>02</span><div><strong>{lowStock.length} أصناف تحت الحد</strong><small>راجع إعادة الطلب أو التحويل بين المستودعات.</small></div></div><div><span>03</span><div><strong>{money(snapshot.availableCredit)} ائتمان متاح</strong><small>الرصيد المتاح للعملاء وفق بيانات النظام الحالية.</small></div></div></div></article>
         </div>
 
         <div className="executive-grid-two bottom-grid">
