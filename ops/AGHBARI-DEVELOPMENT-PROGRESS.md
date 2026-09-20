@@ -268,3 +268,12 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 - CI: connector did not expose push-triggered workflow runs for this exact SHA at reconciliation time; no CI PASS claimed.
 - RELEASE SAFETY: Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain untouched.
 - NEXT: exact-SHA CI/Vercel reconciliation; only after terminal proof proceed to additional product/UI work or merge decisions.
+
+
+## RUN-2026-09-21-EXECUTE-UI-002 — LANGUAGE + UI MODERNIZATION
+- EXACT UI SHA: `509b6597f956e4242da947e01a1890eca4164cf0`
+- Added ES2024 TypeScript target/lib while preserving the locked dependency graph.
+- Added modern browser UI primitives for safe rendering/interaction and mobile safe-area behavior; corrected a possible paint-containment clipping issue before treating the work as final.
+- Vercel previous UI SHA `255ee1484d0c0192034fe4a277ac27b4c7b875cc` was READY; current SHA needs independent exact-SHA validation.
+- No dependency upgrade is claimed; deterministic lockfile regeneration remains required before adopting the newer external package releases.
+- Candidate and Production unchanged.
