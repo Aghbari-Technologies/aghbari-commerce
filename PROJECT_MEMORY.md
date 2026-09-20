@@ -78,21 +78,16 @@ Unless explicitly implemented and proven, these remain backlog/deferred: promoti
 5. Resolve/reassess Auth leaked-password protection through an authorized external configuration path.
 6. Reconcile deferred master-spec capabilities against product readiness.
 7. Consolidate frontend/CSS historical layers only after reference proof and exact regression.
- — 2026-09-20
-A single post-checkpoint commit can invalidate exact-SHA evidence even when the code change is only a test fixture. The control protocol therefore treats **every SHA change as an evidence reconciliation event**, while allowing unaffected historical findings to remain audit context. Current exact-SHA browser proof must be established independently; no PASS is inherited merely because the delta appears low-risk.
 
+## 9. DURABLE EXECUTION LESSONS — 2026-09-20
+- A single post-checkpoint commit can invalidate exact-SHA evidence even when the code change is only a test fixture. Treat every SHA change as an evidence reconciliation event.
+- A later role-split migration (`20260920000410_split_customer_profile_role.sql`) redefined a SECURITY DEFINER invitation function with `search_path=public` and unqualified `digest()`, regressing the earlier hardened contract. The defect was exposed by exact concurrency proof.
+- Corrective migration `20260920000500_harden_customer_invitation_crypto.sql` restores empty search_path, schema-qualified `extensions.digest()`, customer role semantics, and service_role-only execution. Live verification confirms the hardened definition and privileges.
+- When workflow dispatch is unavailable, critical exact-SHA local browser/concurrency workflows require automatic trigger coverage on active development branch families.
+- Creating a new certification branch from a proven development SHA preserves the frozen historical candidate while enabling exact candidate-specific CI; environment-specific evidence remains distinct.
+- Candidate browser/final-regression evidence can be proven safely without mutating the candidate by isolated proof branches that checkout the exact candidate SHA and target the exact candidate deployment.
 
-## 10. DURABLE EXECUTION LESSONS — 2026-09-20
-- A later role-split migration (`20260920000410_split_customer_profile_role.sql`) redefined a SECURITY DEFINER invitation function with `search_path=public` and unqualified `digest()`, regressing the earlier hardened `search_path='' + extensions.digest()` contract. The defect was exposed by the exact concurrency matrix on SHA `9d2149de...`.
-- Corrective migration `20260920000500_harden_customer_invitation_crypto.sql` restores empty search_path, schema-qualified crypto, customer role semantics, and service_role-only execution. Equivalent hardening was applied live and verified by effective function definition/privileges plus a safe invalid-token invocation that reached `invitation not found` rather than crypto-resolution failure.
-- Proof-system rule: when workflow dispatch is unavailable, critical exact-SHA local browser/concurrency workflows must have an automatic trigger path on the active development branch family. This is now covered by `enhancement/**` push triggers.
-
-
-## 11. DURABLE CANDIDATE RELEASE LESSON — 2026-09-20
-- Creating a new certification branch from a proven development SHA preserves the frozen historical candidate while enabling exact candidate-specific CI. Candidate evidence is still environment-specific: local browser/CI proof does not become Deployment Browser proof merely because the source SHA matches.
-- Vercel Git integration produced a READY candidate deployment for the exact candidate SHA, but the repository Browser E2E workflow's authenticated job is conditional on `deployment_status` or manual dispatch. A pull-request-triggered browser-contract PASS therefore cannot be promoted to Deployment Browser PASS.
-
-
-## 12. DURABLE RELEASE-PROOF LESSON — 2026-09-20
-- Candidate browser and final-regression evidence can be proven safely without mutating the candidate by using isolated proof branches that explicitly checkout the candidate SHA and target the candidate's exact Vercel deployment. This is valid because both application source and deployment artifact identity are independently verified against the same exact SHA.
-- A workflow triggered by pull_request may legitimately produce a browser-contract PASS while skipping authenticated deployment E2E. The skipped job must not be promoted to Browser PASS; a dedicated exact-target proof path is required.
+## 10. DURABLE RECONCILIATION LESSON — 2026-09-20
+- A completed candidate technical gate set does not by itself authorize certification or Production mutation. Exact candidate evidence, external configuration blockers, and owner-level release authorization remain separate states.
+- Before creating a new product SHA, reconcile the stored state against GitHub, deployment metadata/runtime, and live Supabase. If the exact SHA and evidence remain valid and no product defect exists, record reconciliation and continue at the release boundary instead of creating speculative work.
+- Direct live verification of a SECURITY DEFINER function must inspect the effective definition and role privileges; source migration text alone is insufficient to prove live security state.
