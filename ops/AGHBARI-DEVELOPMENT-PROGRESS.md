@@ -236,3 +236,11 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 - Exact UI SHA: bc156704980a29d4fffa97f2e72db44beebe654b.
 - Added explicit desktop/mobile navigation visibility assertions and zero-count assertion for obsolete floating command launcher.
 - Fresh exact-SHA gates queued; candidate and Production unchanged.
+
+
+## RUN-2026-09-21 — MASTER UI QUALITY GATE HARDENING
+- Updated `AGHBARI-EXECUTION-START.md` on `ops/execution-control-plane` to make product/UI quality a mandatory execution gate.
+- New permanent rule: Aghbari Commerce UI is not complete when only a component, route, build, CI job, SQL path, or deployment exists. A screen must be visually mature, responsive, accessible, state-complete, functional, and browser-proven on its exact SHA.
+- Reference maturity bar: the user-provided ERP/B2B screenshot. Do not copy it literally; match its operational density, hierarchy, navigation quality, and product maturity while preserving Aghbari identity and scope.
+- Explicit anti-toy rules added: no generic CRUD presentation, no decorative KPI-only dashboards, no fake metrics, no placeholder links, no invented success, and no UI PASS without screenshot/browser evidence.
+- This is an execution-control change only; certification candidate and Production remain untouched.
