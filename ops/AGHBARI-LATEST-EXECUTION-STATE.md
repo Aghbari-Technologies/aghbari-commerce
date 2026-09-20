@@ -401,3 +401,16 @@ No Candidate mutation, no Production mutation, no paid Vercel/Supabase upgrade.
 - PROOF STATUS: fresh exact-SHA verification is required for `da7f3e...`; no prior SHA evidence transfers.
 - CANDIDATE `1685836f...` and PRODUCTION remain untouched / HOLD.
 - RESUME POINTER: reconcile exact-SHA CI and exact Deployment for `da7f3e1651354d397eb01ef2de68544d6e4e1f28`; inspect the first terminal failure, repair only the proven root cause, then re-run the exact-SHA suite.
+
+
+## RUN-2026-09-21-EXECUTE-UI-010 — ORDER DEPTH + CUSTOMER HOME POLISH
+- ACTIVE UI BRANCH: `execution/customer-ui-completion-20260920`.
+- EXACT CURRENT UI HEAD: `3d699ca81e1de17eef36a81bf8eff0b9809bee07`.
+- CUSTOMER ORDER DEPTH: persisted order detail dialog added; it server-verifies the selected order belongs to the authenticated customer before reading `order_items`, then renders actual lines, quantities, prices, totals, status, and timestamp.
+- STAFF ORDER DEPTH: administrative order detail dialog added with RLS-backed order read and actual order-line totals; technical UUID is not shown to operators.
+- CUSTOMER HOME POLISH: hero now surfaces operational facts already loaded by the portal (catalog count, latest order, and available purchase credit) rather than synthetic analytics.
+- UI TESTING: customer critical path verifies persisted order detail after creating a real order; visual review covers staff order detail when orders exist.
+- BRAND HYGIENE: active branch contains no `العامري` search results.
+- NO BUSINESS MODEL CHANGE: no migrations, pricing rules, tenant policies, reporting gateway, Candidate, or Production were changed.
+- PROOF STATUS: exact-SHA verification must be generated/reconciled for `3d699ca...`; no prior PASS transfers.
+- RESUME POINTER: inspect exact-SHA CI creation/status for `3d699ca...`; if workflows are absent or delayed, verify workflow trigger/path conditions rather than treating absence as PASS.
