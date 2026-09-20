@@ -210,3 +210,13 @@ RUN-2026-09-20-EXECUTE-022 — WORLD-CLASS UI/UX ADVANCEMENT
 - CURRENT CI FOR `97431d5...`: fresh runs were created for Security, Quality, Migration, Concurrency, Order, Fresh Browser, Local Browser Artifact, Exact Deployment contract, G1, Test-the-Test, plus the new UI Visual Review. At the latest checkpoint they were QUEUED; no PASS or merge is claimed.
 - VERCEL: active team is `Aghbari-Technologies`; current project list identifies `aghbari-commerce-c2dd` as project `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`. Latest READY deployment observed is SHA `03e1e7...`, not current UI HEAD, so it is not current UI proof.
 - CANDIDATE `1685836f4226fdcb3250a60eba7430ecf3e8f080` and PRODUCTION remain untouched / HOLD.
+
+
+## RUN-2026-09-20-EXECUTE-024 — UI COMPONENT COMPLETION + VISUAL PROOF FRONT
+- EXACT CURRENT UI HEAD: `97431d5a39c28f03b77ad03717caa7c82c8ba621` on `execution/customer-ui-completion-20260920`; PR #100 remains OPEN / DRAFT.
+- UI SOURCE COMPLETION: added 303 lines to `src/customer-portal-v3-dynamic.css` for secondary workflow surfaces previously visually incomplete: staff command bar, order selection, product-detail modal, Excel review rows, cancelled-order note, offline/recovery center, sales-chart containment, and responsive mobile variants.
+- STATIC UI COVERAGE CHECK: audited React className tokens against all five active UI stylesheets on the exact HEAD; 137 class tokens checked, unstyled-class result reduced to `0`.
+- VISUAL REVIEW COVERAGE: added `e2e/ui-visual-review.spec.ts` and `.github/workflows/ui-visual-review.yml`. Exact-SHA browser review verifies Arabic `lang/dir`, no horizontal overflow at 1440px and 390px, customer/staff key surfaces, and uploads four full-page screenshots as 7-day artifacts.
+- CURRENT CI FOR `97431d5...`: fresh runs were created for Security, Quality, Migration, Concurrency, Order, Fresh Browser, Local Browser Artifact, Exact Deployment contract, G1, Test-the-Test, plus the new UI Visual Review. Latest checkpoint: QUEUED; no PASS or merge is claimed.
+- VERCEL: active project is `aghbari-commerce-c2dd` / `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`. Latest READY deployment observed is SHA `03e1e7...`, not current UI HEAD, so it is not current UI proof.
+- CANDIDATE `1685836f4226fdcb3250a60eba7430ecf3e8f080` and PRODUCTION remain untouched / HOLD.
