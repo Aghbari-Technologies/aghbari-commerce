@@ -1,12 +1,11 @@
-# CURRENT EXECUTION REALITY — RUN-2026-09-20-EXECUTE-020
-- Development branch: `enhancement/market-ready-v4-20260918`; CI hardening PR #99 is merged at exact merge SHA `35d95e5e140820c7e7a8e0a792f89b28eacfb8e8`.
-- Active UI implementation branch: `execution/customer-ui-completion-20260920`; current head `1c759469994ad4fa4cb85f8c9fd09add810466e0`; PR #100 is OPEN / DRAFT and contains customer/staff UI + data-fetch performance hardening.
-- UI work includes: separate catalog vs operational fetching, search reset/context, exact loading skeletons, accessible dialog semantics + Escape dismissal, product image alt text, responsive staff shell, role-aware staff section shortcuts, and browser coverage for the new UI paths.
-- Exact-SHA CI for UI head `2e714043e198feec70be226bc00e474d91a332d1` is currently queued on GitHub Actions; no PASS is claimed until every required exact-SHA workflow terminates SUCCESS.
-- Vercel status for UI head is externally rate-limited on the Free plan (`api-deployments-free-per-day` / retry later); this is an environment constraint, not proof of product behavior.
-- CI-hardening SHA `3aafdf19c8a8affc0af8cb0692d81a15e512dcd1` completed all 12 tracked exact-SHA workflows SUCCESS before merge, including Test-the-Test `35486034020`; merged development SHA is therefore `35d95e5e140820c7e7a8e0a792f89b28eacfb8e8`.
-- Certification candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080`, candidate Vercel `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C`, frozen historical candidate `2facceb39aaa826413f20245a6f20b6c2ff7cd34`, and Production remain untouched; Production is HOLD / NO TOUCH.
-- Netlify remains externally BLOCKED by account-credit exhaustion; no cost-bearing workaround is authorized.
+# CURRENT EXECUTION REALITY — RUN-2026-09-20-EXECUTE-022
+- Development branch: `enhancement/market-ready-v4-20260918`; development merge SHA `35d95e5e140820c7e7a8e0a792f89b28eacfb8e8`.
+- Active UI branch: `execution/customer-ui-completion-20260920`; current HEAD `b4c6686761d56a4e3ddf813e30f0d80b654037d5`; PR #100 OPEN / DRAFT.
+- Current front: world-class customer/staff UI visual-system advancement.
+- New UI HEAD requires entirely fresh exact-SHA proof; no prior PASS transfer.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain untouched; Production HOLD / NO TOUCH.
+- External deployment constraints: Vercel Free-plan deployment rate-limit; Netlify account-credit exhaustion. These are blockers for deployment evidence only and are not product PASS/FAIL.
+- Self-improvement: visual polish is now governed as a first-class product-quality surface, with explicit hierarchy, responsive behavior, interaction states, accessibility, and proof-by-artifact/browser after source changes.
 
 # الأغبري | Aghbari Commerce — Execution Control Plane
 
@@ -853,3 +852,8 @@ Keep promotions, provider notification delivery, integration delivery records/ad
 - All evidence tied to `2e714043...` is invalid for `a9dd58a...`; current exact-SHA checks are queued.
 - Netlify public URL currently reports old build SHA `07c3cab...`; Vercel is externally rate-limited by Free plan. Neither is new-UI proof.
 - Candidate `1685836f...` and Production remain protected / untouched.
+
+
+## RUN-022 CONTROL-PLANE EVOLUTION
+- Durable rule: a substantial visual-system change is a release-relevant UI surface even when source changes are CSS-only; it invalidates prior visual/browser evidence for the old SHA and requires fresh exact-SHA artifact/browser verification.
+- Execution decision: use the existing imported `customer-portal-v3-dynamic.css` as the visual-system integration point to minimize source churn and preserve application behavior while allowing comprehensive surface upgrades.
