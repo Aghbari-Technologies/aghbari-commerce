@@ -25,8 +25,8 @@
 ## 3. CURRENT RECONCILED REALITY — 2026-09-20
 - Repository: `Aghbari-Technologies/aghbari-commerce`.
 - Development branch: `enhancement/market-ready-v4-20260918`.
-- Development SHA: `72d5dae91ca7250c98ebb50d8b05409500f77c13`.
-- PR #88: OPEN / DRAFT / MERGEABLE; base remains frozen historical candidate `2facceb39aaa826413f20245a6f20b6c2ff7cd34`.
+- Development SHA: `a9dd58a111138d8a0b12e5e5f5582b74395da79c` (active UI completion SHA; PR #100).
+- PR #100: OPEN / DRAFT; head `a9dd58a111138d8a0b12e5e5f5582b74395da79c`; base `enhancement/market-ready-v4-20260918`. Candidate and Production remain untouched.
 - Active certification branch: `certification/final-candidate-20260920-v3`, promoted fast-forward to exact SHA `1685836f4226fdcb3250a60eba7430ecf3e8f080` after WIP proof closure.
 - Previous exact candidate deployment `dpl_DVfuqGzcMPBX3aTgaH64LdChES6Y` is historical for `72d5dae...`; new candidate deployment `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` is BUILDING and reports exact candidate SHA `1685836f4226fdcb3250a60eba7430ecf3e8f080`.
 - The previous candidate SHA `1366f8ea240f2b1c58d78a863aa7a5584be531fb` had complete technical evidence, but that evidence is historical and invalid for the new SHA.
@@ -164,3 +164,13 @@ Unless explicitly implemented and proven, these remain backlog/deferred: promoti
 - The UI branch includes a final pricing-integrity correction: catalog refresh now fetches customer price tiers for both visible catalog products and all saved cart product IDs, so an off-screen cart line does not lose its applicable tier price after search/filter changes.
 - GitHub Actions for exact UI SHA `2e714043e198feec70be226bc00e474d91a332d1` are present but currently QUEUED; no UI PASS is claimed. Vercel remains Free-plan deployment-rate-limited and is not used as product proof.
 - The earlier UI checkpoint at `1c759469994ad4fa4cb85f8c9fd09add810466e0` is superseded by `2e714043e198feec70be226bc00e474d91a332d1`; do not reuse evidence from the superseded SHA.
+
+
+## RUN-2026-09-20-EXECUTE-021 — UI LINT RECONCILIATION
+- Prior SHA: `2e714043e198feec70be226bc00e474d91a332d1`; Application Quality run `35486580912` failed only on ESLint prefer-const at src/AppV3Fixed.tsx:59:543. Typecheck and 217/217 unit/integration tests passed on that exact SHA.
+- Root cause: grouped price-tier accumulator was declared with let without reassignment.
+- Final corrected SHA: `a9dd58a111138d8a0b12e5e5f5582b74395da79c`; declaration is now const grouped:Record<string,PriceTier[]>={}.
+- Temporary self-healing workflow used to recover the blocked source-edit path was fully removed; final branch contains no repair workflow.
+- New exact-SHA verification suite is triggered for `a9dd58a...` and currently queued; no prior PASS is reused across the SHA change.
+- Netlify public site reports old build SHA `07c3cab1724d54d34234d67250276ac12968e14e`; Vercel PR deployment is externally rate-limited. Neither is current UI proof.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain NO TOUCH / HOLD.
