@@ -1,3 +1,17 @@
+## CURRENT AUTHORITATIVE RECONCILIATION — RUN-2026-09-21-EXECUTE-024C
+- ACTIVE UI BRANCH: `execution/customer-ui-completion-20260920`
+- ACTIVE UI EXACT HEAD: `0e23965179818904d62d7577abb919cca16593a6`
+- PR #100: OPEN / DRAFT / MERGEABLE; head matches the exact UI SHA.
+- UI correction: customer order-template wording is unified to `قالب/قوالب الطلبات`; exact source scan on `src/AppV3Fixed.tsx` reports zero legacy `مسحة` occurrences.
+- Exact Vercel deployment: `dpl_5SWnt86P56xTYZV8yxNSE3Jmtay9` is READY and reports the exact UI SHA.
+- Runtime error query for the project: no runtime errors found in the selected last-hour window.
+- Exact G1: run `35544020449`, job `106166637449` remains QUEUED; no terminal conclusion and no PASS.
+- Combined commit status exposes Vercel success only; missing/queued contexts are not PASS.
+- Protected preview browser boundary: the exact deployment redirects unauthenticated fetches to Vercel SSO. The temporary share-access path also redirected; therefore no external browser visual PASS is claimed.
+- CERTIFICATION CANDIDATE: `1685836f4226fdcb3250a60eba7430ecf3e8f080` unchanged.
+- PRODUCTION: HOLD / NO TOUCH.
+- NEXT EXECUTABLE FRONT: obtain terminal exact-SHA CI results and an authenticated/valid exact-SHA browser evidence path; only then move PR #100 toward merge. After any merge, re-prove the resulting merge SHA from scratch.
+
 ## CURRENT AUTHORITATIVE RECONCILIATION — RUN-2026-09-21-EXECUTE-024B
 - ACTIVE UI BRANCH: `execution/customer-ui-completion-20260920`
 - ACTIVE UI EXACT HEAD: `0e23965179818904d62d7577abb919cca16593a6`
