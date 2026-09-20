@@ -261,3 +261,23 @@
   .admin-order-tools { grid-template-columns: 1fr; }
   .selection-count { justify-self: stretch; text-align: center; }
 }
+
+
+/* Narrow-screen staff workspace: stack operational cards and prevent horizontal canvas growth. */
+@media (max-width: 650px) {
+  .staff-main,
+  .staff-main > .admin-panel,
+  .executive-dashboard,
+  .executive-layout,
+  .executive-content {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+  .staff-main { overflow-x: clip; }
+  .executive-dashboard { overflow-x: clip; padding-inline: 8px; }
+  .admin-grid { grid-template-columns: 1fr; }
+  .admin-card,
+  .cart-panel,
+  .client-control-panel { min-width: 0; }
+}
