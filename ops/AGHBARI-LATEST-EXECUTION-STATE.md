@@ -1,30 +1,28 @@
 # الأغبري | Memory Layer 04 — LATEST RESULTS / EXECUTION ROUTER
 
-## CURRENT EXECUTION STATE — RUN-2026-09-20-EXECUTE-018
-- DEVELOPMENT BRANCH: `enhancement/market-ready-v4-20260918`
-- DEVELOPMENT BASE SHA: `cc9f5e7e1906b553613bb2e8dee99dacd704491d`
-- ACTIVE DEVELOPMENT FRONT HEAD: `483f9722f226c5f295c96edde2be88d760ceb520` on `execution/quick-order-server-lookup-20260920`
-- PR #96: OPEN / development-targeted / 6 commits / 2 changed files / not merged yet.
-- ACTIVE CERTIFICATION BRANCH: `certification/final-candidate-20260920-v3`
-- ACTIVE CANDIDATE SHA: `1685836f4226fdcb3250a60eba7430ecf3e8f080` — UNCHANGED.
-- CANDIDATE VERCEL: `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` — READY / exact candidate SHA.
-- FROZEN HISTORICAL CANDIDATE: `2facceb39aaa826413f20245a6f20b6c2ff7cd34` — FROZEN / NO TOUCH.
-- PRODUCTION: HOLD / NO TOUCH.
+## CURRENT EXECUTION STATE — RUN-2026-09-20-EXECUTE-019
+- VERIFIED DEVELOPMENT PRODUCT SHA: `d8b627bd884c61c0f7f3a18dda1b0e880ef6735c`.
+- ACTIVE CI HARDENING BRANCH: `execution/final-regression-routing-20260920`.
+- ACTIVE CI HARDENING SHA: `3aafdf19c8a8affc0af8cb0692d81a15e512dcd1`.
+- PR #99: OPEN / mergeable / targets `enhancement/market-ready-v4-20260918`; CI-only change.
+- Candidate: `certification/final-candidate-20260920-v3` @ `1685836f4226fdcb3250a60eba7430ecf3e8f080`, Vercel `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` READY; unchanged.
+- Frozen historical candidate: `2facceb39aaa826413f20245a6f20b6c2ff7cd34` — NO TOUCH.
+- Production: HOLD / NO TOUCH.
 
-## RUN-018 EXACT-SHA STATUS
-- SUCCESS: Quality `35485184032`; Security `35485184013`; G1 `35485184157`; Order Workflow `35485184016`; Bootstrap `35485184015`; Fresh Local Browser `35485184014`; Exact Deployment Browser Contract `35485184006`.
-- RUNNING: Test-the-Test `35485184023`; Concurrency `35485184025`; Local Production Artifact Browser `35485184035`.
-- Vercel PR status: FAILED with external Free-plan `api-deployments-free-per-day`; platform blocker only.
+## RUN-019 EXACT-SHA STATUS
+- SUCCESS: Final Regression / Exact Artifact `35486034001`; Security `35486034053`; G1 `35486035947` and `35486034028`; Browser Deployment Contract `35486033971`; Order Workflow `35486033938`; Quality `35486033946`.
+- RUNNING AT LAST RECONCILIATION: Migration `35486034018`; Test-the-Test `35486034020`; Concurrency `35486033945`; Fresh Local Browser `35486033929`; Local Production Artifact Browser `35486033954`.
+- HISTORICAL FAILURE: Final Regression `35485494878` correctly rejected stale Vercel preview SHA `72d5dae...` for expected `d8b627bd...`; root cause = Free-plan deployment quota. It is preserved as proof-system evidence, not a product failure.
 
 ## NEXT EXECUTION ROUTER
-1. Reconcile the three running exact-SHA workflows by job-level terminal state.
-2. If all terminate SUCCESS, final-review PR #96 and merge only into development.
-3. The merged development SHA is a new verification unit; rerun impacted exact-SHA gates before calling it proven.
-4. If any gate fails, capture the first concrete assertion/root cause and fix only the proven defect.
-5. Never transfer evidence from `cc9f5e7...` or `483f972...` to a future merged SHA without revalidation.
+1. Reconcile the five remaining RUN-019 jobs by terminal state.
+2. Merge PR #99 only after all exact-SHA checks are terminal SUCCESS.
+3. After the CI-hardening merge SHA, re-run the affected exact-SHA gates; no evidence transfers.
+4. Continue high-frequency customer/admin UI completion only after the current CI-hardening unit closes.
+5. Candidate and Production remain protected.
 
 ## SAFETY
-Candidate `1685836f...` and frozen candidate `2facceb...` are untouched. Production remains NO TOUCH. No paid Vercel/Supabase upgrade used.
+No Candidate mutation, no Production mutation, no paid Vercel/Supabase upgrade.
 
 ## HISTORICAL ROUTER
 ## RUN-015 WIP## RUN-015 WIP
