@@ -68,7 +68,9 @@ jobs:
             [[ "$code" =~ ^2[0-9][0-9]$ ]] || { cat /tmp/auth-user.out; exit 1; }
           }
           create_user customer-a@test.local
+          create_user customer-b@test.local
           create_user admin-a@test.local
+          create_user admin-b@test.local
           echo 'Waiting for Auth users to become visible to Postgres...'
           for i in $(seq 1 20); do
             count="$(psql "$LOCAL_DB_URL" -Atqc "select count(*) from auth.users where email in ('customer-a@test.local','customer-b@test.local','admin-a@test.local','admin-b@test.local');")"
