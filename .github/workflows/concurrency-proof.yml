@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - 'execution/**'
+      - 'enhancement/**'
   pull_request:
     branches:
       - main
