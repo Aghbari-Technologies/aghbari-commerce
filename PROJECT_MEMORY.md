@@ -236,3 +236,12 @@ RUN-2026-09-20-EXECUTE-022 — WORLD-CLASS UI/UX ADVANCEMENT
 - Fix: removed the redundant floating control from AppV3Fixed, removed its obsolete CSS, and added an exact UI regression assertion that .command-launch count is zero in both customer desktop/mobile visual tests.
 - Transactional/business logic and candidate/Production state were not changed.
 - Fresh exact-SHA verification was triggered for 79267d3; latest observed state is queued across all required gates. No PASS is claimed yet.
+
+
+## RUN-2026-09-20-EXECUTE-026 — EXECUTIVE DASHBOARD STATE REFINEMENT
+- Exact UI HEAD: 75b0192f3bb6f5302c202330154649c07786d199.
+- Root UI refinement: executive dashboard now preserves independently successful metrics when one query fails, marks failed metrics as unavailable instead of presenting false zeroes, and keeps the affected operational list explicitly degraded.
+- Empty seven-day sales now render as an intentional empty state instead of a large blank chart area.
+- Static UI coverage audit on this HEAD: 138 React class tokens checked across active UI stylesheets; missing styled classes = 0.
+- Fresh exact-SHA verification suite was triggered for this HEAD; latest checkpoint all runs are queued. No PASS or merge is claimed.
+- Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 and Production remain untouched.
