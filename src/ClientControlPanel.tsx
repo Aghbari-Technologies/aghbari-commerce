@@ -14,7 +14,7 @@ const DEFAULT_CONFIG: ClientUiConfig = {
 };
 const BOOLEAN_LABELS: Array<[keyof ClientUiConfig, string, string]> = [
   ['showSearch','شريط البحث','البحث بالاسم وSKU والباركود'],['showCategories','التصنيفات','فلاتر التصنيفات في الكتالوج'],['showExcel','رفع Excel','الطلب الجماعي من ملف Excel'],['showQuickOrder','الطلب السريع','إدخال SKU والكمية بسرعة'],
-  ['showTemplates','المسحات','قوائم الطلبات المتكررة'],['showCredit','المركز المالي','الائتمان وكشف الحساب'],['showInventory','إظهار المخزون','حالة التوفر والكمية'],
+  ['showTemplates','القوالب','قوائم الطلبات المتكررة'],['showCredit','المركز المالي','الائتمان وكشف الحساب'],['showInventory','إظهار المخزون','حالة التوفر والكمية'],
   ['requireQuantityConfirmation','اعتماد الكمية','إلزام العميل بتأكيد الكمية قبل الإرسال'],['showTieredPricing','شرائح أسعار الجملة','إظهار مستويات السعر حسب الكمية'],['showSavingsCalculator','حاسبة التوفير','إظهار المتبقي للشريحة التالية'],
   ['showPaymentMethods','وسائل الدفع','إظهار خيارات الدفع المتاحة']
 ];
