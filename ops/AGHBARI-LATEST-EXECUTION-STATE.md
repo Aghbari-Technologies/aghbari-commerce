@@ -1,3 +1,17 @@
+## CURRENT EXECUTION STATE — RUN-2026-09-20-EXECUTE-020 — FINAL SHA CHECKPOINT
+- DEVELOPMENT BRANCH: `enhancement/market-ready-v4-20260918`
+- DEVELOPMENT MERGE SHA: `35d95e5e140820c7e7a8e0a792f89b28eacfb8e8` (PR #99 merged after all tracked exact-SHA CI-hardening gates succeeded on `3aafdf19c8a8affc0af8cb0692d81a15e512dcd1`).
+- ACTIVE UI BRANCH: `execution/customer-ui-completion-20260920`
+- ACTIVE UI SHA: `2e714043e198feec70be226bc00e474d91a332d1`
+- PR #100: OPEN / DRAFT; target development branch.
+- UI FRONT: customer portal + staff portal UX/performance/accessibility; latest correction preserves price tiers for saved cart products across catalog search/filter refreshes.
+- UI EXACT-SHA CI: current runs for `2e714043e198feec70be226bc00e474d91a332d1` are QUEUED; no PASS is claimed and no merge is authorized yet.
+- VERCEL: known Free-plan deployment-rate-limit failure; not product proof; no paid workaround.
+- CANDIDATE: `1685836f4226fdcb3250a60eba7430ecf3e8f080` / `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` READY, unchanged.
+- PRODUCTION: HOLD / NO TOUCH.
+- NETLIFY: HTTP 403 account-credit exhaustion; no paid workaround.
+- NEXT ACTION: finish exact-SHA verification on `2e714043e198feec70be226bc00e474d91a332d1`; only after terminal success merge PR #100, then rerun affected gates on its new merge SHA. Continue high-frequency UI/transactional backlog from the proven development head.
+
 ## CURRENT EXECUTION STATE — RUN-2026-09-20-EXECUTE-020
 - DEVELOPMENT BRANCH: `enhancement/market-ready-v4-20260918`
 - CURRENT DEVELOPMENT MERGE SHA: `35d95e5e140820c7e7a8e0a792f89b28eacfb8e8` — PR #99 CI proof-routing hardening merged after all tracked exact-SHA gates on `3aafdf19c8a8affc0af8cb0692d81a15e512dcd1` succeeded.
