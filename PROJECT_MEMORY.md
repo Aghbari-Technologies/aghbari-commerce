@@ -262,3 +262,15 @@ RUN-2026-09-20-EXECUTE-022 — WORLD-CLASS UI/UX ADVANCEMENT
 - No invented metrics, fake data, placeholder controls, or decorative links may be used to make a screen appear complete.
 - Required primary surfaces include executive/admin operations, sales/orders, purchasing, inventory/warehouses/stock count, customers, suppliers, finance/statements, product/category/pricing, import/export, client controls/settings, invitations, B2B catalog/cart/checkout/order history/templates/financial center, and mobile purchasing flows.
 - Evidence from one SHA must never be reused for another SHA; implementation, browser visual proof, certification, and production remain separate states.
+
+
+## CURRENT UI EXECUTION — 2026-09-21
+- Active UI branch: `execution/customer-ui-completion-20260920`.
+- Latest UI SHA: `c481db25ab046b73bec3693944a7cbcfc8369835`.
+- Implemented: unified Aghbari design-system layer loaded by `src/main.tsx`; staff shell alignment; premium RTL executive dashboard layout; operational insight modules; role-aware navigation anchors; stronger admin operations/forms/tables; customer portal visual consistency; responsive desktop/tablet/mobile states; duplicate staff identity mark removed.
+- Executive dashboard now exposes real low-stock operational signals from `getLowStock()` for permitted staff roles and includes actionable recommendation cards. No synthetic business metrics were introduced.
+- Admin navigation anchors now point to the actual product, orders, customers, inventory, purchasing, finance, export, and settings sections.
+- Current Vercel deployment for this exact SHA: `dpl_Hr162D72YEvrVu1rUWemkPwF3iYe` QUEUED. Latest READY UI deployment before this SHA is `dpl_Ac6FCRRWjiMbBfH4nms9sApLcYo9` for SHA `0b0d6051fab859a1f12b3fa67860f00ec91b3db1`; it is not evidence for current SHA.
+- Exact-SHA UI Visual Review run `35542432570` is QUEUED; all other exact-SHA product/security/browser gates for `c481db25ab046b73bec3693944a7cbcfc8369835` are also QUEUED at latest observation. No PASS transferred from prior SHA.
+- TinyFish visual automation was not used because the connected wallet is below zero; no paid workaround used.
+- Certification Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain untouched / NO TOUCH.
