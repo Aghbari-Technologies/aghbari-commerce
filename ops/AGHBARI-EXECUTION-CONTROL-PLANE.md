@@ -852,3 +852,9 @@ Keep promotions, provider notification delivery, integration delivery records/ad
 - Candidate `certification/final-candidate-20260920-v3` at `1685836f4226fdcb3250a60eba7430ecf3e8f080`, candidate Vercel `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C`, and Production remain untouched.
 - Verification-only PR #98 was closed without merge.
 - Next executable front is core customer/admin transactional UI completion from development head, with explicit state handling, accessibility, and server-truth constraints.
+
+## EVOLUTION / RUN-2026-09-20-EXECUTE-019
+- New proof-routing rule: source Final Regression on push must validate the exact locally built artifact; a quota-blocked/stale Vercel Preview cannot be used as a substitute for source regression.
+- Deployment artifact proof remains separate and is exercised only when a real deployment_status/manual deployment target is available and exact SHA identity can be proven.
+- CI-only correction is isolated on PR #99 at `3aafdf19c8a8affc0af8cb0692d81a15e512dcd1`; do not merge until its exact-SHA checks terminate SUCCESS.
+- Current Supabase advisor review found no new actionable performance/security defect: security findings are the known intentional SECURITY DEFINER execution pattern; performance findings are predominantly unused-index informational notices. No speculative DDL change is authorized.
