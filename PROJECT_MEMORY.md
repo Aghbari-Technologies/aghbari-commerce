@@ -28,7 +28,7 @@
 - Development SHA: `72d5dae91ca7250c98ebb50d8b05409500f77c13`.
 - PR #88: OPEN / DRAFT / MERGEABLE; base remains frozen historical candidate `2facceb39aaa826413f20245a6f20b6c2ff7cd34`.
 - Active certification branch: `certification/final-candidate-20260920-v3`, exact SHA `72d5dae91ca7250c98ebb50d8b05409500f77c13`.
-- Vercel exact candidate deployment `dpl_DVfuqGzcMPBX3aTgaH64LdChES6Y` is BUILDING at the latest check; exact SHA matches. Development exact-SHA preview `dpl_2aas6bAdtyEjBT9GDabNKKmdo8gd` is READY.
+- Vercel exact candidate deployment `dpl_DVfuqGzcMPBX3aTgaH64LdChES6Y` is READY and exact SHA matches. Development exact-SHA preview `dpl_2aas6bAdtyEjBT9GDabNKKmdo8gd` is also READY.
 - The previous candidate SHA `1366f8ea240f2b1c58d78a863aa7a5584be531fb` had complete technical evidence, but that evidence is historical and invalid for the new SHA.
 - Production remains HOLD / NO TOUCH.
 - Netlify exact-SHA deployment remains externally blocked by HTTP 403 account-credit exhaustion.
@@ -70,8 +70,9 @@ Unless explicitly implemented and proven, these remain backlog/deferred: promoti
 1. Rebuild every mandatory exact-SHA gate for candidate SHA `72d5dae91ca7250c98ebb50d8b05409500f77c13` after the performance migration.
 2. Establish candidate deployment-browser proof on the exact new candidate deployment.
 3. Establish final regression proof on the exact new candidate SHA/deployment.
-4. Recheck live security/performance advisors and record only exact current evidence.
-5. Certification remains NO until every mandatory release gate is proven on the new candidate and every external blocker is classified.
+4. Final Regression proof on the exact candidate deployment must be completed and retained; the isolated proof run already established the corrected manifest/service-worker/header contract, and the exact Customer/Admin browser job remains in progress.
+5. Recheck live security/performance advisors and record only exact current evidence.
+6. Certification remains NO until every mandatory release gate is proven on the new candidate and every external blocker is classified.
 
 ### P1
 6. Resolve/reassess Auth leaked-password protection through an authorized external configuration path.
@@ -90,3 +91,9 @@ Unless explicitly implemented and proven, these remain backlog/deferred: promoti
 - Direct live verification of a SECURITY DEFINER function must inspect the effective definition and role privileges; source migration text alone is insufficient to prove live security state.
 - Performance-advisor `unindexed_foreign_keys` findings are actionable when they identify real FK columns lacking a standalone leading index. In this case, the existing `(organization_id, customer_id, created_at)` index did not satisfy the `customer_id` FK because `organization_id` was the leading key; adding standalone FK indexes was the correct low-risk hardening. Unused-index INFO immediately after creation is expected and is not evidence that the indexes should be removed.
 - Live DDL and source migration must be advanced together: apply the exact migration, advance the candidate to the exact source SHA, and rebuild all SHA-bound evidence rather than allowing live/candidate drift.
+
+
+## 10. DURABLE PROOF-HARNESS LESSON — 2026-09-20
+- The isolated candidate Final Regression proof initially failed because the harness loaded `manifest.webmanifest` with Node `require()`, which treats the `.webmanifest` file as JavaScript instead of parsing JSON. This was a proof-system defect, not an application defect.
+- The harness was corrected to use `JSON.parse(fs.readFileSync(...))`. A new isolated proof run `35479844177` then passed deployed artifact identity, security headers, Arabic/RTL shell, PWA manifest, and service worker checks against the exact candidate deployment `dpl_DVfuqGzcMPBX3aTgaH64LdChES6Y` and exact product SHA `72d5dae91ca7250c98ebb50d8b05409500f77c13`.
+- The proof path deliberately lives on `proof/candidate-release-20260920-v2` and checks out the candidate SHA explicitly, so proof-harness commits do not mutate or invalidate the candidate source.
