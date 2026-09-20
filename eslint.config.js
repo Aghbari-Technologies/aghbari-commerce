@@ -7,8 +7,14 @@ export default tseslint.config(
   { ignores: ['dist'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
-  reactHooks.configs.flat.recommended,
-  reactRefresh.configs.vite(),
+  {
+    files: ['**/*.{ts,tsx}'],
+    plugins: { 'react-hooks': reactHooks, 'react-refresh': reactRefresh },
+    rules: {
+      ...reactHooks.configs.recommended.rules,
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }]
+    }
+  },
   {
     files: ['**/*.mjs'],
     languageOptions: {
