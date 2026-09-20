@@ -1,3 +1,9 @@
+## RUN-2026-09-21-EXECUTE-UI-009
+- Latest UI exact SHA: `7b9c0efa4fd04a30d80952dce55ddad52ee52ae4`
+- Concrete UI hardening since UI-008: customer portal branding localized to `تجارة B2B`; executive dashboard footer now translates role keys to Arabic.
+- Exact source re-read after both changes.
+- Current-SHA CI: expect fresh queued/pending verification; no PASS until terminal evidence exists.
+- Vercel: deployment-rate-limited for the current free window; no current-SHA deployment proof. No Production touch.
 ## RUN-2026-09-21-EXECUTE-UI-008 — CURRENT AUTHORITATIVE RECONCILIATION
 - ACTIVE UI BRANCH: `execution/customer-ui-completion-20260920`
 - ACTIVE UI EXACT HEAD: `41ee8dba7968124f2b6649e0b1347250c5a3a118`
