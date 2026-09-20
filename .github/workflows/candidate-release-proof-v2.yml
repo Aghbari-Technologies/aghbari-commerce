@@ -1,0 +1,143 @@
+name: Certification / Candidate Runtime and Browser Proof
+
+on:
+  push:
+    branches:
+      - 'proof/candidate-release-20260920-v2'
+
+permissions:
+  contents: read
+
+env:
+  CANDIDATE_SHA: 72d5dae91ca7250c98ebb50d8b05409500f77c13
+  CANDIDATE_URL: https://aghbari-commerce-c2dd-l4unncznk-aghbari-technologies1.vercel.app
+
+jobs:
+  candidate-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      E2E_EMAIL: ${{ secrets.E2E_EMAIL }}
+      E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+      E2E_EMAIL_B: ${{ secrets.E2E_EMAIL_B }}
+      E2E_PASSWORD_B: ${{ secrets.E2E_PASSWORD_B }}
+      E2E_ADMIN_EMAIL: ${{ secrets.E2E_ADMIN_EMAIL }}
+      E2E_ADMIN_PASSWORD: ${{ secrets.E2E_ADMIN_PASSWORD }}
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.CANDIDATE_SHA }}
+          fetch-depth: 1
+      - name: Verify exact candidate checkout
+        run: test "$(git rev-parse HEAD)" = "$CANDIDATE_SHA"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium
+      - name: Require deployment bypass and E2E credentials
+        run: |
+          test -n "$VERCEL_AUTOMATION_BYPASS_SECRET"
+          test -n "$E2E_EMAIL" && test -n "$E2E_PASSWORD"
+          test -n "$E2E_EMAIL_B" && test -n "$E2E_PASSWORD_B"
+          test -n "$E2E_ADMIN_EMAIL" && test -n "$E2E_ADMIN_PASSWORD"
+      - name: Verify exact deployed artifact
+        run: |
+          curl --fail --silent --show-error --location --max-time 20             -H "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET"             "$CANDIDATE_URL/build-meta.json" -o build-meta.json
+          node -e 'const m=require("./build-meta.json"); if(m.product!=="aghbari-commerce"||m.git_sha!==process.env.CANDIDATE_SHA) process.exit(1); console.log(m)'
+      - name: Run exact candidate Customer E2E
+        env:
+          E2E_BASE_URL: ${{ env.CANDIDATE_URL }}
+          EXPECTED_SHA: ${{ env.CANDIDATE_SHA }}
+        run: npx playwright test e2e/critical-path.spec.ts --project=chromium
+      - name: Run exact candidate Admin E2E
+        env:
+          E2E_BASE_URL: ${{ env.CANDIDATE_URL }}
+          EXPECTED_SHA: ${{ env.CANDIDATE_SHA }}
+        run: npx playwright test e2e/admin-control-plane.spec.ts --project=chromium
+      - name: Upload candidate browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: candidate-browser-proof-${{ env.CANDIDATE_SHA }}
+          path: |
+            build-meta.json
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  candidate-final-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.CANDIDATE_SHA }}
+          fetch-depth: 1
+      - name: Verify exact candidate checkout
+        run: test "$(git rev-parse HEAD)" = "$CANDIDATE_SHA"
+      - name: Verify deployed artifact identity
+        run: |
+          test -n "$VERCEL_AUTOMATION_BYPASS_SECRET"
+          curl --fail --silent --show-error --location --max-time 20             -H "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET"             "$CANDIDATE_URL/build-meta.json" -o build-meta.json
+          node - <<'NODE'
+          const fs=require('node:fs');
+          const m=JSON.parse(fs.readFileSync('build-meta.json','utf8'));
+          if(m.product!=='aghbari-commerce') throw new Error('Unexpected product');
+          if(m.git_sha!==process.env.CANDIDATE_SHA) throw new Error('Candidate SHA mismatch');
+          if(!m.version) throw new Error('Missing version');
+          console.log('EXACT DEPLOYED SHA:',m.git_sha);
+          console.log('DEPLOYED VERSION:',m.version);
+          NODE
+      - name: Verify security headers
+        run: |
+          curl --fail --silent --show-error --location --max-time 20             -H "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET"             -D headers.txt -o /dev/null "$CANDIDATE_URL/"
+          grep -qi '^content-security-policy:' headers.txt
+          grep -qi '^x-content-type-options:.*nosniff' headers.txt
+          grep -qi '^x-frame-options:.*DENY' headers.txt
+          grep -qi '^strict-transport-security:' headers.txt
+          grep -qi '^referrer-policy:' headers.txt
+          grep -qi '^permissions-policy:' headers.txt
+      - name: Verify Arabic RTL shell
+        run: |
+          curl --fail --silent --show-error --location --max-time 20             -H "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET"             "$CANDIDATE_URL/" -o index.html
+          grep -qi '<html' index.html
+          grep -qi 'lang="ar"' index.html
+          grep -qi 'dir="rtl"' index.html
+          grep -qi 'بوابة الأغبري' index.html
+          grep -q 'type="module"' index.html
+      - name: Verify PWA manifest
+        run: |
+          curl --fail --silent --show-error --location --max-time 20             -H "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET"             "$CANDIDATE_URL/manifest.webmanifest" -o manifest.webmanifest
+          node - <<'NODE'
+          const p=require('./manifest.webmanifest');
+          if(!p.name || !p.short_name) throw new Error('PWA name missing');
+          if(p.lang!=='ar' || p.dir!=='rtl') throw new Error('PWA locale mismatch');
+          if(p.start_url!=='/' || p.scope!=='/' || p.display!=='standalone') throw new Error('PWA scope/display mismatch');
+          if(!Array.isArray(p.icons) || p.icons.length<2) throw new Error('PWA icons incomplete');
+          console.log('PWA: PASS');
+          NODE
+      - name: Verify service worker
+        run: |
+          curl --fail --silent --show-error --location --max-time 20             -H "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET"             "$CANDIDATE_URL/sw.js" -o sw.js
+          test -s sw.js
+          grep -q 'self.addEventListener' sw.js
+          grep -q 'fetch' sw.js
+      - name: Upload final regression evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: candidate-final-regression-${{ env.CANDIDATE_SHA }}
+          path: |
+            build-meta.json
+            headers.txt
+            index.html
+            manifest.webmanifest
+            sw.js
+          if-no-files-found: ignore
+          retention-days: 14
