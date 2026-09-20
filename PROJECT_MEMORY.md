@@ -1,3 +1,11 @@
+## RUN-2026-09-21-EXECUTE-UI-006 — AUTHORITATIVE UI/CI CHECKPOINT
+- Exact UI head: `629ecad26367a6c860e10a668d5ec71f34ae9083` on `execution/customer-ui-completion-20260920`; PR #100 remains OPEN / DRAFT / MERGEABLE.
+- Final UI code fixes in this lane: visible-vs-total catalog count wording; per-order reorder busy guard with guaranteed cleanup.
+- CI trigger hardening: product verification push triggers were restricted to controlled product branches/families, excluding `ops/**`, while preserving development/certification/proof/release coverage.
+- Vercel exact deployment `dpl_4GPcZtQPW7Y9LYF1FV4Lyj4EBXtx` is READY for the exact SHA `629ecad26367a6c860e10a668d5ec71f34ae9083`.
+- Exact-SHA CI is not yet terminal; queued/pending is not PASS. No previous-SHA proof is reused.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain untouched.
+
 ## RUN-2026-09-21-EXECUTE-UI-005 — UI EXECUTION CHECKPOINT
 - Active UI branch: `execution/customer-ui-completion-20260920`; exact SHA: `2490f7f47c2837aade96e854392ba297b94efdfb`; PR #100 remains OPEN / DRAFT / MERGEABLE.
 - Product/UI corrections implemented: the customer catalog hero statistic now labels the paginated count accurately (visible vs fully loaded); order reordering now uses a dedicated per-order busy state and always clears it in `finally`, preventing repeated concurrent reorder actions and preserving feedback on failure.
