@@ -376,3 +376,14 @@ No Candidate mutation, no Production mutation, no paid Vercel/Supabase upgrade.
 - Vercel READY proves deployment of this SHA, not browser correctness or certification.
 - Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` remains untouched; Production remains NO TOUCH / HOLD.
 - NEXT EXECUTABLE TASK: reconcile the queued exact-SHA verification set for `7f1b523319d74aa17f549c49db0f52482df5c00b`; repair any terminal failure before merge/certification.
+
+## RUN-2026-09-21-EXECUTE-UI-008 — CUSTOMER + ADMIN UI COMPLETION
+- ACTIVE UI BRANCH: `execution/customer-ui-completion-20260920`.
+- EXACT CURRENT UI HEAD: `7ee608d77d32ef6804dd1d08086b14cf5ea795f5`.
+- IMPLEMENTED: customer B2B purchase-shortcut rail; Excel upload control decoupled from search visibility and kept keyboard-accessible; executive dashboard metric/low-stock degraded states made explicit; role-aware sidebar icons stabilized; secondary workflow modifiers styled for Excel review, invitations, filters, and operational grid; UI visual review expanded to product detail, cart, orders, templates, finance, plus corrected command-launch assertion.
+- STATIC TARGET CHECK: all newly introduced/affected UI selectors are explicitly styled on the exact HEAD; no intentional placeholder/fake data was added.
+- PROOF STATUS: fresh exact-SHA GitHub Actions were created for the current HEAD (G1, Quality, Security, Migration, Concurrency, Order Workflow, Test-the-Test, Fresh Local Browser, Local Production Artifact, UI Visual Review, Exact Deployment Browser Contract) and are QUEUED at the latest checkpoint. No PASS is claimed until terminal exact-SHA evidence exists.
+- VERCEL: an intermediate deployment for SHA `658b9a10ea522b7696885386a2d2cf10e03a1b82` failed at `buildStep` with `npm run build` exit 2; exact root cause is not inferred. Current HEAD `7ee608d...` has no verified deployment yet, and no old deployment evidence is reused.
+- CANDIDATE: `1685836f4226fdcb3250a60eba7430ecf3e8f080` remains untouched.
+- PRODUCTION: HOLD / NO TOUCH.
+- RESUME POINTER: reconcile terminal exact-SHA CI for `7ee608d77d32ef6804dd1d08086b14cf5ea795f5`; inspect the first real failure by job/log, repair only the affected root cause, then re-run exact-SHA verification. Do not merge PR #100 or touch Candidate/Production before required proof closes.
