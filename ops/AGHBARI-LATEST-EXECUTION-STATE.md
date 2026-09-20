@@ -1,3 +1,14 @@
+## CURRENT AUTHORITATIVE RECONCILIATION — RUN-2026-09-21-EXECUTE-024B
+- ACTIVE UI BRANCH: `execution/customer-ui-completion-20260920`
+- ACTIVE UI EXACT HEAD: `0e23965179818904d62d7577abb919cca16593a6`
+- PR #100: OPEN / DRAFT / MERGEABLE.
+- Product UI correction committed: `fix(ui): unify order-template terminology`; all user-visible template terminology in `src/AppV3Fixed.tsx` now uses «قالب/قوالب» consistently; exact source scan reports zero `مسحة` occurrences.
+- Exact Vercel deployment: `dpl_5SWnt86P56xTYZV8yxNSE3Jmtay9` is BUILDING for the exact UI SHA; prior `dpl_Gs339...` is historical for `7f1b523...` and is not reused as proof for this new SHA.
+- Exact G1: run `35544020449` remains QUEUED; no terminal result and no PASS.
+- Commit status currently reports only Vercel pending; absence of other contexts is not a PASS.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` unchanged; Production HOLD / NO TOUCH.
+- NEXT: verify the new exact deployment to READY, then reconcile exact-SHA browser/CI evidence; do not transfer evidence from `7f1b523...`.
+
 ## CURRENT AUTHORITATIVE RECONCILIATION — RUN-2026-09-21-EXECUTE-024
 - ACTIVE UI BRANCH: `execution/customer-ui-completion-20260920`
 - ACTIVE UI EXACT HEAD: `7f1b523319d74aa17f549c49db0f52482df5c00b`
