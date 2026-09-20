@@ -198,3 +198,12 @@
   .product-skeleton > span,
   .product-skeleton i { animation: none; }
 }
+
+
+/* Mobile header declutter — keep command center available through the floating shortcut. */
+@media (max-width: 560px) {
+  .header-actions { gap: 5px; }
+  .header-actions .command-launch-button { display: none; }
+  .header-actions .ghost { padding-inline: 10px; }
+  .header-actions > button { min-height: 38px; }
+}
