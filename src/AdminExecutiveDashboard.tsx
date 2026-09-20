@@ -35,6 +35,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
   const [salesRows, setSalesRows] = useState<DashboardSaleRow[]>([]);
   const [metricErrors, setMetricErrors] = useState<Partial<Record<DashboardMetric, boolean>>>({});
   const [lowStock, setLowStock] = useState<LowStockRow[]>([]);
+  const [lowStockError, setLowStockError] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -65,7 +66,9 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
         const salesRowsData: DashboardSaleRow[] = (salesResult.data ?? []).map((row) => ({ status: String(row.status), total: Number(row.total ?? 0), created_at: String(row.created_at) }));
         const sales7d = calculateSevenDaySales(salesRowsData, new Date());
         const creditRows = creditResult.data ?? [];
-        const lowStockRows = ['owner', 'admin', 'warehouse'].includes(role) ? await getLowStock().catch(() => []) : [];
+        const lowStockResult = ['owner', 'admin', 'warehouse'].includes(role)
+          ? await getLowStock().then((data) => ({ data, error: false })).catch(() => ({ data: [] as LowStockRow[], error: true }))
+          : { data: [] as LowStockRow[], error: false };
         if (!cancelled) {
           setSnapshot({
             products: productsResult.count ?? 0,
@@ -78,7 +81,8 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
           });
           setOrders(staffOrdersResult.data);
           setSalesRows(salesRowsData);
-          setLowStock(lowStockRows);
+          setLowStock(lowStockResult.data);
+          setLowStockError(lowStockResult.error);
           setMetricErrors({
             products: Boolean(productsResult.error),
             customers: Boolean(customersResult.error),
@@ -140,8 +144,8 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
         </div>
 
         <div className="executive-grid-two operational-insight-grid">
-          <article className="executive-card"><div className="executive-card-title"><div><span>إشارة المخزون</span><h2>أصناف تحتاج إجراء</h2></div><b>{lowStock.length}</b></div>{lowStock.length ? <div className="executive-alert-list">{lowStock.slice(0,5).map((row) => <div key={`${row.warehouse_id}:${row.product_id}`}><div><strong>{row.product_name}</strong><small>{row.sku} · {row.warehouse_name}</small></div><span><b>{row.current_quantity}</b><small>الحد {row.min_quantity}</small></span></div>)}</div> : <div className="executive-empty-chart"><strong>المخزون ضمن الحدود</strong><span>لا توجد أصناف تحت حد إعادة الطلب المعلن حاليًا.</span></div>}</article>
-          <article className="executive-card smart-card"><div className="executive-card-title"><div><span>مركز القرار</span><h2>توصيات تشغيلية</h2></div><span>مباشرة</span></div><div className="recommendation-list"><div><span>01</span><div><strong>{orders.filter((o) => o.status === 'pending').length} طلبات تحتاج مراجعة</strong><small>ابدأ بدورة الاعتماد من مركز الطلبات.</small></div></div><div><span>02</span><div><strong>{lowStock.length} أصناف تحت الحد</strong><small>راجع إعادة الطلب أو التحويل بين المستودعات.</small></div></div><div><span>03</span><div><strong>{money(snapshot.availableCredit)} ائتمان متاح</strong><small>الرصيد المتاح للعملاء وفق بيانات النظام الحالية.</small></div></div></div></article>
+          <article className="executive-card"><div className="executive-card-title"><div><span>إشارة المخزون</span><h2>أصناف تحتاج إجراء</h2></div><b>{lowStockError ? "—" : lowStock.length}</b></div>{lowStockError ? <div className="executive-degraded">تعذر تحديث إشارات المخزون؛ لم يتم الاستنتاج بأن المخزون ضمن الحدود.</div> : lowStock.length ? <div className="executive-alert-list">{lowStock.slice(0,5).map((row) => <div key={`${row.warehouse_id}:${row.product_id}`}><div><strong>{row.product_name}</strong><small>{row.sku} · {row.warehouse_name}</small></div><span><b>{row.current_quantity}</b><small>الحد {row.min_quantity}</small></span></div>)}</div> : <div className="executive-empty-chart"><strong>المخزون ضمن الحدود</strong><span>لا توجد أصناف تحت حد إعادة الطلب المعلن حاليًا.</span></div>}</article>
+          <article className="executive-card smart-card"><div className="executive-card-title"><div><span>مركز القرار</span><h2>توصيات تشغيلية</h2></div><span>مباشرة</span></div><div className="recommendation-list"><div><span>01</span><div><strong>{metricErrors.orders ? 'غير متاح' : orders.filter((o) => o.status === 'pending').length} طلبات تحتاج مراجعة</strong><small>ابدأ بدورة الاعتماد من مركز الطلبات بعد توفر بياناتها.</small></div></div><div><span>02</span><div><strong>{lowStockError ? 'غير متاح' : lowStock.length} أصناف تحت الحد</strong><small>راجع إعادة الطلب أو التحويل بين المستودعات بعد تحديث المؤشر.</small></div></div><div><span>03</span><div><strong>{metricErrors.availableCredit ? 'غير متاح' : money(snapshot.availableCredit)}{metricErrors.availableCredit ? '' : ' ائتمان متاح'}</strong><small>الرصيد المتاح للعملاء وفق بيانات النظام الحالية.</small></div></div></div></article>
         </div>
 
         <div className="executive-grid-two bottom-grid">
