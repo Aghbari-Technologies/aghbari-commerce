@@ -104,7 +104,7 @@ export default function ExportPanel({ role }: { role: UserRole }) {
   return <div className="admin-card">
     <h3>بيانات التقارير</h3>
     <p>تمر البيانات إلى بوابة التقارير فقط؛ لا توجد صلاحية للمستهلك التحليلي لتعديل معاملات الأغبري.</p>
-    {canPublish && <button disabled={busy || publishing} onClick={() => void publishForReporting()}>{publishing ? 'جارٍ تمرير البيانات…' : 'حلّل متجري'}</button>}
+    {canPublish && <button disabled={busy || publishing} onClick={() => void publishForReporting()}>{publishing ? 'جارٍ تمرير البيانات…' : 'إرسال إلى بوابة التقارير'}</button>}
     <button disabled={busy || publishing} onClick={() => void exportProducts()}>{busy ? 'جارٍ التصدير…' : 'تصدير الكتالوج والأسعار'}</button>
     {error && <div className="error-banner" role="alert">{error}</div>}
     {message && <div className="success" role="status">{message}</div>}
