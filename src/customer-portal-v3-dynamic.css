@@ -1351,9 +1351,6 @@
   .checkout,
   .quick-editor button,
   .staff-section-rail button,
-  .command-launch {
-    transition: none !important;
-  }
   .modal,
   .cart-drawer {
     animation: none !important;
