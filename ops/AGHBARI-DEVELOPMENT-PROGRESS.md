@@ -363,3 +363,10 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 **Implemented:** functional voice search in customer catalog with graceful capability/error handling; removed unimplemented image-search button; added active-state styling.
 **Evidence:** exact source re-read; Vercel is rate-limited and cannot provide current-SHA deployment proof; current-SHA CI created but remains queued at checkpoint; no PASS transferred.
 **Next:** exact-SHA terminal proof and valid non-production browser visual verification.
+
+## RUN-2026-09-21-EXECUTE-UI-009
+- Exact UI branch: `execution/customer-ui-completion-20260920`
+- Exact UI SHA: `7b9c0efa4fd04a30d80952dce55ddad52ee52ae4`
+- UI hardening: localized customer portal branding; localized executive-dashboard role label; prior exact-SHA interaction fixes retained.
+- Verification: source re-read after changes; PR #100 remains development-only. Current-SHA CI evidence must remain unclaimed while queued. Vercel remains rate-limited and no current-SHA deployment exists.
+- Boundary: Candidate and Production untouched.
