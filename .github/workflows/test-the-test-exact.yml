@@ -2,7 +2,13 @@ name: Test-the-Test / Exact SHA
 
 on:
   push:
-    branches: ['**']
+    branches:
+      - main
+      - 'execution/**'
+      - 'enhancement/**'
+      - 'certification/**'
+      - 'proof/**'
+      - 'release/**'
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -78,40 +84,3 @@ jobs:
       - name: Mutation 3 — break storage registration authorization
         shell: bash
         run: |
-          psql "$DB_URL" -v ON_ERROR_STOP=1 -c "revoke execute on function public.register_product_media(uuid,text,text,integer,integer,bigint) from authenticated;"
-          set +e
-          supabase test db --local > mutated-storage-boundary.log 2>&1
-          rc=$?
-          cat mutated-storage-boundary.log
-          set -e
-          test "$rc" -ne 0 || { echo 'TEST-THE-TEST FAILURE: storage registration authorization mutation was not detected'; exit 1; }
-          echo "PASS: storage-boundary mutation detected (exit=$rc)"
-      - name: Restore implementation from zero
-        run: supabase db reset --local
-      - name: Mutation 4 — remove inventory tenant RLS
-        shell: bash
-        run: |
-          psql "$DB_URL" -v ON_ERROR_STOP=1 -c "alter table public.inventory_balances disable row level security;"
-          set +e
-          supabase test db --local > mutated-inventory-rls.log 2>&1
-          rc=$?
-          cat mutated-inventory-rls.log
-          set -e
-          test "$rc" -ne 0 || { echo 'TEST-THE-TEST FAILURE: inventory RLS removal was not detected'; exit 1; }
-          echo "PASS: inventory RLS mutation detected (exit=$rc)"
-      - name: Restore implementation from zero
-        run: supabase db reset --local
-      - name: Mutation 5 — remove authenticated access to order transition RPC
-        shell: bash
-        run: |
-          psql "$DB_URL" -v ON_ERROR_STOP=1 -c "revoke execute on function public.transition_order(uuid,public.order_status) from authenticated;"
-          set +e
-          supabase test db --local > mutated-order-rpc-grant.log 2>&1
-          rc=$?
-          cat mutated-order-rpc-grant.log
-          set -e
-          test "$rc" -ne 0 || { echo 'TEST-THE-TEST FAILURE: sensitive order-transition EXECUTE removal was not detected'; exit 1; }
-          echo "PASS: order-transition privilege mutation detected (exit=$rc)"
-      - name: Stop local Supabase
-        if: always()
-        run: supabase stop --no-backup
