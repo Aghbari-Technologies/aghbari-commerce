@@ -13,4 +13,5 @@
 `1` = EXECUTE NOW.
 
 ## Current next fronts
-P0 candidate reconciliation → formal final-regression capability closure → certification evidence pack; viewer/customer role split and browser/fixture integrity are now proven on development SHA `07c3cab1724d54d34234d67250276ac12968e14e`.
+- P0 exact candidate release closure: candidate Vercel deployment `dpl_DVfuqGzcMPBX3aTgaH64LdChES6Y` is READY at SHA `72d5dae91ca7250c98ebb50d8b05409500f77c13`; all mandatory technical gates plus exact Customer/Admin browser proof and Final Regression are now proven. Certification remains held only at the release-boundary decision/external Auth warning; Production is NO TOUCH.
+- Free-tier constraint: do not enable Supabase native Leaked Password Protection or upgrade services solely for it; keep the known external warning recorded and continue with zero-cost execution.
