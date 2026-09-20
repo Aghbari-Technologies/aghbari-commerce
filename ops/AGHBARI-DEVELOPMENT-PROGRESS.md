@@ -1,22 +1,25 @@
 # الأغبري | Memory Layer 03 — PROBLEM / PROGRESS LEDGER
 
-## CURRENT CHECKPOINT — RUN-2026-09-20-EXECUTE-009
-- Development SHA: `1366f8ea240f2b1c58d78a863aa7a5584be531fb`; development branch `enhancement/market-ready-v4-20260918`.
-- Certification branch: `certification/final-candidate-20260920-v3`; exact SHA `1366f8ea240f2b1c58d78a863aa7a5584be531fb`.
-- Candidate Vercel deployment: `dpl_72VRoKV9a71aY8JPtn7Pqsv5p18z` READY; exact SHA matches.
-- Candidate exact CI: Bootstrap 1067 SUCCESS; Application Quality 3105 SUCCESS; Security 2795 SUCCESS; G1 2948 SUCCESS; Order Workflow 1576 SUCCESS; Browser-contract 592 SUCCESS.
-- Candidate exact CI still running at checkpoint: Migration 3080; Concurrency 573; Test-the-Test 682; Fresh Browser 400; Local Production Browser 406.
-- Candidate Deployment Browser: NOT_PROVEN. The candidate PR-triggered Browser E2E workflow run `35478137968` succeeded only for `browser-contract`; authenticated browser job was SKIPPED because the workflow condition excludes pull_request events.
-- Development exact-SHA proof prior to candidate promotion is fully closed: Final Regression 35477914059; Security 35477914046; Quality 35477914032; G1 35477914182/35477916774; Migration 35477914025; Concurrency 35477914055; Test-the-Test 35477914073; Fresh Browser 35477913975; Local Browser 35477913977; Deployment Browser 35477929768 all SUCCESS.
-- Netlify 35477914057 remains FAILED by external account-credit HTTP 403.
-- Frozen historical candidate `2facceb...` and Production remain untouched.
+## CURRENT CHECKPOINT — RUN-2026-09-20-EXECUTE-010
+- Development SHA: `1366f8ea240f2b1c58d78a863aa7a5584be531fb`.
+- Certification candidate branch: `certification/final-candidate-20260920-v3`, same exact SHA.
+- Candidate Vercel deployment: `dpl_72VRoKV9a71aY8JPtn7Pqsv5p18z` READY, exact SHA matched.
+- Candidate CI exact gates: Bootstrap 1067 SUCCESS; Quality 3105 SUCCESS; Security 2795 SUCCESS; G1 2948 SUCCESS; Order Workflow 1576 SUCCESS; Migration 3080 SUCCESS; Concurrency 573 SUCCESS; Test-the-Test 682 attempt 2 SUCCESS; Fresh Browser 400 SUCCESS; Local Production Browser 406 SUCCESS.
+- Candidate Deployment Browser proof: run 35478298905 SUCCESS; exact candidate artifact verified; Customer and Admin E2E SUCCESS; artifact 10594833277 retained.
+- Candidate Final Regression proof: run 35478610589 SUCCESS; exact candidate artifact, security headers, Arabic/RTL shell, PWA manifest, and service worker verified; artifact 10594688925 retained.
+- Candidate Vercel preview runtime error/fatal log query returned no entries.
+- Frozen historical candidate `2facceb...` remains untouched; Production remains HOLD / NO TOUCH.
+- Netlify remains externally blocked by HTTP 403 account-credit exhaustion.
+- Auth leaked-password protection remains an external Supabase Auth configuration warning.
 
-## RUN-2026-09-20-EXECUTE-009
-- Action: promoted the exact proven development SHA to new certification branch `certification/final-candidate-20260920-v3` without modifying frozen candidate `2facceb...`.
-- Root cause / proof lesson: candidate-specific Deployment Browser E2E is not automatically emitted by the pull_request-triggered workflow; its authenticated job is conditional on deployment_status/manual dispatch.
-- Verified candidate deployment `dpl_72VRoKV9a71aY8JPtn7Pqsv5p18z` is READY and exact SHA-aligned.
-- Result: candidate release validation is in progress; certification remains NO.
-- Next action: close candidate's five running gates, then solve/prove Deployment Browser through an allowed exact candidate path.
+## RUN-2026-09-20-EXECUTE-010
+- Objective: complete exact candidate-side release verification without mutating the frozen historical candidate or Production.
+- Root cause previously fixed: invitation SECURITY DEFINER crypto dependency was vulnerable to migration redefinition drift; hardened with empty `search_path` and schema-qualified `extensions.digest()`.
+- Candidate exact test-the-test rerun proved all five adversarial mutations are detected and restored from zero.
+- Candidate deployment browser and final regression were proven through isolated proof branches that checkout the candidate SHA and hit the candidate Vercel deployment directly.
+- Result: candidate-side mandatory technical evidence is COMPLETE on exact SHA `1366f8...`.
+- Release boundary: LIVE/Production alignment is intentionally NOT_PROVEN; Auth leaked-password protection remains externally unresolved; Netlify is externally blocked.
+- Next: owner-approved release decision path only; no automatic Production mutation.
 
 ## PRIOR VERIFIED RUNS
 ### RUN-2026-09-20-RESUME-006 — SHA `4f0a0614...`
