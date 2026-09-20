@@ -1,7 +1,7 @@
 # CURRENT EXECUTION REALITY — RUN-2026-09-20-EXECUTE-016
 - Active certification branch: `certification/final-candidate-20260920-v3`
 - Active candidate SHA: `1685836f4226fdcb3250a60eba7430ecf3e8f080`
-- New candidate Vercel: `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` BUILDING, exact SHA matched
+- New candidate Vercel: `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` READY, exact SHA matched
 - WIP Test-the-Test: `35481150811` / job `105999082463` SUCCESS
 - Frozen historical candidate `2facceb...`: FROZEN / NO TOUCH
 - Production: HOLD / NO TOUCH
@@ -803,3 +803,9 @@ Keep promotions, provider notification delivery, integration delivery records/ad
 - RESULT: source-level exact gates PROVEN; candidate deployment evidence NOT_PROVEN pending Vercel READY.
 - EVIDENCE: 35481150809, 35481150821, 35481150820, 35481150804, 35481150826, 35481150812, 35481150807, 35481150837, 35481150808, 35481150811/105999082463; Vercel dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C.
 - NEXT: exact candidate deployment browser + Final Regression after READY. Production NO TOUCH.
+
+## RUN-2026-09-20-EXECUTE-016 FOLLOW-UP
+- Deployment readiness reconciled: `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` is READY at exact candidate SHA `1685836f4226fdcb3250a60eba7430ecf3e8f080`.
+- Vercel runtime verification for the candidate project found no runtime error clusters in the checked 1-hour window and no deployment-scoped error/fatal logs in the checked window.
+- Candidate-triggered exact-SHA revalidation is RUNNING for Fresh Local Browser `35483251620`, Local Production Artifact Browser `35483251716`, Migration `35483251634`, Test-the-Test `35483251636`, and Concurrency `35483251748`; Exact Deployment Browser Contract `35483251669` is SUCCESS.
+- Rule: deployment READY is necessary but not sufficient for candidate certification; no browser/final-regression PASS is asserted until the exact candidate workflows terminate successfully.
