@@ -1,0 +1,106 @@
+name: Certification / Candidate Final Regression Proof
+
+on:
+  push:
+    branches:
+      - 'proof/candidate-final-regression-20260920'
+
+permissions:
+  contents: read
+
+jobs:
+  candidate-final-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      EXPECTED_SHA: 1366f8ea240f2b1c58d78a863aa7a5584be531fb
+      BASE_URL: https://aghbari-commerce-c2dd-9k5gyro95-aghbari-technologies1.vercel.app
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.EXPECTED_SHA }}
+          fetch-depth: 1
+      - name: Validate exact candidate checkout and inputs
+        shell: bash
+        run: |
+          test -n "$VERCEL_AUTOMATION_BYPASS_SECRET"
+          test -n "$BASE_URL"
+          echo "$EXPECTED_SHA" | grep -Eq '^[0-9a-f]{40}$'
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$EXPECTED_SHA"
+          echo "EXACT CANDIDATE SMOKE HEAD: $actual"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Verify exact deployed artifact
+        run: |
+          curl --fail --silent --show-error --location --max-time 15             -H "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET"             "$BASE_URL/build-meta.json" -o build-meta.json
+          node - <<'NODE'
+          const fs=require('node:fs');
+          const p=JSON.parse(fs.readFileSync('build-meta.json','utf8'));
+          if(p.product!=='aghbari-commerce') throw new Error('Unexpected product');
+          if(p.git_sha!==process.env.EXPECTED_SHA) throw new Error(`DEPLOYED SHA MISMATCH expected=${process.env.EXPECTED_SHA} actual=${p.git_sha}`);
+          if(typeof p.version!=='string'||!p.version.trim()) throw new Error('Missing version');
+          const bt=p.built_at||p.build_time;
+          if(typeof bt!=='string'||Number.isNaN(Date.parse(bt))) throw new Error('Invalid build timestamp');
+          console.log('EXACT DEPLOYED SHA: '+p.git_sha);
+          console.log('DEPLOYED VERSION: '+p.version);
+          console.log('DEPLOYED BUILD TIME: '+bt);
+          NODE
+      - name: Verify security headers
+        shell: bash
+        run: |
+          curl --fail --silent --show-error --location --max-time 15             -H "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET"             -D headers.txt -o /dev/null "$BASE_URL/"
+          grep -qi '^content-security-policy:' headers.txt
+          grep -qi '^x-content-type-options:.*nosniff' headers.txt
+          grep -qi '^x-frame-options:.*DENY' headers.txt
+          grep -qi '^strict-transport-security:' headers.txt
+          grep -qi '^referrer-policy:' headers.txt
+          grep -qi '^permissions-policy:' headers.txt
+      - name: Verify Arabic RTL application shell
+        shell: bash
+        run: |
+          curl --fail --silent --show-error --location --max-time 15             -H "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET"             "$BASE_URL/" -o index.html
+          grep -qi '<html' index.html
+          grep -qi 'lang="ar"' index.html
+          grep -qi 'dir="rtl"' index.html
+          grep -qi 'بوابة الأغبري' index.html
+          grep -q 'type="module"' index.html
+      - name: Verify PWA manifest
+        run: |
+          curl --fail --silent --show-error --location --max-time 15             -H "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET"             "$BASE_URL/manifest.webmanifest" -o manifest.webmanifest
+          node - <<'NODE'
+          const fs=require('node:fs');
+          const p=JSON.parse(fs.readFileSync('manifest.webmanifest','utf8'));
+          if(!p.name||!p.short_name) throw new Error('Missing PWA name');
+          if(p.lang!=='ar'||p.dir!=='rtl') throw new Error('PWA locale mismatch');
+          if(p.start_url!=='/'||p.scope!=='/') throw new Error('PWA scope mismatch');
+          if(p.display!=='standalone') throw new Error('PWA display mismatch');
+          if(!Array.isArray(p.icons)||p.icons.length<2) throw new Error('PWA icons incomplete');
+          for(const i of p.icons) if(!i.src||!i.sizes||!i.type) throw new Error('Invalid icon');
+          console.log('PWA manifest: PASS');
+          NODE
+      - name: Verify service worker
+        run: |
+          curl --fail --silent --show-error --location --max-time 15             -H "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET"             "$BASE_URL/sw.js" -o sw.js
+          test -s sw.js
+          grep -q 'self.addEventListener' sw.js
+          grep -q 'fetch' sw.js
+          echo 'Service worker: PASS'
+      - name: Upload regression evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: candidate-final-regression-1366f8ea240f2b1c58d78a863aa7a5584be531fb
+          path: |
+            build-meta.json
+            headers.txt
+            index.html
+            manifest.webmanifest
+            sw.js
+          if-no-files-found: ignore
+          retention-days: 7
