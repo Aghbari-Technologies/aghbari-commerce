@@ -147,3 +147,14 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 - Isolated CI correction branch `execution/final-regression-routing-20260920` at `3aafdf19c8a8affc0af8cb0692d81a15e512dcd1`, PR #99, routes push-time Final Regression to the exact locally-built source artifact while preserving deployed-artifact verification for deployment_status/manual paths.
 - Exact local Final Regression `35486034001` SUCCESS on `3aafdf...`; Security `35486034053`, G1 `35486035947`/`35486034028`, Order `35486033938`, Deployment Contract `35486033971`, and Quality `35486033946` are SUCCESS. Migration `35486034018`, Test-the-Test `35486034020`, Concurrency `35486033945`, Fresh Local Browser `35486033929`, and Local Production Artifact Browser `35486033954` remain in progress at checkpoint.
 - No evidence is transferred across SHA. PR #99 must remain unmerged until its exact-SHA checks terminate successfully.
+
+
+## RUN-2026-09-20-EXECUTE-020 — CUSTOMER/STAFF UI COMPLETION FRONT
+- Resume source: verified development product SHA `d8b627bd884c61c0f7f3a18dda1b0e880ef6735c`; CI proof-routing PR #99 subsequently merged into development as `35d95e5e140820c7e7a8e0a792f89b28eacfb8e8`.
+- Implementation branch: `execution/customer-ui-completion-20260920`; exact head `1c759469994ad4fa4cb85f8c9fd09add810466e0`; PR #100 OPEN / DRAFT.
+- Implemented active-customer UI improvements: catalog/operational fetch separation; search reset/context; exact loading skeletons; dialog semantics + Escape dismissal; product image alt text/lazy loading; responsive customer bottom navigation; staff portal shell; role-aware staff section navigation; responsive detailed admin operations styling.
+- Added browser tests for search reset + dialog Escape behavior and staff section rail visibility.
+- Verification state: GitHub Actions runs for exact UI head exist but were still QUEUED at checkpoint; therefore no exact-SHA UI PASS or merge was claimed. Vercel Free-plan deployment status is externally rate-limited and is not used as product proof.
+- Previous CI-hardened SHA `3aafdf19c8a8affc0af8cb0692d81a15e512dcd1` had all tracked exact-SHA gates terminal SUCCESS, then PR #99 was merged safely. New development merge SHA `35d95e5e140820c7e7a8e0a792f89b28eacfb8e8` is a new verification unit; no old PASS is transferred.
+- Candidate and Production remained untouched.
+- NEXT OPEN FRONT: obtain terminal exact-SHA UI evidence for `1c759469994ad4fa4cb85f8c9fd09add810466e0`; merge PR #100 only after all required exact-SHA checks succeed, then re-run affected gates on its new merge SHA. Continue high-frequency customer/admin UI and transactional surface completion after proof.
