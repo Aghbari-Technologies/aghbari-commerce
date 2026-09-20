@@ -208,3 +208,12 @@ No Candidate mutation, no Production mutation, no paid Vercel/Supabase upgrade.
 - Static class-to-CSS audit remains clean from prior HEAD; this latest change is test-only.
 - Fresh exact-SHA CI for bc1567049 is queued across required gates. No PASS/certification/merge.
 - Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 unchanged; Production HOLD / NO TOUCH.
+
+
+## CURRENT EXECUTION STATE — RUN-2026-09-21-BOOT-QUALITY-DIRECTIVE
+- MASTER BOOT UPDATED: `AGHBARI-EXECUTION-START.md` now enforces a mandatory Product/UI Quality Gate and required end-to-end product surfaces.
+- UI STANDARD: use the user-provided ERP/B2B reference as the minimum maturity bar; match operational/visual maturity without literal copying.
+- COMPLETION RULE: no UI completion/PASS from source presence, build success, CI, SQL, route availability, or deployment alone; exact-SHA browser visual evidence is required.
+- ANTI-TOY RULE: reject generic CRUD styling, decorative KPI-only screens, fake metrics, placeholder controls, and visually incomplete states.
+- RELEASE BOUNDARY: Certification Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain unchanged / NO TOUCH.
+- NEXT EXECUTION: resume from the active development/UI frontier, prioritize proven UI/product gaps, then run exact-SHA visual + functional verification before merge.
