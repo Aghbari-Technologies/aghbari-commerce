@@ -43,6 +43,41 @@ test.describe('Aghbari UI visual integrity', () => {
     await expect(page.locator('.purchase-shortcuts')).toBeVisible();
     await expect(page.locator('.purchase-shortcut-grid button').first()).toBeVisible();
     await page.screenshot({ path: 'visual-evidence/customer-desktop.png', fullPage: true });
+
+    const detailButton = page.getByRole('button', { name: 'عرض التفاصيل', exact: true }).first();
+    await expect(detailButton).toBeVisible();
+    await detailButton.click();
+    await expect(page.getByRole('dialog', { name: 'تفاصيل المنتج' })).toBeVisible();
+    await assertRtlAndNoOverflow(page);
+    await page.screenshot({ path: 'visual-evidence/customer-product-detail-desktop.png', fullPage: true });
+    await page.getByRole('button', { name: 'إغلاق تفاصيل المنتج' }).click();
+
+    await page.getByRole('banner').getByRole('button', { name: /السلة/ }).click();
+    await expect(page.getByRole('dialog', { name: /السلة/ })).toBeVisible();
+    await assertRtlAndNoOverflow(page);
+    await page.screenshot({ path: 'visual-evidence/customer-cart-desktop.png', fullPage: true });
+    await page.getByRole('button', { name: 'إغلاق السلة' }).click();
+
+    await page.getByRole('button', { name: 'طلباتي', exact: true }).click();
+    await expect(page.getByRole('heading', { name: 'طلباتك وشحناتك' })).toBeVisible();
+    await assertRtlAndNoOverflow(page);
+    await page.screenshot({ path: 'visual-evidence/customer-orders-desktop.png', fullPage: true });
+
+    const templatesNav = page.getByRole('button', { name: 'قوالب الطلبات', exact: true });
+    if (await templatesNav.count()) {
+      await templatesNav.click();
+      await expect(page.getByRole('heading', { name: 'قوالب الطلبات الجاهزة' })).toBeVisible();
+      await assertRtlAndNoOverflow(page);
+      await page.screenshot({ path: 'visual-evidence/customer-templates-desktop.png', fullPage: true });
+    }
+
+    const financeNav = page.getByRole('button', { name: 'المركز المالي', exact: true });
+    if (await financeNav.count()) {
+      await financeNav.click();
+      await expect(page.getByRole('heading', { name: 'المركز المالي' })).toBeVisible();
+      await assertRtlAndNoOverflow(page);
+      await page.screenshot({ path: 'visual-evidence/customer-finance-desktop.png', fullPage: true });
+    }
   });
 
   test('customer mobile visual evidence', async ({ page }) => {
