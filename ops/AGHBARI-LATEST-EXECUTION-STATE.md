@@ -180,3 +180,12 @@ No Candidate mutation, no Production mutation, no paid Vercel/Supabase upgrade.
 - UI Visual Review: run 35489157936, job 106020938737, IN_PROGRESS; exact SHA verification and clean install passed, isolated local Supabase startup is running.
 - Current exact-head suite for 97431d5: UI Visual Review IN_PROGRESS; Security, Quality, Migration, Concurrency, Order, Fresh Browser, Local Browser Artifact, Exact Deployment contract, G1 and Test-the-Test remain QUEUED at the same checkpoint.
 - No merge/certification PASS.
+
+
+## CURRENT RECONCILED OVERRIDE — RUN-2026-09-20-EXECUTE-025
+- ACTIVE UI BRANCH: execution/customer-ui-completion-20260920.
+- EXACT UI HEAD: 79267d3d8634ee2b65aab2763b7717eb503e2bcb.
+- PR #100 remains OPEN / DRAFT.
+- Proven defect: redundant fixed .command-launch overlay from visual artifacts; removed and guarded by UI regression test.
+- Fresh exact-SHA runs for 79267d3 are created for UI Visual Review, Security, Quality, Migration, Concurrency, Order, Fresh Browser, Local Browser Artifact, Exact Deployment contract, G1 and Test-the-Test; latest checkpoint all are QUEUED.
+- Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 unchanged. Production HOLD / NO TOUCH.
