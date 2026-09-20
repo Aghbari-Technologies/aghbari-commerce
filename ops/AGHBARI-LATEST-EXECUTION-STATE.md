@@ -1,3 +1,19 @@
+## CURRENT EXECUTION STATE — RUN-2026-09-20-EXECUTE-020
+- DEVELOPMENT BRANCH: `enhancement/market-ready-v4-20260918`
+- CURRENT DEVELOPMENT MERGE SHA: `35d95e5e140820c7e7a8e0a792f89b28eacfb8e8` — PR #99 CI proof-routing hardening merged after all tracked exact-SHA gates on `3aafdf19c8a8affc0af8cb0692d81a15e512dcd1` succeeded.
+- ACTIVE IMPLEMENTATION BRANCH: `execution/customer-ui-completion-20260920`
+- ACTIVE UI SHA: `1c759469994ad4fa4cb85f8c9fd09add810466e0`
+- PR #100: OPEN / DRAFT; base `enhancement/market-ready-v4-20260918`.
+- UI IMPLEMENTATION: active AppV3Fixed customer portal performance/accessibility/UX hardening plus responsive staff shell and role-aware admin section navigation.
+- UI EXACT-SHA PROOF: GitHub Actions runs for `1c759469994ad4fa4cb85f8c9fd09add810466e0` are currently QUEUED at this checkpoint; no PASS is claimed.
+- VERCEL: UI head receives the known Free-plan deployment rate-limit failure; not treated as product proof. No paid upgrade/workaround authorized.
+- PREVIOUS CI HARDENING: `3aafdf19c8a8affc0af8cb0692d81a15e512dcd1` all tracked exact-SHA workflows SUCCESS; PR #99 merged as `35d95e5e140820c7e7a8e0a792f89b28eacfb8e8`.
+- CERTIFICATION CANDIDATE: `certification/final-candidate-20260920-v3` @ `1685836f4226fdcb3250a60eba7430ecf3e8f080` — unchanged; candidate Vercel `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` READY.
+- FROZEN HISTORICAL CANDIDATE: `2facceb39aaa826413f20245a6f20b6c2ff7cd34` — NO TOUCH.
+- PRODUCTION: HOLD / NO TOUCH.
+- NETLIFY: externally BLOCKED by account-credit exhaustion; no paid workaround.
+- NEXT ACTION: finish exact-SHA UI verification on `1c759469994ad4fa4cb85f8c9fd09add810466e0`; only then merge #100 and treat its new merge SHA as a fresh proof unit. Continue UI/transactional backlog from each proven development head.
+
 # الأغبري | Memory Layer 04 — LATEST RESULTS / EXECUTION ROUTER
 
 ## CURRENT EXECUTION STATE — RUN-2026-09-20-EXECUTE-019
