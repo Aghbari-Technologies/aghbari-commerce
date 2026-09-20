@@ -230,3 +230,9 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 - Static class-to-CSS audit: 138 JSX class tokens, missing=0.
 - Fresh exact-SHA gates queued; prior evidence is stale for this SHA.
 - Candidate and Production untouched.
+
+
+## RUN-2026-09-20-EXECUTE-027 — RESPONSIVE UI REGRESSION GUARDS
+- Exact UI SHA: bc156704980a29d4fffa97f2e72db44beebe654b.
+- Added explicit desktop/mobile navigation visibility assertions and zero-count assertion for obsolete floating command launcher.
+- Fresh exact-SHA gates queued; candidate and Production unchanged.
