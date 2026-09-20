@@ -174,3 +174,15 @@ Unless explicitly implemented and proven, these remain backlog/deferred: promoti
 - New exact-SHA verification suite is triggered for `a9dd58a...` and currently queued; no prior PASS is reused across the SHA change.
 - Netlify public site reports old build SHA `07c3cab1724d54d34234d67250276ac12968e14e`; Vercel PR deployment is externally rate-limited. Neither is current UI proof.
 - Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain NO TOUCH / HOLD.
+
+
+RUN-2026-09-20-EXECUTE-022 — WORLD-CLASS UI/UX ADVANCEMENT
+- OBJECTIVE: upgrade Aghbari Commerce customer + staff interfaces from functional operational styling to a cohesive premium B2B SaaS visual system, without changing transactional truth, permissions, reporting boundary, or candidate/production state.
+- EXACT UI HEAD: `b4c6686761d56a4e3ddf813e30f0d80b654037d5` on `execution/customer-ui-completion-20260920`; PR #100 remains OPEN / DRAFT targeting `35d95e5e140820c7e7a8e0a792f89b28eacfb8e8`.
+- IMPLEMENTED: 184-line visual-system layer followed by a finishing pass in `src/customer-portal-v3-dynamic.css` (+ premium identity, authentication, admin surfaces, responsive behavior, interaction states, order/finance hierarchy, mobile navigation/shell). Two commits: `b4fc4fdc6b9cd68ed124b87b85e20d1378e67a92` then `b4c6686761d56a4e3ddf813e30f0d80b654037d5`.
+- CHANGE SURFACE: second commit is exactly one file: `src/customer-portal-v3-dynamic.css`, 184 additional lines; no application logic or data model changed.
+- DESIGN STANDARD: elevated hierarchy, restrained teal/navy brand language, glass/frosted chrome only where useful, stronger cards/surfaces, product-grid density, mobile-first controls, accessible focus/hover states, explicit loading/empty/error/success affordances, and staff/admin operational readability.
+- PROOF RULE: all prior UI evidence for SHA `a9dd58a...`, `006f5e98...`, or `b4fc4fd...` is stale for this exact HEAD until revalidated. Do not transfer PASS.
+- CURRENT CI OBSERVATION: exact-SHA workflow runs for `b4c6686761d56a4e3ddf813e30f0d80b654037d5` have not yet produced a terminal proof set at the time of this record; prior commit `b4fc4fd...` had partial/active gates before this second UI commit. No certification PASS is claimed.
+- VERCEL / NETLIFY: known external free-tier deployment constraints remain unchanged; not converted into product proof.
+- CANDIDATE `1685836f4226fdcb3250a60eba7430ecf3e8f080` remains untouched. PRODUCTION remains HOLD / NO TOUCH.
