@@ -1,3 +1,8 @@
+## RUN-2026-09-21-EXECUTE-UI-008 — UI EXECUTION CHECKPOINT
+- Exact UI head: `41ee8dba7968124f2b6649e0b1347250c5a3a118` on `execution/customer-ui-completion-20260920`; PR #100 remains development-only.
+- Latest concrete UI fixes: customer/order filters; responsive filter styling; consistent Arabic product terminology; functional browser voice search; removal of dead image-search action.
+- Voice search uses Arabic locale `ar-YE`, focuses catalog query state, and reports unsupported-browser / permission failures without pretending success.
+- No candidate or production changes.
 ## RUN-2026-09-21-EXECUTE-UI-007 — UI COMPLETION CHECKPOINT
 - Exact UI head is `a5369f4a17147c315f571c84743ed3682e4b2337` on `execution/customer-ui-completion-20260920`; PR #100 remains OPEN/DRAFT/MERGEABLE.
 - Implemented UI usability upgrades: customer directory filtering; purchase-order filtering; localized customer-facing operational terminology; reporting gateway action wording made explicit.
