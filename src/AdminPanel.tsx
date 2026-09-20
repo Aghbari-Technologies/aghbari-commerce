@@ -109,10 +109,10 @@ export default function AdminPanel({ role }: { role: UserRole }) {
         </section>
       </div>}
       {error && <div className="error-banner" role="alert">{error}</div>}{message && <div className="success" role="status">{message}</div>}
-      {canCatalog && <div id="admin-customers"><div id="admin-customers"><CustomerPanel role={role} /></div></div>}
-      {canInventory && <div id="admin-inventory"><div id="admin-inventory"><InventoryPanel role={role} /></div></div>}
-      {canInventory && <div id="admin-purchasing"><div id="admin-purchasing"><PurchasingPanel role={role} /></div></div>}
-      {canFinance && <div id="admin-finance"><div id="admin-finance"><FinancePanel role={role} /></div></div>}
+      {canCatalog && <div id="admin-customers"><CustomerPanel role={role} /></div>}
+      {canInventory && <div id="admin-inventory"><InventoryPanel role={role} /></div>}
+      {canInventory && <div id="admin-purchasing"><PurchasingPanel role={role} /></div>}
+      {canFinance && <div id="admin-finance"><FinancePanel role={role} /></div>}
       {canInventory && <div id="admin-export"><ExportPanel role={role}/></div>}
       {canCategory && <div id="admin-settings"><ClientControlPanel role={role}/></div>} 
     </details>
