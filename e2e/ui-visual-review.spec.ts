@@ -105,6 +105,14 @@ test.describe('Aghbari UI visual integrity', () => {
     await expect(page.locator('#admin-purchasing')).toBeVisible();
     await expect(page.locator('#admin-finance')).toBeVisible();
     await expect(page.locator('#admin-settings')).toBeVisible();
+    const staffDetailButtons = page.getByRole('button', { name: 'عرض التفاصيل', exact: true });
+    if (await staffDetailButtons.count()) {
+      await staffDetailButtons.first().click();
+      await expect(page.getByRole('dialog', { name: 'تفاصيل الطلب' })).toBeVisible();
+      await assertRtlAndNoOverflow(page);
+      await page.screenshot({ path: 'visual-evidence/staff-order-detail-desktop.png', fullPage: true });
+      await page.getByRole('button', { name: 'إغلاق تفاصيل الطلب الإداري' }).click();
+    }
     await page.screenshot({ path: 'visual-evidence/staff-desktop.png', fullPage: true });
   });
 
