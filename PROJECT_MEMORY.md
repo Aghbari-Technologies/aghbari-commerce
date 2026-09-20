@@ -369,3 +369,11 @@ RUN-2026-09-20-EXECUTE-022 — WORLD-CLASS UI/UX ADVANCEMENT
 - Role-filtered navigation icons must be bound to the navigation item itself, not array position.
 - Secondary operational surfaces (Excel review, invitations, filter toolbars, responsive admin grids) require explicit layout selectors and mobile behavior.
 - Exact current UI checkpoint: `7ee608d77d32ef6804dd1d08086b14cf5ea795f5` on `execution/customer-ui-completion-20260920`; fresh exact-SHA verification remains the only valid proof unit.
+
+
+## DURABLE EXECUTION RULE — DEEP TRANSACTIONAL UI / 2026-09-21
+- Customer order history must expose real persisted order details, not only status cards.
+- Any customer order-detail read must verify the selected order belongs to the authenticated customer before loading `order_items`.
+- Staff order-detail views may rely on existing authenticated RLS, but must not expose technical UUIDs as customer-facing/operator-facing business identifiers.
+- Hero/header summaries may surface already-loaded operational facts, but must not become synthetic BI metrics.
+- Current exact UI checkpoint: `3d699ca81e1de17eef36a81bf8eff0b9809bee07`; fresh exact-SHA proof is mandatory for this checkpoint.
