@@ -2,7 +2,13 @@ name: G1 Domain Proof
 
 on:
   push:
-    branches: ['**']
+    branches:
+      - main
+      - 'execution/**'
+      - 'enhancement/**'
+      - 'certification/**'
+      - 'proof/**'
+      - 'release/**'
   pull_request:
   workflow_dispatch:
     inputs:
