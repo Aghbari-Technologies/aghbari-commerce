@@ -1,63 +1,48 @@
 # الأغبري | Memory Layer 04 — LATEST RESULTS / EXECUTION ROUTER
 
-## CURRENT EXECUTION STATE — RUN-2026-09-20-EXECUTE-011
-- DEVELOPMENT SHA: `1366f8ea240f2b1c58d78a863aa7a5584be531fb`
+## CURRENT EXECUTION STATE — RUN-2026-09-20-EXECUTE-012
+- DEVELOPMENT SHA: `72d5dae91ca7250c98ebb50d8b05409500f77c13`
 - DEVELOPMENT BRANCH: `enhancement/market-ready-v4-20260918`
 - CERTIFICATION CANDIDATE: `certification/final-candidate-20260920-v3`
-- CANDIDATE SHA: `1366f8ea240f2b1c58d78a863aa7a5584be531fb`
+- CANDIDATE SHA: `72d5dae91ca7250c98ebb50d8b05409500f77c13`
 - FROZEN HISTORICAL CANDIDATE: `2facceb39aaa826413f20245a6f20b6c2ff7cd34` — FROZEN / NO TOUCH
 - PR #88: OPEN / DRAFT / MERGEABLE
 - PRODUCTION: HOLD / NO TOUCH
 
-## RECONCILIATION — 2026-09-20
-- PR #88 head still exactly matches development SHA; base remains the frozen historical candidate.
-- Exact-SHA workflow set for `1366f8ea240f2b1c58d78a863aa7a5584be531fb` is completed SUCCESS for Order Workflow, Browser Exact Deployment, Security, G1, Bootstrap, Application Quality, Migration, Concurrency, Fresh Local Browser, Local Production Artifact Browser, and Test-the-Test.
-- Candidate Vercel deployment `dpl_72VRoKV9a71aY8JPtn7Pqsv5p18z` is READY and reports exact Git ref `certification/final-candidate-20260920-v3` and exact Git SHA `1366f8ea240f2b1c58d78a863aa7a5584be531fb`.
-- Vercel preview runtime error/fatal query for the exact deployment returned no logs in the checked 24h window.
-- Live Supabase direct verification: 58 public base tables; `public.consume_customer_invitation(text,uuid)` is SECURITY DEFINER with empty `search_path`, `extensions.digest()`, and EXECUTE denied to anon/authenticated and granted to service_role.
-- This run introduced no product/source SHA change and therefore does not invalidate the candidate evidence.
+## RUN-012 REALITY
+- A real performance finding was fixed: two uncovered foreign keys on `public.customer_invitations`.
+- Migration source: `supabase/migrations/20260920000600_add_customer_invitation_fk_indexes.sql`.
+- Live migration application: SUCCESS.
+- Candidate branch was advanced fast-forward to exact SHA `72d5dae91ca7250c98ebb50d8b05409500f77c13`.
+- Vercel exact candidate deployment: `dpl_DVfuqGzcMPBX3aTgaH64LdChES6Y` BUILDING at last check, exact Git SHA matched. Development exact-SHA preview: `dpl_2aas6bAdtyEjBT9GDabNKKmdo8gd` READY.
+- No runtime error/fatal entries were returned for the new project/deployment time window checked.
+- GitHub G1 Domain Proof run `35479225179` is IN PROGRESS for the new SHA.
 
-## CANDIDATE DEPLOYMENT
-- Vercel deployment: `dpl_72VRoKV9a71aY8JPtn7Pqsv5p18z`
-- URL: `aghbari-commerce-c2dd-9k5gyro95-aghbari-technologies1.vercel.app`
-- State: READY
-- Exact Git SHA: `1366f8ea240f2b1c58d78a863aa7a5584be531fb`
-- Alias: `aghbari-commerce-c2dd-git-certific-e21ba0-aghbari-technologies1.vercel.app`
+## EXACT-SHA EVIDENCE STATUS
+- Previous SHA `1366f8ea...` evidence is CLOSED historical evidence only and MUST NOT be presented as PASS for `72d5dae...`.
+- New SHA certification evidence status: REBUILDING / NOT YET COMPLETE.
+- Required gates: Bootstrap, Quality, Security, G1, Order Workflow, Migration, Concurrency, Test-the-Test, Fresh Browser, Local Production Artifact Browser, Candidate Deployment Browser, Final Regression.
 
-## EXACT CANDIDATE GATES — ALL PROVEN
-- Bootstrap: 1067 SUCCESS
-- Application Quality: 3105 SUCCESS
-- Security: 2795 SUCCESS
-- G1 Domain: 2948 SUCCESS
-- Order Workflow: 1576 SUCCESS
-- Migration: 3080 SUCCESS
-- Concurrency: 573 SUCCESS
-- Test-the-Test: 682 attempt 2 SUCCESS
-- Browser Fresh Local: 400 SUCCESS
-- Browser Local Production Artifact: 406 SUCCESS
-- Deployment Browser: 35478298905 SUCCESS — exact artifact + Customer/Admin E2E
-- Final Regression: 35478610589 SUCCESS — artifact/headers/RTL/PWA/service worker
-
-## EVIDENCE ARTIFACTS
-- Deployment Browser evidence artifact: 10594833277, digest `sha256:73d24d5907a3b7cb80dc7370d373497d881bbe5bdc29abf7d76be3b73c715361`
-- Final Regression evidence artifact: 10594688925, digest `sha256:32adab41d2f751ca35549ef418251d1962dd1afa780270f55f8072a5b709a900`
-
-## SUPABASE
+## LIVE SUPABASE
 - Project `aghbari-commerce`, ref `mrcyqezbhpncuvaehwgf`, ACTIVE_HEALTHY, PostgreSQL 17.6.1.166.
-- Invitation consumer remains SECURITY DEFINER with empty search_path, `extensions.digest()`, anon/authenticated EXECUTE false, service_role true; direct live definition matches the hardened migration on the exact candidate SHA.
-- Auth leaked-password protection remains an external Auth configuration warning and was not altered by this run.
-- Notifications boundary exists with RLS/direct-write denial; provider delivery/outbox remains deferred.
+- Customer invitation crypto boundary remains hardened: SECURITY DEFINER, empty search_path, `extensions.digest()`, anon/authenticated EXECUTE denied, service_role allowed.
+- New FK indexes are live: `customer_invitations_customer_id_fk_idx`, `customer_invitations_created_by_fk_idx`.
+- Performance advisor recheck removed the two `unindexed_foreign_keys` findings; unused-index INFO findings are expected until workload uses the indexes and are not a reason to delete them.
+- Security advisor still reports the intentional authenticated SECURITY DEFINER pattern plus the external `auth_leaked_password_protection` warning.
 
-## EXTERNAL BLOCKERS / RELEASE BOUNDARY
-- Netlify exact deploy: `35477914057` FAILED with HTTP 403 account-credit exhaustion.
-- LIVE/Production alignment: NOT_PROVEN by design because Production remains NO TOUCH.
-- Certification: NOT DECLARED COMPLETE; candidate-side technical evidence is complete, but owner-approved release path and external Auth warning remain unresolved.
+## EXTERNAL / RELEASE BLOCKERS
+- Netlify exact deploy remains externally blocked by HTTP 403 account-credit exhaustion.
+- Supabase leaked-password protection remains an external Auth settings warning; no authorized in-chat settings mutation is available through the current connector surface.
+- Production remains NO TOUCH.
+- Certification remains NO until all mandatory gates for SHA `72d5dae...` are proven.
 
-## NEXT EXECUTABLE FRONT
-1. Do not modify the candidate or Production.
-2. Resolve/reassess the external Supabase Auth leaked-password protection through an authorized settings path if available.
-3. If no authorized external path is available, retain the warning as a release blocker and keep the candidate frozen/protected.
-4. Await only the owner-level release decision once all external blockers are classified; no technical work remains that requires a new product SHA.
+## NEXT EXECUTION ROUTER
+1. Reconcile all GitHub Actions runs for exact SHA `72d5dae91ca7250c98ebb50d8b05409500f77c13`.
+2. Verify exact candidate Vercel deployment becomes READY and matches the same SHA.
+3. Rebuild exact-SHA browser/deployment/final-regression evidence; never reuse old SHA evidence.
+4. Recheck live Supabase security/performance after the new migration.
+5. Update this file and `ops/AGHBARI-DEVELOPMENT-PROGRESS.md` with the exact new evidence before any certification decision.
+6. Do not touch the frozen historical candidate or Production.
 
 ## SAFETY
 Never modify frozen historical candidate `2facceb...`, never transfer PASS across SHA, and never mutate Production for testing.
