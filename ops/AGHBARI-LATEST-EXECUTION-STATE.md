@@ -1,4 +1,6 @@
-# CURRENT EXECUTION STATE — RUN-2026-09-20-EXECUTE-018
+# الأغبري | Memory Layer 04 — LATEST RESULTS / EXECUTION ROUTER
+
+## CURRENT EXECUTION STATE — RUN-2026-09-20-EXECUTE-018
 - DEVELOPMENT BRANCH: `enhancement/market-ready-v4-20260918`
 - DEVELOPMENT BASE SHA: `cc9f5e7e1906b553613bb2e8dee99dacd704491d`
 - ACTIVE DEVELOPMENT FRONT HEAD: `483f9722f226c5f295c96edde2be88d760ceb520` on `execution/quick-order-server-lookup-20260920`
@@ -12,43 +14,17 @@
 ## RUN-018 EXACT-SHA STATUS
 - SUCCESS: Quality `35485184032`; Security `35485184013`; G1 `35485184157`; Order Workflow `35485184016`; Bootstrap `35485184015`; Fresh Local Browser `35485184014`; Exact Deployment Browser Contract `35485184006`.
 - RUNNING: Test-the-Test `35485184023`; Concurrency `35485184025`; Local Production Artifact Browser `35485184035`.
-- Vercel PR status: FAILED with external Free-plan `api-deployments-free-per-day`; this is a platform blocker, not a product result.
+- Vercel PR status: FAILED with external Free-plan `api-deployments-free-per-day`; platform blocker only.
 
 ## NEXT EXECUTION ROUTER
 1. Reconcile the three running exact-SHA workflows by job-level terminal state.
-2. If all terminate SUCCESS, perform the final exact-SHA review of PR #96 and merge only into development; never into candidate/Production.
-3. The merged development SHA becomes a new evidence unit; rerun impacted exact-SHA gates before calling it proven.
-4. If any gate fails, capture first assertion/root cause and fix only the proven defect on a new development SHA.
-5. Do not transfer any evidence from `cc9f5e7...` or `483f972...` to a future merged SHA without revalidation.
+2. If all terminate SUCCESS, final-review PR #96 and merge only into development.
+3. The merged development SHA is a new verification unit; rerun impacted exact-SHA gates before calling it proven.
+4. If any gate fails, capture the first concrete assertion/root cause and fix only the proven defect.
+5. Never transfer evidence from `cc9f5e7...` or `483f972...` to a future merged SHA without revalidation.
 
 ## SAFETY
-- Candidate `1685836f...` and frozen candidate `2facceb...` are untouched.
-- Production remains NO TOUCH.
-- No paid Vercel/Supabase upgrade used.
-
-# الأغبري | Memory Layer 04 — LATEST RESULTS / EXECUTION ROUTER
-
-## CURRENT EXECUTION STATE — RUN-2026-09-20-EXECUTE-016
-- ACTIVE CERTIFICATION BRANCH: `certification/final-candidate-20260920-v3`
-- ACTIVE CANDIDATE SHA: `1685836f4226fdcb3250a60eba7430ecf3e8f080`
-- FROZEN HISTORICAL CANDIDATE: `2facceb39aaa826413f20245a6f20b6c2ff7cd34` — FROZEN / NO TOUCH
-- NEW CANDIDATE VERCEL: `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` — READY, exact SHA matched
-- PRODUCTION: HOLD / NO TOUCH
-
-## RUN-016 PROVEN SOURCE GATES
-- Test-the-Test `35481150811` / job `105999082463` SUCCESS.
-- Quality `35481150809`; Security `35481150821`; G1 `35481150820`; Order Workflow `35481150804`; Deployment Browser Contract `35481150826`; Local Production Browser `35481150812`; Concurrency `35481150807`; Migration `35481150837`; Fresh Local Browser `35481150808` — all SUCCESS for exact SHA `1685836f4226fdcb3250a60eba7430ecf3e8f080`.
-- Old candidate deployment/browser/final-regression evidence for `72d5dae...` is historical and cannot be transferred.
-
-## NEXT EXECUTION ROUTER
-1. Source-level exact-SHA candidate revalidation is CLOSED SUCCESS for `1685836f4226fdcb3250a60eba7430ecf3e8f080`.
-2. Candidate deployment `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` is READY and exact SHA matched; direct HTTP 200 shell/runtime checks are clean.
-3. Remaining proof front: full exact candidate Deployment Browser E2E + Final Regression. Do not label PASS without the exact workflow evidence.
-4. The connected GitHub capability does not expose workflow dispatch; record this as a bounded proof-tool limitation, not as a product defect. No paid browser automation is used under the zero-cost policy.
-5. Preserve Production NO TOUCH and the external Free-tier Auth warning policy.
-
-## SAFETY
-Never modify frozen historical candidate, never transfer PASS across SHA, and never mutate Production for testing.
+Candidate `1685836f...` and frozen candidate `2facceb...` are untouched. Production remains NO TOUCH. No paid Vercel/Supabase upgrade used.
 
 ## HISTORICAL ROUTER
 ## RUN-015 WIP## RUN-015 WIP
