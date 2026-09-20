@@ -1392,14 +1392,19 @@
 
 
 /* World-class finishing: identity, authentication, admin density, and interaction states. */
+.portal-header > div:first-child {
+  position: relative;
+  padding-inline-end: 44px;
+}
 .portal-header > div:first-child::before {
   content: "أ";
-  display: inline-grid;
+  position: absolute;
+  inset-inline-end: 0;
+  inset-block-start: 0;
+  display: grid;
   place-items: center;
-  float: right;
   width: 34px;
   height: 34px;
-  margin: 1px 0 0 9px;
   border-radius: 10px;
   background: linear-gradient(145deg, var(--ag-primary), var(--ag-primary-strong));
   color: #fff;
