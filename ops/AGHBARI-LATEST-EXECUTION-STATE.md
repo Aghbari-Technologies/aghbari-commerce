@@ -160,3 +160,17 @@ No Candidate mutation, no Production mutation, no paid Vercel/Supabase upgrade.
 - No PASS is transferred from the prior SHA.
 - Netlify public site `https://aghbari-commerce-web.netlify.app` is reachable but reports old SHA `07c3cab1724d54d34234d67250276ac12968e14e`; not current UI evidence. Vercel current UI branch is externally rate-limited on Free plan.
 - Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` / Vercel `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` remains untouched. Production = HOLD / NO TOUCH.
+
+
+## CURRENT RECONCILED OVERRIDE — RUN-2026-09-20-EXECUTE-024
+- DEVELOPMENT BRANCH: `enhancement/market-ready-v4-20260918` / `35d95e5e140820c7e7a8e0a792f89b28eacfb8e8`.
+- ACTIVE IMPLEMENTATION BRANCH: `execution/customer-ui-completion-20260920`.
+- EXACT UI HEAD: `97431d5a39c28f03b77ad03717caa7c82c8ba621`.
+- PR #100: OPEN / DRAFT / mergeable=true. Direct compare against current development branch is 26 commits ahead / 3 behind; merge base `d8b627bd884c61c0f7f3a18dda1b0e880ef6735c`.
+- UI IMPLEMENTATION: premium visual-system layer plus completion styling for product details, Excel review, recovery center, order selection, staff command bar, and responsive chart/operations surfaces.
+- UI TESTING: `e2e/ui-visual-review.spec.ts` + `.github/workflows/ui-visual-review.yml` added. Static class-to-CSS audit reports zero missing styled classes.
+- CI: fresh exact-SHA runs for `97431d5...` are QUEUED at latest observation. No PASS, certification, or merge is asserted.
+- VERCEL: current project `aghbari-commerce-c2dd` / `prj_ww25V0FNP0YQCIcCAEFKVPkzLyOm`; latest observed READY deployment is `03e1e7...`, not current-head proof.
+- CANDIDATE: `certification/final-candidate-20260920-v3` / `1685836f4226fdcb3250a60eba7430ecf3e8f080`, unchanged.
+- PRODUCTION: HOLD / NO TOUCH.
+- NEXT TRANSACTION: reconcile terminal exact-SHA CI, inspect/download UI visual artifacts, fix only proven failures on a new SHA, then consider PR #100 merge only after required gates are terminal SUCCESS.
