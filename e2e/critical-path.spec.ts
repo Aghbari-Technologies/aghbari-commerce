@@ -99,7 +99,7 @@ test('authenticated customer completes real search → catalog → cart → orde
   await expect(page.getByRole('button', { name: 'طلباتي', exact: true })).toBeVisible(); await expect(page.getByText(`طلب #${orderNumber}`, { exact: true })).toBeVisible(); await page.reload();
   await expect(page.getByRole('button', { name: 'طلباتي', exact: true })).toBeVisible(); await page.getByRole('button', { name: 'طلباتي', exact: true }).click(); await expect(page.getByText(`طلب #${orderNumber}`, { exact: true })).toBeVisible();
   await expect(page.getByRole('status').filter({ hasText: 'قيد المراجعة' }).first()).toBeVisible(); await expect(page.locator('.order-progress').first()).toBeVisible();
-  const orderDetailButton = page.getByRole('button', { name: 'عرض التفاصيل', exact: true }).filter({ visible: true }).first();
+  const orderDetailButton = page.getByRole('button', { name: 'عرض التفاصيل', exact: true }).first();
   await expect(orderDetailButton).toBeVisible();
   await orderDetailButton.click();
   const orderDialog = page.getByRole('dialog', { name: 'تفاصيل الطلب' });
