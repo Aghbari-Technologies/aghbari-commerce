@@ -79,6 +79,15 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
           setOrders(staffOrdersResult.data);
           setSalesRows(salesRowsData);
           setLowStock(lowStockRows);
+          setMetricErrors({
+            products: Boolean(productsResult.error),
+            customers: Boolean(customersResult.error),
+            orders: Boolean(ordersResult.error || staffOrdersResult.error),
+            stockItems: Boolean(stockResult.error),
+            receivables: Boolean(creditResult.error),
+            availableCredit: Boolean(creditResult.error),
+            sales7d: Boolean(salesResult.error),
+          });
           setLastUpdated(new Date());
           setError(queryFailures.length ? 'تعذر تحديث بعض مناطق لوحة الإدارة؛ المناطق السليمة ما زالت تعرض آخر بيانات مؤكدة.' : null);
         }
@@ -112,7 +121,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
       <aside className="executive-sidebar">
         <div className="executive-brand"><span>أ</span><div><strong>الأغبري</strong><small>Enterprise B2B</small></div></div>
         <nav aria-label="أقسام الإدارة">
-          {[['الرئيسية','#admin-dashboard',true],['الطلبات','#admin-orders',['owner','admin','sales','warehouse'].includes(role)],['المخزون','#admin-inventory',['owner','admin','warehouse'].includes(role)],['العملاء والتجار','#admin-customers',['owner','admin','sales'].includes(role)],['الموردين','#admin-purchasing',['owner','admin','warehouse'].includes(role)],['الحسابات والمالية','#admin-finance',['owner','admin','sales'].includes(role)],['الإعدادات','#admin-settings',['owner','admin'].includes(role)]].filter(([, , can]) => can).map(([item,target], index) => <a key={item as string} className={index === 0 ? 'active' : ''} href={target as string}>{['⌂','↗','□','♙','▱','◫','⚙'][index]}<span>{item as string}</span></a>)}
+          {[{label:'الرئيسية',target:'#admin-dashboard',icon:'⌂',can:true},{label:'الطلبات',target:'#admin-orders',icon:'↗',can:['owner','admin','sales','warehouse'].includes(role)},{label:'المخزون',target:'#admin-inventory',icon:'□',can:['owner','admin','warehouse'].includes(role)},{label:'العملاء والتجار',target:'#admin-customers',icon:'♙',can:['owner','admin','sales'].includes(role)},{label:'الموردين',target:'#admin-purchasing',icon:'▱',can:['owner','admin','warehouse'].includes(role)},{label:'الحسابات والمالية',target:'#admin-finance',icon:'◫',can:['owner','admin','sales'].includes(role)},{label:'الإعدادات',target:'#admin-settings',icon:'⚙',can:['owner','admin'].includes(role)}].filter((item) => item.can).map((item, index) => <a key={item.label} className={index === 0 ? 'active' : ''} href={item.target}>{item.icon}<span>{item.label}</span></a>)}
         </nav>
         <div className="executive-sidebar-section"><small>تشغيل سريع</small>{["owner","admin","sales","warehouse"].includes(role) && <a href="#admin-orders">↗ متابعة الطلبات</a>}{["owner","admin","warehouse"].includes(role) && <a href="#admin-inventory">□ إدارة المخزون</a>}{["owner","admin","sales"].includes(role) && <a href="#admin-customers">♙ إدارة العملاء</a>}{role === "viewer" && <span>وصول قراءة فقط — لا توجد مهام تشغيلية متاحة لهذا الدور.</span>}</div>
       </aside>
