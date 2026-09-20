@@ -1,3 +1,8 @@
+## CONTROL-PLANE EVOLUTION — RUN-2026-09-21-EXECUTE-024
+- New proof lesson: Vercel `READY` is deployment/build evidence only. For this project, direct preview access can terminate at Vercel SSO, and the available share-access fetch path also redirected. Therefore no external fetch result is promoted to Browser PASS.
+- Required procedure: use the repository's exact-SHA browser/visual contracts and their artifacts for candidate/UI proof, or an authenticated platform path that explicitly exposes the protected deployment. Never record a visual PASS from a protected-route redirect.
+- Queue lesson: repeated live polling of the exact G1 run remained QUEUED; with no terminal job evidence, classify the front as RUNNING/QUEUED and continue independent non-release work rather than inventing a result.
+
 # CURRENT EXECUTION REALITY — RUN-2026-09-20-EXECUTE-023
 - Development branch: `enhancement/market-ready-v4-20260918`; development merge SHA `35d95e5e140820c7e7a8e0a792f89b28eacfb8e8`.
 - Active UI branch: `execution/customer-ui-completion-20260920`; current HEAD `bc3e66b8ef69c381d9750ef54551a9a526e88554`; PR #100 OPEN / DRAFT.
