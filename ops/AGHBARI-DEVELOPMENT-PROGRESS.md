@@ -222,3 +222,11 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 - Fixed on exact SHA 79267d3: removed duplicate floating command control + obsolete CSS and added a regression assertion.
 - Candidate and Production remain untouched.
 - Fresh exact-SHA gates are queued; do not infer PASS from queue state.
+
+
+## RUN-2026-09-20-EXECUTE-026 — EXECUTIVE DASHBOARD UX REFINEMENT
+- Refined admin dashboard degraded states and empty sales presentation on exact UI branch.
+- Exact SHA: 75b0192f3bb6f5302c202330154649c07786d199.
+- Static class-to-CSS audit: 138 JSX class tokens, missing=0.
+- Fresh exact-SHA gates queued; prior evidence is stale for this SHA.
+- Candidate and Production untouched.
