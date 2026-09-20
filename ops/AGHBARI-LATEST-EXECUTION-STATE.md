@@ -242,3 +242,13 @@ No Candidate mutation, no Production mutation, no paid Vercel/Supabase upgrade.
 - CANDIDATE: `1685836f4226fdcb3250a60eba7430ecf3e8f080` unchanged.
 - PRODUCTION: NO TOUCH / HOLD.
 - NEXT EXECUTABLE TASK: reconcile exact-SHA CI and deployment state for `255ee1484d0c0192034fe4a277ac27b4c7b875cc`; if any terminal failure exists, repair that exact SHA; if all gates pass, continue the next UI/product completion front without re-running unrelated completed scans.
+
+
+## CURRENT RESUME POINTER — RUN-2026-09-21-EXECUTE-UI-002
+- ACTIVE UI BRANCH: `execution/customer-ui-completion-20260920`
+- EXACT UI HEAD: `509b6597f956e4242da947e01a1890eca4164cf0`
+- LAST ACTIONS: modern UI rendering/interaction baseline; paint-clipping correction; ES2024 TypeScript target/lib; execution boot now contains the 120-minute UI coverage gate and session-resume contract.
+- INSTALLED TOOLCHAIN REMAINS: React 19.1.1, React DOM 19.1.1, Vite 7.3.5, TypeScript 5.9.2, Vitest 3.2.4, Supabase JS 2.112.4, Playwright 1.63.0, ESLint 9.35.0. Newer releases are upgrade targets only until package-lock regeneration + exact regression proof exists.
+- PREVIOUS EXACT UI SHA `255ee1484d0c0192034fe4a277ac27b4c7b875cc` deployed READY as `dpl_9S5oxwqv2cY5BmMD4JTgYNT3raYC`; current SHA requires its own proof.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` unchanged; Production NO TOUCH.
+- NEXT EXECUTABLE TASK: reconcile exact-SHA CI and Vercel for `509b6597f956e4242da947e01a1890eca4164cf0`; then address any terminal failure before further expansion.
