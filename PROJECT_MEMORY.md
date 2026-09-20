@@ -25,17 +25,14 @@
 ## 3. CURRENT RECONCILED REALITY — 2026-09-20
 - Repository: `Aghbari-Technologies/aghbari-commerce`.
 - Development branch: `enhancement/market-ready-v4-20260918`.
-- Development SHA: `1366f8ea240f2b1c58d78a863aa7a5584be531fb`.
+- Development SHA: `72d5dae91ca7250c98ebb50d8b05409500f77c13`.
 - PR #88: OPEN / DRAFT / MERGEABLE; base remains frozen historical candidate `2facceb39aaa826413f20245a6f20b6c2ff7cd34`.
-- Active certification branch: `certification/final-candidate-20260920-v3`, exact SHA `1366f8ea240f2b1c58d78a863aa7a5584be531fb`.
-- Candidate Vercel deployment: `dpl_72VRoKV9a71aY8JPtn7Pqsv5p18z`, READY, exact SHA matches; runtime error query for this preview returned no error/fatal logs.
-- Candidate exact gates proven: Bootstrap 1067; Quality 3105; Security 2795; G1 2948; Order Workflow 1576; Migration 3080; Concurrency 573; Test-the-Test 682 attempt 2; Fresh Browser 400; Local Production Browser 406.
-- Candidate Deployment Browser proven independently by `Certification / Candidate Deployment Browser Proof` run `35478298905`, with exact artifact verification, Customer E2E, Admin E2E, and evidence artifact `10594833277`.
-- Candidate Final Regression proven independently by `Certification / Candidate Final Regression Proof` run `35478610589`, with exact artifact, security headers, Arabic/RTL shell, PWA manifest, service worker, and evidence artifact `10594688925`.
-- Frozen historical candidate `certification/final-candidate-20260918` remains exactly `2facceb39aaa826413f20245a6f20b6c2ff7cd34` and untouched.
+- Active certification branch: `certification/final-candidate-20260920-v3`, exact SHA `72d5dae91ca7250c98ebb50d8b05409500f77c13`.
+- Vercel exact candidate deployment `dpl_DVfuqGzcMPBX3aTgaH64LdChES6Y` is BUILDING at the latest check; exact SHA matches. Development exact-SHA preview `dpl_2aas6bAdtyEjBT9GDabNKKmdo8gd` is READY.
+- The previous candidate SHA `1366f8ea240f2b1c58d78a863aa7a5584be531fb` had complete technical evidence, but that evidence is historical and invalid for the new SHA.
 - Production remains HOLD / NO TOUCH.
 - Netlify exact-SHA deployment remains externally blocked by HTTP 403 account-credit exhaustion.
-- Auth leaked-password protection remains an explicit external Supabase Auth configuration warning.
+- Auth leaked-password protection remains an external Supabase Auth configuration warning.
 
 ## 4. LIVE SUPABASE TRUTH
 - Project: `aghbari-commerce`; ref `mrcyqezbhpncuvaehwgf`; status `ACTIVE_HEALTHY`; PostgreSQL `17.6.1.166`.
@@ -44,6 +41,7 @@
 - Barcode RPC exposure was hardened: anon execution revoked; authenticated/service-role access according to the domain contract.
 - Auth leaked-password protection remains an external Supabase Auth configuration warning.
 - A direct query against `supabase_migrations.schema_migrations` returned no rows for versions `20260920000210` and `20260920000300`; therefore this query is not used as migration proof and no migration PASS is inferred from it.
+- New live performance hardening migration `20260920000600_add_customer_invitation_fk_indexes.sql` is applied. It adds standalone indexes for `customer_invitations.customer_id` and `customer_invitations.created_by` to cover their foreign keys.
 
 ## 5. VERIFIED PRODUCT / ARCHITECTURE KNOWLEDGE
 - Customer invitation direct authenticated RPC exposure is revoked; privileged service-role path retained.
@@ -69,15 +67,16 @@ Unless explicitly implemented and proven, these remain backlog/deferred: promoti
 
 ## 8. NEXT EXECUTION QUEUE
 ### P0
-1. Finish candidate-v3 exact-SHA gates: migration, concurrency, Test-the-Test, fresh browser, local production browser.
-2. Establish candidate deployment-browser proof on the candidate Vercel deployment; the PR-triggered browser workflow currently proves only the browser contract and skips the authenticated E2E job on pull_request events.
-3. Reconcile the full 61-commit delta against the frozen historical candidate without mutating the frozen ref.
-4. Certification remains NO until every mandatory release gate is proven on the candidate and every external blocker is classified.
+1. Rebuild every mandatory exact-SHA gate for candidate SHA `72d5dae91ca7250c98ebb50d8b05409500f77c13` after the performance migration.
+2. Establish candidate deployment-browser proof on the exact new candidate deployment.
+3. Establish final regression proof on the exact new candidate SHA/deployment.
+4. Recheck live security/performance advisors and record only exact current evidence.
+5. Certification remains NO until every mandatory release gate is proven on the new candidate and every external blocker is classified.
 
 ### P1
-5. Resolve/reassess Auth leaked-password protection through an authorized external configuration path.
-6. Reconcile deferred master-spec capabilities against product readiness.
-7. Consolidate frontend/CSS historical layers only after reference proof and exact regression.
+6. Resolve/reassess Auth leaked-password protection through an authorized external configuration path.
+7. Reconcile deferred master-spec capabilities against product readiness.
+8. Consolidate frontend/CSS historical layers only after reference proof and exact regression.
 
 ## 9. DURABLE EXECUTION LESSONS — 2026-09-20
 - A single post-checkpoint commit can invalidate exact-SHA evidence even when the code change is only a test fixture. Treat every SHA change as an evidence reconciliation event.
@@ -86,8 +85,8 @@ Unless explicitly implemented and proven, these remain backlog/deferred: promoti
 - When workflow dispatch is unavailable, critical exact-SHA local browser/concurrency workflows require automatic trigger coverage on active development branch families.
 - Creating a new certification branch from a proven development SHA preserves the frozen historical candidate while enabling exact candidate-specific CI; environment-specific evidence remains distinct.
 - Candidate browser/final-regression evidence can be proven safely without mutating the candidate by isolated proof branches that checkout the exact candidate SHA and target the exact candidate deployment.
-
-## 10. DURABLE RECONCILIATION LESSON — 2026-09-20
 - A completed candidate technical gate set does not by itself authorize certification or Production mutation. Exact candidate evidence, external configuration blockers, and owner-level release authorization remain separate states.
-- Before creating a new product SHA, reconcile the stored state against GitHub, deployment metadata/runtime, and live Supabase. If the exact SHA and evidence remain valid and no product defect exists, record reconciliation and continue at the release boundary instead of creating speculative work.
+- Before creating a new product SHA, reconcile stored state against GitHub, deployment metadata/runtime, and live Supabase. If the exact SHA and evidence remain valid and no product defect exists, record reconciliation and continue at the release boundary instead of creating speculative work.
 - Direct live verification of a SECURITY DEFINER function must inspect the effective definition and role privileges; source migration text alone is insufficient to prove live security state.
+- Performance-advisor `unindexed_foreign_keys` findings are actionable when they identify real FK columns lacking a standalone leading index. In this case, the existing `(organization_id, customer_id, created_at)` index did not satisfy the `customer_id` FK because `organization_id` was the leading key; adding standalone FK indexes was the correct low-risk hardening. Unused-index INFO immediately after creation is expected and is not evidence that the indexes should be removed.
+- Live DDL and source migration must be advanced together: apply the exact migration, advance the candidate to the exact source SHA, and rebuild all SHA-bound evidence rather than allowing live/candidate drift.
