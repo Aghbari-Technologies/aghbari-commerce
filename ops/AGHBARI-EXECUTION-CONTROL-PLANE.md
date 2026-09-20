@@ -864,3 +864,11 @@ Keep promotions, provider notification delivery, integration delivery records/ad
 
 ## RUN-023 LIVE CI RECONCILIATION
 - Latest exact-SHA CI observation for `bc3e66b8ef69c381d9750ef54551a9a526e88554`: G1 run 35488858872 SUCCESS; Order Workflow 35488856980 SUCCESS; Exact Deployment contract run 35488856986 SUCCESS with browser-e2e SKIPPED; Local Production Artifact 35488856969 RUNNING; Fresh Local Supabase 35488856975 RUNNING; Migration 35488856972 RUNNING; Concurrency 35488856971 RUNNING; Security 35488856994 QUEUED; Application Quality 35488856970 QUEUED; Test-the-Test 35488856978 QUEUED; second G1 run 35488856976 RUNNING. No certification/merge PASS is claimed.
+
+
+## RUN-024 CONTROL-PLANE EVOLUTION
+- Durable UI rule: customer/staff secondary surfaces must receive first-class styling and responsive treatment; a class used in JSX without an active UI selector is a visual-completion defect unless intentionally covered by a semantic/global selector.
+- New exact-proof rule: screenshots from a different deployment SHA do not prove the current UI. Exact visual review must build the same SHA locally, assert Arabic `lang/dir`, assert no horizontal overflow on desktop/mobile viewports, exercise customer + staff key surfaces, and publish screenshot artifacts.
+- Visual review fixtures are isolated to local Supabase only; they must not be treated as production data or production authentication.
+- Current UI visual workflow: `.github/workflows/ui-visual-review.yml`; current spec: `e2e/ui-visual-review.spec.ts`.
+- Current UI SHA: `97431d5a39c28f03b77ad03717caa7c82c8ba621`; candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain protected.
