@@ -338,3 +338,12 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 - Exact-SHA CI runs: G1 35544372549 / 35544368562; Quality 35544368512; UI Visual Review 35544368533; Security 35544368431; Migration 35544368407; Concurrency 35544368481; Order 35544368499; Fresh Local 35544368483; Local Artifact 35544368465; Exact Deployment Browser 35544368474; Test-the-Test 35544368555 — all currently QUEUED at checkpoint; no PASS.
 **Candidate/Production:** candidate unchanged; Production NO TOUCH.
 **Next:** reconcile queued exact-SHA runs and obtain valid exact-SHA browser visual evidence before merge.
+
+## RUN-2026-09-21-EXECUTE-UI-006
+**Date:** 2026-09-21
+**Branch:** `execution/customer-ui-completion-20260920`
+**Exact SHA:** `629ecad26367a6c860e10a668d5ec71f34ae9083`
+**Front:** CI trigger hygiene / final UI branch reconciliation
+**Implemented:** Scoped five previously broad `push.branches: ['**']` verification workflows to `main`, `execution/**`, `enhancement/**`, `certification/**`, `proof/**`, and `release/**`, preventing `ops/**` documentation activity from launching product verification. PR #100 body was synchronized to the current head.
+**Verification:** Vercel deployment `dpl_4GPcZtQPW7Y9LYF1FV4Lyj4EBXtx` READY with exact SHA `629ecad26367a6c860e10a668d5ec71f34ae9083`; commit status context `Vercel` SUCCESS. Exact verification runs for this SHA are present but queued/pending; no PASS claimed. Candidate and Production unchanged.
+**Resume:** reconcile queued exact-SHA gates, then obtain valid authenticated browser visual proof before merge.
