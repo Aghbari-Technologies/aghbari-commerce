@@ -175,3 +175,13 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 - Temporary repair workflow was removed completely after the direct Git-tree correction. Final branch contains only the intended source/docs history.
 - New exact-SHA checks are queued: Quality `35487225729`, Security `35487225703`, Migration `35487225746`, Concurrency `35487225716`, Test-the-Test `35487225712`, Order `35487225707`, Fresh Browser `35487225697`, Local Production Browser `35487225725`, Exact Deployment contract `35487225726`, G1 `35487225705` / `35487228074`.
 - Old SHA PASSes are not reused. Vercel remains rate-limited on Free plan; current Netlify public site remains old SHA `07c3cab...`. Candidate and Production untouched.
+
+
+## RUN-2026-09-20-EXECUTE-022 — WORLD-CLASS UI/UX ADVANCEMENT
+- Front: world-class UI/UX advancement.
+- SHA: `b4c6686761d56a4e3ddf813e30f0d80b654037d5`; branch `execution/customer-ui-completion-20260920`; PR #100 OPEN/DRAFT.
+- Implementation: premium visual-system layer + finishing identity/auth/admin/responsive pass in `src/customer-portal-v3-dynamic.css`.
+- Scope: 1 CSS file in the finishing commit; no transaction/data/reporting logic.
+- Verification: branch HEAD and compare metadata verified; exact-SHA CI for the new HEAD not yet terminal at record time; therefore NOT_PROVEN, not PASS.
+- Guardrails: candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` untouched; production NO TOUCH; prior SHA evidence not transferred.
+- Next: reconcile all exact-SHA workflows for `b4c6686761d56a4e3ddf813e30f0d80b654037d5`, inspect local-browser/artifact visual evidence, then merge #100 only if required exact gates are terminal SUCCESS; treat merge SHA as a fresh verification unit.
