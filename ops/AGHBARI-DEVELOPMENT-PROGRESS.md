@@ -111,3 +111,14 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 - Vercel development deployment is externally blocked by Free-plan build-rate-limit. Candidate Vercel deployment `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` remains READY and exact candidate SHA `1685836f4226fdcb3250a60eba7430ecf3e8f080`.
 - PR #94 and #95 were verification-only and closed. Candidate and Production were not touched.
 - Open product front: server-backed Quick Order SKU/barcode fallback for products outside the currently loaded catalog page. This is not implemented or claimed PASS yet.
+
+
+## RUN-2026-09-20-EXECUTE-018 — QUICK ORDER SERVER-BACKED IDENTIFIER FRONT
+- OBJECTIVE: implement and prove the next development-only core-product gap: Quick Order must resolve an exact SKU/barcode through the authorized server catalog when the product is outside the currently loaded catalog page.
+- RECONCILIATION: development SHA before this front = `cc9f5e7e1906b553613bb2e8dee99dacd704491d`; active certification candidate = `1685836f4226fdcb3250a60eba7430ecf3e8f080` and remains untouched.
+- IMPLEMENTATION HEAD: `483f9722f226c5f295c96edde2be88d760ceb520`, branch `execution/quick-order-server-lookup-20260920`, PR #96 retargeted from main to `enhancement/market-ready-v4-20260918`. Compare against dev is exactly 6 commits / 2 files.
+- TECHNICAL CHANGE: Quick Order keeps local identifier matching first, then falls back to `get_catalog`/barcode-backed server catalog resolution with the active warehouse; lookup failures are surfaced explicitly. Browser regression covers a filtered/empty catalog resolving an authorized SKU outside the loaded result set.
+- EXACT-SHA EVIDENCE: Quality `35485184032` SUCCESS; Security `35485184013` SUCCESS; G1 `35485184157` SUCCESS; Order Workflow `35485184016` SUCCESS; Bootstrap `35485184015` SUCCESS; Fresh Local Browser `35485184014` SUCCESS. Test-the-Test `35485184023`, Concurrency `35485184025`, Local Production Artifact Browser `35485184035` are RUNNING. Deployment Browser Contract `35485184006` SUCCESS.
+- EXTERNAL BLOCKER: Vercel status check is FAILED because the Free plan exceeded `api-deployments-free-per-day`; no paid upgrade or Production action used.
+- RESULT: implementation present; exact-SHA proof set not yet closed. No PASS/certification claim for this front until running gates terminate successfully.
+- NEXT ACTION: reconcile terminal states, close remaining exact-SHA gates, then merge PR #96 into development only if all required proofs pass; after merge, treat the new development SHA as a new verification unit. Candidate/Production remain NO TOUCH.
