@@ -1,6 +1,6 @@
 # الأغبري | Memory Layer 03 — PROBLEM / PROGRESS LEDGER
 
-## CURRENT CHECKPOINT — RUN-2026-09-20-EXECUTE-012
+## CURRENT CHECKPOINT — RUN-2026-09-20-EXECUTE-013
 - Development SHA: `72d5dae91ca7250c98ebb50d8b05409500f77c13`.
 - Certification candidate branch: `certification/final-candidate-20260920-v3`, advanced to the same exact SHA.
 - PR #88 remains OPEN / DRAFT / MERGEABLE; base remains frozen historical candidate `2facceb39aaa826413f20245a6f20b6c2ff7cd34`.
@@ -52,3 +52,15 @@ Do not repeat closed work unless SHA/dependency/evidence/environment/requirement
 
 ## END-OF-RUN RULE
 Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` when durable product/architecture/decision knowledge changes.
+
+## RUN-2026-09-20-EXECUTE-013
+- Objective: continue exact-SHA release verification without mutating the candidate or Production, establish isolated candidate deployment/final-regression proof, and repair any proof-harness defect discovered during execution.
+- Candidate source SHA: `72d5dae91ca7250c98ebb50d8b05409500f77c13`; candidate branch `certification/final-candidate-20260920-v3`; frozen historical candidate `2facceb39aaa826413f20245a6f20b6c2ff7cd34` untouched.
+- Candidate Vercel deployment `dpl_DVfuqGzcMPBX3aTgaH64LdChES6Y` is READY and reports the exact candidate SHA.
+- Isolated proof branch: `proof/candidate-release-20260920-v2`. Proof run `35479844177` explicitly checked out candidate SHA `72d5dae...` and targeted the exact Vercel candidate deployment.
+- Final Regression job `105995552370` is SUCCESS. It proved exact deployed artifact identity, security headers, Arabic/RTL shell, PWA manifest, and service worker. Evidence artifact `10595392644`, digest `sha256:4fd744980d85bf08da616764441793258d261caef7d7752627172e38faf891eb`.
+- Root cause found in proof harness: Node `require('./manifest.webmanifest')` parsed JSON as JavaScript and caused a false PWA failure. The harness was corrected to explicit JSON.parse and the corrected final-regression job passed.
+- Candidate Browser job `105995552224` is still IN_PROGRESS at the Customer E2E step after exact artifact verification and credential checks. No PASS is claimed until both Customer and Admin E2E complete successfully.
+- External release blockers unchanged: Supabase Auth leaked-password protection remains an external configuration warning; Netlify remains externally blocked by account-credit HTTP 403; Production remains HOLD / NO TOUCH.
+- Result: strong new exact candidate evidence established, but certification remains NO while the exact Customer/Admin browser proof is still running and the external Auth warning is unresolved.
+- Next action: close candidate browser proof, capture exact artifact, then reconcile the complete evidence set. Do not transfer evidence across SHA and do not mutate Production.
