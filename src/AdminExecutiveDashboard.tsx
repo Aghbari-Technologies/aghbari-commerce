@@ -89,7 +89,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
     void load();
     const timer = window.setInterval(load, 60_000);
     return () => { cancelled = true; window.clearInterval(timer); };
-  }, []);
+  }, [role]);
 
   const salesByDay = useMemo(() => buildSevenDaySales(salesRows), [salesRows]);
   const maxSales = Math.max(...salesByDay.map((day) => day.value), 1);
