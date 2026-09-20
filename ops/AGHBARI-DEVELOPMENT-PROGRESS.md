@@ -215,3 +215,10 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 ### RUN-2026-09-20-EXECUTE-024 LIVE RECONCILIATION
 - UI Visual Review run 35489157936 is IN_PROGRESS on exact SHA 97431d5a39c28f03b77ad03717caa7c82c8ba621; exact checkout/install steps succeeded.
 - Remaining exact-SHA gates for the same SHA are queued; do not infer PASS from queue state.
+
+
+## RUN-2026-09-20-EXECUTE-025 — VISUAL DEFECT ROOT-CAUSE FIX
+- Visual review of exact SHA 97431d5 found a duplicated fixed command launcher overlaying customer content.
+- Fixed on exact SHA 79267d3: removed duplicate floating command control + obsolete CSS and added a regression assertion.
+- Candidate and Production remain untouched.
+- Fresh exact-SHA gates are queued; do not infer PASS from queue state.
