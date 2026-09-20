@@ -217,3 +217,15 @@ No Candidate mutation, no Production mutation, no paid Vercel/Supabase upgrade.
 - ANTI-TOY RULE: reject generic CRUD styling, decorative KPI-only screens, fake metrics, placeholder controls, and visually incomplete states.
 - RELEASE BOUNDARY: Certification Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain unchanged / NO TOUCH.
 - NEXT EXECUTION: resume from the active development/UI frontier, prioritize proven UI/product gaps, then run exact-SHA visual + functional verification before merge.
+
+
+## CURRENT UI EXECUTION — 2026-09-21
+- Active UI branch: `execution/customer-ui-completion-20260920`.
+- Latest UI SHA: `c481db25ab046b73bec3693944a7cbcfc8369835`.
+- Implemented: unified Aghbari design-system layer loaded by `src/main.tsx`; staff shell alignment; premium RTL executive dashboard layout; operational insight modules; role-aware navigation anchors; stronger admin operations/forms/tables; customer portal visual consistency; responsive desktop/tablet/mobile states; duplicate staff identity mark removed.
+- Executive dashboard now exposes real low-stock operational signals from `getLowStock()` for permitted staff roles and includes actionable recommendation cards. No synthetic business metrics were introduced.
+- Admin navigation anchors now point to the actual product, orders, customers, inventory, purchasing, finance, export, and settings sections.
+- Current Vercel deployment for this exact SHA: `dpl_Hr162D72YEvrVu1rUWemkPwF3iYe` QUEUED. Latest READY UI deployment before this SHA is `dpl_Ac6FCRRWjiMbBfH4nms9sApLcYo9` for SHA `0b0d6051fab859a1f12b3fa67860f00ec91b3db1`; it is not evidence for current SHA.
+- Exact-SHA UI Visual Review run `35542432570` is QUEUED; all other exact-SHA product/security/browser gates for `c481db25ab046b73bec3693944a7cbcfc8369835` are also QUEUED at latest observation. No PASS transferred from prior SHA.
+- TinyFish visual automation was not used because the connected wallet is below zero; no paid workaround used.
+- Certification Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain untouched / NO TOUCH.
