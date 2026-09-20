@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'enhancement/**'
+      - 'execution/**'
   deployment_status:
   workflow_dispatch:
     inputs:
@@ -26,7 +27,7 @@ concurrency:
 jobs:
   local-final-regression:
     name: Local Final Regression / Exact Source Artifact
-    if: github.event_name == 'push' && startsWith(github.ref_name, 'enhancement/')
+    if: github.event_name == 'push' && (startsWith(github.ref_name, 'enhancement/') || startsWith(github.ref_name, 'execution/'))
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
