@@ -229,3 +229,16 @@ No Candidate mutation, no Production mutation, no paid Vercel/Supabase upgrade.
 - Exact-SHA UI Visual Review run `35542432570` is QUEUED; all other exact-SHA product/security/browser gates for `c481db25ab046b73bec3693944a7cbcfc8369835` are also QUEUED at latest observation. No PASS transferred from prior SHA.
 - TinyFish visual automation was not used because the connected wallet is below zero; no paid workaround used.
 - Certification Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain untouched / NO TOUCH.
+
+
+## CURRENT RESUME POINTER — RUN-2026-09-21-EXECUTE-UI-001
+- ACTIVE UI BRANCH: `execution/customer-ui-completion-20260920`
+- EXACT UI HEAD: `255ee1484d0c0192034fe4a277ac27b4c7b875cc`
+- LAST PROVEN ACTION: safe UI modernization CSS baseline + execution-start UI/handoff contract; temporary dependency-refresh automation removed because no authoritative lockfile regeneration was produced.
+- CURRENT TOOLCHAIN TRUTH: installed versions remain React 19.1.1, React DOM 19.1.1, Vite 7.3.5, TypeScript 5.9.2, Vitest 3.2.4, Supabase JS 2.112.4, Playwright 1.63.0, ESLint 9.35.0.
+- UPGRADE TARGET (NOT INSTALLED): React 19.3.x, Vite 8.3.x, TypeScript 7.0.x, Supabase JS 2.116.x, Vitest 5.x, ESLint 10.x; requires deterministic package-lock regeneration + exact regression before adoption.
+- CURRENT VERCEL: deployment `dpl_9S5oxwqv2cY5BmMD4JTgYNT3raYC` for exact SHA `255ee1484d0c0192034fe4a277ac27b4c7b875cc` is QUEUED at latest observation.
+- CI: exact-SHA workflow run visibility is incomplete through the connected GitHub action at this checkpoint; therefore no CI PASS is asserted.
+- CANDIDATE: `1685836f4226fdcb3250a60eba7430ecf3e8f080` unchanged.
+- PRODUCTION: NO TOUCH / HOLD.
+- NEXT EXECUTABLE TASK: reconcile exact-SHA CI and deployment state for `255ee1484d0c0192034fe4a277ac27b4c7b875cc`; if any terminal failure exists, repair that exact SHA; if all gates pass, continue the next UI/product completion front without re-running unrelated completed scans.
