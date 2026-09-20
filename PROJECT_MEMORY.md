@@ -253,3 +253,12 @@ RUN-2026-09-20-EXECUTE-022 — WORLD-CLASS UI/UX ADVANCEMENT
 - This specifically protects against the layering defect found in exact visual artifacts for 97431d5.
 - Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 and Production remain untouched.
 - Fresh exact-SHA verification suite for bc1567049 was created; latest observed state all queued. No PASS or merge is claimed.
+
+
+## DURABLE PRODUCT/UI QUALITY DIRECTIVE — 2026-09-21
+- The master boot now contains a mandatory Product/UI Quality Gate. Aghbari Commerce must be treated as a serious sale-ready B2B/ERP product, not a prototype, generic CRUD app, or decorative KPI dashboard.
+- UI completion requires real functionality plus coherent Arabic/RTL design system, strong information architecture, responsive desktop/tablet/mobile behavior, data-dense operational surfaces, explicit loading/empty/error/success/permission/offline states, accessibility/keyboard/focus behavior, and exact-SHA browser visual evidence.
+- The user-provided reference screen is the minimum maturity bar, not a literal design to copy. The goal is comparable operational and visual maturity under Aghbari branding and scope.
+- No invented metrics, fake data, placeholder controls, or decorative links may be used to make a screen appear complete.
+- Required primary surfaces include executive/admin operations, sales/orders, purchasing, inventory/warehouses/stock count, customers, suppliers, finance/statements, product/category/pricing, import/export, client controls/settings, invitations, B2B catalog/cart/checkout/order history/templates/financial center, and mobile purchasing flows.
+- Evidence from one SHA must never be reused for another SHA; implementation, browser visual proof, certification, and production remain separate states.
