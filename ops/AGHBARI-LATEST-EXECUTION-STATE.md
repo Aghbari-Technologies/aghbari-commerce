@@ -1,3 +1,15 @@
+## CURRENT RECONCILED OVERRIDE — RUN-2026-09-20-EXECUTE-023
+- DEVELOPMENT BRANCH: `enhancement/market-ready-v4-20260918`
+- DEVELOPMENT MERGE SHA: `35d95e5e140820c7e7a8e0a792f89b28eacfb8e8`
+- ACTIVE UI BRANCH: `execution/customer-ui-completion-20260920`
+- ACTIVE UI EXACT HEAD: `bc3e66b8ef69c381d9750ef54551a9a526e88554`
+- PR #100: OPEN / DRAFT; target development.
+- UI FRONT: world-class customer + staff visual system advancement plus header brand-mark layout stabilization.
+- IMPLEMENTED: premium visual hierarchy, responsive navigation, stronger catalog/product surfaces, order/finance presentation, modal/drawer polish, auth identity, staff/admin surfaces, interaction states, mobile density, reduced-motion support; then stabilized the RTL header brand mark with absolute positioning and reserved space.
+- EXACT-SHA PROOF: new SHA `bc3e66b8ef69c381d9750ef54551a9a526e88554` requires fresh exact-SHA gates. Prior UI PASS evidence is invalid for this SHA.
+- CANDIDATE: `1685836f4226fdcb3250a60eba7430ecf3e8f080`; unchanged. PRODUCTION: HOLD / NO TOUCH.
+- DEPLOYMENT: Vercel Free-plan rate-limit; Netlify credit exhaustion. No paid workaround.
+- NEXT: poll terminal exact-SHA CI; inspect local/fresh browser artifacts; merge PR #100 only when release-required gates are terminal SUCCESS; then re-prove the merge SHA as a new unit.
 ## CURRENT RECONCILED OVERRIDE — RUN-2026-09-20-EXECUTE-022
 - DEVELOPMENT BRANCH: `enhancement/market-ready-v4-20260918`
 - DEVELOPMENT MERGE SHA: `35d95e5e140820c7e7a8e0a792f89b28eacfb8e8`
