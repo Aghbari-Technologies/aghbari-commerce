@@ -24,27 +24,67 @@ export default function CommandPalette({
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const dialogRef = useRef<HTMLElement>(null);
+  const restoreFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (!open) {
       setQuery('');
       return;
     }
+
+    restoreFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
     const frame = requestAnimationFrame(() => {
       inputRef.current?.focus();
       inputRef.current?.select();
     });
-    return () => cancelAnimationFrame(frame);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      document.body.style.overflow = previousOverflow;
+      restoreFocusRef.current?.focus({ preventScroll: true });
+      restoreFocusRef.current = null;
+    };
   }, [open]);
 
   useEffect(() => {
     if (!open) return;
+
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         event.preventDefault();
         onClose();
+        return;
+      }
+
+      if (event.key !== 'Tab') return;
+
+      const dialog = dialogRef.current;
+      if (!dialog) return;
+
+      const focusable = Array.from(
+        dialog.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])',
+        ),
+      ).filter((element) => element.getClientRects().length > 0);
+
+      if (!focusable.length) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
       }
     };
+
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [open, onClose]);
@@ -54,8 +94,10 @@ export default function CommandPalette({
   useEffect(() => { setActiveIndex(0); }, [query]);
 
   if (!open) return null;
+
   const handleCommandKeyDown = (event: ReactKeyboardEvent<HTMLInputElement>) => {
     if (!filtered.length) return;
+
     if (event.key === 'ArrowDown') {
       event.preventDefault();
       setActiveIndex((index) => Math.min(index + 1, filtered.length - 1));
@@ -65,13 +107,17 @@ export default function CommandPalette({
     } else if (event.key === 'Enter') {
       event.preventDefault();
       const action = filtered[activeIndex];
-      if (action) { action.onSelect(); onClose(); }
+      if (action) {
+        action.onSelect();
+        onClose();
+      }
     }
   };
 
   return (
     <div className="command-backdrop" role="presentation" onMouseDown={onClose}>
       <section
+        ref={dialogRef}
         className="command-palette"
         role="dialog"
         aria-modal="true"
