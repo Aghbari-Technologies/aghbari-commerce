@@ -5,6 +5,7 @@ import { supabase } from './lib/supabase';
 import { buildSevenDaySales, calculateSevenDaySales, type DashboardSaleRow } from './domain/adminDashboard';
 
 type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer';
+type DashboardMetric = 'products' | 'customers' | 'orders' | 'stockItems' | 'receivables' | 'availableCredit' | 'sales7d';
 
 interface DashboardSnapshot {
   products: number;
@@ -31,6 +32,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [salesRows, setSalesRows] = useState<DashboardSaleRow[]>([]);
+  const [metricErrors, setMetricErrors] = useState<Partial<Record<DashboardMetric, boolean>>>({});
 
   useEffect(() => {
     let cancelled = false;
@@ -113,19 +115,19 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
 
       <div className="executive-content" id="admin-dashboard">
         <div className="executive-kpis">
-          <article><span>الذمم المدينة</span><strong>{loading ? '—' : money(snapshot.receivables)}</strong><small>إجمالي الأرصدة المستحقة</small></article>
-          <article><span>المخزون المتوفر</span><strong>{loading ? '—' : snapshot.stockItems.toLocaleString('ar')}</strong><small>{snapshot.products.toLocaleString('ar')} صنف نشط</small></article>
-          <article><span>الطلبات</span><strong>{loading ? '—' : snapshot.orders.toLocaleString('ar')}</strong><small>{snapshot.customers.toLocaleString('ar')} عميل مسجل</small></article>
-          <article><span>التدفق التجاري · 7 أيام</span><strong>{loading ? '—' : money(snapshot.sales7d)}</strong><small>من الطلبات غير الملغاة</small></article>
+          <article><span>الذمم المدينة</span><strong>{loading ? '—' : metricErrors.receivables ? 'غير متاح' : money(snapshot.receivables)}</strong><small>إجمالي الأرصدة المستحقة</small></article>
+          <article><span>المخزون المتوفر</span><strong>{loading ? '—' : metricErrors.stockItems ? 'غير متاح' : snapshot.stockItems.toLocaleString('ar')}</strong><small>{metricErrors.products ? 'عدد الأصناف غير متاح' : `${snapshot.products.toLocaleString('ar')} صنف نشط`}</small></article>
+          <article><span>الطلبات</span><strong>{loading ? '—' : metricErrors.orders ? 'غير متاح' : snapshot.orders.toLocaleString('ar')}</strong><small>{metricErrors.customers ? 'عدد العملاء غير متاح' : `${snapshot.customers.toLocaleString('ar')} عميل مسجل`}</small></article>
+          <article><span>التدفق التجاري · 7 أيام</span><strong>{loading ? '—' : metricErrors.sales7d ? 'غير متاح' : money(snapshot.sales7d)}</strong><small>من الطلبات غير الملغاة</small></article>
         </div>
 
         <div className="executive-grid-two">
-          <article className="executive-card sales-chart"><div className="executive-card-title"><div><span>المبيعات</span><h2>حركة المبيعات خلال آخر 7 أيام</h2></div><b>{money(snapshot.sales7d)}</b></div>{snapshot.sales7d > 0 ? <div className="bars" aria-label="مخطط المبيعات لسبعة أيام">{salesByDay.map((day) => <div className="bar-column" key={day.key}><strong>{day.value ? formatMoney(day.value) : '0'}</strong><div className="bar" style={{ height: `${Math.max(8, (day.value / maxSales) * 150)}px` }} /><small>{day.label}</small></div>)}</div> : <div className="executive-empty-chart" role="status"><strong>لا توجد مبيعات مسجلة</strong><span>لم تُسجّل طلبات مكتملة خلال آخر 7 أيام.</span></div>}</article>
+          <article className="executive-card sales-chart"><div className="executive-card-title"><div><span>المبيعات</span><h2>حركة المبيعات خلال آخر 7 أيام</h2></div><b>{metricErrors.sales7d ? 'غير متاح' : money(snapshot.sales7d)}</b></div>{snapshot.sales7d > 0 ? <div className="bars" aria-label="مخطط المبيعات لسبعة أيام">{salesByDay.map((day) => <div className="bar-column" key={day.key}><strong>{day.value ? formatMoney(day.value) : '0'}</strong><div className="bar" style={{ height: `${Math.max(8, (day.value / maxSales) * 150)}px` }} /><small>{day.label}</small></div>)}</div> : <div className="executive-empty-chart" role="status"><strong>لا توجد مبيعات مسجلة</strong><span>لم تُسجّل طلبات مكتملة خلال آخر 7 أيام.</span></div>}</article>
           <article className="executive-card"><div className="executive-card-title"><div><span>توزيع التشغيل</span><h2>حالة الطلبات</h2></div><b>{orders.length}</b></div><div className="status-list">{statusCounts.length ? statusCounts.map((item) => <div key={item.status}><span>{item.label}</span><strong>{item.count}</strong><div><i style={{ width: `${Math.min(100, (item.count / Math.max(orders.length, 1)) * 100)}%` }} /></div></div>) : <p className="executive-empty">لا توجد طلبات تشغيلية في العينة الحالية.</p>}</div></article>
         </div>
 
         <div className="executive-grid-two bottom-grid">
-          <article className="executive-card"><div className="executive-card-title"><div><span>التشغيل</span><h2>أحدث الطلبات</h2></div>{['owner','admin','sales','warehouse'].includes(role) && <a href="#admin-orders">عرض الكل ←</a>}</div>{latestOrders.length ? <div className="executive-orders">{latestOrders.map((order) => <div key={order.id}><span>#{order.order_number}</span><div><strong>{order.customer_name}</strong><small>{formatBusinessDate(order.created_at)}</small></div><b>{money(order.total)}</b><em>{STATUS_LABELS[order.status] ?? order.status}</em></div>)}</div> : <p className="executive-empty">لا توجد طلبات بعد.</p>}</article>
+          <article className="executive-card"><div className="executive-card-title"><div><span>التشغيل</span><h2>أحدث الطلبات</h2></div>{['owner','admin','sales','warehouse'].includes(role) && <a href="#admin-orders">عرض الكل ←</a>}</div>{metricErrors.orders ? <p className="executive-degraded">تعذر تحديث قائمة الطلبات، مع بقاء بقية بيانات اللوحة مستقلة.</p> : latestOrders.length ? <div className="executive-orders">{latestOrders.map((order) => <div key={order.id}><span>#{order.order_number}</span><div><strong>{order.customer_name}</strong><small>{formatBusinessDate(order.created_at)}</small></div><b>{money(order.total)}</b><em>{STATUS_LABELS[order.status] ?? order.status}</em></div>)}</div> : <p className="executive-empty">لا توجد طلبات بعد.</p>}</article>
           <article className="executive-card smart-card"><div className="executive-card-title"><div><span>أدوات الإدارة</span><h2>أوامر سريعة</h2></div><span>تشغيل مباشر</span></div><div className="quick-actions">{['owner','admin','sales'].includes(role) && <a href="#admin-product-create">＋ إضافة منتج</a>}{['owner','admin','sales','warehouse'].includes(role) && <a href="#admin-orders">▤ إدارة الطلبات</a>}{['owner','admin','sales'].includes(role) && <a href="#admin-customers">▣ إدارة العملاء</a>}{['owner','admin','warehouse'].includes(role) && <a href="#admin-inventory">▥ إدارة المخزون</a>}{['owner','admin','sales'].includes(role) && <a href="#admin-finance">◫ الحسابات والمالية</a>}{['owner','admin'].includes(role) && <a href="#admin-settings">⚙ إعدادات التحكم</a>}</div><div className="credit-summary"><span>الائتمان المتاح</span><strong>{money(snapshot.availableCredit)}</strong></div></article>
         </div>
 
