@@ -1,25 +1,22 @@
 # الأغبري | Memory Layer 03 — PROBLEM / PROGRESS LEDGER
 
-## CURRENT CHECKPOINT — RUN-2026-09-20-EXECUTE-007
-- SHA: `9d2149de4bf3c491abad8460cab5df01c6faa4bd`
+## CURRENT CHECKPOINT — RUN-2026-09-20-EXECUTE-008
+- SHA: `1366f8ea240f2b1c58d78a863aa7a5584be531fb`
 - Branch: `enhancement/market-ready-v4-20260918`
-- PR #88: OPEN / DRAFT / MERGEABLE; frozen base `2facceb39aaa826413f20245a6f20b6c2ff7cd34`
-- Vercel exact preview: `dpl_GVNskevLQiUCxAwqiHjuadLMg1is` READY.
-- Exact current-SHA Browser E2E / Exact Deployment: SUCCESS `35477629049` (#586).
-- Security `35477628903` SUCCESS; Bootstrap lockfile `35477628985` SUCCESS; Order Workflow `35477629035` SUCCESS; G1 `35477628973` SUCCESS.
-- Still running exact current-SHA gates: Browser Fresh Local `35477628875`; Concurrency `35477628886`; Browser Local Production Artifact `35477629065`; Migration `35477628986`; Test-the-Test `35477628991`; Application Quality `35477629014`.
-- Netlify remains blocked by account-credit HTTP 403.
-- Production: HOLD / NO TOUCH. Certification: NO.
+- PR #88: OPEN / DRAFT; frozen base `2facceb39aaa826413f20245a6f20b6c2ff7cd34`
+- Final Regression `35477914059`: SUCCESS.
+- Security `35477914046`: SUCCESS; Quality `35477914032`: SUCCESS; G1 `35477914182`/`35477916774`: SUCCESS.
+- Test-the-Test `35477914073`, Concurrency `35477914055`, Migration `35477914025`, Browser Fresh `35477913975`, Browser Local `35477913977`: RUNNING.
+- Browser deployment workflow `35477929768`: browser-contract SUCCESS; exact deployment browser E2E tracking remains active.
+- Netlify `35477914057`: FAILED HTTP 403 account-credit exhaustion.
+- Candidate and Production untouched.
 
-## RUN-2026-09-20-EXECUTE-007
-- Root cause discovered: repository state advanced one commit after the stored checkpoint.
-- Exact delta from `4f0a0614...` to `9d2149de...`: only `scripts/browser-e2e-seed.sql`, correcting the inactive browser product barcode fixture.
-- Verified exact current Vercel deployment and exact current-SHA browser/deployment/security/bootstrap/order/G1 evidence.
-- Reconciliation rule applied: prior `4f0a0614...` Migration/Test-the-Test PASSes are audit history only and are not transferred to `9d2149de...`.
-- Exact current-SHA replacement gates were observed running and recorded above; no PASS is claimed while they are running.
-- Supabase project is ACTIVE_HEALTHY; direct migration-history query for versions `20260920000210` and `20260920000300` returned no rows, so that query is not used as migration proof.
-- Candidate and Production were not touched.
-- Next action: close the six running exact-SHA gates, then reconcile candidate readiness without candidate mutation.
+## RUN-2026-09-20-EXECUTE-008
+- Root cause: `20260920000410_split_customer_profile_role.sql` overwrote the invitation consumer with `search_path=public` and unqualified `digest()`; Fresh DB places pgcrypto in `extensions`, producing exact concurrency failure.
+- Fix: `20260920000500_harden_customer_invitation_crypto.sql`; equivalent live hardening applied and verified. Live function is SECURITY DEFINER with empty search_path, `extensions.digest()`, customer role, and service_role-only execution.
+- Proof-system fix: critical local Browser and Concurrency workflows now trigger on `enhancement/**`, removing dependence on unavailable workflow dispatch.
+- Current exact-SHA proof fronts were intentionally re-opened by the new SHA and are being closed independently. No PASS is transferred.
+- Next: close running exact-SHA fronts, then perform candidate-delta reconciliation without candidate mutation.
 
 ## PRIOR VERIFIED RUNS
 ### RUN-2026-09-20-RESUME-006 — SHA `4f0a0614...`
