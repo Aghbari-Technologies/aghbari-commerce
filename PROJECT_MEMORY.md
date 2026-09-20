@@ -45,6 +45,7 @@
 
 ## 5. VERIFIED PRODUCT / ARCHITECTURE KNOWLEDGE
 - Customer invitation direct authenticated RPC exposure is revoked; privileged service-role path retained.
+- Notifications have a transactional boundary table with tenant/customer RLS and direct-write denial (`20260918190000_notifications_boundary.sql`); provider delivery/outbox integration remains deferred.
 - Product barcode is part of active catalog/domain mapping and centralized SKU-or-barcode lookup is used by Quick Order/Excel paths.
 - Barcode RPC privileges are explicitly hardened against PostgreSQL implicit PUBLIC EXECUTE.
 - PR #88 market-ready UI includes Command Center, keyboard-first navigation, repeat-order shortcuts, mobile quick navigation, and exact UI assertions.
@@ -62,7 +63,7 @@
 - Production is never used for testing or browser proof.
 
 ## 7. MASTER-SPEC DEFERRED AREAS
-Unless explicitly implemented and proven, these remain backlog/deferred: promotions engine; notification center/provider delivery; integration delivery records/adapters; lots/batches/expiry/FEFO; reservations; independent fulfillment records; WhatsApp/Onyx provider adapters; centralized bilingual locale architecture.
+Unless explicitly implemented and proven, these remain backlog/deferred: promotions engine; notification provider delivery; integration delivery records/adapters; lots/batches/expiry/FEFO; reservations; independent fulfillment records; WhatsApp/Onyx provider adapters; centralized bilingual locale architecture.
 
 ## 8. NEXT EXECUTION QUEUE
 ### P0
