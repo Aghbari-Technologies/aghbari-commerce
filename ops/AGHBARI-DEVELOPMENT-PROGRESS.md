@@ -256,3 +256,15 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 - Exact-SHA UI Visual Review run `35542432570` is QUEUED; all other exact-SHA product/security/browser gates for `c481db25ab046b73bec3693944a7cbcfc8369835` are also QUEUED at latest observation. No PASS transferred from prior SHA.
 - TinyFish visual automation was not used because the connected wallet is below zero; no paid workaround used.
 - Certification Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain untouched / NO TOUCH.
+
+
+## RUN-2026-09-21-EXECUTE-UI-001 — CURRENT UI RECONCILIATION
+- ACTIVE UI BRANCH: `execution/customer-ui-completion-20260920`
+- EXACT UI SHA: `255ee1484d0c0192034fe4a277ac27b4c7b875cc`
+- ACTION: completed a safe UI modernization pass and hardened session boot/resume semantics.
+- UI: modern browser interaction/rendering baseline added without changing business logic; 120-minute full-coverage gate and explicit session handoff/resume contract now live in `AGHBARI-EXECUTION-START.md`.
+- TOOLCHAIN: repository remains on its locked versions. Newer React/Vite/TypeScript/Supabase/Vitest/ESLint releases were validated as upgrade targets but were not falsely marked installed because deterministic lockfile regeneration was not obtained.
+- VERCEL: exact SHA deployment `dpl_9S5oxwqv2cY5BmMD4JTgYNT3raYC` QUEUED at latest observation; `dpl_9i65axyXsgpU4j16ttkCNxKX6hme` for the previous config-restoration SHA was BUILDING.
+- CI: connector did not expose push-triggered workflow runs for this exact SHA at reconciliation time; no CI PASS claimed.
+- RELEASE SAFETY: Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain untouched.
+- NEXT: exact-SHA CI/Vercel reconciliation; only after terminal proof proceed to additional product/UI work or merge decisions.
