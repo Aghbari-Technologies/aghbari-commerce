@@ -1,3 +1,11 @@
+## RUN-2026-09-21-EXECUTE-UI-005 — UI EXECUTION CHECKPOINT
+- Active UI branch: `execution/customer-ui-completion-20260920`; exact SHA: `2490f7f47c2837aade96e854392ba297b94efdfb`; PR #100 remains OPEN / DRAFT / MERGEABLE.
+- Product/UI corrections implemented: the customer catalog hero statistic now labels the paginated count accurately (visible vs fully loaded); order reordering now uses a dedicated per-order busy state and always clears it in `finally`, preventing repeated concurrent reorder actions and preserving feedback on failure.
+- Exact Vercel deployment `dpl_5SWnt86P56xTYZV8yxNSE3Jmtay9` is READY and reports the exact source SHA. This establishes deployment/build evidence, not browser proof.
+- Fresh exact-SHA CI for `2490f7f47c2837aade96e854392ba297b94efdfb`: 12 verification runs are queued. No PASS has been transferred from any previous SHA.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain untouched.
+- Durable lesson: when equivalent exact-SHA verification runs already exist and are queued, reconcile those runs instead of creating additional duplicates; queue volume is itself an operational blocker and does not reduce proof requirements.
+
 ## CURRENT AUTHORITATIVE RECONCILIATION — 2026-09-21B
 - Active UI SHA: `0e23965179818904d62d7577abb919cca16593a6` on `execution/customer-ui-completion-20260920`; PR #100 OPEN / DRAFT / MERGEABLE.
 - UX correction: template terminology is now consistently «قالب/قوالب» across visible customer UI strings in `src/AppV3Fixed.tsx`; exact scan found zero legacy `مسحة` terms.
