@@ -1,3 +1,12 @@
+## CURRENT AUTHORITATIVE RECONCILIATION — 2026-09-21
+- Aghbari Commerce active UI branch: `execution/customer-ui-completion-20260920`.
+- Current exact UI SHA: `7f1b523319d74aa17f549c49db0f52482df5c00b`; PR #100 OPEN / DRAFT / MERGEABLE against `enhancement/market-ready-v4-20260918`.
+- Vercel exact deployment `dpl_Gs339VatHiPGCVhv46UF7ot1HiTE` is READY and reports the same source SHA.
+- The preview is protected: direct external fetch redirected to Vercel SSO; a generated share-access URL also failed to yield a browser-renderable page through the available fetch path. This is proof-boundary information only; it does not establish a product UI failure or a browser PASS.
+- G1 Domain Proof `35543639501` / job `106165620419` is still QUEUED; no terminal PASS.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain untouched.
+- Evidence remains exact-SHA scoped; no prior UI/Candidate PASS is transferred to `7f1b523319d74aa17f549c49db0f52482df5c00b`.
+
 # الأغبري | Memory Layer 02 — PRODUCT SPECIFICATIONS
 
 > Canonical durable specification memory. This file defines what Aghbari Commerce is, its permanent technical/product decisions, and the newest durable execution lessons. Run history belongs in the progress ledger.
