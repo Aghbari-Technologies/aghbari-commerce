@@ -294,3 +294,12 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 - GitHub G1 exact-SHA run `35543639501` remains QUEUED; job `106165620419` QUEUED.
 - No certification or merge PASS is asserted from Vercel READY alone.
 - Candidate and Production unchanged.
+
+## RUN-2026-09-21-EXECUTE-024
+- Objective: resume Aghbari Commerce from repository reality, reconcile stale living-state pointers, and continue exact-SHA UI verification without mutating Candidate or Production.
+- Exact UI source: `7f1b523319d74aa17f549c49db0f52482df5c00b` on `execution/customer-ui-completion-20260920`; PR #100 remains OPEN / DRAFT / MERGEABLE.
+- Exact Vercel deployment: `dpl_Gs339VatHiPGCVhv46UF7ot1HiTE` READY and reports source SHA `7f1b523319d74aa17f549c49db0f52482df5c00b`.
+- Exact G1 proof: run `35543639501` / job `106165620419` remains QUEUED; repeated polling did not reach a terminal state. No PASS claimed.
+- Browser evidence boundary: unauthenticated preview access redirected to Vercel SSO; Vercel share-access was attempted but the fetch path still redirected. This is a platform access/proof boundary, not an application defect and not UI PASS.
+- Action/result: reconciled the living state to exact current GitHub/Vercel reality; preserved Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production HOLD / NO TOUCH.
+- Next: close the exact-SHA CI/browser verification unit from terminal evidence, then merge only after required release gates are terminal SUCCESS; re-prove the merge SHA as a new evidence unit.
