@@ -370,3 +370,13 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 - UI hardening: localized customer portal branding; localized executive-dashboard role label; prior exact-SHA interaction fixes retained.
 - Verification: source re-read after changes; PR #100 remains development-only. Current-SHA CI evidence must remain unclaimed while queued. Vercel remains rate-limited and no current-SHA deployment exists.
 - Boundary: Candidate and Production untouched.
+
+
+## 2026-09-21 — UI Completion Continuation
+- Current UI branch: `execution/customer-ui-completion-20260920`; exact head `7ee608d77d32ef6804dd1d08086b14cf5ea795f5`.
+- Customer portal: added a premium B2B purchase-shortcut strip for Quick Order, Orders, Templates, Finance, and Excel workflows; Excel upload is now structurally independent from the search panel so its action remains valid when search visibility is toggled.
+- Executive/admin console: fixed misleading dashboard failure states, preserved per-metric availability, surfaced low-stock retrieval failures explicitly, and stabilized sidebar icon mapping across role-filtered navigation.
+- Secondary UI: added explicit responsive/layout contracts for Excel review rows, customer filters, invitation controls, and admin bottom-grid composition.
+- Browser visual coverage: corrected the stale command-launch selector and expanded exact-SHA customer visual capture to product detail, cart, orders, templates, and finance; staff visual review now asserts core operational section presence.
+- No transactional schema, pricing authorization, tenant isolation, reporting boundary, Candidate, or Production was changed.
+- Exact-SHA CI for `7ee608d...` is currently queued; no UI PASS is claimed.
