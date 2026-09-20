@@ -166,3 +166,12 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 - Exact-SHA UI workflows for `2e714043e198feec70be226bc00e474d91a332d1` remain QUEUED at this checkpoint; no PASS or merge is claimed. The prior UI SHA `1c759469994ad4fa4cb85f8c9fd09add810466e0` is superseded.
 - Vercel Free-plan rate limit remains an external deployment constraint and is not treated as product failure.
 - Candidate and Production remain untouched.
+
+
+## RUN-2026-09-20-EXECUTE-021 — CUSTOMER/STAFF UI COMPLETION
+- Final exact UI SHA: `a9dd58a111138d8a0b12e5e5f5582b74395da79c` on branch `execution/customer-ui-completion-20260920`; PR #100 remains OPEN / DRAFT against development.
+- Retained UI work: catalog search/reset/context, loading skeletons, product detail modal, Escape handling, responsive mobile navigation, customer/staff shells, role-aware staff rail, admin operations tools, saved-cart tier-price preservation, server-backed Quick Order lookup.
+- Prior SHA `2e714043...` Quality run `35486580912` exposed one ESLint prefer-const failure; fixed directly in src/AppV3Fixed.tsx by changing grouped declaration from let to const.
+- Temporary repair workflow was removed completely after the direct Git-tree correction. Final branch contains only the intended source/docs history.
+- New exact-SHA checks are queued: Quality `35487225729`, Security `35487225703`, Migration `35487225746`, Concurrency `35487225716`, Test-the-Test `35487225712`, Order `35487225707`, Fresh Browser `35487225697`, Local Production Browser `35487225725`, Exact Deployment contract `35487225726`, G1 `35487225705` / `35487228074`.
+- Old SHA PASSes are not reused. Vercel remains rate-limited on Free plan; current Netlify public site remains old SHA `07c3cab...`. Candidate and Production untouched.
