@@ -1,100 +1,53 @@
 # الأغبري | Memory Layer 04 — LATEST RESULTS / EXECUTION ROUTER
 
-> **Final live-memory handoff before reality verification and execution.** Read after `PROJECT_MEMORY.md` and `ops/AGHBARI-DEVELOPMENT-PROGRESS.md`.
->
-> **HANDOFF:** `SPECIFICATIONS → PROBLEMS/PROGRESS → LATEST RESULTS (this file) → CURRENT REALITY → EXECUTE`
->
-> This file is the current checkpoint. Historical entries belong in the progress ledger. Do not use stale historical PASS as current evidence.
+> Final live-memory handoff before reality verification and execution.
+> This file is authoritative for the newest reconciled execution state; historical detail belongs in the progress ledger.
 
-## CURRENT EXECUTION STATE
-- RUN: `RUN-2026-09-20-RESUME-006`
+## CURRENT EXECUTION STATE — RECONCILED 2026-09-20
+- RUN: `RUN-2026-09-20-EXECUTE-007`
 - DEVELOPMENT BRANCH: `enhancement/market-ready-v4-20260918`
-- CURRENT DEVELOPMENT SHA: `4f0a0614ab94e1c2ebd61745aa915f6942b3c5a0`
-- PR: #88 OPEN / DRAFT / MERGEABLE
-- CERTIFICATION CANDIDATE: `2facceb39aaa826413f20245a6f20b6c2ff7cd34` — FROZEN / NO TOUCH
+- CURRENT DEVELOPMENT SHA: `9d2149de4bf3c491abad8460cab5df01c6faa4bd`
+- PR: #88 OPEN / DRAFT / MERGEABLE; base `certification/final-candidate-20260918`
+- FROZEN CERTIFICATION CANDIDATE: `2facceb39aaa826413f20245a6f20b6c2ff7cd34` — FROZEN / NO TOUCH
 - PRODUCTION: HOLD / NO TOUCH
 
-## LATEST RESULTS
-- Exact Vercel development deployment: `dpl_BCvmScQ6hMUQDppRXMCnGkkRV5hd` READY; exact Git SHA `4f0a0614ab94e1c2ebd61745aa915f6942b3c5a0`.
-- Final Regression / Exact Artifact: `35477022465` SUCCESS on exact current development SHA; verified checkout/deployed artifact identity, security headers, Arabic/RTL shell, PWA manifest and service worker.
-- Application Quality: `35477022455` SUCCESS.
-- Security: `35477022467` SUCCESS.
-- G1 push/PR: `35477022486` / `35477025357` SUCCESS.
-- Migration: `35477022461` IN PROGRESS at last checkpoint.
-- Test-the-Test: `35477022490` IN PROGRESS at last checkpoint.
-- Netlify exact SHA: `35477022463` BLOCKED by HTTP 403 account-credit exhaustion; do not retry until credits are restored.
-- Exact current-SHA Browser E2E: NOT_PROVEN. Historical browser proof from `07c3cab...` is not transferable.
-- Formal Final Regression: PROVEN for current development SHA.
-- Certification: NO.
-- Production: NO TOUCH.
+## REALITY RECONCILIATION
+- PR reality was newer than the previous memory checkpoint: HEAD advanced one commit from `4f0a0614...` to `9d2149de...`.
+- Exact delta: one file only, `scripts/browser-e2e-seed.sql`, changing the browser fixture for an inactive product barcode case.
+- Exact current Vercel preview: deployment `dpl_GVNskevLQiUCxAwqiHjuadLMg1is`, READY, exact Git SHA `9d2149de4bf3c491abad8460cab5df01c6faa4bd`.
+- Exact current-SHA browser E2E: SUCCESS, GitHub check run `105988969179`, workflow run `35477420804`.
+- Current-SHA browser-contract check: SUCCESS, run `35477420804`.
+- Vercel preview feedback check: SUCCESS with zero unresolved feedback, check `105988962012`.
+- Production-smoke check for this preview: SKIPPED by design; it is not production evidence.
+- Earlier current-SHA migration proof `35477022461`: SUCCESS for `4f0a0614...`.
+- Earlier current-SHA Test-the-Test `35477022490`: SUCCESS for `4f0a0614...`.
+- Because `9d2149de...` is a new SHA, those PASSes are not automatically transferable; the exact current SHA is the release evidence target.
+- Netlify remains externally blocked by account-credit exhaustion; no retry until platform permits it.
 
-## CURRENT BLOCKERS / OPEN FRONTS
+## SUPABASE CURRENT REALITY
+- Project: `aghbari-commerce`; ref `mrcyqezbhpncuvaehwgf`; status `ACTIVE_HEALTHY`; PostgreSQL `17.6.1.166`.
+- Live verification through the connected Supabase project confirms the project is healthy.
+- The repository migration ledger query did not expose the two named migration versions through `supabase_migrations.schema_migrations`; therefore no migration PASS is claimed from that query.
+- Existing durable security state remains: customer invitation RPC service-role-only; viewer read-only helper/policies distinct from write-sensitive `is_staff()`; Auth leaked-password protection remains an external configuration warning.
+
+## OPEN / NOT_PROVEN
 ### P0
-1. Close Migration `35477022461`.
-2. Close Test-the-Test `35477022490`.
-3. Produce fresh exact-SHA Browser E2E proof if required by the active release gate.
-4. Reconcile the development delta against frozen candidate `2facceb...` without touching the candidate.
+1. Re-run/verify exact-SHA release gates that are invalidated by the one-commit change (`9d2149de...`) and close them only with exact-SHA evidence.
+2. Reconcile the complete development delta against frozen candidate `2facceb...` without touching the candidate.
+3. Establish whether the exact current SHA satisfies the formal candidate/release gate; do not infer certification from development evidence.
 
 ### P1
-5. Resolve/reassess the external Supabase Auth leaked-password-protection warning through the available authorized path.
-6. Reconcile master specification vs implementation/deferred capabilities.
-7. Only after reference proof, consolidate frontend/CSS historical layers.
+4. Resolve/reassess Supabase Auth leaked-password protection through an authorized external configuration path.
+5. Reconcile deferred master-spec capabilities: promotions, notification center/provider delivery, integration delivery records/adapters, lots/batches/expiry/FEFO, reservations, independent fulfillment, WhatsApp/Onyx adapters, centralized bilingual locale architecture.
+6. Frontend/CSS consolidation only after reference proof and exact regression.
 
-### EXTERNAL BLOCKER
-Netlify account credit exhaustion. This is a platform limitation, not a product defect. Exact Vercel development deployment is already available, so do not burn additional Netlify attempts.
-
-## SUPABASE CURRENT TRUTH
-- Project ref: `mrcyqezbhpncuvaehwg`.
-- Status: `ACTIVE_HEALTHY`.
-- PostgreSQL: `17.6.1.166`.
-- Customer invitation RPC: service_role-only.
-- Customer-linked viewer count: zero.
-- Viewer read-only scope is live through the dedicated reader helper/policies; write-sensitive `is_staff()` remains distinct.
-- Auth leaked-password protection remains the explicit external configuration warning.
-
-## CANDIDATE SAFETY
-`2facceb39aaa826413f20245a6f20b6c2ff7cd34` is **FROZEN / NO TOUCH**.
-
-Never:
-- modify it merely to make certification easier;
-- transfer development PASS into it;
-- use current development evidence as candidate evidence;
-- call development deployment Production;
-- mutate Production for testing.
-
-Any candidate mutation creates a new candidate and invalidates the frozen-candidate assumption.
-
-## REALITY VERIFICATION GATE
-After reading this file, verify only what is needed to establish current reality:
-
-`GitHub HEAD / PR / CI → Supabase → deployment/artifact → browser/runtime when required`
-
-If stored state conflicts with reality:
-
-`DETECT → VERIFY → RECONCILE → UPDATE MEMORY → CONTINUE`
+## CANDIDATE / PRODUCTION SAFETY
+Never modify candidate `2facceb...` merely to make certification easier. Never transfer PASS across SHAs. Never promote the development preview to Production. Production remains NO TOUCH until formal certification.
 
 ## EXECUTION GATE
-The next action is not chosen by the user unless it is a Business/Product decision.
+Choose the highest-priority executable unresolved front by security/risk → release dependency → correctness → blocking dependency → product value → resource efficiency.
 
-Choose the highest-priority executable unresolved front using:
-1. Security/risk.
-2. Release/certification dependency.
-3. Correctness.
-4. Blocking dependency.
-5. User/product value.
-6. Cost/resource efficiency.
+`READ → RECONCILE → IMPLEMENT → TEST → VERIFY → PROVE → RECORD → CONTINUE`
 
-Then execute:
-
-`IMPLEMENT → TEST → VERIFY → PROVE → RECORD → CONTINUE`
-
-## MANDATORY END-OF-RUN HANDOFF
-Before reporting completion:
-
-1. Update this file with the newest exact state.
-2. Append exactly one compact run record to `ops/AGHBARI-DEVELOPMENT-PROGRESS.md`.
-3. Update `PROJECT_MEMORY.md` only when durable specification/architecture/decision/lesson changed.
-4. Reconcile all PASS/FAIL/BLOCKED/NOT_PROVEN states against exact SHA.
-5. Only then report to the owner.
-
-The next session starts here only after reading the preceding layers; this file never replaces them.
+## MANDATORY END HANDOFF
+Before completion: update this file, append exactly one run record to `ops/AGHBARI-DEVELOPMENT-PROGRESS.md`, update `PROJECT_MEMORY.md` for durable changes, and reconcile every status against the exact SHA.
