@@ -937,3 +937,202 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
     scroll-behavior: auto !important;
   }
 }
+
+
+/* Dashboard operational insight modules */
+.executive-empty-chart {
+  min-height: 220px;
+  display: grid;
+  place-content: center;
+  gap: 7px;
+  padding: 24px;
+  border: 1px dashed #d6e5e9;
+  border-radius: 14px;
+  background: linear-gradient(180deg,#fbfefe,#f6fafb);
+  text-align: center;
+}
+.executive-empty-chart strong {
+  color: var(--ag-ink);
+  font-size: 15px;
+}
+.executive-empty-chart span {
+  color: var(--ag-muted);
+  font-size: 11px;
+}
+.operational-insight-grid {
+  margin-top: 12px !important;
+}
+.executive-alert-list,
+.recommendation-list {
+  display: grid;
+  gap: 8px;
+}
+.executive-alert-list > div {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 11px 0;
+  border-bottom: 1px solid #edf3f5;
+}
+.executive-alert-list > div:last-child {
+  border-bottom: 0;
+}
+.executive-alert-list strong,
+.executive-alert-list small,
+.recommendation-list strong,
+.recommendation-list small {
+  display: block;
+}
+.executive-alert-list strong,
+.recommendation-list strong {
+  color: var(--ag-ink);
+  font-size: 12px;
+}
+.executive-alert-list small,
+.recommendation-list small {
+  margin-top: 3px;
+  color: var(--ag-muted);
+  font-size: 10px;
+}
+.executive-alert-list > div > span {
+  min-width: 62px;
+  display: grid;
+  justify-items: end;
+  gap: 2px;
+}
+.executive-alert-list > div > span b {
+  color: var(--ag-warning);
+  font-size: 15px;
+}
+.recommendation-list > div {
+  display: grid;
+  grid-template-columns: 34px minmax(0,1fr);
+  gap: 10px;
+  align-items: start;
+  padding: 11px 0;
+  border-bottom: 1px solid #edf3f5;
+}
+.recommendation-list > div:last-child {
+  border-bottom: 0;
+}
+.recommendation-list > div > span {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  background: var(--ag-primary-soft);
+  color: var(--ag-primary-2);
+  font-size: 10px;
+  font-weight: 950;
+}
+.executive-degraded {
+  padding: 18px;
+  border-radius: 13px;
+  border: 1px dashed #e3d9dc;
+  background: #fff9fa;
+  color: var(--ag-danger);
+  font-size: 12px;
+  line-height: 1.8;
+}
+.admin-order-tools {
+  display: grid;
+  grid-template-columns: minmax(220px,1.4fr) minmax(160px,.7fr) auto;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.admin-order-tools input,
+.admin-order-tools select {
+  min-height: 43px;
+  border: 1px solid var(--ag-border);
+  border-radius: 10px;
+  padding: 8px 11px;
+  background: #fff;
+}
+.admin-order-tools > button {
+  min-height: 43px;
+  padding: 8px 12px;
+  border: 1px solid var(--ag-border);
+  border-radius: 10px;
+  background: #f7fbfc;
+  color: var(--ag-ink);
+  font-weight: 800;
+}
+.admin-order-tools > button.bulk-action {
+  border-color: #b9dfe5;
+  background: var(--ag-primary-soft);
+  color: var(--ag-primary-2);
+}
+.import-reconciliation {
+  background: linear-gradient(145deg,#f6fcfd,#fff) !important;
+}
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 14px;
+  margin-top: 14px;
+  border-top: 1px solid #edf3f5;
+}
+.modal-actions button {
+  min-height: 42px;
+  padding: 8px 14px;
+  border: 1px solid var(--ag-border);
+  border-radius: 10px;
+  background: #f3f7f9;
+  color: var(--ag-ink);
+  font-weight: 850;
+}
+.modal-actions button:last-child {
+  border-color: var(--ag-primary);
+  background: var(--ag-primary);
+  color: #fff;
+}
+.admin-operations > .admin-grid {
+  grid-template-columns: repeat(3,minmax(0,1fr));
+}
+.admin-operations > .admin-grid > .admin-card {
+  min-height: 235px;
+}
+.admin-operations > .cart-panel {
+  margin-top: 14px;
+}
+#admin-customers > .cart-panel,
+#admin-inventory > .cart-panel,
+#admin-purchasing > .cart-panel,
+#admin-finance > .cart-panel {
+  margin: 14px 18px;
+}
+#admin-customers,
+#admin-inventory,
+#admin-purchasing,
+#admin-finance,
+#admin-export,
+#admin-settings {
+  scroll-margin-top: 96px;
+}
+
+@media (max-width: 1080px) {
+  .admin-operations > .admin-grid {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+  }
+  .admin-order-tools {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 700px) {
+  .admin-operations > .admin-grid {
+    grid-template-columns: 1fr;
+  }
+  .admin-order-tools {
+    grid-template-columns: 1fr;
+  }
+  #admin-customers > .cart-panel,
+  #admin-inventory > .cart-panel,
+  #admin-purchasing > .cart-panel,
+  #admin-finance > .cart-panel {
+    margin-inline: 10px;
+  }
+}
