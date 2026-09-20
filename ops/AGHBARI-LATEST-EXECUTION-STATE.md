@@ -1,3 +1,9 @@
+## CURRENT LIVE CI RECONCILIATION — RUN-2026-09-20-EXECUTE-023
+- ACTIVE UI SHA: `bc3e66b8ef69c381d9750ef54551a9a526e88554`
+
+- Latest exact-SHA CI observation for `bc3e66b8ef69c381d9750ef54551a9a526e88554`: G1 run 35488858872 SUCCESS; Order Workflow 35488856980 SUCCESS; Exact Deployment contract run 35488856986 SUCCESS with browser-e2e SKIPPED; Local Production Artifact 35488856969 RUNNING; Fresh Local Supabase 35488856975 RUNNING; Migration 35488856972 RUNNING; Concurrency 35488856971 RUNNING; Security 35488856994 QUEUED; Application Quality 35488856970 QUEUED; Test-the-Test 35488856978 QUEUED; second G1 run 35488856976 RUNNING. No certification/merge PASS is claimed.
+- PR #100 remains OPEN / DRAFT. Candidate and Production remain untouched.
+
 ## CURRENT RECONCILED OVERRIDE — RUN-2026-09-20-EXECUTE-023
 - DEVELOPMENT BRANCH: `enhancement/market-ready-v4-20260918`
 - DEVELOPMENT MERGE SHA: `35d95e5e140820c7e7a8e0a792f89b28eacfb8e8`
