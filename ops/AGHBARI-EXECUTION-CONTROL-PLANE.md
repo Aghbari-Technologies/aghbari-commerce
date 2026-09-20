@@ -887,3 +887,7 @@ Keep promotions, provider notification delivery, integration delivery records/ad
 - Durable UX rule: one user action should not be rendered simultaneously as a fixed floating control and as a structural header/bottom-nav control when the fixed copy can obscure transactional content.
 - Visual review must inspect layering/occlusion, not only DOM visibility and overflow. A successful screenshot test can still reveal a product-quality defect that requires root-cause correction.
 - Current correction: redundant floating .command-launch removed from customer UI and its obsolete CSS removed; regression assertion added to keep its count at zero.
+
+## RUN-2026-09-21-EXECUTE-UI-006
+- Current product head is `629ecad26367a6c860e10a668d5ec71f34ae9083`. The queue-control change is now present in the active UI branch: `ops/**` no longer triggers the five broad product proof workflows.
+- Deployment/build evidence is exact (`dpl_4GPcZtQPW7Y9LYF1FV4Lyj4EBXtx` READY); exact CI/browser proof remains pending and must not be inferred from deployment readiness.
