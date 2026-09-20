@@ -1,6 +1,6 @@
 # الأغبري | Memory Layer 04 — LATEST RESULTS / EXECUTION ROUTER
 
-## CURRENT EXECUTION STATE — RUN-2026-09-20-EXECUTE-010
+## CURRENT EXECUTION STATE — RUN-2026-09-20-EXECUTE-011
 - DEVELOPMENT SHA: `1366f8ea240f2b1c58d78a863aa7a5584be531fb`
 - DEVELOPMENT BRANCH: `enhancement/market-ready-v4-20260918`
 - CERTIFICATION CANDIDATE: `certification/final-candidate-20260920-v3`
@@ -9,13 +9,20 @@
 - PR #88: OPEN / DRAFT / MERGEABLE
 - PRODUCTION: HOLD / NO TOUCH
 
+## RECONCILIATION — 2026-09-20
+- PR #88 head still exactly matches development SHA; base remains the frozen historical candidate.
+- Exact-SHA workflow set for `1366f8ea240f2b1c58d78a863aa7a5584be531fb` is completed SUCCESS for Order Workflow, Browser Exact Deployment, Security, G1, Bootstrap, Application Quality, Migration, Concurrency, Fresh Local Browser, Local Production Artifact Browser, and Test-the-Test.
+- Candidate Vercel deployment `dpl_72VRoKV9a71aY8JPtn7Pqsv5p18z` is READY and reports exact Git ref `certification/final-candidate-20260920-v3` and exact Git SHA `1366f8ea240f2b1c58d78a863aa7a5584be531fb`.
+- Vercel preview runtime error/fatal query for the exact deployment returned no logs in the checked 24h window.
+- Live Supabase direct verification: 58 public base tables; `public.consume_customer_invitation(text,uuid)` is SECURITY DEFINER with empty `search_path`, `extensions.digest()`, and EXECUTE denied to anon/authenticated and granted to service_role.
+- This run introduced no product/source SHA change and therefore does not invalidate the candidate evidence.
+
 ## CANDIDATE DEPLOYMENT
 - Vercel deployment: `dpl_72VRoKV9a71aY8JPtn7Pqsv5p18z`
 - URL: `aghbari-commerce-c2dd-9k5gyro95-aghbari-technologies1.vercel.app`
 - State: READY
 - Exact Git SHA: `1366f8ea240f2b1c58d78a863aa7a5584be531fb`
 - Alias: `aghbari-commerce-c2dd-git-certific-e21ba0-aghbari-technologies1.vercel.app`
-- Preview runtime query: no error/fatal logs in the checked window.
 
 ## EXACT CANDIDATE GATES — ALL PROVEN
 - Bootstrap: 1067 SUCCESS
@@ -37,14 +44,20 @@
 
 ## SUPABASE
 - Project `aghbari-commerce`, ref `mrcyqezbhpncuvaehwgf`, ACTIVE_HEALTHY, PostgreSQL 17.6.1.166.
-- Invitation consumer remains SECURITY DEFINER with empty search_path, `extensions.digest()`, anon/authenticated EXECUTE false, service_role true.
-- Auth leaked-password protection remains an external Auth configuration warning.
+- Invitation consumer remains SECURITY DEFINER with empty search_path, `extensions.digest()`, anon/authenticated EXECUTE false, service_role true; direct live definition matches the hardened migration on the exact candidate SHA.
+- Auth leaked-password protection remains an external Auth configuration warning and was not altered by this run.
 - Notifications boundary exists with RLS/direct-write denial; provider delivery/outbox remains deferred.
 
 ## EXTERNAL BLOCKERS / RELEASE BOUNDARY
-- Netlify exact deploy: 35477914057 FAILED with HTTP 403 account-credit exhaustion.
+- Netlify exact deploy: `35477914057` FAILED with HTTP 403 account-credit exhaustion.
 - LIVE/Production alignment: NOT_PROVEN by design because Production remains NO TOUCH.
 - Certification: NOT DECLARED COMPLETE; candidate-side technical evidence is complete, but owner-approved release path and external Auth warning remain unresolved.
+
+## NEXT EXECUTABLE FRONT
+1. Do not modify the candidate or Production.
+2. Resolve/reassess the external Supabase Auth leaked-password protection through an authorized settings path if available.
+3. If no authorized external path is available, retain the warning as a release blocker and keep the candidate frozen/protected.
+4. Await only the owner-level release decision once all external blockers are classified; no technical work remains that requires a new product SHA.
 
 ## SAFETY
 Never modify frozen historical candidate `2facceb...`, never transfer PASS across SHA, and never mutate Production for testing.
