@@ -116,3 +116,15 @@ No Candidate mutation, no Production mutation, no paid Vercel/Supabase upgrade.
 - Remaining RUNNING: Migration `35486034018`; Test-the-Test `35486034020`; Concurrency `35486033945`; Fresh Local Browser `35486033929`; Local Production Artifact Browser `35486033954`.
 - Historical Final Regression `35485494878` failed exactly because deployed preview exposed `72d5dae...` instead of expected `d8b627bd...`; this is now explicitly routed to local exact-source regression for push events.
 - Certification candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` / `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` unchanged; frozen historical candidate unchanged; Production NO TOUCH.
+
+
+# CURRENT RECONCILED OVERRIDE — RUN-2026-09-20-EXECUTE-021
+- Development UI branch: `execution/customer-ui-completion-20260920`
+- Exact current HEAD: `a9dd58a111138d8a0b12e5e5f5582b74395da79c`
+- PR #100: OPEN / DRAFT; base `enhancement/market-ready-v4-20260918`.
+- Prior exact SHA `2e714043...` had one Application Quality lint failure at src/AppV3Fixed.tsx:59:543 (`prefer-const`); typecheck and 217/217 unit/integration tests passed.
+- Fix on final SHA: `const grouped:Record<string,PriceTier[]>={};`; temporary repair workflow has been removed.
+- New exact-SHA proof suite is currently QUEUED: Quality `35487225729`; Security `35487225703`; Migration `35487225746`; Concurrency `35487225716`; Test-the-Test `35487225712`; Order `35487225707`; Fresh Local Browser `35487225697`; Local Production Artifact `35487225725`; Exact Deployment contract `35487225726`; G1 `35487225705` and `35487228074`.
+- No PASS is transferred from the prior SHA.
+- Netlify public site `https://aghbari-commerce-web.netlify.app` is reachable but reports old SHA `07c3cab1724d54d34234d67250276ac12968e14e`; not current UI evidence. Vercel current UI branch is externally rate-limited on Free plan.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` / Vercel `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` remains untouched. Production = HOLD / NO TOUCH.
