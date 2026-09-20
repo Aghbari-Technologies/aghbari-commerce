@@ -1,3 +1,11 @@
+## RUN-2026-09-21-EXECUTE-UI-010 — PURCHASING RENDER INTEGRITY
+- Active UI branch: `execution/customer-ui-completion-20260920`; exact SHA: `3a2901208c60507b791eceb0c113f9373adab036`.
+- Root cause found in `src/PurchasingPanel.tsx`: render-time `visiblePurchaseOrders` called `supplierNameFor` before the const helper was initialized, creating a JavaScript temporal-dead-zone `ReferenceError` and potentially blanking the staff UI.
+- Corrected by moving `supplierNameFor`, `productNameFor`, `selectedOrderItems`, and `selectedReceiveItem` before the render-derived filtered-order computation. No data model, authorization, or reporting boundary changed.
+- Exact source verification on the new SHA confirms the helper declarations precede `visiblePurchaseOrders` and there is no duplicate helper declaration in the function.
+- Vercel deployment proof is not available for this exact SHA; latest visible Vercel deployments remain on earlier SHAs and are not reusable.
+- Browser/CI terminal PASS is not claimed for this SHA. Certification candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain untouched / HOLD.
+- NEXT RESUME: obtain terminal exact-SHA UI/browser evidence for `3a2901208c60507b791eceb0c113f9373adab036`; then inspect the full staff/customer visual surface and only merge PR #100 after required exact gates are terminal SUCCESS.
 ## RUN-2026-09-21-EXECUTE-UI-009
 - Latest UI exact SHA: `7b9c0efa4fd04a30d80952dce55ddad52ee52ae4`
 - Concrete UI hardening since UI-008: customer portal branding localized to `تجارة B2B`; executive dashboard footer now translates role keys to Arabic.
