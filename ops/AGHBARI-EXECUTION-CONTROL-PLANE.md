@@ -1,3 +1,7 @@
+## CONTROL-PLANE EVOLUTION — RUN-2026-09-21-EXECUTE-UI-010
+- Added a render-integrity rule: in React components, any helper used by render-time derived values (filters, maps, memoized lists, selected-item derivations) must be initialized before the first evaluation of those values; do not rely on function declaration hoisting when using `const` helpers.
+- This rule is specifically intended to catch runtime TDZ defects that type/build checks can miss when the component renders only under a role-specific surface.
+
 ## CONTROL-PLANE EVOLUTION — RUN-2026-09-21-EXECUTE-UI-005
 - Queue-control rule strengthened: do not trigger another exact-SHA proof run when an equivalent required run for the same SHA is already QUEUED/IN_PROGRESS; reconcile existing runs first. Queue accumulation is tracked as an operational constraint, never converted to PASS or used to justify weakened gates.
 - UI truth rule strengthened: paginated counts must not be labeled as totals/availability unless the complete dataset is actually loaded.
