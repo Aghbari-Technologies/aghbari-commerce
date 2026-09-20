@@ -1,3 +1,16 @@
+## RUN-2026-09-21-EXECUTE-UI-008 — CURRENT AUTHORITATIVE RECONCILIATION
+- ACTIVE UI BRANCH: `execution/customer-ui-completion-20260920`
+- ACTIVE UI EXACT HEAD: `41ee8dba7968124f2b6649e0b1347250c5a3a118`
+- PR #100: OPEN / DRAFT / MERGEABLE at last read before this checkpoint; verify again before any merge.
+- UI WORK COMPLETED IN THIS LANE: customer directory search/status/tier filters; purchase-order search/status filters; customer order search/status filters with responsive styling; localized operational terminology; purchase/reporting labels clarified; reorder action lock; catalog count truthfulness; voice search implemented with graceful unsupported/permission error; dead image-search control removed from the rendered UI.
+- EXACT SOURCE CHECK: latest AppV3Fixed and customer portal CSS were re-read from active branch after the voice-search changes.
+- VERCEL: free deployment-rate limit is active and returns failure message `Deployment rate limited — retry in 24 hours.`; therefore Vercel is not valid current-SHA deployment proof. No production touch.
+- NETLIFY: existing site `aghbari-commerce-web` remains a known free-plan site, but its current production deploy is not to be overwritten from this development SHA because Production/controlled release boundaries remain NO TOUCH.
+- GITHUB EXACT-SHA CI: current SHA push spawned a fresh verification set; status must be reconciled from GitHub and queued/pending is not PASS.
+- BROWSER PROOF: no authenticated external visual PASS claimed.
+- CANDIDATE: `certification/final-candidate-20260920-v3` @ `1685836f4226fdcb3250a60eba7430ecf3e8f080` unchanged.
+- PRODUCTION: HOLD / NO TOUCH.
+- NEXT RESUME: reconcile terminal exact-SHA CI for `41ee8dba7968124f2b6649e0b1347250c5a3a118`; use a non-production Netlify/preview path only when it can be proven exact to this SHA; then run authenticated visual evidence. Avoid speculative UI commits while the proof set is queued unless a concrete defect is found.
 ## RUN-2026-09-21-EXECUTE-UI-007 — CURRENT AUTHORITATIVE RECONCILIATION
 - ACTIVE UI BRANCH: `execution/customer-ui-completion-20260920`
 - ACTIVE UI EXACT HEAD: `a5369f4a17147c315f571c84743ed3682e4b2337`
