@@ -861,3 +861,6 @@ Keep promotions, provider notification delivery, integration delivery records/ad
 ## RUN-023 CONTROL-PLANE EVOLUTION
 - Root cause found during visual review: the brand mark pseudo-element was a floating layout participant. On a complex RTL header this can create alignment drift across responsive layout modes.
 - Preventive rule: brand/decoration pseudo-elements in structural headers must be absolutely positioned or otherwise removed from layout flow when they are decorative, with explicit reserved space for content.
+
+## RUN-023 LIVE CI RECONCILIATION
+- Latest exact-SHA CI observation for `bc3e66b8ef69c381d9750ef54551a9a526e88554`: G1 run 35488858872 SUCCESS; Order Workflow 35488856980 SUCCESS; Exact Deployment contract run 35488856986 SUCCESS with browser-e2e SKIPPED; Local Production Artifact 35488856969 RUNNING; Fresh Local Supabase 35488856975 RUNNING; Migration 35488856972 RUNNING; Concurrency 35488856971 RUNNING; Security 35488856994 QUEUED; Application Quality 35488856970 QUEUED; Test-the-Test 35488856978 QUEUED; second G1 run 35488856976 RUNNING. No certification/merge PASS is claimed.
