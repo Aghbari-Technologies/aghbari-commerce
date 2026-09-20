@@ -37,6 +37,7 @@ test.describe('Aghbari UI visual integrity', () => {
     await expect(page.locator('.portal-header')).toBeVisible();
     await expect(page.locator('.command-launch')).toHaveCount(0);
     await expect(page.locator('.portal-nav')).toBeVisible();
+    await expect(page.locator('.portal-bottom-nav')).toBeHidden();
     await expect(page.locator('.product-grid')).toBeVisible();
     await expect(page.locator('.hero-card')).toBeVisible();
     await page.screenshot({ path: 'visual-evidence/customer-desktop.png', fullPage: true });
@@ -47,6 +48,7 @@ test.describe('Aghbari UI visual integrity', () => {
     await login(page, 'customer-a@test.local');
     await expect(page.locator('.portal-header')).toBeVisible();
     await expect(page.locator('.portal-nav')).toBeVisible();
+    await expect(page.locator('.portal-bottom-nav')).toBeVisible();
     await expect(page.locator('.product-grid')).toBeVisible();
     await expect(page.locator('.hero-card')).toBeVisible();
     await page.screenshot({ path: 'visual-evidence/customer-mobile.png', fullPage: true });
