@@ -1,3 +1,11 @@
+## CURRENT AUTHORITATIVE RECONCILIATION — 2026-09-21B
+- Active UI SHA: `0e23965179818904d62d7577abb919cca16593a6` on `execution/customer-ui-completion-20260920`; PR #100 OPEN / DRAFT / MERGEABLE.
+- UX correction: template terminology is now consistently «قالب/قوالب» across visible customer UI strings in `src/AppV3Fixed.tsx`; exact scan found zero legacy `مسحة` terms.
+- Exact Vercel deployment `dpl_5SWnt86P56xTYZV8yxNSE3Jmtay9` is BUILDING and must be treated as a new verification unit.
+- G1 run `35544020449` is QUEUED; no terminal PASS.
+- Previous exact-SHA evidence for `7f1b523...` is invalid for `0e23965179818904d62d7577abb919cca16593a6`.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain untouched.
+
 ## CURRENT AUTHORITATIVE RECONCILIATION — 2026-09-21
 - Aghbari Commerce active UI branch: `execution/customer-ui-completion-20260920`.
 - Current exact UI SHA: `7f1b523319d74aa17f549c49db0f52482df5c00b`; PR #100 OPEN / DRAFT / MERGEABLE against `enhancement/market-ready-v4-20260918`.
