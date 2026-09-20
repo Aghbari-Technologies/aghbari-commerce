@@ -156,3 +156,11 @@ Unless explicitly implemented and proven, these remain backlog/deferred: promoti
 - UI PR #100 is intentionally still OPEN / DRAFT while its exact-SHA workflows are QUEUED. Vercel reports the known Free-plan deployment rate limit; that status is not product proof and no paid upgrade is authorized.
 - Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080`, candidate deployment `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C`, frozen historical candidate, and Production remain untouched.
 - Durable UX rule: loading/search/empty/error/accessibility states are part of the product contract, and high-frequency customer search must not refetch unrelated operational datasets on every query change.
+
+
+## RUN-2026-09-20-EXECUTE-020 — FINAL CHECKPOINT CORRECTION
+- Active UI implementation branch: `execution/customer-ui-completion-20260920`.
+- Current exact UI head: `2e714043e198feec70be226bc00e474d91a332d1`. PR #100 remains OPEN / DRAFT against `enhancement/market-ready-v4-20260918`.
+- The UI branch includes a final pricing-integrity correction: catalog refresh now fetches customer price tiers for both visible catalog products and all saved cart product IDs, so an off-screen cart line does not lose its applicable tier price after search/filter changes.
+- GitHub Actions for exact UI SHA `2e714043e198feec70be226bc00e474d91a332d1` are present but currently QUEUED; no UI PASS is claimed. Vercel remains Free-plan deployment-rate-limited and is not used as product proof.
+- The earlier UI checkpoint at `1c759469994ad4fa4cb85f8c9fd09add810466e0` is superseded by `2e714043e198feec70be226bc00e474d91a332d1`; do not reuse evidence from the superseded SHA.
