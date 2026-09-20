@@ -157,6 +157,22 @@ test('inline product quantity controls preserve a single cart line', async ({ pa
   }
 });
 
+
+test('customer portal search reset and modal escape controls remain accessible', async ({ page }) => {
+  const email = process.env.E2E_EMAIL; const password = process.env.E2E_PASSWORD; if (!email || !password) throw new Error('E2E_EMAIL and E2E_PASSWORD are required for customer UI accessibility proof.');
+  const failures = captureBrowserFailures(page); await login(page, email, password);
+  const firstCard = page.locator('.product-card').first(); await expect(firstCard).toBeVisible();
+  const productName = (await firstCard.getByRole('heading').first().innerText()).trim();
+  const search = page.getByRole('textbox', { name: 'البحث في الكتالوج' }); await search.fill(productName);
+  await expect(page.getByRole('button', { name: 'مسح البحث' })).toBeVisible();
+  await page.getByRole('button', { name: 'مسح البحث' }).click(); await expect(search).toHaveValue(''); await expect(page.locator('.product-card').first()).toBeVisible();
+  await page.locator('.product-card').first().getByRole('button', { name: 'عرض التفاصيل' }).click();
+  await expect(page.getByRole('dialog', { name: 'تفاصيل المنتج' })).toBeVisible(); await page.keyboard.press('Escape'); await expect(page.getByRole('dialog', { name: 'تفاصيل المنتج' })).toHaveCount(0);
+  await page.getByRole('banner').getByRole('button', { name: /السلة/ }).click();
+  await expect(page.getByRole('dialog', { name: /السلة/ })).toBeVisible(); await page.keyboard.press('Escape'); await expect(page.getByRole('dialog', { name: /السلة/ })).toHaveCount(0);
+  await assertCleanBrowser(failures);
+});
+
 test('product detail modal exposes customer-safe facts', async ({ page }) => {
   const email = process.env.E2E_EMAIL; const password = process.env.E2E_PASSWORD; if (!email || !password) throw new Error('E2E_EMAIL and E2E_PASSWORD are required for product detail proof.'); await login(page, email, password);
   const card = page.locator('.product-card').first(); await expect(card).toBeVisible(); await card.getByRole('button', { name: 'عرض التفاصيل' }).click();
