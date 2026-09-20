@@ -1,4 +1,13 @@
-# CURRENT EXECUTION REALITY — RUN-2026-09-20-EXECUTE-014
+# CURRENT EXECUTION REALITY — RUN-2026-09-20-EXECUTE-016
+- Active certification branch: `certification/final-candidate-20260920-v3`
+- Active candidate SHA: `1685836f4226fdcb3250a60eba7430ecf3e8f080`
+- New candidate Vercel: `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` BUILDING, exact SHA matched
+- WIP Test-the-Test: `35481150811` / job `105999082463` SUCCESS
+- Frozen historical candidate `2facceb...`: FROZEN / NO TOUCH
+- Production: HOLD / NO TOUCH
+- Netlify: external HTTP 403 credit blocker
+- Supabase Auth leaked-password protection: external warning; FREE-TIER COST CONSTRAINT = DO NOT UPGRADE JUST FOR THIS
+
 - Development branch: `enhancement/market-ready-v4-20260918`
 - Development SHA: `72d5dae91ca7250c98ebb50d8b05409500f77c13`
 - Candidate branch: `certification/final-candidate-20260920-v3`, exact SHA matches
@@ -782,3 +791,15 @@ Keep promotions, provider notification delivery, integration delivery records/ad
 - Vercel runtime-log and runtime-error checks were reconciled against the deployment's actual Vercel project ID rather than a stale project ID; no runtime logs/errors were found for the exact candidate deployment.
 - Free-tier boundary clarified: Supabase native leaked-password protection remains an external WARN and is not a justification for a paid-tier upgrade under the zero-cost product constraint.
 - Control-plane startup pointers were stale versus the canonical 72d5dae state; this run reconciles the top-level reality, current state, and execution-start router so future sessions do not resume from obsolete SHA/evidence.
+
+
+## EVOLUTION / RUN-2026-09-20-EXECUTE-016
+- The prior memory marked Test-the-Test RUNNING even though its job was terminal SUCCESS. The execution rule is now explicit: reconcile active labels against job-level terminal state before classifying a front.
+- Candidate promotion is permitted only after isolated WIP exact-SHA proof closes; promotion immediately invalidates deployment/browser/final-regression evidence tied to the previous SHA.
+
+## RUN-2026-09-20-EXECUTE-016 COMPACT RECORD
+- SHA: `1685836f4226fdcb3250a60eba7430ecf3e8f080`; candidate branch: `certification/final-candidate-20260920-v3`.
+- FRONT: bulk actions/import reconciliation → Test-the-Test closure → candidate promotion.
+- RESULT: source-level exact gates PROVEN; candidate deployment evidence NOT_PROVEN pending Vercel READY.
+- EVIDENCE: 35481150809, 35481150821, 35481150820, 35481150804, 35481150826, 35481150812, 35481150807, 35481150837, 35481150808, 35481150811/105999082463; Vercel dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C.
+- NEXT: exact candidate deployment browser + Final Regression after READY. Production NO TOUCH.
