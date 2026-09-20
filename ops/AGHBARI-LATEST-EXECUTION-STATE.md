@@ -189,3 +189,12 @@ No Candidate mutation, no Production mutation, no paid Vercel/Supabase upgrade.
 - Proven defect: redundant fixed .command-launch overlay from visual artifacts; removed and guarded by UI regression test.
 - Fresh exact-SHA runs for 79267d3 are created for UI Visual Review, Security, Quality, Migration, Concurrency, Order, Fresh Browser, Local Browser Artifact, Exact Deployment contract, G1 and Test-the-Test; latest checkpoint all are QUEUED.
 - Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 unchanged. Production HOLD / NO TOUCH.
+
+
+## CURRENT RECONCILED OVERRIDE — RUN-2026-09-20-EXECUTE-026
+- ACTIVE UI BRANCH: execution/customer-ui-completion-20260920.
+- EXACT UI HEAD: 75b0192f3bb6f5302c202330154649c07786d199.
+- PR #100 OPEN / DRAFT; head equals 75b0192f3bb6f5302c202330154649c07786d199.
+- Implemented dashboard resilience: partial metric failures no longer collapse the whole dashboard into one red error state; failed metrics are labeled unavailable, successful metrics remain visible, and empty sales receive an intentional empty-state surface.
+- Exact-SHA suite for 75b0192 is newly queued across Visual Review, Security, Quality, Migration, Concurrency, Order, Fresh Browser, Local Browser Artifact, Deployment contract, G1, Test-the-Test.
+- Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 unchanged; Production HOLD / NO TOUCH.
