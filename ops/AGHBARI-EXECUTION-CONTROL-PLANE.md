@@ -872,3 +872,9 @@ Keep promotions, provider notification delivery, integration delivery records/ad
 - Visual review fixtures are isolated to local Supabase only; they must not be treated as production data or production authentication.
 - Current UI visual workflow: `.github/workflows/ui-visual-review.yml`; current spec: `e2e/ui-visual-review.spec.ts`.
 - Current UI SHA: `97431d5a39c28f03b77ad03717caa7c82c8ba621`; candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain protected.
+
+
+## RUN-025 CONTROL-PLANE EVOLUTION
+- Durable UX rule: one user action should not be rendered simultaneously as a fixed floating control and as a structural header/bottom-nav control when the fixed copy can obscure transactional content.
+- Visual review must inspect layering/occlusion, not only DOM visibility and overflow. A successful screenshot test can still reveal a product-quality defect that requires root-cause correction.
+- Current correction: redundant floating .command-launch removed from customer UI and its obsolete CSS removed; regression assertion added to keep its count at zero.
