@@ -252,3 +252,11 @@ No Candidate mutation, no Production mutation, no paid Vercel/Supabase upgrade.
 - PREVIOUS EXACT UI SHA `255ee1484d0c0192034fe4a277ac27b4c7b875cc` deployed READY as `dpl_9S5oxwqv2cY5BmMD4JTgYNT3raYC`; current SHA requires its own proof.
 - Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` unchanged; Production NO TOUCH.
 - NEXT EXECUTABLE TASK: reconcile exact-SHA CI and Vercel for `509b6597f956e4242da947e01a1890eca4164cf0`; then address any terminal failure before further expansion.
+
+
+## LIVE RECONCILIATION — 2026-09-21T22:59Z
+- Exact current UI SHA: `509b6597f956e4242da947e01a1890eca4164cf0`.
+- Exact current Vercel deployment: `dpl_4VgbP6Cp7gykHrq37vv1kvYWrCYN` — BUILDING at latest check.
+- Exact current G1 workflow run: `35543245468` — QUEUED; job `106165362690` if/when exposed is the next direct proof target.
+- Previous exact UI SHA `255ee1484d0c0192034fe4a277ac27b4c7b875cc` deployment `dpl_9S5oxwqv2cY5BmMD4JTgYNT3raYC` is READY, but is not current-SHA evidence.
+- No PASS/certification/merge claim is made for `509b6597...` until the exact-SHA verification set reaches terminal proven results.
