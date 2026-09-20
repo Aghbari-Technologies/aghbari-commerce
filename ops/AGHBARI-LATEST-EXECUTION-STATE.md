@@ -1,3 +1,11 @@
+## RUN-2026-09-21-EXECUTE-UI-011 — UI DATA-LOAD STABILITY
+- Active UI branch: `execution/customer-ui-completion-20260920`; latest product SHA: `3fd298cf1cb073e037a3d24f50adbfb68f688635`.
+- Additional fixes after UI-010: `PurchasingPanel`, `InventoryPanel`, and `FinancePanel` now initialize default selections with functional state setters while `reload` callbacks depend only on role capability flags. This removes unnecessary reload/effect churn caused by selection-state dependencies and preserves the user's current selections on subsequent refreshes.
+- Previous Purchasing TDZ defect remains fixed at ancestor `3a2901208c60507b791eceb0c113f9373adab036`; current SHA includes that fix plus the load-stability fixes.
+- Exact source verification completed on the current SHA; no browser/CI PASS is claimed because the exact automated runs are not terminally proven through the available connector surface.
+- Supabase live project `mrcyqezbhpncuvaehwgf` is `ACTIVE_HEALTHY`, PostgreSQL 17.6; current SQL check found 58 public tables and 58/58 RLS enabled. Security advisor still reports the existing authenticated SECURITY DEFINER warning class; inspected functions currently have `search_path` locked down and `anon EXECUTE=false`, so no blind permission change was made.
+- Vercel remains free-plan/build-rate limited for exact current deployment; no exact-SHA deployment proof. Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain untouched/HOLD.
+- NEXT RESUME: reconcile exact-SHA workflow terminal states for `3fd298cf1cb073e037a3d24f50adbfb68f688635`; then perform visual/browser proof on this exact SHA and only then consider PR #100 promotion.
 ## RUN-2026-09-21-EXECUTE-UI-010 — PURCHASING RENDER INTEGRITY
 - Active UI branch: `execution/customer-ui-completion-20260920`; exact SHA: `3a2901208c60507b791eceb0c113f9373adab036`.
 - Root cause found in `src/PurchasingPanel.tsx`: render-time `visiblePurchaseOrders` called `supplierNameFor` before the const helper was initialized, creating a JavaScript temporal-dead-zone `ReferenceError` and potentially blanking the staff UI.
