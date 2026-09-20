@@ -1,24 +1,32 @@
 # الأغبري | Memory Layer 03 — PROBLEM / PROGRESS LEDGER
 
-## CURRENT CHECKPOINT — RUN-2026-09-20-EXECUTE-011
-- Development SHA: `1366f8ea240f2b1c58d78a863aa7a5584be531fb`.
-- Certification candidate branch: `certification/final-candidate-20260920-v3`, same exact SHA.
-- Candidate Vercel deployment: `dpl_72VRoKV9a71aY8JPtn7Pqsv5p18z` READY, exact SHA matched.
-- Exact-SHA workflow set rechecked: Order Workflow 1576, Browser Exact Deployment 592, Security 2795, G1 2948, Bootstrap 1067, Quality 3105, Migration 3080, Concurrency 573, Fresh Browser 400, Local Production Browser 406, Test-the-Test 682 — all SUCCESS.
-- Candidate Deployment Browser proof `35478298905` SUCCESS; Final Regression `35478610589` SUCCESS; evidence artifacts retained.
-- Candidate Vercel preview runtime error/fatal query returned no entries.
-- Live Supabase verification confirmed 58 public base tables and the hardened `consume_customer_invitation(text,uuid)` SECURITY DEFINER boundary with empty search_path, `extensions.digest()`, anon/authenticated denied, service_role allowed.
-- Frozen historical candidate `2facceb...` remains untouched; Production remains HOLD / NO TOUCH.
-- Netlify remains externally blocked by HTTP 403 account-credit exhaustion.
-- Auth leaked-password protection remains an external Supabase Auth configuration warning.
+## CURRENT CHECKPOINT — RUN-2026-09-20-EXECUTE-012
+- Development SHA: `72d5dae91ca7250c98ebb50d8b05409500f77c13`.
+- Certification candidate branch: `certification/final-candidate-20260920-v3`, advanced to the same exact SHA.
+- PR #88 remains OPEN / DRAFT / MERGEABLE; base remains frozen historical candidate `2facceb39aaa826413f20245a6f20b6c2ff7cd34`.
+- New Vercel candidate deployment `dpl_DVfuqGzcMPBX3aTgaH64LdChES6Y` is BUILDING for exact candidate SHA; the same SHA already has READY preview deployment `dpl_2aas6bAdtyEjBT9GDabNKKmdo8gd` on the development branch.
+- New SHA exact gates are still in progress; prior SHA evidence is intentionally invalidated for the changed candidate and is not carried forward.
+- Live Supabase migration `add_customer_invitation_fk_indexes` applied successfully.
+- Supabase performance advisor's two unindexed customer_invitations foreign keys were removed as findings by adding standalone indexes for `customer_id` and `created_by`.
+- Security advisor still reports the intentional SECURITY DEFINER/authenticated-RPC pattern plus the external Auth leaked-password-protection warning; neither is treated as an unverified PASS.
+- Frozen historical candidate remains untouched; Production remains HOLD / NO TOUCH.
+
+## RUN-2026-09-20-EXECUTE-012
+- Objective: continue execution rather than stop at the previous release boundary; inspect live security/performance advisories and fix an actionable database performance finding without weakening the product contract.
+- Root cause: Supabase performance advisor identified two real unindexed foreign keys on `public.customer_invitations`: `customer_invitations_created_by_fkey` and `customer_invitations_customer_id_fkey`. The existing `(organization_id, customer_id, created_at)` index did not cover `customer_id` as a standalone leading FK index.
+- Action: added migration `supabase/migrations/20260920000600_add_customer_invitation_fk_indexes.sql` on development SHA `72d5dae91ca7250c98ebb50d8b05409500f77c13`, creating `customer_invitations_customer_id_fk_idx` and `customer_invitations_created_by_fk_idx`; applied the exact same DDL to live Supabase through the migration path.
+- Verification: performance advisor was rechecked immediately. The two `unindexed_foreign_keys` findings disappeared; only the expected unused-index informational findings remained, including the two new indexes because they have not yet accumulated workload.
+- Candidate handling: certification candidate `certification/final-candidate-20260920-v3` was advanced fast-forward to the new exact SHA. No historical candidate was mutated.
+- Deployment: Vercel automatically created exact-SHA candidate deployment `dpl_DVfuqGzcMPBX3aTgaH64LdChES6Y`; an exact-SHA development preview `dpl_2aas6bAdtyEjBT9GDabNKKmdo8gd` is READY. Runtime error queries for the new project/deployment window returned no error/fatal entries.
+- CI: G1 Domain Proof run `35479225179` started for the new SHA; remaining exact-SHA gates must complete before any candidate PASS is asserted.
+- Release boundary: Production remains untouched. Certification remains NO until the new SHA's complete evidence set is rebuilt.
 
 ## RUN-2026-09-20-EXECUTE-011
-- Objective: execute the next unresolved front after the candidate-side release evidence was already complete, reconcile stored memory against live GitHub/Vercel/Supabase reality, and close any stale-state uncertainty without changing the product SHA.
-- Root cause/status: no new product defect found. The stored candidate/deployment/evidence state was confirmed current. The previously fixed invitation crypto hardening is live and matches the candidate source contract.
+- Objective: execute the next unresolved front after the candidate-side release evidence was already complete, reconcile stored memory against live GitHub/Vercel/Supabase reality, and close stale-state uncertainty without changing the product SHA.
+- Root cause/status: no new product defect found. Stored candidate/deployment/evidence state was confirmed current. The previously fixed invitation crypto hardening is live and matches the candidate source contract.
 - Action: verified PR #88 head/base/SHA; verified all exact-SHA workflow runs; verified exact candidate Vercel deployment metadata and preview runtime error/fatal absence; verified live Supabase function definition and privileges.
-- Result: reconciliation PASS for current state. No new product SHA required. Candidate technical evidence remains valid because no product source changed.
-- Release boundary: certification remains NO; Production remains NO TOUCH. External Auth leaked-password protection warning and owner-approved release decision remain the only release-boundary items. Netlify credit blocker remains external and non-product.
-- Next action: authorized external Auth configuration path if available; otherwise preserve the candidate and wait for owner-level release decision. Do not create speculative code changes merely to manufacture a new SHA.
+- Result: reconciliation PASS for the old exact SHA only. No evidence from that SHA is carried to RUN-012.
+- Release boundary: certification remained NO; Production remained NO TOUCH.
 
 ## PRIOR VERIFIED RUNS
 ### RUN-2026-09-20-EXECUTE-010 — SHA `1366f8ea...`
