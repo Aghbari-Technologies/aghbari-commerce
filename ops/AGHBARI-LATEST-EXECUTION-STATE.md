@@ -1,3 +1,17 @@
+## CURRENT RECONCILED OVERRIDE — RUN-2026-09-20-EXECUTE-022
+- DEVELOPMENT BRANCH: `enhancement/market-ready-v4-20260918`
+- DEVELOPMENT MERGE SHA: `35d95e5e140820c7e7a8e0a792f89b28eacfb8e8`
+- ACTIVE UI BRANCH: `execution/customer-ui-completion-20260920`
+- ACTIVE UI EXACT HEAD: `b4c6686761d56a4e3ddf813e30f0d80b654037d5`
+- PR #100: OPEN / DRAFT → development.
+- UI FRONT: world-class customer + staff visual system advancement.
+- IMPLEMENTED: premium visual hierarchy, branded identity/auth surfaces, responsive portal navigation, stronger product/catalog cards, order/finance presentation, modals/drawer polish, staff/admin operational surfaces, focus/interaction states, mobile density and reduced-motion handling.
+- SOURCE CHANGE: finishing commit `b4c6686761d56a4e3ddf813e30f0d80b654037d5` modifies only `src/customer-portal-v3-dynamic.css`; prior commit `b4fc4fd...` introduced the main visual system. No transaction/data model/reporting code changed.
+- EXACT-SHA PROOF: NEW HEAD `b4c6686761d56a4e3ddf813e30f0d80b654037d5` requires a fresh proof cycle. No PASS transferred from earlier UI SHAs.
+- DEPLOYMENT: Vercel Free-plan rate-limit and Netlify credit exhaustion remain external blockers; no paid workaround.
+- CANDIDATE: `1685836f4226fdcb3250a60eba7430ecf3e8f080` / deployment `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` unchanged.
+- PRODUCTION: HOLD / NO TOUCH.
+- NEXT: terminal exact-SHA CI → visual browser/artifact inspection → merge PR #100 only after all required gates succeed → fresh proof on merge SHA.
 ## CURRENT EXECUTION STATE — RUN-2026-09-20-EXECUTE-020 — FINAL SHA CHECKPOINT
 - DEVELOPMENT BRANCH: `enhancement/market-ready-v4-20260918`
 - DEVELOPMENT MERGE SHA: `35d95e5e140820c7e7a8e0a792f89b28eacfb8e8` (PR #99 merged after all tracked exact-SHA CI-hardening gates succeeded on `3aafdf19c8a8affc0af8cb0692d81a15e512dcd1`).
