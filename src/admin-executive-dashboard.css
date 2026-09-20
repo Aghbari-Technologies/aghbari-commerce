@@ -157,3 +157,107 @@
   .staff-section-rail { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px; }
   .staff-section-rail button { padding: 9px; }
 }
+
+
+/* Detailed operations canvas — clearer grouping without changing transaction behavior. */
+.admin-operations {
+  margin-top: 14px;
+  scroll-margin-top: 90px;
+}
+.admin-operations > summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 48px;
+  padding: 10px 14px;
+  border: 1px solid #d8e6eb;
+  border-radius: 13px;
+  background: #fff;
+  color: #173e50;
+  cursor: pointer;
+  font-weight: 900;
+}
+.admin-operations > summary::-webkit-details-marker { display: none; }
+.admin-operations > summary::before {
+  content: "＋";
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: #edf7f9;
+  color: #0d7182;
+  flex: 0 0 auto;
+}
+.admin-operations[open] > summary::before { content: "−"; }
+.admin-operations[open] > summary {
+  border-color: #bed7de;
+  background: #fbfeff;
+}
+.admin-operations > .section-heading {
+  margin-top: 18px;
+}
+.admin-operations > .admin-grid {
+  margin-top: 10px;
+}
+.admin-operations > [id^="admin-"] > .cart-panel,
+.admin-operations > [id^="admin-"] > .admin-panel {
+  margin-inline: 0;
+}
+.admin-order-tools {
+  display: grid;
+  grid-template-columns: minmax(230px,1.5fr) minmax(150px,.7fr) auto auto auto;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.admin-order-tools input,
+.admin-order-tools select {
+  min-height: 42px;
+  border: 1px solid #d9e6eb;
+  border-radius: 10px;
+  padding: 8px 10px;
+  background: #fff;
+}
+.admin-order-tools button {
+  min-height: 42px;
+  border: 1px solid #d5e4e9;
+  border-radius: 10px;
+  padding: 8px 11px;
+  background: #f7fbfc;
+  color: #294f60;
+  font-weight: 800;
+}
+.admin-order-tools .bulk-action {
+  border-color: #0d91a5;
+  background: #0d91a5;
+  color: #fff;
+}
+.selection-count {
+  justify-self: start;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: #eaf7f9;
+  color: #0d7182;
+  font-size: 11px;
+  font-weight: 900;
+}
+.admin-card > small {
+  line-height: 1.6;
+  color: #7b909a;
+}
+.import-reconciliation {
+  grid-column: 1 / -1;
+}
+@media (max-width: 1100px) {
+  .admin-order-tools {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 650px) {
+  .admin-operations > summary { min-height: 44px; }
+  .admin-order-tools { grid-template-columns: 1fr; }
+  .selection-count { justify-self: stretch; text-align: center; }
+}
