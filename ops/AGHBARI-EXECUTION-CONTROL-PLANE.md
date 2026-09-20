@@ -1,16 +1,15 @@
-# CURRENT EXECUTION REALITY — RUN-2026-09-20-EXECUTE-010
+# CURRENT EXECUTION REALITY — RUN-2026-09-20-EXECUTE-014
 - Development branch: `enhancement/market-ready-v4-20260918`
-- Development SHA: `1366f8ea240f2b1c58d78a863aa7a5584be531fb`
+- Development SHA: `72d5dae91ca7250c98ebb50d8b05409500f77c13`
 - Candidate branch: `certification/final-candidate-20260920-v3`, exact SHA matches
-- Candidate Vercel: `dpl_72VRoKV9a71aY8JPtn7Pqsv5p18z` READY
-- Candidate exact release gates: ALL CANDIDATE-SIDE TECHNICAL GATES PROVEN
-- Deployment Browser proof: `35478298905` SUCCESS
-- Final Regression proof: `35478610589` SUCCESS
-- Test-the-Test: `35478137938` attempt 2 SUCCESS
+- Candidate Vercel: `dpl_DVfuqGzcMPBX3aTgaH64LdChES6Y` READY
+- Candidate exact release gates: ALL MANDATORY TECHNICAL GATES PROVEN
+- Candidate Deployment Browser proof: `35479844177` / job `105995552224` SUCCESS
+- Final Regression proof: `35479844177` / job `105995552370` SUCCESS
 - Frozen historical candidate `2facceb...`: FROZEN / NO TOUCH
 - Production: HOLD / NO TOUCH
 - Netlify: external HTTP 403 credit blocker
-- Auth leaked-password protection: external configuration warning
+- Supabase Auth leaked-password protection: external warning; FREE-TIER COST CONSTRAINT = DO NOT UPGRADE JUST FOR THIS
 
 # الأغبري | Aghbari Commerce — Execution Control Plane
 
@@ -48,19 +47,15 @@
 
 # 0A. AUTHORITATIVE LIVE EXECUTION STATE — 2026-09-20 — CURRENT RECONCILIATION
 - DEVELOPMENT LANE: `enhancement/market-ready-v4-20260918`; PR #88 OPEN / DRAFT / MERGEABLE.
-- CURRENT DEVELOPMENT SHA: `4f0a0614ab94e1c2ebd61745aa915f6942b3c5a0`.
-- EXACT VERCEL DEVELOPMENT DEPLOYMENT: `dpl_BCvmScQ6hMUQDppRXMCnGkkRV5hd`, READY.
-- CURRENT-SHA FINAL REGRESSION: `35477022465` SUCCESS.
-- CURRENT-SHA QUALITY/SECURITY/G1: `35477022455`/`35477022467`/`35477022486`/`35477025357` SUCCESS.
-- CURRENT-SHA MIGRATION: `35477022461` IN PROGRESS.
-- CURRENT-SHA TEST-THE-TEST: `35477022490` IN PROGRESS.
-- NETLIFY EXACT-SHA: `35477022463` BLOCKED by external account-credit exhaustion (HTTP 403).
-- EXACT CURRENT-SHA BROWSER E2E: NOT_PROVEN.
-- FORMAL FINAL REGRESSION: PROVEN for current development SHA `4f0a0614ab94e1c2ebd61745aa915f6942b3c5a0` by `35477022465`.
-- CERTIFICATION: NO.
-- CERTIFICATION CANDIDATE: `2facceb39aaa826413f20245a6f20b6c2ff7cd34` — FROZEN / NO TOUCH.
+- CURRENT DEVELOPMENT SHA: `72d5dae91ca7250c98ebb50d8b05409500f77c13`.
+- EXACT VERCEL CANDIDATE: `dpl_DVfuqGzcMPBX3aTgaH64LdChES6Y`, READY, exact SHA matched.
+- EXACT-SHA TECHNICAL GATES: Bootstrap `35479239719`; Quality `35479239624`; Security `35479239515`; G1 `35479239732`; Order Workflow `35479239619`; Migration `35479239575`; Concurrency `35479239567`; Test-the-Test `35479239547`; Fresh Browser `35479239560`; Local Production Artifact Browser `35479239623` — all SUCCESS.
+- EXACT CANDIDATE DEPLOYMENT BROWSER: run `35479844177` job `105995552224` SUCCESS; Customer E2E and Admin E2E completed successfully; browser evidence artifact `10596010632`.
+- FORMAL FINAL REGRESSION: run `35479844177` job `105995552370` SUCCESS; artifact `10595392644`, digest `sha256:4fd744980d85bf08da616764441793258d261caef7d7752627172e38faf891eb`.
+- NETLIFY EXACT-SHA: externally BLOCKED by account-credit exhaustion (HTTP 403); no cost-bearing workaround authorized.
+- CERTIFICATION: TECHNICAL GATES COMPLETE; release boundary remains held because Supabase native leaked-password protection is unavailable on Free and Production has explicit NO TOUCH until release authorization.
 - PRODUCTION: NO TOUCH.
-- NEXT OPEN FRONT: close Migration/Test-the-Test; then candidate reconciliation/evidence without candidate or Production mutation.
+- NEXT OPEN FRONT: maintain exact evidence, reconcile release artifacts, and continue only with zero-cost technical hardening/backlog work; do not create speculative candidate SHA.
 
 # 0B. AUTONOMOUS MEMORY + SELF-IMPROVEMENT PROTOCOL
 
@@ -781,3 +776,9 @@ Keep promotions, provider notification delivery, integration delivery records/ad
 - Added isolated exact-candidate proof patterns for Deployment Browser and Final Regression without candidate mutation.
 - Confirmed that workflow-contract PASS cannot stand in for authenticated Browser E2E.
 - Preserved strict environment/SHA separation while closing all candidate-side technical gates.
+
+## EVOLUTION LOG — RUN-2026-09-20-EXECUTE-014
+- The isolated candidate proof workflow completed after the manifest-parser harness defect was corrected; Customer E2E, Admin E2E, and Final Regression are now proven against the exact candidate deployment/SHA.
+- Vercel runtime-log and runtime-error checks were reconciled against the deployment's actual Vercel project ID rather than a stale project ID; no runtime logs/errors were found for the exact candidate deployment.
+- Free-tier boundary clarified: Supabase native leaked-password protection remains an external WARN and is not a justification for a paid-tier upgrade under the zero-cost product constraint.
+- Control-plane startup pointers were stale versus the canonical 72d5dae state; this run reconciles the top-level reality, current state, and execution-start router so future sessions do not resume from obsolete SHA/evidence.
