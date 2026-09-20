@@ -27,13 +27,13 @@
 - Development branch: `enhancement/market-ready-v4-20260918`.
 - PR #88: OPEN / DRAFT; base is frozen candidate `2facceb39aaa826413f20245a6f20b6c2ff7cd34`.
 - **Current development SHA: `1366f8ea240f2b1c58d78a863aa7a5584be531fb`.**
-- Previous exact fix SHA: `2f1ad18f62a76ff82483b1753d18e96cb7bbf146`.
-- Exact current-SHA Final Regression `35477914059`: SUCCESS.
-- Exact current-SHA Security `35477914046`: SUCCESS; Application Quality `35477914032`: SUCCESS; G1 `35477914182`/`35477916774`: SUCCESS.
-- Exact current-SHA Test-the-Test `35477914073`, Concurrency `35477914055`, Migration `35477914025`, Browser Fresh Local `35477913975`, and Browser Local Production Artifact `35477913977` are RUNNING at this checkpoint.
-- Current Vercel preview deployment for `1366f8ea240f2b1c58d78a863aa7a5584be531fb` is building; previous exact fix deployment was READY.
-- Netlify Exact SHA `35477914057`: external HTTP 403 account-credit exhaustion; no product PASS is inferred.
-- Frozen candidate remains untouched; Production remains HOLD / NO TOUCH.
+- Exact current development Vercel deployment: `dpl_DVpzzmGceQ8hSZkTMKHzDc9DCmCh`, READY.
+- New candidate branch: `certification/final-candidate-20260920-v3`, exact SHA `1366f8ea240f2b1c58d78a863aa7a5584be531fb`.
+- Candidate Vercel deployment: `dpl_72VRoKV9a71aY8JPtn7Pqsv5p18z`, READY, exact SHA `1366f8ea240f2b1c58d78a863aa7a5584be531fb`.
+- Candidate branch now has exact CI release gates running/closing against the same SHA; no evidence is transferred from other SHAs.
+- Frozen historical candidate `certification/final-candidate-20260918` remains at `2facceb39aaa826413f20245a6f20b6c2ff7cd34` and remains untouched.
+- Production remains HOLD / NO TOUCH.
+- Netlify exact-SHA remains externally blocked by HTTP 403 account-credit exhaustion.
 
 ## 4. LIVE SUPABASE TRUTH
 - Project: `aghbari-commerce`; ref `mrcyqezbhpncuvaehwgf`; status `ACTIVE_HEALTHY`; PostgreSQL `17.6.1.166`.
@@ -66,16 +66,16 @@ Unless explicitly implemented and proven, these remain backlog/deferred: promoti
 
 ## 8. NEXT EXECUTION QUEUE
 ### P0
-1. Revalidate the affected release gates on exact SHA `9d2149de...`; do not inherit PASS from `4f0a0614...`.
-2. Reconcile the complete development delta against frozen candidate `2facceb...` without touching the candidate.
-3. Establish formal release/candidate readiness only from exact candidate evidence; certification remains NO until all required gates are proven.
+1. Finish candidate-v3 exact-SHA gates: migration, concurrency, Test-the-Test, fresh browser, local production browser.
+2. Establish candidate deployment-browser proof on the candidate Vercel deployment; the PR-triggered browser workflow currently proves only the browser contract and skips the authenticated E2E job on pull_request events.
+3. Reconcile the full 61-commit delta against the frozen historical candidate without mutating the frozen ref.
+4. Certification remains NO until every mandatory release gate is proven on the candidate and every external blocker is classified.
 
 ### P1
-4. Resolve/reassess Auth leaked-password protection through an authorized external configuration path.
-5. Reconcile master specification vs implementation/deferred capabilities.
-6. Consolidate frontend/CSS historical layers only after reference proof and exact regression.
-
-## 9. DURABLE EXECUTION LESSON — 2026-09-20
+5. Resolve/reassess Auth leaked-password protection through an authorized external configuration path.
+6. Reconcile deferred master-spec capabilities against product readiness.
+7. Consolidate frontend/CSS historical layers only after reference proof and exact regression.
+ — 2026-09-20
 A single post-checkpoint commit can invalidate exact-SHA evidence even when the code change is only a test fixture. The control protocol therefore treats **every SHA change as an evidence reconciliation event**, while allowing unaffected historical findings to remain audit context. Current exact-SHA browser proof must be established independently; no PASS is inherited merely because the delta appears low-risk.
 
 
@@ -83,3 +83,8 @@ A single post-checkpoint commit can invalidate exact-SHA evidence even when the 
 - A later role-split migration (`20260920000410_split_customer_profile_role.sql`) redefined a SECURITY DEFINER invitation function with `search_path=public` and unqualified `digest()`, regressing the earlier hardened `search_path='' + extensions.digest()` contract. The defect was exposed by the exact concurrency matrix on SHA `9d2149de...`.
 - Corrective migration `20260920000500_harden_customer_invitation_crypto.sql` restores empty search_path, schema-qualified crypto, customer role semantics, and service_role-only execution. Equivalent hardening was applied live and verified by effective function definition/privileges plus a safe invalid-token invocation that reached `invitation not found` rather than crypto-resolution failure.
 - Proof-system rule: when workflow dispatch is unavailable, critical exact-SHA local browser/concurrency workflows must have an automatic trigger path on the active development branch family. This is now covered by `enhancement/**` push triggers.
+
+
+## 11. DURABLE CANDIDATE RELEASE LESSON — 2026-09-20
+- Creating a new certification branch from a proven development SHA preserves the frozen historical candidate while enabling exact candidate-specific CI. Candidate evidence is still environment-specific: local browser/CI proof does not become Deployment Browser proof merely because the source SHA matches.
+- Vercel Git integration produced a READY candidate deployment for the exact candidate SHA, but the repository Browser E2E workflow's authenticated job is conditional on `deployment_status` or manual dispatch. A pull-request-triggered browser-contract PASS therefore cannot be promoted to Deployment Browser PASS.
