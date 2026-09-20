@@ -1236,3 +1236,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
     display: none;
   }
 }
+
+
+/* Prevent duplicate identity mark: the live staff shell renders its own brand mark. */
+.staff-shell .staff-topbar::before { display: none !important; }
