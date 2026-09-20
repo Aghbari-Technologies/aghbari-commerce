@@ -260,3 +260,15 @@ No Candidate mutation, no Production mutation, no paid Vercel/Supabase upgrade.
 - Exact current G1 workflow run: `35543245468` — QUEUED; job `106165362690` if/when exposed is the next direct proof target.
 - Previous exact UI SHA `255ee1484d0c0192034fe4a277ac27b4c7b875cc` deployment `dpl_9S5oxwqv2cY5BmMD4JTgYNT3raYC` is READY, but is not current-SHA evidence.
 - No PASS/certification/merge claim is made for `509b6597...` until the exact-SHA verification set reaches terminal proven results.
+
+
+## CURRENT RESUME POINTER — RUN-2026-09-21-EXECUTE-UI-003
+- ACTIVE UI BRANCH: `execution/customer-ui-completion-20260920`
+- EXACT UI HEAD / PR HEAD: `7f1b523319d74aa17f549c49db0f52482df5c00b`
+- LATEST IMPLEMENTED: skip-to-content accessibility landmarks; ES2024 TypeScript baseline; modern rendering/interaction CSS; customer template label correction; 120-minute UI coverage + session-resume boot rules.
+- VERCEL EXACT-SHA DEPLOYMENT: `dpl_Gs339VatHiPGCVhv46UF7ot1HiTE` — QUEUED at latest check.
+- CI EXACT-SHA: G1 run `35543639501` — QUEUED; other workflow visibility remains incomplete until runs surface.
+- PREVIOUS READY UI DEPLOYMENT: `dpl_9S5oxwqv2cY5BmMD4JTgYNT3raYC` for `255ee148...`; not current-SHA evidence.
+- CANDIDATE: `1685836f4226fdcb3250a60eba7430ecf3e8f080` unchanged.
+- PRODUCTION: NO TOUCH / HOLD.
+- NEXT EXECUTABLE TASK: reconcile exact-SHA CI + Vercel for `7f1b523319d74aa17f549c49db0f52482df5c00b`; once terminal, repair failures before additional scope.
