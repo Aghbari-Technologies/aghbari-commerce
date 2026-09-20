@@ -96,3 +96,8 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 - Runtime error clusters for the project in the checked 1-hour window: none. Deployment-scoped preview error/fatal logs in the checked window: none.
 - Candidate-triggered exact-SHA workflows are now running on `1685836f4226fdcb3250a60eba7430ecf3e8f080`: Fresh Local Browser `35483251620`; Local Production Artifact Browser `35483251716`; Migration `35483251634`; Test-the-Test `35483251636`; Concurrency `35483251748`. Exact Deployment Browser Contract `35483251669` is SUCCESS.
 - No deployment-browser E2E or Final Regression PASS is asserted yet. Old `72d5dae...` deployment evidence remains invalid for the promoted SHA.
+
+## RUN-2026-09-20-EXECUTE-016 FINAL RECONCILIATION
+- All candidate-triggered exact-SHA revalidation runs completed SUCCESS for `1685836f4226fdcb3250a60eba7430ecf3e8f080`: Fresh Local Browser `35483251620`; Local Production Artifact Browser `35483251716`; Migration `35483251634`; Test-the-Test `35483251636`; Concurrency `35483251748`; Order Workflow `35483251629`; Bootstrap `35483251637`; Exact Deployment Browser Contract `35483251669`; Security `35483251600`; G1 `35483251710`; Quality `35483251704`.
+- Candidate deployment `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` is READY, exact SHA matched, HTTP 200 shell verified; no runtime errors/fatal logs in the checked deployment window.
+- Certification status: NOT CERTIFIED. Candidate full Deployment Browser E2E and Final Regression remain NOT_PROVEN because workflow dispatch is not exposed by the connected GitHub capability. No evidence is fabricated or transferred from `72d5dae...`. Production remains NO TOUCH.
