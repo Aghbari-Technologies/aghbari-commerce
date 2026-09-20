@@ -1588,3 +1588,112 @@
     min-width: auto;
   }
 }
+
+.inline-detail-button {
+  margin-top: 7px;
+  padding: 5px 8px;
+  border: 1px solid #cfe1e6;
+  border-radius: 8px;
+  background: #f2f8fa;
+  color: var(--ag-primary-strong);
+  font-size: 10px;
+  font-weight: 850;
+}
+.staff-order-detail-modal {
+  width: min(820px, 100%);
+}
+.staff-order-detail-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 13px 0;
+  border-bottom: 1px solid #e7eff1;
+}
+.staff-order-detail-head > div {
+  display: grid;
+  gap: 4px;
+}
+.staff-order-detail-head strong {
+  color: var(--ag-ink);
+  font-size: 14px;
+}
+.staff-order-detail-head small,
+.staff-order-detail-head span {
+  color: var(--ag-muted);
+  font-size: 10px;
+}
+.staff-order-detail-head > div:last-child {
+  justify-items: end;
+}
+.staff-order-detail-head > div:last-child strong {
+  color: var(--ag-primary-strong);
+  font-size: 19px;
+}
+.staff-order-lines {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+.staff-order-line {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto auto;
+  gap: 14px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid #e2ecef;
+  border-radius: 12px;
+  background: #fbfdfe;
+}
+.staff-order-line > div {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+.staff-order-line strong {
+  color: var(--ag-ink);
+  font-size: 12px;
+}
+.staff-order-line small,
+.staff-order-line span {
+  color: var(--ag-muted);
+  font-size: 10px;
+}
+.staff-order-line > b {
+  min-width: 105px;
+  text-align: end;
+  color: var(--ag-ink);
+  font-size: 12px;
+}
+.staff-order-detail-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #e7eff1;
+  color: var(--ag-muted);
+}
+.staff-order-detail-footer strong {
+  color: var(--ag-primary-strong);
+  font-size: 18px;
+}
+@media (max-width: 640px) {
+  .staff-order-detail-head {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .staff-order-detail-head > div:last-child {
+    justify-items: start;
+  }
+  .staff-order-line {
+    grid-template-columns: 1fr auto;
+  }
+  .staff-order-line > span {
+    grid-column: 1 / -1;
+  }
+  .staff-order-line > b {
+    min-width: auto;
+  }
+}
