@@ -274,3 +274,14 @@ RUN-2026-09-20-EXECUTE-022 — WORLD-CLASS UI/UX ADVANCEMENT
 - Exact-SHA UI Visual Review run `35542432570` is QUEUED; all other exact-SHA product/security/browser gates for `c481db25ab046b73bec3693944a7cbcfc8369835` are also QUEUED at latest observation. No PASS transferred from prior SHA.
 - TinyFish visual automation was not used because the connected wallet is below zero; no paid workaround used.
 - Certification Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain untouched / NO TOUCH.
+
+
+## CURRENT EXECUTION RECONCILIATION — RUN-2026-09-21-EXECUTE-UI-001
+- Active development/UI branch: `execution/customer-ui-completion-20260920`.
+- Exact current UI SHA: `255ee1484d0c0192034fe4a277ac27b4c7b875cc`.
+- UI changes after `c481db25...`: encoded 120-minute UI coverage + session-resume rules in the execution-start router; removed the unconsumed one-time dependency-refresh workflow/marker after no authoritative package-lock regeneration occurred; restored the locked-stack ESLint config; added a modern CSS interaction/rendering baseline using safe browser primitives (color-scheme, scrollbar-gutter, text-wrap, contain/content-visibility where supported, touch-action, accent-color, safe-area spacing).
+- Actual locked frontend stack remains: React 19.1.1, React DOM 19.1.1, Vite 7.3.5, TypeScript 5.9.2, Vitest 3.2.4, Supabase JS 2.112.4, Playwright 1.63.0, ESLint 9.35.0.
+- Current validated newer releases are recorded as an upgrade target, not as installed truth: React 19.3.x, Vite 8.3.x, TypeScript 7.0.x, Supabase JS 2.116.x, Vitest 5.x, ESLint 10.x. A full dependency upgrade requires deterministic lockfile regeneration and exact-SHA regression; do not claim it as completed until that proof exists.
+- Latest Vercel deployment for exact SHA `255ee1484d0c0192034fe4a277ac27b4c7b875cc`: `dpl_9S5oxwqv2cY5BmMD4JTgYNT3raYC` — QUEUED at latest observation. Prior deployment READY states are not current-SHA evidence.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain HOLD / NO TOUCH.
+- Resume pointer: reconcile exact-SHA CI + Vercel state for `255ee1484d0c0192034fe4a277ac27b4c7b875cc`; then repair any exact-SHA failure before further UI expansion. Do not reuse prior SHA PASS evidence.
