@@ -294,3 +294,13 @@ RUN-2026-09-20-EXECUTE-022 — WORLD-CLASS UI/UX ADVANCEMENT
 - Added safe modern browser UI primitives for rendering/interaction and mobile safe-area handling; retained no-business-logic-change discipline.
 - Locked package versions remain the actual installed truth; newer external releases remain an upgrade target pending deterministic lockfile regeneration and exact regression proof.
 - Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain unchanged / NO TOUCH.
+
+
+## CURRENT EXECUTION RECONCILIATION — RUN-2026-09-21-EXECUTE-UI-003
+- Active UI branch: `execution/customer-ui-completion-20260920`.
+- Latest branch/PR head: `7f1b523319d74aa17f549c49db0f52482df5c00b`.
+- Added keyboard skip navigation to both customer and staff shells, with explicit main landmarks and focus-safe styling.
+- Corrected customer-facing order template wording from `المسحات` to `قوالب الطلبات` in all three UI occurrences.
+- TypeScript language baseline remains ES2024; locked dependency graph remains unchanged for reproducibility.
+- Latest verified external stable targets remain React 19.3.0, TypeScript 7.0.2, Vite 8.3.0, Supabase JS 2.116.0, Vitest 5.0.1, ESLint 10.11.0; adoption still requires deterministic lockfile regeneration + exact regression proof.
+- Certification Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain untouched / NO TOUCH.
