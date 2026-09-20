@@ -1,35 +1,14 @@
-# CURRENT EXECUTION REALITY — RUN-2026-09-20-EXECUTE-018
-- Development branch: `enhancement/market-ready-v4-20260918`; verified development base SHA `cc9f5e7e1906b553613bb2e8dee99dacd704491d`.
-- Active development front: `execution/quick-order-server-lookup-20260920`, exact head `483f9722f226c5f295c96edde2be88d760ceb520`, PR #96 targeted at development and not merged.
-- PR #96 compare against dev: 6 commits / 2 changed files only.
-- Candidate: `certification/final-candidate-20260920-v3` at `1685836f4226fdcb3250a60eba7430ecf3e8f080`, unchanged; candidate Vercel `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` READY exact.
-- Production: HOLD / NO TOUCH.
-- Running exact-SHA fronts: Test-the-Test `35485184023`; Concurrency `35485184025`; Local Production Artifact Browser `35485184035`.
-- External Vercel status: Free-plan `api-deployments-free-per-day` failure on the development PR; no paid workaround authorized.
+# CURRENT EXECUTION REALITY — RUN-2026-09-20-EXECUTE-019
+- Development product head: `d8b627bd884c61c0f7f3a18dda1b0e880ef6735c` on `enhancement/market-ready-v4-20260918`.
+- Active CI proof hardening: `execution/final-regression-routing-20260920` @ `3aafdf19c8a8affc0af8cb0692d81a15e512dcd1`, PR #99 → development.
+- Final Regression local source-artifact proof `35486034001` is SUCCESS; the old failure `35485494878` was a real stale-preview mismatch caused by Vercel Free-plan quota and is not a product defect.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and frozen candidate `2facceb39aaa826413f20245a6f20b6c2ff7cd34` remain untouched.
+- Production remains HOLD / NO TOUCH.
+- Current unresolved exact-SHA checks for CI-hardening SHA at checkpoint: Migration `35486034018`, Test-the-Test `35486034020`, Concurrency `35486033945`, Fresh Local Browser `35486033929`, Local Production Artifact Browser `35486033954`.
+- Supabase current advisor review shows only the known intentional SECURITY DEFINER warnings and unused-index informational findings; no new actionable free-safe DDL issue was introduced.
 
-# CURRENT EXECUTION REALITY — RUN-2026-09-20-EXECUTE-016
-- Active certification branch: `certification/final-candidate-20260920-v3`
-- Active candidate SHA: `1685836f4226fdcb3250a60eba7430ecf3e8f080`
-- New candidate Vercel: `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` READY, exact SHA matched
-- WIP Test-the-Test: `35481150811` / job `105999082463` SUCCESS
-- Frozen historical candidate `2facceb...`: FROZEN / NO TOUCH
-- Production: HOLD / NO TOUCH
-- Netlify: external HTTP 403 credit blocker
-- Supabase Auth leaked-password protection: external warning; FREE-TIER COST CONSTRAINT = DO NOT UPGRADE JUST FOR THIS
+# الأغبري | Aghbari Commerce — Execution Control Plane
 
-- Development branch: `enhancement/market-ready-v4-20260918`
-- Development SHA: `72d5dae91ca7250c98ebb50d8b05409500f77c13`
-- Candidate branch: `certification/final-candidate-20260920-v3`, exact SHA matches
-- Candidate Vercel: `dpl_DVfuqGzcMPBX3aTgaH64LdChES6Y` READY
-- Candidate exact release gates: ALL MANDATORY TECHNICAL GATES PROVEN
-- Candidate Deployment Browser proof: `35479844177` / job `105995552224` SUCCESS
-- Final Regression proof: `35479844177` / job `105995552370` SUCCESS
-- Frozen historical candidate `2facceb...`: FROZEN / NO TOUCH
-- Production: HOLD / NO TOUCH
-- Netlify: external HTTP 403 credit blocker
-- Supabase Auth leaked-password protection: external warning; FREE-TIER COST CONSTRAINT = DO NOT UPGRADE JUST FOR THIS
-
-# الأغبري |# الأغبري | Aghbari Commerce — Execution Control Plane
 
 > **Canonical operating document for continuous execution, proof, reconciliation, and release closure.**
 >
