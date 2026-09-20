@@ -1,11 +1,12 @@
-# CURRENT EXECUTION REALITY — RUN-2026-09-20-EXECUTE-019
-- Development product head: `d8b627bd884c61c0f7f3a18dda1b0e880ef6735c` on `enhancement/market-ready-v4-20260918`.
-- Active CI proof hardening: `execution/final-regression-routing-20260920` @ `3aafdf19c8a8affc0af8cb0692d81a15e512dcd1`, PR #99 → development.
-- Final Regression local source-artifact proof `35486034001` is SUCCESS; the old failure `35485494878` was a real stale-preview mismatch caused by Vercel Free-plan quota and is not a product defect.
-- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and frozen candidate `2facceb39aaa826413f20245a6f20b6c2ff7cd34` remain untouched.
-- Production remains HOLD / NO TOUCH.
-- Current unresolved exact-SHA checks for CI-hardening SHA at checkpoint: Migration `35486034018`, Test-the-Test `35486034020`, Concurrency `35486033945`, Fresh Local Browser `35486033929`, Local Production Artifact Browser `35486033954`.
-- Supabase current advisor review shows only the known intentional SECURITY DEFINER warnings and unused-index informational findings; no new actionable free-safe DDL issue was introduced.
+# CURRENT EXECUTION REALITY — RUN-2026-09-20-EXECUTE-020
+- Development branch: `enhancement/market-ready-v4-20260918`; CI hardening PR #99 is merged at exact merge SHA `35d95e5e140820c7e7a8e0a792f89b28eacfb8e8`.
+- Active UI implementation branch: `execution/customer-ui-completion-20260920`; current head `1c759469994ad4fa4cb85f8c9fd09add810466e0`; PR #100 is OPEN / DRAFT and contains customer/staff UI + data-fetch performance hardening.
+- UI work includes: separate catalog vs operational fetching, search reset/context, exact loading skeletons, accessible dialog semantics + Escape dismissal, product image alt text, responsive staff shell, role-aware staff section shortcuts, and browser coverage for the new UI paths.
+- Exact-SHA CI for UI head `1c759469994ad4fa4cb85f8c9fd09add810466e0` is currently queued on GitHub Actions; no PASS is claimed until every required exact-SHA workflow terminates SUCCESS.
+- Vercel status for UI head is externally rate-limited on the Free plan (`api-deployments-free-per-day` / retry later); this is an environment constraint, not proof of product behavior.
+- CI-hardening SHA `3aafdf19c8a8affc0af8cb0692d81a15e512dcd1` completed all 12 tracked exact-SHA workflows SUCCESS before merge, including Test-the-Test `35486034020`; merged development SHA is therefore `35d95e5e140820c7e7a8e0a792f89b28eacfb8e8`.
+- Certification candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080`, candidate Vercel `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C`, frozen historical candidate `2facceb39aaa826413f20245a6f20b6c2ff7cd34`, and Production remain untouched; Production is HOLD / NO TOUCH.
+- Netlify remains externally BLOCKED by account-credit exhaustion; no cost-bearing workaround is authorized.
 
 # الأغبري | Aghbari Commerce — Execution Control Plane
 
@@ -43,16 +44,18 @@
 ---
 
 # 0A. AUTHORITATIVE LIVE EXECUTION STATE — 2026-09-20 — CURRENT RECONCILIATION
-- DEVELOPMENT LANE: `enhancement/market-ready-v4-20260918`; PR #88 OPEN / DRAFT / MERGEABLE.
-- CURRENT DEVELOPMENT SHA: `72d5dae91ca7250c98ebb50d8b05409500f77c13`.
-- EXACT VERCEL CANDIDATE: `dpl_DVfuqGzcMPBX3aTgaH64LdChES6Y`, READY, exact SHA matched.
-- EXACT-SHA TECHNICAL GATES: Bootstrap `35479239719`; Quality `35479239624`; Security `35479239515`; G1 `35479239732`; Order Workflow `35479239619`; Migration `35479239575`; Concurrency `35479239567`; Test-the-Test `35479239547`; Fresh Browser `35479239560`; Local Production Artifact Browser `35479239623` — all SUCCESS.
-- EXACT CANDIDATE DEPLOYMENT BROWSER: run `35479844177` job `105995552224` SUCCESS; Customer E2E and Admin E2E completed successfully; browser evidence artifact `10596010632`.
-- FORMAL FINAL REGRESSION: run `35479844177` job `105995552370` SUCCESS; artifact `10595392644`, digest `sha256:4fd744980d85bf08da616764441793258d261caef7d7752627172e38faf891eb`.
-- NETLIFY EXACT-SHA: externally BLOCKED by account-credit exhaustion (HTTP 403); no cost-bearing workaround authorized.
-- CERTIFICATION: TECHNICAL GATES COMPLETE; release boundary remains held because Supabase native leaked-password protection is unavailable on Free and Production has explicit NO TOUCH until release authorization.
-- PRODUCTION: NO TOUCH.
-- NEXT OPEN FRONT: maintain exact evidence, reconcile release artifacts, and continue only with zero-cost technical hardening/backlog work; do not create speculative candidate SHA.
+- DEVELOPMENT LANE: `enhancement/market-ready-v4-20260918`.
+- CURRENT DEVELOPMENT MERGE SHA: `35d95e5e140820c7e7a8e0a792f89b28eacfb8e8` (PR #99 CI proof-routing hardening merged after all exact-SHA gates succeeded).
+- ACTIVE IMPLEMENTATION: `execution/customer-ui-completion-20260920` @ `1c759469994ad4fa4cb85f8c9fd09add810466e0`; PR #100 OPEN / DRAFT.
+- UI FRONT: customer portal and staff portal UX/performance/accessibility hardening; no business-truth or reporting-boundary change.
+- UI EXACT-SHA PROOF: GitHub Actions runs exist for the exact UI head but are still QUEUED at this checkpoint; Vercel status is an external Free-plan rate-limit failure and is not treated as product proof.
+- CI PROOF ROUTING: push-time Final Regression now builds/verifies the exact source artifact locally; deployment proof remains separate. The routing change was merged via PR #99.
+- CERTIFICATION CANDIDATE: `certification/final-candidate-20260920-v3` / `1685836f4226fdcb3250a60eba7430ecf3e8f080` — unchanged.
+- CANDIDATE VERCEL: `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` — READY, exact candidate SHA.
+- FROZEN HISTORICAL CANDIDATE: `2facceb39aaa826413f20245a6f20b6c2ff7cd34` — NO TOUCH.
+- PRODUCTION: HOLD / NO TOUCH.
+- EXTERNAL DEPLOYMENT LIMITS: Vercel development deployments rate-limited on Free; Netlify HTTP 403 credit exhaustion; no paid upgrade/workaround authorized.
+- NEXT OPEN FRONT: finish exact-SHA UI verification, merge PR #100 only after all required exact checks are terminal SUCCESS, then treat its merge SHA as a new verification unit and rerun affected gates. Continue product UI/transactional backlog after each proven merge; never transfer proof across SHAs.
 
 # 0B. AUTONOMOUS MEMORY + SELF-IMPROVEMENT PROTOCOL
 
