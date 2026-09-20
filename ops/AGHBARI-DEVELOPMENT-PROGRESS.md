@@ -347,3 +347,11 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 **Implemented:** Scoped five previously broad `push.branches: ['**']` verification workflows to `main`, `execution/**`, `enhancement/**`, `certification/**`, `proof/**`, and `release/**`, preventing `ops/**` documentation activity from launching product verification. PR #100 body was synchronized to the current head.
 **Verification:** Vercel deployment `dpl_4GPcZtQPW7Y9LYF1FV4Lyj4EBXtx` READY with exact SHA `629ecad26367a6c860e10a668d5ec71f34ae9083`; commit status context `Vercel` SUCCESS. Exact verification runs for this SHA are present but queued/pending; no PASS claimed. Candidate and Production unchanged.
 **Resume:** reconcile queued exact-SHA gates, then obtain valid authenticated browser visual proof before merge.
+
+## RUN-2026-09-21-EXECUTE-UI-007
+**Date:** 2026-09-21
+**Exact SHA:** `a5369f4a17147c315f571c84743ed3682e4b2337`
+**Front:** UI workflow completion and terminology/accessibility polish
+**Implemented:** customer directory search/status/tier filters; purchase-order search/status filters; Arabic localization of reporting/settings labels and removal of remaining legacy template wording in inspected customer/staff UI files.
+**Evidence:** exact active-branch source re-read after edits. Vercel prior READY evidence is not transferred to the current SHA. Current SHA verification runs are queued. Candidate and Production untouched.
+**Next:** reconcile terminal current-SHA gates and then authenticated browser visual proof; stop speculative UI commits while equivalent proof is pending.
