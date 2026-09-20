@@ -312,3 +312,13 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 - G1 run `35544020449` is QUEUED; no PASS.
 - Candidate and Production unchanged.
 - Next: exact-SHA deployment/browser/CI verification for `0e23965179818904d62d7577abb919cca16593a6`, then merge only after required gates are terminal SUCCESS.
+
+## RUN-2026-09-21-EXECUTE-024C
+- Reconciled PR #100 after the terminology-fix commit: exact head is `0e23965179818904d62d7577abb919cca16593a6`, OPEN / DRAFT / MERGEABLE.
+- Exact Vercel deployment `dpl_5SWnt86P56xTYZV8yxNSE3Jmtay9` is READY with matching source SHA.
+- Runtime error scan for the selected last-hour window returned no runtime errors.
+- Exact G1 run `35544020449` / job `106166637449` remains QUEUED; no PASS.
+- External preview fetch redirects to Vercel SSO even when using the generated share-access path; no browser visual PASS inferred.
+- Result: product UI terminology correction is implemented and deployment-ready, but exact-SHA CI/browser proof is still OPEN/QUEUED.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain untouched.
+- Next: terminal exact-SHA proof, then merge/reprove; no evidence transfer across SHAs.
