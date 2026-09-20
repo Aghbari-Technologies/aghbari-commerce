@@ -35,11 +35,13 @@ test.describe('Aghbari UI visual integrity', () => {
     await page.setViewportSize({ width: 1440, height: 1000 });
     await login(page, 'customer-a@test.local');
     await expect(page.locator('.portal-header')).toBeVisible();
-    await expect(page.locator('.command-launch')).toHaveCount(0);
+    await expect(page.locator('.command-launch-button')).toBeVisible();
     await expect(page.locator('.portal-nav')).toBeVisible();
     await expect(page.locator('.portal-bottom-nav')).toBeHidden();
     await expect(page.locator('.product-grid')).toBeVisible();
     await expect(page.locator('.hero-card')).toBeVisible();
+    await expect(page.locator('.purchase-shortcuts')).toBeVisible();
+    await expect(page.locator('.purchase-shortcut-grid button').first()).toBeVisible();
     await page.screenshot({ path: 'visual-evidence/customer-desktop.png', fullPage: true });
   });
 
@@ -51,6 +53,9 @@ test.describe('Aghbari UI visual integrity', () => {
     await expect(page.locator('.portal-bottom-nav')).toBeVisible();
     await expect(page.locator('.product-grid')).toBeVisible();
     await expect(page.locator('.hero-card')).toBeVisible();
+    await expect(page.locator('.command-launch-button')).toBeHidden();
+    await expect(page.locator('.portal-bottom-nav')).toBeVisible();
+    await expect(page.locator('.purchase-shortcuts')).toBeVisible();
     await page.screenshot({ path: 'visual-evidence/customer-mobile.png', fullPage: true });
   });
 
@@ -60,6 +65,11 @@ test.describe('Aghbari UI visual integrity', () => {
     await expect(page.getByRole('heading', { name: 'مركز التحكم' }).first()).toBeVisible({ timeout: 15000 });
     await expect(page.locator('.staff-section-rail')).toBeVisible();
     await expect(page.locator('.admin-operations')).toBeVisible();
+    await expect(page.locator('#admin-customers')).toBeVisible();
+    await expect(page.locator('#admin-inventory')).toBeVisible();
+    await expect(page.locator('#admin-purchasing')).toBeVisible();
+    await expect(page.locator('#admin-finance')).toBeVisible();
+    await expect(page.locator('#admin-settings')).toBeVisible();
     await page.screenshot({ path: 'visual-evidence/staff-desktop.png', fullPage: true });
   });
 
