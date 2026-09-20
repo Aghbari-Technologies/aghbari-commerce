@@ -286,3 +286,11 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 - VERCEL: deployment `dpl_Gs339VatHiPGCVhv46UF7ot1HiTE` for SHA `7f1b5233...` was QUEUED at the latest check.
 - CI: exact-SHA G1 run `35543639501` was QUEUED; no PASS claimed.
 - RELEASE SAFETY: Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain unchanged.
+
+
+## RUN-2026-09-21-EXECUTE-UI-004 — DEPLOYMENT RECONCILIATION
+- UI HEAD: `7f1b523319d74aa17f549c49db0f52482df5c00b`.
+- Vercel exact-SHA deployment `dpl_Gs339VatHiPGCVhv46UF7ot1HiTE` is READY and SHA-matched.
+- GitHub G1 exact-SHA run `35543639501` remains QUEUED; job `106165620419` QUEUED.
+- No certification or merge PASS is asserted from Vercel READY alone.
+- Candidate and Production unchanged.
