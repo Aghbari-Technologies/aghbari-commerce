@@ -40,17 +40,24 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
       try {
         // Read a wider window than the seven-day presentation window so browser/runner timezone cannot under-fetch the first included business day. The domain calculator performs the exact Asia/Aden day filter.
         const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 10);
-        const [productsResult, customersResult, ordersResult, stockResult, creditResult, staffOrders, salesResult] = await Promise.all([
+        const [productsResult, customersResult, ordersResult, stockResult, creditResult, staffOrdersResult, salesResult] = await Promise.all([
           supabase.from('products').select('id', { count: 'exact', head: true }).eq('status', 'active'),
           supabase.from('customers').select('id', { count: 'exact', head: true }),
           supabase.from('orders').select('id', { count: 'exact', head: true }),
           supabase.from('inventory_balances').select('product_id', { count: 'exact', head: true }),
           supabase.from('customer_credit_accounts').select('outstanding_balance,available_credit'),
-          getStaffOrders(100),
+          getStaffOrders(100).then((data) => ({ data, error: null as Error | null })).catch((cause) => ({ data: [] as StaffOrderSummary[], error: cause instanceof Error ? cause : new Error('تعذر تحميل الطلبات التشغيلية.') })),
           supabase.from('orders').select('status,total,created_at').gte('created_at', cutoff.toISOString()).order('created_at', { ascending: true }).limit(1000),
         ]);
-        const firstError = productsResult.error ?? customersResult.error ?? ordersResult.error ?? stockResult.error ?? creditResult.error ?? salesResult.error;
-        if (firstError) throw firstError;
+        const queryFailures = [
+          productsResult.error,
+          customersResult.error,
+          ordersResult.error,
+          stockResult.error,
+          creditResult.error,
+          staffOrdersResult.error,
+          salesResult.error,
+        ].filter(Boolean);
         const salesRowsData: DashboardSaleRow[] = (salesResult.data ?? []).map((row) => ({ status: String(row.status), total: Number(row.total ?? 0), created_at: String(row.created_at) }));
         const sales7d = calculateSevenDaySales(salesRowsData, new Date());
         const creditRows = creditResult.data ?? [];
@@ -64,9 +71,10 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
             availableCredit: creditRows.reduce((sum, row) => sum + Number(row.available_credit ?? 0), 0),
             sales7d,
           });
-          setOrders(staffOrders);
+          setOrders(staffOrdersResult.data);
           setSalesRows(salesRowsData);
           setLastUpdated(new Date());
+          setError(queryFailures.length ? 'تعذر تحديث بعض مناطق لوحة الإدارة؛ المناطق السليمة ما زالت تعرض آخر بيانات مؤكدة.' : null);
         }
       } catch (cause) {
         if (!cancelled) setError(cause instanceof Error ? cause.message : 'تعذر تحديث مؤشرات لوحة الإدارة.');
@@ -112,7 +120,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
         </div>
 
         <div className="executive-grid-two">
-          <article className="executive-card sales-chart"><div className="executive-card-title"><div><span>المبيعات</span><h2>حركة المبيعات خلال آخر 7 أيام</h2></div><b>{money(snapshot.sales7d)}</b></div><div className="bars" aria-label="مخطط المبيعات لسبعة أيام">{salesByDay.map((day) => <div className="bar-column" key={day.key}><strong>{day.value ? formatMoney(day.value) : '0'}</strong><div className="bar" style={{ height: `${Math.max(8, (day.value / maxSales) * 150)}px` }} /><small>{day.label}</small></div>)}</div></article>
+          <article className="executive-card sales-chart"><div className="executive-card-title"><div><span>المبيعات</span><h2>حركة المبيعات خلال آخر 7 أيام</h2></div><b>{money(snapshot.sales7d)}</b></div>{snapshot.sales7d > 0 ? <div className="bars" aria-label="مخطط المبيعات لسبعة أيام">{salesByDay.map((day) => <div className="bar-column" key={day.key}><strong>{day.value ? formatMoney(day.value) : '0'}</strong><div className="bar" style={{ height: `${Math.max(8, (day.value / maxSales) * 150)}px` }} /><small>{day.label}</small></div>)}</div> : <div className="executive-empty-chart" role="status"><strong>لا توجد مبيعات مسجلة</strong><span>لم تُسجّل طلبات مكتملة خلال آخر 7 أيام.</span></div>}</article>
           <article className="executive-card"><div className="executive-card-title"><div><span>توزيع التشغيل</span><h2>حالة الطلبات</h2></div><b>{orders.length}</b></div><div className="status-list">{statusCounts.length ? statusCounts.map((item) => <div key={item.status}><span>{item.label}</span><strong>{item.count}</strong><div><i style={{ width: `${Math.min(100, (item.count / Math.max(orders.length, 1)) * 100)}%` }} /></div></div>) : <p className="executive-empty">لا توجد طلبات تشغيلية في العينة الحالية.</p>}</div></article>
         </div>
 
