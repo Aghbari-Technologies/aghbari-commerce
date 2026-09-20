@@ -66,6 +66,13 @@ export default function AdminPanel({ role }: { role: UserRole }) {
   return <section className="admin-panel" id="account">
     <div className="staff-commandbar"><div><span className="eyebrow">مركز التشغيل</span><strong>وصول سريع للمهام</strong><small>Ctrl/⌘ K</small></div><button type="button" onClick={() => setCommandOpen(true)}>⚡ أوامر الأغبري</button></div>
     <AdminExecutiveDashboard role={role} />
+    <nav className="staff-section-rail" aria-label="اختصارات مركز التشغيل">
+      {commandActions.filter((action) => ['product-create','import','inventory','purchasing','orders','customers','finance','settings'].includes(action.id)).map((action) => (
+        <button type="button" key={action.id} onClick={action.onSelect}>
+          <span aria-hidden="true">{action.icon}</span><strong>{action.label}</strong><small>{action.hint}</small>
+        </button>
+      ))}
+    </nav>
     <details className="admin-operations" open>
       <summary>مركز التشغيل التفصيلي وإدارة البيانات</summary>
       <div className="section-heading"><div><span className="eyebrow">إدارة التشغيل</span><h2>مركز التحكم</h2></div><span>الصلاحيات تُفرض على الخادم أيضًا</span></div>
