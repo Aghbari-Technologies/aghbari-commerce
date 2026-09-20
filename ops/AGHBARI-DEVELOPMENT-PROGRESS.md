@@ -90,3 +90,9 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 - Vercel exact candidate deployment: `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C`, BUILDING, exact ref `certification/final-candidate-20260920-v3`, exact SHA `1685836f4226fdcb3250a60eba7430ecf3e8f080`.
 - Result: source-level candidate gates PROVEN for `1685836f4226fdcb3250a60eba7430ecf3e8f080`; deployment browser/final-regression remain NOT_PROVEN until the new deployment reaches READY. Production remains NO TOUCH.
 - Next: exact candidate Deployment Browser + Final Regression against `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` and `1685836f4226fdcb3250a60eba7430ecf3e8f080` after READY.
+
+## RUN-2026-09-20-EXECUTE-016 — LIVE RECONCILIATION UPDATE
+- Vercel candidate deployment `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` reached READY with exact ref `certification/final-candidate-20260920-v3` and exact SHA `1685836f4226fdcb3250a60eba7430ecf3e8f080`.
+- Runtime error clusters for the project in the checked 1-hour window: none. Deployment-scoped preview error/fatal logs in the checked window: none.
+- Candidate-triggered exact-SHA workflows are now running on `1685836f4226fdcb3250a60eba7430ecf3e8f080`: Fresh Local Browser `35483251620`; Local Production Artifact Browser `35483251716`; Migration `35483251634`; Test-the-Test `35483251636`; Concurrency `35483251748`. Exact Deployment Browser Contract `35483251669` is SUCCESS.
+- No deployment-browser E2E or Final Regression PASS is asserted yet. Old `72d5dae...` deployment evidence remains invalid for the promoted SHA.
