@@ -1,3 +1,15 @@
+## RUN-2026-09-21-EXECUTE-UI-007 — CURRENT AUTHORITATIVE RECONCILIATION
+- ACTIVE UI BRANCH: `execution/customer-ui-completion-20260920`
+- ACTIVE UI EXACT HEAD: `a5369f4a17147c315f571c84743ed3682e4b2337`
+- PR #100: OPEN / DRAFT / MERGEABLE; head matches this SHA.
+- UI COMPLETION: customer directory now has local search + status/tier filters + clear filtering; purchasing order list now has local search + status filter + clear filtering; customer-facing operational labels were localized and legacy template wording removed from ClientControlPanel; reporting export action is explicitly named as sending data to the reporting gateway.
+- EXACT SOURCE VERIFICATION: current UI files were re-read from the active branch after every edit; no legacy `المسحات/مسحة` remains in ClientControlPanel/AppV3Fixed visible template labels checked.
+- VERCEL: deployment `dpl_4GPcZtQPW7Y9LYF1FV4Lyj4EBXtx` is READY and exact to prior UI SHA `629ecad...`; newer intermediate deployments `0d9bb176...` and `4409fd9...` were ERROR, while `25e7adf...` was READY. The current SHA `a5369f4a17147c315f571c84743ed3682e4b2337` has not yet produced a corresponding deployment in the visible deployment list; do not transfer any deployment result from another SHA.
+- GITHUB EXACT-SHA CI: fresh required runs for `a5369f4a17147c315f571c84743ed3682e4b2337` exist and are currently queued; no PASS is claimed.
+- BROWSER PROOF: protected Vercel preview remains inaccessible through the available unauthenticated browser/fetch path; no visual PASS inferred.
+- CANDIDATE: `certification/final-candidate-20260920-v3` @ `1685836f4226fdcb3250a60eba7430ecf3e8f080` unchanged.
+- PRODUCTION: HOLD / NO TOUCH.
+- NEXT RESUME: obtain terminal exact-SHA build/test evidence for `a5369f4a17147c315f571c84743ed3682e4b2337`, then exact-SHA browser visual proof. Do not create further speculative UI commits until this proof set is reconciled unless a concrete defect is found.
 ## RUN-2026-09-21-EXECUTE-UI-006 — CURRENT AUTHORITATIVE RECONCILIATION
 - ACTIVE UI BRANCH: `execution/customer-ui-completion-20260920`
 - ACTIVE UI EXACT HEAD: `629ecad26367a6c860e10a668d5ec71f34ae9083`
