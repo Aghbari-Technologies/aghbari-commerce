@@ -80,3 +80,11 @@ Candidate `1685836f...` and frozen candidate `2facceb...` are untouched. Product
 - PRODUCTION: HOLD / NO TOUCH.
 - DEVELOPMENT VERCEL: Free-plan build-rate-limit remains external platform constraint.
 - NEXT CORE FRONT: high-frequency customer/admin transactional UI completion from verified development head; preserve explicit loading/empty/error/accessibility states and exact identifier/server-truth semantics.
+
+## RUN-2026-09-20-EXECUTE-019 CHECKPOINT
+- VERIFIED DEVELOPMENT PRODUCT SHA: `d8b627bd884c61c0f7f3a18dda1b0e880ef6735c`.
+- ACTIVE CI HARDENING SHA: `3aafdf19c8a8affc0af8cb0692d81a15e512dcd1` on `execution/final-regression-routing-20260920`; PR #99 targets development.
+- Final Regression `35486034001` SUCCESS on exact CI-hardening SHA. Security `35486034053`, G1 `35486035947`/`35486034028`, Browser Deployment Contract `35486033971`, Order Workflow `35486033938`, Quality `35486033946` SUCCESS.
+- Remaining RUNNING: Migration `35486034018`; Test-the-Test `35486034020`; Concurrency `35486033945`; Fresh Local Browser `35486033929`; Local Production Artifact Browser `35486033954`.
+- Historical Final Regression `35485494878` failed exactly because deployed preview exposed `72d5dae...` instead of expected `d8b627bd...`; this is now explicitly routed to local exact-source regression for push events.
+- Certification candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` / `dpl_CpazdZojBzCEdxZcpX5zw4jUKn5C` unchanged; frozen historical candidate unchanged; Production NO TOUCH.
