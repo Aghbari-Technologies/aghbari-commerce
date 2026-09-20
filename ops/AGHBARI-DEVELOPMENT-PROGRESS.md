@@ -158,3 +158,11 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 - Previous CI-hardened SHA `3aafdf19c8a8affc0af8cb0692d81a15e512dcd1` had all tracked exact-SHA gates terminal SUCCESS, then PR #99 was merged safely. New development merge SHA `35d95e5e140820c7e7a8e0a792f89b28eacfb8e8` is a new verification unit; no old PASS is transferred.
 - Candidate and Production remained untouched.
 - NEXT OPEN FRONT: obtain terminal exact-SHA UI evidence for `1c759469994ad4fa4cb85f8c9fd09add810466e0`; merge PR #100 only after all required exact-SHA checks succeed, then re-run affected gates on its new merge SHA. Continue high-frequency customer/admin UI and transactional surface completion after proof.
+
+
+### RUN-2026-09-20-EXECUTE-020 — FINAL SHA CORRECTION
+- Active UI branch remains `execution/customer-ui-completion-20260920` with current exact head `2e714043e198feec70be226bc00e474d91a332d1`; PR #100 remains OPEN / DRAFT.
+- Final UI correction: customer price-tier lookup now covers visible catalog products plus all saved cart product IDs during catalog refresh, preserving tier pricing across search/filter changes.
+- Exact-SHA UI workflows for `2e714043e198feec70be226bc00e474d91a332d1` remain QUEUED at this checkpoint; no PASS or merge is claimed. The prior UI SHA `1c759469994ad4fa4cb85f8c9fd09add810466e0` is superseded.
+- Vercel Free-plan rate limit remains an external deployment constraint and is not treated as product failure.
+- Candidate and Production remain untouched.
