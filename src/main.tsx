@@ -7,6 +7,7 @@ import './offline.css';
 import './accessibility.css';
 import './product-excellence.css';
 import './command-palette.css';
+import './aghbari-ui-system.css';
 
 const invitationToken = new URLSearchParams(window.location.search).get('invite');
 const RootApp = invitationToken ? <InvitationAcceptance token={invitationToken} /> : <App />;
