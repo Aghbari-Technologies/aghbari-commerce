@@ -43,3 +43,8 @@
 
 ## SAFETY
 Never modify frozen historical candidate, never transfer PASS across SHA, and never mutate Production for testing.
+
+## RUN-015 WIP
+- Separate development branch `execution/bulk-actions-20260920` contains the current unproven product improvements: bulk transition preview/tests and import reconciliation reporting.
+- Current candidate `72d5dae...` remains unchanged and retains its complete proven evidence. WIP branch is not yet eligible for candidate promotion until CI/runtime verification succeeds.
+- Free-tier rule remains active: no paid upgrade for Supabase leaked-password protection.
