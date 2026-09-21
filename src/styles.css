@@ -1,3 +1,4 @@
+@import './premium-ui-overrides.css';
 :root { font-family: "Noto Sans Arabic", "Segoe UI", Tahoma, sans-serif; color: #172033; background: #f5f7fb; font-synthesis: none; }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
