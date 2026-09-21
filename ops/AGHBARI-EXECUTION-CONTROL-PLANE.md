@@ -917,3 +917,12 @@ Keep promotions, provider notification delivery, integration delivery records/ad
 - Security: live Supabase migration 20260921000431 is applied; product-media update policy and register_product_media boundary inspected. The generic authenticated SECURITY DEFINER advisor warning is recorded as a known intentional RPC boundary, not a certification PASS.
 - Candidate/Production remain frozen.
 
+
+
+## 2026-09-21 — UI-013 exact-SHA evidence checkpoint
+- Exact observed HEAD: `fbf7869f32e8a8f2f491086b272f8fa22957c5be`.
+- Source root cause closed: malformed service-worker registration callback in `src/main.tsx`.
+- Local evidence on PC01: typecheck PASS, lint PASS, unit/service suite PASS (31/217), build PASS.
+- External proof remains open: G1 queued; Vercel blocked by free deployment-rate limit; authenticated browser proof blocked by missing runtime Supabase config.
+- No Candidate / Production mutation.
+
