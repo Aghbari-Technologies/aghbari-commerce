@@ -586,3 +586,12 @@ RUN-2026-09-20-EXECUTE-022 — WORLD-CLASS UI/UX ADVANCEMENT
 - Visual evidence covers authentication, customer portal landing/detail/cart/orders, and staff/admin landing/orders/customers/inventory/purchasing/finance/export/settings across desktop/mobile coverage defined by the contract.
 - Resource-smart constraint preserved: no new dependency, asset, font, or database/storage payload; no fake operational data; no reporting-boundary change.
 - This UI milestone is proven; release certification still requires separate exact-SHA non-UI gates and remains protected by Candidate HOLD / Production NO TOUCH.
+
+## RUN-2026-09-21-EXECUTE-UI-027 — CURRENT UI PROOF STATE
+- Product HEAD: bda31298fdc6e027ab6f48a36b1fe1a63f7551d2 on execution/customer-ui-completion-20260920.
+- Customer Portal visual coverage now includes desktop landing/detail/cart/orders and mobile landing/detail/cart/orders/templates/finance.
+- Staff/Admin visual coverage includes desktop landing and dedicated orders/customers/inventory/purchasing/finance/export/settings screens, plus mobile landing.
+- Exact UI Visual Review #141 succeeded on this exact HEAD after exact checkout, isolated fixture setup, build identity validation, and browser execution.
+- Mobile screenshot methodology is now viewport-truth with focus/scroll normalization; this prevents fixed bottom navigation from polluting the evidence image.
+- No fake business data was introduced; single-product/empty-order states remain real fixture conditions.
+- UI work is proven for the current HEAD; certification remains separate and Production remains NO TOUCH.
