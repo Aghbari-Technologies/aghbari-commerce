@@ -481,3 +481,31 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 - Browser authenticated visual review: BLOCKED by missing local Supabase runtime configuration.
 - Candidate / Production untouched.
 
+
+
+## RUN-2026-09-21-EXECUTE-UI-015 — heavy CI routing closure
+**Exact HEAD:** `57d9d74a6528a036ec36e35a9655b4d431b00ce8`  
+**Branch:** `execution/customer-ui-completion-20260920`
+
+### Root cause
+The CI deduplication commit correctly removed feature-branch push triggers but accidentally constrained several heavy workflows to PRs targeting `main`. PR #100 targets `enhancement/market-ready-v4-20260918`, so those exact proofs could disappear.
+
+### Fix
+- Removed `pull_request.branches: [main]` restrictions from:
+  - browser-e2e-local-fresh
+  - browser-e2e-local
+  - concurrency-proof
+  - test-the-test-exact
+- Kept feature-branch `push` triggers removed; proof is now PR-driven for all bases and deduplicated.
+
+### Exact verification
+- typecheck PASS
+- lint PASS
+- 31/31 test files, 217/217 tests PASS
+- build PASS
+- G1 35547342267 queued
+- Test-the-Test 35547342250 queued
+- Concurrency 35547342225 queued
+- Fresh Local Browser 35547342229 queued
+- Local Production Browser 35547342355 queued
+
