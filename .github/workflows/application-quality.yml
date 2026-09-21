@@ -5,7 +5,15 @@ on:
     branches:
       - main
   pull_request:
-    branches: [main]
+    paths:
+      - 'src/**'
+      - 'supabase/**'
+      - 'public/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'scripts/**'
+      - 'e2e/**'
+      - '.github/workflows/**'
   workflow_dispatch:
     inputs:
       exact_sha:

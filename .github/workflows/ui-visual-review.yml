@@ -2,7 +2,13 @@ name: UI Visual Review / Exact SHA
 
 on:
   pull_request:
-    branches: [main]
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'e2e/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/**'
   workflow_dispatch:
     inputs:
       exact_sha:

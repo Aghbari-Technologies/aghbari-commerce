@@ -2,7 +2,6 @@ name: supabase-migration-proof
 
 on:
   pull_request:
-    branches: [main]
     paths:
       - 'supabase/**'
       - 'scripts/**'
