@@ -39,7 +39,7 @@ async function clearCustomerCart(page: Page) {
     }
   }
   await expect(lines).toHaveCount(0, { timeout: 5000 });
-  const close = page.locator('.cart-drawer').getByRole('button', { name: '×', exact: true });
+  const close = page.locator('.cart-drawer').getByRole('button', { name: 'إغلاق السلة', exact: true });
   if (await close.isVisible().catch(() => false)) await close.click();
 
   // Rehydrate from the server and verify cleanup persisted; never trust only client state.
@@ -49,7 +49,7 @@ async function clearCustomerCart(page: Page) {
   const verifyCartButton = page.getByRole('banner').getByRole('button', { name: /السلة/ });
   await verifyCartButton.click();
   await expect(page.locator('.cart-drawer .drawer-line')).toHaveCount(0, { timeout: 5000 });
-  const verifyClose = page.locator('.cart-drawer').getByRole('button', { name: '×', exact: true });
+  const verifyClose = page.locator('.cart-drawer').getByRole('button', { name: 'إغلاق السلة', exact: true });
   if (await verifyClose.isVisible().catch(() => false)) await verifyClose.click();
 }
 
@@ -162,7 +162,7 @@ test('catalog progressive browsing exposes bounded loading when more products ex
 test('inline product quantity controls preserve a single cart line', async ({ page }) => {
   const email = process.env.E2E_EMAIL; const password = process.env.E2E_PASSWORD; if (!email || !password) throw new Error('E2E_EMAIL and E2E_PASSWORD are required for quantity-control proof.'); await login(page, email, password);
   const card = page.locator('.product-card').first(); await expect(card).toBeVisible(); const addButton = card.getByRole('button', { name: 'إضافة للسلة' }); if (await addButton.count()) {
-    await addButton.click(); await expect(card.locator('.product-qty-control')).toBeVisible(); await expect(card.locator('.product-qty-control output')).toHaveText('1'); const drawerClose = page.locator('.cart-drawer').getByRole('button', { name: '×', exact: true }); await expect(drawerClose).toBeVisible(); await drawerClose.click(); await expect(page.locator('.cart-drawer')).toHaveCount(0); const inlineCard = page.locator('.product-card').first(); await inlineCard.getByRole('button', { name: /زيادة/ }).click(); await expect(card.locator('.product-qty-control output')).toHaveText('2'); await card.getByRole('button', { name: /إنقاص/ }).click(); await expect(card.locator('.product-qty-control output')).toHaveText('1');
+    await addButton.click(); await expect(card.locator('.product-qty-control')).toBeVisible(); await expect(card.locator('.product-qty-control output')).toHaveText('1'); const drawerClose = page.locator('.cart-drawer').getByRole('button', { name: 'إغلاق السلة', exact: true }); await expect(drawerClose).toBeVisible(); await drawerClose.click(); await expect(page.locator('.cart-drawer')).toHaveCount(0); const inlineCard = page.locator('.product-card').first(); await inlineCard.getByRole('button', { name: /زيادة/ }).click(); await expect(card.locator('.product-qty-control output')).toHaveText('2'); await card.getByRole('button', { name: /إنقاص/ }).click(); await expect(card.locator('.product-qty-control output')).toHaveText('1');
   }
 });
 
