@@ -1,4 +1,12 @@
 ## RUN-2026-09-21-EXECUTE-UI-019
+- Evidence unit = 8ee815061a6c1f7068983eaa0769ff1ee443947d.
+- Real change = PR routing repair across development bases with path filters; product runtime code unchanged from prior verified UI state.
+- Exact local green: typecheck, lint, 217 tests, build.
+- Ten exact-SHA PR proofs queued; none PASS.
+- Draft preview cancelled; no evidence.
+- Candidate and Production boundaries unchanged.
+- Rule: do not create source changes merely to work around runner queue; preserve exact-SHA proof boundaries.
+## RUN-2026-09-21-EXECUTE-UI-019
 - Preview rule: current development UI must be visually inspected on the exact source SHA before claiming final UI parity.
 - Use Netlify Draft Deploy for visual review; never use --prod or alter the production site.
 ## RUN-2026-09-21-EXECUTE-UI-018
