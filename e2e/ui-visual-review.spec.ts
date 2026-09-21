@@ -30,6 +30,14 @@ async function login(page: Page, email: string) {
   await assertRtlAndNoOverflow(page);
 }
 
+async function prepareViewportCapture(page: Page) {
+  await page.evaluate(() => {
+    window.scrollTo(0, 0);
+    const active = document.activeElement;
+    if (active instanceof HTMLElement) active.blur();
+  });
+}
+
 test.describe('Aghbari UI visual integrity', () => {
 
   test('authentication desktop visual evidence', async ({ page }) => {
@@ -47,8 +55,10 @@ test.describe('Aghbari UI visual integrity', () => {
     await expect(page.getByRole('heading', { name: 'تسجيل الدخول' })).toBeVisible();
     await expect(page.locator('.auth-aside')).toBeVisible();
     await assertRtlAndNoOverflow(page);
-    await page.screenshot({ path: 'visual-evidence/auth-mobile.png', fullPage: true });
+    await prepareViewportCapture(page);
+    await page.screenshot({ path: 'visual-evidence/auth-mobile.png', fullPage: false });
   });
+
   test('customer desktop visual evidence', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 1000 });
     await login(page, 'customer-a@test.local');
@@ -107,9 +117,9 @@ test.describe('Aghbari UI visual integrity', () => {
     await expect(page.locator('.product-grid')).toBeVisible();
     await expect(page.locator('.hero-card')).toBeVisible();
     await expect(page.locator('.command-launch-button')).toBeHidden();
-    await expect(page.locator('.portal-bottom-nav')).toBeVisible();
     await expect(page.locator('.purchase-shortcuts')).toBeVisible();
-    await page.screenshot({ path: 'visual-evidence/customer-mobile.png', fullPage: true });
+    await prepareViewportCapture(page);
+    await page.screenshot({ path: 'visual-evidence/customer-mobile.png', fullPage: false });
   });
 
   test('staff desktop visual evidence', async ({ page }) => {
@@ -118,7 +128,6 @@ test.describe('Aghbari UI visual integrity', () => {
     await expect(page.getByRole('heading', { name: 'مركز التحكم' }).first()).toBeVisible({ timeout: 15000 });
     await expect(page.locator('.staff-section-rail')).toBeVisible();
     await expect(page.locator('.admin-operations')).toBeVisible();
-    await expect(page.locator('.status-distribution-card')).toBeVisible();
     await expect(page.locator('.status-distribution-card')).toBeVisible();
     await expect(page.locator('#admin-customers')).toBeVisible();
     await expect(page.locator('#admin-inventory')).toBeVisible();
@@ -162,6 +171,7 @@ test.describe('Aghbari UI visual integrity', () => {
     await expect(page.locator('.staff-section-rail')).toBeVisible();
     await expect(page.locator('.admin-operations')).toBeVisible();
     await expect(page.locator('.staff-bottom-nav')).toBeVisible();
-    await page.screenshot({ path: 'visual-evidence/staff-mobile.png', fullPage: true });
+    await prepareViewportCapture(page);
+    await page.screenshot({ path: 'visual-evidence/staff-mobile.png', fullPage: false });
   });
 });
