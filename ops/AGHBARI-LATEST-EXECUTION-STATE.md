@@ -1,20 +1,18 @@
-## RUN-2026-09-21-EXECUTE-UI-031 — CASCADE-CORRECT PREMIUM UI CHECKPOINT
+## RUN-2026-09-21-EXECUTE-UI-032 — CURRENT EXACT-SHA PROOF RECONCILIATION
 - Active UI branch: `execution/customer-ui-completion-20260920`.
 - Exact current HEAD: `3571885f62d73941e2218be405130f4fe96ce454`.
-- Parent visual SHA: `8747d253343e2b4a98728bad5edb7119f1c2b2be`.
 - PR #100: OPEN / DRAFT; base `enhancement/market-ready-v4-20260918`.
-- Root cause found in the previous premium-layer integration: `@import` was loaded before the existing unlayered base rules, so equal-specificity base declarations could override parts of the intended premium visual layer.
-- Fix: `src/styles.css` now places the premium layer first and wraps the legacy/base stylesheet rules in `@layer aghbari-base`, giving the unlayered premium layer deterministic cascade priority without adding dependencies or runtime code.
-- No business logic, pricing, authorization, tenant isolation, transaction, database/storage, or reporting behavior changed.
-- Resource-smart rule preserved: CSS-only; no new images, fonts, packages, or database/storage payload.
-- Previous exact-SHA evidence for `8747d253343e2b4a98728bad5edb7119f1c2b2be` is invalid for the new HEAD until fresh exact-SHA verification completes.
-- Vercel remains an external Free-plan rate-limit constraint and is not product proof.
+- Latest real source correction: `src/styles.css` now layers legacy/base rules under `@layer aghbari-base` while the new premium visual layer remains unlayered, making the intended premium cascade deterministic.
+- Exact current-SHA workflow state:
+  - SUCCESS: G1 `35558048021`; Order Workflow `35558048044`; Security `35558048062`.
+  - IN_PROGRESS: Application Quality `35558048126`; Test-the-Test `35558048037`; Fresh Local Browser `35558048093`.
+  - PENDING: Local Production Artifact Browser `35558048030`; UI Visual Review `35558048043`; Migration `35558048123`; Concurrency `35558048047`.
+- No certification PASS is claimed while any required gate is non-terminal.
+- Vercel remains externally rate-limited on the Free plan; no deployment PASS inferred.
 - Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` remains frozen/untouched. Production remains HOLD / NO TOUCH.
 
 ## CURRENT RESUME POINTER
-Resume at: **fresh exact-SHA CI/browser verification for `3571885f62d73941e2218be405130f4fe96ce454`**.
-- Re-query PR #100/workflow runs after the new commit surfaces.
-- Treat queued/in-progress as NOT_PROVEN; inspect only terminal failures.
-- Verify UI Visual Review and browser artifacts on this exact SHA before any merge/release claim.
-- If all required gates succeed, reconcile PR #100; the eventual merge SHA becomes a new proof unit.
-- Do not touch Candidate or Production.
+Resume at: **poll the exact-SHA runs above for `3571885f62d73941e2218be405130f4fe96ce454` to terminal state**.
+- Inspect only terminal failures and repair their root causes on a new SHA.
+- Require exact current-SHA UI Visual Review and browser evidence before merge/release claims.
+- After all required gates are terminal SUCCESS, reconcile PR #100; its merge SHA becomes a fresh evidence unit.
