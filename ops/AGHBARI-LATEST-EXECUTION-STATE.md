@@ -655,3 +655,16 @@ Resume at: **poll the five exact-SHA GitHub proof runs for `57d9d74a6528a036ec36
 - Current visual proof requirement: rerun exact-SHA UI Visual Review for `eb5a0e2b3aef104b53a206b11bce129215989a81` and inspect the new artifact before any certification/release claim.
 - Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080`: HOLD / untouched. Production: NO TOUCH.
 - NEXT RESUME: obtain terminal UI Visual Review for `eb5a0e2b3aef104b53a206b11bce129215989a81`; inspect customer desktop/mobile and all staff/admin module captures; fix only concrete remaining defects, then reconcile exact-SHA release gates.
+
+## RUN-2026-09-21-EXECUTE-UI-026 — MOBILE/TRUTH VISUAL PROOF COMPLETE
+- Exact active product HEAD: bcc5ac82db39eb495e908f0b8e372661042a1561 on execution/customer-ui-completion-20260920.
+- Final visual closure source is present: src/ui-final-visual-closure.css is imported from src/main.tsx.
+- Mobile visual evidence was changed from full-page stitching to viewport-truth capture, with explicit scroll reset and focus cleanup in the test helper.
+- Exact UI Visual Review run #139 / 35555203454: SUCCESS. Exact checkout, isolated Supabase fixtures, production build, and the visual review completed successfully on this SHA.
+- Exact visual artifact ID: 10620032737; artifact name is tied to the same exact SHA.
+- Verified visual set includes authentication desktop/mobile; customer desktop/mobile/product detail/cart/orders; staff desktop/mobile and staff orders/customers/inventory/purchasing/finance/export/settings.
+- Visual inspection confirms the customer B2B shell, purchase shortcuts, product-detail/cart surfaces, and staff/admin operational console are materially aligned with the intended premium RTL design language.
+- No fake products or metrics were introduced to fill fixture whitespace.
+- Resource-smart implementation remains in force: CSS-only closure, no new runtime dependency, image, font, or database/storage growth; business/security/reporting behavior was not changed.
+- Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 remains HOLD/untouched. Production remains NO TOUCH.
+- NEXT RESUME: reconcile terminal non-UI exact-SHA gates for bcc5ac82db39eb495e908f0b8e372661042a1561; do not reuse prior-SHA evidence.
