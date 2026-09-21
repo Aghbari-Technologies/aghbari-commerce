@@ -1,6 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 
-const PASSWORD = 'AghbariE2E!2026';
+const PASSWORD = process.env.E2E_PASSWORD ?? process.env.E2E_ADMIN_PASSWORD ?? '';
 
 async function assertRtlAndNoOverflow(page: Page) {
   await expect(page.locator('html')).toHaveAttribute('lang', 'ar');
@@ -32,10 +32,15 @@ async function login(page: Page, email: string) {
 
 async function prepareViewportCapture(page: Page) {
   await page.evaluate(() => {
-    window.scrollTo(0, 0);
+    document.documentElement.style.scrollBehavior = 'auto';
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
     const active = document.activeElement;
     if (active instanceof HTMLElement) active.blur();
   });
+  await page.waitForFunction(() => window.scrollY === 0 || document.documentElement.scrollTop === 0);
+  await page.waitForTimeout(250);
 }
 
 test.describe('Aghbari UI visual integrity', () => {
