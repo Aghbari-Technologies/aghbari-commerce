@@ -31,6 +31,24 @@ async function login(page: Page, email: string) {
 }
 
 test.describe('Aghbari UI visual integrity', () => {
+
+  test('authentication desktop visual evidence', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.goto('/');
+    await expect(page.getByRole('heading', { name: 'تسجيل الدخول' })).toBeVisible();
+    await expect(page.locator('.auth-aside')).toBeVisible();
+    await assertRtlAndNoOverflow(page);
+    await page.screenshot({ path: 'visual-evidence/auth-desktop.png', fullPage: true });
+  });
+
+  test('authentication mobile visual evidence', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+    await expect(page.getByRole('heading', { name: 'تسجيل الدخول' })).toBeVisible();
+    await expect(page.locator('.auth-aside')).toBeVisible();
+    await assertRtlAndNoOverflow(page);
+    await page.screenshot({ path: 'visual-evidence/auth-mobile.png', fullPage: true });
+  });
   test('customer desktop visual evidence', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 1000 });
     await login(page, 'customer-a@test.local');
