@@ -1,3 +1,6 @@
+## RUN-2026-09-21-EXECUTE-UI-016
+- Resource policy consolidated: avoid duplicate Push+PR gates on feature branches; use PR-scoped cancellation and manual exact-SHA runs for immutable evidence.
+- Do not claim space savings by deleting business data; measure first and prevent unbounded binary/browser-cache growth at the source.
 ## RUN-2026-09-21-EXECUTE-UI-014
 - Resource rule: version browser caches by deploy artifact identity and garbage-collect superseded cache namespaces on Service Worker activation.
 - Keep operational/auth network-authoritative and outside Cache Storage.

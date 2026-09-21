@@ -509,3 +509,16 @@ The CI deduplication commit correctly removed feature-branch push triggers but a
 - Fresh Local Browser 35547342229 queued
 - Local Production Browser 35547342355 queued
 
+
+
+## RUN-2026-09-21-EXECUTE-UI-016 — RESOURCE-PRESERVATION + CI DEDUP CHECKPOINT
+- Product exact SHA: c524b3d6b3915112d760190a6c43171ff29e2a14 on execution/customer-ui-completion-20260920; PR #100 remains draft/mergeable.
+- Storage preservation completed: product images use one canonical organization/product/main.webp object, upserted in place; secure UPDATE policy and bounded WebP limits are applied. Live product-media storage is 0 objects / 0 bytes.
+- PWA preservation completed: Service Worker cache is namespaced from the current module bundle identity and old aghbari-shell-* namespaces are removed on activation. Operational/auth requests remain uncached.
+- Client config polling reduced from 15s to 60s while Supabase Realtime remains the primary update path.
+- CI resource preservation completed: feature-branch Push triggers were removed from the main verification gates; PR-to-main and explicit workflow_dispatch exact-SHA remain. Heavy gates use PR-scoped cancel-in-progress so obsolete runs are disposable when a newer commit supersedes them.
+- Current repo tree is approximately 1.82 MiB across 350 tracked blobs; largest tracked file is package-lock.json at about 146 KiB; no unusually large binary asset was found.
+- Live Supabase database remains approximately 20 MB with 58/58 public tables RLS-enabled. No operational/finance/audit records were deleted for space saving.
+- GitHub Actions backlog remains queue-heavy from historical commits. The available automation wallet cannot perform interactive cancellation, so stale queued evidence was not falsely represented as complete.
+- Exact-SHA PASS is NOT claimed. Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 remains untouched; Production remains NO TOUCH.
+- NEXT RESUME: reconcile terminal PR #100 checks for c524b3d6b3915112d760190a6c43171ff29e2a14, then browser/visual exact-SHA proof and release-gate reconciliation.
