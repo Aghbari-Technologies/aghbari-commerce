@@ -449,3 +449,14 @@ RUN-2026-09-20-EXECUTE-022 — WORLD-CLASS UI/UX ADVANCEMENT
 - Browser visual certification remains blocked in the clean local clone because runtime Supabase configuration is absent; the login shell rendered in Arabic RTL, but authenticated customer/staff screens were not proven. No authenticated UI PASS is claimed.
 - Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` remains untouched; Production remains NO TOUCH.
 
+
+
+## 2026-09-21 — EXECUTE-UI-015 / CI routing closure
+- Exact current PR #100 HEAD: `57d9d74a6528a036ec36e35a9655b4d431b00ce8`; base remains `enhancement/market-ready-v4-20260918`.
+- Root cause fixed: heavy verification workflows had been restricted to `pull_request.branches: [main]`, so PR #100 on the enhancement base could lose Browser/Concurrency/Test-the-Test coverage. PR triggers are now base-agnostic for the four affected heavy workflows while feature-branch push triggers remain removed, preserving deduplication without removing proof.
+- Exact current branch local verification on PC01: typecheck PASS; lint PASS; 31 test files / 217 tests PASS; build PASS.
+- Fresh exact-SHA GitHub runs created for this HEAD: G1 `35547342267`; Test-the-Test `35547342250`; Concurrency `35547342225`; Fresh Local Browser `35547342229`; Local Production Browser `35547342355`. All jobs are currently QUEUED; none is PASS.
+- Vercel status remains free-plan deployment-rate failure; no deployment proof.
+- PC01 cannot run a fresh local Supabase browser stack because neither `supabase` CLI nor Docker is installed. Authenticated browser proof is therefore delegated to the exact GitHub browser workflows; no local authenticated PASS is claimed.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain untouched.
+
