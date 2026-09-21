@@ -612,3 +612,9 @@ RUN-2026-09-20-EXECUTE-022 — WORLD-CLASS UI/UX ADVANCEMENT
 - Product directories must provide direct movement from discovery to the actual edit/pricing/media workflow.
 - Customer ordering screens prioritize fast B2B repeat purchase, readable tier pricing, order progression, finance visibility, and mobile-first checkout.
 - The visual system remains asset-light and dependency-free unless a future requirement demonstrably needs heavier assets.
+
+## RUN-2026-09-21 — FLAGSHIP UI CLOSURE RULE
+- Treat the current visual artifacts as the source of truth for visual weakness; source-level intent is insufficient once screenshot evidence exists.
+- Preserve exact naming expected by high-value E2E tests when changing visible operational labels, or update the test contract in the same SHA deliberately.
+- Permission-aware navigation is part of UI correctness: every visible Admin shortcut must be reachable by the active role.
+- Direct product discovery-to-edit flow is required for efficient B2B operations; avoid forcing users to hunt through unrelated forms.
