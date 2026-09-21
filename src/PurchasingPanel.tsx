@@ -84,11 +84,6 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
   }
 
   if (!canManage) return null;
-  const selectedOrderItems = items.filter((item) => item.purchase_order_id === selectedOrderId && item.quantity_received < item.quantity_ordered);
-  const supplierNameFor = (id: string) => suppliers.find((supplier) => supplier.id === id)?.name ?? 'مورد';
-  const productNameFor = (id: string) => products.find((product) => product.id === id)?.name ?? id;
-  const selectedReceiveItem = selectedOrderItems.find((item) => item.id === receiveItemId) ?? selectedOrderItems[0];
-
   return <div className="cart-panel" id="purchasing">
     <div className="section-heading"><div><span className="eyebrow">المشتريات والمستودع</span><h2>دورة التوريد</h2></div><span>{orders.length} أوامر شراء</span></div>
     <div className="admin-grid">
