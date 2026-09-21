@@ -982,3 +982,12 @@ Keep promotions, provider notification delivery, integration delivery records/ad
 - Visual evidence on this exact SHA is not yet claimed: UI Visual Review run 120 is currently queued; no current-SHA deployed preview exists yet.
 - Production NO TOUCH; certification candidate remains untouched.
 - NEXT RESUME: obtain terminal UI Visual Review on f90150c..., retrieve exact-SHA visual evidence, inspect every customer/admin screen and close any defects found; only then proceed to certification/release reconciliation.
+
+
+## RUN-2026-09-21-EXECUTE-UI-022 — SCREEN-BY-SCREEN REFERENCE ALIGNMENT
+- Current exact product HEAD: 23ebe9a5f08680f2dd13f4407f8216a8232c68d3 on execution/customer-ui-completion-20260920.
+- Reference-aligned implementation now includes: semantic split login (desktop/mobile), premium Customer Portal shell activation, dark desktop customer rail, responsive customer bottom navigation, live B2B purchase shortcut rail, live order-status donut in Admin Executive Dashboard, persistent Staff/Admin mobile bottom navigation, grouped Admin Control Plane styling, unified transactional module styling, stronger table hierarchy, and deterministic product-media rollback safety.
+- Exact UI visual contract now captures: auth desktop/mobile; customer desktop; customer product detail; customer cart; customer orders; customer templates; customer finance; customer mobile; staff order detail; staff desktop; individual staff orders/customers/inventory/purchasing/finance/export/settings desktop screens; staff mobile.
+- Current exact UI Visual Review run: 35549111426 / #121, status queued. No PASS is claimed until terminal evidence exists.
+- No exact current-SHA deployment is available yet; old Netlify deploy remains non-authoritative for current UI evidence. Production NO TOUCH; certification candidate untouched.
+- NEXT RESUME: obtain run #121 terminal result and visual artifact set for 23ebe9a..., inspect every captured screen against the two reference boards, fix any concrete visual/functional defects, then create exact non-production Draft URL and perform browser proof before certification.
