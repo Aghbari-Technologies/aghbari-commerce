@@ -102,7 +102,7 @@ test('authenticated customer completes real search → catalog → cart → orde
   const orderDetailButton = page.getByRole('button', { name: 'عرض التفاصيل', exact: true }).first();
   await expect(orderDetailButton).toBeVisible();
   await orderDetailButton.click();
-  const orderDialog = page.getByRole('dialog', { name: 'تفاصيل الطلب' });
+  const orderDialog = page.locator('.order-detail-modal');
   await expect(orderDialog).toBeVisible();
   await expect(orderDialog.getByText(productName, { exact: true })).toBeVisible();
   await expect(orderDialog.getByText('إجمالي الطلب')).toBeVisible();
