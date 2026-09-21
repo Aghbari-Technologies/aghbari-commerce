@@ -1,3 +1,11 @@
+## RUN-2026-09-21-EXECUTE-UI-018
+- Evidence unit advanced to product SHA f7713afd33b92564504081c37e9351d59fa5a845 on execution/customer-ui-completion-20260920.
+- Exact local verification is green: typecheck, lint, 217 tests, and production build.
+- Signed image URL cache expiry is now actively evicted before lookup, preventing stale-expired entries from occupying reuse state.
+- Exact-SHA proof runs were retried on the same SHA and remain QUEUED/PENDING; queue state is operationally blocked, never PASS.
+- External Vercel Free-plan deployment-rate-limit failure remains separate from product correctness.
+- Candidate and Production boundaries unchanged: candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 untouched; Production NO TOUCH.
+- Rule reinforced: when a new product SHA arrives, invalidate prior proof for the affected front, re-run the exact proof set, and do not create speculative code to make queue state look resolved.
 ## RUN-2026-09-21-EXECUTE-UI-017
 - Resource rule: client-side caches must have both time-based eviction and a hard entry cap when keys can grow with catalog breadth.
 ## RUN-2026-09-21-EXECUTE-UI-016
@@ -941,4 +949,3 @@ Keep promotions, provider notification delivery, integration delivery records/ad
 - CI exact proof runs: 35547342267, 35547342250, 35547342225, 35547342229, 35547342355 — all queued.
 - Browser local limitation: PC01 has neither Supabase CLI nor Docker, so authenticated browser proof is not locally executable; do not infer PASS.
 - Candidate/Production frozen.
-

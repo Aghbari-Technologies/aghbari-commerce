@@ -1,3 +1,13 @@
+## RUN-2026-09-21-EXECUTE-UI-018 — CURRENT AUTHORITATIVE STATE
+- Product branch: execution/customer-ui-completion-20260920.
+- Current exact product SHA: f7713afd33b92564504081c37e9351d59fa5a845.
+- PR #100 remains OPEN / DRAFT, base enhancement/market-ready-v4-20260918.
+- Latest source correction: expired signed product-image URL cache entries are evicted before reuse; bounded cache behavior remains intact from prior UI-017 work.
+- Exact local PC01 verification: typecheck PASS; lint PASS; npm test 31/31 files and 217/217 tests PASS; build PASS.
+- Exact-SHA CI is currently queue constrained: 35547509433 G1 QUEUED; 35547509437 Test-the-Test QUEUED; 35547509427 Concurrency QUEUED; 35547509434 Local Production Browser QUEUED; 35547509442 Fresh Local Browser PENDING. No PASS is transferred from prior SHAs.
+- Vercel is externally rate-limited on the Free plan (api-deployments-free-per-day); no exact-SHA deployment/browser PASS is claimed.
+- Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 remains untouched; Production remains HOLD / NO TOUCH.
+- RESUME POINTER: poll the five runs above to terminal states; inspect exact failed jobs if any; then perform exact-SHA browser/visual proof and release-gate reconciliation.
 ## RUN-2026-09-21-EXECUTE-UI-017 — SIGNED IMAGE CACHE BOUNDING
 - Product exact SHA: 19b7a2a3f36b74ab30e603b948acaf9370681727 on execution/customer-ui-completion-20260920.
 - src/services/catalog.ts now evicts expired signed image URL entries and caps the in-memory cache at 256 entries, preventing unbounded per-tab growth during long catalog sessions.
@@ -531,4 +541,3 @@ First action: re-query PR #100 HEAD; if unchanged, poll G1 `35547160424` to term
 
 **CURRENT RESUME POINTER**
 Resume at: **poll the five exact-SHA GitHub proof runs for `57d9d74a6528a036ec36e35a9655b4d431b00ce8` to terminal states, then reconcile any failures on that exact SHA.** Do not reuse evidence from `fbf7869` or ancestors.
-

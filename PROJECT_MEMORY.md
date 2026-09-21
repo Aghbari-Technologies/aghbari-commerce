@@ -1,3 +1,12 @@
+## RUN-2026-09-21-EXECUTE-UI-018 — SIGNED IMAGE URL EXPIRY RECONCILIATION
+- Product exact SHA: f7713afd33b92564504081c37e9351d59fa5a845 on execution/customer-ui-completion-20260920; PR #100 remains OPEN / DRAFT against enhancement/market-ready-v4-20260918.
+- Real source change: src/services/catalog.ts now evicts expired signed image-URL cache entries before reuse. No transactional truth, authorization, Storage policy, reporting boundary, or persistent data changed.
+- Exact local verification on PC01 for this SHA: npm run typecheck PASS; npm run lint PASS; npm test PASS (31 files / 217 tests); npm run build PASS (Vite 7.3.5, 165 modules).
+- GitHub exact-SHA proof runs exist but remain non-terminal/queue-constrained after retry: G1 35547509433 QUEUED; Test-the-Test 35547509437 QUEUED; Concurrency 35547509427 QUEUED; Local Production Browser 35547509434 QUEUED; Fresh Local Supabase Browser 35547509442 PENDING. No CI PASS is claimed.
+- Combined commit status has only Vercel FAILURE caused by the Free-plan api-deployments-free-per-day rate limit; this is an external deployment constraint, not an application failure.
+- PC01 has no Supabase CLI or Docker, so authenticated fresh-local Supabase browser certification cannot be produced locally; GitHub browser proof remains authoritative.
+- Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 remains untouched; Production remains NO TOUCH / HOLD.
+- NEXT RESUME: poll the five exact-SHA runs above to terminal state; on any failure inspect the exact job/logs and fix only the root cause on the resulting SHA. Do not transfer prior evidence. After terminal proof, continue exact-SHA browser/visual evidence and release-gate reconciliation.
 ## RUN-2026-09-21-EXECUTE-UI-017 — SIGNED IMAGE CACHE BOUNDING
 - Product exact SHA: 19b7a2a3f36b74ab30e603b948acaf9370681727 on execution/customer-ui-completion-20260920.
 - src/services/catalog.ts now evicts expired signed image URL entries and caps the in-memory cache at 256 entries, preventing unbounded per-tab growth during long catalog sessions.
@@ -478,4 +487,3 @@ RUN-2026-09-20-EXECUTE-022 — WORLD-CLASS UI/UX ADVANCEMENT
 - Vercel status remains free-plan deployment-rate failure; no deployment proof.
 - PC01 cannot run a fresh local Supabase browser stack because neither `supabase` CLI nor Docker is installed. Authenticated browser proof is therefore delegated to the exact GitHub browser workflows; no local authenticated PASS is claimed.
 - Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain untouched.
-

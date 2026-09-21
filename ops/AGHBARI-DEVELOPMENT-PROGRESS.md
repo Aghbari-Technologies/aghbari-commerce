@@ -1,3 +1,13 @@
+## CURRENT CHECKPOINT — RUN-2026-09-21-EXECUTE-UI-018
+- Active UI branch: execution/customer-ui-completion-20260920.
+- Exact HEAD: f7713afd33b92564504081c37e9351d59fa5a845.
+- PR #100: OPEN / DRAFT; base enhancement/market-ready-v4-20260918.
+- Product change: signed product-image URL cache now evicts expired entries before lookup/reuse.
+- Local PC01 verification at exact HEAD: typecheck PASS, lint PASS, 31 test files / 217 tests PASS, Vite production build PASS.
+- Exact-SHA GitHub proof state: G1 35547509433 QUEUED; Test-the-Test 35547509437 QUEUED; Concurrency 35547509427 QUEUED; Local Production Browser 35547509434 QUEUED; Fresh Local Supabase Browser 35547509442 PENDING. No terminal CI PASS.
+- Vercel status is a Free-plan deployment-rate-limit FAILURE only.
+- Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 untouched. Production HOLD / NO TOUCH.
+- NEXT: reconcile the five exact-SHA proof runs, then browser/visual evidence and release-gate reconciliation on the exact terminally proven SHA only.
 # الأغبري | Memory Layer 03 — PROBLEM / PROGRESS LEDGER
 
 ## CURRENT CHECKPOINT — RUN-2026-09-20-EXECUTE-014
