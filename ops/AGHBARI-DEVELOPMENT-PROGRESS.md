@@ -645,3 +645,14 @@ The CI deduplication commit correctly removed feature-branch push triggers but a
 - Current visual proof requirement: rerun exact-SHA UI Visual Review for `eb5a0e2b3aef104b53a206b11bce129215989a81` and inspect the new artifact before any certification/release claim.
 - Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080`: HOLD / untouched. Production: NO TOUCH.
 - NEXT RESUME: obtain terminal UI Visual Review for `eb5a0e2b3aef104b53a206b11bce129215989a81`; inspect customer desktop/mobile and all staff/admin module captures; fix only concrete remaining defects, then reconcile exact-SHA release gates.
+
+## RUN-2026-09-21-EXECUTE-UI-026 — MOBILE/TRUTH VISUAL PROOF COMPLETE
+- Product exact HEAD: bcc5ac82db39eb495e908f0b8e372661042a1561 on execution/customer-ui-completion-20260920.
+- UI closure layer: src/ui-final-visual-closure.css; imported after the existing UI layers from src/main.tsx.
+- Root UI defects addressed: mobile sticky/flow occlusion, hero metric wrapping, sparse single-product grid presentation, incidental skip-link visibility, and desktop staff section navigation persistence.
+- Visual review capture was corrected to use viewport-truth screenshots on mobile instead of full-page stitching; this makes fixed bottom navigation and sticky chrome visually trustworthy.
+- UI Visual Review #139 / run 35555203454: SUCCESS on the exact HEAD.
+- Verified exact screen set: authentication, customer desktop/mobile/detail/cart/orders, and staff desktop/mobile plus orders/customers/inventory/purchasing/finance/export/settings.
+- No business behavior, pricing, permissions, database, storage, or reporting boundary changed. No fake data was added.
+- Candidate remains untouched; Production remains NO TOUCH.
+- NEXT: reconcile non-UI exact-SHA gates only; UI visual work is proven for this HEAD.
