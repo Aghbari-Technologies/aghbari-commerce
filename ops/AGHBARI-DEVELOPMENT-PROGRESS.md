@@ -556,3 +556,13 @@ The CI deduplication commit correctly removed feature-branch push triggers but a
 - TinyFish interactive cleanup of stale queued runs could not run because its wallet balance is negative; stale run cancellation was not claimed.
 - Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 remains untouched. Production remains NO TOUCH.
 - CURRENT RESUME POINTER: reconcile terminal PR #100 verification for 4ad08061b3e2cbff83386dacf6dcf9681ca64b80; then obtain exact-SHA browser/visual evidence on a non-production preview or exact deployment; then final release-gate reconciliation. Do not create speculative UI commits while equivalent checks are queued.
+
+
+## RUN-2026-09-21-EXECUTE-UI-019 — EXACT UI PREVIEW CHECKPOINT
+- Product exact SHA: ac7bd20ff82ad1e429f970d054c52e142c39f352 on execution/customer-ui-completion-20260920.
+- Added non-production workflow .github/workflows/aghbari-ui-exact-draft-preview.yml to build the exact SHA and deploy the dist artifact as a Netlify Draft Deploy, never with --prod.
+- GitHub Actions run 35547971607 / job 106177476243 was re-run for the exact SHA; current job status is queued. Therefore no exact deployed UI screenshot exists yet for this SHA and none is represented as final proof.
+- Last available live screenshot remains the older Netlify deploy 6aaf1c861e08e126409753e0 with context production; it is not exact to the current SHA and is shown only as a visual reference, never as exact-SHA evidence.
+- Current UI source includes Customer Portal and Staff/Admin surfaces; exact visual review remains blocked on a current-SHA deployed preview.
+- Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 remains untouched. Production remains NO TOUCH.
+- NEXT RESUME: obtain the Netlify Draft URL for ac7bd20ff82ad1e429f970d054c52e142c39f352, capture desktop/mobile screenshots, then inspect Customer Portal and Staff/Admin screens screen-by-screen on that same exact SHA.

@@ -1,3 +1,6 @@
+## RUN-2026-09-21-EXECUTE-UI-019
+- Preview rule: current development UI must be visually inspected on the exact source SHA before claiming final UI parity.
+- Use Netlify Draft Deploy for visual review; never use --prod or alter the production site.
 ## RUN-2026-09-21-EXECUTE-UI-018
 - Resource-control rule: keep expensive CI gates path-scoped on pull requests and retain full exact-SHA manual dispatch for certification. Avoid Push+PR duplication on feature branches.
 - Release browser proof is deployment-status/manual exact-SHA, not a redundant PR contract run.

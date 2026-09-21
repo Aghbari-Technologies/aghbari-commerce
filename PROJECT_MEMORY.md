@@ -1,3 +1,11 @@
+## RUN-2026-09-21-EXECUTE-UI-019 — EXACT UI PREVIEW CHECKPOINT
+- Product exact SHA: ac7bd20ff82ad1e429f970d054c52e142c39f352 on execution/customer-ui-completion-20260920.
+- Added non-production workflow .github/workflows/aghbari-ui-exact-draft-preview.yml to build the exact SHA and deploy the dist artifact as a Netlify Draft Deploy, never with --prod.
+- GitHub Actions run 35547971607 / job 106177476243 was re-run for the exact SHA; current job status is queued. Therefore no exact deployed UI screenshot exists yet for this SHA and none is represented as final proof.
+- Last available live screenshot remains the older Netlify deploy 6aaf1c861e08e126409753e0 with context production; it is not exact to the current SHA and is shown only as a visual reference, never as exact-SHA evidence.
+- Current UI source includes Customer Portal and Staff/Admin surfaces; exact visual review remains blocked on a current-SHA deployed preview.
+- Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 remains untouched. Production remains NO TOUCH.
+- NEXT RESUME: obtain the Netlify Draft URL for ac7bd20ff82ad1e429f970d054c52e142c39f352, capture desktop/mobile screenshots, then inspect Customer Portal and Staff/Admin screens screen-by-screen on that same exact SHA.
 ## RUN-2026-09-21-EXECUTE-UI-018 — RESOURCE-PRESERVATION FINAL CHECKPOINT
 - Product exact SHA: 4ad08061b3e2cbff83386dacf6dcf9681ca64b80 on execution/customer-ui-completion-20260920; PR #100 is OPEN / DRAFT / MERGEABLE.
 - Catalog signed-image URL cache now has expiry eviction plus a hard cap of 256 in-memory entries.
