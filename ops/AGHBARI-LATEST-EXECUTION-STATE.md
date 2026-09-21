@@ -479,3 +479,22 @@ No Candidate mutation, no Production mutation, no paid Vercel/Supabase upgrade.
 Resume at: **exact-SHA CI/browser certification for PR #100 on `bec7eccf2c7f0d06681e5079361bae7d004cfde7` after G1 run `35546623901` becomes terminal.**
 First action: re-query the current GitHub PR HEAD and workflow status; if HEAD moved, reconcile to the new exact SHA before using any evidence. Then pursue authenticated browser proof only in an environment with a valid `E2E_BASE_URL` and Supabase runtime configuration. Do not reuse local or older SHA evidence as certification for a new HEAD.
 
+
+
+## 2026-09-21 — FINAL RESUME POINTER UPDATE
+**LAST PROVEN STATE**
+- Exact observed development HEAD: `fbf7869f32e8a8f2f491086b272f8fa22957c5be`
+- Branch: `execution/customer-ui-completion-20260920`
+- PR #100: OPEN / DRAFT / unmerged.
+- Local exact-HEAD verification: typecheck PASS; lint PASS; 31/31 test files and 217/217 tests PASS; build PASS.
+- Browser visual-review: runtime-blocked in clean clone because Supabase environment variables are absent; no authenticated UI PASS claimed.
+- GitHub G1 run: `35547160424`, QUEUED.
+- Vercel exact status: FAILURE due free-plan deployment-rate limit.
+- Live Supabase: `20260921000431 product_media_single_object` applied; product-media security boundary inspected.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080`: HOLD / untouched.
+- Production: NO TOUCH.
+
+**CURRENT RESUME POINTER**
+Resume at: **reconcile exact-SHA release proof for `fbf7869f32e8a8f2f491086b272f8fa22957c5be`**.
+First action: re-query PR #100 HEAD; if unchanged, poll G1 `35547160424` to terminal and pursue authenticated browser proof in a runtime with valid Supabase configuration. If HEAD moved, discard all new-head certification assumptions and repeat exact-SHA reconciliation first.
+
