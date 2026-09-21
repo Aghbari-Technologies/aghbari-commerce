@@ -1,3 +1,12 @@
+## RUN-2026-09-21-EXECUTE-UI-025 — EXACT VERCEL PREVIEW RECONCILIATION
+- Product exact SHA: `57268606940f3b4576cba869b6ec72e8d05d9526` on `execution/customer-ui-completion-20260920`.
+- Vercel deployment `dpl_4FNCFayzPT4YqQ6adabEM6vL2edr` is READY and reports the same Git commit SHA and branch.
+- Preview root returned HTTP 200 with the Aghbari Arabic/RTL application shell and exact Vercel security headers; no production target was touched.
+- Browser proofs for the same SHA remain the only unfinished certification evidence: Fresh Local 35554101373 and Local Production Artifact 35554101445 are still IN_PROGRESS. No browser PASS claimed.
+- All other exact-SHA gates remain terminal SUCCESS as recorded in UI-024.
+- CURRENT RESUME POINTER: reconcile the two browser runs for SHA `57268606940f3b4576cba869b6ec72e8d05d9526`; if both terminal SUCCESS, reconcile PR #100 and release evidence; if a failure occurs, inspect only that exact SHA/run.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` untouched. Production HOLD / NO TOUCH.
+
 ## RUN-2026-09-21-EXECUTE-UI-024 — AUTHORITATIVE CURRENT STATE
 - Active UI branch: `execution/customer-ui-completion-20260920`.
 - Exact HEAD: `57268606940f3b4576cba869b6ec72e8d05d9526`.
