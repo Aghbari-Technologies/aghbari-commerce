@@ -684,3 +684,11 @@ The CI deduplication commit correctly removed feature-branch push triggers but a
 - No new packages/assets/runtime dependencies or persistence/security/reporting boundary changes.
 - Fresh exact-SHA verification has restarted for the new source SHA; no evidence transferred from prior SHAs.
 - Next: reconcile terminal CI/browser/visual evidence, then repair only evidenced defects.
+
+
+### RUN-2026-09-21-EXECUTE-UI-037 — LIVE PREVIEW + PERMISSION-AWARE POLISH
+- Product SHA: `c53fb4e3430c135998b5a43be886acf14e11a65b`.
+- Real preview deployment built the exact artifact successfully and exposed an Aghbari-branded Arabic login surface.
+- Workspace navigation was corrected to hide sections the active role cannot access.
+- Customer and Admin visual systems were refined with a CSS-first resource budget; no new package/asset/runtime dependency introduced.
+- Application-quality, security, G1 and Order Workflow have terminal SUCCESS on this exact SHA; remaining browser/visual gates are active.
