@@ -1023,3 +1023,12 @@ Keep promotions, provider notification delivery, integration delivery records/ad
 - UI scope now has exact evidence for authentication, Customer Portal desktop/mobile/detail/cart/orders, and Staff/Admin desktop/mobile plus operational module screens.
 - Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 remains HOLD/untouched. Production remains NO TOUCH.
 - RELEASE RULE: this closes the UI visual gate only. Do not transfer UI PASS into certification/production. Reconcile remaining exact-SHA functional/security/domain/release gates independently.
+
+## RUN-2026-09-21-EXECUTE-UI-027 — UI COVERAGE GATE CLOSED
+- Exact product HEAD: bda31298fdc6e027ab6f48a36b1fe1a63f7551d2.
+- UI Visual Review #141 / 35555557897: SUCCESS.
+- Current artifact includes customer mobile landing, product detail, cart, orders, templates, and finance captures; staff/admin desktop module captures remain available, with mobile staff landing proven.
+- Visual evidence is now viewport-truth on mobile and exact-SHA-bound.
+- CSS-only visual closure remains the resource-preserving path; no business/security/reporting behavior changed.
+- Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 is HOLD/untouched. Production NO TOUCH.
+- UI gate is closed for this HEAD. Do not transfer it into certification without the remaining exact-SHA release gates.
