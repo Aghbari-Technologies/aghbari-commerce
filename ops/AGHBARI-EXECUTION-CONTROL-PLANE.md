@@ -963,3 +963,11 @@ Keep promotions, provider notification delivery, integration delivery records/ad
 - CI exact proof runs: 35547342267, 35547342250, 35547342225, 35547342229, 35547342355 — all queued.
 - Browser local limitation: PC01 has neither Supabase CLI nor Docker, so authenticated browser proof is not locally executable; do not infer PASS.
 - Candidate/Production frozen.
+
+
+## RUN-2026-09-21-EXECUTE-UI-020 — CURRENT UI SHA / IMAGE ROLLBACK SAFETY
+- Current exact product SHA: 7ba2c7b79287667a6860d8b8868dc8e63e5b2e46 on execution/customer-ui-completion-20260920.
+- Hardened src/services/imagePipeline.ts: deterministic product-media main.webp is no longer deleted if RPC registration fails after upsert, preventing accidental loss of the existing canonical image object.
+- The prior non-production draft preview was tied to ac7bd20ff82ad1e429f970d054c52e142c39f352 and did not start; it must not be reused as exact-SHA evidence. No current-SHA deployment exists yet.
+- Production NO TOUCH; certification candidate 1685836f4226fdcb3250a60eba7430ec3f8e3f080 remains untouched.
+- NEXT: wait for current-SHA PR/Draft checks, obtain a current-SHA non-production preview, then capture Customer Portal (desktop/mobile + product detail + cart + orders + templates + finance) and Staff/Admin (desktop/mobile + order detail) visual evidence on the same exact SHA.

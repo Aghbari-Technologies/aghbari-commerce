@@ -575,3 +575,11 @@ The CI deduplication commit correctly removed feature-branch push triggers but a
 - Current UI source includes Customer Portal and Staff/Admin surfaces; exact visual review remains blocked on a current-SHA deployed preview.
 - Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 remains untouched. Production remains NO TOUCH.
 - NEXT RESUME: obtain the Netlify Draft URL for ac7bd20ff82ad1e429f970d054c52e142c39f352, capture desktop/mobile screenshots, then inspect Customer Portal and Staff/Admin screens screen-by-screen on that same exact SHA.
+
+
+## RUN-2026-09-21-EXECUTE-UI-020 — CURRENT UI SHA / IMAGE ROLLBACK SAFETY
+- Current exact product SHA: 7ba2c7b79287667a6860d8b8868dc8e63e5b2e46 on execution/customer-ui-completion-20260920.
+- Hardened src/services/imagePipeline.ts: deterministic product-media main.webp is no longer deleted if RPC registration fails after upsert, preventing accidental loss of the existing canonical image object.
+- The prior non-production draft preview was tied to ac7bd20ff82ad1e429f970d054c52e142c39f352 and did not start; it must not be reused as exact-SHA evidence. No current-SHA deployment exists yet.
+- Production NO TOUCH; certification candidate 1685836f4226fdcb3250a60eba7430ec3f8e3f080 remains untouched.
+- NEXT: wait for current-SHA PR/Draft checks, obtain a current-SHA non-production preview, then capture Customer Portal (desktop/mobile + product detail + cart + orders + templates + finance) and Staff/Admin (desktop/mobile + order detail) visual evidence on the same exact SHA.

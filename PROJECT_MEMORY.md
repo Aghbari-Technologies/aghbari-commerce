@@ -518,3 +518,11 @@ RUN-2026-09-20-EXECUTE-022 — WORLD-CLASS UI/UX ADVANCEMENT
 - Vercel status remains free-plan deployment-rate failure; no deployment proof.
 - PC01 cannot run a fresh local Supabase browser stack because neither `supabase` CLI nor Docker is installed. Authenticated browser proof is therefore delegated to the exact GitHub browser workflows; no local authenticated PASS is claimed.
 - Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain untouched.
+
+
+## RUN-2026-09-21-EXECUTE-UI-020 — CURRENT UI SHA / IMAGE ROLLBACK SAFETY
+- Current exact product SHA: 7ba2c7b79287667a6860d8b8868dc8e63e5b2e46 on execution/customer-ui-completion-20260920.
+- Hardened src/services/imagePipeline.ts: deterministic product-media main.webp is no longer deleted if RPC registration fails after upsert, preventing accidental loss of the existing canonical image object.
+- The prior non-production draft preview was tied to ac7bd20ff82ad1e429f970d054c52e142c39f352 and did not start; it must not be reused as exact-SHA evidence. No current-SHA deployment exists yet.
+- Production NO TOUCH; certification candidate 1685836f4226fdcb3250a60eba7430ec3f8e3f080 remains untouched.
+- NEXT: wait for current-SHA PR/Draft checks, obtain a current-SHA non-production preview, then capture Customer Portal (desktop/mobile + product detail + cart + orders + templates + finance) and Staff/Admin (desktop/mobile + order detail) visual evidence on the same exact SHA.

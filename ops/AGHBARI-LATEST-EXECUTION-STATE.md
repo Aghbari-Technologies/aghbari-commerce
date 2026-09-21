@@ -571,3 +571,11 @@ First action: re-query PR #100 HEAD; if unchanged, poll G1 `35547160424` to term
 
 **CURRENT RESUME POINTER**
 Resume at: **poll the five exact-SHA GitHub proof runs for `57d9d74a6528a036ec36e35a9655b4d431b00ce8` to terminal states, then reconcile any failures on that exact SHA.** Do not reuse evidence from `fbf7869` or ancestors.
+
+
+## RUN-2026-09-21-EXECUTE-UI-020 — CURRENT UI SHA / IMAGE ROLLBACK SAFETY
+- Current exact product SHA: 7ba2c7b79287667a6860d8b8868dc8e63e5b2e46 on execution/customer-ui-completion-20260920.
+- Hardened src/services/imagePipeline.ts: deterministic product-media main.webp is no longer deleted if RPC registration fails after upsert, preventing accidental loss of the existing canonical image object.
+- The prior non-production draft preview was tied to ac7bd20ff82ad1e429f970d054c52e142c39f352 and did not start; it must not be reused as exact-SHA evidence. No current-SHA deployment exists yet.
+- Production NO TOUCH; certification candidate 1685836f4226fdcb3250a60eba7430ec3f8e3f080 remains untouched.
+- NEXT: wait for current-SHA PR/Draft checks, obtain a current-SHA non-production preview, then capture Customer Portal (desktop/mobile + product detail + cart + orders + templates + finance) and Staff/Admin (desktop/mobile + order detail) visual evidence on the same exact SHA.
