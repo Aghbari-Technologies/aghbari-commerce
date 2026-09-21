@@ -76,7 +76,7 @@ test.describe('Aghbari UI visual integrity', () => {
     await page.screenshot({ path: 'visual-evidence/customer-cart-desktop.png', fullPage: true });
     await page.getByRole('button', { name: 'إغلاق السلة' }).click();
 
-    await page.getByRole('button', { name: 'طلباتي', exact: true }).click();
+    await page.getByRole('button', { name: /^طلباتي/ }).first().click();
     await expect(page.getByRole('heading', { name: 'طلباتك وشحناتك' })).toBeVisible();
     await assertRtlAndNoOverflow(page);
     await page.screenshot({ path: 'visual-evidence/customer-orders-desktop.png', fullPage: true });
