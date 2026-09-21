@@ -926,3 +926,14 @@ Keep promotions, provider notification delivery, integration delivery records/ad
 - External proof remains open: G1 queued; Vercel blocked by free deployment-rate limit; authenticated browser proof blocked by missing runtime Supabase config.
 - No Candidate / Production mutation.
 
+
+
+## 2026-09-21 — UI-015 evidence checkpoint
+- Exact SHA: `57d9d74a6528a036ec36e35a9655b4d431b00ce8`.
+- Root cause: heavy PR workflows were filtered to main-only while PR #100 targets the enhancement branch.
+- Remediation: PR triggers made base-agnostic; feature push triggers remain removed for dedupe.
+- Local exact-SHA proof: typecheck/lint/217 tests/build PASS.
+- CI exact proof runs: 35547342267, 35547342250, 35547342225, 35547342229, 35547342355 — all queued.
+- Browser local limitation: PC01 has neither Supabase CLI nor Docker, so authenticated browser proof is not locally executable; do not infer PASS.
+- Candidate/Production frozen.
+
