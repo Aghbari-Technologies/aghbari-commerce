@@ -613,3 +613,12 @@ The CI deduplication commit correctly removed feature-branch push triggers but a
 - The deterministic product-media rollback safety is verified in code: registration failure leaves deterministic main.webp intact after upsert.
 - Production NO TOUCH; certification candidate untouched.
 - NEXT RESUME: run/complete exact-SHA visual review for 4d8268e..., capture the full screen set, compare against saved reference models, and fix concrete mismatches until the implementation visibly matches the intended product standard.
+
+
+## 2026-09-21 — EXACT-SHA VISUAL REVIEW COMPLETE
+- Product HEAD proven: `6ec216d8465e77e65763a71f61e91d34df43ccc6`.
+- UI Visual Review #126 / run `35550483413`: **SUCCESS**.
+- Exact browser evidence artifact uploaded with the complete screen set: authentication, customer portal (desktop/mobile/detail/cart/orders), and staff/admin (desktop/mobile + operational modules).
+- The visual review initially exposed test-contract errors rather than product rendering failures; those assertions were corrected on the same development branch and the full exact-SHA review then completed successfully.
+- Production NO TOUCH; certification candidate HOLD/untouched.
+- NEXT: perform image-by-image reference comparison and implement any remaining visible gaps before release reconciliation.
