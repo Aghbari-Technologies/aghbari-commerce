@@ -219,3 +219,10 @@ button,.checkout,.cart-button,.add-button{transition:transform .18s cubic-bezier
  .customer-app .template-grid{grid-template-columns:1fr}
  .customer-app .product-card>img,.customer-app .product-card>.product-placeholder{height:172px!important}
 }
+
+
+/* Auth field refinement */
+.password-field{position:relative;display:flex;align-items:center}
+.password-field input{padding-inline-end:78px!important}
+.password-reveal{position:absolute!important;inset-inline-end:7px!important;top:7px!important;min-height:34px!important;padding:5px 9px!important;border:1px solid #d7e6ea!important;border-radius:8px!important;background:#f7fafb!important;color:#52717c!important;font-size:9px!important;font-weight:900!important;box-shadow:none!important}
+.password-reveal:hover{background:#eef8f9!important;color:#087383!important}
