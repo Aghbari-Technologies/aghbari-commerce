@@ -2281,3 +2281,62 @@
   .auth-card{padding:22px;}
   .auth-card h2{font-size:27px;}
 }
+
+
+/* Admin control-plane grouping — visually separates policy, portal presentation, payments and limits. */
+.client-control-panel{
+  position:relative;
+  overflow:hidden;
+}
+.client-control-panel::before{
+  content:"CONTROL PLANE";
+  position:absolute;
+  inset-inline-start:25px;
+  inset-block-start:18px;
+  color:#b1c2ca;
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.18em;
+  pointer-events:none;
+}
+.client-control-panel>.section-heading{
+  padding-inline-start:0;
+}
+.client-control-panel>.section-heading h2{
+  font-size:24px;
+}
+.client-control-panel>.admin-card:first-of-type{
+  margin-top:16px;
+  border:1px solid #cfe3e8;
+  background:linear-gradient(135deg,#f7fcfd,#eef8fa);
+}
+.client-control-panel>.admin-grid{
+  align-items:stretch;
+}
+.client-control-panel .control-toggle{
+  min-height:64px;
+  background:linear-gradient(180deg,#fff,#fbfdfe);
+  border-color:#dbe8ec;
+}
+.client-control-panel .control-toggle:hover{
+  border-color:#b9d4da;
+  box-shadow:0 8px 22px rgba(16,42,67,.055);
+}
+.client-control-panel>.admin-grid:nth-of-type(2){
+  margin-top:12px;
+}
+.client-control-panel>.admin-grid:nth-of-type(2)>.admin-card{
+  min-height:190px;
+}
+.client-control-panel>.admin-grid:nth-of-type(2)>.admin-card h3{
+  font-size:15px;
+}
+.client-control-panel>.checkout:last-of-type{
+  min-height:48px;
+  margin-top:15px;
+  background:linear-gradient(135deg,#0a6f84,#0d91a5);
+}
+@media(max-width:650px){
+  .client-control-panel::before{inset-inline-start:16px;}
+  .client-control-panel>.section-heading h2{font-size:20px;}
+}
