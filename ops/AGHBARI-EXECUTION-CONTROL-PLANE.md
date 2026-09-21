@@ -1,3 +1,5 @@
+## RUN-2026-09-21-EXECUTE-UI-011 — UI DATA-LOAD STABILITY
+- Add dependency rule: data-refresh callbacks should depend on capability/identity inputs, not mutable form selections used only to choose defaults. Use functional state setters for defaulting after refresh.
 ## CONTROL-PLANE EVOLUTION — RUN-2026-09-21-EXECUTE-UI-010
 - Added a render-integrity rule: in React components, any helper used by render-time derived values (filters, maps, memoized lists, selected-item derivations) must be initialized before the first evaluation of those values; do not rely on function declaration hoisting when using `const` helpers.
 - This rule is specifically intended to catch runtime TDZ defects that type/build checks can miss when the component renders only under a role-specific surface.
