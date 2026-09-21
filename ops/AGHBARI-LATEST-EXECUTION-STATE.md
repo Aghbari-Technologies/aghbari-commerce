@@ -7,7 +7,7 @@
 - Browser proofs remain non-terminal: Fresh Local 35554101373 IN_PROGRESS; Local Production Artifact 35554101445 IN_PROGRESS. No browser PASS transferred or claimed.
 - Vercel commit status is pending; no exact deployment PASS is claimed.
 - Resource boundary: product-media 0 objects / 0 bytes at the last live checkpoint; no operational/business rows removed.
-- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f3e8d` untouched. Production HOLD / NO TOUCH.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` untouched. Production HOLD / NO TOUCH.
 - CURRENT RESUME POINTER: reconcile 35554101373 and 35554101445 to terminal state on exact SHA `57268606940f3b4576cba869b6ec72e8d05d9526`; inspect any terminal failure; then proceed to the next concrete UI/product gap only after preserving exact-SHA evidence.
 
 ## RUN-2026-09-21-EXECUTE-UI-019 — AUTHORITATIVE CURRENT STATE
