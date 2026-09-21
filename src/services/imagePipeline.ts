@@ -89,30 +89,26 @@ export async function uploadProductImage(productId: string, file: File) {
   });
   if (uploadError) throw uploadError;
 
-  try {
-    const { data: mediaId, error: registerError } = await client.rpc('register_product_media', {
-      p_product_id: productId.trim(),
-      p_storage_path: objectPath,
-      p_mime_type: processed.mimeType,
-      p_width: processed.width,
-      p_height: processed.height,
-      p_byte_size: processed.blob.size
-    });
-    if (registerError) throw registerError;
+  // main.webp is deterministic and may have replaced a valid prior image.
+  // Keep it intact when registration fails; a later successful registration reconciles the canonical row.
+  const { data: mediaId, error: registerError } = await client.rpc('register_product_media', {
+    p_product_id: productId.trim(),
+    p_storage_path: objectPath,
+    p_mime_type: processed.mimeType,
+    p_width: processed.width,
+    p_height: processed.height,
+    p_byte_size: processed.blob.size
+  });
+  if (registerError) throw registerError;
 
-    const stalePaths = (previousMedia ?? [])
-      .map((row) => row.storage_path)
-      .filter((path): path is string => Boolean(path) && path !== objectPath);
-    if (stalePaths.length) {
-      const { error: cleanupError } = await client.storage.from('product-media').remove(stalePaths);
-      if (cleanupError) console.warn('تعذر تنظيف صور المنتج القديمة بعد نجاح الصورة الجديدة.', cleanupError);
-    }
-
-    return { mediaId: mediaId as string, storagePath: objectPath, ...processed };
-  } catch (error) {
-    // main.webp is deterministic and may have replaced a valid prior image.
-    // Do not delete it on registration failure: deleting it can break the existing media row.
-    // A later successful registration reconciles the canonical row; the single-object path remains bounded.
-    throw error;
+  const stalePaths = (previousMedia ?? [])
+    .map((row) => row.storage_path)
+    .filter((path): path is string => Boolean(path) && path !== objectPath);
+  if (stalePaths.length) {
+    const { error: cleanupError } = await client.storage.from('product-media').remove(stalePaths);
+    if (cleanupError) console.warn('تعذر تنظيف صور المنتج القديمة بعد نجاح الصورة الجديدة.', cleanupError);
   }
+
+  return { mediaId: mediaId as string, storagePath: objectPath, ...processed };
+
 }
