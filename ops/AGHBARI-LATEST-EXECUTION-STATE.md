@@ -579,3 +579,14 @@ Resume at: **poll the five exact-SHA GitHub proof runs for `57d9d74a6528a036ec36
 - The prior non-production draft preview was tied to ac7bd20ff82ad1e429f970d054c52e142c39f352 and did not start; it must not be reused as exact-SHA evidence. No current-SHA deployment exists yet.
 - Production NO TOUCH; certification candidate 1685836f4226fdcb3250a60eba7430ec3f8e3f080 remains untouched.
 - NEXT: wait for current-SHA PR/Draft checks, obtain a current-SHA non-production preview, then capture Customer Portal (desktop/mobile + product detail + cart + orders + templates + finance) and Staff/Admin (desktop/mobile + order detail) visual evidence on the same exact SHA.
+
+
+## RUN-2026-09-21-EXECUTE-UI-021 — REFERENCE-ALIGNED UI EXECUTION
+- Current exact product HEAD: f90150cba65c3a8379f4e4c1f2f5f8842fabf736 on execution/customer-ui-completion-20260920.
+- Implemented reference-aligned Customer Portal shell: semantic split login, dark desktop customer rail, stronger B2B hero/purchase shortcuts, premium customer styling activation via customer-app root, responsive mobile bottom navigation.
+- Implemented reference-aligned Staff/Admin surfaces: operational status donut using live order status counts, dense transactional module styling, persistent staff mobile bottom navigation, grouped Control Plane presentation.
+- Expanded exact UI visual contract to capture authentication desktop/mobile and verify status donut + staff mobile navigation.
+- Hardened deterministic product-media rollback behavior: do not delete main.webp after registration failure following upsert.
+- Visual evidence on this exact SHA is not yet claimed: UI Visual Review run 120 is currently queued; no current-SHA deployed preview exists yet.
+- Production NO TOUCH; certification candidate remains untouched.
+- NEXT RESUME: obtain terminal UI Visual Review on f90150c..., retrieve exact-SHA visual evidence, inspect every customer/admin screen and close any defects found; only then proceed to certification/release reconciliation.
