@@ -609,3 +609,16 @@ Resume at: **poll the five exact-SHA GitHub proof runs for `57d9d74a6528a036ec36
 - The deterministic product-media rollback safety is verified in code: registration failure leaves deterministic main.webp intact after upsert.
 - Production NO TOUCH; certification candidate untouched.
 - NEXT RESUME: run/complete exact-SHA visual review for 4d8268e..., capture the full screen set, compare against saved reference models, and fix concrete mismatches until the implementation visibly matches the intended product standard.
+
+
+## RUN-2026-09-21-EXECUTE-UI-024 — EXACT-SHA VISUAL PROOF COMPLETE
+- Current exact product HEAD: `6ec216d8465e77e65763a71f61e91d34df43ccc6` on `execution/customer-ui-completion-20260920`.
+- PR #100: OPEN / DRAFT / unmerged; Production remains NO TOUCH; certification candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` remains untouched.
+- Exact UI Visual Review run #126: `35550483413`; terminal result **SUCCESS**.
+- Exact SHA checkout/build identity and isolated Supabase browser fixtures both passed before visual execution.
+- UI visual evidence artifact: `aghbari-ui-visual-review-6ec216d8465e77e65763a71f61e91d34df43ccc6` (artifact ID `10617373913`), uploaded from the exact run and containing the full captured screen set.
+- Captured screens: auth desktop/mobile; customer desktop/product detail/cart/orders/mobile; staff/admin desktop/orders/customers/inventory/purchasing/finance/export/settings/mobile.
+- Test-only fixes made while proving the screen contract: login brand text locator aligned to actual semantic element; product detail dialog locator aligned to `.product-detail-modal`; customer orders navigation locator aligned to accessible label; staff visual assertion no longer requires a donut when the test fixture has no orders.
+- Visual proof is authoritative for the exact HEAD above; older artifacts are not reused.
+- Note from inspection: some fixture states are intentionally sparse (for example customer orders has zero historical orders); this is real test data state, not an omitted screen.
+- NEXT RESUME: inspect the captured exact-SHA images against the saved reference boards, then make concrete UI improvements where the live result is visibly behind the reference standard; preserve exact-SHA evidence after each UI change.
