@@ -1,3 +1,5 @@
+## RUN-2026-09-21-EXECUTE-UI-013
+- Resource rule: use realtime subscriptions as the normal configuration propagation channel; keep periodic polling as a slower bounded fallback to reduce unnecessary network/database activity.
 ## RUN-2026-09-21-EXECUTE-UI-012
 - Resource-preservation rule strengthened: replaceable binary assets should use deterministic bounded object names and verified replacement paths rather than append-only UUID growth.
 - Storage cleanup ordering is mandatory: validate tenant/asset dependency → register the new canonical asset → remove stale storage objects → retain metadata only when required for audit/backward compatibility.

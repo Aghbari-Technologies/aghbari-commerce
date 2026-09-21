@@ -1,3 +1,12 @@
+## RUN-2026-09-21-EXECUTE-UI-013 — CLIENT CONFIG POLLING EFFICIENCY
+- Product branch current exact SHA: `809ab581a87e231a3d5a714862eb11a609781419`; branch `execution/customer-ui-completion-20260920`.
+- Reduced client UI settings fallback polling from every 15 seconds to every 60 seconds in `src/AppV3Fixed.tsx`. Organization setting changes still flow through the existing Supabase Realtime subscription; the interval is only a bounded fallback.
+- No transactional truth, authorization, storage policy, or reporting boundary changed.
+- Exact source verification confirms the interval is 60 seconds.
+- Exact-SHA verification for this SHA is queued behind the existing GitHub Actions backlog; no PASS is claimed.
+- Live resource proof remains database ≈20 MB and `product-media` storage 0 objects / 0 bytes.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` remains untouched; Production remains NO TOUCH.
+- NEXT RESUME: reconcile terminal Exact-SHA checks for `809ab581a87e231a3d5a714862eb11a609781419`, then browser/visual proof, then release-gate reconciliation.
 
 
 ## RUN-2026-09-21-EXECUTE-UI-012 — SPACE-PRESERVATION / PRODUCT MEDIA
