@@ -44,3 +44,20 @@ Resume at: **start/inspect fresh exact-SHA verification for `e3b6f54964b4a33c4c8
 
 ## CURRENT RESUME POINTER
 Resume at: **poll exact-SHA verification for `35b677d6d10584c0d4b49de7411a58c89b01172f`; after terminal results, inspect UI Visual Review/browser evidence and repair any remaining weak screen or functional regression on a new SHA.**
+
+
+## RUN-2026-09-21-EXECUTE-UI-037 — LIVE PREVIEW + PERMISSION-AWARE POLISH
+- Product source exact SHA: `c53fb4e3430c135998b5a43be886acf14e11a65b`.
+- Latest UI additions: flagship Admin workspace, live operational pulse, permission-aware workspace map, searchable product directory, real edit-from-directory path, customer ordering refinement, executive dashboard polish, and login password visibility control.
+- Exact non-production Netlify draft preview: `https://6ab0abfd7a3d3dc251bf816a--aghbari-commerce-web.netlify.app`; deployment/build identity proved for exact SHA `c53fb4e3430c135998b5a43be886acf14e11a65b`.
+- Public preview content fetch confirms the product title/description are Aghbari-branded Arabic B2B Commerce and exposes the intended login surface. No wrong-brand text was observed there.
+- Exact-SHA verification for `c53fb4e3430c135998b5a43be886acf14e11a65b`: security, G1, Order Workflow, and application-quality are terminal SUCCESS; browser/visual/concurrency/migration remain active at this checkpoint.
+- Resource preservation remains mandatory: CSS-first refinement, no extra runtime dependency or asset payload.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` remains frozen. Production remains HOLD / NO TOUCH.
+
+## DESIGN SYSTEM DURABLE RULE
+- Workspace navigation must be permission-aware at render time, so every visible shortcut maps to a surface the active role can actually reach.
+- UI polish must use real operational state or clearly labeled empty states; no synthetic operational metrics.
+
+## CURRENT RESUME POINTER
+Resume at: **reconcile all remaining exact-SHA checks for `c53fb4e3430c135998b5a43be886acf14e11a65b`, inspect uploaded visual evidence, and repair only evidenced UI/functional weaknesses.**
