@@ -668,3 +668,12 @@ Resume at: **poll the five exact-SHA GitHub proof runs for `57d9d74a6528a036ec36
 - Resource-smart implementation remains in force: CSS-only closure, no new runtime dependency, image, font, or database/storage growth; business/security/reporting behavior was not changed.
 - Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 remains HOLD/untouched. Production remains NO TOUCH.
 - NEXT RESUME: reconcile terminal non-UI exact-SHA gates for bcc5ac82db39eb495e908f0b8e372661042a1561; do not reuse prior-SHA evidence.
+
+## RUN-2026-09-21-EXECUTE-UI-027 — FULL CUSTOMER MOBILE SCREEN SET PROVEN
+- Exact active product HEAD: bda31298fdc6e027ab6f48a36b1fe1a63f7551d2 on execution/customer-ui-completion-20260920.
+- UI Visual Review #141 / run 35555557897: SUCCESS on the exact HEAD.
+- Visual contract now captures customer mobile landing, product detail, cart, orders, templates, and finance; staff mobile landing remains proven, with desktop module captures for orders, customers, inventory, purchasing, finance, export, and settings.
+- Mobile evidence uses viewport-truth screenshots with scroll/focus normalization. The visual artifact confirms the customer mobile B2B navigation and section presentations render cleanly without the earlier full-page fixed-navigation stitching distortion.
+- The visual closure layer remains CSS-only and resource-smart. No business data, pricing, authorization, database/storage, or reporting behavior was changed.
+- Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 remains HOLD/untouched. Production remains NO TOUCH.
+- NEXT RESUME: reconcile the remaining exact-SHA non-UI gates for bda31298fdc6e027ab6f48a36b1fe1a63f7551d2. UI visual coverage is proven for the current HEAD.
