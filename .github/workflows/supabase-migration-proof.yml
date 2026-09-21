@@ -98,7 +98,7 @@ jobs:
             IF fn NOT LIKE '%pg_catalog.pg_advisory_xact_lock%' OR fn NOT LIKE '%v_requested_key%' THEN
               RAISE EXCEPTION 'effective create_order is missing same-key serialization';
             END IF;
-            IF fn NOT LIKE '%v_requested_payment%' OR fn NOT LIKE '%p_payment_method%' THEN
+            IF fn NOT LIKE '%p_payment_method%' OR fn NOT LIKE '%v_requested_payment%' THEN
               RAISE EXCEPTION 'effective create_order is missing payment-method authority';
             END IF;
             IF fn NOT LIKE '%c.organization_id=v_org%' AND fn NOT LIKE '%c.organization_id = v_org%' THEN
