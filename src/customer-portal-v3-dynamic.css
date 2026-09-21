@@ -1753,3 +1753,331 @@
     grid-column: 1 / -1;
   }
 }
+
+
+/* ==========================================================================
+   AGHBARI REFERENCE-ALIGNED PRODUCT VISUAL PASS
+   Reference: "منصة الأغبري: لوحة تجارة ذكية متكاملة" + "منصة الأغبري لإدارة الأعمال التجارية"
+   Scope: Customer Portal shell, authenticated entry, staff/admin density.
+   No business state, pricing, authorization, or data behavior changed.
+   ========================================================================== */
+
+.auth-shell {
+  min-height: 100vh;
+  padding: clamp(18px, 4vw, 44px);
+  place-items: center;
+  background:
+    radial-gradient(circle at 5% 10%, rgba(13,145,165,.18), transparent 26rem),
+    linear-gradient(135deg, #061d31 0%, #0a334b 48%, #eff7f9 48.1%, #f7fafb 100%);
+}
+.auth-shell::before {
+  content: "الأغبري\A\Aمنصة التجارة الذكية للتجار والشركات\A\Aإدارة المنتجات • العملاء • الطلبات • المخزون • الحسابات\A\Aشراء جملة أسرع، متابعة أوضح، وتشغيل أكثر انضباطًا.";
+  white-space: pre-line;
+  width: min(560px, 42vw);
+  min-height: 620px;
+  padding: clamp(32px, 5vw, 64px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #e9f8fb;
+  font-size: clamp(18px, 2vw, 26px);
+  font-weight: 800;
+  line-height: 2;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 34px;
+  background:
+    radial-gradient(circle at 65% 20%, rgba(77,202,214,.22), transparent 16rem),
+    linear-gradient(160deg, rgba(16,69,91,.92), rgba(5,31,49,.98));
+  box-shadow: 0 34px 100px rgba(2,20,34,.32);
+}
+.auth-card {
+  position: relative;
+  z-index: 1;
+  width: min(460px, 92vw);
+  margin-inline-start: clamp(0px, 3vw, 40px);
+  padding: clamp(28px, 4vw, 42px);
+  border: 1px solid rgba(255,255,255,.8);
+  border-radius: 28px;
+  background: rgba(255,255,255,.96);
+  box-shadow: 0 30px 90px rgba(6,34,51,.22);
+}
+.auth-card .eyebrow {
+  color: #0c8297;
+  letter-spacing: .16em;
+}
+.auth-card h1 {
+  font-size: clamp(30px, 4vw, 42px);
+  color: #102a43;
+  letter-spacing: -.9px;
+}
+.auth-card button {
+  min-height: 48px;
+  margin-top: 4px;
+  border-radius: 12px;
+  background: linear-gradient(135deg,#0a6f84,#0d91a5);
+  box-shadow: 0 11px 28px rgba(13,145,165,.18);
+}
+@media (max-width: 900px) {
+  .auth-shell {
+    background:
+      radial-gradient(circle at 80% 0, rgba(13,145,165,.15), transparent 20rem),
+      #eef6f8;
+  }
+  .auth-shell::before {
+    width: min(700px, 94vw);
+    min-height: 210px;
+    margin-bottom: -14px;
+    font-size: 15px;
+    line-height: 1.8;
+  }
+  .auth-card {
+    margin-inline: 0;
+    width: min(520px, 94vw);
+  }
+}
+@media (max-width: 560px) {
+  .auth-shell { padding: 14px; }
+  .auth-shell::before {
+    min-height: 155px;
+    padding: 22px;
+    border-radius: 24px;
+    font-size: 13px;
+  }
+  .auth-card {
+    padding: 24px;
+    border-radius: 22px;
+  }
+}
+
+/* Desktop customer workspace: dark operational rail matching the reference composition. */
+@media (min-width: 821px) {
+  .portal-body {
+    grid-template-columns: 230px minmax(0, 1fr);
+    max-width: 1580px;
+    gap: 18px;
+    padding-inline: max(18px, 3.2vw);
+  }
+  .portal-nav {
+    position: sticky;
+    top: 92px;
+    display: grid;
+    align-content: start;
+    gap: 4px;
+    min-height: calc(100vh - 122px);
+    padding: 14px 10px;
+    overflow: hidden;
+    border: 0;
+    border-radius: 20px;
+    background:
+      radial-gradient(circle at 50% 0, rgba(41,157,178,.24), transparent 13rem),
+      linear-gradient(165deg,#08243a,#0a3046 62%,#061b2d);
+    box-shadow: 0 24px 60px rgba(5,28,43,.19);
+  }
+  .portal-nav::before {
+    content: "الأغبري\Aتجارة B2B";
+    white-space: pre;
+    display: block;
+    padding: 12px 10px 19px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid rgba(255,255,255,.12);
+    color: #fff;
+    font-size: 18px;
+    line-height: 1.55;
+    font-weight: 900;
+  }
+  .portal-nav::after {
+    content: "بوابة العميل";
+    margin-top: 14px;
+    padding: 11px 12px;
+    border-top: 1px solid rgba(255,255,255,.09);
+    color: #87b3bf;
+    font-size: 10px;
+    font-weight: 800;
+  }
+  .portal-nav button {
+    min-height: 48px;
+    padding: 10px 42px 10px 12px;
+    border: 1px solid transparent;
+    border-radius: 11px;
+    background: transparent;
+    color: #b8d0d9;
+    text-align: right;
+    font-size: 12px;
+    font-weight: 850;
+    transition: background .18s ease,color .18s ease,transform .18s ease;
+  }
+  .portal-nav button::before {
+    inset-inline-start: auto;
+    inset-inline-end: 12px;
+    width: 26px;
+    height: 26px;
+    background: rgba(255,255,255,.06);
+    border-radius: 8px;
+    transform: none;
+  }
+  .portal-nav button::after {
+    position: absolute;
+    inset-inline-end: 19px;
+    top: 14px;
+    z-index: 1;
+    color: #8fd1db;
+    font-size: 13px;
+    font-weight: 900;
+  }
+  .portal-nav button:nth-child(1)::after { content: "⌂"; }
+  .portal-nav button:nth-child(2)::after { content: "↗"; }
+  .portal-nav button:nth-child(3)::after { content: "▤"; }
+  .portal-nav button:nth-child(4)::after { content: "◫"; }
+  .portal-nav button:hover {
+    background: rgba(255,255,255,.07);
+    color: #fff;
+    transform: translateX(-2px);
+  }
+  .portal-nav button.active {
+    background: linear-gradient(135deg,#0d91a5,#0a667b);
+    color: #fff;
+    box-shadow: 0 10px 24px rgba(5,24,39,.22);
+  }
+  .portal-nav button.active::before {
+    background: rgba(255,255,255,.13);
+  }
+  .portal-nav button.active::after {
+    color: #fff;
+  }
+
+  .portal-main { min-width: 0; }
+  .hero-card {
+    min-height: 235px;
+    padding: 32px 34px;
+    border-radius: 24px;
+    background:
+      radial-gradient(circle at 78% 20%, rgba(99,210,222,.2), transparent 15rem),
+      linear-gradient(135deg,#071f33 0%,#103f55 58%,#0a7d92 135%);
+    box-shadow: 0 25px 65px rgba(7,36,54,.2);
+  }
+  .hero-card h2 {
+    max-width: 720px;
+    font-size: clamp(32px, 3.3vw, 50px);
+  }
+  .hero-metrics {
+    min-width: 320px;
+    max-width: 370px;
+  }
+  .purchase-shortcuts {
+    grid-template-columns: 210px minmax(0,1fr);
+    padding: 9px;
+    margin-top: 14px;
+    border-radius: 17px;
+  }
+  .purchase-shortcuts-intro {
+    min-height: 94px;
+    border-radius: 13px;
+  }
+  .product-grid {
+    grid-template-columns: repeat(4,minmax(0,1fr));
+    gap: 13px;
+  }
+  .product-card {
+    border-radius: 17px;
+  }
+  .product-card img,
+  .product-placeholder {
+    aspect-ratio: 1 / .78;
+  }
+  .product-body {
+    padding: 14px;
+  }
+  .product-body h3 {
+    font-size: 15px;
+  }
+  .content-card {
+    border-radius: 18px;
+  }
+}
+
+/* Make operations feel like a commercial control console. */
+.staff-shell .staff-main {
+  max-width: 1580px;
+}
+.staff-shell .staff-topbar {
+  min-height: 76px;
+  padding-inline: max(18px,3.2vw);
+  background:
+    radial-gradient(circle at 100% 0, rgba(13,145,165,.08), transparent 19rem),
+    rgba(255,255,255,.94);
+}
+.staff-shell .staff-brand strong {
+  font-size: 19px;
+}
+.staff-shell .staff-main > .admin-panel {
+  margin-top: 14px;
+}
+.staff-shell .staff-section-rail {
+  grid-template-columns: repeat(8,minmax(0,1fr));
+}
+.staff-shell .staff-section-rail button {
+  min-height: 74px;
+  border-radius: 14px;
+  box-shadow: 0 9px 22px rgba(16,42,67,.055);
+}
+.staff-shell .admin-operations > summary {
+  min-height: 56px;
+  font-size: 13px;
+}
+.staff-shell .admin-card,
+.staff-shell .cart-panel {
+  border-radius: 18px;
+  box-shadow: 0 10px 28px rgba(16,42,67,.05);
+}
+.staff-shell .admin-card h3 {
+  color: #12394e;
+}
+.staff-shell .admin-order-tools {
+  padding: 9px;
+  border: 1px solid #e1edf0;
+  border-radius: 14px;
+  background: linear-gradient(180deg,#fbfeff,#f5f9fa);
+}
+.staff-shell .admin-order-tools input,
+.staff-shell .admin-order-tools select,
+.staff-shell .admin-order-tools button {
+  min-height: 46px;
+}
+@media (max-width: 1180px) {
+  .staff-shell .staff-section-rail { grid-template-columns: repeat(4,minmax(0,1fr)); }
+}
+@media (max-width: 650px) {
+  .staff-shell .staff-section-rail { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+
+/* Data-dense tables: stronger hierarchy, better scanning and sticky headers. */
+.admin-card table,
+.cart-panel table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+.admin-card thead th,
+.cart-panel thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding: 11px 10px;
+  background: #eef7f9;
+  border-bottom: 1px solid #cfe3e8;
+  color: #496977;
+  font-size: 10px;
+  font-weight: 900;
+}
+.admin-card tbody td,
+.cart-panel tbody td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #edf3f5;
+  color: #29495d;
+  font-size: 11px;
+}
+.admin-card tbody tr:hover td,
+.cart-panel tbody tr:hover td {
+  background: #f9fcfd;
+}
