@@ -26,3 +26,21 @@
 Resume at: **start/inspect fresh exact-SHA verification for `e3b6f54964b4a33c4c8403f0831ae43a1277904c`; prioritize UI Visual Review and fresh browser evidence, then repair any remaining visual weakness on a new SHA if required.**
 - Never transfer prior-SHA evidence.
 - Do not merge, promote Candidate, or touch Production from non-terminal evidence.
+
+## RUN-2026-09-21-EXECUTE-UI-036 — FLAGSHIP WORKSPACE + CUSTOMER REFINEMENT
+- Active UI branch: `execution/customer-ui-completion-20260920`.
+- Exact current product HEAD: `35b677d6d10584c0d4b49de7411a58c89b01172f`.
+- PR #100: OPEN / DRAFT / MERGEABLE.
+- Real implementation completed: Admin flagship workspace composition, live operational pulse, workspace map, searchable product directory with direct pricing/image/edit actions, real product edit workflow backed by `upsert_product`, and further Customer Portal B2B refinements for shortcuts, product cards, orders, finance, templates, cart, and mobile chrome.
+- Resource-smart rule preserved: no new package, image/font payload, runtime dependency, database/schema, authorization, transaction, Storage, or reporting-boundary change.
+- Customer/Admin visual direction remains authored B2B rather than copied product templates.
+- Exact-SHA verification for `35b677d6d10584c0d4b49de7411a58c89b01172f` has restarted: current runs are queued/pending; therefore no final PASS or certification claim is made yet.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` remains frozen/untouched. Production remains HOLD / NO TOUCH.
+
+## LAST PROVEN STATE
+- Source/product implementation checkpoint: `35b677d6d10584c0d4b49de7411a58c89b01172f`.
+- Previous exact-SHA proofs are stale for this new SHA and must not be reused.
+- UI Visual Review and browser evidence remain mandatory before visual closure.
+
+## CURRENT RESUME POINTER
+Resume at: **poll exact-SHA verification for `35b677d6d10584c0d4b49de7411a58c89b01172f`; after terminal results, inspect UI Visual Review/browser evidence and repair any remaining weak screen or functional regression on a new SHA.**
