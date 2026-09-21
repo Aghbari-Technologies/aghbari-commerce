@@ -72,11 +72,20 @@ export async function uploadProductImage(productId: string, file: File) {
   if (!['owner', 'admin', 'sales'].includes(profile.role)) throw new Error('ليس لديك صلاحية رفع صور المنتجات.');
 
   const processed = await processProductImage(file);
-  const objectPath = `${profile.organization_id}/${productId.trim()}/${crypto.randomUUID()}.webp`;
+  const objectPath = `${profile.organization_id}/${productId.trim()}/main.webp`;
+  const { data: previousMedia, error: previousMediaError } = await client
+    .from('product_media')
+    .select('storage_path')
+    .eq('organization_id', profile.organization_id)
+    .eq('product_id', productId.trim())
+    .order('sort_order', { ascending: true })
+    .order('created_at', { ascending: true });
+  if (previousMediaError) throw previousMediaError;
+
   const { error: uploadError } = await client.storage.from('product-media').upload(objectPath, processed.blob, {
     contentType: processed.mimeType,
     cacheControl: '31536000',
-    upsert: false
+    upsert: true
   });
   if (uploadError) throw uploadError;
 
@@ -90,6 +99,15 @@ export async function uploadProductImage(productId: string, file: File) {
       p_byte_size: processed.blob.size
     });
     if (registerError) throw registerError;
+
+    const stalePaths = (previousMedia ?? [])
+      .map((row) => row.storage_path)
+      .filter((path): path is string => Boolean(path) && path !== objectPath);
+    if (stalePaths.length) {
+      const { error: cleanupError } = await client.storage.from('product-media').remove(stalePaths);
+      if (cleanupError) console.warn('تعذر تنظيف صور المنتج القديمة بعد نجاح الصورة الجديدة.', cleanupError);
+    }
+
     return { mediaId: mediaId as string, storagePath: objectPath, ...processed };
   } catch (error) {
     await client.storage.from('product-media').remove([objectPath]);
