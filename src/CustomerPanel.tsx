@@ -20,7 +20,7 @@ export default function CustomerPanel({ role }: { role: UserRole }) {
   const [inviteBusy, setInviteBusy] = useState<string | null>(null);
   const [customerQuery, setCustomerQuery] = useState('');
   const [customerStatus, setCustomerStatus] = useState<'all' | 'active' | 'paused'>('all');
-  const [customerTier, setCustomerTier] = useState<'all' | CustomerTier>('all');
+  const [customerTier, setCustomerTierFilter] = useState<'all' | CustomerTier>('all');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -35,7 +35,7 @@ export default function CustomerPanel({ role }: { role: UserRole }) {
     return matchesQuery && matchesStatus && matchesTier;
   });
   const hasCustomerFilters = Boolean(customerQuery.trim()) || customerStatus !== 'all' || customerTier !== 'all';
-  function clearCustomerFilters() { setCustomerQuery(''); setCustomerStatus('all'); setCustomerTier('all'); }
+  function clearCustomerFilters() { setCustomerQuery(''); setCustomerStatus('all'); setCustomerTierFilter('all'); }
   async function dispatchInvitation(customer: StaffCustomer) {
     const email = (inviteEmail[customer.id] ?? '').trim().toLowerCase();
     if (!supabase || !email) return;
@@ -62,7 +62,7 @@ export default function CustomerPanel({ role }: { role: UserRole }) {
       </form>}
       <div className="admin-card">
         <div className="section-heading"><div><h3>العملاء الحاليون</h3></div><span>{hasCustomerFilters ? "إظهار " + visibleCustomers.length + " من " + customers.length : customers.length + " عميل"}</span></div>
-        {customers.length > 0 && <div className="admin-order-tools customer-filter-tools"><input aria-label="البحث في العملاء" value={customerQuery} onChange={(e) => setCustomerQuery(e.target.value)} placeholder="اسم العميل أو الهاتف…"/><select aria-label="تصفية حالة العميل" value={customerStatus} onChange={(e) => setCustomerStatus(e.target.value as 'all' | 'active' | 'paused')}><option value="all">كل الحالات</option><option value="active">نشط</option><option value="paused">موقوف</option></select><select aria-label="تصفية فئة العميل" value={customerTier} onChange={(e) => setCustomerTier(e.target.value as 'all' | CustomerTier)}><option value="all">كل الفئات</option>{tiers.map((item) => <option key={item} value={item}>{tierLabels[item]}</option>)}</select>{hasCustomerFilters && <button type="button" onClick={clearCustomerFilters}>مسح التصفية</button>}</div>}
+        {customers.length > 0 && <div className="admin-order-tools customer-filter-tools"><input aria-label="البحث في العملاء" value={customerQuery} onChange={(e) => setCustomerQuery(e.target.value)} placeholder="اسم العميل أو الهاتف…"/><select aria-label="تصفية حالة العميل" value={customerStatus} onChange={(e) => setCustomerStatus(e.target.value as 'all' | 'active' | 'paused')}><option value="all">كل الحالات</option><option value="active">نشط</option><option value="paused">موقوف</option></select><select aria-label="تصفية فئة العميل" value={customerTier} onChange={(e) => setCustomerTierFilter(e.target.value as 'all' | CustomerTier)}><option value="all">كل الفئات</option>{tiers.map((item) => <option key={item} value={item}>{tierLabels[item]}</option>)}</select>{hasCustomerFilters && <button type="button" onClick={clearCustomerFilters}>مسح التصفية</button>}</div>}
         {!customers.length ? <small>لا يوجد عملاء مسجلون بعد.</small> : !visibleCustomers.length ? <div className="cart-empty">لا توجد نتائج مطابقة. عدّل البحث أو التصفية.</div> : <div className="cart-lines">{visibleCustomers.map((customer) => <article className="cart-line" key={customer.id}>
           <div><strong>{customer.name}</strong><small>{customer.phone ?? 'بدون هاتف'} · {customer.is_active ? 'نشط' : 'موقوف'}</small></div>
           <select aria-label={`فئة ${customer.name}`} disabled={!canManage || busy} value={customer.tier} onChange={(e) => void run(() => setCustomerTier(customer.id, e.target.value as CustomerTier), 'تم تحديث فئة العميل.')}>{tiers.map((item) => <option key={item} value={item}>{tierLabels[item]}</option>)}</select>
