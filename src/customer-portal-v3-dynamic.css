@@ -1325,6 +1325,7 @@
   max-width: 560px;
   margin-inline: auto;
   padding: 36px 18px;
+}
 
 /* Customer order directory controls — compact, RTL-safe, touch-friendly. */
 .customer-app .order-filter-bar {
