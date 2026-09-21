@@ -1032,3 +1032,14 @@ Keep promotions, provider notification delivery, integration delivery records/ad
 - CSS-only visual closure remains the resource-preserving path; no business/security/reporting behavior changed.
 - Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 is HOLD/untouched. Production NO TOUCH.
 - UI gate is closed for this HEAD. Do not transfer it into certification without the remaining exact-SHA release gates.
+
+## RUN-2026-09-21-EXECUTE-UI-029 — CURRENT EXACT-SHA PROVEN STATE
+- Current product HEAD: dc980cc840b1c59099e66217149216dff0a20ae0 on execution/customer-ui-completion-20260920.
+- Root-cause fix: customer order-detail loading now reads order_items and authorized product facts as separate queries instead of relying on an embedded RLS join. This preserves tenant authorization while removing the failing customer order-detail path.
+- Exact current-SHA terminal PASS: application-quality 35557623162; G1 35557623170; security 35557623217; migration 35557623164; concurrency 35557623168; Test-the-Test 35557623213; Order Workflow 35557623161; Browser E2E Local Production Artifact 35557623215; Browser E2E Fresh Local Supabase 35557623188; UI Visual Review 35557623171.
+- UI Visual artifact: 10621088272, name aghbari-ui-visual-review-dc980cc840b1c59099e66217149216dff0a20ae0, SHA-256 93e0d85450bfe00714279878714bfef0f6fbf9fc94862fdca281b345b03a5880.
+- Browser E2E now proves the real customer search/catalog/cart/order/refresh/logout path, tenant isolation, quick-order SKU/barcode/server lookup, pagination, quantity controls, modal/accessibility paths, and admin browser coverage without current-SHA failures.
+- UI Visual Review separately proves the screen contract on the same SHA; visual evidence is not transferred from an older SHA.
+- Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f3f080 remains HOLD/untouched. Production remains NO TOUCH.
+- Resource-smart rule remains: no new dependency/asset/font/database payload was introduced by the order-detail fix.
+- NEXT RESUME: reconcile current PR/release path and obtain an exact-SHA non-production deployment/preview for final browser proof. Do not touch Candidate or Production.
