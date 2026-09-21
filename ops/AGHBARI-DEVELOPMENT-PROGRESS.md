@@ -392,3 +392,10 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 - DEPLOYMENT: no exact-SHA Vercel deployment proof; earlier deployments are SHA-mismatched and excluded.
 - CANDIDATE: `1685836f4226fdcb3250a60eba7430ecf3e8f080` unchanged. PRODUCTION: HOLD / NO TOUCH.
 - NEXT ACTION: exact-SHA UI/browser verification, then merge #100 only after required gates are terminal SUCCESS.
+
+
+## RUN-2026-09-21-EXECUTE-UI-011 — UI DATA-LOAD STABILITY
+- UI stability hardening across Purchasing, Inventory, Finance.
+- Exact SHA: `3fd298cf1cb073e037a3d24f50adbfb68f688635`.
+- Root issue: role-driven operational reload callbacks were also keyed to user selection state, causing avoidable effect recreation/reload churn. Functional setters now read the latest state without widening callback dependencies.
+- Result: source-level defect fixed and verified by exact commit diff. Browser/CI PASS not claimed.
