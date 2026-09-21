@@ -575,3 +575,14 @@ RUN-2026-09-20-EXECUTE-022 — WORLD-CLASS UI/UX ADVANCEMENT
 - Current visual proof requirement: rerun exact-SHA UI Visual Review for `eb5a0e2b3aef104b53a206b11bce129215989a81` and inspect the new artifact before any certification/release claim.
 - Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080`: HOLD / untouched. Production: NO TOUCH.
 - NEXT RESUME: obtain terminal UI Visual Review for `eb5a0e2b3aef104b53a206b11bce129215989a81`; inspect customer desktop/mobile and all staff/admin module captures; fix only concrete remaining defects, then reconcile exact-SHA release gates.
+
+## RUN-2026-09-21-EXECUTE-UI-026 — FINAL UI STATE
+- Current product HEAD: bcc5ac82db39eb495e908f0b8e372661042a1561 on execution/customer-ui-completion-20260920.
+- Added a CSS-only final visual closure layer and activated it from main.tsx.
+- Customer Portal: mobile navigation no longer relies on sticky content rail; hero metrics stack safely; single-product fixture presentation avoids an empty grid track; desktop B2B shell and transactional surfaces remain premium and RTL.
+- Staff/Admin: desktop section rail is persistent while scrolling; operational modules retain dense commercial hierarchy, responsive layout, and mobile bottom navigation.
+- Accessibility: skip link now appears on focus-visible so incidental programmatic focus does not turn the control into persistent chrome.
+- UI Visual Review #139 for this exact HEAD succeeded after exact checkout, isolated fixture setup, exact production build, artifact identity validation, and browser review.
+- Visual evidence covers authentication, customer portal landing/detail/cart/orders, and staff/admin landing/orders/customers/inventory/purchasing/finance/export/settings across desktop/mobile coverage defined by the contract.
+- Resource-smart constraint preserved: no new dependency, asset, font, or database/storage payload; no fake operational data; no reporting-boundary change.
+- This UI milestone is proven; release certification still requires separate exact-SHA non-UI gates and remains protected by Candidate HOLD / Production NO TOUCH.
