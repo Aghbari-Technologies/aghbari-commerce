@@ -1013,3 +1013,13 @@ Keep promotions, provider notification delivery, integration delivery records/ad
 - Current visual proof requirement: rerun exact-SHA UI Visual Review for `eb5a0e2b3aef104b53a206b11bce129215989a81` and inspect the new artifact before any certification/release claim.
 - Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080`: HOLD / untouched. Production: NO TOUCH.
 - NEXT RESUME: obtain terminal UI Visual Review for `eb5a0e2b3aef104b53a206b11bce129215989a81`; inspect customer desktop/mobile and all staff/admin module captures; fix only concrete remaining defects, then reconcile exact-SHA release gates.
+
+## RUN-2026-09-21-EXECUTE-UI-026 — UI VISUAL GATE CLOSED
+- Exact product HEAD: bcc5ac82db39eb495e908f0b8e372661042a1561.
+- Presentation-only closure layer committed: src/ui-final-visual-closure.css and main.tsx import.
+- Fixed concrete visual defects observed from exact-SHA browser evidence: mobile sticky/flow occlusion, mobile hero metric wrapping, single-product grid whitespace treatment, incidental skip-link visibility, and staff section-rail persistence.
+- Mobile visual evidence now uses viewport-truth capture with explicit top reset/focus cleanup; full-page stitching is reserved for pages where it is semantically useful.
+- UI Visual Review #139 / run 35555203454: SUCCESS on the exact HEAD; artifact is tied to the same SHA.
+- UI scope now has exact evidence for authentication, Customer Portal desktop/mobile/detail/cart/orders, and Staff/Admin desktop/mobile plus operational module screens.
+- Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 remains HOLD/untouched. Production remains NO TOUCH.
+- RELEASE RULE: this closes the UI visual gate only. Do not transfer UI PASS into certification/production. Reconcile remaining exact-SHA functional/security/domain/release gates independently.
