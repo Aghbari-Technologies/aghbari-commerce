@@ -1,3 +1,14 @@
+## RUN-2026-09-21-EXECUTE-UI-024 — OFFLINE RENDER CHURN PRESERVATION
+- Active UI branch: `execution/customer-ui-completion-20260920`.
+- Exact source SHA: `57268606940f3b4576cba869b6ec72e8d05d9526`.
+- Implemented in `src/AppV3Fixed.tsx`: offline queue polling still refreshes every 5s for prompt state visibility, but now uses a functional state comparison and returns the previous array when operation identity/type/timestamps/attempts/retry/terminal state are unchanged. This prevents redundant React subtree renders without changing queue persistence, retry semantics, synchronization, or business data.
+- Exact source diff: parent `c2ba5efc171fba64227e7cbd623190d947e26c6f` → current SHA, one file, +1/-1.
+- Exact-SHA proof already terminal: UI Visual Review 35554101317 SUCCESS; Quality 35554101360 SUCCESS; Security 35554101483 SUCCESS; G1 35554101502 SUCCESS; Order Workflow 35554101292 SUCCESS; Migration 35554101490 SUCCESS; Test-the-Test 35554101374 SUCCESS; Concurrency 35554101462 SUCCESS.
+- Browser E2E: Fresh Local run 35554101373 and Local Production Artifact run 35554101445 remain IN_PROGRESS at latest reconciliation; no browser PASS is claimed yet.
+- Resource boundary preserved: product-media remains deterministic/single-object; PWA cache bounded; signed-image cache capped at 256; offline queue capped at 100 operations / 16 KB payload; no operational/business data deletion.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` untouched. Production HOLD / NO TOUCH.
+- NEXT: obtain terminal result for runs 35554101373 and 35554101445; then continue only with concrete UI/product gaps or release-gate reconciliation.
+
 ## CURRENT CHECKPOINT — RUN-2026-09-21-EXECUTE-UI-019
 - Active product branch: execution/customer-ui-completion-20260920.
 - Exact HEAD: 8ee815061a6c1f7068983eaa0769ff1ee443947d.
