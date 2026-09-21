@@ -6,7 +6,7 @@ async function login(page: Page, email: string, password: string) {
   await loginForm.locator('input[type="email"]').fill(email);
   await loginForm.locator('input[type="password"]').fill(password);
   await loginForm.getByRole('button', { name: 'دخول آمن' }).click();
-  const portal = page.getByRole('button', { name: 'الكتالوج', exact: true }).first();
+  const portal = page.getByRole('complementary', { name: 'تنقل البوابة' }).getByRole('button', { name: /^الكتالوج(?:\\s|$)/ }).first();
   const error = page.locator('.error-banner');
   await Promise.race([portal.waitFor({ state: 'visible', timeout: 5000 }), error.waitFor({ state: 'visible', timeout: 5000 })]).catch(() => undefined);
   if (await error.isVisible().catch(() => false)) throw new Error('Login/bootstrap failed: ' + await error.innerText());
