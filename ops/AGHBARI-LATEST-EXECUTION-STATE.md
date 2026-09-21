@@ -61,3 +61,24 @@ Resume at: **poll exact-SHA verification for `35b677d6d10584c0d4b49de7411a58c89b
 
 ## CURRENT RESUME POINTER
 Resume at: **reconcile all remaining exact-SHA checks for `c53fb4e3430c135998b5a43be886acf14e11a65b`, inspect uploaded visual evidence, and repair only evidenced UI/functional weaknesses.**
+
+## RUN-2026-09-21-EXECUTE-UI-038 — FULL UI COVERAGE + EXACT PROOF CLOSED
+- Active product branch: `execution/customer-ui-completion-20260920`.
+- Exact current product SHA: `84c50dcca7913799310f626130935c7634d7be74`.
+- PR #100: OPEN / DRAFT / MERGEABLE; no merge or Candidate promotion performed.
+- UI implementation completed for the current Commerce scope: customer B2B portal refinement, flagship Admin workspace, permission-aware workspace map, searchable product directory, real product edit flow via existing `upsert_product` RPC, executive command-center polish, order/customer/inventory/purchasing/finance/data/settings surfaces, login interaction refinement, and responsive/mobile treatment.
+- Exact non-production Netlify draft preview for this SHA: `https://6ab0acfe7a3d3dcb80bf8147--aghbari-commerce-web.netlify.app` with successful exact artifact/deployment identity.
+- Exact-SHA gates are terminal SUCCESS on this SHA: security, quality, G1, Order Workflow, migration, concurrency, sensitivity, Fresh Local Browser, Local Browser, UI Visual Review, and draft preview.
+- Visual evidence artifact: `10621412588` (`aghbari-ui-visual-review-84c50dcca7913799310f626130935c7634d7be74`) and browser artifact `10622125460`; evidence is tied to the exact SHA.
+- Same-SHA visual evidence reviewed includes auth desktop/mobile, customer desktop/mobile, cart/orders/templates/finance/product-detail mobile and desktop views, plus staff desktop/mobile and operational surfaces.
+- No stale/prior-SHA evidence transferred.
+- Resource-smart rule preserved: no additional runtime dependency, image/font payload, database change, transaction/security boundary change, or reporting-boundary change in this UI pass.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` remains frozen/untouched. Production remains HOLD / NO TOUCH. Vercel rate-limit remains external; Netlify draft preview is the current non-production visual path.
+
+## LAST PROVEN STATE
+- Exact SHA: `84c50dcca7913799310f626130935c7634d7be74`.
+- All required current-SHA verification gates: terminal SUCCESS.
+- Exact visual/browser artifacts exist and were reviewed.
+
+## CURRENT RESUME POINTER
+Resume at: **only the next concrete product/UI gap or release-gate reconciliation on exact SHA `84c50dcca7913799310f626130935c7634d7be74`; do not rescan or rebuild completed surfaces. Merge/Candidate/Production remain separate release decisions.**
