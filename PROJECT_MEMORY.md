@@ -415,3 +415,16 @@ RUN-2026-09-20-EXECUTE-022 — WORLD-CLASS UI/UX ADVANCEMENT
 - Staff order-detail views may rely on existing authenticated RLS, but must not expose technical UUIDs as customer-facing/operator-facing business identifiers.
 - Hero/header summaries may surface already-loaded operational facts, but must not become synthetic BI metrics.
 - Current exact UI checkpoint: `3d699ca81e1de17eef36a81bf8eff0b9809bee07`; fresh exact-SHA proof is mandatory for this checkpoint.
+
+## 2026-09-21 — EXECUTE-UI-012 / exact-SHA reconciliation checkpoint
+- Observation time: 2026-09-21 03:13 Asia/Aden.
+- Active development lane: `execution/customer-ui-completion-20260920`; PR #100 is still OPEN/DRAFT and its current GitHub HEAD at this checkpoint is `bec7eccf2c7f0d06681e5079361bae7d004cfde7`. The PR body is stale and is not treated as evidence.
+- Direct fixes completed and confirmed still present on the current HEAD lineage: duplicate PurchasingPanel helper removal; CustomerPanel filter-setter/service-function name collision fix; missing `}` in `src/customer-portal-v3-dynamic.css`.
+- Current HEAD also contains the single-primary-product-image storage work (`src/services/imagePipeline.ts` + migration `20260921000431_product_media_single_object`). Live Supabase project `mrcyqezbhpncuvaehwgf` confirms migration `20260921000431` is applied.
+- Non-production local verification on PC01 against exact observed HEAD `bec7ecc...`: TypeScript typecheck PASS; ESLint PASS; Vitest PASS (31 files / 217 tests); Vite production build PASS. Runtime was Node `v24.20.0` while package engine is `>=22 <23`; these are verification results, not release certification.
+- Browser visual-review attempt against the local Vite server reached the real Arabic RTL login shell, then failed closed with `Supabase runtime configuration is missing` because this clean clone has no runtime `.env`. Therefore no authenticated UI/browser PASS was claimed. A separate local shell smoke verified title `بوابة الأغبري التجارية`, `lang=ar`, `dir=rtl`, and no horizontal overflow.
+- Current GitHub combined status for `bec7ecc...`: Vercel status FAILURE caused by the free-plan deployment rate limit; no deployment PASS inferred.
+- Current exact-SHA G1 run `35546623901` is QUEUED, job `106173588719`; no CI PASS inferred until terminal.
+- Supabase security verification for `register_product_media(uuid,text,text,integer,integer,bigint)`: SECURITY DEFINER, owner postgres, `search_path=""`, EXECUTE granted to authenticated/service_role/postgres. The security advisor warns because authenticated users can call it; this is an intentional app RPC boundary currently guarded by organization, staff-role, path, product, MIME/dimension/size, storage-object, and owner checks. Do not reclassify the generic advisor warning as a PASS.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` remains untouched; Production remains NO TOUCH.
+
