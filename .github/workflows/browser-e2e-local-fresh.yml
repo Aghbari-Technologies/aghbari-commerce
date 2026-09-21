@@ -3,8 +3,7 @@ name: Browser E2E / Fresh Local Supabase
 on:
   push:
     branches:
-      - 'execution/**'
-      - 'enhancement/**'
+      - main
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -13,6 +12,10 @@ on:
         description: 'Exact Git SHA to verify'
         required: true
         type: string
+
+concurrency:
+  group: aghbari-browser-local-fresh-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.event_name == 'workflow_dispatch' && format('sha-{0}', inputs.exact_sha) || github.ref_name }}
+  cancel-in-progress: true
 
 permissions:
   contents: read

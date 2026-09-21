@@ -4,11 +4,6 @@ on:
   push:
     branches:
       - main
-      - 'execution/**'
-      - 'enhancement/**'
-      - 'certification/**'
-      - 'proof/**'
-      - 'release/**'
   pull_request:
   workflow_dispatch:
     inputs:
@@ -16,6 +11,10 @@ on:
         description: 'Exact Git commit SHA to verify'
         required: true
         type: string
+
+concurrency:
+  group: aghbari-g1-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.event_name == 'workflow_dispatch' && format('sha-{0}', inputs.exact_sha) || github.ref_name }}
+  cancel-in-progress: true
 
 permissions:
   contents: read

@@ -3,8 +3,7 @@ name: Browser E2E / Local Production Artifact
 on:
   push:
     branches:
-      - 'execution/**'
-      - 'enhancement/**'
+      - main
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -22,9 +21,8 @@ env:
   VITE_BUILD_SHA: ${{ inputs.exact_sha || github.event.pull_request.head.sha || github.sha }}
 
 concurrency:
-  group: aghbari-browser-local-${{ github.event.pull_request.head.sha || inputs.exact_sha || github.sha }}
-  cancel-in-progress: false
-
+  group: aghbari-browser-local-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.event_name == 'workflow_dispatch' && format('sha-{0}', inputs.exact_sha) || github.ref_name }}
+  cancel-in-progress: true
 jobs:
   local-browser-e2e:
     runs-on: ubuntu-latest
