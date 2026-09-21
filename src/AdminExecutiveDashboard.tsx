@@ -155,6 +155,26 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
 
         <footer className="executive-footer"><span>دورك الحالي: {{owner:'مالك',admin:'مدير',sales:'مبيعات',warehouse:'مخزون',viewer:'قارئ'}[role] ?? role}</span><span>{lastUpdated ? `آخر تحديث ${formatBusinessTime(lastUpdated)}` : 'جارٍ التحديث…'}</span><span>التحديث التلقائي كل 60 ثانية</span></footer>
       </div>
+
+      <aside className="executive-brand-rail" aria-label="هوية منصة الأغبري ومزايا مساحة العمل">
+        <div className="brand-rail-hero">
+          <div className="brand-rail-mark">أ</div>
+          <span className="executive-eyebrow">الأغبري</span>
+          <h2>منصة إدارة الأعمال التجارية</h2>
+          <p>كل ما تحتاجه في مكان واحد — من المنتجات والطلبات إلى المخزون والعملاء والحسابات.</p>
+          <span className="brand-rail-role">حسابك الحالي: {{owner:'مالك المؤسسة',admin:'مدير',sales:'المبيعات',warehouse:'المخزون',viewer:'قراءة فقط'}[role] ?? role}</span>
+        </div>
+        <div className="brand-rail-feature-list">
+          <div><span>01</span><strong>إدارة المنتجات والكتالوج</strong><small>أسعار وصور وتصنيفات وتشغيل يومي.</small></div>
+          <div><span>02</span><strong>بوابة العملاء B2B</strong><small>طلبات جملة وحسابات وقوالب وإعادة طلب.</small></div>
+          <div><span>03</span><strong>المخزون والمستودعات</strong><small>تحويل وجرد وحدود إعادة الطلب.</small></div>
+          <div><span>04</span><strong>المحاسبة والفواتير</strong><small>تحصيل ومصروفات وأرصدة تشغيلية.</small></div>
+        </div>
+        <div className="brand-rail-footer">
+          <span>البيانات التشغيلية</span>
+          <strong>تُعرض من المصدر الحالي للنظام</strong>
+        </div>
+      </aside>
     </div>
   </section>;
 }
