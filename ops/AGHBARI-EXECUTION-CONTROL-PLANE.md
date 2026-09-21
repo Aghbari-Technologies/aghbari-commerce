@@ -1,4 +1,7 @@
 ## RUN-2026-09-21-EXECUTE-UI-018
+- Resource-control rule: keep expensive CI gates path-scoped on pull requests and retain full exact-SHA manual dispatch for certification. Avoid Push+PR duplication on feature branches.
+- Release browser proof is deployment-status/manual exact-SHA, not a redundant PR contract run.
+## RUN-2026-09-21-EXECUTE-UI-018
 - Evidence unit advanced to product SHA f7713afd33b92564504081c37e9351d59fa5a845 on execution/customer-ui-completion-20260920.
 - Exact local verification is green: typecheck, lint, 217 tests, and production build.
 - Signed image URL cache expiry is now actively evicted before lookup, preventing stale-expired entries from occupying reuse state.

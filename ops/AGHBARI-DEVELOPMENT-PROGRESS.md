@@ -542,3 +542,17 @@ The CI deduplication commit correctly removed feature-branch push triggers but a
 - Live resource proof remains Supabase DB approximately 20 MB; product-media storage 0 objects / 0 bytes. Offline queue remains bounded at 100 operations / 16 KB payload.
 - Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 untouched; Production remains NO TOUCH.
 - NEXT RESUME: reconcile terminal Exact-SHA gates for the latest product SHA, then browser visual proof and release-gate reconciliation.
+
+
+## RUN-2026-09-21-EXECUTE-UI-018 — RESOURCE-PRESERVATION FINAL CHECKPOINT
+- Product exact SHA: 4ad08061b3e2cbff83386dacf6dcf9681ca64b80 on execution/customer-ui-completion-20260920; PR #100 is OPEN / DRAFT / MERGEABLE.
+- Catalog signed-image URL cache now has expiry eviction plus a hard cap of 256 in-memory entries.
+- CI resource preservation is installed: feature-branch Push triggers removed from heavy verification gates; PR-based verification remains for relevant paths; explicit workflow_dispatch exact-SHA remains for full immutable release proof; obsolete same-PR runs are canceled by concurrency.
+- Browser E2E / Exact Deployment no longer runs a redundant PR contract job; deployment_status and manual exact-SHA remain the release/browser proof paths.
+- Live Supabase: approximately 20 MB database; 58/58 public tables RLS-enabled; product-media bucket private, WebP-only, 5 MB limit; current product-media usage 0 objects / 0 bytes; no operational/business data deleted.
+- Local offline queue is bounded at 100 operations / 16 KB payload; Service Worker cache is versioned by bundle identity and old namespaces are removed.
+- Latest GitHub exact-SHA verification runs for 4ad08061b3e2cbff83386dacf6dcf9681ca64b80 remain queued/pending. No PASS claimed.
+- Local container verification could not clone GitHub because this environment cannot resolve github.com; this is an environment limitation, not a test failure.
+- TinyFish interactive cleanup of stale queued runs could not run because its wallet balance is negative; stale run cancellation was not claimed.
+- Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 remains untouched. Production remains NO TOUCH.
+- CURRENT RESUME POINTER: reconcile terminal PR #100 verification for 4ad08061b3e2cbff83386dacf6dcf9681ca64b80; then obtain exact-SHA browser/visual evidence on a non-production preview or exact deployment; then final release-gate reconciliation. Do not create speculative UI commits while equivalent checks are queued.
