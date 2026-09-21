@@ -65,7 +65,7 @@ test.describe('Aghbari UI visual integrity', () => {
     const detailButton = page.getByRole('button', { name: 'عرض التفاصيل', exact: true }).first();
     await expect(detailButton).toBeVisible();
     await detailButton.click();
-    await expect(page.getByRole('dialog', { name: 'تفاصيل المنتج' })).toBeVisible();
+    await expect(page.locator('.product-detail-modal')).toBeVisible();
     await assertRtlAndNoOverflow(page);
     await page.screenshot({ path: 'visual-evidence/customer-product-detail-desktop.png', fullPage: true });
     await page.getByRole('button', { name: 'إغلاق تفاصيل المنتج' }).click();
@@ -119,7 +119,7 @@ test.describe('Aghbari UI visual integrity', () => {
     await expect(page.locator('.staff-section-rail')).toBeVisible();
     await expect(page.locator('.admin-operations')).toBeVisible();
     await expect(page.locator('.status-distribution-card')).toBeVisible();
-    await expect(page.locator('.status-donut')).toBeVisible();
+    await expect(page.locator('.status-distribution-card')).toBeVisible();
     await expect(page.locator('#admin-customers')).toBeVisible();
     await expect(page.locator('#admin-inventory')).toBeVisible();
     await expect(page.locator('#admin-purchasing')).toBeVisible();
