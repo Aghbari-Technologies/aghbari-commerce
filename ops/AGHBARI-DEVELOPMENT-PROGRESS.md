@@ -633,3 +633,15 @@ The CI deduplication commit correctly removed feature-branch push triggers but a
 - The visual review initially exposed test-contract errors rather than product rendering failures; those assertions were corrected on the same development branch and the full exact-SHA review then completed successfully.
 - Production NO TOUCH; certification candidate HOLD/untouched.
 - NEXT: perform image-by-image reference comparison and implement any remaining visible gaps before release reconciliation.
+
+
+## RUN-2026-09-21-EXECUTE-UI-025 — FINAL VISUAL CLOSURE PASS
+- Exact active product HEAD after implementation: `eb5a0e2b3aef104b53a206b11bce129215989a81` on `execution/customer-ui-completion-20260920`.
+- UI implementation change is presentation-only and resource-smart: one CSS closure layer `src/ui-final-visual-closure.css` plus its import in `src/main.tsx`; no dependency, image, font, database, pricing, permission, transaction, or reporting-boundary change.
+- Root causes closed from exact-SHA visual inspection: customer mobile sticky navigation could occlude the hero when the top bar wrapped; the mobile hero metrics remained horizontally constrained; sparse single-product fixtures left an unintended empty grid track; incidental skip-link focus made the accessibility control visually persistent; staff section navigation was not persistent while scrolling desktop operations.
+- Remediation: mobile customer rail is normal flow with the persistent bottom nav retained; mobile hero stacks cleanly; customer product grid explicitly handles one-real-product and narrow-device density; skip link now responds to intentional `focus-visible`; desktop staff section rail is sticky; section anchors retain safe scroll margins.
+- No fake data was introduced to fill visual whitespace.
+- Previous exact-SHA visual evidence for `6ec216d8465e77e65763a71f61e91d34df43ccc6` remains valid only for that SHA and is not reused to certify this new HEAD.
+- Current visual proof requirement: rerun exact-SHA UI Visual Review for `eb5a0e2b3aef104b53a206b11bce129215989a81` and inspect the new artifact before any certification/release claim.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080`: HOLD / untouched. Production: NO TOUCH.
+- NEXT RESUME: obtain terminal UI Visual Review for `eb5a0e2b3aef104b53a206b11bce129215989a81`; inspect customer desktop/mobile and all staff/admin module captures; fix only concrete remaining defects, then reconcile exact-SHA release gates.
