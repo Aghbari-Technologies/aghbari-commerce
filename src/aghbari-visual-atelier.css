@@ -127,3 +127,95 @@ button,.checkout,.cart-button,.add-button{transition:transform .18s cubic-bezier
  .catalog-directory-actions-row{justify-content:stretch}
  .catalog-directory-actions-row button{flex:1}
 }
+
+
+/* Customer portal flagship refinement — B2B ordering ergonomics + visual confidence. */
+.customer-app .portal-main{max-width:1180px!important}
+.customer-app .portal-header{border-bottom:1px solid #d9e7eb!important}
+.customer-app .hero-card{display:grid!important;grid-template-columns:minmax(0,1.45fr) minmax(270px,.55fr);gap:22px;align-items:end}
+.customer-app .hero-card>div:first-child{max-width:760px}
+.customer-app .hero-metrics{align-self:end}
+.purchase-shortcuts{margin:15px 0 14px;padding:16px;border:1px solid #d9e7eb;border-radius:20px;background:rgba(255,255,255,.78);box-shadow:0 12px 34px rgba(7,28,43,.055)}
+.purchase-shortcuts-intro{display:grid;gap:2px;margin-bottom:11px}
+.purchase-shortcuts-intro strong{font-size:17px;color:#0a3346;letter-spacing:-.035em}
+.purchase-shortcuts-intro small{font-size:10px;color:#7c919a}
+.purchase-shortcut-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.purchase-shortcut-grid button{position:relative;display:grid;grid-template-columns:auto 1fr;grid-template-areas:"icon title" "icon hint";align-items:center;gap:1px 8px;min-height:68px;padding:10px;border:1px solid #dce8ec;border-radius:13px;background:linear-gradient(145deg,#fff,#f8fbfc);color:#193f51;text-align:start}
+.purchase-shortcut-grid button:hover{transform:translateY(-2px);border-color:#b6d4db;box-shadow:0 11px 24px rgba(7,28,43,.08)}
+.purchase-shortcut-grid button>span{grid-area:icon;display:grid;place-items:center;width:31px;height:31px;border-radius:9px;background:#eaf7f8;color:#087383;font-weight:900}
+.purchase-shortcut-grid button strong{grid-area:title;font-size:10px}
+.purchase-shortcut-grid button small{grid-area:hint;color:#81939c;font-size:8px}
+.search-context{font-size:9px!important;color:#78909a!important}
+.category-row{padding-inline:2px}
+.customer-app .product-card{padding:0!important}
+.customer-app .product-card>img,.customer-app .product-card>.product-placeholder{border-radius:20px 20px 0 0!important;display:block;width:100%;height:210px!important;object-fit:cover}
+.customer-app .product-card .product-body{padding:16px 17px 17px!important}
+.customer-app .product-card .sku{display:inline-flex;align-self:flex-start;padding:4px 7px;border:1px solid #dbe9ec;border-radius:7px;background:#f7fafb;color:#718892;font-size:8px;font-weight:900;direction:ltr}
+.customer-app .product-card h3{margin:8px 0 2px!important;font-size:16px!important}
+.customer-app .product-card .product-body>small{color:#7c9199;font-size:9px}
+.customer-app .product-card .product-details-link{margin-top:5px}
+.customer-app .product-card .price-row{display:flex;align-items:end;justify-content:space-between;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid #edf2f3}
+.customer-app .product-card .tiers{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.customer-app .product-card .tiers span{padding:4px 6px;border-radius:7px;background:#f4f9fa;color:#60808a;font-size:8px;font-weight:750}
+.customer-app .product-card .product-footer{margin-top:10px!important}
+.customer-app .orders-list{display:grid;gap:10px}
+.customer-app .order-card{padding:17px!important;border:1px solid #d9e7eb!important;border-radius:18px!important;background:linear-gradient(145deg,#fff,#fbfdfe)!important}
+.customer-app .order-head{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.customer-app .order-head strong:first-child{font-size:14px}
+.customer-app .order-head strong:last-child{font-size:15px;color:#0a485b}
+.customer-app .order-status{display:inline-flex;margin-top:8px;padding:5px 9px;border:1px solid #d4ebeb;border-radius:999px;background:#eef9f9;color:#087582;font-size:9px;font-weight:900}
+.customer-app .order-progress{display:grid!important;grid-template-columns:repeat(5,1fr);gap:3px;margin:15px 0 10px!important}
+.customer-app .order-progress>div{display:grid;justify-items:center;gap:4px}
+.customer-app .order-progress>div:not(:last-child)::after{top:8px!important;inset-inline-start:50%!important;width:100%!important}
+.customer-app .order-progress span{width:18px;height:18px;display:grid;place-items:center;border:2px solid #d4e5e8;border-radius:50%;background:#fff;font-size:8px}
+.customer-app .order-progress>div.done span{border-color:#6fcfd3;background:#eaf8f8;color:#087887}
+.customer-app .order-progress small{font-size:8px!important;text-align:center;color:#748b94}
+.customer-app .order-actions{display:flex;justify-content:flex-end;gap:7px;margin-top:10px}
+.customer-app .order-actions button{min-height:38px;padding:7px 10px;border:1px solid #d7e6ea;border-radius:10px;background:#fff;color:#274f60;font-size:9px;font-weight:900}
+.customer-app .order-actions button:last-child{border-color:#071c2b;background:#071c2b;color:#fff}
+.customer-app .template-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.customer-app .template-card{padding:15px!important;border:1px solid #d9e7eb!important;border-radius:15px!important;background:linear-gradient(145deg,#fff,#f9fcfd)!important}
+.customer-app .template-card strong{font-size:12px}
+.customer-app .template-card small{display:block;margin-top:4px;color:#7b9099;font-size:9px}
+.customer-app .template-card>div{display:flex;gap:6px;margin-top:12px}
+.customer-app .template-card button{flex:1;min-height:37px;border:1px solid #d5e5e9;border-radius:9px;background:#fff;color:#315a68;font-size:9px;font-weight:900}
+.customer-app .template-card button:first-child{background:#071c2b;color:#fff;border-color:#071c2b}
+.customer-app .finance-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-bottom:14px}
+.customer-app .finance-grid>div{padding:15px;border:1px solid #dbe8ec;border-radius:14px;background:linear-gradient(145deg,#fff,#f8fbfc)}
+.customer-app .finance-grid small{display:block;color:#81939c;font-size:9px}
+.customer-app .finance-grid strong{display:block;margin-top:6px;color:#0a3d50;font-size:17px;letter-spacing:-.03em}
+.customer-app .ledger-table{overflow:hidden;border:1px solid #dbe8ec;border-radius:14px;background:#fff}
+.customer-app .ledger-row{display:grid;grid-template-columns:90px minmax(0,1fr) auto auto;gap:8px;align-items:center;padding:11px 12px;border-bottom:1px solid #edf2f3}
+.customer-app .ledger-row:last-child{border-bottom:0}
+.customer-app .ledger-row span,.customer-app .ledger-row strong{font-size:9px}
+.customer-app .ledger-row strong{font-size:10px}
+.customer-app .cart-drawer{border-inline-start:1px solid #d6e5e9!important;box-shadow:-28px 0 80px rgba(2,20,29,.18)!important;background:rgba(255,255,255,.96)!important;backdrop-filter:blur(18px)}
+.customer-app .drawer-line{padding:14px 0!important;border-bottom:1px solid #edf2f3}
+.customer-app .drawer-line>div:first-child{min-width:0}
+.customer-app .saving{display:inline-block;margin-top:4px;padding:3px 6px;border-radius:6px;background:#eaf8f8;color:#087582;font-size:8px}
+.customer-app .payment-box{padding:12px;border:1px solid #d9e7eb;border-radius:13px;background:#f7fafb}
+.customer-app .payment-box>strong{font-size:10px}
+.customer-app .payment-box label{display:inline-flex;align-items:center;gap:5px;margin-inline-end:13px;margin-top:7px;font-size:9px;color:#526e79}
+.customer-app .portal-bottom-nav{border:1px solid #d2e2e6!important;background:rgba(255,255,255,.94)!important;box-shadow:0 16px 38px rgba(7,28,43,.15)!important;backdrop-filter:blur(16px)}
+.customer-app .portal-bottom-nav button{font-size:9px;font-weight:900}
+.customer-app .portal-bottom-nav button.active{background:#071c2b!important;color:#fff!important;border-radius:11px}
+
+.form-card-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:1px}
+.form-card-heading .eyebrow{margin-bottom:2px}
+.form-card-heading h3{margin:0!important}
+.compact-action{min-height:32px!important;padding:5px 9px!important;font-size:9px!important;border-radius:8px!important}
+
+@media(max-width:980px){
+ .purchase-shortcut-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .customer-app .hero-card{grid-template-columns:1fr}
+ .customer-app .template-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:650px){
+ .purchase-shortcut-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .purchase-shortcut-grid button{min-height:62px}
+ .customer-app .finance-grid{grid-template-columns:1fr}
+ .customer-app .ledger-row{grid-template-columns:70px 1fr}
+ .customer-app .ledger-row span:nth-last-child(2),.customer-app .ledger-row span:last-child{grid-column:2}
+ .customer-app .template-grid{grid-template-columns:1fr}
+ .customer-app .product-card>img,.customer-app .product-card>.product-placeholder{height:172px!important}
+}
