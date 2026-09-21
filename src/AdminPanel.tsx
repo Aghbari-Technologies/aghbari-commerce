@@ -120,6 +120,14 @@ export default function AdminPanel({ role }: { role: UserRole }) {
       {canInventory && <div id="admin-export"><ExportPanel role={role}/></div>}
       {canCategory && <div id="admin-settings"><ClientControlPanel role={role}/></div>} 
     </details>
+    <nav className="staff-bottom-nav" aria-label="تنقل الإدارة على الهاتف">
+      <button type="button" onClick={() => document.getElementById('admin-dashboard')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}><span>⌂</span><small>الرئيسية</small></button>
+      {canOrderWorkflow && <button type="button" onClick={() => document.getElementById('admin-orders')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}><span>↗</span><small>الطلبات</small></button>}
+      {canInventory && <button type="button" onClick={() => document.getElementById('admin-inventory')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}><span>□</span><small>المخزون</small></button>}
+      {canCatalog && <button type="button" onClick={() => document.getElementById('admin-customers')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}><span>♙</span><small>العملاء</small></button>}
+      {canFinance && <button type="button" onClick={() => document.getElementById('admin-finance')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}><span>◫</span><small>المالية</small></button>}
+      {canCategory && <button type="button" onClick={() => document.getElementById('admin-settings')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}><span>⚙</span><small>الإعدادات</small></button>}
+    </nav>
     <CommandPalette open={commandOpen} onClose={() => setCommandOpen(false)} actions={commandActions} title="أوامر مركز الإدارة" />
   </section>;
 }
