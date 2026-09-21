@@ -134,6 +134,25 @@ test.describe('Aghbari UI visual integrity', () => {
       await page.getByRole('button', { name: 'إغلاق تفاصيل الطلب الإداري' }).click();
     }
     await page.screenshot({ path: 'visual-evidence/staff-desktop.png', fullPage: true });
+
+    const adminScreens = [
+      ['admin-orders', 'staff-orders-desktop'],
+      ['admin-customers', 'staff-customers-desktop'],
+      ['admin-inventory', 'staff-inventory-desktop'],
+      ['admin-purchasing', 'staff-purchasing-desktop'],
+      ['admin-finance', 'staff-finance-desktop'],
+      ['admin-export', 'staff-export-desktop'],
+      ['admin-settings', 'staff-settings-desktop'],
+    ] as const;
+    for (const [id, filename] of adminScreens) {
+      const section = page.locator(`#${id}`).first();
+      if (await section.count() && await section.isVisible().catch(() => false)) {
+        await section.scrollIntoViewIfNeeded();
+        await page.waitForTimeout(150);
+        await assertRtlAndNoOverflow(page);
+        await page.screenshot({ path: `visual-evidence/${filename}.png`, fullPage: false });
+      }
+    }
   });
 
   test('staff mobile visual evidence', async ({ page }) => {
