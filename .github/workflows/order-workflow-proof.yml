@@ -6,6 +6,15 @@ on:
       - main
   pull_request:
     branches: [main]
+    paths:
+      - 'poc/order-workflow/**'
+      - 'src/domain/order.ts'
+      - 'src/services/orders.ts'
+      - 'src/services/cart.ts'
+      - 'supabase/migrations/**'
+      - 'supabase/tests/**'
+      - 'e2e/critical-path.spec.ts'
+      - '.github/workflows/**'
   workflow_dispatch:
     inputs:
       exact_sha:

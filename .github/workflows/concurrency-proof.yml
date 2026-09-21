@@ -5,6 +5,14 @@ on:
     branches:
       - main
   pull_request:
+    paths:
+      - 'scripts/concurrency*.sh'
+      - 'src/services/orders.ts'
+      - 'src/services/cart.ts'
+      - 'src/services/orderTemplates.ts'
+      - 'supabase/migrations/**'
+      - 'supabase/tests/**'
+      - '.github/workflows/**'
   workflow_dispatch:
     inputs:
       exact_sha:

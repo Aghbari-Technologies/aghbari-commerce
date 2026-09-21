@@ -5,6 +5,16 @@ on:
     branches:
       - main
   pull_request:
+    paths:
+      - 'supabase/**'
+      - 'src/domain/**'
+      - 'src/services/orders.ts'
+      - 'src/services/cart.ts'
+      - 'src/services/inventory.ts'
+      - 'src/services/purchasing.ts'
+      - 'src/services/finance.ts'
+      - 'poc/**'
+      - '.github/workflows/**'
   workflow_dispatch:
     inputs:
       exact_sha:
