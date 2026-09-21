@@ -19,6 +19,7 @@ export interface CatalogItem {
 
 const SIGNED_URL_TTL_SECONDS = 3600;
 const SIGNED_URL_REUSE_MS = 50 * 60 * 1000;
+const MAX_IMAGE_URL_CACHE_ENTRIES = 256;
 const imageUrlCache = new Map<string, { url: string; expiresAt: number }>();
 
 function finiteNumber(value: unknown, fallback = 0): number {
@@ -85,6 +86,11 @@ export async function getProductImageUrls(paths: Array<string | null>) {
       if (!path || !item.signedUrl) continue;
       imageUrlCache.set(path, { url: item.signedUrl, expiresAt: now + SIGNED_URL_REUSE_MS });
       result.set(path, item.signedUrl);
+      while (imageUrlCache.size > MAX_IMAGE_URL_CACHE_ENTRIES) {
+        const oldest = imageUrlCache.keys().next().value as string | undefined;
+        if (!oldest) break;
+        imageUrlCache.delete(oldest);
+      }
     }
   }
   return result;
