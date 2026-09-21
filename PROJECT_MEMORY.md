@@ -546,3 +546,13 @@ RUN-2026-09-20-EXECUTE-022 — WORLD-CLASS UI/UX ADVANCEMENT
 - Current exact UI Visual Review run: 35549111426 / #121, status queued. No PASS is claimed until terminal evidence exists.
 - No exact current-SHA deployment is available yet; old Netlify deploy remains non-authoritative for current UI evidence. Production NO TOUCH; certification candidate untouched.
 - NEXT RESUME: obtain run #121 terminal result and visual artifact set for 23ebe9a..., inspect every captured screen against the two reference boards, fix any concrete visual/functional defects, then create exact non-production Draft URL and perform browser proof before certification.
+
+
+## RUN-2026-09-21-EXECUTE-UI-023 — REFERENCE MODEL CALIBRATION
+- Exact product HEAD: 4d8268e00694237e284ade280c4d433ceeaf9b50 on execution/customer-ui-completion-20260920.
+- User-provided/reference model review confirmed the target is substantially richer than the earlier live preview: full brand system, structured dashboard composition, professional dark navigation, commercial login, customer B2B portal, dense admin modules, and mobile variants.
+- Implementation added since prior checkpoint: executive brand/context rail, reference-aligned dashboard composition, semantic split login, premium customer shell activation, live order-status donut, staff mobile nav, customer mobile nav, shared transactional surface styling, screen-by-screen visual evidence contract.
+- Current UI Visual Review for prior screen contract was queued and older runs canceled by PR concurrency; any current-SHA evidence must be re-established for exact 4d8268e... and not inferred from old screenshots.
+- The deterministic product-media rollback safety is verified in code: registration failure leaves deterministic main.webp intact after upsert.
+- Production NO TOUCH; certification candidate untouched.
+- NEXT RESUME: run/complete exact-SHA visual review for 4d8268e..., capture the full screen set, compare against saved reference models, and fix concrete mismatches until the implementation visibly matches the intended product standard.
