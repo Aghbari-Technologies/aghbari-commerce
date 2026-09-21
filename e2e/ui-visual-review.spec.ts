@@ -100,6 +100,8 @@ test.describe('Aghbari UI visual integrity', () => {
     await expect(page.getByRole('heading', { name: 'مركز التحكم' }).first()).toBeVisible({ timeout: 15000 });
     await expect(page.locator('.staff-section-rail')).toBeVisible();
     await expect(page.locator('.admin-operations')).toBeVisible();
+    await expect(page.locator('.status-distribution-card')).toBeVisible();
+    await expect(page.locator('.status-donut')).toBeVisible();
     await expect(page.locator('#admin-customers')).toBeVisible();
     await expect(page.locator('#admin-inventory')).toBeVisible();
     await expect(page.locator('#admin-purchasing')).toBeVisible();
