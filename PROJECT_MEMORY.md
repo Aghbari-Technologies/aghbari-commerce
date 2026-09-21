@@ -606,3 +606,9 @@ RUN-2026-09-20-EXECUTE-022 — WORLD-CLASS UI/UX ADVANCEMENT
 - Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f3f080 remains HOLD/untouched. Production remains NO TOUCH.
 - Resource-smart rule remains: no new dependency/asset/font/database payload was introduced by the order-detail fix.
 - NEXT RESUME: reconcile current PR/release path and obtain an exact-SHA non-production deployment/preview for final browser proof. Do not touch Candidate or Production.
+
+## RUN-2026-09-21 — FLAGSHIP UI RULES
+- The Commerce UI is organized as role-aware operational workspaces, not a generic dashboard collection.
+- Product directories must provide direct movement from discovery to the actual edit/pricing/media workflow.
+- Customer ordering screens prioritize fast B2B repeat purchase, readable tier pricing, order progression, finance visibility, and mobile-first checkout.
+- The visual system remains asset-light and dependency-free unless a future requirement demonstrably needs heavier assets.
