@@ -1,3 +1,10 @@
+## RUN-2026-09-21-EXECUTE-UI-024 — DURABLE RESOURCE-PRESERVATION RULE
+- Aghbari UI may poll bounded client-side operational state for responsiveness, but repeated reads must not force redundant React state updates when the semantic snapshot is unchanged.
+- For the offline recovery queue specifically, `src/AppV3Fixed.tsx` now preserves the existing `offlineOps` array when operation identity/type/timestamp/attempt/retry/terminal fields are unchanged. This reduces render churn while preserving the existing 5-second visibility cadence, online-triggered synchronization, persistence limits, and recovery semantics.
+- This is a UI/runtime efficiency rule only; it does not alter transactional truth, authorization, tenant isolation, Storage policy, reporting boundary, or business records.
+- Exact implementation SHA: `57268606940f3b4576cba869b6ec72e8d05d9526`.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` remains frozen/untouched. Production remains HOLD / NO TOUCH.
+
 ## RUN-2026-09-21-EXECUTE-UI-019 — CURRENT PR HEAD / CI ROUTING CLOSURE
 - Authoritative PR #100 HEAD: 8ee815061a6c1f7068983eaa0769ff1ee443947d on execution/customer-ui-completion-20260920; OPEN / DRAFT; base enhancement/market-ready-v4-20260918.
 - Exact local PC01 verification at 8ee8150: typecheck PASS; lint PASS; npm test PASS (31 files / 217 tests); npm run build PASS (Vite 7.3.5, 165 modules).
