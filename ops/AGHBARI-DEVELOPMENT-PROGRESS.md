@@ -1,3 +1,12 @@
+## CURRENT CHECKPOINT — RUN-2026-09-21-EXECUTE-UI-019
+- Active product branch: execution/customer-ui-completion-20260920.
+- Exact HEAD: 8ee815061a6c1f7068983eaa0769ff1ee443947d.
+- PR #100 OPEN / DRAFT; base enhancement/market-ready-v4-20260918.
+- Local PC01 at exact HEAD: typecheck PASS; lint PASS; 31/31 test files and 217/217 tests PASS; production build PASS.
+- Required PR routing repaired across development bases; targeted path filters retained.
+- Ten exact-SHA runs are QUEUED: 35548047446 security, 35548047468 quality, 35548047470 UI visual, 35548047510 order, 35548047459 concurrency, 35548047466 browser-local, 35548047451 G1, 35548047445 migration, 35548047434 browser-fresh, 35548047443 test-the-test.
+- Draft preview 35548045441 CANCELLED; no preview evidence.
+- NEXT: poll all ten exact-SHA runs to terminal; reconcile only the exact 8ee8150 result.
 ## CURRENT CHECKPOINT — RUN-2026-09-21-EXECUTE-UI-018
 - Active UI branch: execution/customer-ui-completion-20260920.
 - Exact HEAD: f7713afd33b92564504081c37e9351d59fa5a845.
