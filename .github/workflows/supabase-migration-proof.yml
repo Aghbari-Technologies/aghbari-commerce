@@ -63,6 +63,8 @@ jobs:
         run: supabase start
       - name: Apply migrations from empty database
         run: supabase db reset --local
+      - name: Run pgTAP database tests
+        run: supabase test db
       - name: Verify effective final order authority in Fresh DB
         shell: bash
         run: |
