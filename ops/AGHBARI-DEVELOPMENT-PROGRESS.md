@@ -459,3 +459,25 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 - Exact-SHA CI is still queue-constrained; no PASS is claimed.
 - Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 untouched; Production NO TOUCH.
 - NEXT RESUME: inspect terminal Exact-SHA runs for 1ba1d5da76810b179cdee40a7e1d1693cdf60d2b; then browser visual proof and release-gate reconciliation.
+
+
+## RUN-2026-09-21-EXECUTE-UI-013 — PWA syntax root-cause closure
+**Exact HEAD:** `fbf7869f32e8a8f2f491086b272f8fa22957c5be`  
+**Branch:** `execution/customer-ui-completion-20260920`
+
+### Root cause fixed
+- `src/main.tsx` had invalid arrow-function syntax introduced by the immediately preceding PWA cache-version change.
+- Corrected service-worker registration to a block-bodied `load` callback while preserving versioned `/sw.js?v=...` registration semantics.
+
+### Exact verification
+- `npm run typecheck`: PASS.
+- `npm run lint`: PASS.
+- `npm test`: PASS — 31 files / 217 tests.
+- `npm run build`: PASS — Vite production bundle generated successfully.
+
+### Remaining proof gates
+- G1 run `35547160424`: QUEUED.
+- Vercel: FAILURE because of free-plan deployment-rate limit.
+- Browser authenticated visual review: BLOCKED by missing local Supabase runtime configuration.
+- Candidate / Production untouched.
+
