@@ -1,23 +1,40 @@
-## RUN-2026-09-21-EXECUTE-UI-033 — SIGNATURE UI / EXACT-SHA HANDOFF
+## RUN-2026-09-21-EXECUTE-UI-034 — VISUAL ATELIER / EXACT-SHA HANDOFF
 - Active UI branch: `execution/customer-ui-completion-20260920`.
-- Exact current HEAD: `4f72ffe795a8114847d65abbff4966b4acd1ee87`.
-- PR #100: OPEN / DRAFT; base `enhancement/market-ready-v4-20260918`.
-- User-requested visual escalation completed as a resource-smart pure-CSS signature layer: `src/aghbari-signature-ui.css` plus import ordering in `src/styles.css`.
-- Visual direction now explicitly targets authored premium B2B commerce: editorial typography, command-center navigation, tactile product cards, stronger hero composition, operational tables, premium dialogs, tactile buttons, mobile hierarchy, RTL-safe logical properties, and stronger first-impression auth shell.
-- No new packages, image/font payloads, runtime dependencies, database changes, authorization changes, transaction changes, or reporting-boundary changes.
-- Exact-SHA verification has restarted on `4f72ffe795a8114847d65abbff4966b4acd1ee87`; current checks are non-terminal at this checkpoint (quality, security, G1, order workflow all running).
-- Previous SHA evidence is stale and must not be transferred.
-- Vercel Free-plan deployment-rate limit remains external; no deployment PASS inferred.
-- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` remains frozen/untouched. Production remains HOLD / NO TOUCH.
+- Exact current product HEAD: `635d44dedd2b9465ca35c717203976daea0988f3`.
+- PR #100 remains OPEN / DRAFT / MERGEABLE; base `enhancement/market-ready-v4-20260918`.
+- User requested continued full UI execution because the prior visual layer was still judged weak.
+- Implemented a new resource-smart presentation layer: `src/aghbari-visual-atelier.css` (commit `11a9ab36251c78f9f9f56ae3d926287cf549c198`) and loaded it last from `src/main.tsx` (commit resulting in exact HEAD above).
+- Visual Atelier strengthens page atmosphere, editorial section headings, hero composition, product-card rhythm, operational list rails, form focus treatment, KPI surfaces, command rails, dialogs, empty states, table hierarchy, tactile interactions, and mobile hierarchy.
+- No new package, image, font, runtime dependency, database, authorization, transaction, Storage, or reporting-boundary change.
+- Resource rule preserved: CSS-only, asset-free, dependency-free.
+
+## EXACT-SHA VERIFICATION
+- Ten exact-SHA gates have started for `635d44dedd2b9465ca35c717203976daea0988f3`:
+  - application-quality `35558699400` IN_PROGRESS
+  - security-audit `35558699414` IN_PROGRESS
+  - G1 Domain Proof `35558699429` IN_PROGRESS
+  - Order Workflow `35558699417` IN_PROGRESS
+  - Concurrency `35558699445` IN_PROGRESS
+  - Migration `35558699409` IN_PROGRESS
+  - Test-the-Test `35558699402` IN_PROGRESS
+  - UI Visual Review `35558699424` IN_PROGRESS
+  - Browser Fresh Local Supabase `35558699404` IN_PROGRESS
+  - Browser Local Production Artifact `35558699428` IN_PROGRESS
+- No PASS is claimed until terminal evidence exists.
+- Prior SHA evidence remains stale and is not transferred.
+
+## RELEASE SAFETY
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` remains frozen/untouched.
+- Production remains HOLD / NO TOUCH.
+- Vercel Free-plan deployment-rate limit remains an external constraint; no deployment PASS inferred.
 
 ## LAST PROVEN STATE
-- Source correction committed: `4f72ffe795a8114847d65abbff4966b4acd1ee87`.
-- Added signature stylesheet blob: `79889df503d67c8ad1889a65fe2b42778bdcbae3`.
-- Updated styles import blob: `2803cac64ba2fd422acbecb3992a0c5daaed9e59`.
-- Proof status: exact-SHA gates are executing; no final PASS claimed.
+- Source/product state: exact HEAD `635d44dedd2b9465ca35c717203976daea0988f3`.
+- Latest implementation objective completed: visual escalation beyond the signature layer.
+- Proof state: ten exact-SHA gates IN_PROGRESS; no terminal PASS yet.
 
 ## CURRENT RESUME POINTER
-Resume at: **poll exact-SHA gates for `4f72ffe795a8114847d65abbff4966b4acd1ee87` to terminal state, then inspect the actual UI visual/browser evidence before any merge decision.**
-- If a gate fails, repair only its root cause on a new SHA and restart affected evidence.
-- If visual review still shows weak composition, continue the signature UI lane rather than declaring visual completion.
-- After all required gates are terminal SUCCESS, reconcile PR #100; its merge SHA becomes a fresh verification unit.
+Resume at: **poll the ten exact-SHA runs for `635d44dedd2b9465ca35c717203976daea0988f3` to terminal state; inspect exact logs only for failures; then use the same-SHA browser/visual evidence to identify and repair any remaining UI weakness before merge.**
+- If visual review is weak, continue the visual lane on a new SHA.
+- If gates fail, fix only root causes and restart affected evidence on the resulting SHA.
+- Never merge or touch Candidate/Production based on non-terminal or prior-SHA evidence.
