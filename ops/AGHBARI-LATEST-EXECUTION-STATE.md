@@ -498,3 +498,18 @@ First action: re-query the current GitHub PR HEAD and workflow status; if HEAD m
 Resume at: **reconcile exact-SHA release proof for `fbf7869f32e8a8f2f491086b272f8fa22957c5be`**.
 First action: re-query PR #100 HEAD; if unchanged, poll G1 `35547160424` to terminal and pursue authenticated browser proof in a runtime with valid Supabase configuration. If HEAD moved, discard all new-head certification assumptions and repeat exact-SHA reconciliation first.
 
+
+
+## 2026-09-21 — CURRENT RESUME POINTER UPDATE
+**LAST PROVEN STATE**
+- Exact HEAD: `57d9d74a6528a036ec36e35a9655b4d431b00ce8`
+- PR #100 OPEN / DRAFT / unmerged; base `enhancement/market-ready-v4-20260918`.
+- Local exact-HEAD verification: typecheck PASS; lint PASS; 31 files / 217 tests PASS; build PASS.
+- Heavy exact-SHA workflows are now correctly attached to all PR bases. Current run IDs: G1 `35547342267`; Test-the-Test `35547342250`; Concurrency `35547342225`; Fresh Local Browser `35547342229`; Local Production Browser `35547342355`. All QUEUED.
+- Local authenticated browser remains unavailable because PC01 lacks Supabase CLI and Docker; GitHub browser workflows are the authoritative next proof path.
+- Vercel remains blocked by free-plan deployment-rate limit.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080`: HOLD/untouched. Production: NO TOUCH.
+
+**CURRENT RESUME POINTER**
+Resume at: **poll the five exact-SHA GitHub proof runs for `57d9d74a6528a036ec36e35a9655b4d431b00ce8` to terminal states, then reconcile any failures on that exact SHA.** Do not reuse evidence from `fbf7869` or ancestors.
+
