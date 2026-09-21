@@ -1,3 +1,14 @@
+## RUN-2026-09-21-EXECUTE-UI-014 — PWA CACHE BOUNDING
+- Product branch exact SHA: 1ba1d5da76810b179cdee40a7e1d1693cdf60d2b; branch execution/customer-ui-completion-20260920.
+- Service Worker cache is now versioned from the current module bundle filename. Each deployment gets a bounded cache namespace, and activation deletes prior aghbari-shell-* caches.
+- Operational/auth traffic remains explicitly non-cacheable.
+- This prevents old content-hashed Vite assets from accumulating indefinitely in one persistent browser cache.
+- Exact source verification confirms main.tsx passes a sanitized bundle-derived version to /sw.js?v=... and public/sw.js uses it as the cache namespace.
+- No transactional, authorization, Storage-policy, or reporting boundary changed.
+- Current live resource proof remains DB approximately 20 MB and product-media 0 objects / 0 bytes. Repository tracked files are approximately 1.82 MiB across 350 blobs; no unusually large binary assets were found.
+- Exact-SHA CI is still queue-constrained; no PASS is claimed.
+- Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 untouched; Production NO TOUCH.
+- NEXT RESUME: inspect terminal Exact-SHA runs for 1ba1d5da76810b179cdee40a7e1d1693cdf60d2b; then browser visual proof and release-gate reconciliation.
 ## RUN-2026-09-21-EXECUTE-UI-013 — CLIENT CONFIG POLLING EFFICIENCY
 - Product branch current exact SHA: `809ab581a87e231a3d5a714862eb11a609781419`; branch `execution/customer-ui-completion-20260920`.
 - Reduced client UI settings fallback polling from every 15 seconds to every 60 seconds in `src/AppV3Fixed.tsx`. Organization setting changes still flow through the existing Supabase Realtime subscription; the interval is only a bounded fallback.

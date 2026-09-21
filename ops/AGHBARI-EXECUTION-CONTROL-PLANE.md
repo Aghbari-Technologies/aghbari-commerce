@@ -1,3 +1,6 @@
+## RUN-2026-09-21-EXECUTE-UI-014
+- Resource rule: version browser caches by deploy artifact identity and garbage-collect superseded cache namespaces on Service Worker activation.
+- Keep operational/auth network-authoritative and outside Cache Storage.
 ## RUN-2026-09-21-EXECUTE-UI-013
 - Resource rule: use realtime subscriptions as the normal configuration propagation channel; keep periodic polling as a slower bounded fallback to reduce unnecessary network/database activity.
 ## RUN-2026-09-21-EXECUTE-UI-012
