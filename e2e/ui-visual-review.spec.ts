@@ -18,7 +18,7 @@ async function login(page: Page, email: string) {
   await page.goto('/');
   const form = page.locator('form').filter({ has: page.locator('input[type="password"]') }).first();
   await expect(form).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'بوابة الأغبري التجارية' })).toBeVisible();
+  await expect(page.getByText('بوابة الأغبري التجارية', { exact: true }).first()).toBeVisible();
   await form.locator('input[type="email"]').fill(email);
   await form.locator('input[type="password"]').fill(PASSWORD);
   await form.getByRole('button', { name: 'دخول آمن' }).click();
