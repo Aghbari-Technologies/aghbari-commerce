@@ -1,34 +1,28 @@
-## RUN-2026-09-21-EXECUTE-UI-034 — VISUAL ATELIER / EXACT-SHA VERIFICATION RECONCILIATION
+## RUN-2026-09-21-EXECUTE-UI-035 — FLAGSHIP B2B VISUAL ESCALATION
 - Active UI branch: `execution/customer-ui-completion-20260920`.
-- Exact current product HEAD: `635d44dedd2b9465ca35c717203976daea0988f3`.
+- Exact current product HEAD after latest UI commit: `e3b6f54964b4a33c4c8403f0831ae43a1277904c`.
 - PR #100 remains OPEN / DRAFT / MERGEABLE; base `enhancement/market-ready-v4-20260918`.
-- Implemented resource-smart `src/aghbari-visual-atelier.css` and loaded it as the final presentation layer from `src/main.tsx`.
-- Visual Atelier adds authored B2B composition: atmospheric background, editorial section rails, stronger hero geometry, product-card rhythm, operational scan rails, deliberate form states, KPI surfaces, command rails, modal hierarchy, empty-state treatment, table hierarchy, tactile interaction, and mobile-safe density.
-- No packages, images, fonts, runtime dependencies, database, authorization, transaction, Storage, or reporting-boundary changes.
+- Implemented a second visual escalation in `src/aghbari-visual-atelier.css`.
+- The new layer deepens Customer Portal and Staff/Admin presentation: navigation active rails, command-search surfaces, category/filter chips, editorial product grid rhythm, stronger cart/ordering command center, account/finance/order/template surfaces, order timeline treatment, staff sidebar and toolbar hierarchy, operational table treatment, calm forms, tactile primary actions, status language, focused modal/drawer workspaces, premium authentication surface, notification/toast hierarchy, keyboard focus, and mobile density.
+- Resource rule preserved: CSS-only, asset-free, dependency-free. No package, image, font, runtime dependency, database, authorization, transaction, Storage, or reporting-boundary changes.
+- The supplied legacy "بوابة العامري" route inventory was treated as a visual inspiration/reference only. It was NOT copied as product scope, and no Report-Advisor/BI scope was introduced into Aghbari Commerce.
 
-## EXACT-SHA CURRENT RESULTS
-- SUCCESS: application-quality `35558699400`.
-- SUCCESS: security-audit `35558699414`.
-- SUCCESS: G1 Domain Proof `35558699429`.
-- SUCCESS: Order Workflow Proof `35558699417`.
-- IN_PROGRESS: Concurrency `35558699445`.
-- IN_PROGRESS: Migration `35558699409`.
-- IN_PROGRESS: Test-the-Test `35558699402`.
-- IN_PROGRESS: UI Visual Review `35558699424`.
-- IN_PROGRESS: Browser Fresh Local Supabase `35558699404`.
-- IN_PROGRESS: Browser Local Production Artifact `35558699428`.
-- These are exact-SHA results for `635d44dedd2b9465ca35c717203976daea0988f3`; no prior-SHA evidence is transferred.
+## EXACT-SHA EVIDENCE DISCIPLINE
+- Previous proof gates belong to `635d44dedd2b9465ca35c717203976daea0988f3` and are stale for the new SHA.
+- New SHA `e3b6f54964b4a33c4c8403f0831ae43a1277904c` requires fresh exact-SHA verification before any PASS/certification claim.
+- Required next proof: application quality, security, domain/order invariants, concurrency, migration, test-the-test, UI visual review, fresh browser Supabase, and local production artifact on the new SHA.
 
 ## RELEASE SAFETY
 - Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` remains frozen/untouched.
 - Production remains HOLD / NO TOUCH.
-- Vercel Free-plan deployment-rate limit remains external; no deployment PASS inferred.
+- Vercel Free-plan deployment-rate limit remains an external constraint; no deployment PASS inferred.
 
 ## LAST PROVEN STATE
-- Source/product state: exact HEAD `635d44dedd2b9465ca35c717203976daea0988f3`.
-- Four exact-SHA gates are terminal SUCCESS; six remain active.
-- Visual completion is not declared until the exact UI Visual Review and browser evidence finish.
+- Source/product implementation: exact HEAD `e3b6f54964b4a33c4c8403f0831ae43a1277904c`.
+- Latest implementation objective: flagship visual escalation completed at source level.
+- Proof state: fresh verification for this SHA is required; no PASS is claimed yet.
 
 ## CURRENT RESUME POINTER
-Resume at: **poll the six active exact-SHA gates for `635d44dedd2b9465ca35c717203976daea0988f3`; inspect exact failure logs if any; then review same-SHA browser/visual evidence and continue UI repair on a new SHA if the visual gate exposes weakness.**
+Resume at: **start/inspect fresh exact-SHA verification for `e3b6f54964b4a33c4c8403f0831ae43a1277904c`; prioritize UI Visual Review and fresh browser evidence, then repair any remaining visual weakness on a new SHA if required.**
+- Never transfer prior-SHA evidence.
 - Do not merge, promote Candidate, or touch Production from non-terminal evidence.
