@@ -1,3 +1,5 @@
+## RUN-2026-09-21-EXECUTE-UI-017
+- Resource rule: client-side caches must have both time-based eviction and a hard entry cap when keys can grow with catalog breadth.
 ## RUN-2026-09-21-EXECUTE-UI-016
 - Resource policy consolidated: avoid duplicate Push+PR gates on feature branches; use PR-scoped cancellation and manual exact-SHA runs for immutable evidence.
 - Do not claim space savings by deleting business data; measure first and prevent unbounded binary/browser-cache growth at the source.

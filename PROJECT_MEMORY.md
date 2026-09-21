@@ -1,3 +1,12 @@
+## RUN-2026-09-21-EXECUTE-UI-017 — SIGNED IMAGE CACHE BOUNDING
+- Product exact SHA: 19b7a2a3f36b74ab30e603b948acaf9370681727 on execution/customer-ui-completion-20260920.
+- src/services/catalog.ts now evicts expired signed image URL entries and caps the in-memory cache at 256 entries, preventing unbounded per-tab growth during long catalog sessions.
+- No persistent data, authorization, transaction, Storage policy, or reporting boundary changed.
+- Exact source verification: expiry eviction, MAX_IMAGE_URL_CACHE_ENTRIES=256, and hard-size enforcement are present on the product branch.
+- Current exact-SHA CI remains queue-constrained; no PASS is claimed until terminal evidence.
+- Live resource proof remains Supabase DB approximately 20 MB; product-media storage 0 objects / 0 bytes. Offline queue remains bounded at 100 operations / 16 KB payload.
+- Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 untouched; Production remains NO TOUCH.
+- NEXT RESUME: reconcile terminal Exact-SHA gates for the latest product SHA, then browser visual proof and release-gate reconciliation.
 ## RUN-2026-09-21-EXECUTE-UI-016 — RESOURCE-PRESERVATION + CI DEDUP CHECKPOINT
 - Product exact SHA: c524b3d6b3915112d760190a6c43171ff29e2a14 on execution/customer-ui-completion-20260920; PR #100 remains draft/mergeable.
 - Storage preservation completed: product images use one canonical organization/product/main.webp object, upserted in place; secure UPDATE policy and bounded WebP limits are applied. Live product-media storage is 0 objects / 0 bytes.
