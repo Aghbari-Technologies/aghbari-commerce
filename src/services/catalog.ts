@@ -64,6 +64,9 @@ export async function getProductImageUrls(paths: Array<string | null>) {
   const uniquePaths = [...new Set(paths.filter((path): path is string => Boolean(path)))];
   if (!uniquePaths.length) return new Map<string, string>();
   const now = Date.now();
+  for (const [path, cached] of imageUrlCache) {
+    if (cached.expiresAt <= now) imageUrlCache.delete(path);
+  }
   const result = new Map<string, string>();
   const missing: string[] = [];
   for (const path of uniquePaths) {
