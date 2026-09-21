@@ -450,3 +450,21 @@ No Candidate mutation, no Production mutation, no paid Vercel/Supabase upgrade.
 - NO BUSINESS MODEL CHANGE: no migrations, pricing rules, tenant policies, reporting gateway, Candidate, or Production were changed.
 - PROOF STATUS: exact-SHA verification must be generated/reconciled for `3d699ca...`; no prior PASS transfers.
 - RESUME POINTER: inspect exact-SHA CI creation/status for `3d699ca...`; if workflows are absent or delayed, verify workflow trigger/path conditions rather than treating absence as PASS.
+
+## 2026-09-21 — CURRENT RESUME POINTER UPDATE
+**LAST PROVEN STATE**
+- Exact observed development HEAD: `bec7eccf2c7f0d06681e5079361bae7d004cfde7`
+- Branch: `execution/customer-ui-completion-20260920`
+- PR #100: OPEN / DRAFT / unmerged.
+- Local verification against the current branch lineage: typecheck PASS; lint PASS; 31/31 test files and 217/217 tests PASS; production build PASS.
+- Browser proof status: local visual-review test BLOCKED because runtime Supabase env is absent in the clean clone; authenticated customer/staff UI is not claimed proven.
+- CI proof: G1 run `35546623901` currently QUEUED.
+- Deployment proof: Vercel status FAILURE due free-plan `api-deployments-free-per-day`; no deployment PASS.
+- Supabase live schema: migration `20260921000431 product_media_single_object` applied; `register_product_media` verified with restricted ACL and `search_path=""`.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080`: HOLD/untouched.
+- Production: NO TOUCH.
+
+**CURRENT RESUME POINTER**
+Resume at: **exact-SHA CI/browser certification for PR #100 on `bec7eccf2c7f0d06681e5079361bae7d004cfde7` after G1 run `35546623901` becomes terminal.**
+First action: re-query the current GitHub PR HEAD and workflow status; if HEAD moved, reconcile to the new exact SHA before using any evidence. Then pursue authenticated browser proof only in an environment with a valid `E2E_BASE_URL` and Supabase runtime configuration. Do not reuse local or older SHA evidence as certification for a new HEAD.
+
