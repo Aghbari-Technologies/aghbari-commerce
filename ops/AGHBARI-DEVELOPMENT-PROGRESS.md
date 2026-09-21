@@ -656,3 +656,12 @@ The CI deduplication commit correctly removed feature-branch push triggers but a
 - No business behavior, pricing, permissions, database, storage, or reporting boundary changed. No fake data was added.
 - Candidate remains untouched; Production remains NO TOUCH.
 - NEXT: reconcile non-UI exact-SHA gates only; UI visual work is proven for this HEAD.
+
+## RUN-2026-09-21-EXECUTE-UI-027 — FULL CUSTOMER MOBILE SCREEN SET PROVEN
+- Current product exact HEAD: bda31298fdc6e027ab6f48a36b1fe1a63f7551d2.
+- UI Visual Review #141 / run 35555557897: SUCCESS.
+- Added exact mobile viewport captures for customer product detail, cart, orders, templates, and finance; authentication and staff desktop/mobile coverage remain in the same visual contract.
+- Mobile evidence was corrected to avoid full-page stitching of fixed/sticky chrome and to reset the viewport before capture.
+- UI changes are presentation-only and resource-smart; no runtime dependency, database, storage, pricing, permission, or reporting behavior changed.
+- Candidate stays HOLD/untouched; Production stays NO TOUCH.
+- NEXT: exact-SHA non-UI gate reconciliation on bda31298fdc6e027ab6f48a36b1fe1a63f7551d2.
