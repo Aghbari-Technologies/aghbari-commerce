@@ -92,15 +92,15 @@ export default function AdminPanel({ role }: { role: UserRole }) {
     completed: orders.filter((order) => order.status === 'completed').length,
   };
   const workspaceSections = [
-    { id:'admin-orders', icon:'↗', title:'المبيعات والطلبات', hint:'متابعة الطلبات واعتماد انتقالاتها', meta:orderPulse.pending + ' قيد المراجعة', tone:'orders' },
-    { id:'admin-customers', icon:'♙', title:'العملاء', hint:'حسابات العملاء والدعوات والفئات', meta:orders.length + ' طلب مرتبط', tone:'customers' },
-    { id:'admin-catalog-directory', icon:'▦', title:'كتالوج الأصناف', hint:'فهرس الأصناف والوصول السريع للتسعير والصور', meta:products.length + ' صنف', tone:'catalog' },
-    { id:'admin-inventory', icon:'□', title:'المخزون والمستودعات', hint:'النقل والجرد والحدود التشغيلية', meta:warehouses.length + ' مستودع', tone:'inventory' },
-    { id:'admin-purchasing', icon:'↘', title:'المشتريات والتوريد', hint:'الموردون وأوامر الشراء والاستلام', meta:'دورة التوريد', tone:'purchasing' },
-    { id:'admin-finance', icon:'◫', title:'المالية التشغيلية', hint:'الفواتير والتحصيل والمصروفات', meta:'حسابات وحركات', tone:'finance' },
-    { id:'admin-export', icon:'⇧', title:'البيانات والتصدير', hint:'ملفات البيانات ونقاط التصدير', meta:'مركز البيانات', tone:'data' },
-    { id:'admin-settings', icon:'⚙', title:'واجهة العميل', hint:'الهوية والكثافة والدفع وحدود الطلب', meta:'نشر فوري', tone:'settings' },
-  ];
+    { id:'admin-orders', icon:'↗', title:'المبيعات والطلبات', hint:'متابعة الطلبات واعتماد انتقالاتها', meta:orderPulse.pending + ' قيد المراجعة', tone:'orders', show:canOrderWorkflow },
+    { id:'admin-customers', icon:'♙', title:'العملاء', hint:'حسابات العملاء والدعوات والفئات', meta:orders.length + ' طلب مرتبط', tone:'customers', show:canCatalog },
+    { id:'admin-catalog-directory', icon:'▦', title:'كتالوج الأصناف', hint:'فهرس الأصناف والوصول السريع للتسعير والصور', meta:products.length + ' صنف', tone:'catalog', show:canCatalog },
+    { id:'admin-inventory', icon:'□', title:'المخزون والمستودعات', hint:'النقل والجرد والحدود التشغيلية', meta:warehouses.length + ' مستودع', tone:'inventory', show:canInventory },
+    { id:'admin-purchasing', icon:'↘', title:'المشتريات والتوريد', hint:'الموردون وأوامر الشراء والاستلام', meta:'دورة التوريد', tone:'purchasing', show:canInventory },
+    { id:'admin-finance', icon:'◫', title:'المالية التشغيلية', hint:'الفواتير والتحصيل والمصروفات', meta:'حسابات وحركات', tone:'finance', show:canFinance },
+    { id:'admin-export', icon:'⇧', title:'البيانات والتصدير', hint:'ملفات البيانات ونقاط التصدير', meta:'مركز البيانات', tone:'data', show:canInventory },
+    { id:'admin-settings', icon:'⚙', title:'واجهة العميل', hint:'الهوية والكثافة والدفع وحدود الطلب', meta:'نشر فوري', tone:'settings', show:canCategory },
+  ].filter((item) => item.show);
 
   return <section className="admin-panel staff-console" id="account">
     <section className="staff-hero" aria-label="مركز تشغيل الأغبري">
