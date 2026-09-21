@@ -904,3 +904,13 @@ Keep promotions, provider notification delivery, integration delivery records/ad
 ## RUN-2026-09-21-EXECUTE-UI-006
 - Current product head is `629ecad26367a6c860e10a668d5ec71f34ae9083`. The queue-control change is now present in the active UI branch: `ops/**` no longer triggers the five broad product proof workflows.
 - Deployment/build evidence is exact (`dpl_4GPcZtQPW7Y9LYF1FV4Lyj4EBXtx` READY); exact CI/browser proof remains pending and must not be inferred from deployment readiness.
+
+## 2026-09-21 — Evidence ledger checkpoint / UI-012
+- Exact observed product SHA: `bec7eccf2c7f0d06681e5079361bae7d004cfde7`.
+- Local verification evidence on PC01: typecheck PASS, lint PASS, unit/service suite PASS (31 files / 217 tests), build PASS. Environment Node 24.20.0 vs project engine <23; classify as development verification only.
+- Browser visual-review: BLOCKED on missing runtime Supabase configuration in the clean clone; login shell itself rendered and remained Arabic RTL with no horizontal overflow.
+- GitHub G1: run 35546623901 queued; no PASS transfer from ancestor SHAs.
+- Vercel: exact commit status failure due free deployment-rate limit; no deployment proof.
+- Security: live Supabase migration 20260921000431 is applied; product-media update policy and register_product_media boundary inspected. The generic authenticated SECURITY DEFINER advisor warning is recorded as a known intentional RPC boundary, not a certification PASS.
+- Candidate/Production remain frozen.
+
