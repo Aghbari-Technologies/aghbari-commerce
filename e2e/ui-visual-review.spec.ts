@@ -125,6 +125,45 @@ test.describe('Aghbari UI visual integrity', () => {
     await expect(page.locator('.purchase-shortcuts')).toBeVisible();
     await prepareViewportCapture(page);
     await page.screenshot({ path: 'visual-evidence/customer-mobile.png', fullPage: false });
+
+    const mobileDetail = page.getByRole('button', { name: 'عرض التفاصيل', exact: true }).first();
+    if (await mobileDetail.count()) {
+      await mobileDetail.click();
+      await expect(page.locator('.product-detail-modal')).toBeVisible();
+      await prepareViewportCapture(page);
+      await page.screenshot({ path: 'visual-evidence/customer-mobile-product-detail.png', fullPage: false });
+      await page.getByRole('button', { name: 'إغلاق تفاصيل المنتج' }).click();
+    }
+
+    await page.getByRole('banner').getByRole('button', { name: /السلة/ }).click();
+    await expect(page.getByRole('dialog', { name: /السلة/ })).toBeVisible();
+    await prepareViewportCapture(page);
+    await page.screenshot({ path: 'visual-evidence/customer-mobile-cart.png', fullPage: false });
+    await page.getByRole('button', { name: 'إغلاق السلة' }).click();
+
+    const mobileOrders = page.locator('.portal-nav').getByRole('button', { name: 'طلباتي', exact: true });
+    if (await mobileOrders.count()) {
+      await mobileOrders.click();
+      await expect(page.getByRole('heading', { name: 'طلباتك وشحناتك' })).toBeVisible();
+      await prepareViewportCapture(page);
+      await page.screenshot({ path: 'visual-evidence/customer-mobile-orders.png', fullPage: false });
+    }
+
+    const mobileTemplates = page.locator('.portal-nav').getByRole('button', { name: 'قوالب الطلبات', exact: true });
+    if (await mobileTemplates.count()) {
+      await mobileTemplates.click();
+      await expect(page.getByRole('heading', { name: 'قوالب الطلبات الجاهزة' })).toBeVisible();
+      await prepareViewportCapture(page);
+      await page.screenshot({ path: 'visual-evidence/customer-mobile-templates.png', fullPage: false });
+    }
+
+    const mobileFinance = page.locator('.portal-nav').getByRole('button', { name: 'المركز المالي', exact: true });
+    if (await mobileFinance.count()) {
+      await mobileFinance.click();
+      await expect(page.getByRole('heading', { name: 'المركز المالي' })).toBeVisible();
+      await prepareViewportCapture(page);
+      await page.screenshot({ path: 'visual-evidence/customer-mobile-finance.png', fullPage: false });
+    }
   });
 
   test('staff desktop visual evidence', async ({ page }) => {
@@ -178,5 +217,23 @@ test.describe('Aghbari UI visual integrity', () => {
     await expect(page.locator('.staff-bottom-nav')).toBeVisible();
     await prepareViewportCapture(page);
     await page.screenshot({ path: 'visual-evidence/staff-mobile.png', fullPage: false });
+
+    const mobileStaffTargets = [
+      ['الطلبات', 'admin-orders', 'staff-mobile-orders'],
+      ['المخزون', 'admin-inventory', 'staff-mobile-inventory'],
+      ['العملاء', 'admin-customers', 'staff-mobile-customers'],
+      ['المالية', 'admin-finance', 'staff-mobile-finance'],
+      ['الإعدادات', 'admin-settings', 'staff-mobile-settings'],
+    ] as const;
+    for (const [label, id, filename] of mobileStaffTargets) {
+      const navButton = page.locator('.staff-bottom-nav').getByRole('button', { name: label, exact: true });
+      if (await navButton.count()) {
+        await navButton.click();
+        await expect(page.locator(`#${id}`).first()).toBeVisible();
+        await page.waitForTimeout(120);
+        await prepareViewportCapture(page);
+        await page.screenshot({ path: `visual-evidence/${filename}.png`, fullPage: false });
+      }
+    }
   });
 });
