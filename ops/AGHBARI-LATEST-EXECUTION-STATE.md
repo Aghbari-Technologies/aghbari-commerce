@@ -677,3 +677,10 @@ Resume at: **poll the five exact-SHA GitHub proof runs for `57d9d74a6528a036ec36
 - The visual closure layer remains CSS-only and resource-smart. No business data, pricing, authorization, database/storage, or reporting behavior was changed.
 - Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 remains HOLD/untouched. Production remains NO TOUCH.
 - NEXT RESUME: reconcile the remaining exact-SHA non-UI gates for bda31298fdc6e027ab6f48a36b1fe1a63f7551d2. UI visual coverage is proven for the current HEAD.
+
+## RUN-2026-09-21-EXECUTE-UI-028 — NON-UI GATES STATUS CHECK
+- Exact product HEAD remains bda31298fdc6e027ab6f48a36b1fe1a63f7551d2.
+- Exact current-SHA terminal PASS: UI Visual Review #141 / 35555557897; G1 35555557778; application-quality 35555557829; security-audit 35555557702; Concurrency Proof 35555557734; Test-the-Test 35555557766; Supabase migration proof 35555558075; Order Workflow 35555557779.
+- Exact current-SHA browser runs still active at checkpoint: Fresh Local Supabase 35555557916 and Local Production Artifact 35555557781. No PASS is claimed for either until terminal.
+- Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f080 remains HOLD/untouched. Production remains NO TOUCH.
+- Resume point: poll the two active browser runs for terminal evidence, then reconcile release gates.
