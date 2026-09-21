@@ -676,3 +676,11 @@ The CI deduplication commit correctly removed feature-branch push triggers but a
 - Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f3f080 remains HOLD/untouched. Production remains NO TOUCH.
 - Resource-smart rule remains: no new dependency/asset/font/database payload was introduced by the order-detail fix.
 - NEXT RESUME: reconcile current PR/release path and obtain an exact-SHA non-production deployment/preview for final browser proof. Do not touch Candidate or Production.
+
+### RUN-2026-09-21-EXECUTE-UI-036 — FLAGSHIP WORKSPACE + CUSTOMER REFINEMENT
+- Development SHA: `35b677d6d10584c0d4b49de7411a58c89b01172f` on `execution/customer-ui-completion-20260920`.
+- Added Admin workspace map backed by current real operational state, searchable product directory, direct pricing/image actions, SKU copy, and real product edit flow through existing server RPC.
+- Refined Customer Portal presentation: B2B purchase shortcut rail, stronger product card rhythm, richer order cards/timeline, finance/ledger surfaces, template cards, cart drawer, payment section, floating mobile navigation.
+- No new packages/assets/runtime dependencies or persistence/security/reporting boundary changes.
+- Fresh exact-SHA verification has restarted for the new source SHA; no evidence transferred from prior SHAs.
+- Next: reconcile terminal CI/browser/visual evidence, then repair only evidenced defects.
