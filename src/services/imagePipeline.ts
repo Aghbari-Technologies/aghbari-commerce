@@ -110,7 +110,9 @@ export async function uploadProductImage(productId: string, file: File) {
 
     return { mediaId: mediaId as string, storagePath: objectPath, ...processed };
   } catch (error) {
-    await client.storage.from('product-media').remove([objectPath]);
+    // main.webp is deterministic and may have replaced a valid prior image.
+    // Do not delete it on registration failure: deleting it can break the existing media row.
+    // A later successful registration reconciles the canonical row; the single-object path remains bounded.
     throw error;
   }
 }
