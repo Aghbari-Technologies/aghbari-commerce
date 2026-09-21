@@ -420,3 +420,29 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 - Live resource proof remains database ≈20 MB and `product-media` storage 0 objects / 0 bytes.
 - Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` remains untouched; Production remains NO TOUCH.
 - NEXT RESUME: reconcile terminal Exact-SHA checks for `809ab581a87e231a3d5a714862eb11a609781419`, then browser/visual proof, then release-gate reconciliation.
+
+## RUN-2026-09-21-EXECUTE-UI-012 — current-head verification and root-cause closure
+**Exact observed HEAD:** `bec7eccf2c7f0d06681e5079361bae7d004cfde7`  
+**Branch:** `execution/customer-ui-completion-20260920`  
+**PR:** #100 OPEN/DRAFT
+
+### Completed
+- Removed duplicate block-scoped helpers in `src/PurchasingPanel.tsx` that broke typecheck.
+- Renamed the CustomerPanel filter state setter to `setCustomerTierFilter` so the imported `setCustomerTier(...)` service mutation is no longer shadowed.
+- Closed the unbalanced `.empty-state` CSS rule in `src/customer-portal-v3-dynamic.css`.
+- Reconciled the branch after a newer parallel commit moved HEAD from `8d70cfb...` to `bec7ecc...`; no prior evidence was transferred across SHAs.
+- Confirmed the single-object product-media migration is present in live Supabase.
+
+### Exact local verification at current HEAD lineage
+- `npm run typecheck`: PASS.
+- `npm run lint`: PASS after removing the temporary smoke script from the repo.
+- `npm test`: PASS — 31 test files / 217 tests.
+- `npm run build`: PASS, Vite produced production assets without the previous CSS syntax warning.
+- `npm run test:e2e -- e2e/ui-visual-review.spec.ts`: BLOCKED on runtime environment in clean clone; login stopped on `Supabase runtime configuration is missing`. This is not a browser PASS.
+- Local browser shell smoke: PASS for Arabic title, `lang=ar`, `dir=rtl`, and no horizontal overflow; authenticated screens remain unproven locally.
+
+### External proof state
+- G1 run `35546623901`: QUEUED.
+- Vercel exact-status check: FAILURE from free-plan deployment-rate limit; deployment evidence unavailable for this SHA.
+- Candidate/Production untouched.
+
