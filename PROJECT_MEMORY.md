@@ -439,3 +439,13 @@ RUN-2026-09-20-EXECUTE-022 — WORLD-CLASS UI/UX ADVANCEMENT
 - Supabase security verification for `register_product_media(uuid,text,text,integer,integer,bigint)`: SECURITY DEFINER, owner postgres, `search_path=""`, EXECUTE granted to authenticated/service_role/postgres. The security advisor warns because authenticated users can call it; this is an intentional app RPC boundary currently guarded by organization, staff-role, path, product, MIME/dimension/size, storage-object, and owner checks. Do not reclassify the generic advisor warning as a PASS.
 - Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` remains untouched; Production remains NO TOUCH.
 
+
+
+## 2026-09-21 — EXECUTE-UI-013 / final exact-head checkpoint
+- Final observed active development HEAD at checkpoint: `fbf7869f32e8a8f2f491086b272f8fa22957c5be`.
+- A parallel PWA commit at ancestor `1ba1d5da...` introduced invalid TypeScript in `src/main.tsx`; root cause was a statement declaration placed directly inside an arrow expression. Fixed in `fbf7869f...` by using a block callback for service-worker cache-version extraction/registration.
+- Exact local verification on `fbf7869...` and PC01: typecheck PASS, lint PASS, 31 test files / 217 tests PASS, production build PASS.
+- The current Vercel status for this exact head remains FAILURE due to the free deployment rate limit. G1 run `35547160424` remains QUEUED. No CI PASS or deployment PASS is claimed.
+- Browser visual certification remains blocked in the clean local clone because runtime Supabase configuration is absent; the login shell rendered in Arabic RTL, but authenticated customer/staff screens were not proven. No authenticated UI PASS is claimed.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` remains untouched; Production remains NO TOUCH.
+
