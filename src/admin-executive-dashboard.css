@@ -320,3 +320,93 @@
 .executive-kpis article strong {
   font-variant-numeric: tabular-nums;
 }
+
+
+/* Reference-aligned live status donut. */
+.status-distribution-card .status-donut-layout{
+  display:grid;
+  grid-template-columns:minmax(150px,190px) minmax(0,1fr);
+  align-items:center;
+  gap:22px;
+  min-height:205px;
+}
+.status-donut{
+  width:174px;
+  aspect-ratio:1;
+  margin:auto;
+  display:grid;
+  place-items:center;
+  position:relative;
+  border-radius:50%;
+  box-shadow:0 14px 36px rgba(16,42,67,.10);
+}
+.status-donut::before{
+  content:"";
+  position:absolute;
+  inset:21px;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:inset 0 0 0 1px rgba(216,230,235,.7);
+}
+.status-donut span,
+.status-donut small{
+  position:relative;
+  z-index:1;
+  display:block;
+  text-align:center;
+}
+.status-donut span{
+  margin-top:18px;
+  font-size:24px;
+  font-weight:900;
+  color:#173b58;
+}
+.status-donut small{
+  margin-top:-2px;
+  color:#81929d;
+  font-size:10px;
+}
+.status-donut-legend{
+  display:grid;
+  gap:11px;
+}
+.status-donut-legend>div{
+  display:grid;
+  grid-template-columns:10px minmax(0,1fr) auto;
+  gap:8px;
+  align-items:center;
+}
+.status-donut-legend .status-dot{
+  width:9px;
+  height:9px;
+  border-radius:50%;
+}
+.status-donut-legend strong{
+  min-width:0;
+  color:#526b79;
+  font-size:11px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.status-donut-legend b{
+  color:#173b58;
+  font-size:12px;
+}
+:root{
+  --status-pending:#efb04d;
+  --status-confirmed:#4ca6db;
+  --status-preparing:#8666c7;
+  --status-ready:#2aa7ae;
+  --status-completed:#35a97b;
+  --status-cancelled:#d66b7c;
+  --status-draft:#8da0aa;
+}
+@media(max-width:620px){
+  .status-distribution-card .status-donut-layout{
+    grid-template-columns:1fr;
+  }
+  .status-donut{
+    width:150px;
+  }
+}
