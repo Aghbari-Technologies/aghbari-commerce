@@ -24,7 +24,7 @@ async function login(page: Page, email: string) {
   await form.getByRole('button', { name: 'دخول آمن' }).click();
   await page.locator('.portal-loading').first().waitFor({ state: 'hidden', timeout: 15000 }).catch(() => undefined);
   await expect.poll(async () => {
-    return (await page.getByRole('button', { name: 'الكتالوج', exact: true }).first().isVisible().catch(() => false))
+    return (await page.getByRole('complementary', { name: 'تنقل البوابة' }).getByRole('button', { name: /الكتالوج/ }).first().isVisible().catch(() => false))
       || (await page.getByRole('heading', { name: 'مركز التحكم' }).first().isVisible().catch(() => false));
   }, { timeout: 15000 }).toBeTruthy();
   await assertRtlAndNoOverflow(page);
