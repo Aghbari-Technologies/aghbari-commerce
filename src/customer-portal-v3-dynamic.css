@@ -2340,3 +2340,74 @@
   .client-control-panel::before{inset-inline-start:16px;}
   .client-control-panel>.section-heading h2{font-size:20px;}
 }
+
+
+/* Shared transactional workspace styling — keep every operational module inside one product language. */
+.staff-shell .cart-panel,
+.staff-shell .client-control-panel{
+  margin-top:18px;
+  padding:20px;
+  border:1px solid var(--ag-border);
+  border-radius:18px;
+  background:rgba(255,255,255,.94);
+  box-shadow:var(--ag-shadow-sm);
+}
+.staff-shell .cart-panel>.section-heading{
+  min-height:58px;
+  padding-bottom:13px;
+  border-bottom:1px solid #edf3f5;
+}
+.staff-shell .cart-panel>.section-heading h2{
+  margin:5px 0 0;
+  font-size:21px;
+  letter-spacing:-.35px;
+  color:var(--ag-ink);
+}
+.staff-shell .cart-panel>.section-heading>span{
+  padding:6px 9px;
+  border-radius:999px;
+  background:var(--ag-surface-soft);
+  color:var(--ag-muted);
+  font-size:10px;
+  font-weight:900;
+}
+.staff-shell .cart-panel .admin-grid{
+  align-items:stretch;
+}
+.staff-shell .cart-panel .admin-card{
+  min-height:160px;
+  border-color:#dfecef;
+  border-radius:15px;
+  background:linear-gradient(180deg,#fff,#fbfdfe);
+}
+.staff-shell .cart-panel .admin-card>h3{
+  font-size:14px;
+  color:var(--ag-ink);
+}
+.staff-shell .cart-panel .admin-card>small{
+  line-height:1.7;
+}
+.staff-shell .cart-panel .cart-line{
+  border-bottom-color:#edf3f5;
+}
+.staff-shell .cart-panel .cart-line:last-child{
+  border-bottom:0;
+}
+.staff-shell .cart-panel .cart-line strong{
+  color:var(--ag-ink);
+  font-size:12px;
+}
+.staff-shell .cart-panel .cart-line small{
+  color:var(--ag-muted);
+  font-size:10px;
+}
+@media(max-width:650px){
+  .staff-shell .cart-panel,
+  .staff-shell .client-control-panel{
+    padding:14px;
+    border-radius:15px;
+  }
+  .staff-shell .cart-panel>.section-heading h2{
+    font-size:18px;
+  }
+}
