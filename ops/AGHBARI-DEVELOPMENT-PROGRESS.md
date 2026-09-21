@@ -399,3 +399,13 @@ Append exactly one compact run record per execution. Update `PROJECT_MEMORY.md` 
 - Exact SHA: `3fd298cf1cb073e037a3d24f50adbfb68f688635`.
 - Root issue: role-driven operational reload callbacks were also keyed to user selection state, causing avoidable effect recreation/reload churn. Functional setters now read the latest state without widening callback dependencies.
 - Result: source-level defect fixed and verified by exact commit diff. Browser/CI PASS not claimed.
+
+
+## RUN-2026-09-21-EXECUTE-UI-012
+- FRONT: space preservation / product media lifecycle.
+- Product SHA: `bec7eccf2c7f0d06681e5079361bae7d004cfde7`.
+- Implemented deterministic `main.webp` object lifecycle and secure UPDATE policy; remote migration version `20260921000431` applied and verified.
+- Storage cleanup is ordered after successful canonical media registration; no operational business records were deleted.
+- Evidence: live `product-media` bucket = 0 objects / 0 bytes; database ≈20 MB; transient operational retention tables are currently empty.
+- Verification state: source exactness and remote policy/function proof complete; CI/browser not terminally PASS.
+- Next: terminal exact-SHA verification, visual proof, then release gates.

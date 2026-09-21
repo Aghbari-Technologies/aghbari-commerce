@@ -1,3 +1,8 @@
+## RUN-2026-09-21-EXECUTE-UI-012
+- Resource-preservation rule strengthened: replaceable binary assets should use deterministic bounded object names and verified replacement paths rather than append-only UUID growth.
+- Storage cleanup ordering is mandatory: validate tenant/asset dependency → register the new canonical asset → remove stale storage objects → retain metadata only when required for audit/backward compatibility.
+- Database space is measured before cleanup; do not delete operational or financial records merely because they are small.
+- Documentation updates for this run should be committed atomically to reduce CI/Actions overhead.
 ## RUN-2026-09-21-EXECUTE-UI-011 — UI DATA-LOAD STABILITY
 - Add dependency rule: data-refresh callbacks should depend on capability/identity inputs, not mutable form selections used only to choose defaults. Use functional state setters for defaulting after refresh.
 ## CONTROL-PLANE EVOLUTION — RUN-2026-09-21-EXECUTE-UI-010

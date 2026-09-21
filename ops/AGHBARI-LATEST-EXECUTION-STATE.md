@@ -1,3 +1,14 @@
+## RUN-2026-09-21-EXECUTE-UI-012 — SPACE-PRESERVATION / PRODUCT MEDIA
+- Latest product UI exact SHA: `bec7eccf2c7f0d06681e5079361bae7d004cfde7` on `execution/customer-ui-completion-20260920`.
+- Space-preserving change: product images now use one deterministic `<organization>/<product>/main.webp` object with Storage upsert; repeated replacements no longer create a new UUID object every time.
+- Migration applied remotely as `20260921000431_product_media_single_object`. Its UPDATE policy is constrained to authenticated staff, current organization, existing product ownership, and WebP object paths; both USING and WITH CHECK are present.
+- `register_product_media` now keeps the deterministic image at `sort_order=0` and safely upserts its metadata. Legacy media paths remain accepted for backward compatibility.
+- Upload flow captures prior media paths and attempts storage cleanup only after the new image is successfully registered; cleanup failure does not invalidate the newly registered image.
+- Live resource proof: Commerce database size is about 20 MB; `product-media` storage currently has 0 objects / 0 bytes; transient import/export/idempotency/template-operation tables checked are currently empty. No operational rows were deleted.
+- Resource rule: prefer bounded/deterministic object names for replaceable assets; never perform destructive cleanup without dependency/ownership verification.
+- Exact-SHA CI for the current product branch is queued; no PASS is claimed. Vercel remains free-plan build-rate-limited; no exact-SHA deployment proof.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain untouched/HOLD.
+- NEXT RESUME: reconcile terminal Exact-SHA checks for `bec7eccf2c7f0d06681e5079361bae7d004cfde7`, then browser/visual proof and release-gate reconciliation.
 ## RUN-2026-09-21-EXECUTE-UI-011 — UI DATA-LOAD STABILITY
 - Active UI branch: `execution/customer-ui-completion-20260920`; latest product SHA: `3fd298cf1cb073e037a3d24f50adbfb68f688635`.
 - Additional fixes after UI-010: `PurchasingPanel`, `InventoryPanel`, and `FinancePanel` now initialize default selections with functional state setters while `reload` callbacks depend only on role capability flags. This removes unnecessary reload/effect churn caused by selection-state dependencies and preserves the user's current selections on subsequent refreshes.
