@@ -111,15 +111,15 @@ test('authenticated customer completes real search → catalog → cart → orde
   expect(orderNumberMatch, `Order number missing from success message: ${successText}`).not.toBeNull();
   const orderNumber = orderNumberMatch![1];
 
-  await expect(page.getByRole('button', { name: 'طلباتي', exact: true })).toBeVisible();
+  await expect(page.locator('.portal-header').getByRole('button', { name: 'طلباتي', exact: true })).toBeVisible();
   await expect(page.getByText(`طلب #${orderNumber}`, { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'التفاصيل', exact: true }).last().click();
   await expect(page.getByRole('heading', { name: 'تفاصيل الطلب', exact: true })).toBeVisible();
   await expect(page.getByText('إجمالي الطلب', { exact: true })).toBeVisible();
   await expect(page.locator('.order-detail-row').first()).toBeVisible();
   await page.reload();
-  await expect(page.getByRole('button', { name: 'طلباتي', exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'طلباتي', exact: true }).click();
+  await expect(page.locator('.portal-header').getByRole('button', { name: 'طلباتي', exact: true })).toBeVisible();
+  await page.locator('.portal-header').getByRole('button', { name: 'طلباتي', exact: true }).click();
   await expect(page.getByText(`طلب #${orderNumber}`, { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'التفاصيل', exact: true }).last().click();
   await expect(page.getByRole('heading', { name: 'تفاصيل الطلب', exact: true })).toBeVisible();
