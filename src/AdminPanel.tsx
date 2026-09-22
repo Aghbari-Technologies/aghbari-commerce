@@ -14,6 +14,7 @@ import InventoryPanel from './InventoryPanel';
 import FinancePanel from './FinancePanel';
 import ClientControlPanel from './ClientControlPanel';
 import CommandPalette from './CommandPalette';
+import GovernancePanel from './GovernancePanel';
 import { allowedNextOrderStatuses, buildBulkTransitionPlan } from './domain/bulkActions';
 import AdminExecutiveDashboard from './AdminExecutiveDashboard';
 import './admin-executive-dashboard.css';
@@ -62,7 +63,7 @@ export default function AdminPanel({ role }: { role: UserRole }) {
   const bulkAllowedStatuses = bulkStatuses.filter((status) => { const selected = orders.filter((order) => selectedOrderIds.has(order.id)); return selected.length > 0 && selected.every((order) => allowedNextOrderStatuses(order.status, role).includes(status)); });
   const bulkPreview = bulkPreviewStatus ? buildBulkTransitionPlan(orders, selectedOrderIds, role, bulkPreviewStatus) : null;
   async function bulkChangeOrderStatus(status: OrderStatus) { const plan = buildBulkTransitionPlan(orders, selectedOrderIds, role, status); if (!plan.selected.length || plan.blocked.length || !bulkAllowedStatuses.includes(status)) return; const ids = plan.eligible.map((order) => order.id); setBusy(true); setError(null); setMessage(null); let successCount = 0; const failures: string[] = []; try { for (const orderId of ids) { try { await transitionOrder(orderId, status); successCount += 1; } catch (error) { failures.push(error instanceof Error ? error.message : 'فشل غير محدد'); } } await reload(); setSelectedOrderIds(new Set()); setBulkPreviewStatus(null); setMessage(failures.length ? `تم تنفيذ ${successCount} من ${ids.length} عمليات؛ ${failures.length} تحتاج مراجعة.` : `تم تحديث ${successCount} طلبات إلى: ${STATUS_LABELS[status]}.`); if (failures.length) setError(`تعذر تنفيذ بعض العمليات: ${failures[0]}`); } finally { setBusy(false); } }
-  const canCatalog = role === 'owner' || role === 'admin' || role === 'sales'; const canCategory = role === 'owner' || role === 'admin'; const canInventory = role === 'owner' || role === 'admin' || role === 'warehouse'; const canOrderWorkflow = STAFF_ROLES.has(role); const canFinance = ['owner', 'admin', 'sales'].includes(role);
+  const canCatalog = role === 'owner' || role === 'admin' || role === 'sales'; const canCategory = role === 'owner' || role === 'admin'; const canInventory = role === 'owner' || role === 'admin' || role === 'warehouse'; const canOrderWorkflow = STAFF_ROLES.has(role); const canFinance = ['owner', 'admin', 'sales'].includes(role); const canGovernance = role === 'owner' || role === 'admin';
   const commandActions = [
     ...(canCatalog ? [
       { id: 'product-create', label: 'إضافة منتج', hint: 'فتح نموذج إنشاء المنتج', icon: '+', onSelect: () => document.getElementById('admin-product-create')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), keywords: ['منتج', 'sku'] },
@@ -77,7 +78,7 @@ export default function AdminPanel({ role }: { role: UserRole }) {
     ...(canOrderWorkflow ? [{ id: 'orders', label: 'إدارة الطلبات', hint: 'طلبات العملاء وحالاتها', icon: '↗', onSelect: () => document.getElementById('admin-orders')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), keywords: ['طلبات', 'تجهيز', 'شحن'] }] : []),
     ...(canCatalog ? [{ id: 'customers', label: 'إدارة العملاء', hint: 'فتح ملفات العملاء', icon: '👥', onSelect: () => document.getElementById('admin-customers')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), keywords: ['عملاء'] }] : []),
     ...(canFinance ? [{ id: 'finance', label: 'المركز المالي', hint: 'الكشوف والحركات التشغيلية', icon: '◍', onSelect: () => document.getElementById('admin-finance')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), keywords: ['مالية', 'كشف'] }] : []),
-    ...(canCategory ? [{ id: 'settings', label: 'إعدادات بوابة العميل', hint: 'هوية الواجهة والخيارات التشغيلية', icon: '⚙', onSelect: () => document.getElementById('admin-settings')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), keywords: ['إعدادات', 'واجهة', 'ثيم'] }] : []),
+    ...(canCategory ? [{ id: 'settings', label: 'إعدادات بوابة العميل', hint: 'هوية الواجهة والخيارات التشغيلية', icon: '⚙', onSelect: () => document.getElementById('admin-settings')?.scrollIntoView({ behavior: 'smooth', block: 'center' }), keywords: ['إعدادات', 'واجهة', 'ثيم'] }] : []), ...(canGovernance ? [{ id:'access', label:'المستخدمون والأدوار', hint:'إدارة الوصول وسجل التدقيق', icon:'◈', onSelect:()=>document.getElementById('admin-access')?.scrollIntoView({behavior:'smooth',block:'center'}), keywords:['مستخدمون','أدوار','صلاحيات','تدقيق'] }] : []),
   ];
   useEffect(() => { const onKeyDown = (event: KeyboardEvent) => { if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); setCommandOpen(true); } }; window.addEventListener('keydown', onKeyDown); return () => window.removeEventListener('keydown', onKeyDown); }, []);
   const filteredProducts = products.filter((item) => {
@@ -99,7 +100,7 @@ export default function AdminPanel({ role }: { role: UserRole }) {
     { id:'admin-purchasing', icon:'↘', title:'المشتريات والتوريد', hint:'الموردون وأوامر الشراء والاستلام', meta:'دورة التوريد', tone:'purchasing', show:canInventory },
     { id:'admin-finance', icon:'◫', title:'المالية التشغيلية', hint:'الفواتير والتحصيل والمصروفات', meta:'حسابات وحركات', tone:'finance', show:canFinance },
     { id:'admin-export', icon:'⇧', title:'البيانات والتصدير', hint:'ملفات البيانات ونقاط التصدير', meta:'مركز البيانات', tone:'data', show:canInventory },
-    { id:'admin-settings', icon:'⚙', title:'واجهة العميل', hint:'الهوية والكثافة والدفع وحدود الطلب', meta:'نشر فوري', tone:'settings', show:canCategory },
+    { id:'admin-settings', icon:'⚙', title:'واجهة العميل', hint:'الهوية والكثافة والدفع وحدود الطلب', meta:'نشر فوري', tone:'settings', show:canCategory }, { id:'admin-access', icon:'◈', title:'الوصول والحوكمة', hint:'المستخدمون والأدوار وسجل التدقيق', meta:'صلاحيات محكومة', tone:'access', show:canGovernance },
   ].filter((item) => item.show);
 
   return <section className="admin-panel staff-console" id="account">
@@ -218,7 +219,8 @@ export default function AdminPanel({ role }: { role: UserRole }) {
       {canInventory && <div id="admin-purchasing"><PurchasingPanel role={role} /></div>}
       {canFinance && <div id="admin-finance"><FinancePanel role={role} /></div>}
       {canInventory && <div id="admin-export"><ExportPanel role={role}/></div>}
-      {canCategory && <div id="admin-settings"><ClientControlPanel role={role}/></div>} 
+      {canCategory && <div id="admin-settings"><ClientControlPanel role={role}/></div>}
+      {canGovernance && <GovernancePanel role={role} />} 
     </details>
     <nav className="staff-bottom-nav" aria-label="تنقل الإدارة على الهاتف">
       <button type="button" onClick={() => document.getElementById('admin-dashboard')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}><span>⌂</span><small>الرئيسية</small></button>
@@ -226,7 +228,7 @@ export default function AdminPanel({ role }: { role: UserRole }) {
       {canInventory && <button type="button" onClick={() => document.getElementById('admin-inventory')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}><span>□</span><small>المخزون</small></button>}
       {canCatalog && <button type="button" onClick={() => document.getElementById('admin-customers')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}><span>♙</span><small>العملاء</small></button>}
       {canFinance && <button type="button" onClick={() => document.getElementById('admin-finance')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}><span>◫</span><small>المالية</small></button>}
-      {canCategory && <button type="button" onClick={() => document.getElementById('admin-settings')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}><span>⚙</span><small>الإعدادات</small></button>}
+      {canCategory && <button type="button" onClick={() => document.getElementById('admin-settings')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}><span>⚙</span><small>الإعدادات</small></button>}{canGovernance && <button type="button" onClick={() => document.getElementById('admin-access')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}><span>◈</span><small>الوصول</small></button>}
     </nav>
     <CommandPalette open={commandOpen} onClose={() => setCommandOpen(false)} actions={commandActions} title="أوامر مركز الإدارة" />
   </section>;

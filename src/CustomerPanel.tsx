@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { CustomerTier } from './domain/types';
+import { formatMoney } from './domain/pricing';
 import { createCustomer, getCustomers, setCustomerActive, setCustomerTier, type StaffCustomer } from './services/customers';
 import { supabase } from './lib/supabase';
 
@@ -12,6 +13,11 @@ export default function CustomerPanel({ role }: { role: UserRole }) {
   const canManage = ['owner', 'admin'].includes(role);
   const canInvite = ['owner', 'admin', 'sales'].includes(role);
   const [customers, setCustomers] = useState<StaffCustomer[]>([]);
+  const [selectedCustomer,setSelectedCustomer]=useState<StaffCustomer|null>(null);
+  const [detailLoading,setDetailLoading]=useState(false);
+  const [detailOrders,setDetailOrders]=useState<Array<{order_number:number;status:string;total:number;currency:string;created_at:string}>>([]);
+  const [detailLedger,setDetailLedger]=useState<Array<{reference:string|null;description:string;debit:number;credit:number;due_date:string|null;status:string;created_at:string}>>([]);
+  const [detailInvitations,setDetailInvitations]=useState<Array<{recipient_email:string;expires_at:string;accepted_at:string|null;revoked_at:string|null;created_at:string}>>([]);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [tier, setTier] = useState<CustomerTier>('wholesale');
@@ -36,6 +42,23 @@ export default function CustomerPanel({ role }: { role: UserRole }) {
   });
   const hasCustomerFilters = Boolean(customerQuery.trim()) || customerStatus !== 'all' || customerTier !== 'all';
   function clearCustomerFilters() { setCustomerQuery(''); setCustomerStatus('all'); setCustomerTierFilter('all'); }
+  async function openCustomerDetail(customer:StaffCustomer){
+    if(!supabase || detailLoading) return;
+    setSelectedCustomer(customer); setDetailLoading(true); setError('');
+    try{
+      const [{data:orders,error:ordersError},{data:ledger,error:ledgerError},{data:invitations,error:invitationError}]=await Promise.all([
+        supabase.from('orders').select('order_number,status,total,currency,created_at').eq('customer_id',customer.id).order('created_at',{ascending:false}).limit(25),
+        supabase.from('customer_ledger_entries').select('reference,description,debit,credit,due_date,status,created_at').eq('customer_id',customer.id).order('created_at',{ascending:false}).limit(40),
+        supabase.from('customer_invitations').select('recipient_email,expires_at,accepted_at,revoked_at,created_at').eq('customer_id',customer.id).order('created_at',{ascending:false}).limit(20)
+      ]);
+      if(ordersError) throw ordersError; if(ledgerError) throw ledgerError; if(invitationError) throw invitationError;
+      setDetailOrders((orders??[]).map(item=>({...item,total:Number(item.total)})));
+      setDetailLedger((ledger??[]).map(item=>({...item,debit:Number(item.debit),credit:Number(item.credit)})));
+      setDetailInvitations((invitations??[]) as typeof detailInvitations);
+    }catch(e){setSelectedCustomer(null);setError(e instanceof Error?e.message:'تعذر تحميل ملف العميل.');}
+    finally{setDetailLoading(false);}
+  }
+
   async function dispatchInvitation(customer: StaffCustomer) {
     const email = (inviteEmail[customer.id] ?? '').trim().toLowerCase();
     if (!supabase || !email) return;
@@ -67,6 +90,7 @@ export default function CustomerPanel({ role }: { role: UserRole }) {
           <div><strong>{customer.name}</strong><small>{customer.phone ?? 'بدون هاتف'} · {customer.is_active ? 'نشط' : 'موقوف'}</small></div>
           <select aria-label={`فئة ${customer.name}`} disabled={!canManage || busy} value={customer.tier} onChange={(e) => void run(() => setCustomerTier(customer.id, e.target.value as CustomerTier), 'تم تحديث فئة العميل.')}>{tiers.map((item) => <option key={item} value={item}>{tierLabels[item]}</option>)}</select>
           {canManage && <button disabled={busy} onClick={() => void run(() => setCustomerActive(customer.id, !customer.is_active), customer.is_active ? 'تم إيقاف العميل.' : 'تم تفعيل العميل.')}>{customer.is_active ? 'إيقاف' : 'تفعيل'}</button>}
+          <button type="button" className="ghost compact-action" onClick={()=>void openCustomerDetail(customer)} disabled={detailLoading}>تفاصيل وكشف</button>
           {canInvite && customer.is_active && <div className="invite-controls"><input type="email" aria-label={`بريد دعوة ${customer.name}`} placeholder="بريد العميل" value={inviteEmail[customer.id] ?? ''} onChange={(e) => setInviteEmail((current) => ({ ...current, [customer.id]: e.target.value }))} /><button disabled={inviteBusy === customer.id || !(inviteEmail[customer.id] ?? '').trim()} onClick={() => void dispatchInvitation(customer)}>{inviteBusy === customer.id ? 'جارٍ إنشاء الدعوة…' : 'إرسال دعوة'}</button>{inviteLink[customer.id] && <a href={inviteLink[customer.id]} target="_blank" rel="noreferrer">فتح رابط الدعوة</a>}</div>}
         </article>)}</div>}
       </div>
