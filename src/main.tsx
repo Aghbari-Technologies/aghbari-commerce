@@ -6,6 +6,7 @@ import AppErrorBoundary from './AppErrorBoundary';
 import './offline.css';
 import './accessibility.css';
 import './product-excellence.css';
+import './ui-continuous-polish.css';
 
 const invitationToken = new URLSearchParams(window.location.search).get('invite');
 const RootApp = invitationToken ? <InvitationAcceptance token={invitationToken} /> : <App />;
