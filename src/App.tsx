@@ -1,3 +1,170 @@
+import { useCallback, useEffect, useMemo, useState, useRef, type ChangeEvent, type FormEvent } from 'react';
+import readXlsxFile from './lib/read-excel-file-browser';
+import type { CartLine, Product, OrderStatus } from './domain/types';
+import { calculateClientPreviewTotal } from './domain/order';
+import { formatMoney } from './domain/pricing';
+import { getCatalog, getProductImageUrls, type CatalogItem } from './services/catalog';
+import { getCategories, type CategoryOption } from './services/categories';
+import { getCart, removeCartItem, setCartItem, syncOfflineCart } from './services/cart';
+import { createOrder } from './services/orders';
+import { getCustomerOrders, type CustomerOrderSummary } from './services/customerOrders';
+import { applyOrderTemplate, createOrderTemplate, deleteOrderTemplate, getOrderTemplates, type OrderTemplate } from './services/orderTemplates';
+import { getSession, signIn, signOut } from './services/auth';
+import { supabase } from './lib/supabase';
+import AdminPanel from './AdminPanel';
+import ClientControlPanel from './ClientControlPanel';
+import './styles.css';
+import './customer-portal-v3.css';
+import './ui-polish.css';
+
+type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer';
+const STAFF_ROLES = new Set<UserRole>(['owner', 'admin', 'sales', 'warehouse']);
+const STATUS_LABELS: Record<OrderStatus, string> = { draft: 'مسودة', pending: 'قيد المراجعة', confirmed: 'مؤكد', preparing: 'قيد التجهيز', ready: 'جاهز', completed: 'مكتمل', cancelled: 'ملغي' };
+const STATUS_STEPS: OrderStatus[] = ['pending', 'confirmed', 'preparing', 'ready', 'completed'];
+const UNIT_OPTIONS = ['حبة', 'كرتون', 'طن'];
+
+type PriceTier = { min_quantity: number; unit_price: number; currency: string };
+type Finance = { currency: string; creditLimit: number; outstanding: number; available: number; entries: Array<{ id: string; reference?: string; description: string; debit: number; credit: number; due_date?: string; status: string; created_at: string }> };
+import { DEFAULT_CUSTOMER_PORTAL_CONFIG, firstEnabledPaymentMethod, isPaymentMethodEnabled, validateCheckoutPolicy, type ClientUiConfig, type PaymentMethod } from './domain/customerPolicy';
+
+function mapCatalogItem(item: CatalogItem, categoryName: string, imageUrl?: string): Product & { authorizedPrice?: number } { return { id: item.id, sku: item.sku, name: item.name, unit: item.unit, category: categoryName, description: item.description ?? undefined, availableQuantity: item.available_quantity, status: item.status === 'active' ? 'active' : 'inactive', imageUrl, authorizedPrice: item.authorized_price ?? undefined }; }
+function currencyLabel(currency = 'YER') { return currency === 'YER' ? 'ر.ي' : currency; }
+function statusIndex(status: OrderStatus) { return STATUS_STEPS.indexOf(status); }
+
+export default function App() {
+  const [email, setEmail] = useState(''); const [password, setPassword] = useState('');
+  const [sessionReady, setSessionReady] = useState(false); const [signedIn, setSignedIn] = useState(false); const [role, setRole] = useState<UserRole>('viewer');
+  const [authBusy, setAuthBusy] = useState(false); const [authError, setAuthError] = useState<string | null>(null);
+  const [query, setQuery] = useState(''); const [catalogSearch, setCatalogSearch] = useState(''); const [categoryId, setCategoryId] = useState<string | null>(null);
+  const [categoryOptions, setCategoryOptions] = useState<CategoryOption[]>([]); const [products, setProducts] = useState<Product[]>([]); const [serverPrices, setServerPrices] = useState<Record<string, number>>({}); const [priceTiers, setPriceTiers] = useState<Record<string, PriceTier[]>>({});
+  const [catalogLoading, setCatalogLoading] = useState(false); const [cart, setCart] = useState<CartLine[]>([]); const [checkoutKey, setCheckoutKey] = useState<string | null>(null); const [warehouseId, setWarehouseId] = useState<string | null>(null); const [customerId, setCustomerId] = useState<string | null>(null); const [organizationId, setOrganizationId] = useState<string | null>(null);
+  const [customerName, setCustomerName] = useState('تاجر الأغبري'); const [customerTier, setCustomerTier] = useState('wholesale'); const [orders, setOrders] = useState<CustomerOrderSummary[]>([]); const [ordersLoading, setOrdersLoading] = useState(false); const [ordersError, setOrdersError] = useState<string | null>(null);
+  const [finance, setFinance] = useState<Finance | null>(null); const [financeLoading, setFinanceLoading] = useState(false); const [templates, setTemplates] = useState<OrderTemplate[]>([]); const [templateName, setTemplateName] = useState('');
+  const [quickOrderOpen, setQuickOrderOpen] = useState(false); const [cartOpen, setCartOpen] = useState(false); const [section, setSection] = useState<'catalog' | 'orders' | 'finance' | 'templates' | 'account'>('catalog'); const [selectedProductId, setSelectedProductId] = useState<string | null>(null); const [detailQuantity, setDetailQuantity] = useState(1); const [orderDetails, setOrderDetails] = useState<CustomerOrderSummary | null>(null); const [orderDetailsItems, setOrderDetailsItems] = useState<Array<{ productId: string; sku: string; name: string; unit: string; quantity: number; unitPrice: number; lineTotal: number }>>([]); const [orderDetailsLoading, setOrderDetailsLoading] = useState(false); const [offlineSyncRevision, setOfflineSyncRevision] = useState(0); const [uiConfig, setUiConfig] = useState<ClientUiConfig>(DEFAULT_CUSTOMER_PORTAL_CONFIG); const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('credit'); const [confirmedLines, setConfirmedLines] = useState<Record<string, boolean>>({});
+  const [runtimeError, setRuntimeError] = useState<string | null>(null); const [orderBusy, setOrderBusy] = useState(false); const [orderResult, setOrderResult] = useState<string | null>(null); const [isOnline, setIsOnline] = useState(() => typeof navigator === 'undefined' ? true : navigator.onLine); const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const loadIdentity = useCallback(async (userId: string) => {
+    if (!supabase) return;
+    const { data: profile, error } = await supabase.from('profiles').select('customer_id, role, organization_id').eq('id', userId).single();
+    if (error) throw error;
+    setCustomerId(profile.customer_id); setOrganizationId(profile.organization_id ?? null); setRole((profile.role as UserRole) ?? 'viewer');
+    if (profile.customer_id) {
+      const { data: customer } = await supabase.from('customers').select('name,tier').eq('id', profile.customer_id).maybeSingle();
+      if (customer) { setCustomerName(customer.name); setCustomerTier(String(customer.tier ?? 'wholesale')); }
+      try { setTemplates(await getOrderTemplates()); } catch (error) { setTemplates([]); setRuntimeError(error instanceof Error ? error.message : 'تعذر تحميل الطلبات المحفوظة.'); }
+    }
+    if (profile.organization_id) {
+      const { data: ui } = await supabase.from('client_ui_settings').select('config').eq('organization_id', profile.organization_id).maybeSingle();
+      if (ui?.config) setUiConfig({ ...DEFAULT_CUSTOMER_PORTAL_CONFIG, ...(ui.config as Partial<ClientUiConfig>) }); else setUiConfig(DEFAULT_CUSTOMER_PORTAL_CONFIG);
+    }
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    void getSession().then(async (currentSession) => { if (cancelled) return; setSignedIn(Boolean(currentSession)); setSessionReady(true); if (currentSession) await loadIdentity(currentSession.user.id); }).catch((error) => { if (!cancelled) { setSessionReady(true); setAuthError(error instanceof Error ? error.message : 'تعذر قراءة جلسة الدخول.'); } });
+    const listener = supabase?.auth.onAuthStateChange((event, nextSession) => { if (cancelled) return; setSignedIn(Boolean(nextSession)); if (nextSession && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) void loadIdentity(nextSession.user.id).catch((error) => setAuthError(error instanceof Error ? error.message : 'تعذر تحميل هوية الحساب.')); else if (!nextSession) { setCustomerId(null); setOrganizationId(null); setRole('viewer'); setProducts([]); setCart([]); setOrders([]); setTemplates([]); setFinance(null); setConfirmedLines({}); setUiConfig(DEFAULT_CUSTOMER_PORTAL_CONFIG); } });
+    return () => { cancelled = true; listener?.data.subscription.unsubscribe(); };
+  }, [loadIdentity]);
+  useEffect(() => { const on = () => { setIsOnline(true); if (signedIn && !STAFF_ROLES.has(role)) void syncOfflineCart().then(() => { setRuntimeError(null); setOfflineSyncRevision((current) => current + 1); }).catch((error) => setRuntimeError(error instanceof Error ? `تعذر مزامنة السلة المؤجلة: ${error.message}` : 'تعذر مزامنة السلة المؤجلة.')); }; const off = () => setIsOnline(false); window.addEventListener('online', on); window.addEventListener('offline', off); return () => { window.removeEventListener('online', on); window.removeEventListener('offline', off); }; }, [role, signedIn]);
+  useEffect(() => { if (!signedIn || !uiConfig.showSearch) return; const timer = window.setTimeout(() => setCatalogSearch(query.trim()), 220); return () => window.clearTimeout(timer); }, [query, signedIn, uiConfig.showSearch]);
+  useEffect(() => { if (!signedIn || !uiConfig.showSearch) return; const onKeyDown = (event: KeyboardEvent) => { if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); searchInputRef.current?.focus(); searchInputRef.current?.select(); } if (event.key === 'Escape' && document.activeElement === searchInputRef.current) searchInputRef.current?.blur(); }; window.addEventListener('keydown', onKeyDown); return () => window.removeEventListener('keydown', onKeyDown); }, [signedIn, uiConfig.showSearch]);
+
+  useEffect(() => {
+    if (!signedIn || !supabase || !isOnline || STAFF_ROLES.has(role)) return; let cancelled = false;
+    async function loadRuntime() {
+      setCatalogLoading(true); setRuntimeError(null);
+      try {
+        const [{ data: warehouse, error: warehouseError }, items, savedCart, categories] = await Promise.all([
+          supabase!.from('warehouses').select('id').eq('is_active', true).order('created_at').limit(1).maybeSingle(), getCatalog(catalogSearch, categoryId, 60, 0), getCart(), getCategories()
+        ]);
+        if (warehouseError) throw warehouseError; if (!warehouse?.id) throw new Error('لا يوجد مستودع تشغيلي نشط.'); if (cancelled) return;
+        const categoryMap = new Map(categories.map((item) => [item.id, item.name])); const imageUrls = await getProductImageUrls(items.map((item) => item.image_path));
+        const mapped = items.map((item) => mapCatalogItem(item, categoryMap.get(item.category_id ?? '') ?? 'أصناف', item.image_path ? imageUrls.get(item.image_path) : undefined));
+        setWarehouseId(warehouse.id); setCategoryOptions(categories); setProducts(mapped); setServerPrices(Object.fromEntries(items.map((item) => [item.id, item.authorized_price ?? 0])));
+        setCart(savedCart.map((item) => ({ product: mapped.find((product) => product.id === item.product_id) ?? { id: item.product_id, sku: item.sku, name: item.name, unit: item.unit, category: 'أصناف', availableQuantity: 0, status: 'active' }, quantity: item.quantity, unitPrice: item.authorized_price ?? 0 }))); setConfirmedLines(Object.fromEntries(savedCart.map((item) => [item.product_id, false])));
+        if (customerId && items.length) { const { data: tiers } = await supabase.from('customer_price_tiers').select('product_id,min_quantity,unit_price,currency').eq('customer_id', customerId).in('product_id', items.map((item) => item.id)).order('min_quantity'); const grouped: Record<string, PriceTier[]> = {}; for (const row of tiers ?? []) (grouped[row.product_id] ??= []).push({ min_quantity: Number(row.min_quantity), unit_price: Number(row.unit_price), currency: row.currency }); if (!cancelled) setPriceTiers(grouped); }
+      } catch (error) { if (!cancelled) setRuntimeError(error instanceof Error ? error.message : 'تعذر تحميل بيانات المتجر.'); }
+      finally { if (!cancelled) setCatalogLoading(false); }
+    }
+    void loadRuntime(); return () => { cancelled = true; };
+  }, [catalogSearch, categoryId, signedIn, isOnline, customerId, role, offlineSyncRevision]);
+
+  useEffect(() => {
+    const next = firstEnabledPaymentMethod(uiConfig);
+    if (next && !isPaymentMethodEnabled(uiConfig, paymentMethod)) setPaymentMethod(next);
+    if (!next) setRuntimeError('لا توجد وسيلة دفع متاحة لهذا المتجر.');
+  }, [uiConfig, paymentMethod]);
+
+  useEffect(() => {
+    if (!signedIn || !supabase || !organizationId || STAFF_ROLES.has(role)) return;
+    let cancelled = false;
+    const applyConfig = (value: unknown) => {
+      const config = (value && typeof value === 'object' ? value : {}) as Partial<ClientUiConfig>;
+      if (!cancelled) setUiConfig((current) => ({ ...current, ...config }));
+    };
+    const channel = supabase.channel(`aghbari-client-ui-${organizationId}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'client_ui_settings', filter: `organization_id=eq.${organizationId}` }, (payload) => applyConfig((payload.new as { config?: unknown }).config))
+      .subscribe();
+    const refresh = window.setInterval(() => {
+      void supabase.from('client_ui_settings').select('config').eq('organization_id', organizationId).maybeSingle()
+        .then(({ data }) => { if (data?.config) applyConfig(data.config); });
+    }, 60000);
+    return () => { cancelled = true; window.clearInterval(refresh); void supabase.removeChannel(channel); };
+  }, [signedIn, organizationId, role]);
+
+  useEffect(() => { if (!signedIn || !isOnline || STAFF_ROLES.has(role)) return; let cancelled = false; setOrdersLoading(true); setOrdersError(null); void getCustomerOrders(30).then((items) => { if (!cancelled) setOrders(items); }).catch((error) => { if (!cancelled) setOrdersError(error instanceof Error ? error.message : 'تعذر تحميل الطلبات.'); }).finally(() => { if (!cancelled) setOrdersLoading(false); }); return () => { cancelled = true; }; }, [signedIn, isOnline, role, orderResult]);
+  useEffect(() => { if (!signedIn || !customerId || !supabase || STAFF_ROLES.has(role)) return; let cancelled = false; setFinanceLoading(true); void (async () => { try { const [{ data: account, error: accountError }, { data: entries, error: entriesError }] = await Promise.all([supabase!.from('customer_credit_accounts').select('currency,credit_limit,outstanding_balance,available_credit').eq('customer_id', customerId).maybeSingle(), supabase!.from('customer_ledger_entries').select('id,reference,description,debit,credit,due_date,status,created_at').eq('customer_id', customerId).order('created_at', { ascending: false }).limit(50)]); if (accountError || entriesError) throw accountError ?? entriesError; if (!cancelled) setFinance(account ? { currency: account.currency, creditLimit: Number(account.credit_limit), outstanding: Number(account.outstanding_balance), available: Number(account.available_credit), entries: (entries ?? []).map((e) => ({ ...e, debit: Number(e.debit), credit: Number(e.credit) })) } : null); } catch { if (!cancelled) setFinance(null); } finally { if (!cancelled) setFinanceLoading(false); } })(); return () => { cancelled = true; }; }, [signedIn, customerId, role]);
+
+  const categories = useMemo(() => [{ id: null, name: 'الكل' }, ...categoryOptions], [categoryOptions]);
+  const priceFor = (product: Product) => serverPrices[product.id] ?? 0; const total = calculateClientPreviewTotal(cart); const cartCount = cart.reduce((sum, line) => sum + line.quantity, 0);
+  function nextTier(product: Product, quantity: number) { return (priceTiers[product.id] ?? []).filter((tier) => tier.min_quantity > quantity).sort((a, b) => a.min_quantity - b.min_quantity)[0]; }
+  function effectivePrice(product: Product, quantity = 1) { const tiers = priceTiers[product.id] ?? []; return [...tiers].sort((a, b) => b.min_quantity - a.min_quantity).find((tier) => quantity >= tier.min_quantity)?.unit_price ?? priceFor(product); }
+  function savingHint(product: Product) { const quantity = cart.find((line) => line.product.id === product.id)?.quantity ?? 1; const tier = nextTier(product, quantity); return tier ? `أضف ${tier.min_quantity - quantity} ${product.unit} للوصول إلى ${formatMoney(tier.unit_price)} ${currencyLabel(tier.currency)}` : 'أنت على أفضل سعر متاح لحسابك'; }
+  async function handleLogin(event: FormEvent) { event.preventDefault(); setAuthBusy(true); setAuthError(null); try { const session = await signIn(email.trim(), password); if (!session) throw new Error('تعذر إنشاء جلسة دخول صالحة.'); await loadIdentity(session.user.id); setSignedIn(true); setSessionReady(true); setPassword(''); } catch (error) { setSignedIn(false); setAuthError(error instanceof Error ? error.message : 'تعذر تسجيل الدخول.'); } finally { setAuthBusy(false); } }
+  async function handleSignOut() { try { await signOut(); } finally { setProducts([]); setCart([]); setOrders([]); setCustomerId(null); setRole('viewer'); setTemplates([]); setFinance(null); setUiConfig(DEFAULT_CUSTOMER_PORTAL_CONFIG); } }
+  async function addToCart(product: Product, quantity = 1) { const price = effectivePrice(product, quantity); if (price <= 0 || product.availableQuantity < quantity || !isOnline) return; const existing = cart.find((line) => line.product.id === product.id); const next = Math.min((existing?.quantity ?? 0) + quantity, product.availableQuantity); try { await setCartItem(product.id, next); setCart((current) => existing ? current.map((line) => line.product.id === product.id ? { ...line, quantity: next, unitPrice: effectivePrice(product, next) } : line) : [...current, { product, quantity: next, unitPrice: price }]); setConfirmedLines((current) => ({ ...current, [product.id]: false })); setCartOpen(true); setRuntimeError(null); } catch (error) { setRuntimeError(error instanceof Error ? error.message : 'تعذر تحديث السلة.'); } }
+  async function updateQuantity(id: string, quantity: number) { const line = cart.find((item) => item.product.id === id); if (!line) return; const next = Math.max(0, Math.min(quantity, line.product.availableQuantity)); try { if (!next) { await removeCartItem(id); setCart((c) => c.filter((item) => item.product.id !== id)); setConfirmedLines((current) => { const nextState = { ...current }; delete nextState[id]; return nextState; }); } else { await setCartItem(id, next); setCart((c) => c.map((item) => item.product.id === id ? { ...item, quantity: next, unitPrice: effectivePrice(item.product, next) } : item)); setConfirmedLines((current) => ({ ...current, [id]: false })); } } catch (error) { setRuntimeError(error instanceof Error ? error.message : 'تعذر تحديث السلة.'); } }
+  async function submitOrder() {
+    if (!isOnline) { setRuntimeError('إرسال الطلب يحتاج اتصالًا بالإنترنت.'); return; }
+    if (!customerId || !warehouseId || !cart.length || orderBusy) return;
+    const policyError = validateCheckoutPolicy({
+      config: uiConfig,
+      paymentMethod,
+      total,
+      lineProductIds: cart.map((line) => line.product.id),
+      confirmedProductIds: new Set(Object.entries(confirmedLines).filter(([, confirmed]) => confirmed).map(([id]) => id)),
+    });
+    if (policyError) { setRuntimeError(policyError); setCartOpen(true); return; }
+    setOrderBusy(true); setRuntimeError(null);
+    const idempotencyKey = checkoutKey ?? crypto.randomUUID();
+    setCheckoutKey(idempotencyKey);
+    try {
+      const result = await createOrder(
+        { customerId, idempotencyKey, lines: cart.map((line) => ({ productId: line.product.id, quantity: line.quantity })) },
+        warehouseId,
+        { paymentMethod },
+      );
+      setCart([]); setConfirmedLines({}); setCheckoutKey(null); setCartOpen(false);
+      setOrderResult(`تم إرسال الطلب #${result.order_number} بنجاح.`); setSection('orders');
+    } catch (error) {
+      setRuntimeError(error instanceof Error ? error.message : 'تعذر إرسال الطلب.');
+    } finally { setOrderBusy(false); }
+  }
+  async function reorder(order: CustomerOrderSummary) { if (!supabase || !isOnline) return; try { const { data: items, error } = await supabase.from('order_items').select('product_id,quantity').eq('order_id', order.id); if (error) throw error; let added = 0; for (const item of items ?? []) { const product = products.find((candidate) => candidate.id === item.product_id); if (product) { await addToCart(product, Math.min(Number(item.quantity), product.availableQuantity)); added++; } } setRuntimeError(added ? `تمت إعادة إضافة ${added} أصناف من الطلب #${order.order_number}.` : 'تعذر العثور على أصناف الطلب في الكتالوج الحالي.'); if (added) setSection('catalog'); } catch (error) { setRuntimeError(error instanceof Error ? error.message : 'تعذر إعادة الطلب.'); } }
+  async function openOrderDetails(order: CustomerOrderSummary) { if (!supabase || !isOnline) return; setOrderDetails(order); setOrderDetailsLoading(true); try { const { data, error } = await supabase.from('order_items').select('product_id,quantity,unit_price,line_total,products(name,sku,unit)').eq('order_id', order.id).order('created_at'); if (error) throw error; const rows = (data ?? []) as Array<{ product_id: string; quantity: number; unit_price: number | string; line_total: number | string; products: { name?: string; sku?: string; unit?: string } | null }>; setOrderDetailsItems(rows.map((item) => ({ productId: item.product_id, sku: item.products?.sku ?? '—', name: item.products?.name ?? 'صنف غير متاح', unit: item.products?.unit ?? 'وحدة', quantity: Number(item.quantity), unitPrice: Number(item.unit_price), lineTotal: Number(item.line_total) }))); } catch (error) { setOrderDetailsItems([]); setRuntimeError(error instanceof Error ? error.message : 'تعذر تحميل تفاصيل الطلب.'); } finally { setOrderDetailsLoading(false); } }
+  async function saveTemplate() { if (!customerId || !cart.length || !templateName.trim()) return; try { const created = await createOrderTemplate({ name: templateName.trim(), branchLabel: 'الفرع الرئيسي', lines: cart.map((line) => ({ productId: line.product.id, sku: line.product.sku, name: line.product.name, unit: line.product.unit, quantity: line.quantity })) }); setTemplates((current) => [created, ...current.filter((item) => item.id !== created.id)].slice(0, 100)); setTemplateName(''); setRuntimeError(null); } catch (error) { setRuntimeError(error instanceof Error ? error.message : 'تعذر حفظ الطلب المتكرر.'); } }
+  async function applyTemplate(template: OrderTemplate) { try { if (!warehouseId) throw new Error('لا يوجد مستودع نشط متاح للحساب الحالي.'); await applyOrderTemplate(template.id, warehouseId); const savedCart = await getCart(); const mapped = savedCart.map((item) => ({ product: products.find((product) => product.id === item.product_id) ?? { id: item.product_id, sku: item.sku, name: item.name, unit: item.unit, category: 'أصناف', availableQuantity: 0, status: 'active' }, quantity: item.quantity, unitPrice: item.authorized_price ?? 0 })); setCart(mapped); setSection('catalog'); setRuntimeError(null); } catch (error) { setRuntimeError(error instanceof Error ? error.message : 'تعذر تطبيق الطلب المحفوظ.'); } }
+  function downloadStatement() { if (!finance) return; const rows = [['المرجع','البيان','مدين','دائن','الاستحقاق','الحالة'], ...finance.entries.map((e) => [e.reference ?? '-', e.description, String(e.debit), String(e.credit), e.due_date ?? '-', e.status])]; const csv = '\ufeff' + rows.map((row) => row.map((cell) => `"${String(cell).replaceAll('"','""')}"`).join(',')).join('\n'); const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); const a = document.createElement('a'); a.href = url; a.download = `aghbari-statement-${new Date().toISOString().slice(0,10)}.csv`; a.click(); URL.revokeObjectURL(url); }
+  async function importExcel(event: ChangeEvent<HTMLInputElement>) { const file = event.target.files?.[0]; event.target.value = ''; if (!file) return; try { const rows = await readXlsxFile(file); const header = rows[0]?.map((x) => String(x ?? '').trim().toLowerCase()) ?? []; const skuIndex = header.findIndex((x) => ['sku','الكود','كود الصنف'].includes(x)); const qtyIndex = header.findIndex((x) => ['quantity','qty','الكمية'].includes(x)); if (skuIndex < 0 || qtyIndex < 0) throw new Error('ملف Excel يجب أن يحتوي على عمودي SKU والكمية.'); let added = 0; for (const row of rows.slice(1)) { const sku = String(row[skuIndex] ?? '').trim(); const quantity = Number(row[qtyIndex]); const product = products.find((item) => item.sku === sku); if (product && Number.isSafeInteger(quantity) && quantity > 0) { await addToCart(product, Math.min(quantity, product.availableQuantity)); added++; } } setRuntimeError(added ? `تمت مطابقة ${added} أصناف من ملف Excel.` : 'لم تتم مطابقة أي صنف.'); } catch (error) { setRuntimeError(error instanceof Error ? error.message : 'تعذر قراءة ملف Excel.'); } }
+
+  if (!sessionReady) return <div className="auth-shell"><div className="auth-card"><span className="eyebrow">بوابة الأغبري</span><h1>جارٍ التحقق…</h1><p>يتم التحقق من الجلسة قبل عرض بيانات المتجر.</p></div></div>;
+  if (!signedIn) return <div className="auth-shell"><form className="auth-card" onSubmit={handleLogin}><span className="eyebrow">بوابة الأغبري التجارية</span><h1>دخول التاجر</h1><p>الوصول إلى الكتالوج والأسعار والطلبات المصرح بها لحسابك.</p><label>البريد الإلكتروني<input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" /></label><label>كلمة المرور<input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required autoComplete="current-password" /></label>{authError && <div className="error-banner">{authError}</div>}<button className="checkout" disabled={authBusy}>{authBusy ? 'جارٍ الدخول…' : 'دخول آمن'}</button></form></div>;
+  if (STAFF_ROLES.has(role)) return <div className="app-shell"><AdminPanel role={role}/><ClientControlPanel role={role}/></div>;
+
+  return <div className="customer-app" dir="rtl">
+    <header className="customer-topbar"><div className="customer-brand"><span className="brand-mark">أ</span><div><strong>بوابة الأغبري التجارية</strong><small>منصة الجملة والطلبات الذكية</small></div></div>{uiConfig.showSearch ? <label className="global-search"><span aria-hidden="true">⌕</span><input ref={searchInputRef} value={query} onChange={(e) => setQuery(e.target.value)} placeholder="ابحث عن المنتج، SKU أو الباركود..." aria-label="بحث المنتج"/><kbd>Ctrl K</kbd></label> : <div/>}<div className="customer-actions"><button onClick={() => setSection('orders')} className="icon-action">طلباتي</button><button onClick={() => setSection('account')} className="icon-action">حسابي</button><button onClick={() => setCartOpen(true)} className="cart-action">السلة <b>{cartCount}</b></button><button onClick={() => void handleSignOut()} className="signout">خروج</button></div></header>
+    {!isOnline && <div className="offline-banner">أنت دون اتصال. يمكن تعديل السلة محليًا، أما إرسال الطلب فيحتاج اتصالًا.</div>}
+    <main className="customer-main">
       <section className="customer-welcome"><div><span className="eyebrow">مرحبًا، {customerName}</span><h1>احتياج متجرك<br/><em>جاهز للطلب.</em></h1><p>أسعار الجملة والمخزون والخصومات المصرح بها لحسابك في مكان واحد.</p><div className="welcome-actions">{uiConfig.showQuickOrder && <button onClick={() => setQuickOrderOpen(true)}>⚡ طلب سريع</button>}{uiConfig.showTemplates && <button className="secondary" onClick={() => setSection('templates')}>↻ إعادة طلب محفوظ</button>}</div></div>{uiConfig.showCredit && <div className="credit-mini"><span>المتاح الائتماني</span><strong>{finance ? formatMoney(finance.available) : '—'}</strong><small>{finance ? `من حد ${formatMoney(finance.creditLimit)} ${currencyLabel(finance.currency)}` : 'المعلومات المالية ستظهر بعد مزامنة المركز المالي'}</small></div>}</section>
       {runtimeError && <div className="error-banner">{runtimeError}</div>}
       <section className="customer-nav"><button className={section === 'catalog' ? 'nav-pill active' : 'nav-pill'} onClick={() => setSection('catalog')}>الكتالوج</button><button className={section === 'orders' ? 'nav-pill active' : 'nav-pill'} onClick={() => setSection('orders')}>طلباتي <span>{orders.length}</span></button>{uiConfig.showTemplates && <button className={section === 'templates' ? 'nav-pill active' : 'nav-pill'} onClick={() => setSection('templates')}>المحفوظة</button>}<button className={section === 'account' ? 'nav-pill active' : 'nav-pill'} onClick={() => setSection('account')}>حسابي</button>{uiConfig.showCredit && <button className={section === 'finance' ? 'nav-pill active' : 'nav-pill'} onClick={() => setSection('finance')}>المركز المالي</button>}</section>
@@ -9,3 +176,19 @@
     </main>
     {quickOrderOpen && uiConfig.showQuickOrder && <div className="modal-backdrop" onClick={() => setQuickOrderOpen(false)}><section className="modal" onClick={(e) => e.stopPropagation()}><div className="modal-head"><div><span className="eyebrow">Quick Order</span><h2>الطلب السريع</h2></div><button onClick={() => setQuickOrderOpen(false)}>×</button></div><p>أدخل SKU والكمية لإضافة أصناف كثيرة بسرعة.</p><QuickOrderEditor products={products} onAdd={addToCart} onClose={() => setQuickOrderOpen(false)}/></section></div>}
     {cartOpen && <div className="drawer-backdrop" onClick={() => setCartOpen(false)}><aside className="cart-drawer" onClick={(e) => e.stopPropagation()}><div className="drawer-head"><div><span className="eyebrow">سلة الشراء</span><h2>{cartCount} وحدة</h2></div><button onClick={() => setCartOpen(false)}>×</button></div>{!cart.length ? <div className="empty-state">السلة فارغة.</div> : <>{cart.map((line) => <div className="drawer-line" key={line.product.id}><div><strong>{line.product.name}</strong><small>{formatMoney(line.unitPrice)} / {line.product.unit}</small></div><div className="quantity"><button onClick={() => void updateQuantity(line.product.id, line.quantity - 1)}>−</button><span>{line.quantity}</span><button onClick={() => void updateQuantity(line.product.id, line.quantity + 1)}>+</button></div><strong>{formatMoney(line.unitPrice * line.quantity)}</strong></div>)}<div className="drawer-total"><span>الإجمالي</span><strong>{formatMoney(total)} ر.ي</strong></div>
+{uiConfig.showPaymentMethods && <div className="checkout-block"><strong>طريقة الدفع</strong><div className="payment-methods" role="radiogroup" aria-label="طريقة الدفع">
+{([['credit','آجل / ائتمان',uiConfig.paymentOnCredit],['cash','نقدي',uiConfig.paymentCash],['transfer','حوالة',uiConfig.paymentTransfer]] as Array<[PaymentMethod,string,boolean]>).filter(([, , enabled]) => enabled).map(([method,label]) => <label className="payment-option" key={method}><input type="radio" name="payment-method" value={method} checked={paymentMethod === method} onChange={() => setPaymentMethod(method)}/><span>{label}</span></label>)}
+</div></div>}
+{uiConfig.requireQuantityConfirmation && <div className="checkout-block"><strong>تأكيد الكميات</strong><div className="quantity-confirmation-list">
+{cart.map((line) => <label className="quantity-confirmation" key={line.product.id}><input type="checkbox" checked={Boolean(confirmedLines[line.product.id])} onChange={(e) => setConfirmedLines((current) => ({ ...current, [line.product.id]: e.target.checked }))}/><span>أؤكد طلب <b>{line.quantity}</b> من {line.product.name}</span></label>)}
+</div></div>}{uiConfig.showTemplates && <label className="template-inline"><input value={templateName} onChange={(e) => setTemplateName(e.target.value)} placeholder="اسم قائمة إعادة الطلب (اختياري)"/><button disabled={!templateName.trim()} onClick={() => void saveTemplate()}>حفظ</button></label>}<button className="checkout" disabled={orderBusy || !customerId || !warehouseId || !isOnline} onClick={() => void submitOrder()}>{orderBusy ? 'جارٍ اعتماد الطلب…' : 'تأكيد وإرسال الطلب'}</button></>}</aside></div>}
+    {selectedProductId && (() => { const product = products.find((item) => item.id === selectedProductId); if (!product) return null; const price = effectivePrice(product, detailQuantity); return <div className="modal-backdrop" onClick={() => setSelectedProductId(null)}><section className="modal product-detail-modal" onClick={(e) => e.stopPropagation()}><div className="modal-head"><div><span className="eyebrow">تفاصيل الصنف</span><h2>{product.name}</h2></div><button aria-label="إغلاق تفاصيل المنتج" onClick={() => setSelectedProductId(null)}>×</button></div><div className="product-detail"><div className="product-detail-visual">{product.imageUrl ? <img src={product.imageUrl} alt={product.name}/> : <span>{product.name.slice(0,1)}</span>}</div><div className="product-detail-copy"><div className="sku-row"><span>{product.category}</span><code>{product.sku}</code></div><p>{product.description ?? 'توريد جملة مباشر من مخزون الأغبري.'}</p><div className="detail-stats"><span><small>المتاح</small><b>{product.availableQuantity} {product.unit}</b></span><span><small>سعر حسابك</small><b>{price > 0 ? formatMoney(price) + ' ' + currencyLabel() : 'غير متاح'}</b></span></div>{uiConfig.showTieredPricing && (priceTiers[product.id]?.length ?? 0) > 0 && <div className="tier-list">{(priceTiers[product.id] ?? []).slice(0, 6).map((item) => <span key={item.min_quantity}>{item.min_quantity}+ · {formatMoney(item.unit_price)} {currencyLabel(item.currency)}</span>)}</div>}<label className="detail-quantity">الكمية<input type="number" min="1" max={Math.max(1, product.availableQuantity)} step="1" value={detailQuantity} onChange={(e) => setDetailQuantity(Math.max(1, Math.min(Number(e.target.value) || 1, Math.max(1, product.availableQuantity))))}/></label><div className="detail-actions"><button className="secondary-action" onClick={() => setSelectedProductId(null)}>إغلاق</button><button disabled={price <= 0 || product.availableQuantity < detailQuantity || !isOnline} onClick={async () => { await addToCart(product, detailQuantity); setSelectedProductId(null); }}>إضافة {detailQuantity} {product.unit}</button></div></div></div></section></div>; })()}
+    {orderDetails && <div className="modal-backdrop" onClick={() => setOrderDetails(null)}><section className="modal" onClick={(e) => e.stopPropagation()}><div className="modal-head"><div><span className="eyebrow">الطلب #{orderDetails.order_number}</span><h2>تفاصيل الطلب</h2></div><button aria-label="إغلاق تفاصيل الطلب" onClick={() => setOrderDetails(null)}>×</button></div>{orderDetailsLoading ? <div className="empty-state">جارٍ تحميل تفاصيل الطلب…</div> : !orderDetailsItems.length ? <div className="empty-state">لا توجد بنود متاحة لعرض هذا الطلب.</div> : <div className="order-detail-list">{orderDetailsItems.map((item) => <article className="order-detail-row" key={item.productId}><div><strong>{item.name}</strong><small>{item.sku} · {item.quantity} {item.unit}</small></div><span>{formatMoney(item.unitPrice)} × {item.quantity}</span><strong>{formatMoney(item.lineTotal)} {currencyLabel(orderDetails.currency)}</strong></article>)}</div>}<div className="order-detail-total"><span>إجمالي الطلب</span><strong>{formatMoney(orderDetails.total)} {currencyLabel(orderDetails.currency)}</strong></div><div className="detail-actions"><button className="secondary-action" onClick={() => setOrderDetails(null)}>إغلاق</button><button onClick={() => { const detail = orderDetails; setOrderDetails(null); void reorder(detail); }}>إعادة الطلب</button></div></section></div>}
+    <footer className="customer-footer"><span>بوابة الأغبري التجارية</span><span>حساب {customerTier === 'wholesale' ? 'جملة' : customerTier}</span><span>{isOnline ? '● متصل' : '○ دون اتصال'}</span></footer>
+  </div>;
+}
+
+function QuickOrderEditor({ products, onAdd, onClose }: { products: Product[]; onAdd: (product: Product, quantity?: number) => Promise<void>; onClose: () => void }) {
+  const [rows, setRows] = useState([{ sku: '', quantity: 1 }]);
+  return <div className="quick-editor">{rows.map((row, index) => <div className="quick-row" key={index}><input value={row.sku} onChange={(e) => setRows((r) => r.map((item, i) => i === index ? { ...item, sku: e.target.value } : item))} placeholder="SKU"/><input type="number" min="1" value={row.quantity} onChange={(e) => setRows((r) => r.map((item, i) => i === index ? { ...item, quantity: Number(e.target.value) } : item))}/><button disabled={!products.find((p) => p.sku === row.sku) || row.quantity < 1} onClick={() => { const product = products.find((p) => p.sku === row.sku); if (product) void onAdd(product, row.quantity); }}>إضافة</button></div>)}<div className="quick-actions"><button className="ghost" onClick={() => setRows((r) => [...r, { sku: '', quantity: 1 }])}>+ سطر</button><button onClick={onClose}>تم</button></div></div>;
+}
