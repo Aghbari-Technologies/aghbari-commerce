@@ -49,7 +49,7 @@ export default function GovernancePanel({ role }: { role: UserRole }) {
     try{
       const {error:invokeError}=await supabase.rpc('set_organization_user_role',{p_user_id:user.user_id,p_role:nextRole});
       if(invokeError) throw invokeError;
-      setMessage(\`تم تحديث دور \${user.email} إلى \${ROLE_LABELS[nextRole]}.\`);
+      setMessage(`تم تحديث دور ${user.email} إلى ${ROLE_LABELS[nextRole]}.`);
       await reload();
     }catch(e){setError(e instanceof Error?e.message:'تعذر تحديث دور المستخدم.');}
     finally{setBusyUserId(null);}
@@ -66,7 +66,7 @@ export default function GovernancePanel({ role }: { role: UserRole }) {
       <div className="admin-card"><div className="section-heading"><div><h3>المستخدمون</h3><small>{canManageRoles?'يمكن للمالك تغيير الدور مع حماية آخر مالك.':'عرض فقط؛ تغيير الأدوار محصور بالمالك.'}</small></div></div>
         {loading?<div className="cart-empty">جارٍ تحميل المستخدمين…</div>:!users.length?<div className="cart-empty">لا توجد حسابات مؤسسية متاحة.</div>:
         <div className="cart-lines">{users.map(user=><article className="cart-line" key={user.user_id}><div><strong>{user.email}</strong><small>{user.customer_id?'مرتبط ببوابة عميل':'حساب فريق'} · أضيف {new Date(user.created_at).toLocaleDateString('ar-YE')}</small></div>
-          <select aria-label={\`دور \${user.email}\`} value={user.role} disabled={!canManageRoles || busyUserId===user.user_id} onChange={e=>void changeRole(user,e.target.value as UserRole)}>
+          <select aria-label={`دور ${user.email}`} value={user.role} disabled={!canManageRoles || busyUserId===user.user_id} onChange={e=>void changeRole(user,e.target.value as UserRole)}>
             {(Object.keys(ROLE_LABELS) as UserRole[]).map(item=><option value={item} key={item}>{ROLE_LABELS[item]}</option>)}
           </select></article>)}</div>}
       </div>

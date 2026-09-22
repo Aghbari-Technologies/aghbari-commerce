@@ -82,7 +82,7 @@ export default function ExportPanel({ role }: { role: UserRole }) {
     setBusy(true); setError(null); setMessage(null);
     try { const { data, error: queryError } = await client.from('customers').select('name,phone,tier,is_active,created_at').order('created_at',{ascending:false}).limit(MAX_EXPORT_ROWS); if(queryError) throw queryError;
       const rows=(data??[]).map(row=>({Name:row.name,Phone:row.phone??'',Tier:row.tier,Status:row.is_active?'active':'paused',CreatedAt:row.created_at}));
-      downloadCsv(\`aghbari-customers-\${new Date().toISOString().slice(0,10)}.csv\`,['Name','Phone','Tier','Status','CreatedAt'],rows); setMessage(\`تم تصدير \${rows.length} عميلًا.\`);
+      downloadCsv(`aghbari-customers-${new Date().toISOString().slice(0,10)}.csv`,['Name','Phone','Tier','Status','CreatedAt'],rows); setMessage(`تم تصدير ${rows.length} عميلًا.`);
     }catch(e){setError(e instanceof Error?e.message:'تعذر تصدير العملاء.');}finally{setBusy(false);}
   }
   async function exportOrders() {
@@ -90,7 +90,7 @@ export default function ExportPanel({ role }: { role: UserRole }) {
     setBusy(true); setError(null); setMessage(null);
     try { const { data, error: queryError } = await client.from('orders').select('order_number,status,total,currency,payment_method,created_at').order('created_at',{ascending:false}).limit(MAX_EXPORT_ROWS); if(queryError) throw queryError;
       const rows=(data??[]).map(row=>({OrderNumber:row.order_number,Status:row.status,Total:Number(row.total),Currency:row.currency,PaymentMethod:row.payment_method??'',CreatedAt:row.created_at}));
-      downloadCsv(\`aghbari-orders-\${new Date().toISOString().slice(0,10)}.csv\`,['OrderNumber','Status','Total','Currency','PaymentMethod','CreatedAt'],rows); setMessage(\`تم تصدير \${rows.length} طلبًا.\`);
+      downloadCsv(`aghbari-orders-${new Date().toISOString().slice(0,10)}.csv`,['OrderNumber','Status','Total','Currency','PaymentMethod','CreatedAt'],rows); setMessage(`تم تصدير ${rows.length} طلبًا.`);
     }catch(e){setError(e instanceof Error?e.message:'تعذر تصدير الطلبات.');}finally{setBusy(false);}
   }
   async function exportInventory() {
@@ -105,7 +105,7 @@ export default function ExportPanel({ role }: { role: UserRole }) {
       if(balanceError) throw balanceError; if(productsError) throw productsError; if(warehouseError) throw warehouseError;
       const productMap=new Map((products??[]).map(row=>[row.id,row])); const warehouseMap=new Map((warehouses??[]).map(row=>[row.id,row]));
       const rows=(balances??[]).map(row=>({SKU:productMap.get(row.product_id)?.sku??row.product_id,Product:productMap.get(row.product_id)?.name??'',Warehouse:warehouseMap.get(row.warehouse_id)?.name??row.warehouse_id,Quantity:Number(row.quantity),UpdatedAt:row.updated_at}));
-      downloadCsv(\`aghbari-inventory-\${new Date().toISOString().slice(0,10)}.csv\`,['SKU','Product','Warehouse','Quantity','UpdatedAt'],rows); setMessage(\`تم تصدير \${rows.length} حركة رصيد مخزني.\`);
+      downloadCsv(`aghbari-inventory-${new Date().toISOString().slice(0,10)}.csv`,['SKU','Product','Warehouse','Quantity','UpdatedAt'],rows); setMessage(`تم تصدير ${rows.length} حركة رصيد مخزني.`);
     }catch(e){setError(e instanceof Error?e.message:'تعذر تصدير المخزون.');}finally{setBusy(false);}
   }
 
