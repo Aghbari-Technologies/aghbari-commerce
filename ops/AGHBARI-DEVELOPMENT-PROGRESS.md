@@ -31,3 +31,41 @@ The live-state document was intentionally carrying an older “last verified wor
 
 ### Decision
 Do not restart from historical branches or repeat already proven transactional/security work without an invalidation reason. The next code frontier is the customer order/account experience plus admin navigation, while exact-SHA CI/browser/security evidence is run against the resulting HEAD.
+
+
+## Run 2026-09-23 — Customer order/account closure frontier
+
+### Start
+- Exact HEAD before implementation: `ba6f999ed35e00d1b1774b2fcf2d6d9428c72de6`.
+- Branch: `main`.
+- Production: NO TOUCH.
+- Certification: NOT CLAIMED.
+
+### Change
+- Added real customer order-detail retrieval with order items and status history.
+- Added customer-facing order tracking timeline and reorder action.
+- Added customer account surface with session identity/context and secure sign-out.
+- Added responsive styling for the new surfaces.
+
+### Root Cause
+The customer portal previously exposed only order summaries and reorder behavior. The documented UI frontier required drill-down, tracking, account context and session controls.
+
+### Fix
+- `src/services/customerOrders.ts`: exact order-detail query and validation.
+- `src/AppV3Fixed.tsx`: detail modal, tracking timeline, account surface, navigation.
+- `src/customer-portal-v3-dynamic.css`: responsive detail/account styling.
+
+### Proof
+- Implementation commits:
+  - `d81b9284c56877ad94eefa75c10ad192c92a97d2`
+  - `09e65a2c8587fad04d1f57a277448e4bdd87634`
+  - `8e329ae21975d9df77dc268499af4989bd2f4981`
+- Final write-back state commit: `919f43a1a6c24ca4dac0fb9574bca99d9183ca64`.
+- Source-level correctness is recorded; executable PASS is intentionally not claimed until exact-HEAD workflows finish.
+
+### Remaining
+- Exact-head quality, security, test-the-test and browser verification.
+- Explicit loading/empty/error/retry closure across major customer subviews.
+- Semantic merge/reference audit for all 50 legacy Markdown sources.
+- Deployment/candidate/runtime certification.
+
