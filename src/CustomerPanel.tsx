@@ -21,7 +21,8 @@ export default function CustomerPanel({ role }: { role: UserRole }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  const reload = useCallback(async () => setCustomers(await getCustomers(200)), []);
+  const [loading, setLoading] = useState(true);
+  const reload = useCallback(async () => { setLoading(true); try { setCustomers(await getCustomers(200)); } finally { setLoading(false); } }, []);
   useEffect(() => { void reload().catch((e) => setError(e instanceof Error ? e.message : 'تعذر تحميل العملاء.')); }, [reload]);
   async function run(action: () => Promise<unknown>, success: string) { setBusy(true); setError(null); setMessage(null); try { await action(); setMessage(success); await reload(); } catch (e) { setError(e instanceof Error ? e.message : 'تعذر تنفيذ العملية.'); } finally { setBusy(false); } }
   async function dispatchInvitation(customer: StaffCustomer) {
@@ -50,7 +51,7 @@ export default function CustomerPanel({ role }: { role: UserRole }) {
       </form>}
       <div className="admin-card">
         <h3>العملاء الحاليون</h3>
-        {!customers.length ? <small>لا يوجد عملاء مسجلون بعد.</small> : <div className="cart-lines">{customers.map((customer) => <article className="cart-line" key={customer.id}>
+        {loading ? <div className="portal-loading">جارٍ تحميل العملاء…</div> : !customers.length ? <div className="empty-state"><strong>لا يوجد عملاء مسجلون بعد.</strong><button type="button" onClick={() => void reload()}>إعادة المحاولة</button></div> : <div className="cart-lines">{customers.map((customer) => <article className="cart-line" key={customer.id}>
           <div><strong>{customer.name}</strong><small>{customer.phone ?? 'بدون هاتف'} · {customer.is_active ? 'نشط' : 'موقوف'}</small></div>
           <select aria-label={`فئة ${customer.name}`} disabled={!canManage || busy} value={customer.tier} onChange={(e) => void run(() => setCustomerTier(customer.id, e.target.value as CustomerTier), 'تم تحديث فئة العميل.')}>{tiers.map((item) => <option key={item} value={item}>{tierLabels[item]}</option>)}</select>
           {canManage && <button disabled={busy} onClick={() => void run(() => setCustomerActive(customer.id, !customer.is_active), customer.is_active ? 'تم إيقاف العميل.' : 'تم تفعيل العميل.')}>{customer.is_active ? 'إيقاف' : 'تفعيل'}</button>}
