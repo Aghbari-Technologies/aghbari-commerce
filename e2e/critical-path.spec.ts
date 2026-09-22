@@ -71,27 +71,27 @@ test('authenticated customer completes real search → catalog → cart → orde
 
   const failures = captureBrowserFailures(page);
   await login(page, email, password);
-  await expect(page.locator('.customer-shell')).toBeVisible();
+  await expect(page.locator('.customer-app')).toBeVisible();
 
-  const firstCard = page.locator('.product-card').first();
+  const firstCard = page.locator('.b2b-product-card').first();
   await expect(firstCard).toBeVisible();
-  const productName = (await firstCard.getByRole('heading').first().innerText()).trim();
-  const search = page.getByRole('textbox', { name: 'البحث في الكتالوج' });
+  const productName = (await firstCard.getByRole('heading', { level: 3 }).innerText()).trim();
+  const search = page.getByRole('textbox', { name: 'بحث المنتج' });
   await expect(search).toBeVisible();
   await search.fill(productName);
-  await expect(page.locator('.product-card')).toHaveCount(1);
-  await expect(page.locator('.product-card').first().getByRole('heading', { name: productName, exact: true })).toBeVisible();
+  await expect(page.locator('.b2b-product-card')).toHaveCount(1);
+  await expect(page.locator('.b2b-product-card').first().getByRole('heading', { name: productName, exact: true })).toBeVisible();
   await search.fill('');
 
-  const addButton = page.getByRole('button', { name: 'إضافة للسلة', exact: true }).first();
+  const addButton = page.getByRole('button', { name: '+ إضافة', exact: true }).first();
   await expect(addButton).toBeEnabled();
   await addButton.click();
   await expect(page.getByRole('button', { name: /السلة/ })).toContainText('1');
 
-  const quantityConfirmation = page.getByRole('button', { name: 'اعتماد الكمية', exact: true }).first();
+  const quantityConfirmation = page.locator('.quantity-confirmation input[type="checkbox"]').first();
   await expect(quantityConfirmation).toBeEnabled();
-  await quantityConfirmation.click();
-  await expect(page.getByRole('button', { name: '✓ معتمد', exact: true })).toBeVisible();
+  await quantityConfirmation.check();
+  await expect(quantityConfirmation).toBeChecked();
 
   const checkout = page.getByRole('button', { name: 'تأكيد وإرسال الطلب', exact: true });
   await expect(checkout).toBeEnabled();
@@ -106,10 +106,17 @@ test('authenticated customer completes real search → catalog → cart → orde
 
   await expect(page.getByRole('button', { name: 'طلباتي', exact: true })).toBeVisible();
   await expect(page.getByText(`طلب #${orderNumber}`, { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'التفاصيل', exact: true }).last().click();
+  await expect(page.getByRole('heading', { name: 'تفاصيل الطلب', exact: true })).toBeVisible();
+  await expect(page.getByText('إجمالي الطلب', { exact: true })).toBeVisible();
   await page.reload();
   await expect(page.getByRole('button', { name: 'طلباتي', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'طلباتي', exact: true }).click();
   await expect(page.getByText(`طلب #${orderNumber}`, { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'التفاصيل', exact: true }).last().click();
+  await expect(page.getByRole('heading', { name: 'تفاصيل الطلب', exact: true })).toBeVisible();
+  await expect(page.getByText('إجمالي الطلب', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'إغلاق تفاصيل الطلب', exact: true }).click();
 
   await page.getByRole('button', { name: 'خروج', exact: true }).last().click();
   await expect(page.getByRole('button', { name: 'دخول آمن', exact: true })).toBeVisible();
@@ -128,13 +135,13 @@ test('tenant isolation: Tenant B cannot read Tenant A order through the real UI 
   const pageA = await contextA.newPage();
   const failuresA = captureBrowserFailures(pageA);
   await login(pageA, emailA, passwordA);
-  const addButton = pageA.getByRole('button', { name: 'إضافة للسلة', exact: true }).first();
+  const addButton = pageA.getByRole('button', { name: '+ إضافة', exact: true }).first();
   await expect(addButton).toBeEnabled();
   await addButton.click();
-  const quantityConfirmation = pageA.getByRole('button', { name: 'اعتماد الكمية', exact: true }).first();
+  const quantityConfirmation = pageA.locator('.quantity-confirmation input[type="checkbox"]').first();
   await expect(quantityConfirmation).toBeEnabled();
-  await quantityConfirmation.click();
-  await expect(pageA.getByRole('button', { name: '✓ معتمد', exact: true })).toBeVisible();
+  await quantityConfirmation.check();
+  await expect(quantityConfirmation).toBeChecked();
   await pageA.getByRole('button', { name: 'تأكيد وإرسال الطلب', exact: true }).click();
   const success = pageA.locator('.success').filter({ hasText: 'تم إرسال الطلب #' }).last();
   await expect(success).toBeVisible();
