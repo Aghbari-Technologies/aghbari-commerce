@@ -95,6 +95,25 @@ export default function CustomerPanel({ role }: { role: UserRole }) {
         </article>)}</div>}
       </div>
     </div>
+    {selectedCustomer && <div id="customer-detail-modal" className="modal-backdrop" role="presentation" onMouseDown={() => !detailLoading && setSelectedCustomer(null)}>
+      <section className="modal customer-detail-modal" role="dialog" aria-modal="true" aria-labelledby="customer-detail-title" onMouseDown={(event) => event.stopPropagation()}>
+        <div className="modal-head"><div><span className="eyebrow">ملف العميل</span><h3 id="customer-detail-title">{selectedCustomer.name}</h3></div><button type="button" aria-label="إغلاق ملف العميل" onClick={() => setSelectedCustomer(null)}>×</button></div>
+        {detailLoading ? <div className="cart-empty">جارٍ تحميل الملف التجاري…</div> : <>
+          <div className="bulk-preview-stats"><strong>{detailOrders.length} طلب</strong><span>{detailLedger.length} قيد مالي</span><span>{detailInvitations.length} دعوة</span></div>
+          <div className="admin-grid">
+            <div className="admin-card"><div className="section-heading"><div><h4>الطلبات الأخيرة</h4><small>بيانات الطلبات المصرح بها لهذا العميل.</small></div></div>
+              {!detailOrders.length ? <div className="cart-empty">لا توجد طلبات.</div> : <div className="cart-lines">{detailOrders.slice(0,10).map((order) => <article className="cart-line" key={order.order_number}><div><strong>طلب #{order.order_number}</strong><small>{order.status} · {new Date(order.created_at).toLocaleDateString('ar-YE')}</small></div><b>{formatMoney(order.total)} {order.currency}</b></article>)}</div>}
+            </div>
+            <div className="admin-card"><div className="section-heading"><div><h4>كشف الحساب</h4><small>القيود المالية المصرح بها.</small></div></div>
+              {!detailLedger.length ? <div className="cart-empty">لا توجد قيود مالية.</div> : <div className="cart-lines">{detailLedger.slice(0,15).map((entry,index) => <article className="cart-line" key={(entry.reference ?? 'entry') + entry.created_at + index}><div><strong>{entry.description}</strong><small>{entry.reference ?? 'بدون مرجع'} · {entry.status}</small></div><div><span>مدين {formatMoney(entry.debit)}</span><span>دائن {formatMoney(entry.credit)}</span></div></article>)}</div>}
+            </div>
+          </div>
+          <div className="admin-card"><div className="section-heading"><div><h4>دعوات العميل</h4><small>حالة الدعوات المرتبطة ببوابة العميل.</small></div></div>
+            {!detailInvitations.length ? <div className="cart-empty">لا توجد دعوات.</div> : <div className="cart-lines">{detailInvitations.map((item,index) => <article className="cart-line" key={item.recipient_email + item.created_at + index}><div><strong>{item.recipient_email}</strong><small>{item.accepted_at ? 'مقبولة' : item.revoked_at ? 'ملغاة' : new Date(item.expires_at).getTime() < Date.now() ? 'منتهية' : 'بانتظار القبول'}</small></div><time dateTime={item.created_at}>{new Date(item.created_at).toLocaleDateString('ar-YE')}</time></article>)}</div>}
+          </div>
+        </>}
+      </section>
+    </div>
     {error && <div className="error-banner" role="alert">{error}</div>}{message && <div className="success" role="status">{message}</div>}
   </div>;
 }
