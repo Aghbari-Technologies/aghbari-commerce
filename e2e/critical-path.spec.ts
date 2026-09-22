@@ -116,6 +116,7 @@ test('authenticated customer completes real search → catalog → cart → orde
   await page.getByRole('button', { name: 'التفاصيل', exact: true }).last().click();
   await expect(page.getByRole('heading', { name: 'تفاصيل الطلب', exact: true })).toBeVisible();
   await expect(page.getByText('إجمالي الطلب', { exact: true })).toBeVisible();
+  await expect(page.locator('.order-detail-row').first()).toBeVisible();
   await page.reload();
   await expect(page.getByRole('button', { name: 'طلباتي', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'طلباتي', exact: true }).click();
