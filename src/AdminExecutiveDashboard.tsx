@@ -18,7 +18,6 @@ interface DashboardSnapshot {
 
 const EMPTY: DashboardSnapshot = { products: 0, customers: 0, orders: 0, stockItems: 0, receivables: 0, availableCredit: 0, sales7d: 0 };
 const STATUS_LABELS: Record<string, string> = { pending: 'قيد المراجعة', confirmed: 'مؤكد', preparing: 'قيد التجهيز', ready: 'جاهز', completed: 'مكتمل', cancelled: 'ملغي', draft: 'مسودة' };
-
 function money(value: number) { return `${formatMoney(value)} ر.ي`; }
 
 export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
@@ -51,22 +50,11 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
         const sales7d = calculateSevenDaySales(salesRowsData, new Date());
         const creditRows = creditResult.data ?? [];
         if (!cancelled) {
-          setSnapshot({
-            products: productsResult.count ?? 0,
-            customers: customersResult.count ?? 0,
-            orders: ordersResult.count ?? 0,
-            stockItems: stockResult.count ?? 0,
-            receivables: creditRows.reduce((sum, row) => sum + Number(row.outstanding_balance ?? 0), 0),
-            availableCredit: creditRows.reduce((sum, row) => sum + Number(row.available_credit ?? 0), 0),
-            sales7d,
-          });
-          setOrders(staffOrders);
-          setSalesRows(salesRowsData);
-          setLastUpdated(new Date());
+          setSnapshot({ products: productsResult.count ?? 0, customers: customersResult.count ?? 0, orders: ordersResult.count ?? 0, stockItems: stockResult.count ?? 0, receivables: creditRows.reduce((sum, row) => sum + Number(row.outstanding_balance ?? 0), 0), availableCredit: creditRows.reduce((sum, row) => sum + Number(row.available_credit ?? 0), 0), sales7d });
+          setOrders(staffOrders); setSalesRows(salesRowsData); setLastUpdated(new Date());
         }
-      } catch (cause) {
-        if (!cancelled) setError(cause instanceof Error ? cause.message : 'تعذر تحديث مؤشرات لوحة الإدارة.');
-      } finally { if (!cancelled) setLoading(false); }
+      } catch (cause) { if (!cancelled) setError(cause instanceof Error ? cause.message : 'تعذر تحديث مؤشرات لوحة الإدارة.'); }
+      finally { if (!cancelled) setLoading(false); }
     }
     void load();
     const timer = window.setInterval(load, 60_000);
@@ -77,46 +65,45 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
   const maxSales = Math.max(...salesByDay.map((day) => day.value), 1);
   const statusCounts = useMemo(() => Object.entries(STATUS_LABELS).map(([status, label]) => ({ status, label, count: orders.filter((order) => order.status === status).length })).filter((item) => item.count > 0), [orders]);
   const latestOrders = orders.slice(0, 5);
+  const canOrders = ['owner','admin','sales','warehouse'].includes(role);
+  const canInventory = ['owner','admin','warehouse'].includes(role);
+  const canCustomers = ['owner','admin','sales'].includes(role);
+  const canFinance = ['owner','admin','sales'].includes(role);
+  const canAdmin = ['owner','admin'].includes(role);
+
+  const nav = [
+    ['الرئيسية','#admin-dashboard',true,'⌂'],
+    ['الطلبات','#admin-orders',canOrders,'↗'],
+    ['المخزون','#admin-inventory',canInventory,'□'],
+    ['العملاء والتجار','#admin-customers',canCustomers,'♙'],
+    ['الموردين','#admin-purchasing',canInventory,'▱'],
+    ['الحسابات والمالية','#admin-finance',canFinance,'◫'],
+    ['الاستيراد والتصدير','#admin-export',canInventory,'⇅'],
+    ['إعدادات العميل','#admin-settings',canAdmin,'⚙'],
+  ] as const;
 
   return <section className="executive-dashboard" dir="rtl" aria-label="لوحة المعلومات التنفيذية">
     <header className="executive-header">
-      <div>
-        <span className="executive-eyebrow">لوحة التحكم · الإدارة التنفيذية</span>
-        <h1>مرحباً بك في بوابة الأغبري التجارية</h1>
-        <p>رؤية تشغيلية موحدة للمبيعات، المخزون، العملاء والسيولة — مبنية على بيانات النظام الحالية.</p>
-      </div>
+      <div><span className="executive-eyebrow">لوحة التحكم · الإدارة التنفيذية</span><h1>مرحباً بك في بوابة الأغبري التجارية</h1><p>رؤية تشغيلية موحدة للمبيعات، المخزون، العملاء والسيولة — مبنية على بيانات النظام الحالية.</p></div>
       <div className="executive-header-actions"><span className="live-dot">● النظام يعمل</span><button type="button" onClick={() => window.location.reload()}>تحديث البيانات ↻</button></div>
     </header>
-
     {error && <div className="executive-error" role="alert">تعذر تحديث بعض المؤشرات: {error}</div>}
-
     <div className="executive-layout">
       <aside className="executive-sidebar">
         <div className="executive-brand"><span>أ</span><div><strong>الأغبري</strong><small>Enterprise B2B</small></div></div>
-        <nav aria-label="أقسام الإدارة">
-          {[['الرئيسية','#admin-dashboard',true],['الطلبات','#admin-orders',['owner','admin','sales','warehouse'].includes(role)],['المخزون','#admin-inventory',['owner','admin','warehouse'].includes(role)],['العملاء والتجار','#admin-customers',['owner','admin','sales'].includes(role)],['الموردين','#admin-purchasing',['owner','admin','warehouse'].includes(role)],['الحسابات والمالية','#admin-finance',['owner','admin','sales'].includes(role)],['الإعدادات','#admin-settings',['owner','admin'].includes(role)]].filter(([, , can]) => can).map(([item,target], index) => <a key={item as string} className={index === 0 ? 'active' : ''} href={target as string}>{['⌂','↗','□','♙','▱','◫','⚙'][index]}<span>{item as string}</span></a>)}
-        </nav>
-        <div className="executive-sidebar-section"><small>تشغيل سريع</small><a href="#admin-orders">↗ متابعة الطلبات</a><a href="#admin-inventory">□ إدارة المخزون</a><a href="#admin-customers">♙ إدارة العملاء</a></div>
+        <nav aria-label="أقسام الإدارة">{nav.filter(([, , can]) => can).map(([item,target], index) => <a key={item} className={index === 0 ? 'active' : ''} href={target}>{['⌂','↗','□','♙','▱','◫','⇅','⚙'][index]}<span>{item}</span></a>)}</nav>
+        <div className="executive-sidebar-section"><small>تشغيل سريع</small>{canOrders&&<a href="#admin-orders">↗ متابعة الطلبات</a>}{canInventory&&<a href="#admin-inventory">□ إدارة المخزون</a>}{canCustomers&&<a href="#admin-customers">♙ إدارة العملاء</a>}{canInventory&&<a href="#admin-export">⇅ الاستيراد والتصدير</a>}</div>
       </aside>
-
       <div className="executive-content" id="admin-dashboard">
-        <div className="executive-kpis">
-          <article><span>الذمم المدينة</span><strong>{loading ? '—' : money(snapshot.receivables)}</strong><small>إجمالي الأرصدة المستحقة</small></article>
-          <article><span>المخزون المتوفر</span><strong>{loading ? '—' : snapshot.stockItems.toLocaleString('ar')}</strong><small>{snapshot.products.toLocaleString('ar')} صنف نشط</small></article>
-          <article><span>الطلبات</span><strong>{loading ? '—' : snapshot.orders.toLocaleString('ar')}</strong><small>{snapshot.customers.toLocaleString('ar')} عميل مسجل</small></article>
-          <article><span>التدفق التجاري · 7 أيام</span><strong>{loading ? '—' : money(snapshot.sales7d)}</strong><small>من الطلبات غير الملغاة</small></article>
-        </div>
-
+        <div className="executive-kpis"><article><span>الذمم المدينة</span><strong>{loading ? '—' : money(snapshot.receivables)}</strong><small>إجمالي الأرصدة المستحقة</small></article><article><span>المخزون المتوفر</span><strong>{loading ? '—' : snapshot.stockItems.toLocaleString('ar')}</strong><small>{snapshot.products.toLocaleString('ar')} صنف نشط</small></article><article><span>الطلبات</span><strong>{loading ? '—' : snapshot.orders.toLocaleString('ar')}</strong><small>{snapshot.customers.toLocaleString('ar')} عميل مسجل</small></article><article><span>التدفق التجاري · 7 أيام</span><strong>{loading ? '—' : money(snapshot.sales7d)}</strong><small>من الطلبات غير الملغاة</small></article></div>
         <div className="executive-grid-two">
           <article className="executive-card sales-chart"><div className="executive-card-title"><div><span>المبيعات</span><h2>حركة المبيعات خلال آخر 7 أيام</h2></div><b>{money(snapshot.sales7d)}</b></div><div className="bars" aria-label="مخطط المبيعات لسبعة أيام">{salesByDay.map((day) => <div className="bar-column" key={day.key}><strong>{day.value ? formatMoney(day.value) : '0'}</strong><div className="bar" style={{ height: `${Math.max(8, (day.value / maxSales) * 150)}px` }} /><small>{day.label}</small></div>)}</div></article>
           <article className="executive-card"><div className="executive-card-title"><div><span>توزيع التشغيل</span><h2>حالة الطلبات</h2></div><b>{orders.length}</b></div><div className="status-list">{statusCounts.length ? statusCounts.map((item) => <div key={item.status}><span>{item.label}</span><strong>{item.count}</strong><div><i style={{ width: `${Math.min(100, (item.count / Math.max(orders.length, 1)) * 100)}%` }} /></div></div>) : <p className="executive-empty">لا توجد طلبات تشغيلية في العينة الحالية.</p>}</div></article>
         </div>
-
         <div className="executive-grid-two bottom-grid">
-          <article className="executive-card"><div className="executive-card-title"><div><span>التشغيل</span><h2>أحدث الطلبات</h2></div>{['owner','admin','sales','warehouse'].includes(role) && <a href="#admin-orders">عرض الكل ←</a>}</div>{latestOrders.length ? <div className="executive-orders">{latestOrders.map((order) => <div key={order.id}><span>#{order.order_number}</span><div><strong>{order.customer_name}</strong><small>{new Date(order.created_at).toLocaleString('ar')}</small></div><b>{money(order.total)}</b><em>{STATUS_LABELS[order.status] ?? order.status}</em></div>)}</div> : <p className="executive-empty">لا توجد طلبات بعد.</p>}</article>
-          <article className="executive-card smart-card"><div className="executive-card-title"><div><span>أدوات الإدارة</span><h2>أوامر سريعة</h2></div><span>تشغيل مباشر</span></div><div className="quick-actions">{['owner','admin','sales'].includes(role) && <a href="#admin-product-create">＋ إضافة منتج</a>}{['owner','admin','sales','warehouse'].includes(role) && <a href="#admin-orders">▤ إدارة الطلبات</a>}{['owner','admin','sales'].includes(role) && <a href="#admin-customers">▣ إدارة العملاء</a>}{['owner','admin','warehouse'].includes(role) && <a href="#admin-inventory">▥ إدارة المخزون</a>}{['owner','admin','sales'].includes(role) && <a href="#admin-finance">◫ الحسابات والمالية</a>}{['owner','admin'].includes(role) && <a href="#admin-settings">⚙ إعدادات التحكم</a>}</div><div className="credit-summary"><span>الائتمان المتاح</span><strong>{money(snapshot.availableCredit)}</strong></div></article>
+          <article className="executive-card"><div className="executive-card-title"><div><span>التشغيل</span><h2>أحدث الطلبات</h2></div>{canOrders && <a href="#admin-orders">عرض الكل ←</a>}</div>{latestOrders.length ? <div className="executive-orders">{latestOrders.map((order) => <div key={order.id}><span>#{order.order_number}</span><div><strong>{order.customer_name}</strong><small>{new Date(order.created_at).toLocaleString('ar')}</small></div><b>{money(order.total)}</b><em>{STATUS_LABELS[order.status] ?? order.status}</em></div>)}</div> : <p className="executive-empty">لا توجد طلبات بعد.</p>}</article>
+          <article className="executive-card smart-card"><div className="executive-card-title"><div><span>أدوات الإدارة</span><h2>أوامر سريعة</h2></div><span>تشغيل مباشر</span></div><div className="quick-actions">{canCustomers&&<a href="#admin-product-create">＋ إضافة منتج</a>}{canOrders&&<a href="#admin-orders">▤ إدارة الطلبات</a>}{canCustomers&&<a href="#admin-customers">▣ إدارة العملاء</a>}{canInventory&&<a href="#admin-inventory">▥ إدارة المخزون</a>}{canFinance&&<a href="#admin-finance">◫ الحسابات والمالية</a>}{canInventory&&<a href="#admin-export">⇅ الاستيراد والتصدير</a>}{canAdmin&&<a href="#admin-settings">⚙ إعدادات التحكم</a>}</div><div className="credit-summary"><span>الائتمان المتاح</span><strong>{money(snapshot.availableCredit)}</strong></div></article>
         </div>
-
         <footer className="executive-footer"><span>دورك الحالي: {role}</span><span>{lastUpdated ? `آخر تحديث ${lastUpdated.toLocaleTimeString('ar')}` : 'جارٍ التحديث…'}</span><span>التحديث التلقائي كل 60 ثانية</span></footer>
       </div>
     </div>
