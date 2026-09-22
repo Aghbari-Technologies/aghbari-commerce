@@ -1,0 +1,71 @@
+/* Aghbari UI resilience layer — no runtime dependency, no asset payload. */
+
+:where(button, a, input, select, textarea, summary, [role="button"], [tabindex]):focus-visible {
+  outline: 3px solid color-mix(in srgb, #0d91a5 72%, white);
+  outline-offset: 3px;
+}
+
+:where(button, a, input, select, textarea):disabled,
+:where([aria-disabled="true"]) {
+  cursor: not-allowed;
+}
+
+/* Keep dense operational tables usable on narrow screens without changing markup. */
+@media (max-width: 760px) {
+  :where(.admin-table, .data-table, table) {
+    min-width: 640px;
+  }
+
+  :where(.admin-table-wrap, .table-wrap, .data-table-wrap, .table-container) {
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: thin;
+  }
+
+  :where(.modal, [role="dialog"], .drawer, .sheet) {
+    max-height: calc(100dvh - 16px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
+
+/* Prevent accidental viewport overflow from long Arabic identifiers and operational labels. */
+:where(.admin-panel, .customer-portal, .staff-shell, .executive-dashboard, [role="dialog"]) {
+  overflow-wrap: anywhere;
+}
+
+/* Touch targets: preserve compact density while keeping primary controls finger-safe. */
+@media (pointer: coarse) {
+  :where(button, [role="button"], a) {
+    min-height: 40px;
+  }
+}
+
+/* Respect OS accessibility preference without introducing another design-system dependency. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* Print operational documents cleanly; interactive chrome and controls stay out of paper output. */
+@media print {
+  :where(nav, aside, .staff-topbar, .executive-header-actions, .staff-actions, .quick-actions, button, [role="button"], .modal-backdrop) {
+    display: none !important;
+  }
+
+  :where(.admin-panel, .customer-portal, .executive-dashboard, .staff-shell) {
+    background: #fff !important;
+    box-shadow: none !important;
+  }
+
+  :where(.executive-card, .executive-kpis article, .admin-card, .cart-panel, .finance-card) {
+    break-inside: avoid;
+    box-shadow: none !important;
+  }
+}
