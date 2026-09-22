@@ -4,11 +4,15 @@ on:
   push:
     branches:
       - main
-      - 'execution/**'
-      - 'enhancement/**'
   pull_request:
-    branches:
-      - main
+    paths:
+      - 'scripts/concurrency*.sh'
+      - 'src/services/orders.ts'
+      - 'src/services/cart.ts'
+      - 'src/services/orderTemplates.ts'
+      - 'supabase/migrations/**'
+      - 'supabase/tests/**'
+      - '.github/workflows/**'
   workflow_dispatch:
     inputs:
       exact_sha:
@@ -20,9 +24,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: aghbari-concurrency-${{ github.event.pull_request.head.sha || inputs.exact_sha || github.sha }}
-  cancel-in-progress: false
-
+  group: aghbari-concurrency-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.event_name == 'workflow_dispatch' && format('sha-{0}', inputs.exact_sha) || github.ref_name }}
+  cancel-in-progress: true
 jobs:
   concurrency-proof:
     runs-on: ubuntu-latest

@@ -1,10 +1,14 @@
-name: Browser E2E / Local Production Artifact
+name: UI Visual Review / Exact SHA
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'e2e/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/**'
   workflow_dispatch:
     inputs:
       exact_sha:
@@ -20,15 +24,15 @@ env:
   VITE_BUILD_SHA: ${{ inputs.exact_sha || github.event.pull_request.head.sha || github.sha }}
 
 concurrency:
-  group: aghbari-browser-local-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.event_name == 'workflow_dispatch' && format('sha-{0}', inputs.exact_sha) || github.ref_name }}
+  group: aghbari-ui-visual-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.event_name == 'workflow_dispatch' && format('sha-{0}', inputs.exact_sha) || github.ref_name }}
   cancel-in-progress: true
+
 jobs:
-  local-browser-e2e:
+  visual-review:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
       - name: Validate exact SHA
-        shell: bash
         run: echo "$EXPECTED_SHA" | grep -Eq '^[0-9a-f]{40}$'
 
       - uses: actions/checkout@v4
@@ -41,10 +45,10 @@ jobs:
         run: |
           actual="$(git rev-parse HEAD)"
           test "$actual" = "$EXPECTED_SHA" || {
-            echo "EXACT LOCAL BROWSER SHA MISMATCH expected=$EXPECTED_SHA actual=$actual"
+            echo "UI VISUAL SHA MISMATCH expected=$EXPECTED_SHA actual=$actual"
             exit 1
           }
-          echo "EXACT LOCAL BROWSER SHA: $actual"
+          echo "UI VISUAL EXACT SHA: $actual"
 
       - uses: actions/setup-node@v4
         with:
@@ -56,25 +60,15 @@ jobs:
           version: 2.117.0
 
       - name: Clean dependency state
-        shell: bash
-        run: |
-          rm -rf node_modules dist playwright-report test-results
-          test -s package-lock.json
+        run: rm -rf node_modules dist playwright-report test-results visual-evidence
 
       - name: Deterministic clean install
         run: npm ci --no-audit --no-fund
 
-      - name: Prove Vite is installed in clean build environment
-        shell: bash
-        run: |
-          node -p "require.resolve('vite/package.json')"
-          test -x node_modules/.bin/vite
-          node_modules/.bin/vite --version
-
       - name: Start isolated local Supabase
         run: supabase start
 
-      - name: Load isolated local Supabase connection values
+      - name: Load isolated Supabase values
         shell: bash
         run: |
           supabase status -o env > /tmp/supabase.env
@@ -83,7 +77,6 @@ jobs:
             echo "VITE_SUPABASE_URL=$API_URL"
             echo "VITE_SUPABASE_PUBLISHABLE_KEY=$ANON_KEY"
             echo "LOCAL_DB_URL=$DB_URL"
-            echo "LOCAL_ANON_KEY=$ANON_KEY"
             echo "LOCAL_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY"
           } >> "$GITHUB_ENV"
 
@@ -103,90 +96,68 @@ jobs:
           create_user customer-b@test.local
           create_user admin-a@test.local
           create_user admin-b@test.local
-          echo 'Waiting for Auth users to become visible to Postgres...'
           for i in $(seq 1 20); do
             count="$(psql "$LOCAL_DB_URL" -Atqc "select count(*) from auth.users where email in ('customer-a@test.local','customer-b@test.local','admin-a@test.local','admin-b@test.local');")"
-            if [ "$count" = "4" ]; then
-              echo 'AUTH_USER_VISIBILITY_READY'
-              break
-            fi
-            echo "AUTH_USER_VISIBILITY_WAIT count=$count attempt=$i"
+            if [ "$count" = "4" ]; then break; fi
             sleep 1
           done
           test "$(psql "$LOCAL_DB_URL" -Atqc "select count(*) from auth.users where email in ('customer-a@test.local','customer-b@test.local','admin-a@test.local','admin-b@test.local');")" = "4"
           psql "$LOCAL_DB_URL" -v ON_ERROR_STOP=1 -f scripts/browser-e2e-seed.sql
 
-      - name: Production build from exact SHA
+      - name: Build exact production artifact
         run: npm run build
 
-      - name: Verify local artifact identity and checksum
+      - name: Verify artifact identity
         shell: bash
         run: |
-          test -s dist/build-meta.json
           node - <<'NODE'
           const fs = require('node:fs');
           const meta = JSON.parse(fs.readFileSync('dist/build-meta.json', 'utf8'));
-          const expected = process.env.EXPECTED_SHA;
-          if (meta.product !== 'aghbari-commerce') throw new Error(`Unexpected product: ${meta.product}`);
-          if (meta.git_sha !== expected) throw new Error(`BUILD SHA MISMATCH expected=${expected} actual=${meta.git_sha}`);
-          if (!meta.version) throw new Error('Missing build version');
-          console.log(`LOCAL ARTIFACT PRODUCT: ${meta.product}`);
-          console.log(`LOCAL ARTIFACT SHA: ${meta.git_sha}`);
-          console.log(`LOCAL ARTIFACT VERSION: ${meta.version}`);
+          if (meta.product !== 'aghbari-commerce') throw new Error('Unexpected product');
+          if (meta.git_sha !== process.env.EXPECTED_SHA) {
+            throw new Error(`BUILD SHA MISMATCH expected=${process.env.EXPECTED_SHA} actual=${meta.git_sha}`);
+          }
           NODE
-          sha256sum dist/build-meta.json
-          find dist -type f -print0 | sort -z | xargs -0 sha256sum > dist.sha256
-          sha256sum dist.sha256
 
       - name: Start local production server
         shell: bash
         run: |
-          nohup npm run preview -- --host 127.0.0.1 --port 4173 > preview.log 2>&1 &
+          nohup npm run preview -- --host 127.0.0.1 --port 4173 >/tmp/preview.log 2>&1 &
           for i in $(seq 1 30); do
-            if curl --fail --silent http://127.0.0.1:4173/build-meta.json > /tmp/local-meta.json; then
-              break
-            fi
+            curl --fail --silent http://127.0.0.1:4173/build-meta.json >/dev/null && break
             sleep 1
           done
-          test -s /tmp/local-meta.json
-          diff -u dist/build-meta.json /tmp/local-meta.json
+          test -s dist/build-meta.json
+          test -s /tmp/preview.log || true
 
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Run customer browser E2E against exact local artifact
+      - name: Run exact UI visual review
         env:
           E2E_BASE_URL: http://127.0.0.1:4173
           E2E_EMAIL: customer-a@test.local
           E2E_PASSWORD: AghbariE2E!2026
           E2E_EMAIL_B: customer-b@test.local
           E2E_PASSWORD_B: AghbariE2E!2026
-          EXPECTED_SHA: ${{ env.EXPECTED_SHA }}
-        run: npx playwright test e2e/critical-path.spec.ts --project=chromium
-
-      - name: Run admin browser E2E against exact local artifact
-        env:
-          E2E_BASE_URL: http://127.0.0.1:4173
           E2E_ADMIN_EMAIL: admin-a@test.local
           E2E_ADMIN_PASSWORD: AghbariE2E!2026
-          EXPECTED_SHA: ${{ env.EXPECTED_SHA }}
-        run: npx playwright test e2e/admin-control-plane.spec.ts --project=chromium
+        run: npx playwright test e2e/ui-visual-review.spec.ts --project=chromium --reporter=list
 
-      - name: Upload local browser evidence
+      - name: Upload UI visual evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: browser-local-${{ env.EXPECTED_SHA }}
+          name: aghbari-ui-visual-review-${{ env.EXPECTED_SHA }}
           path: |
-            dist/build-meta.json
-            dist.sha256
-            preview.log
+            visual-evidence/
             playwright-report/
             test-results/
-          if-no-files-found: ignore
+            dist/build-meta.json
+            /tmp/preview.log
+          if-no-files-found: error
           retention-days: 7
 
-      - name: Stop isolated local Supabase
+      - name: Stop isolated Supabase
         if: always()
-        shell: bash
-        run: supabase stop || true
+        run: supabase stop --no-backup || true

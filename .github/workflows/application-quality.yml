@@ -2,9 +2,18 @@ name: application-quality
 
 on:
   push:
-    branches: ['**']
+    branches:
+      - main
   pull_request:
-    branches: [main]
+    paths:
+      - 'src/**'
+      - 'supabase/**'
+      - 'public/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'scripts/**'
+      - 'e2e/**'
+      - '.github/workflows/**'
   workflow_dispatch:
     inputs:
       exact_sha:
@@ -16,9 +25,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: aghbari-quality-${{ github.workflow }}-${{ github.ref }}-${{ github.event.pull_request.head.sha || github.sha || inputs.exact_sha }}
+  group: aghbari-quality-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.event_name == 'workflow_dispatch' && format('sha-{0}', inputs.exact_sha) || github.ref_name }}
   cancel-in-progress: true
-
 jobs:
   quality:
     runs-on: ubuntu-latest

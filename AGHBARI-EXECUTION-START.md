@@ -144,4 +144,9 @@ Only genuine OPEN / BLOCKED / RUNNING / NOT_PROVEN work.
 NEXT ACTION
 The next logical executable front.
 
+
+## UI DELIVERY GATE — FIRST 120 MINUTES
+
+For any session whose objective includes UI/product completion, the first 120 minutes are governed by:
+\nFULL PRODUCT UI COVERAGE FIRST → FUNCTIONAL BASELINE → GLOBAL POLISH → VERIFICATION\n\nWithin the first 120 minutes, cover the complete product UI surface: customer portal, staff/admin console, routes/views, forms, tables, search/filter states, dialogs/drawers, loading/empty/error/success states, responsive/mobile, and RTL. Do not let verification-only work consume the entire window while major screens remain visually or functionally incomplete. After coverage is complete, continue deep visual polish, accessibility, performance, and micro-interactions.\n\nUI acceptance: no placeholder screens, fake buttons, misleading metrics, duplicate structural controls, obvious visual drift, or unhandled mobile/RTL layout failures.\n\n## SESSION HANDOFF / RESUME GATE\n\nEvery session must end with a machine-readable resume point in the living state. Record the exact SHA, branch, completed work, incomplete work, active blockers, latest evidence, deployment state, Candidate state, Production state, and one specific next executable task.\n\nAt the beginning of the next session, read that resume point and continue from the first genuinely incomplete task. Do not restart the project, repeat completed work, or replace a precise resume point with a new generic plan. Conversation memory never overrides current GitHub + living-memory reality.\n
 **The project advances by initiative + execution + evidence, not by waiting for the owner to manage technical details.**

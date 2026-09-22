@@ -2,9 +2,17 @@ name: security-audit
 
 on:
   push:
-    branches: ['**']
+    branches:
+      - main
   pull_request:
-    branches: [main]
+    paths:
+      - 'src/**'
+      - 'supabase/**'
+      - 'public/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'scripts/**'
+      - '.github/workflows/**'
   workflow_dispatch:
     inputs:
       exact_sha:
@@ -16,9 +24,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: aghbari-security-${{ github.workflow }}-${{ github.ref }}-${{ github.event.pull_request.head.sha || inputs.exact_sha || github.sha }}
+  group: aghbari-security-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.event_name == 'workflow_dispatch' && format('sha-{0}', inputs.exact_sha) || github.ref_name }}
   cancel-in-progress: true
-
 jobs:
   security:
     runs-on: ubuntu-latest

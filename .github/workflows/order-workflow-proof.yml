@@ -4,9 +4,16 @@ on:
   push:
     branches:
       - main
-      - 'execution/**'
   pull_request:
-    branches: [main]
+    paths:
+      - 'poc/order-workflow/**'
+      - 'src/domain/order.ts'
+      - 'src/services/orders.ts'
+      - 'src/services/cart.ts'
+      - 'supabase/migrations/**'
+      - 'supabase/tests/**'
+      - 'e2e/critical-path.spec.ts'
+      - '.github/workflows/**'
   workflow_dispatch:
     inputs:
       exact_sha:
@@ -18,9 +25,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: aghbari-order-workflow-${{ inputs.exact_sha || github.event.pull_request.head.sha || github.sha }}
-  cancel-in-progress: false
-
+  group: aghbari-order-workflow-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.event_name == 'workflow_dispatch' && format('sha-{0}', inputs.exact_sha) || github.ref_name }}
+  cancel-in-progress: true
 jobs:
   order-workflow-proof:
     runs-on: ubuntu-latest

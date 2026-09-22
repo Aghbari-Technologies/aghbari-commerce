@@ -22,6 +22,9 @@ test.describe('Admin control plane exact browser path', () => {
     await expect(page.getByRole('heading', { name: 'تعديل المخزون' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'استيراد Excel آمن' })).toBeVisible();
     await expect(page.getByText('وصول سريع للمهام')).toBeVisible();
+    const sectionRail = page.getByRole('navigation', { name: 'اختصارات مركز التشغيل' });
+    await expect(sectionRail).toBeVisible();
+    await expect(sectionRail.getByRole('button', { name: /إدارة الطلبات/ })).toBeVisible();
     await page.getByRole('button', { name: /أوامر الأغبري/ }).first().click();
     const palette = page.getByRole('dialog', { name: 'أوامر مركز الإدارة' });
     await expect(palette).toBeVisible();

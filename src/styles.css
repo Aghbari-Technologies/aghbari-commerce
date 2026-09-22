@@ -1,3 +1,7 @@
+@import './premium-ui-overrides.css';
+@import './aghbari-signature-ui.css';
+
+@layer aghbari-base {
 :root { font-family: "Noto Sans Arabic", "Segoe UI", Tahoma, sans-serif; color: #172033; background: #f5f7fb; font-synthesis: none; }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
@@ -80,3 +84,4 @@ footer { padding: 30px 16px; text-align: center; color: #8b93a1; }
 @media (max-width: 850px) { .hero { grid-template-columns: 1fr; } .catalog-grid, .admin-grid { grid-template-columns: repeat(2, 1fr); } .topbar { flex-wrap: wrap; } nav { order: 3; width: 100%; overflow-x: auto; padding-top: 2px; gap: 16px; } .status-actions { justify-content: flex-start; min-width: 0; } .client-control-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
 @media (max-width: 560px) { main { width: min(100% - 20px, 1180px); } .topbar { padding-inline: 8px; } .brand small { display: none; } .signout { padding-inline: 10px; } .catalog-grid, .admin-grid { grid-template-columns: 1fr; } .hero { padding-top: 42px; } h1 { letter-spacing: -1px; } .cart-line { grid-template-columns: 1fr auto; } .cart-line > strong:last-child { grid-column: 1 / -1; } .status-actions { grid-column: 1 / -1; width: 100%; } .status-actions button { flex: 1 1 auto; } .client-control-grid { grid-template-columns:1fr; } }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; } }
+}

@@ -2,14 +2,29 @@ name: G1 Domain Proof
 
 on:
   push:
-    branches: ['**']
+    branches:
+      - main
   pull_request:
+    paths:
+      - 'supabase/**'
+      - 'src/domain/**'
+      - 'src/services/orders.ts'
+      - 'src/services/cart.ts'
+      - 'src/services/inventory.ts'
+      - 'src/services/purchasing.ts'
+      - 'src/services/finance.ts'
+      - 'poc/**'
+      - '.github/workflows/**'
   workflow_dispatch:
     inputs:
       exact_sha:
         description: 'Exact Git commit SHA to verify'
         required: true
         type: string
+
+concurrency:
+  group: aghbari-g1-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.event_name == 'workflow_dispatch' && format('sha-{0}', inputs.exact_sha) || github.ref_name }}
+  cancel-in-progress: true
 
 permissions:
   contents: read

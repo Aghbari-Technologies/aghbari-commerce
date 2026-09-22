@@ -1,0 +1,150 @@
+/* Aghbari Commerce — Signature UI layer
+   Resource-smart: pure CSS, no assets, fonts, packages, or runtime work.
+   Goal: make the product feel authored, premium, operational, and unmistakably B2B. */
+
+:root {
+  --ag-ink:#071d2b;
+  --ag-ink-2:#123b4d;
+  --ag-teal:#0a91a3;
+  --ag-cyan:#6dd7dd;
+  --ag-paper:#fbfdfe;
+  --ag-cloud:#eef5f7;
+  --ag-line:#d7e5e9;
+  --ag-muted:#718692;
+  --ag-radius-xl:26px;
+  --ag-radius-lg:20px;
+  --ag-radius-md:14px;
+  --ag-ease:cubic-bezier(.2,.75,.2,1);
+}
+
+/* ───────── Global typographic direction ───────── */
+body{color:var(--ag-ink);background:#f4f8fa;letter-spacing:-.01em}
+strong,h1,h2,h3,h4{letter-spacing:-.035em}
+small,.eyebrow,.unit,.product-meta{letter-spacing:.015em}
+::selection{background:#bdecef;color:#06202c}
+
+/* ───────── Auth: first impression ───────── */
+.auth-shell{position:relative;overflow:hidden;background:
+ radial-gradient(circle at 12% 10%,rgba(109,215,221,.22),transparent 24rem),
+ radial-gradient(circle at 88% 88%,rgba(18,59,77,.10),transparent 28rem),#f6fafb}
+.auth-shell::before{content:"";position:absolute;inset:7%;border:1px solid rgba(10,145,163,.09);border-radius:48px;pointer-events:none}
+.auth-card{position:relative;border:1px solid #dce9ed;border-radius:28px;padding:38px;box-shadow:0 28px 90px rgba(7,29,43,.12);background:rgba(255,255,255,.94);backdrop-filter:blur(18px)}
+.auth-card::before{content:"الأغبري";display:block;color:var(--ag-teal);font-size:12px;font-weight:900;letter-spacing:.12em;margin-bottom:8px}
+.auth-card h1{font-size:clamp(34px,7vw,58px);line-height:1;margin-bottom:14px}
+.auth-card input{min-height:48px;border-radius:13px;border-color:#d4e2e6;background:#f8fbfc}
+.auth-card button{min-height:48px;border-radius:13px!important;background:linear-gradient(135deg,#092b3c,#0b8293)!important;box-shadow:0 12px 25px rgba(10,145,163,.18)}
+
+/* ───────── Shared shell / command navigation ───────── */
+.topbar{min-height:70px;padding-block:10px;border-color:#dce8ec;background:rgba(252,254,255,.90);box-shadow:0 10px 34px rgba(7,29,43,.06)}
+.brand-mark{position:relative;overflow:hidden;background:linear-gradient(145deg,#071d2b,#0b8293);border-radius:14px;box-shadow:0 8px 20px rgba(7,29,43,.15)}
+.brand-mark::after{content:"";position:absolute;inset:6px;border:1px solid rgba(255,255,255,.22);border-radius:9px}
+.brand strong{font-size:16px;color:#071d2b}.brand small{font-size:10px;font-weight:800;color:#718692}
+nav a{position:relative;border-radius:10px;padding:9px 11px;transition:all .2s var(--ag-ease)}
+nav a:hover{background:#eef7f8;color:#0a6878;transform:translateY(-1px)}
+nav a.active{background:#e8f7f8;color:#075f70}
+nav a.active::after{content:"";position:absolute;bottom:3px;inset-inline:11px;height:2px;border-radius:99px;background:#0a91a3}
+.topbar-actions button{transition:all .2s var(--ag-ease)}
+.topbar-actions button:hover{transform:translateY(-2px);box-shadow:0 9px 22px rgba(7,29,43,.10)}
+
+/* ───────── Customer portal: editorial hero ───────── */
+.customer-app{background:
+ radial-gradient(circle at 100% 0,rgba(109,215,221,.11),transparent 34rem),
+ radial-gradient(circle at 0 50%,rgba(7,29,43,.045),transparent 32rem),#f3f8fa}
+.portal-header{background:rgba(251,253,254,.92)!important}
+.hero-card{border-radius:var(--ag-radius-xl)!important;min-height:280px!important;padding:clamp(30px,4vw,48px)!important;background:
+ radial-gradient(circle at 76% 24%,rgba(109,215,221,.17),transparent 15rem),
+ linear-gradient(128deg,#061c2a 0%,#0e4052 58%,#078296 100%)!important;box-shadow:0 30px 70px rgba(7,29,43,.20)!important}
+.hero-card::after{content:"B2B COMMERCE";position:absolute;inset-inline-end:30px;bottom:22px;color:rgba(255,255,255,.22);font-size:10px;font-weight:900;letter-spacing:.22em}
+.hero-card h2{max-width:760px;font-weight:900;font-size:clamp(30px,4.6vw,54px)!important}
+.hero-card p{font-size:14px!important;max-width:680px;color:#c8e6e9!important}
+.hero-mini-metric{border-radius:16px!important;background:rgba(255,255,255,.075)!important;border-color:rgba(255,255,255,.14)!important;box-shadow:inset 0 1px rgba(255,255,255,.10),0 10px 24px rgba(0,0,0,.08)}
+.hero-mini-metric strong{font-size:21px!important}
+
+/* ───────── Customer navigation becomes product chrome ───────── */
+.portal-nav{border-radius:20px!important;padding:9px!important;background:rgba(255,255,255,.86)!important;box-shadow:0 16px 38px rgba(7,29,43,.07)!important}
+.portal-nav button{font-weight:750;min-height:48px!important}
+.portal-nav button.active{background:linear-gradient(135deg,#071d2b,#125066)!important;box-shadow:0 10px 23px rgba(7,29,43,.18)!important}
+
+/* ───────── Search: command surface ───────── */
+.search-panel{border-radius:18px!important;padding:12px!important;background:rgba(255,255,255,.92)!important}
+.search-field-wrap{min-height:48px!important;border-radius:13px!important;background:#f7fafb!important}
+.search-field-wrap input{font-size:14px!important;font-weight:650}
+.category-row button{font-weight:750!important;border-radius:11px!important}
+.category-row button.active{background:linear-gradient(135deg,#071d2b,#135166)!important}
+
+/* ───────── Product cards: premium retail density ───────── */
+.product-grid,.catalog-grid{gap:16px!important}
+.product-card{overflow:hidden;border-radius:20px!important;background:linear-gradient(180deg,#fff,#fbfdfe)!important;box-shadow:0 9px 28px rgba(7,29,43,.055)!important}
+.product-card:hover{transform:translateY(-6px)!important;box-shadow:0 24px 50px rgba(7,29,43,.13)!important}
+.product-image,.product-card img,.product-placeholder{position:relative;background:linear-gradient(145deg,#eaf5f7,#f8fbfc)!important}
+.product-image::after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,transparent 55%,rgba(109,215,221,.12));pointer-events:none}
+.product-body{padding:18px!important}
+.product-card h2,.product-body h3{font-size:17px!important;line-height:1.45!important;font-weight:850!important}
+.product-meta{font-size:10px!important;color:#8498a1!important}
+.product-footer{padding-top:4px}
+.product-footer strong,.price-row strong{font-size:20px!important;color:#071d2b!important}
+.product-footer button,.add-button{min-height:43px!important;border-radius:12px!important;background:linear-gradient(135deg,#071d2b,#0a91a3)!important;border:0!important;box-shadow:0 9px 20px rgba(10,145,163,.17)!important}
+.stock{font-weight:800!important;border:1px solid #ccebe5;background:#eefaf7!important;color:#08735e!important}
+
+/* ───────── Operational cards ───────── */
+.content-card,.cart-panel,.admin-panel{border-radius:22px!important;border-color:#d9e6ea!important;box-shadow:0 14px 42px rgba(7,29,43,.065)!important}
+.section-heading h2{font-weight:900!important}
+.order-card,.template-card,.admin-card{border-radius:16px!important;background:linear-gradient(180deg,#fff,#fbfdfe)!important}
+.order-card:hover,.template-card:hover,.admin-card:hover{border-color:#bddbe0!important;box-shadow:0 14px 32px rgba(7,29,43,.09)!important}
+.cart-line{padding-block:16px!important}
+.quantity{border-color:#cfdee3!important;background:#fff!important}
+.quantity button:hover{background:#eaf7f8!important;color:#075f70}
+
+/* ───────── Admin: command center, not generic dashboard ───────── */
+.staff-shell{background:
+ radial-gradient(circle at 92% 0,rgba(109,215,221,.12),transparent 30rem),
+ linear-gradient(180deg,#f3f8fa,#edf4f6)!important}
+.staff-topbar{background:rgba(251,253,254,.92)!important;border-color:#d9e6ea!important}
+.staff-main{max-width:1560px!important}
+.staff-main > .admin-panel{border-radius:24px!important}
+.staff-commandbar{border-radius:16px!important;background:rgba(255,255,255,.92)!important}
+.admin-grid{gap:16px!important}
+.admin-card{padding:20px!important}
+.admin-card h3{font-size:16px!important}
+.admin-card button,.status-actions button{border-radius:11px!important;background:linear-gradient(135deg,#071d2b,#125066)!important;box-shadow:0 7px 16px rgba(7,29,43,.12)}
+.admin-card input,.admin-card select,.admin-card textarea{min-height:46px!important;border-radius:12px!important;background:#fbfdfe!important}
+.success{border:1px solid #cceee5!important}.error-banner{border:1px solid #f3d4da!important}
+
+/* ───────── Tables / ledger / inventory density ───────── */
+table{border-collapse:separate!important;border-spacing:0!important;overflow:hidden;border:1px solid #dbe7ea;border-radius:15px}
+thead th{background:#f2f7f8!important;color:#5f747e!important;font-size:10px!important;font-weight:900!important;letter-spacing:.04em;text-transform:uppercase}
+tbody tr{transition:background .15s ease}
+tbody tr:hover{background:#f6fbfc!important}
+td,th{border-bottom:1px solid #e8eff1!important;padding:12px 13px!important}
+tbody tr:last-child td{border-bottom:0!important}
+
+/* ───────── Buttons: tactile but restrained ───────── */
+.checkout,.cart-button,.signout,.status-actions button{transition:transform .18s var(--ag-ease),box-shadow .18s var(--ag-ease),background .18s ease!important}
+.checkout:hover,.cart-button:hover,.status-actions button:hover{transform:translateY(-2px)!important;box-shadow:0 12px 24px rgba(7,29,43,.14)!important}
+
+/* ───────── Modals / drawers: layered depth ───────── */
+.modal-backdrop,.drawer-backdrop{background:rgba(3,20,29,.56)!important;backdrop-filter:blur(8px)!important}
+.modal{border-radius:24px!important;border-color:#d7e5e9!important;box-shadow:0 40px 110px rgba(2,18,27,.30)!important}
+
+/* ───────── Focus / accessibility ───────── */
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid rgba(10,145,163,.35)!important;outline-offset:3px!important}
+
+/* ───────── Mobile: retain premium hierarchy ───────── */
+@media(max-width:820px){
+ .hero-card{min-height:300px!important}
+ .hero-card::after{display:none}
+ .product-grid,.catalog-grid{gap:10px!important}
+ .product-card{border-radius:16px!important}
+ .product-footer{align-items:stretch!important}
+}
+@media(max-width:560px){
+ .auth-card{padding:26px 20px;border-radius:22px}
+ .hero-card{padding:24px 19px!important;border-radius:20px!important}
+ .hero-card h2{font-size:29px!important}
+ .hero-mini-metric{padding:12px!important}
+ .product-body{padding:12px!important}
+ .product-footer strong,.price-row strong{font-size:17px!important}
+ .product-footer button,.add-button{min-height:40px!important;padding-inline:10px!important}
+}
+
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}

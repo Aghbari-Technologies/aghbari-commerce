@@ -4,10 +4,6 @@ on:
   push:
     branches:
       - main
-      - 'execution/**'
-  pull_request:
-    branches:
-      - main
   deployment_status:
   workflow_dispatch:
     inputs:
@@ -24,9 +20,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: aghbari-browser-e2e-${{ github.event.deployment.sha || inputs.exact_sha || github.event.pull_request.head.sha || github.sha }}
-  cancel-in-progress: false
-
+  group: aghbari-browser-e2e-${{ github.event_name == 'deployment_status' && github.event.deployment.ref || github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.event_name == 'workflow_dispatch' && format('sha-{0}', inputs.exact_sha) || github.ref_name }}
+  cancel-in-progress: true
 jobs:
   browser-contract:
     runs-on: ubuntu-latest

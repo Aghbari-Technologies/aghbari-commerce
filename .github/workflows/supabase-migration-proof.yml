@@ -2,9 +2,13 @@ name: supabase-migration-proof
 
 on:
   pull_request:
-    branches: [main]
+    paths:
+      - 'supabase/**'
+      - 'scripts/**'
+      - '.github/workflows/**'
   push:
-    branches: ['**']
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       exact_sha:
@@ -16,9 +20,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: aghbari-migration-proof-${{ github.ref }}-${{ github.event.pull_request.head.sha || github.sha || inputs.exact_sha }}
+  group: aghbari-migration-proof-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.event_name == 'workflow_dispatch' && format('sha-{0}', inputs.exact_sha) || github.ref_name }}
   cancel-in-progress: true
-
 jobs:
   migration-proof:
     runs-on: ubuntu-latest
@@ -60,6 +63,8 @@ jobs:
         run: supabase start
       - name: Apply migrations from empty database
         run: supabase db reset --local
+      - name: Run pgTAP database tests
+        run: supabase test db
       - name: Verify effective final order authority in Fresh DB
         shell: bash
         run: |
@@ -88,16 +93,28 @@ jobs:
             JOIN pg_namespace n ON n.oid = p.pronamespace
             WHERE n.nspname = 'public'
               AND p.proname = 'create_order'
-              AND pg_get_function_identity_arguments(p.oid) = 'p_idempotency_key text, p_warehouse_id uuid, p_lines jsonb';
+              AND pg_get_function_identity_arguments(p.oid) = 'p_idempotency_key text, p_warehouse_id uuid, p_lines jsonb, p_payment_method text';
 
             IF fn NOT LIKE '%pg_catalog.pg_advisory_xact_lock%' OR fn NOT LIKE '%v_requested_key%' THEN
               RAISE EXCEPTION 'effective create_order is missing same-key serialization';
             END IF;
-            IF fn NOT LIKE '%c.organization_id = v_org%' OR fn NOT LIKE '%c.customer_id = v_customer%' OR fn NOT LIKE '%c.status = ''active''%' THEN
-              RAISE EXCEPTION 'effective create_order is missing atomic active-cart lock';
+            IF fn NOT LIKE '%p_payment_method%' OR fn NOT LIKE '%v_requested_payment%' THEN
+              RAISE EXCEPTION 'effective create_order is missing payment-method authority';
             END IF;
-            IF fn NOT LIKE '%SET status = ''converted'', updated_at = pg_catalog.now()%' THEN
+            IF fn NOT LIKE '%c.organization_id=v_org%' AND fn NOT LIKE '%c.organization_id = v_org%' THEN
+              RAISE EXCEPTION 'effective create_order is missing organization cart boundary';
+            END IF;
+            IF fn NOT LIKE '%c.customer_id=v_customer%' AND fn NOT LIKE '%c.customer_id = v_customer%' THEN
+              RAISE EXCEPTION 'effective create_order is missing customer cart boundary';
+            END IF;
+            IF fn NOT LIKE '%c.status=''active''%' AND fn NOT LIKE '%c.status = ''active''%' THEN
+              RAISE EXCEPTION 'effective create_order is missing active-cart boundary';
+            END IF;
+            IF fn NOT LIKE '%status=''converted''%' AND fn NOT LIKE '%status = ''converted''%' THEN
               RAISE EXCEPTION 'effective create_order is missing atomic cart conversion';
+            END IF;
+            IF fn NOT LIKE '%updated_at=pg_catalog.now()%' AND fn NOT LIKE '%updated_at = pg_catalog.now()%' THEN
+              RAISE EXCEPTION 'effective create_order is missing cart timestamp update';
             END IF;
             IF fn NOT LIKE '%idempotency key payload conflict%' OR fn NOT LIKE '%errcode=''40001''%' THEN
               RAISE EXCEPTION 'effective create_order is missing payload-conflict fail-closed contract';
@@ -118,13 +135,11 @@ jobs:
               RAISE EXCEPTION 'anon/PUBLIC must not retain authoritative create_order EXECUTE';
             END IF;
             IF has_function_privilege('authenticated', 'public.create_order(text,uuid,jsonb)', 'EXECUTE') THEN
-              RAISE EXCEPTION 'authenticated must not retain legacy create_order EXECUTE';
+              RAISE EXCEPTION 'legacy 3-argument create_order must remain non-executable for authenticated users';
             END IF;
           END $$;
           SELECT 'Fresh DB effective create_order authority: PASS' AS evidence;
           SQL
-      - name: Run database pgTAP proofs
-        run: supabase test db --local
       - name: Verify local migration inventory
         run: supabase migration list --local
       - name: Stop local Supabase

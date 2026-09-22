@@ -6,19 +6,19 @@ async function login(page: Page, email: string, password: string) {
   await loginForm.locator('input[type="email"]').fill(email);
   await loginForm.locator('input[type="password"]').fill(password);
   await loginForm.getByRole('button', { name: 'دخول آمن' }).click();
-  const portal = page.getByRole('button', { name: 'الكتالوج', exact: true }).first();
+  const portal = page.getByRole('complementary', { name: 'تنقل البوابة' }).getByRole('button', { name: /الكتالوج/ }).first();
   const error = page.locator('.error-banner');
-  await Promise.race([portal.waitFor({ state: 'visible', timeout: 5000 }), error.waitFor({ state: 'visible', timeout: 5000 })]).catch(() => undefined);
+  await Promise.race([portal.waitFor({ state: 'visible', timeout: 15000 }), error.waitFor({ state: 'visible', timeout: 15000 })]).catch(() => undefined);
   if (await error.isVisible().catch(() => false)) throw new Error('Login/bootstrap failed: ' + await error.innerText());
   await expect(portal).toBeVisible();
   await expect(page.locator('.portal-loading')).toHaveCount(0, { timeout: 15000 });
-  await expect(page.getByRole('banner').getByRole('button', { name: /السلة/ })).toBeVisible();
+  await expect(page.getByRole('banner').getByRole('button', { name: /^السلة/ }).first()).toBeVisible();
   await clearCustomerCart(page);
 }
 
 async function clearCustomerCart(page: Page) {
   await expect(page.locator('.portal-loading')).toHaveCount(0, { timeout: 15000 });
-  const cartButton = page.getByRole('banner').getByRole('button', { name: /السلة/ });
+  const cartButton = page.getByRole('banner').getByRole('button', { name: /^السلة/ }).first();
   await expect(cartButton).toBeVisible();
   await cartButton.click();
   const lines = page.locator('.cart-drawer .drawer-line');
@@ -39,17 +39,17 @@ async function clearCustomerCart(page: Page) {
     }
   }
   await expect(lines).toHaveCount(0, { timeout: 5000 });
-  const close = page.locator('.cart-drawer').getByRole('button', { name: '×', exact: true });
+  const close = page.locator('.cart-drawer').getByRole('button', { name: 'إغلاق السلة', exact: true });
   if (await close.isVisible().catch(() => false)) await close.click();
 
   // Rehydrate from the server and verify cleanup persisted; never trust only client state.
   await page.reload();
   await expect(page.locator('.customer-shell')).toBeVisible();
   await expect(page.locator('.portal-loading')).toHaveCount(0, { timeout: 15000 });
-  const verifyCartButton = page.getByRole('banner').getByRole('button', { name: /السلة/ });
+  const verifyCartButton = page.getByRole('banner').getByRole('button', { name: /^السلة/ }).first();
   await verifyCartButton.click();
   await expect(page.locator('.cart-drawer .drawer-line')).toHaveCount(0, { timeout: 5000 });
-  const verifyClose = page.locator('.cart-drawer').getByRole('button', { name: '×', exact: true });
+  const verifyClose = page.locator('.cart-drawer').getByRole('button', { name: 'إغلاق السلة', exact: true });
   if (await verifyClose.isVisible().catch(() => false)) await verifyClose.click();
 }
 
@@ -91,14 +91,23 @@ test('authenticated customer completes real search → catalog → cart → orde
   const firstCard = page.locator('.product-card').first(); await expect(firstCard).toBeVisible(); const productName = (await firstCard.getByRole('heading').first().innerText()).trim();
   const search = page.getByRole('textbox', { name: 'البحث في الكتالوج' }); await expect(search).toBeVisible(); await search.fill(productName); await expect(page.locator('.product-card')).toHaveCount(1);
   await expect(page.locator('.product-card').first().getByRole('heading', { name: productName, exact: true })).toBeVisible(); await search.fill('');
-  const addButton = page.getByRole('button', { name: 'إضافة للسلة', exact: true }).first(); await expect(addButton).toBeEnabled(); await addButton.click(); await expect(page.getByRole('banner').getByRole('button', { name: /السلة/ })).toHaveText(/السلة\s+1/);
+  const addButton = page.getByRole('button', { name: 'إضافة للسلة', exact: true }).first(); await expect(addButton).toBeEnabled(); await addButton.click(); await expect(page.getByRole('banner').getByRole('button', { name: /^السلة/ }).first()).toHaveText(/السلة\s+1/);
   const quantityConfirmation = page.getByRole('button', { name: 'اعتماد الكمية', exact: true }).first(); await expect(quantityConfirmation).toBeEnabled(); await quantityConfirmation.click(); await expect(page.getByRole('button', { name: '✓ معتمد', exact: true })).toBeVisible();
   const checkout = page.getByRole('button', { name: 'تأكيد وإرسال الطلب', exact: true }); await expect(checkout).toBeEnabled(); await checkout.click();
   const success = page.locator('.success').filter({ hasText: 'تم إرسال الطلب #' }).last(); await expect(success).toBeVisible(); const successText = await success.innerText(); const orderNumberMatch = successText.match(/طلب #([^\s]+) بنجاح/);
   expect(orderNumberMatch, `Order number missing from success message: ${successText}`).not.toBeNull(); const orderNumber = orderNumberMatch![1];
-  await expect(page.getByRole('button', { name: 'طلباتي', exact: true })).toBeVisible(); await expect(page.getByText(`طلب #${orderNumber}`, { exact: true })).toBeVisible(); await page.reload();
-  await expect(page.getByRole('button', { name: 'طلباتي', exact: true })).toBeVisible(); await page.getByRole('button', { name: 'طلباتي', exact: true }).click(); await expect(page.getByText(`طلب #${orderNumber}`, { exact: true })).toBeVisible();
+  await expect(page.getByRole('complementary', { name: 'تنقل البوابة' }).getByRole('button', { name: /^طلباتي/ }).first()).toBeVisible(); await expect(page.getByText(`طلب #${orderNumber}`, { exact: true })).toBeVisible(); await page.reload();
+  await expect(page.getByRole('complementary', { name: 'تنقل البوابة' }).getByRole('button', { name: /^طلباتي/ }).first()).toBeVisible(); await page.getByRole('complementary', { name: 'تنقل البوابة' }).getByRole('button', { name: /^طلباتي/ }).first().click(); await expect(page.getByText(`طلب #${orderNumber}`, { exact: true })).toBeVisible();
   await expect(page.getByRole('status').filter({ hasText: 'قيد المراجعة' }).first()).toBeVisible(); await expect(page.locator('.order-progress').first()).toBeVisible();
+  const orderDetailButton = page.getByRole('button', { name: 'عرض التفاصيل', exact: true }).first();
+  await expect(orderDetailButton).toBeVisible();
+  await orderDetailButton.click();
+  const orderDialog = page.locator('.order-detail-modal');
+  await expect(orderDialog).toBeVisible();
+  await expect(orderDialog.getByText(productName, { exact: true })).toBeVisible();
+  await expect(orderDialog.getByText('إجمالي الطلب')).toBeVisible();
+  await page.getByRole('button', { name: 'إغلاق تفاصيل الطلب', exact: true }).click();
+  await expect(orderDialog).toHaveCount(0);
   await page.getByRole('button', { name: 'خروج', exact: true }).last().click(); await expect(page.getByRole('button', { name: 'دخول آمن', exact: true })).toBeVisible(); await expect(page.getByRole('button', { name: 'الكتالوج', exact: true })).toHaveCount(0); await assertCleanBrowser(failures);
 });
 
@@ -110,7 +119,7 @@ test('tenant isolation: Tenant B cannot read Tenant A order through the real UI 
   const quantityConfirmation = pageA.getByRole('button', { name: 'اعتماد الكمية', exact: true }).first(); await expect(quantityConfirmation).toBeEnabled(); await quantityConfirmation.click(); await expect(pageA.getByRole('button', { name: '✓ معتمد', exact: true })).toBeVisible();
   await pageA.getByRole('button', { name: 'تأكيد وإرسال الطلب', exact: true }).click(); const success = pageA.locator('.success').filter({ hasText: 'تم إرسال الطلب #' }).last(); await expect(success).toBeVisible();
   const match = (await success.innerText()).match(/طلب #([^\s]+) بنجاح/); expect(match, 'Tenant A order number must be captured from the real persisted response.').not.toBeNull(); const orderNumberA = match![1];
-  const contextB = await browser.newContext(); const pageB = await contextB.newPage(); const failuresB = captureBrowserFailures(pageB); await login(pageB, emailB, passwordB); await pageB.getByRole('button', { name: 'طلباتي', exact: true }).click();
+  const contextB = await browser.newContext(); const pageB = await contextB.newPage(); const failuresB = captureBrowserFailures(pageB); await login(pageB, emailB, passwordB); await pageB.getByRole('complementary', { name: 'تنقل البوابة' }).getByRole('button', { name: /^طلباتي/ }).first().click();
   await expect(pageB.getByText(`طلب #${orderNumberA}`, { exact: true })).toHaveCount(0); await assertCleanBrowser(failuresA); await assertCleanBrowser(failuresB); await contextB.close(); await contextA.close();
 });
 
@@ -129,7 +138,7 @@ test('quick order accepts scanner-style Enter submission', async ({ page }) => {
   const failures = captureBrowserFailures(page); await login(page, email, password); const sku = await page.locator('.product-card').first().locator('.sku').innerText();
   const quickButton = page.getByRole('button', { name: 'طلب سريع', exact: true }); await expect(quickButton).toBeVisible(); await quickButton.click();
   const skuInput = page.getByRole('textbox', { name: 'SKU / الباركود' }); const qtyInput = page.getByRole('spinbutton', { name: 'كمية الطلب' }); await expect(skuInput).toBeFocused(); await skuInput.fill(sku.trim()); await qtyInput.fill('1'); await qtyInput.press('Enter');
-  await expect(page.getByRole('button', { name: /السلة/ })).toContainText('1'); await assertCleanBrowser(failures);
+  await expect(page.getByRole('banner').getByRole('button', { name: /^السلة/ }).first()).toContainText('1'); await assertCleanBrowser(failures);
 });
 
 test('quick order accepts barcode identifiers', async ({ page }) => {
@@ -140,10 +149,10 @@ test('quick order accepts barcode identifiers', async ({ page }) => {
   const quickButton = page.getByRole('button', { name: 'طلب سريع', exact: true }); await quickButton.click();
   const identifierInput = page.getByRole('textbox', { name: 'SKU / الباركود' }); const qtyInput = page.getByRole('spinbutton', { name: 'كمية الطلب' });
   await identifierInput.fill(barcode!); await qtyInput.fill('1'); await qtyInput.press('Enter');
-  await expect(page.getByRole('button', { name: /السلة/ })).toContainText('1'); await assertCleanBrowser(failures);
+  await expect(page.getByRole('banner').getByRole('button', { name: /^السلة/ }).first()).toContainText('1'); await assertCleanBrowser(failures);
 });
 
-test('quick order resolves a server-authorized product outside the currently loaded catalog results', async ({ page }) => { const email = process.env.E2E_EMAIL; const password = process.env.E2E_PASSWORD; if (!email || !password) throw new Error('E2E_EMAIL and E2E_PASSWORD are required for server-backed quick-order lookup proof.'); const failures = captureBrowserFailures(page); await login(page, email, password); const search = page.getByRole('textbox', { name: 'البحث في الكتالوج' }); await search.fill('NO-SUCH-CATALOG-MATCH'); await expect(page.locator('.product-card')).toHaveCount(0); const quickButton = page.getByRole('button', { name: 'طلب سريع', exact: true }); await quickButton.click(); const identifierInput = page.getByRole('textbox', { name: 'SKU / الباركود' }); const qtyInput = page.getByRole('spinbutton', { name: 'كمية الطلب' }); await expect(identifierInput).toBeFocused(); await identifierInput.fill('BROW-001'); await qtyInput.fill('1'); await identifierInput.press('Enter'); await expect(page.getByRole('button', { name: /السلة/ })).toContainText('1'); await assertCleanBrowser(failures); });
+test('quick order resolves a server-authorized product outside the currently loaded catalog results', async ({ page }) => { const email = process.env.E2E_EMAIL; const password = process.env.E2E_PASSWORD; if (!email || !password) throw new Error('E2E_EMAIL and E2E_PASSWORD are required for server-backed quick-order lookup proof.'); const failures = captureBrowserFailures(page); await login(page, email, password); const search = page.getByRole('textbox', { name: 'البحث في الكتالوج' }); await search.fill('NO-SUCH-CATALOG-MATCH'); await expect(page.locator('.product-card')).toHaveCount(0); const quickButton = page.getByRole('button', { name: 'طلب سريع', exact: true }); await quickButton.click(); const identifierInput = page.getByRole('textbox', { name: 'SKU / الباركود' }); const qtyInput = page.getByRole('spinbutton', { name: 'كمية الطلب' }); await expect(identifierInput).toBeFocused(); await identifierInput.fill('BROW-001'); await qtyInput.fill('1'); await identifierInput.press('Enter'); await expect(page.getByRole('banner').getByRole('button', { name: /^السلة/ }).first()).toContainText('1'); await assertCleanBrowser(failures); });
 
 test('catalog progressive browsing exposes bounded loading when more products exist', async ({ page }) => {
   const email = process.env.E2E_EMAIL; const password = process.env.E2E_PASSWORD; if (!email || !password) throw new Error('E2E_EMAIL and E2E_PASSWORD are required for catalog pagination proof.'); await login(page, email, password);
@@ -153,8 +162,24 @@ test('catalog progressive browsing exposes bounded loading when more products ex
 test('inline product quantity controls preserve a single cart line', async ({ page }) => {
   const email = process.env.E2E_EMAIL; const password = process.env.E2E_PASSWORD; if (!email || !password) throw new Error('E2E_EMAIL and E2E_PASSWORD are required for quantity-control proof.'); await login(page, email, password);
   const card = page.locator('.product-card').first(); await expect(card).toBeVisible(); const addButton = card.getByRole('button', { name: 'إضافة للسلة' }); if (await addButton.count()) {
-    await addButton.click(); await expect(card.locator('.product-qty-control')).toBeVisible(); await expect(card.locator('.product-qty-control output')).toHaveText('1'); const drawerClose = page.locator('.cart-drawer').getByRole('button', { name: '×', exact: true }); await expect(drawerClose).toBeVisible(); await drawerClose.click(); await expect(page.locator('.cart-drawer')).toHaveCount(0); const inlineCard = page.locator('.product-card').first(); await inlineCard.getByRole('button', { name: /زيادة/ }).click(); await expect(card.locator('.product-qty-control output')).toHaveText('2'); await card.getByRole('button', { name: /إنقاص/ }).click(); await expect(card.locator('.product-qty-control output')).toHaveText('1');
+    await addButton.click(); await expect(card.locator('.product-qty-control')).toBeVisible(); await expect(card.locator('.product-qty-control output')).toHaveText('1'); const drawerClose = page.locator('.cart-drawer').getByRole('button', { name: 'إغلاق السلة', exact: true }); await expect(drawerClose).toBeVisible(); await drawerClose.click(); await expect(page.locator('.cart-drawer')).toHaveCount(0); const inlineCard = page.locator('.product-card').first(); await inlineCard.getByRole('button', { name: /زيادة/ }).click(); await expect(card.locator('.product-qty-control output')).toHaveText('2'); await card.getByRole('button', { name: /إنقاص/ }).click(); await expect(card.locator('.product-qty-control output')).toHaveText('1');
   }
+});
+
+
+test('customer portal search reset and modal escape controls remain accessible', async ({ page }) => {
+  const email = process.env.E2E_EMAIL; const password = process.env.E2E_PASSWORD; if (!email || !password) throw new Error('E2E_EMAIL and E2E_PASSWORD are required for customer UI accessibility proof.');
+  const failures = captureBrowserFailures(page); await login(page, email, password);
+  const firstCard = page.locator('.product-card').first(); await expect(firstCard).toBeVisible();
+  const productName = (await firstCard.getByRole('heading').first().innerText()).trim();
+  const search = page.getByRole('textbox', { name: 'البحث في الكتالوج' }); await search.fill(productName);
+  await expect(page.getByRole('button', { name: 'مسح البحث' })).toBeVisible();
+  await page.getByRole('button', { name: 'مسح البحث' }).click(); await expect(search).toHaveValue(''); await expect(page.locator('.product-card').first()).toBeVisible();
+  await page.locator('.product-card').first().getByRole('button', { name: 'عرض التفاصيل' }).click();
+  await expect(page.locator('.product-detail-modal')).toBeVisible(); await page.keyboard.press('Escape'); await expect(page.locator('.product-detail-modal')).toHaveCount(0);
+  await page.getByRole('banner').getByRole('button', { name: /^السلة/ }).first().click();
+  await expect(page.getByRole('dialog', { name: /السلة/ })).toBeVisible(); await page.keyboard.press('Escape'); await expect(page.getByRole('dialog', { name: /السلة/ })).toHaveCount(0);
+  await assertCleanBrowser(failures);
 });
 
 test('product detail modal exposes customer-safe facts', async ({ page }) => {

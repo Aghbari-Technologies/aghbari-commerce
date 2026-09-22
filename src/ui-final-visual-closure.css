@@ -1,0 +1,228 @@
+/* Aghbari Commerce — final visual closure layer.
+   Presentation-only: no business logic, pricing, authorization, data, or reporting behavior changes.
+   Resource-smart: CSS-only, no new dependency, font, image, or runtime payload. */
+
+/* Keyboard accessibility: show skip links for intentional keyboard focus, not incidental programmatic focus. */
+.skip-link {
+  top: -80px;
+}
+.skip-link:focus-visible {
+  top: 16px;
+}
+
+/* Customer mobile: prevent the sticky navigation from covering the hero/header.
+   The persistent bottom nav remains the mobile navigation surface. */
+@media (max-width: 650px) {
+  .customer-shell .portal-nav {
+    position: static !important;
+    top: auto !important;
+    z-index: auto !important;
+    overflow-x: auto;
+    margin: 2px 0 10px;
+    padding: 6px !important;
+  }
+
+  .customer-shell .portal-body {
+    display: block !important;
+    width: 100%;
+    max-width: 100%;
+    padding-inline: 10px !important;
+  }
+
+  .customer-shell .portal-main {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .customer-shell .hero-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 18px;
+    min-height: auto;
+    padding: 22px !important;
+  }
+
+  .customer-shell .hero-card h2 {
+    line-height: 1.18;
+  }
+
+  .customer-shell .hero-metrics {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .customer-shell .hero-stat,
+  .customer-shell .hero-mini-metric {
+    min-width: 0;
+  }
+
+  .customer-shell .product-grid {
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+    justify-items: stretch;
+  }
+
+  .customer-shell .product-grid:has(> .product-card:only-child) {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .customer-shell .product-card {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .customer-shell .product-card img,
+  .customer-shell .product-placeholder {
+    width: 100%;
+    aspect-ratio: 1.15;
+    height: auto;
+  }
+
+  .customer-shell .product-body {
+    min-width: 0;
+    padding: 12px;
+  }
+
+  .customer-shell .product-body h3 {
+    font-size: 15px;
+    overflow-wrap: anywhere;
+  }
+
+  .customer-shell .product-qty-control {
+    grid-template-columns: 40px minmax(0, 1fr) 40px;
+  }
+
+  .customer-shell .search-panel {
+    margin-top: 12px;
+  }
+
+  .customer-shell .purchase-shortcuts {
+    margin-top: 10px;
+  }
+}
+
+/* Very narrow devices: keep controls legible and avoid accidental two-track emptiness. */
+@media (max-width: 430px) {
+  .customer-shell .product-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .customer-shell .product-grid:not(:has(> .product-card:only-child)) {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .customer-shell .hero-metrics {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .customer-shell .header-actions {
+    max-width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .customer-shell .header-actions > button {
+    min-height: 38px;
+  }
+
+  .customer-shell .portal-bottom-nav {
+    box-shadow: 0 14px 38px rgba(7, 37, 54, .18);
+  }
+}
+
+/* Sparse/live fixture states: a single real product should look intentionally featured,
+   never like a stretched four-column canvas. */
+@media (min-width: 651px) {
+  .customer-shell .product-grid:has(> .product-card:only-child) {
+    grid-template-columns: minmax(280px, 390px) !important;
+    justify-content: start;
+  }
+
+  .customer-shell .product-grid:has(> .product-card:only-child) .product-card {
+    box-shadow: 0 14px 34px rgba(16, 42, 67, .085);
+  }
+}
+
+/* Customer hierarchy: preserve scan order while trimming unused vertical space. */
+.customer-shell .purchase-shortcuts {
+  border-color: #d5e5e9;
+}
+
+.customer-shell .search-panel {
+  border-color: #d5e5e9;
+}
+
+.customer-shell .category-row {
+  scrollbar-width: thin;
+  scroll-snap-type: x proximity;
+}
+
+.customer-shell .category-row button {
+  scroll-snap-align: start;
+}
+
+.customer-shell .product-body > small {
+  color: #718893;
+}
+
+.customer-shell .price-hidden {
+  border: 1px dashed #d9e6eb;
+}
+
+/* Staff workspace: keep the section rail available while scrolling on desktop,
+   without competing with the mobile bottom navigation. */
+@media (min-width: 651px) {
+  .staff-shell .staff-section-rail {
+    position: sticky;
+    top: 76px;
+    z-index: 35;
+    padding: 7px;
+    margin-top: 8px;
+    margin-inline: -7px;
+    border: 1px solid rgba(210, 226, 231, .92);
+    border-radius: 16px;
+    background: rgba(243, 247, 249, .92);
+    box-shadow: 0 10px 28px rgba(8, 49, 67, .06);
+    backdrop-filter: blur(14px);
+  }
+}
+
+.staff-shell .admin-operations,
+.staff-shell #admin-customers,
+.staff-shell #admin-inventory,
+.staff-shell #admin-purchasing,
+.staff-shell #admin-finance,
+.staff-shell #admin-export,
+.staff-shell #admin-settings {
+  scroll-margin-top: 96px;
+}
+
+.staff-shell .admin-card,
+.staff-shell .cart-panel,
+.staff-shell .client-control-panel {
+  min-width: 0;
+}
+
+.staff-shell .admin-card input,
+.staff-shell .admin-card select,
+.staff-shell .admin-card textarea,
+.staff-shell .admin-order-tools input,
+.staff-shell .admin-order-tools select {
+  max-width: 100%;
+}
+
+.staff-shell .staff-bottom-nav {
+  padding-bottom: max(6px, env(safe-area-inset-bottom));
+}
+
+/* Motion remains restrained and respects the system preference. */
+@media (prefers-reduced-motion: reduce) {
+  .customer-shell *,
+  .staff-shell * {
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

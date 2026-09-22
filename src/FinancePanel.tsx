@@ -29,8 +29,8 @@ export default function FinancePanel({ role }: { role: UserRole }) {
     const typedOrders=(orderRows??[]) as unknown as OrderRow[];
     setOrders(typedOrders.map(o=>({id:o.id,order_number:o.order_number,customer_name:o.customers?.name??'عميل',status:o.status,total:Number(o.total),currency:o.currency})));
     setBranches((branchRows??[]) as Branch[]);setInvoices(invoiceRows);setCash(cashRows);
-    if(!invoiceId&&invoiceRows[0])setInvoiceId(invoiceRows[0].id);if(!cashAccountId&&cashRows[0])setCashAccountId(cashRows[0].id);if(!expenseAccountId&&cashRows[0])setExpenseAccountId(cashRows[0].id);if(!branchId&&branchRows?.[0])setBranchId(branchRows[0].id);
-  },[branchId,canAccount,canExpense,canInvoice,cashAccountId,expenseAccountId,invoiceId]);
+    setInvoiceId((current)=>current||invoiceRows[0]?.id||'');setCashAccountId((current)=>current||cashRows[0]?.id||'');setExpenseAccountId((current)=>current||cashRows[0]?.id||'');setBranchId((current)=>current||branchRows?.[0]?.id||'');
+  },[canAccount,canExpense,canInvoice]);
   useEffect(()=>{void reload().catch(e=>setError(e instanceof Error?e.message:'تعذر تحميل المالية التشغيلية.'));},[reload]);
   async function run(action:()=>Promise<unknown>,success:string){setBusy(true);setError(null);setMessage(null);try{await action();setMessage(success);await reload();}catch(e){setError(e instanceof Error?e.message:'تعذر تنفيذ العملية.');}finally{setBusy(false);}}
   if(!canInvoice&&!canExpense&&!canAccount)return null;

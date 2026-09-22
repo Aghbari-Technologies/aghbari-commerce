@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { CustomerTier } from './domain/types';
+import { formatMoney } from './domain/pricing';
 import { createCustomer, getCustomers, setCustomerActive, setCustomerTier, type StaffCustomer } from './services/customers';
 import { supabase } from './lib/supabase';
 
@@ -12,18 +13,62 @@ export default function CustomerPanel({ role }: { role: UserRole }) {
   const canManage = ['owner', 'admin'].includes(role);
   const canInvite = ['owner', 'admin', 'sales'].includes(role);
   const [customers, setCustomers] = useState<StaffCustomer[]>([]);
+  const [selectedCustomer,setSelectedCustomer]=useState<StaffCustomer|null>(null);
+  const [detailLoading,setDetailLoading]=useState(false);
+  const [detailOrders,setDetailOrders]=useState<Array<{order_number:number;status:string;total:number;currency:string;created_at:string}>>([]);
+  const [detailLedger,setDetailLedger]=useState<Array<{reference:string|null;description:string;debit:number;credit:number;due_date:string|null;status:string;created_at:string}>>([]);
+  const [detailInvitations,setDetailInvitations]=useState<Array<{recipient_email:string;expires_at:string;accepted_at:string|null;revoked_at:string|null;created_at:string}>>([]);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [tier, setTier] = useState<CustomerTier>('wholesale');
   const [inviteEmail, setInviteEmail] = useState<Record<string, string>>({});
   const [inviteLink, setInviteLink] = useState<Record<string, string>>({});
   const [inviteBusy, setInviteBusy] = useState<string | null>(null);
+  const [customerQuery, setCustomerQuery] = useState('');
+  const [customerStatus, setCustomerStatus] = useState<'all' | 'active' | 'paused'>('all');
+  const [customerTier, setCustomerTierFilter] = useState<'all' | CustomerTier>('all');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const reload = useCallback(async () => setCustomers(await getCustomers(200)), []);
   useEffect(() => { void reload().catch((e) => setError(e instanceof Error ? e.message : 'تعذر تحميل العملاء.')); }, [reload]);
   async function run(action: () => Promise<unknown>, success: string) { setBusy(true); setError(null); setMessage(null); try { await action(); setMessage(success); await reload(); } catch (e) { setError(e instanceof Error ? e.message : 'تعذر تنفيذ العملية.'); } finally { setBusy(false); } }
+  const visibleCustomers = customers.filter((customer) => {
+    const needle = customerQuery.trim().toLocaleLowerCase('ar');
+    const matchesQuery = !needle || (customer.name + ' ' + (customer.phone ?? '')).toLocaleLowerCase('ar').includes(needle);
+    const matchesStatus = customerStatus === 'all' || (customerStatus === 'active' ? customer.is_active : !customer.is_active);
+    const matchesTier = customerTier === 'all' || customer.tier === customerTier;
+    return matchesQuery && matchesStatus && matchesTier;
+  });
+  const hasCustomerFilters = Boolean(customerQuery.trim()) || customerStatus !== 'all' || customerTier !== 'all';
+  function clearCustomerFilters() { setCustomerQuery(''); setCustomerStatus('all'); setCustomerTierFilter('all'); }
+  async function openCustomerDetail(customer:StaffCustomer){
+    if(!supabase || detailLoading) return;
+    setSelectedCustomer(customer); setDetailLoading(true); setError('');
+    try{
+      const [{data:orders,error:ordersError},{data:invoices,error:invoiceError},{data:invitations,error:invitationError}]=await Promise.all([
+        supabase.from('orders').select('order_number,status,total,currency,created_at').eq('customer_id',customer.id).order('created_at',{ascending:false}).limit(25),
+        supabase.from('operational_invoices').select('id,invoice_number,status,total,currency,due_at,created_at').eq('customer_id',customer.id).order('created_at',{ascending:false}).limit(40),
+        supabase.from('customer_invitations').select('recipient_email,expires_at,accepted_at,revoked_at,created_at').eq('customer_id',customer.id).order('created_at',{ascending:false}).limit(20)
+      ]);
+      if(ordersError) throw ordersError; if(invoiceError) throw invoiceError; if(invitationError) throw invitationError;
+      const invoiceRows=invoices??[];
+      const invoiceIds=invoiceRows.map(item=>item.id);
+      let payments:Array<{invoice_id:string;amount:number;reference:string|null;method:string;paid_at:string;created_at:string}>=[];
+      if(invoiceIds.length){
+        const {data:paymentRows,error:paymentError}=await supabase.from('payments').select('invoice_id,amount,reference,method,paid_at,created_at').in('invoice_id',invoiceIds).order('paid_at',{ascending:false}).limit(80);
+        if(paymentError) throw paymentError;
+        payments=(paymentRows??[]).map(item=>({...item,amount:Number(item.amount)}));
+      }
+      setDetailOrders((orders??[]).map(item=>({...item,total:Number(item.total)})));
+      const invoiceEntries=invoiceRows.map(item=>({reference:'INV-'+item.invoice_number,description:'فاتورة #'+item.invoice_number,debit:Number(item.total),credit:0,due_date:item.due_at, status:item.status, created_at:item.created_at}));
+      const paymentEntries=payments.map(item=>({reference:item.reference??'PAY-'+item.paid_at,description:'تحصيل '+(item.reference??item.method),debit:0,credit:item.amount,due_date:null,status:'paid',created_at:item.paid_at}));
+      setDetailLedger([...invoiceEntries,...paymentEntries].sort((a,b)=>Date.parse(b.created_at)-Date.parse(a.created_at)).slice(0,80));
+      setDetailInvitations((invitations??[]) as typeof detailInvitations);
+    }catch(e){setSelectedCustomer(null);setError(e instanceof Error?e.message:'تعذر تحميل ملف العميل.');}
+    finally{setDetailLoading(false);}
+  }
+
   async function dispatchInvitation(customer: StaffCustomer) {
     const email = (inviteEmail[customer.id] ?? '').trim().toLowerCase();
     if (!supabase || !email) return;
@@ -49,15 +94,36 @@ export default function CustomerPanel({ role }: { role: UserRole }) {
         <button disabled={busy}>حفظ العميل</button>
       </form>}
       <div className="admin-card">
-        <h3>العملاء الحاليون</h3>
-        {!customers.length ? <small>لا يوجد عملاء مسجلون بعد.</small> : <div className="cart-lines">{customers.map((customer) => <article className="cart-line" key={customer.id}>
+        <div className="section-heading"><div><h3>العملاء الحاليون</h3></div><span>{hasCustomerFilters ? "إظهار " + visibleCustomers.length + " من " + customers.length : customers.length + " عميل"}</span></div>
+        {customers.length > 0 && <div className="admin-order-tools customer-filter-tools"><input aria-label="البحث في العملاء" value={customerQuery} onChange={(e) => setCustomerQuery(e.target.value)} placeholder="اسم العميل أو الهاتف…"/><select aria-label="تصفية حالة العميل" value={customerStatus} onChange={(e) => setCustomerStatus(e.target.value as 'all' | 'active' | 'paused')}><option value="all">كل الحالات</option><option value="active">نشط</option><option value="paused">موقوف</option></select><select aria-label="تصفية فئة العميل" value={customerTier} onChange={(e) => setCustomerTierFilter(e.target.value as 'all' | CustomerTier)}><option value="all">كل الفئات</option>{tiers.map((item) => <option key={item} value={item}>{tierLabels[item]}</option>)}</select>{hasCustomerFilters && <button type="button" onClick={clearCustomerFilters}>مسح التصفية</button>}</div>}
+        {!customers.length ? <small>لا يوجد عملاء مسجلون بعد.</small> : !visibleCustomers.length ? <div className="cart-empty">لا توجد نتائج مطابقة. عدّل البحث أو التصفية.</div> : <div className="cart-lines">{visibleCustomers.map((customer) => <article className="cart-line" key={customer.id}>
           <div><strong>{customer.name}</strong><small>{customer.phone ?? 'بدون هاتف'} · {customer.is_active ? 'نشط' : 'موقوف'}</small></div>
           <select aria-label={`فئة ${customer.name}`} disabled={!canManage || busy} value={customer.tier} onChange={(e) => void run(() => setCustomerTier(customer.id, e.target.value as CustomerTier), 'تم تحديث فئة العميل.')}>{tiers.map((item) => <option key={item} value={item}>{tierLabels[item]}</option>)}</select>
           {canManage && <button disabled={busy} onClick={() => void run(() => setCustomerActive(customer.id, !customer.is_active), customer.is_active ? 'تم إيقاف العميل.' : 'تم تفعيل العميل.')}>{customer.is_active ? 'إيقاف' : 'تفعيل'}</button>}
+          <button type="button" className="ghost compact-action" onClick={()=>void openCustomerDetail(customer)} disabled={detailLoading}>تفاصيل وكشف</button>
           {canInvite && customer.is_active && <div className="invite-controls"><input type="email" aria-label={`بريد دعوة ${customer.name}`} placeholder="بريد العميل" value={inviteEmail[customer.id] ?? ''} onChange={(e) => setInviteEmail((current) => ({ ...current, [customer.id]: e.target.value }))} /><button disabled={inviteBusy === customer.id || !(inviteEmail[customer.id] ?? '').trim()} onClick={() => void dispatchInvitation(customer)}>{inviteBusy === customer.id ? 'جارٍ إنشاء الدعوة…' : 'إرسال دعوة'}</button>{inviteLink[customer.id] && <a href={inviteLink[customer.id]} target="_blank" rel="noreferrer">فتح رابط الدعوة</a>}</div>}
         </article>)}</div>}
       </div>
     </div>
+    {selectedCustomer && <div id="customer-detail-modal" className="modal-backdrop" role="presentation" onMouseDown={() => !detailLoading && setSelectedCustomer(null)}>
+      <section className="modal customer-detail-modal" role="dialog" aria-modal="true" aria-labelledby="customer-detail-title" onMouseDown={(event) => event.stopPropagation()}>
+        <div className="modal-head"><div><span className="eyebrow">ملف العميل</span><h3 id="customer-detail-title">{selectedCustomer.name}</h3></div><button type="button" aria-label="إغلاق ملف العميل" onClick={() => setSelectedCustomer(null)}>×</button></div>
+        {detailLoading ? <div className="cart-empty">جارٍ تحميل الملف التجاري…</div> : <>
+          <div className="bulk-preview-stats"><strong>{detailOrders.length} طلب</strong><span>{detailLedger.length} قيد مالي</span><span>{detailInvitations.length} دعوة</span></div>
+          <div className="admin-grid">
+            <div className="admin-card"><div className="section-heading"><div><h4>الطلبات الأخيرة</h4><small>بيانات الطلبات المصرح بها لهذا العميل.</small></div></div>
+              {!detailOrders.length ? <div className="cart-empty">لا توجد طلبات.</div> : <div className="cart-lines">{detailOrders.slice(0,10).map((order) => <article className="cart-line" key={order.order_number}><div><strong>طلب #{order.order_number}</strong><small>{order.status} · {new Date(order.created_at).toLocaleDateString('ar-YE')}</small></div><b>{formatMoney(order.total)} {order.currency}</b></article>)}</div>}
+            </div>
+            <div className="admin-card"><div className="section-heading"><div><h4>كشف الحساب</h4><small>القيود المالية المصرح بها.</small></div></div>
+              {!detailLedger.length ? <div className="cart-empty">لا توجد قيود مالية.</div> : <div className="cart-lines">{detailLedger.slice(0,15).map((entry,index) => <article className="cart-line" key={(entry.reference ?? 'entry') + entry.created_at + index}><div><strong>{entry.description}</strong><small>{entry.reference ?? 'بدون مرجع'} · {entry.status}</small></div><div><span>مدين {formatMoney(entry.debit)}</span><span>دائن {formatMoney(entry.credit)}</span></div></article>)}</div>}
+            </div>
+          </div>
+          <div className="admin-card"><div className="section-heading"><div><h4>دعوات العميل</h4><small>حالة الدعوات المرتبطة ببوابة العميل.</small></div></div>
+            {!detailInvitations.length ? <div className="cart-empty">لا توجد دعوات.</div> : <div className="cart-lines">{detailInvitations.map((item,index) => <article className="cart-line" key={item.recipient_email + item.created_at + index}><div><strong>{item.recipient_email}</strong><small>{item.accepted_at ? 'مقبولة' : item.revoked_at ? 'ملغاة' : new Date(item.expires_at).getTime() < Date.now() ? 'منتهية' : 'بانتظار القبول'}</small></div><time dateTime={item.created_at}>{new Date(item.created_at).toLocaleDateString('ar-YE')}</time></article>)}</div>}
+          </div>
+        </>}
+      </section>
+    </div>}
     {error && <div className="error-banner" role="alert">{error}</div>}{message && <div className="success" role="status">{message}</div>}
   </div>;
 }
