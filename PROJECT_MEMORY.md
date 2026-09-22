@@ -176,6 +176,74 @@
 - UX: premium responsive Arabic/RTL-first UI, English-ready architecture, accessibility, keyboard/focus, mobile, and explicit loading/empty/error/success states.
 - Differentiation: B2B speed, controlled pricing, self-service, reorder/templates, import/export, inventory integrity, traceability, permissions, offline resilience, auditability, integration readiness. Do not add BI/dashboard scope.
 
+## 1A. MASTER PRODUCT SURFACE & SCREEN CONTRACT
+
+هذه هي قائمة التغطية الدائمة للواجهات. وجود المتطلب هنا يعني أن واجهته وتدفقه جزء من Definition of Done متى كان ذلك الجزء ضمن النطاق الفعلي.
+
+### Staff / Admin
+- Authentication, session, logout, invitation acceptance, role-aware entry.
+- Operational Home / Executive workspace: operational pulse only; no synthetic BI.
+- Orders: list, search/filter, create/edit where supported, detail, status transitions, fulfillment/closure states.
+- Purchasing: suppliers, purchase orders, receive/receiving, purchase detail.
+- Inventory: stock, movements, warehouses, warehouse detail, transfers, transfer detail, stock counts, adjustment flows.
+- Customers: directory, search/filter, customer detail, statements, invitations, customer-linked operations.
+- Suppliers: directory, supplier detail, supplier statements, purchasing links.
+- Catalog: products, product list/search/filter, category management, product detail/edit, media/images, SKU/barcode, availability.
+- Pricing: customer/tier pricing, pricing visibility, operational pricing workflows.
+- Finance: invoices, payments, expenses, customer statements, supplier statements.
+- Import/Export: unified Import Center with upload→parse→validate→preview→execute→result/error report; unified exports according to permission.
+- Users/Roles/Permissions: role management and permission-aware navigation/workflows.
+- Audit-sensitive operations and visible activity/history where required.
+- Settings / organization controls / integrations / client-facing controls that are part of the accepted product scope.
+
+### Customer B2B Portal
+- Login/session/logout/invitation acceptance.
+- Home with direct high-frequency actions.
+- Catalog, categories, search/filter, product detail, authorized pricing, stock visibility where allowed.
+- Quick Order by exact SKU/barcode with authorized server fallback when the current page is incomplete.
+- Excel ordering/import review where supported.
+- Cart, quantity editing, validation, checkout/order submission.
+- Orders history, order detail, status/timeline, reorder.
+- Saved order templates and template-based ordering.
+- Financial center: invoices, payments, statement/ledger, balance visibility according to authorization.
+- Profile/account and responsive/mobile navigation.
+- All customer surfaces must use the same B2B design language and must remain usable at mobile widths.
+
+### Global UI completion states
+Every substantive surface must deliberately handle, where applicable:
+- loading / skeleton;
+- empty / no-results with actionable recovery;
+- success confirmation;
+- error / retry;
+- disabled / busy / duplicate-submit protection;
+- permission denied / role-filtered visibility;
+- offline / reconnect / queued action state;
+- responsive Desktop / Tablet / Mobile;
+- RTL and Arabic typography/direction;
+- keyboard focus, modal focus containment/restoration and accessible interaction.
+
+### Functional completion contract
+واجهة مكتملة = `real workflow + real state + authorization + persistence/API path + audit/reliability where required + responsive/RTL UI + browser proof on the exact SHA`.
+Do not use fake metrics, fake records, placeholder controls, decorative buttons, or screenshots that are not backed by a reproducible exact-SHA evidence path.
+
+### Resource contract
+Prefer reuse and bounded structures:
+- reuse existing components and design tokens;
+- no new dependency when CSS/component composition is sufficient;
+- deterministic replaceable media objects;
+- bounded browser caches, offline queues and payloads;
+- avoid duplicated CI/build/deployment work;
+- measure storage/database/repository growth before destructive remediation;
+- never delete operational, financial, audit, or customer truth merely to reduce size.
+
+### Launch contract
+Every launch must simultaneously:
+1. resume from the stored pointer;
+2. close any still-open core/UI gap that is not genuinely blocked;
+3. advance independent security/QA/release/resource fronts in parallel;
+4. verify changes on the exact SHA;
+5. update the living memory before the launch ends.
+
 ## 2. PERMANENT EXECUTION CONSTITUTION
 - User command `1` = EXECUTE NOW.
 - Start from `AGHBARI-EXECUTION-START.md`, then `CONTROL PLANE → PROJECT MEMORY → DEVELOPMENT PROGRESS → LATEST STATE → CURRENT REALITY → EXECUTE`.

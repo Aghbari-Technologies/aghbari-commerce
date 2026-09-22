@@ -122,6 +122,22 @@
 - Performance-sensitive rendering
 - No visual regressions between modules
 
+## 🔴 MASTER COMPLETION & PARALLEL EXECUTION DIRECTIVE — EVERY LAUNCH
+
+هذا القسم إلزامي في **كل انطلاقة** ولا يجوز تجاوزه أو تفسيره كاقتراح:
+
+1. **استئناف فوري:** ابدأ من آخر `CURRENT RESUME POINTER` مثبت، ثم تحقق من GitHub Exact HEAD والواقع الحالي. لا تبدأ من الصفر، ولا تعيد بناء السياق إذا كان محفوظًا.
+2. **بوابة أول 120 دقيقة:** الأولوية الإلزامية في بداية كل انطلاقة هي الوصول إلى **FULL PRODUCT UI COVERAGE** على مستوى المنتج: جميع routes/views الأساسية، Admin/Staff، Customer Portal، الصفحات الفرعية، dialogs/drawers، forms، tables، filters، search، loading/empty/error/success/disabled/permission/offline states، وDesktop/Tablet/Mobile. المطلوب Baseline حقيقي قابل للاستخدام وليس placeholder.
+3. **التنفيذ المتوازي الإجباري:** اعمل في كل انطلاقة بالتوازي على جميع الجبهات المستقلة الممكنة: UI/UX coverage + visual completion؛ Core transactional functionality؛ Security/data integrity؛ QA/browser/test-the-test؛ deployment/release proof؛ performance/resource preservation. لا تجعل انتظار جبهة واحدة سببًا لتجميد الجبهات الأخرى.
+4. **كل متطلب في الذاكرة له واجهة:** إذا كان المتطلب موجودًا في `PROJECT_MEMORY.md` أو Control Plane أو أي Specification canonical ولم تكن واجهته/تدفقه مكتملًا، فهذه فجوة تنفيذية يجب فتحها وإكمالها في نفس الانطلاقة، ثم تلميعها بصريًا والتحقق منها.
+5. **لا واجهات وهمية:** ممنوع الاكتفاء بشاشة جميلة بلا عملية حقيقية خلفها. لكل واجهة: `UI → State → Logic → API/RPC → Auth/RLS/Storage → Audit → Verification`.
+6. **عدم إعادة فتح المكتمل:** لا تلمس واجهة أو جبهة أغلقت بدليل صحيح إلا إذا تغيّر SHA أو dependency أو evidence أو ظهرت regression/عيب مثبت. استخدم dependency-aware checks.
+7. **توفير المساحة بذكاء:** أعد استخدام المكونات والأنماط والأصول، قلل dependencies والملفات والصور والطلبات، واستخدم caching/storage bounded/deterministic حيث يفيد. ممنوع الحذف التخريبي لبيانات العمل لمجرد توفير المساحة.
+8. **الصلاحيات التنفيذية:** استخدم جميع الصلاحيات والأدوات الممنوحة لك ضمن الحدود الآمنة لاتخاذ وتنفيذ القرارات التقنية. لا تنتظر إذنًا لقرار هندسي مفوض.
+9. **الحقيقة والأدلة:** لا PASS بلا Exact-SHA evidence. لا تنقل دليلًا بين SHAs، ولا تجعل Build/CI/SQL/Deployment بديلًا عن Browser/Runtime proof عندما تكون الأخيرة مطلوبة.
+10. **نهاية كل انطلاقة:** حدّث الذاكرة الحية فورًا مع `LAST PROVEN STATE` و`CURRENT RESUME POINTER` محدد، وما تم وما لم يثبت والأدلة والـblockers والخطوة التنفيذية التالية. يجب أن يستطيع مبرمج ضعيف الذاكرة بدء الجلسة التالية والمواصلة مباشرة من آخر نقطة مثبتة.
+11. **ممنوع التقرير بدل التنفيذ:** لا تنهِ الانطلاقة بخطة جديدة بينما توجد جبهات قابلة للتنفيذ. نفّذ، اختبر، أثبت، سجّل، ثم انتقل مباشرة إلى الجبهة التالية.
+
 ## 🎨 DESIGN RULE
 
 التصميم يجب أن يكون **موحدًا عبر التطبيق كله**.

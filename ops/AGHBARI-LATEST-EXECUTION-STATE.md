@@ -1,3 +1,8 @@
+## RUN-2026-09-22-DOC-MASTER-COMPLETION-DIRECTIVE
+- This is a documentation/control-plane hardening update only; no product source SHA, Candidate, or Production was changed.
+- The permanent launch contract is now explicit: first-120-minute full UI coverage, parallel execution of all independent fronts, automatic implementation of missing/weak interfaces required by canonical specifications, resource-preserving execution, no reopening proven work without a technical reason, and mandatory exact resume handoff.
+- The stored product proof immediately below remains historical until the next execution reconciles the live GitHub product HEAD. No historical PASS is promoted by this documentation change.
+- CURRENT RESUME POINTER: reconcile the live product branch Exact HEAD with the stored state, then execute every actionable independent front in parallel, beginning with any concrete product/UI gap and its dependent proof work. Do not rescan completed surfaces without a dependency/evidence reason.
 ## RUN-2026-09-21-EXECUTE-UI-035 — FLAGSHIP B2B VISUAL ESCALATION
 - Active UI branch: `execution/customer-ui-completion-20260920`.
 - Exact current product HEAD after latest UI commit: `e3b6f54964b4a33c4c8403f0831ae43a1277904c`.

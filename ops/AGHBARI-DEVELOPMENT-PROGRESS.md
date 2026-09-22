@@ -1,3 +1,10 @@
+## RUN-2026-09-22-DOC-MASTER-COMPLETION-DIRECTIVE
+- Scope: reconcile the supplied launch specification against the canonical Aghbari live-memory documents.
+- Finding: product scope, security, evidence, UI quality, resource controls, parallel execution, and resume rules were already represented across the live memory; the launch router lacked sufficiently explicit hard gates for the first-120-minute UI coverage, per-launch parallel front execution, automatic implementation of any canonical UI gap, and explicit resource-preserving/no-reopen behavior.
+- Action: strengthened `AGHBARI-EXECUTION-START.md`, `ops/AGHBARI-EXECUTION-CONTROL-PLANE.md`, and `PROJECT_MEMORY.md` with a permanent master completion directive and screen-by-screen product surface contract.
+- No product runtime/source code, Certification Candidate, or Production was changed by this documentation-only update.
+- The next execution must validate current GitHub product HEAD against the stored state before reusing any historical proof.
+- Required next behavior: resume from the exact stored pointer, execute all independent fronts in parallel, complete missing/weak UI surfaces from the canonical specification, preserve resources, prove the resulting SHA, then record the next resume pointer.
 ## RUN-2026-09-21-EXECUTE-UI-024 — OFFLINE RENDER CHURN PRESERVATION
 - Active UI branch: `execution/customer-ui-completion-20260920`.
 - Exact source SHA: `57268606940f3b4576cba869b6ec72e8d05d9526`.
