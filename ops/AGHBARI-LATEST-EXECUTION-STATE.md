@@ -1,3 +1,24 @@
+## RUN-2026-09-22-EXECUTE-CORE-CLOSURE
+- Active product branch: `execution/customer-ui-completion-20260920`.
+- **EXACT PRODUCT HEAD: `e804e1f345b9628cfc0c31bf9664abd0618e2c4a`**.
+- Product change in this closure commit: only the Exact-SHA visual-contract test was corrected after artifact-level diagnosis. The test now matches the real supplier-dialog semantic name and uses retry-safe unique supplier/bill fixtures, preventing Playwright retries from creating false 23505 collisions.
+- Root cause proven from the failed exact-SHA visual artifact on `7017abb97b65ae5f85a290e6a3c8e053d4195679`: the first attempt created the supplier successfully; the test then incorrectly expected dialog accessible name `ملف المورد` although the dialog is labelled by the supplier name. The retry reused fixed `Visual Supplier`, causing PostgreSQL 23505 `supplier name already exists`. This was a test-contract/retry-isolation defect, not a supplier-transaction defect.
+- Exact-SHA terminal verification for `e804e1f345b9628cfc0c31bf9664abd0618e2c4a`:
+  - Application Quality: run `35769797029` #3599 — SUCCESS.
+  - Security Audit: run `35769797015` #3289 — SUCCESS.
+  - G1 Domain Proof: run `35769797076` #3556 — SUCCESS.
+  - Order Workflow Proof: run `35769797066` #1807 — SUCCESS.
+  - Concurrency Proof: run `35769797067` #810 — SUCCESS.
+  - Supabase Migration Proof: run `35769797018` #3573 — SUCCESS.
+  - Test-the-Test / Exact SHA: run `35769797042` #943 — SUCCESS.
+  - Browser E2E / Fresh Local Supabase: run `35769797119` #637 — SUCCESS.
+  - Browser E2E / Local Production Artifact: run `35769797049` #642 — SUCCESS.
+  - UI Visual Review / Exact SHA: run `35769797009` #184 — SUCCESS; exact build identity + isolated Supabase + Chromium + 24 visual evidence images uploaded in artifact `10713399422` (digest `sha256:5c6b4d7ea4cb024de7473945151285e931592e2ce3112b3b26ce3b55a156df4e`).
+- Visual evidence reviewed from artifact `10713399422`: authentication desktop/mobile; Customer Portal desktop/mobile; customer cart/orders/templates/finance/product-detail; Staff/Admin desktop/mobile; dedicated orders/customers/inventory/purchasing/finance/export/settings; customer detail; supplier detail/accounting.
+- Live Supabase reality rechecked during this execution: 60/60 public tables RLS-enabled; supplier bills/ledger tables present; supplier accounting migrations through `20260922010005_fix_supplier_payment_status_enum` applied. Security advisor remains limited to the known intentional authenticated SECURITY DEFINER warning and the external leaked-password-protection warning; no paid upgrade or Production-side change was made.
+- Deployment/release boundary unchanged: Vercel current product deployment was not available for this SHA; Netlify production site was not touched. Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` remains frozen/untouched. Production remains **HOLD / NO TOUCH**.
+- **CURRENT RESUME POINTER:** `e804e1f345b9628cfc0c31bf9664abd0618e2c4a` is technically proven across all required current-SHA gates. Next concrete task is **release reconciliation only: validate the designated non-production deployment path for this exact SHA (without touching Production/Candidate), then prepare Candidate promotion evidence if and only if the separate release gates require it. Do not reopen the completed UI/transaction/security/test fronts unless a fresh deployment/runtime check produces concrete evidence of a defect.**
+
 
 ## RUN-2026-09-22 — CURRENT EXECUTION CHECKPOINT
 - Current product branch: `execution/customer-ui-completion-20260920`.
