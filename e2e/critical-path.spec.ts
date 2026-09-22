@@ -83,6 +83,13 @@ test('authenticated customer completes real search → catalog → cart → orde
   await expect(page.locator('.b2b-product-card').first().getByRole('heading', { name: productName, exact: true })).toBeVisible();
   await search.fill('');
 
+  const productDetailsButton = firstCard.getByRole('button', { name: 'التفاصيل', exact: true });
+  await expect(productDetailsButton).toBeVisible();
+  await productDetailsButton.click();
+  await expect(page.getByRole('heading', { name: productName, exact: true }).last()).toBeVisible();
+  await expect(page.getByRole('button', { name: 'إغلاق تفاصيل المنتج', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'إغلاق تفاصيل المنتج', exact: true }).click();
+
   const addButton = page.getByRole('button', { name: '+ إضافة', exact: true }).first();
   await expect(addButton).toBeEnabled();
   await addButton.click();
