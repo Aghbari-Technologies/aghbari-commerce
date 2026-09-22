@@ -1,3 +1,14 @@
+
+## RUN-2026-09-22-EXECUTE-CORE — LIVE CHECKPOINT
+- Exact product HEAD: `9d098d69e483c4a3e0ac430c3f4515716929cb15`.
+- Product gap closures executed: governance/access, customer detail/statement, supplier directory/detail, supplier bills/payable ledger/payments, operational customer/order/inventory exports, plus exact visual proof contract expansion.
+- Root-cause defects encountered and fixed on the execution path: TSX quoting in new governance/export surfaces; unmounted customer-detail modal; supplier bill idempotency storage mismatch; customer statement reading dormant ledger instead of active invoice/payment truth; missing governance RPC migration-history contracts.
+- Live DB hardening: supplier accounting migrations 10000–10003 applied; RLS enabled on new tables; anonymous execution explicitly revoked on new supplier RPCs; supplier FK indexes added.
+- Current exact-SHA proof state after advancing to `9d098d69...`: Security terminal SUCCESS and Order Workflow terminal SUCCESS are confirmed; Quality is in progress after exact checkout; G1, migration, browser, visual, concurrency and Test-the-Test are active/queued. No overall PASS or certification claim.
+- Quality root-cause from previous SHA: release audit detected governance RPC names missing from migration history. This was corrected in 10003.
+- Candidate `1685836f...` unchanged. Production NO TOUCH.
+- NEXT RESUME: reconcile all exact-SHA runs for `9d098d69...` to terminal; inspect only exact logs for any failure; then repair concrete defects and repeat on the resulting SHA. Do not transfer evidence.
+
 ## RUN-2026-09-22-DOC-MASTER-COMPLETION-DIRECTIVE
 - Scope: reconcile the supplied launch specification against the canonical Aghbari live-memory documents.
 - Finding: product scope, security, evidence, UI quality, resource controls, parallel execution, and resume rules were already represented across the live memory; the launch router lacked sufficiently explicit hard gates for the first-120-minute UI coverage, per-launch parallel front execution, automatic implementation of any canonical UI gap, and explicit resource-preserving/no-reopen behavior.

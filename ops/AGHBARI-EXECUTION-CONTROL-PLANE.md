@@ -1088,3 +1088,8 @@ Keep promotions, provider notification delivery, integration delivery records/ad
 - Candidate 1685836f4226fdcb3250a60eba7430ecf3e8f3f080 remains HOLD/untouched. Production remains NO TOUCH.
 - Resource-smart rule remains: no new dependency/asset/font/database payload was introduced by the order-detail fix.
 - NEXT RESUME: reconcile current PR/release path and obtain an exact-SHA non-production deployment/preview for final browser proof. Do not touch Candidate or Production.
+
+## CONTROL-PLANE EVOLUTION — RUN-2026-09-22
+- Canonical RPC history rule strengthened: any literal frontend `.rpc('name')` used by an accepted UI/workflow must have a recognizable CREATE/REPLACE FUNCTION contract in migration history. Live existence alone is insufficient for release audit reproducibility.
+- Financial UI source-of-truth rule strengthened: a statement surface must read the same active transactional tables/RPCs that own the financial truth; do not surface dormant/legacy ledger tables as authoritative merely because they look semantically similar.
+- Branch-state truth rule reinforced: when dangling commits exist, the current Git branch ref is authoritative; never infer active HEAD from the most recently created commit.

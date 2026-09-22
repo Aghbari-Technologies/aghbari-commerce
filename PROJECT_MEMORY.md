@@ -686,3 +686,18 @@ RUN-2026-09-20-EXECUTE-022 — WORLD-CLASS UI/UX ADVANCEMENT
 - Preserve exact naming expected by high-value E2E tests when changing visible operational labels, or update the test contract in the same SHA deliberately.
 - Permission-aware navigation is part of UI correctness: every visible Admin shortcut must be reachable by the active role.
 - Direct product discovery-to-edit flow is required for efficient B2B operations; avoid forcing users to hunt through unrelated forms.
+
+
+## RUN-2026-09-22 — CORE PRODUCT COMPLETION / SUPPLIER ACCOUNTING / GOVERNANCE
+
+- Current product branch: `execution/customer-ui-completion-20260920`.
+- Current exact product HEAD: `9d098d69e483c4a3e0ac430c3f4515716929cb15`.
+- This run closed canonical UI/workflow gaps discovered during a dependency-aware review: Admin governance/access, customer detail/statement surface, supplier directory/detail, supplier operational accounting, and expanded operational export coverage.
+- Customer statement UI now reads transactional source-of-truth from `operational_invoices` + `payments`; the dormant `customer_ledger_entries` table is not used by this staff statement surface.
+- Supplier accounting is now a real transactional domain: `supplier_bills` + `supplier_ledger_entries`, owner/admin RPCs for bill creation and payment, idempotency, row/advisory locking, cash linkage when applicable, audit, and outbox.
+- Live migrations applied: `20260922010000_supplier_operational_accounting`, `20260922010001_supplier_accounting_fk_indexes`, `20260922010002_supplier_bill_idempotency_fix`, `20260922010003_restore_governance_rpc_history`.
+- New supplier finance tables have RLS enabled. New supplier finance RPCs are explicitly non-anonymous and search_path-hardened.
+- Release-audit governance gap was real: frontend referenced `list_organization_users` and `set_organization_user_role` but migration history did not contain recognizable CREATE/REPLACE FUNCTION contracts. Migration `20260922010003` restores those exact live contracts to canonical history without changing their verified owner-protection semantics.
+- Resource rule remains: reuse/component/CSS-first, bounded caches/queues/storage, deterministic replaceable media, no destructive business-data deletion.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` remains frozen/untouched. Production remains HOLD / NO TOUCH.
+- Historical evidence remains SHA-bound; no prior SHA proof is promoted by this memory update.

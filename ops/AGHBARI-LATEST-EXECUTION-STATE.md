@@ -1,3 +1,15 @@
+
+## RUN-2026-09-22 — CURRENT EXECUTION CHECKPOINT
+- Current product branch: `execution/customer-ui-completion-20260920`.
+- Current exact source HEAD: `9d098d69e483c4a3e0ac430c3f4515716929cb15`.
+- Current PR: #100 OPEN / DRAFT / MERGEABLE against `enhancement/market-ready-v4-20260918`.
+- Product UI/workflow additions in this checkpoint: Customer detail + transactional statement, Supplier directory/detail + supplier accounting, Governance users/roles/audit, expanded operational exports, exact visual proof contract.
+- Live DB migrations applied through `20260922010003_restore_governance_rpc_history`.
+- Exact-SHA evidence: Security SUCCESS; Order Workflow SUCCESS; Quality/G1/Migration/Browser/Visual/Concurrency/Test-the-Test are not yet all terminal.
+- Vercel is an external deployment evidence path only; no deployment/browser PASS is claimed from status alone.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` frozen/untouched. Production HOLD / NO TOUCH.
+- CURRENT RESUME POINTER: reconcile exact-SHA proof for `9d098d69e483c4a3e0ac430c3f4515716929cb15`; on failure, inspect the exact failing job/log and fix root cause; on terminal success, continue visual/browser/release reconciliation without reopening closed product fronts.
+
 ## RUN-2026-09-22-DOC-MASTER-COMPLETION-DIRECTIVE
 - This is a documentation/control-plane hardening update only; no product source SHA, Candidate, or Production was changed.
 - The permanent launch contract is now explicit: first-120-minute full UI coverage, parallel execution of all independent fronts, automatic implementation of missing/weak interfaces required by canonical specifications, resource-preserving execution, no reopening proven work without a technical reason, and mandatory exact resume handoff.
