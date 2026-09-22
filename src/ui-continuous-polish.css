@@ -1,0 +1,59 @@
+/* Aghbari Commerce — continuous UI baseline
+ * Dependency-free cross-surface hardening. Keep product truth and component ownership unchanged.
+ */
+:where(button, [role='button'], a, input, select, textarea):focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 3px;
+}
+
+@media (pointer: coarse) {
+  :where(button, [role='button'], a, input, select, textarea) {
+    min-block-size: 40px;
+  }
+}
+
+:where(table) {
+  max-inline-size: 100%;
+}
+
+:where(.table-wrapper, [data-table-scroll], .overflow-x-auto) {
+  max-inline-size: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+:where(dialog, [role='dialog'], [data-dialog], [data-drawer]) {
+  max-block-size: min(90dvh, 900px);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+:where(td, th, [data-id], [data-code], [data-reference]) {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+:where(input, textarea, select, button) {
+  max-inline-size: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(*, *::before, *::after) {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media print {
+  :where(nav, aside, [data-no-print], .no-print) {
+    display: none !important;
+  }
+
+  :where(main, [data-print-root]) {
+    inline-size: 100% !important;
+    max-inline-size: none !important;
+  }
+}
