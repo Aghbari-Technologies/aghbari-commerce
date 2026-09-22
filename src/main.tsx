@@ -11,6 +11,7 @@ import './aghbari-ui-system.css';
 import './reference-premium.css';
 import './ui-final-visual-closure.css';
 import './aghbari-visual-atelier.css';
+import './ui-resilience.css';
 
 const invitationToken = new URLSearchParams(window.location.search).get('invite');
 const RootApp = invitationToken ? <InvitationAcceptance token={invitationToken} /> : <App />;
