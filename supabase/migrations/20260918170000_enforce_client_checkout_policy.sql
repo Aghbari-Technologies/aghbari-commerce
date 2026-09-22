@@ -257,6 +257,91 @@ BEGIN
 END;
 $function$;
 
+CREATE OR REPLACE FUNCTION public.create_order(
+  p_idempotency_key text,
+  p_warehouse_id uuid,
+  p_lines jsonb
+)
+RETURNS TABLE(order_id uuid, order_number bigint, status order_status, total numeric)
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO ''
+AS $compat$
+DECLARE
+  v_org uuid := public.current_organization_id();
+  v_customer uuid := public.current_customer_id();
+  v_requested_key text := trim(coalesce(p_idempotency_key, ''));
+  v_existing public.orders%rowtype;
+  v_existing_count integer;
+  v_result record;
+  v_cart_id uuid;
+BEGIN
+  IF v_org IS NULL OR v_customer IS NULL THEN
+    RAISE EXCEPTION USING errcode='42501', message='authenticated customer context required';
+  END IF;
+  IF length(v_requested_key) < 16 OR length(v_requested_key) > 128 THEN
+    RAISE EXCEPTION USING errcode='22023', message='invalid idempotency key';
+  END IF;
+
+  PERFORM pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(v_org::text || ':' || v_requested_key, 0));
+
+  SELECT * INTO v_existing
+  FROM public.orders
+  WHERE organization_id = v_org AND idempotency_key = v_requested_key;
+  IF FOUND THEN
+    IF v_existing.customer_id <> v_customer OR v_existing.warehouse_id <> p_warehouse_id
+       OR coalesce(v_existing.payment_method, 'credit') <> 'credit' THEN
+      RAISE EXCEPTION USING errcode='40001', message='idempotency key payload conflict';
+    END IF;
+
+    SELECT count(*) INTO v_existing_count
+    FROM public.order_items oi
+    WHERE oi.organization_id = v_org AND oi.order_id = v_existing.id;
+    IF v_existing_count <> pg_catalog.jsonb_array_length(coalesce(p_lines, '[]'::jsonb)) OR EXISTS (
+      SELECT 1
+      FROM pg_catalog.jsonb_array_elements(coalesce(p_lines, '[]'::jsonb)) line
+      WHERE NOT EXISTS (
+        SELECT 1 FROM public.order_items oi
+        WHERE oi.organization_id = v_org
+          AND oi.order_id = v_existing.id
+          AND oi.product_id = (line->>'product_id')::uuid
+          AND oi.quantity = (line->>'quantity')::integer
+      )
+    ) THEN
+      RAISE EXCEPTION USING errcode='40001', message='idempotency key payload conflict';
+    END IF;
+
+    RETURN QUERY SELECT v_existing.id, v_existing.order_number, v_existing.status, v_existing.total;
+    RETURN;
+  END IF;
+
+  SELECT * INTO v_result
+  FROM public.create_order(p_idempotency_key, p_warehouse_id, p_lines, 'credit');
+
+  -- Compatibility proof: the authoritative 4-argument command owns the active-cart lock/conversion.
+  -- This post-condition keeps the 3-argument compatibility contract explicit without changing lock order.
+  SELECT c.id INTO v_cart_id
+  FROM public.carts c
+  WHERE c.organization_id = v_org
+    AND c.customer_id = v_customer
+    AND c.status = 'active'
+  FOR UPDATE;
+
+  IF v_cart_id IS NOT NULL THEN
+    UPDATE public.carts c
+    SET status = 'converted', updated_at = pg_catalog.now()
+    WHERE c.id = v_cart_id
+      AND c.organization_id = v_org
+      AND c.status = 'active';
+  END IF;
+
+  RETURN QUERY SELECT v_result.order_id, v_result.order_number, v_result.status, v_result.total;
+END;
+$compat$;
+
+revoke all on function public.create_order(text,uuid,jsonb) from public, anon;
+grant execute on function public.create_order(text,uuid,jsonb) to authenticated;
+
 revoke all on function public.create_order(text,uuid,jsonb,text) from public, anon;
 grant execute on function public.create_order(text,uuid,jsonb,text) to authenticated;
 commit;
