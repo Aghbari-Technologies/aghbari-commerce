@@ -717,3 +717,13 @@ The CI deduplication commit correctly removed feature-branch push triggers but a
 - Closed flagship UI work across Admin and Customer Portal without adding dependencies/assets.
 - Exact browser/visual proof artifacts exist for the same SHA; all required gates are terminal SUCCESS.
 - Next work must be dependency-aware; no duplicate scan of completed UI surfaces.
+
+
+## RUN-2026-09-22-EXECUTE-CORE-CLOSURE — EXACT-SHA PROOF CLOSED
+- Product HEAD: `e804e1f345b9628cfc0c31bf9664abd0618e2c4a` on `execution/customer-ui-completion-20260920`.
+- Closure fix: Exact-SHA UI visual test corrected to the actual supplier dialog accessible-name contract and made supplier/bill fixtures retry-safe with unique per-attempt identifiers.
+- Failed-artifact diagnosis was conclusive: the original supplier creation succeeded; the retry failed with PostgreSQL 23505 `supplier name already exists` because the test reused `Visual Supplier`. The semantic dialog assertion was also wrong because the dialog name is the created supplier's name, not `ملف المورد`.
+- All ten required exact-SHA gates are terminal SUCCESS: quality `35769797029`; security `35769797015`; G1 `35769797076`; Order Workflow `35769797066`; Concurrency `35769797067`; Migration `35769797018`; Test-the-Test `35769797042`; Fresh Local Browser `35769797119`; Local Production Artifact Browser `35769797049`; UI Visual Review `35769797009`.
+- Visual artifact: `10713399422`, exact SHA-bound, digest `sha256:5c6b4d7ea4cb024de7473945151285e931592e2ce3112b3b26ce3b55a156df4e`, with 24 screenshots covering Customer/Admin desktop/mobile and all designated operational modal/detail surfaces.
+- No production/candidate promotion was performed. Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` remains frozen; Production remains HOLD / NO TOUCH.
+- NEXT RESUME: release reconciliation for exact `e804e1f345b9628cfc0c31bf9664abd0618e2c4a` only; use a non-production deployment/preview path, verify deployment identity, then proceed to the separate candidate-release gate without re-running closed technical gates unless deployment evidence exposes a concrete regression.
