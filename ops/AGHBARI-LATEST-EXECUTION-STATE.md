@@ -1,39 +1,55 @@
 # 🔴 AGHBARI LATEST EXECUTION STATE
 
 **Last verified working runtime baseline:** c249f4ec9930d7007e4efd35bdefea0acf9c9e5a
-**Actual current Git HEAD:** ba6f999ed35e00d1b1774b2fcf2d6d9428c72de6
+**Actual current Git HEAD at write-back:** 8e329ae21975d9df77dc268499af4989bd2f4981
 **Branch:** main
 **Production:** NO TOUCH
 **Certification:** NOT CLAIMED
 
 ## Current reality
-- `c249f4e...` remains the exact runtime/code baseline previously inspected.
-- `7275ab1...` and subsequent control-plane write-backs reconciled execution state.
-- `ba6f999...` contains a real UI runtime change in `src/AdminExecutiveDashboard.tsx`: the administration navigation now exposes all existing operational anchors, including import/export and client settings.
-- No runtime PASS is inherited from the older baseline; the new UI change requires exact-HEAD executable verification.
-
-## Verified UI surface
-Customer: catalog/search/categories, authorized pricing, inventory visibility, cart, quantity confirmation, checkout, orders, templates, finance/ledger CSV, quick order, Excel quick-order review.
-Admin: executive dashboard, orders, customers, catalog/products/categories/pricing/media, inventory, purchasing, finance, import/export, client UI settings, with the existing operational sections now surfaced in the primary navigation.
-
-## Open gaps
-- Customer order details + tracking timeline.
-- Customer account/profile context.
-- Exact-head browser/runtime evidence for the current UI.
-- Full semantic consolidation/reference audit of the 50 legacy Markdown sources.
-
-## Blockers / proof state
-- No current production deployment is being claimed.
-- No CI PASS is claimed for `ba6f999...` until an exact-SHA workflow result exists.
-- Browser/runtime PASS is not claimed from source inspection.
+- Exact repository HEAD advanced from `ba6f999...` through three implementation commits for the customer experience.
+- Customer order history now exposes a real order-detail/tracking surface backed by `orders`, `order_items`, and `order_status_history`, using the existing customer-scoped RLS boundary.
+- Customer account now exposes session/customer/organization/warehouse context and a direct secure sign-out action.
+- The implementation is code-complete for this frontier but **not yet PASS**: exact-head quality, test-the-test, security, and browser workflows must complete against the final write-back SHA.
 - Production remains untouched.
 
-## Evidence from this execution
-- Compared `7275ab1...` → `ba6f999...`: ahead by 2 commits; changed files are the latest execution-state document and `src/AdminExecutiveDashboard.tsx`.
-- The dashboard navigation change is therefore confirmed in Git history, but build/typecheck/browser execution is still required before PASS.
+## Implemented frontier
+### UI
+- Customer orders: detail modal, line items, total, status label, status timeline, reorder, close.
+- Customer account: customer/session context, organization/warehouse context, role context, secure sign-out.
+- Responsive CSS added for order details and account cards.
+
+### Core
+- `getCustomerOrderDetail(orderId)` validates UUID, reads only the requested order, its items, and status history, and relies on database RLS for customer scope.
+- Product identity in order details is read through the existing `order_items -> products` relationship; no client-side authorization was introduced.
+
+## Open gaps
+- Exact-head executable verification for the new frontier.
+- Explicit loading/empty/error/retry states on every major customer sub-view.
+- Full semantic consolidation/reference audit of all 50 legacy Markdown sources.
+- Deployment/candidate/runtime certification remains open.
+
+## Evidence / blockers
+- Code commits:
+  - `d81b9284c56877ad94eefa75c10ad192c92a97d2` customer UI.
+  - `09e65a2c8587fad04d1f57a277448e4bdd87634` order-detail service.
+  - `8e329ae21975d9df77dc268499af4989bd2f4981` customer UI CSS.
+- No PASS claim is made from source inspection.
+- No production deployment is claimed.
 
 ## CURRENT RESUME POINTER
-START FROM CURRENT ACTUAL HEAD `ba6f999...` → implement customer order-detail/tracking and account/profile surfaces in the existing `src/AppV3Fixed.tsx` architecture without regressing catalog/cart/checkout/templates/finance → run exact-head typecheck/build/unit/E2E/security/browser workflows → bind every result to the resulting SHA → then evaluate deployment/certification gates.
+START FROM CURRENT ACTUAL HEAD `8e329ae21975d9df77dc268499af4989bd2f4981`.
 
-## Evidence discipline
-No PASS or certification claim is made from code inspection alone. Exact SHA + environment + executable check/workflow + result + evidence remain mandatory.
+UI FRONT:
+Customer Portal → Orders → Order Details/Tracking → verify real line items + status timeline + reorder; Customer Portal → Account → verify session context + sign-out; then close explicit loading/empty/error/retry states.
+
+CORE FRONT:
+Validate `getCustomerOrderDetail` against customer-scoped RLS for `orders`, `order_items`, `order_status_history`; confirm no cross-customer access and no unauthorized product leakage.
+
+PROOF:
+Run exact-SHA application quality + test-the-test + security + browser workflows on the resulting HEAD. Browser proof must exercise order detail, timeline, reorder, account, refresh and mobile/RTL behavior.
+
+DO NOT REPEAT:
+Do not reopen catalog/cart/checkout foundations unless exact-head evidence identifies a regression.
+
+Production remains NO TOUCH until candidate/deployment evidence is independently bound to the exact release SHA.
