@@ -182,7 +182,7 @@ test.describe('Aghbari UI visual integrity', () => {
     await expect(customerDetailAction).toBeVisible();
     await customerDetailAction.click();
     await expect(page.locator('#customer-detail-modal')).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'ملف العميل' })).toBeVisible();
+    await expect(page.locator('#customer-detail-modal .modal-head .eyebrow', { hasText: 'ملف العميل' })).toBeVisible();
     await assertRtlAndNoOverflow(page);
     await page.screenshot({ path: 'visual-evidence/staff-customer-detail-desktop.png', fullPage: true });
     await page.getByRole('button', { name: 'إغلاق ملف العميل' }).click();
