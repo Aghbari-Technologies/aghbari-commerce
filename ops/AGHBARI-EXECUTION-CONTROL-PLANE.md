@@ -299,6 +299,51 @@ Success is not merely a green build or attractive screen. For the stage being ex
 
 ---
 
+## 0C.15 MASTER DELIVERY / UI COMPLETENESS / PARALLEL EXECUTION DIRECTIVE
+
+هذا القسم **حكم تنفيذي** على كل انطلاقة لاحقة، ويعلو على التخطيط أو الانتظار أو إعادة الفحص غير الضروري.
+
+### 0C.15.1 Product coverage gate
+ترتيب التنفيذ الإلزامي:
+`FULL PRODUCT UI COVERAGE FIRST → CORE FUNCTIONAL COMPLETENESS → GLOBAL DESIGN POLISH → SECURITY/DATA HARDENING → TEST/VERIFY → CERTIFICATION/RELEASE`
+خلال أول 120 دقيقة من كل انطلاقة، ادفع جميع الأسطح الأساسية إلى Baseline حقيقي قابل للاستخدام: Admin/Staff وCustomer Portal، كل routes/views المطلوبة، الصفحات الفرعية، dialogs/drawers، forms، tables، search/filter، وجميع حالات loading/empty/error/success/disabled/permission/offline، مع Desktop/Tablet/Mobile. لا placeholder ولا شاشة فارغة لتوهم اكتمالًا.
+
+### 0C.15.2 Master surface contract
+- Auth/session/logout/invitation/permission-aware entry.
+- Admin/Staff: Home, Orders, Order Detail, Purchasing/Receiving, Inventory, Warehouses, Transfers, Stock Count/Adjustments, Customers, Customer Detail/Statement/Invitations, Suppliers, Supplier Detail/Statement, Products, Categories, Product Detail/Edit/Media, Pricing/Customer tiers, Import Center, Export Center, Users/Roles/Permissions, Audit-sensitive flows, Settings, Integrations.
+- Customer B2B Portal: Home, Catalog, Categories/Search, Product Detail, Quick Order, Excel Order, Cart, Checkout/Submit, Orders, Order Detail, Reorder, Templates, Template Detail, Financial Center, Invoices, Payments, Statement, Profile, responsive/mobile flows.
+- Global interaction contract: loading, empty/no-results, error/retry, success, disabled/busy/duplicate-submit protection, permission denied, offline/reconnect, keyboard/focus, RTL/Arabic, responsive behavior.
+- أي شاشة مكتملة يجب أن تكون مرتبطة بالوظيفة الحقيقية المقابلة ومثبتة على Exact SHA بالمستوى المطلوب.
+
+### 0C.15.3 Mandatory parallel front matrix
+في كل انطلاقة نفّذ بالتوازي كل جبهة مستقلة ممكنة:
+A) UI coverage / visual quality
+B) Core transactions / business workflows
+C) Security / RLS / authorization / data integrity
+D) Browser / E2E / test-the-test / observability
+E) Deployment / release evidence
+F) Performance / storage / cache / bundle / resource preservation
+إذا تعطلت جبهة، استمر فورًا في الجبهات الأخرى. لا queue ولا deployment blocker ولا نقص أداة في جبهة واحدة يبرر تجميد المشروع كله.
+
+### 0C.15.4 Every canonical requirement must surface
+كل متطلب موجود في `PROJECT_MEMORY.md` أو Control Plane أو أي Specification canonical وليس له UI/workflow مكتمل هو `CORE PRODUCT GAP`. يجب فتح الجبهة وتنفيذها في نفس الانطلاقة ما لم يوجد عائق تقني حقيقي أو قرار أعمال جوهري. لا تسمح بقاء المتطلبات المعروفة في backlog بينما العمل التنفيذي متاح.
+
+### 0C.15.5 Resource-preserving execution
+- Reuse للمكونات والأنماط والأصول قبل إضافة جديد.
+- CSS/design-system قبل dependency أو asset جديد عندما يحقق النتيجة بأمان.
+- caches/queues/storage bounded وdeterministic للموارد القابلة للنمو.
+- تجنب تكرار CI/build/deployment/requests.
+- قياس نمو storage/database/repository قبل أي معالجة؛ ممنوع حذف operational/financial/audit/customer truth لتوفير المساحة.
+
+### 0C.15.6 No-reopen / no-rework
+لا تفتح جبهة أثبتت وأغلقت إلا بسبب new SHA أو dependency change أو evidence invalidation أو regression مثبت. خلاف ذلك، انتقل إلى أعلى فجوة غير مكتملة.
+
+### 0C.15.7 Mandatory handoff
+قبل نهاية كل انطلاقة: سجّل Exact HEAD، ما تغير، ما ثبت، ما لم يثبت، blockers، Candidate/Production state، و`CURRENT RESUME POINTER` كأول مهمة تنفيذية دقيقة للجلسة التالية. لا تستخدم عبارة عامة مثل «نكمل لاحقًا».
+
+### 0C.15.8 Hard no-stagnation
+إذا كانت جبهة QUEUED/BLOCKED، لا تتوقف. نفّذ الجبهات المستقلة الأخرى، وعندما تنتهي أعطال واضحة، واصل بأقرب فجوة منتج حقيقية أو release-gate قائمة؛ لا تنشئ تغييرات عشوائية فقط لإنتاج SHA.
+
 # 0D. ONE-KEY EXECUTION OVERRIDE
 
 When the owner sends exactly `1`, it is a **control signal to execute**, not a request to generate or restate instructions.
