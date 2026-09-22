@@ -151,3 +151,9 @@ Build a serious sellable Arabic-first B2B operational commerce product:
 
 Command "1" means:
 **EXECUTE NOW FROM THE LATEST EXACT HEAD.**
+## 15. DURABLE IMPLEMENTATION CONTRACTS — 2026-09-23
+
+- `public.notifications` is a server-created, tenant-scoped notification surface. Authenticated customers may read only their own organization/customer or explicitly addressed recipient rows; direct customer writes are denied.
+- Customer order-detail UI must read persisted `order_items` directly and resolve product display fields from the already authorized customer catalog rather than depending on fragile PostgREST relation embedding.
+- Repeated Arabic navigation labels are valid UI by design; browser automation must scope selectors to a stable landmark/component rather than assuming the accessible name is globally unique.
+- Fresh-database migration proof is a release gate: every transactional dependency used by runtime RPCs must exist in the migration chain, not only in the live database.

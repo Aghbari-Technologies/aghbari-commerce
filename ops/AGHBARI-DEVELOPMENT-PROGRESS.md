@@ -70,3 +70,43 @@ Legacy source documents must not be deleted until full-content/semantic merge an
 - Complete exact-SHA GitHub quality, security, migration, domain, concurrency, order-workflow and fresh-local browser checks on the final write-back SHA.
 - Verify the exact Vercel deployment artifact/runtime with the repository's configured bypass path.
 - Do not touch production until candidate proof is green and runtime evidence is bound to the same exact SHA.
+
+## Run 2026-09-23 — Exact-SHA customer/core closure
+
+### Start
+- Verified execution lineage: main `c249f4ec9930d7007e4efd35bdefea0acf9c9e5a` → PR #106 branch `execution/ui-core-closure-20260922`.
+- Code verification target for this run: `954895a729e52554651287b8b6c7afaa216e36df`.
+
+### Changes
+- Restored the missing server-authoritative `orders.payment_method` schema contract with a forward migration.
+- Restored the missing `public.notifications` table, tenant RLS/read boundary, grants, indexes and explicit boundary test from the historical notification contract; included live-compatible nullable `recipient_user_id`.
+- Stabilized the customer quantity-confirmation control with an accessible name and `aria-pressed` state.
+- Scoped duplicate «طلباتي» browser selectors to the portal header landmark.
+- Repaired the customer order-details data path to read persisted order lines directly and resolve product display data from the authorized catalog.
+- Corrected one self-introduced truncated-file edit by restoring the complete `AppV3Fixed.tsx` from the last intact SHA and applying the intended change only.
+
+### Root Causes Closed
+- Fresh DB failed because `create_order` depended on a missing notifications table and `orders.payment_method` column in the repository migration chain.
+- Customer browser proof exposed non-unique navigation selectors and a fragile product relation embedding in order details.
+
+### Exact-SHA Proof — 954895a729e52554651287b8b6c7afaa216e36df
+- `bootstrap-release-lockfile` run 1108 — success.
+- `security-audit` run 3375 — success.
+- `application-quality` run 3685 — success.
+- `G1 Domain Proof` run 3642 — success.
+- `Order Workflow Proof` run 1888 — success.
+- `supabase-migration-proof` run 3659 — success.
+- `Browser E2E / Fresh Local Supabase` run 714 — success.
+- `Browser E2E / Local Production Artifact` run 719 — success.
+- `Browser E2E / Exact Deployment` run 938 — success (source/deployment contract gate; live authenticated Vercel browser interaction remains separately protected).
+- `Concurrency Proof / Exact SHA` run 891 — success.
+- `Test-the-Test / Exact SHA` run 1024 — success.
+
+### Candidate / Runtime
+- PR #106: open and mergeable; head = exact verified SHA above.
+- Vercel Preview: deployment `dpl_2r21QPnusQwNsJT4YhJ4XSg6fZHa`, state `READY`, branch `execution/ui-core-closure-20260922`, exact SHA above, target = preview (not production).
+- Production: NO TOUCH.
+
+### Remaining
+- The candidate has a green exact-SHA CI/runtime-artifact gate. The remaining release-boundary item is authenticated end-to-end browser proof against the protected Vercel preview itself; the local production browser proof is green.
+- Legacy Markdown semantic consolidation/retirement remains a separate documentation gate and has not been falsely declared complete.

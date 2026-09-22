@@ -1,10 +1,10 @@
 # 🔴 AGHBARI LATEST EXECUTION STATE
 
-**Last verified working HEAD:** e80c4325438a8852cc17d0e81eab4be4dadbc008
-**State-file updates after that verification:** documentation-only
-**Branch:** main
+**Last verified working HEAD:** 954895a729e52554651287b8b6c7afaa216e36df
+**State-file updates after that verification:** none before this write-back; code SHA above is independently verified
+**Branch:** execution/ui-core-closure-20260922
 **Production:** NO TOUCH
-**Certification:** NOT CLAIMED
+**Certification:** candidate exact-SHA proof GREEN; production release not performed
 
 ## Documentation-control result
 - PR #105 merged the canonical project-control layer into main.
@@ -90,3 +90,32 @@ New CURRENT RESUME POINTER:
 
 ### New CURRENT RESUME POINTER
 START FROM ACTUAL CURRENT HEAD ff24a71d9757f7a9f1492a4725152a532b4157cd → verify the exact SHA independently → inspect PR #106 CI and Vercel preview for that exact SHA → fix any failing proof/test defects → rerun exact CI until green → runtime/browser proof with exact SHA → only then consider merge/release; meanwhile continue UI/Core 50/50 and do not repeat already proven domains.
+
+## Execution checkpoint — 2026-09-23 — Exact-SHA closure
+
+- **Last verified working HEAD (code):** 954895a729e52554651287b8b6c7afaa216e36df
+- **Actual verified Git HEAD before documentation write-back:** 954895a729e52554651287b8b6c7afaa216e36df
+- **Branch:** execution/ui-core-closure-20260922
+- **PR:** #106 (open, mergeable)
+- **Production:** NO TOUCH
+- **Candidate:** Vercel Preview dpl_2r21QPnusQwNsJT4YhJ4XSg6fZHa, READY, exact SHA above, preview target only.
+
+### What changed
+- Restored missing order payment-method migration contract.
+- Restored missing notifications schema + tenant read boundary and added explicit pgTAP coverage.
+- Stabilized quantity-confirmation accessibility semantics.
+- Scoped duplicate customer navigation selectors.
+- Repaired persisted order-detail line loading by removing fragile product embedding.
+
+### What was proven on the exact code SHA
+All eleven release verification workflows completed successfully: bootstrap 1108; security 3375; application quality 3685; G1 3642; order workflow 1888; migration proof 3659; Fresh Local Browser 714; Local Production Artifact 719; Exact Deployment gate 938; Concurrency 891; Test-the-Test 1024.
+
+### Release boundary
+- Local production browser proof: GREEN.
+- Exact deployment/source contract gate: GREEN.
+- Vercel preview deployment: READY and SHA-bound.
+- Authenticated browser interaction against the protected Vercel preview was not independently completed because the protection flow redirected through Vercel SSO; do not mark that sub-gate PASS.
+- Production remains untouched.
+
+### New CURRENT RESUME POINTER
+START FROM ACTUAL CURRENT GIT HEAD (re-verify after this documentation commit) → load PROJECT_MEMORY + canonical system + latest state → inspect PR #106 exact SHA lineage → preserve the green 954895a code proof → complete authenticated browser proof against the protected Vercel preview if credentials/bypass are available → only then consider merge/release; do not repeat green CI gates unless SHA/evidence is invalidated. In parallel, continue the legacy Markdown semantic consolidation/retirement gate.
