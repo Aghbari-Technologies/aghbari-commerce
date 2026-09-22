@@ -113,7 +113,7 @@ export default function CustomerPanel({ role }: { role: UserRole }) {
           </div>
         </>}
       </section>
-    </div>
+    </div>}
     {error && <div className="error-banner" role="alert">{error}</div>}{message && <div className="success" role="status">{message}</div>}
   </div>;
 }
