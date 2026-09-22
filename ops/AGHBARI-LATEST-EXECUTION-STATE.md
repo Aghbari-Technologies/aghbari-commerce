@@ -1,53 +1,33 @@
 # 🔴 AGHBARI LATEST EXECUTION STATE
 
-**Last verified working HEAD:** e80c4325438a8852cc17d0e81eab4be4dadbc008
-**State-file updates after that verification:** documentation-only
+**Last verified working HEAD:** c249f4ec9930d7007e4efd35bdefea0acf9c9e5a
+**Actual verified Git HEAD at run start:** c249f4ec9930d7007e4efd35bdefea0acf9c9e5a
 **Branch:** main
 **Production:** NO TOUCH
 **Certification:** NOT CLAIMED
 
-## Documentation-control result
-- PR #105 merged the canonical project-control layer into main.
-- Root PROJECT_MEMORY.md is active.
-- docs/CANONICAL-DOCUMENT-SYSTEM.md is active.
-- Six canonical specialist document targets are active.
-- ops/AGHBARI-DEVELOPMENT-PROGRESS.md is active.
-- this file is active.
-- AGHBARI-EXECUTION-START.md is the launch router.
-- Product runtime/code/database behavior was not modified by this documentation-control change.
+## Current reality
+- The repository is materially newer than the historical state file. The current main HEAD is `c249f4e...`; it is the execution truth.
+- Recent commits through this HEAD are documentation/control-plane hardening. No evidence permits treating the documentation work itself as product-runtime certification.
+- Runtime entry is `src/AppV3Fixed.tsx`; staff users render `AdminPanel`, while customers receive the B2B portal.
 
-## Critical consolidation status
-The 50 historical Markdown documents are mapped one-to-one to canonical specializations, but they are **not yet deleted**. They must remain available until full-content semantic merge and repository-reference audit are actually proven.
+## Verified UI surface
+Customer: catalog/search/categories, authorized pricing, inventory visibility, cart, quantity confirmation, checkout, orders, templates, finance/ledger CSV, quick order, Excel quick-order review.
+Admin: executive dashboard, orders, customers, catalog/products/categories/pricing/media, inventory, purchasing, finance, import/export, client UI settings.
 
-Retirement gate:
-READ FULL SOURCE → MERGE UNIQUE REQUIREMENTS/DECISIONS/INVARIANTS/EVIDENCE → UPDATE REFERENCES → COVERAGE AUDIT → DELETE SOURCE.
+## Open gaps
+- Customer order details + tracking timeline.
+- Customer account/profile context.
+- Admin navigation coverage for all existing operational sections.
+- Exact-head browser/runtime evidence for the next UI frontier.
+- Full semantic consolidation/reference audit of the 50 legacy Markdown sources.
 
-## Mandatory next fronts
+## Blockers
+- No current production deployment is being claimed.
+- `fetch_commit_workflow_runs` returned no workflow runs associated with the current documentation-only HEAD, so CI PASS is not claimed for `c249f4e...`.
 
-### UI — 50%
-Run full Admin/Staff + Customer Portal coverage against the canonical UX contract. Close routes, subroutes, components, dialogs/drawers, forms, tables/cards, search/filter/sort/pagination, actions, validation, permission, loading/empty/error/success/disabled/offline and responsive/accessibility behavior as applicable. Connect every action to real behavior.
+## CURRENT RESUME POINTER
+START FROM THE ACTUAL CURRENT HEAD → implement the customer order-detail/tracking and account/profile surfaces in the existing `src/AppV3Fixed.tsx` architecture without regressing catalog/cart/checkout/templates/finance → expose all already-existing Admin sections from `src/AdminExecutiveDashboard.tsx` navigation → run exact-HEAD typecheck/build/unit/E2E/security workflows → bind every result to the resulting SHA → update this state again.
 
-### CORE — 50%
-In parallel reconcile product/domain/database/RLS/RPC/security/offline/integrations/tests/performance/deployment against canonical contracts. Execute unresolved/unproven work only. Do not repeat proven work without an invalidation reason.
-
-### Documentation consolidation
-Complete semantic merge of all 50 source Markdown files. Update every internal reference. Then delete only sources that pass the retirement gate.
-
-## Resume pointer
-CURRENT RESUME POINTER = on the next session, VERIFY THE ACTUAL GIT HEAD FIRST (do not trust a historical SHA in documentation) → load PROJECT_MEMORY + CANONICAL-DOCUMENT-SYSTEM + all six canonical docs + this state → execute UI/Core 50/50 in parallel → finish semantic merge/reference audit → retire legacy docs → verify exact new HEAD → update this state again.
-
-## Important state rule
-Because updating this file itself creates a new Git commit, the file records the **last verified working HEAD**, while every new session must independently verify the actual Git HEAD before using it as execution truth. This avoids self-referential/stale SHA claims.
-
-## End-of-run write-back
-Last verified working HEAD:
-Actual verified Git HEAD at run end:
-Branch:
-What changed:
-What was proven:
-Open gaps:
-Blockers:
-Candidate:
-Deployment:
-Production:
-New CURRENT RESUME POINTER:
+## Evidence discipline
+No PASS or certification claim is made from code inspection alone. Exact SHA + executable check + result + evidence remain mandatory.
