@@ -46,14 +46,24 @@ export default function CustomerPanel({ role }: { role: UserRole }) {
     if(!supabase || detailLoading) return;
     setSelectedCustomer(customer); setDetailLoading(true); setError('');
     try{
-      const [{data:orders,error:ordersError},{data:ledger,error:ledgerError},{data:invitations,error:invitationError}]=await Promise.all([
+      const [{data:orders,error:ordersError},{data:invoices,error:invoiceError},{data:invitations,error:invitationError}]=await Promise.all([
         supabase.from('orders').select('order_number,status,total,currency,created_at').eq('customer_id',customer.id).order('created_at',{ascending:false}).limit(25),
-        supabase.from('customer_ledger_entries').select('reference,description,debit,credit,due_date,status,created_at').eq('customer_id',customer.id).order('created_at',{ascending:false}).limit(40),
+        supabase.from('operational_invoices').select('id,invoice_number,status,total,currency,due_at,created_at').eq('customer_id',customer.id).order('created_at',{ascending:false}).limit(40),
         supabase.from('customer_invitations').select('recipient_email,expires_at,accepted_at,revoked_at,created_at').eq('customer_id',customer.id).order('created_at',{ascending:false}).limit(20)
       ]);
-      if(ordersError) throw ordersError; if(ledgerError) throw ledgerError; if(invitationError) throw invitationError;
+      if(ordersError) throw ordersError; if(invoiceError) throw invoiceError; if(invitationError) throw invitationError;
+      const invoiceRows=invoices??[];
+      const invoiceIds=invoiceRows.map(item=>item.id);
+      let payments:Array<{invoice_id:string;amount:number;reference:string|null;method:string;paid_at:string;created_at:string}>=[];
+      if(invoiceIds.length){
+        const {data:paymentRows,error:paymentError}=await supabase.from('payments').select('invoice_id,amount,reference,method,paid_at,created_at').in('invoice_id',invoiceIds).order('paid_at',{ascending:false}).limit(80);
+        if(paymentError) throw paymentError;
+        payments=(paymentRows??[]).map(item=>({...item,amount:Number(item.amount)}));
+      }
       setDetailOrders((orders??[]).map(item=>({...item,total:Number(item.total)})));
-      setDetailLedger((ledger??[]).map(item=>({...item,debit:Number(item.debit),credit:Number(item.credit)})));
+      const invoiceEntries=invoiceRows.map(item=>({reference:'INV-'+item.invoice_number,description:'فاتورة #'+item.invoice_number,debit:Number(item.total),credit:0,due_date:item.due_at, status:item.status, created_at:item.created_at}));
+      const paymentEntries=payments.map(item=>({reference:item.reference??'PAY-'+item.paid_at,description:'تحصيل '+(item.reference??item.method),debit:0,credit:item.amount,due_date:null,status:'paid',created_at:item.paid_at}));
+      setDetailLedger([...invoiceEntries,...paymentEntries].sort((a,b)=>Date.parse(b.created_at)-Date.parse(a.created_at)).slice(0,80));
       setDetailInvitations((invitations??[]) as typeof detailInvitations);
     }catch(e){setSelectedCustomer(null);setError(e instanceof Error?e.message:'تعذر تحميل ملف العميل.');}
     finally{setDetailLoading(false);}
