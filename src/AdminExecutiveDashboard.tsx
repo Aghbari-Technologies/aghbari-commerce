@@ -27,6 +27,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [salesRows, setSalesRows] = useState<DashboardSaleRow[]>([]);
+  const [refreshTick, setRefreshTick] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -59,7 +60,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
     void load();
     const timer = window.setInterval(load, 60_000);
     return () => { cancelled = true; window.clearInterval(timer); };
-  }, []);
+  }, [refreshTick]);
 
   const salesByDay = useMemo(() => buildSevenDaySales(salesRows), [salesRows]);
   const maxSales = Math.max(...salesByDay.map((day) => day.value), 1);
@@ -82,10 +83,10 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
     ['إعدادات العميل','#admin-settings',canAdmin,'⚙'],
   ] as const;
 
-  return <section className="executive-dashboard" dir="rtl" aria-label="لوحة المعلومات التنفيذية">
+  return <section className="executive-dashboard" dir="rtl" aria-label="لوحة المعلومات التنفيذية" aria-busy={loading}>
     <header className="executive-header">
       <div><span className="executive-eyebrow">لوحة التحكم · الإدارة التنفيذية</span><h1>مرحباً بك في بوابة الأغبري التجارية</h1><p>رؤية تشغيلية موحدة للمبيعات، المخزون، العملاء والسيولة — مبنية على بيانات النظام الحالية.</p></div>
-      <div className="executive-header-actions"><span className="live-dot">● النظام يعمل</span><button type="button" onClick={() => window.location.reload()}>تحديث البيانات ↻</button></div>
+      <div className="executive-header-actions"><span className="live-dot">● النظام يعمل</span><button type="button" onClick={() => setRefreshTick((value) => value + 1)} disabled={loading} aria-busy={loading}>تحديث البيانات ↻</button></div>
     </header>
     {error && <div className="executive-error" role="alert">تعذر تحديث بعض المؤشرات: {error}</div>}
     <div className="executive-layout">
