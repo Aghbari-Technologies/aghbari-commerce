@@ -2,7 +2,11 @@ import { requireSupabase } from '../lib/supabase';
 import type { OrderStatus } from '../domain/types';
 import { retryRead } from '../lib/retry';
 
-export interface CustomerOrderDetailItem { id:string; product_id:string; sku:string; name:string; unit:string; quantity:number; unit_price:number; line_total:number; currency:string; }\nexport interface CustomerOrderTimelineStep { status:OrderStatus; label:string; active:boolean; }\nexport interface CustomerOrderDetail extends CustomerOrderSummary { items:CustomerOrderDetailItem[]; timeline:CustomerOrderTimelineStep[]; statusLabel:string; }\n\nexport interface CustomerOrderSummary {
+export interface CustomerOrderDetailItem { id:string; product_id:string; sku:string; name:string; unit:string; quantity:number; unit_price:number; line_total:number; currency:string; }
+export interface CustomerOrderTimelineStep { status:OrderStatus; label:string; active:boolean; }
+export interface CustomerOrderDetail extends CustomerOrderSummary { items:CustomerOrderDetailItem[]; timeline:CustomerOrderTimelineStep[]; statusLabel:string; }
+
+export interface CustomerOrderSummary {
   id: string;
   order_number: number;
   status: OrderStatus;
@@ -39,4 +43,27 @@ export async function getCustomerOrders(limit = 20): Promise<CustomerOrderSummar
     total: typeof item.total === 'number' ? item.total : Number(item.total)
   }));
 }
-\nconst STATUS_LABELS: Record<string,string> = { draft:'مسودة', pending:'قيد المراجعة', confirmed:'مؤكد', preparing:'قيد التجهيز', ready:'جاهز', completed:'مكتمل', cancelled:'ملغي' };\nconst STATUS_FLOW: OrderStatus[] = ['pending','confirmed','preparing','ready','completed'];\n\nexport async function getCustomerOrderDetail(orderId:string): Promise<CustomerOrderDetail> {\n  if (!UUID_PATTERN.test(orderId)) throw new Error('معرّف الطلب غير صالح.');\n  const client = requireSupabase();\n  const { data: order, error: orderError } = await client.from('orders').select('id,order_number,status,total,currency,created_at').eq('id',orderId).maybeSingle();\n  if (orderError) throw orderError;\n  if (!order) throw new Error('الطلب غير موجود أو غير متاح لهذا الحساب.');\n  const [{ data: items, error: itemsError }, { data: history, error: historyError }] = await Promise.all([\n    client.from('order_items').select('id,product_id,quantity,unit_price,line_total,currency,products:products(sku,name,unit)').eq('order_id',orderId).order('created_at'),\n    client.from('order_status_history').select('from_status,to_status,created_at').eq('order_id',orderId).order('created_at')\n  ]);\n  if (itemsError) throw itemsError;\n  if (historyError) throw historyError;\n  const mappedItems: CustomerOrderDetailItem[] = (items??[]).map((row:any) => {\n    const product = Array.isArray(row.products) ? row.products[0] : row.products;\n    return { id:String(row.id), product_id:String(row.product_id), sku:String(product?.sku??'—'), name:String(product?.name??'صنف غير متاح'), unit:String(product?.unit??'وحدة'), quantity:Number(row.quantity), unit_price:Number(row.unit_price), line_total:Number(row.line_total), currency:String(row.currency??order.currency) };\n  });\n  const reached = new Set<string>(['pending', ...((history??[]).map((h:any)=>String(h.to_status)))]);\n  const timeline = STATUS_FLOW.map(status=>({status,label:STATUS_LABELS[status],active:reached.has(status) || status===order.status}));\n  return { ...assertCustomerOrderSummary({...order, order_number:Number(order.order_number), total:Number(order.total)}), items:mappedItems, timeline, statusLabel:STATUS_LABELS[order.status]??order.status };\n}\n
+
+const STATUS_LABELS: Record<string,string> = { draft:'مسودة', pending:'قيد المراجعة', confirmed:'مؤكد', preparing:'قيد التجهيز', ready:'جاهز', completed:'مكتمل', cancelled:'ملغي' };
+const STATUS_FLOW: OrderStatus[] = ['pending','confirmed','preparing','ready','completed'];
+
+export async function getCustomerOrderDetail(orderId:string): Promise<CustomerOrderDetail> {
+  if (!UUID_PATTERN.test(orderId)) throw new Error('معرّف الطلب غير صالح.');
+  const client = requireSupabase();
+  const { data: order, error: orderError } = await client.from('orders').select('id,order_number,status,total,currency,created_at').eq('id',orderId).maybeSingle();
+  if (orderError) throw orderError;
+  if (!order) throw new Error('الطلب غير موجود أو غير متاح لهذا الحساب.');
+  const [{ data: items, error: itemsError }, { data: history, error: historyError }] = await Promise.all([
+    client.from('order_items').select('id,product_id,quantity,unit_price,line_total,currency,products:products(sku,name,unit)').eq('order_id',orderId).order('created_at'),
+    client.from('order_status_history').select('from_status,to_status,created_at').eq('order_id',orderId).order('created_at')
+  ]);
+  if (itemsError) throw itemsError;
+  if (historyError) throw historyError;
+  const mappedItems: CustomerOrderDetailItem[] = (items??[]).map((row:any) => {
+    const product = Array.isArray(row.products) ? row.products[0] : row.products;
+    return { id:String(row.id), product_id:String(row.product_id), sku:String(product?.sku??'—'), name:String(product?.name??'صنف غير متاح'), unit:String(product?.unit??'وحدة'), quantity:Number(row.quantity), unit_price:Number(row.unit_price), line_total:Number(row.line_total), currency:String(row.currency??order.currency) };
+  });
+  const reached = new Set<string>(['pending', ...((history??[]).map((h:any)=>String(h.to_status)))]);
+  const timeline = STATUS_FLOW.map(status=>({status,label:STATUS_LABELS[status],active:reached.has(status) || status===order.status}));
+  return { ...assertCustomerOrderSummary({...order, order_number:Number(order.order_number), total:Number(order.total)}), items:mappedItems, timeline, statusLabel:STATUS_LABELS[order.status]??order.status };
+}
