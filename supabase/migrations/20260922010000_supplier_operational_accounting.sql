@@ -228,5 +228,7 @@ $$;
 
 REVOKE ALL ON FUNCTION public.create_supplier_bill(uuid,text,numeric,text,timestamptz,uuid,text,text) FROM PUBLIC;
 REVOKE ALL ON FUNCTION public.record_supplier_payment(uuid,numeric,public.payment_method,uuid,text,text) FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.create_supplier_bill(uuid,text,numeric,text,timestamptz,uuid,text,text) FROM anon, PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.record_supplier_payment(uuid,numeric,public.payment_method,uuid,text,text) FROM anon, PUBLIC;
 GRANT EXECUTE ON FUNCTION public.create_supplier_bill(uuid,text,numeric,text,timestamptz,uuid,text,text) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.record_supplier_payment(uuid,numeric,public.payment_method,uuid,text,text) TO authenticated;
