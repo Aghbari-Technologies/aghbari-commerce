@@ -46,6 +46,17 @@ export default function AdminPanel({ role }: { role: UserRole }) {
 
   return <section className="admin-panel" id="account">
     <AdminExecutiveDashboard role={role} />
+      <nav className="admin-command-nav" aria-label="تنقل مركز التشغيل">
+        <a href="#account">المركز</a>
+        {canOrderWorkflow&&<a href="#admin-orders">الطلبات</a>}
+        {canCatalog&&<a href="#admin-customers">العملاء</a>}
+        {canCatalog&&<a href="#admin-product-create">الكتالوج</a>}
+        {canInventory&&<a href="#admin-inventory">المخزون</a>}
+        {canInventory&&<a href="#admin-purchasing">المشتريات</a>}
+        {canFinance&&<a href="#admin-finance">المالية</a>}
+        {canInventory&&<a href="#admin-export">التصدير</a>}
+        {canCategory&&<a href="#admin-settings">الإعدادات</a>}
+      </nav>
     <details className="admin-operations" open>
       <summary>مركز التشغيل التفصيلي وإدارة البيانات</summary>
       <div className="section-heading"><div><span className="eyebrow">إدارة التشغيل</span><h2>مركز التحكم</h2></div><span>الصلاحيات تُفرض على الخادم أيضًا</span></div>
