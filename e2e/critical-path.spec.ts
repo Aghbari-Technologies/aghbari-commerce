@@ -161,7 +161,7 @@ test('tenant isolation: Tenant B cannot read Tenant A order through the real UI 
   const pageB = await contextB.newPage();
   const failuresB = captureBrowserFailures(pageB);
   await login(pageB, emailB, passwordB);
-  await pageB.getByRole('button', { name: 'طلباتي', exact: true }).click();
+  await pageB.locator('.portal-header').getByRole('button', { name: 'طلباتي', exact: true }).click();
   await expect(pageB.getByText(`طلب #${orderNumberA}`, { exact: true })).toHaveCount(0);
   await assertCleanBrowser(failuresA);
   await assertCleanBrowser(failuresB);
