@@ -51,3 +51,42 @@ Candidate:
 Deployment:
 Production:
 New CURRENT RESUME POINTER:
+
+## Execution checkpoint — 2026-09-22
+
+- **Last verified working HEAD:** e80c4325438a8852cc17d0e81eab4be4dadbc008
+- **Current implementation lineage:** main c249f4ec9930d7007e4efd35bdefea0acf9c9e5a → execution/ui-core-closure-20260922
+- **Current branch HEAD at write-back:** ff24a71d9757f7a9f1492a4725152a532b4157cd
+- **PR:** #106 (open, base main)
+- **Production:** NO TOUCH
+- **Certification:** NOT CLAIMED
+
+### What changed
+- Customer Portal: product detail modal with authorized pricing/stock/tier/quantity and real add-to-cart action.
+- Customer Portal: order detail modal backed by persisted order_items/product data.
+- Customer Portal: account surface and saved-order navigation wording correction.
+- Core offline reliability: reconnect event drains the queued cart operations and forces a fresh server-cart read.
+- QA/test-the-test: critical-path selectors were aligned to the current portal and now require product-detail and persisted order-detail evidence.
+
+### What was proven
+- Exact starting repository HEAD was independently verified before implementation.
+- Vercel created a Git-sourced preview for the execution branch; the latest implementation deployment observed before this documentation write-back was tied to e0167c6b73391c9d0ef5d930aa7034a9ea94db9f. The documentation write-back commits necessarily advanced the branch afterwards.
+- Vercel Preview Comments returned success with zero unresolved feedback.
+- No claim of full CI PASS is made: quality/security/migration/domain/concurrency/browser jobs were queued or in progress at the time of this checkpoint.
+
+### Open gaps
+- Re-run/complete all exact-SHA CI gates against the newest write-back HEAD.
+- Verify the final Vercel deployment artifact/runtime against that same SHA.
+- Complete semantic consolidation and retirement audit of the 50 historical Markdown sources.
+
+### Blockers
+- TinyFish external browser automation could not start because the connected wallet balance was insufficient; no retry was performed.
+- Vercel API account scope was initially unauthorized for a stale team identifier, but the correct project/team scope was later used successfully to inspect the exact Git deployment.
+
+### Candidate / Deployment
+- Candidate: PR #106, branch execution/ui-core-closure-20260922.
+- Latest implementation preview observed before documentation write-back: Vercel deployment dpl_DaGRdvuSCA8hYw6meFqw9Xoxx2sp for e0167c6b73391c9d0ef5d930aa7034a9ea94db9f.
+- Production deployment remains main at c249f4ec9930d7007e4efd35bdefea0acf9c9e5a and was not modified by this run.
+
+### New CURRENT RESUME POINTER
+START FROM ACTUAL CURRENT HEAD ff24a71d9757f7a9f1492a4725152a532b4157cd → verify the exact SHA independently → inspect PR #106 CI and Vercel preview for that exact SHA → fix any failing proof/test defects → rerun exact CI until green → runtime/browser proof with exact SHA → only then consider merge/release; meanwhile continue UI/Core 50/50 and do not repeat already proven domains.
