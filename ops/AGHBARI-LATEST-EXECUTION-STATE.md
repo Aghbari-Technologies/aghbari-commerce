@@ -1,44 +1,47 @@
 # 🔴 AGHBARI LATEST EXECUTION STATE
 
-**Current exact HEAD:** e80c4325438a8852cc17d0e81eab4be4dadbc008
+**Last verified working HEAD:** e80c4325438a8852cc17d0e81eab4be4dadbc008
+**State-file updates after that verification:** documentation-only
 **Branch:** main
 **Production:** NO TOUCH
 **Certification:** NOT CLAIMED
 
-## Documentation-control closure
-- Root PROJECT_MEMORY.md: ACTIVE
-- Canonical document-system manifest: ACTIVE
-- Six specialist canonical documents: ACTIVE
-- Development progress ledger: ACTIVE
-- Live execution state: ACTIVE
-- Execution router: ACTIVE
-- PR #105: MERGED to main
-- Product runtime/code/database behavior: NOT MODIFIED by this documentation-control change
+## Documentation-control result
+- PR #105 merged the canonical project-control layer into main.
+- Root PROJECT_MEMORY.md is active.
+- docs/CANONICAL-DOCUMENT-SYSTEM.md is active.
+- Six canonical specialist document targets are active.
+- ops/AGHBARI-DEVELOPMENT-PROGRESS.md is active.
+- this file is active.
+- AGHBARI-EXECUTION-START.md is the launch router.
+- Product runtime/code/database behavior was not modified by this documentation-control change.
 
 ## Critical consolidation status
-The 50 historical Markdown documents are now mapped one-to-one to their intended canonical specialization, but they remain in the repository until the full-content semantic merge and cross-reference audit is actually completed.
+The 50 historical Markdown documents are mapped one-to-one to canonical specializations, but they are **not yet deleted**. They must remain available until full-content semantic merge and repository-reference audit are actually proven.
 
-This is deliberate. The retirement rule is:
-READ FULL SOURCE → MERGE ALL UNIQUE KNOWLEDGE → UPDATE REFERENCES → COVERAGE AUDIT → DELETE SOURCE.
+Retirement gate:
+READ FULL SOURCE → MERGE UNIQUE REQUIREMENTS/DECISIONS/INVARIANTS/EVIDENCE → UPDATE REFERENCES → COVERAGE AUDIT → DELETE SOURCE.
 
-No information is to be discarded merely to make the repository look clean.
-
-## Mandatory next execution fronts
+## Mandatory next fronts
 
 ### UI — 50%
-Use docs/canonical/02-UX-UI-CUSTOMER-EXPERIENCE.md to inventory every Admin/Staff and Customer Portal route, subroute, component, form, dialog/drawer, table/card, search, filter, sort, pagination, bulk action and all applicable state/responsive/accessibility behavior. Implement real connected behavior and close gaps; do not stop at page shells.
+Run full Admin/Staff + Customer Portal coverage against the canonical UX contract. Close routes, subroutes, components, dialogs/drawers, forms, tables/cards, search/filter/sort/pagination, actions, validation, permission, loading/empty/error/success/disabled/offline and responsive/accessibility behavior as applicable. Connect every action to real behavior.
 
 ### CORE — 50%
-In parallel reconcile docs/canonical/01 through 06 against actual code, services, Supabase schema/migrations/RLS/RPCs, integrations/outbox/offline, tests, performance and deployment/release state. Execute unresolved or unproven work only.
+In parallel reconcile product/domain/database/RLS/RPC/security/offline/integrations/tests/performance/deployment against canonical contracts. Execute unresolved/unproven work only. Do not repeat proven work without an invalidation reason.
 
 ### Documentation consolidation
-Complete the full-content semantic merge for all 50 source Markdown files, update all references, prove 50/50 coverage, then retire/delete only the files that pass the gate.
+Complete semantic merge of all 50 source Markdown files. Update every internal reference. Then delete only sources that pass the retirement gate.
 
 ## Resume pointer
-CURRENT RESUME POINTER = exact HEAD e80c4325438a8852cc17d0e81eab4be4dadbc008 → load PROJECT_MEMORY + CANONICAL-DOCUMENT-SYSTEM + all six canonical docs + this state → execute UI/Core 50/50 in parallel → complete full-content source merge + reference audit → retire legacy docs → verify exact HEAD and continue product closure. Do not restart from historical SHAs.
+CURRENT RESUME POINTER = on the next session, VERIFY THE ACTUAL GIT HEAD FIRST (do not trust a historical SHA in documentation) → load PROJECT_MEMORY + CANONICAL-DOCUMENT-SYSTEM + all six canonical docs + this state → execute UI/Core 50/50 in parallel → finish semantic merge/reference audit → retire legacy docs → verify exact new HEAD → update this state again.
+
+## Important state rule
+Because updating this file itself creates a new Git commit, the file records the **last verified working HEAD**, while every new session must independently verify the actual Git HEAD before using it as execution truth. This avoids self-referential/stale SHA claims.
 
 ## End-of-run write-back
-Exact HEAD:
+Last verified working HEAD:
+Actual verified Git HEAD at run end:
 Branch:
 What changed:
 What was proven:
