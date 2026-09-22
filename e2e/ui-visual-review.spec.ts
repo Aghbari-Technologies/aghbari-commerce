@@ -211,7 +211,7 @@ test.describe('Aghbari UI visual integrity', () => {
     await page.getByLabel('إجمالي فاتورة المورد').fill('1250');
     await page.getByRole('button', { name: 'إصدار فاتورة المورد', exact: true }).click();
     await expect(page.getByText('تم إصدار فاتورة المورد وتسجيلها في كشف الحساب.', { exact: true })).toBeVisible({ timeout: 10000 });
-    const billRow = page.getByText('فاتورة VIS-001', { exact: true }).locator('..');
+    const billRow = page.locator('.supplier-accounting .cart-line').filter({ hasText: 'فاتورة VIS-001' }).first();
     await expect(billRow).toBeVisible();
     await billRow.getByRole('button', { name: 'سداد', exact: true }).click();
     await billRow.getByLabel('مبلغ سداد VIS-001').fill('250');
