@@ -61,20 +61,22 @@ Do not create another memory system. Do not ask the owner to reconstruct history
 
 هذا القسم إلزامي في **كل انطلاقة**:
 1. استأنف من آخر `CURRENT RESUME POINTER` بعد التحقق من GitHub Exact HEAD؛ لا تبدأ من الصفر ولا تعيد تنفيذ المكتمل.
-2. اجعل أول 120 دقيقة بوابة **FULL PRODUCT UI COVERAGE**: جميع Admin/Staff وCustomer Portal routes/views والصفحات الفرعية وdialogs/drawers/forms/tables/filters/search وجميع حالات loading/empty/error/success/disabled/permission/offline وDesktop/Tablet/Mobile، بواجهات حقيقية لا placeholders.
-3. اعمل بالتوازي في كل انطلاقة على الجبهات المستقلة: UI/UX + Core transactions + Security/Data integrity + QA/Browser/Test-the-Test + Deployment/Release proof + Performance/Resource preservation. لا تنتظر جبهة متوقفة بينما توجد جبهة مستقلة قابلة للتنفيذ.
-4. كل متطلب canonical غير مكتمل في UI أو workflow هو **CORE PRODUCT GAP** ويجب فتحه وتنفيذه في نفس الانطلاقة ما لم يكن محجوبًا بقرار أعمال جوهري أو عائق تقني حقيقي.
-5. لكل واجهة: `UI → State → Logic → API/RPC → Auth/RLS/Storage → Audit → Verification`. ممنوع الأزرار الوهمية والبيانات الاصطناعية لإخفاء النقص.
-6. وفّر المساحة من المصدر: reuse للمكونات والأنماط والأصول، CSS/design-system قبل dependency جديد، caches/queues/storage bounded/deterministic، وتجنب تكرار CI/build/deploy والملفات والصور. لا تحذف بيانات تشغيلية أو مالية أو تدقيقية لتوفير المساحة.
-7. لا PASS بلا دليل Exact-SHA؛ ولا تعِد فحص جبهة مثبتة إلا بسبب SHA/dependency/evidence/regression. لا تنقل دليلًا بين SHAs.
-8. استخدم كل الصلاحيات والأدوات الممنوحة لك لاتخاذ وتنفيذ القرارات التقنية المفوضة، ولا تنتظر إذنًا تفصيليًا.
-9. قبل نهاية كل انطلاقة حدّث `PROJECT_MEMORY.md` و`ops/AGHBARI-DEVELOPMENT-PROGRESS.md` و`ops/AGHBARI-LATEST-EXECUTION-STATE.md` مع آخر نتيجة مثبتة وResume Pointer تنفيذي محدد.
-10. **لا تقرير بدل التنفيذ:** نفّذ → اختبر → اثبت → سجّل → انتقل للجبهة التالية، حتى إغلاق أكبر قدر ممكن من العمل القابل للتنفيذ.
+2. **UI/UX DEVELOPMENT IS MANDATORY IN EVERY LAUNCH.** في كل انطلاقة يجب فحص جميع Admin/Staff وCustomer Portal routes/views والصفحات الفرعية وdialogs/drawers/forms/tables/filters/search وجميع حالات loading/empty/error/success/disabled/permission/offline وDesktop/Tablet/Mobile. إذا وُجدت أي فجوة UI/UX أو حالة ناقصة، يجب تنفيذها في نفس الانطلاقة؛ لا يجوز تحويل الانطلاقة إلى تحقق/CI فقط ما دامت هناك فجوة واجهة قابلة للتنفيذ.
+3. أول 120 دقيقة هي بوابة **FULL PRODUCT UI COVERAGE**: واجهات حقيقية راقية وقابلة للاستخدام، بلا placeholders أو أزرار وهمية أو بيانات مصطنعة لإخفاء النقص.
+4. بالتوازي في كل انطلاقة: UI/UX Development + Core transactions + Security/Data integrity + QA/Browser/Test-the-Test + Deployment/Release proof + Performance/Resource preservation. لا تنتظر جبهة متوقفة بينما توجد جبهة مستقلة قابلة للتنفيذ.
+5. كل متطلب canonical غير مكتمل في UI أو workflow هو **CORE PRODUCT GAP** ويجب فتحه وتنفيذه في نفس الانطلاقة ما لم يكن محجوبًا بقرار أعمال جوهري أو عائق تقني حقيقي.
+6. لكل واجهة: `UI → State → Logic → API/RPC → Auth/RLS/Storage → Audit → Verification`. ممنوع الأزرار الوهمية والبيانات الاصطناعية لإخفاء النقص.
+7. وفّر المساحة من المصدر: reuse للمكونات والأنماط والأصول، CSS/design-system قبل dependency جديد، caches/queues/storage bounded/deterministic، وتجنب تكرار CI/build/deploy والملفات والصور. لا تحذف بيانات تشغيلية أو مالية أو تدقيقية لتوفير المساحة.
+8. لا PASS بلا دليل Exact-SHA؛ ولا تعِد فحص جبهة مثبتة إلا بسبب SHA/dependency/evidence/regression. لا تنقل دليلًا بين SHAs.
+9. استخدم كل الصلاحيات والأدوات الممنوحة لك لاتخاذ وتنفيذ القرارات التقنية المفوضة، ولا تنتظر إذنًا تفصيليًا.
+10. **بعد كل انطلاقة يجب حفظ النتائج إلزاميًا داخل GitHub**: حدّث `PROJECT_MEMORY.md` للقرارات/الدروس الدائمة فقط، و`ops/AGHBARI-DEVELOPMENT-PROGRESS.md` بسجل run مضغوط، و`ops/AGHBARI-LATEST-EXECUTION-STATE.md` بأحدث Exact HEAD والـevidence والـblockers والـCandidate/Production والـCURRENT RESUME POINTER. لا تعتبر الانطلاقة مكتملة إذا لم تُحفظ هذه الحالة.
+11. **لا تقرير بدل التنفيذ:** نفّذ → اختبر → اثبت → سجّل → انتقل للجبهة التالية، حتى إغلاق أكبر قدر ممكن من العمل القابل للتنفيذ.
+
 ## 🎯 EXECUTE NOW
 
 After the complete chain is read:
 
-`READ → RECONCILE → IDENTIFY OPEN FRONTS → PRIORITIZE → IMPLEMENT → TEST → VERIFY → PROVE → UPDATE MEMORY → CONTINUE`
+`READ → RECONCILE → IDENTIFY OPEN FRONTS → PRIORITIZE → IMPLEMENT UI + CORE → TEST → VERIFY → PROVE → UPDATE MEMORY → CONTINUE`
 
 Do not reply with a new plan or repeat this protocol. **Execute.**
 
