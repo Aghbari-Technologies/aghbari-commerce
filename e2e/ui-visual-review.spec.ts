@@ -178,6 +178,49 @@ test.describe('Aghbari UI visual integrity', () => {
     await expect(page.locator('#admin-purchasing')).toBeVisible();
     await expect(page.locator('#admin-finance')).toBeVisible();
     await expect(page.locator('#admin-settings')).toBeVisible();
+    const customerDetailAction = page.locator('#admin-customers').getByRole('button', { name: 'تفاصيل وكشف', exact: true }).first();
+    await expect(customerDetailAction).toBeVisible();
+    await customerDetailAction.click();
+    await expect(page.locator('#customer-detail-modal')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'ملف العميل' })).toBeVisible();
+    await assertRtlAndNoOverflow(page);
+    await page.screenshot({ path: 'visual-evidence/staff-customer-detail-desktop.png', fullPage: true });
+    await page.getByRole('button', { name: 'إغلاق ملف العميل' }).click();
+
+    const governance = page.locator('#admin-access').first();
+    await expect(governance).toBeVisible();
+    await governance.scrollIntoViewIfNeeded();
+    await assertRtlAndNoOverflow(page);
+    await page.screenshot({ path: 'visual-evidence/staff-governance-desktop.png', fullPage: false });
+
+    const purchasing = page.locator('#admin-purchasing').first();
+    await expect(purchasing).toBeVisible();
+    const supplierName = purchasing.getByLabel('اسم المورد');
+    await supplierName.fill('Visual Supplier');
+    await purchasing.getByLabel('هاتف المورد').fill('711000001');
+    await purchasing.getByLabel('بريد المورد').fill('supplier@visual.test');
+    await purchasing.getByRole('button', { name: 'حفظ المورد', exact: true }).click();
+    await expect(page.getByText('تم إنشاء المورد وتسجيل أثر العملية.', { exact: true })).toBeVisible({ timeout: 10000 });
+    const supplierAction = purchasing.getByRole('button', { name: 'ملف المورد', exact: true }).first();
+    await expect(supplierAction).toBeVisible();
+    await supplierAction.click();
+    await expect(page.getByRole('dialog', { name: 'ملف المورد' })).toBeVisible();
+    await expect(page.locator('.supplier-accounting')).toBeVisible();
+    await expect(page.getByText('فاتورة مورد جديدة', { exact: true })).toBeVisible();
+    await page.getByLabel('رقم فاتورة المورد').fill('VIS-001');
+    await page.getByLabel('إجمالي فاتورة المورد').fill('1250');
+    await page.getByRole('button', { name: 'إصدار فاتورة المورد', exact: true }).click();
+    await expect(page.getByText('تم إصدار فاتورة المورد وتسجيلها في كشف الحساب.', { exact: true })).toBeVisible({ timeout: 10000 });
+    const billRow = page.getByText('فاتورة VIS-001', { exact: true }).locator('..');
+    await expect(billRow).toBeVisible();
+    await billRow.getByRole('button', { name: 'سداد', exact: true }).click();
+    await billRow.getByLabel('مبلغ سداد VIS-001').fill('250');
+    await billRow.getByLabel('طريقة سداد VIS-001').selectOption('bank_transfer');
+    await billRow.getByRole('button', { name: 'تسجيل السداد', exact: true }).click();
+    await expect(page.getByText('تم تسجيل سداد المورد وتحديث حالة الفاتورة.', { exact: true })).toBeVisible({ timeout: 10000 });
+    await page.screenshot({ path: 'visual-evidence/staff-supplier-accounting-desktop.png', fullPage: true });
+    await page.getByRole('button', { name: 'إغلاق ملف المورد' }).click();
+
     const staffDetailButtons = page.getByRole('button', { name: 'عرض التفاصيل', exact: true });
     if (await staffDetailButtons.count()) {
       await staffDetailButtons.first().click();
