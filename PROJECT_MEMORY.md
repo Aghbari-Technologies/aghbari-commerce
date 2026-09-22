@@ -701,3 +701,12 @@ RUN-2026-09-20-EXECUTE-022 — WORLD-CLASS UI/UX ADVANCEMENT
 - Resource rule remains: reuse/component/CSS-first, bounded caches/queues/storage, deterministic replaceable media, no destructive business-data deletion.
 - Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` remains frozen/untouched. Production remains HOLD / NO TOUCH.
 - Historical evidence remains SHA-bound; no prior SHA proof is promoted by this memory update.
+
+
+## 2026-09-22 — EXECUTE-NOW / EXACT-SHA CLOSURE
+- Current development HEAD: `e804e1f345b9628cfc0c31bf9664abd0618e2c4a`.
+- Durable lesson: high-value visual E2E must assert the actual semantic accessibility contract. For mutable fixture creation, retries must use unique bounded test identifiers so a failed assertion does not turn a successful first transaction into a false duplicate-key failure on retry.
+- Exact-SHA verification is now terminal SUCCESS across quality, security, G1, order workflow, concurrency, migration, Test-the-Test, fresh browser, local-production browser, and UI visual review. Visual artifact `10713399422` is SHA-bound to `e804e1f345b9628cfc0c31bf9664abd0618e2c4a`.
+- The Customer Portal/Admin visual surface is proven from actual exact-SHA screenshots, including mobile/desktop and supplier accounting/governance/detail surfaces. No placeholder operational data was introduced to fill screenshots.
+- Candidate `1685836f4226fdcb3250a60eba7430ecf3e8f080` and Production remain untouched. Release decisions stay separate from technical proof.
+- CURRENT RESUME POINTER: exact `e804e1f345b9628cfc0c31bf9664abd0618e2c4a` is the only proven source. Continue at non-production deployment/release reconciliation for this SHA; do not restart closed implementation fronts.
