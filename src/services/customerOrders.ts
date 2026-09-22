@@ -46,6 +46,8 @@ export async function getCustomerOrders(limit = 20): Promise<CustomerOrderSummar
 
 const STATUS_LABELS: Record<string,string> = { draft:'مسودة', pending:'قيد المراجعة', confirmed:'مؤكد', preparing:'قيد التجهيز', ready:'جاهز', completed:'مكتمل', cancelled:'ملغي' };
 const STATUS_FLOW: OrderStatus[] = ['pending','confirmed','preparing','ready','completed'];
+type CustomerOrderDetailRow = { id:string; product_id:string; quantity:number|string; unit_price:number|string; line_total:number|string; currency:string|null; products:{sku:string|null;name:string|null;unit:string|null}|{sku:string|null;name:string|null;unit:string|null}[]|null };
+type CustomerOrderHistoryRow = { from_status:OrderStatus|null; to_status:OrderStatus; created_at:string };
 
 export async function getCustomerOrderDetail(orderId:string): Promise<CustomerOrderDetail> {
   if (!UUID_PATTERN.test(orderId)) throw new Error('معرّف الطلب غير صالح.');
@@ -59,11 +61,11 @@ export async function getCustomerOrderDetail(orderId:string): Promise<CustomerOr
   ]);
   if (itemsError) throw itemsError;
   if (historyError) throw historyError;
-  const mappedItems: CustomerOrderDetailItem[] = (items??[]).map((row:any) => {
+  const mappedItems: CustomerOrderDetailItem[] = (items??[]).map((row:CustomerOrderDetailRow) => {
     const product = Array.isArray(row.products) ? row.products[0] : row.products;
     return { id:String(row.id), product_id:String(row.product_id), sku:String(product?.sku??'—'), name:String(product?.name??'صنف غير متاح'), unit:String(product?.unit??'وحدة'), quantity:Number(row.quantity), unit_price:Number(row.unit_price), line_total:Number(row.line_total), currency:String(row.currency??order.currency) };
   });
-  const reached = new Set<string>(['pending', ...((history??[]).map((h:any)=>String(h.to_status)))]);
+  const reached = new Set<string>(['pending', ...((history??[] as CustomerOrderHistoryRow[]).map((h)=>String(h.to_status)))]);
   const timeline = STATUS_FLOW.map(status=>({status,label:STATUS_LABELS[status],active:reached.has(status) || status===order.status}));
   return { ...assertCustomerOrderSummary({...order, order_number:Number(order.order_number), total:Number(order.total)}), items:mappedItems, timeline, statusLabel:STATUS_LABELS[order.status]??order.status };
 }
