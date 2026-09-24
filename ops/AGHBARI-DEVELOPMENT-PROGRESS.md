@@ -322,3 +322,46 @@ The customer portal previously exposed only order summaries and reorder behavior
 - Continue individual SECURITY DEFINER classification.
 - Continue legacy Markdown semantic consolidation and Promotions contract definition.
 - Certification and production remain HOLD / NO TOUCH until exact end-to-end evidence is complete.
+
+
+## Run 2026-09-25 — UI closure expansion + checkout contract correction
+
+### Functional HEAD
+- `ce79c609ae1507060711fbe0d2fb9e78e522ba06`
+- Branch: `main`
+- Production: NO TOUCH
+- Certification: NOT CLAIMED
+
+### UI implementation
+- Added `CatalogManagementPanel`: real product catalog workspace with search, category/status filters, sorting, pagination, edit dialog, controlled active/inactive state changes and responsive styling.
+- Expanded Admin Command Center navigation to expose the catalog workspace.
+- Completed Staff customer directory with search, active/inactive and tier filters, pagination, invitations, tier changes and activation controls.
+- Completed Staff order queue with search, status filtering and pagination while preserving server-side transition authorization.
+- Added dedicated Customer order-history workspace with search, status filtering, pagination, detail/tracking and reorder actions.
+- Added responsive styles for customer directory and order history.
+
+### Core correction
+- Checkout now passes the selected payment method into the canonical `create_order` RPC through `createOrder(..., { paymentMethod })`.
+- Checkout normalizes the selected method to the first currently enabled payment option when organization UI configuration changes.
+
+### Exact-SHA verification status
+- Application Quality: queued on `ce79c609ae1507060711fbe0d2fb9e78e522ba06` — no PASS claimed yet.
+- Security Audit: queued on exact SHA — no PASS claimed yet.
+- Supabase Migration Proof: queued on exact SHA — no PASS claimed yet.
+- Concurrency Proof: queued on exact SHA — no PASS claimed yet.
+- Test-the-Test: queued on exact SHA — no PASS claimed yet.
+- G1 Domain Proof: queued on exact SHA — no PASS claimed yet.
+- Order Workflow Proof: queued on exact SHA — no PASS claimed yet.
+- Browser E2E / Exact Deployment: queued on exact SHA — no PASS claimed yet.
+- Bootstrap Release Lockfile: queued on exact SHA — no PASS claimed yet.
+
+### Hosted runtime
+- Prior exact deployment for SHA `43d245c34c6f33a23a9882eec400634de1bd5745` is READY and the hosted root returned HTTP 200.
+- The same SHA's newest hosted Browser E2E failed before Playwright at Vercel Deployment Protection artifact-identity verification; this remains an external protection gate and is not treated as an application failure.
+- Newer functional SHA `ce79c609...` has no hosted deployment proof yet.
+
+### Remaining
+- Finish exact-SHA gate results for `ce79c609...` and fix any regressions found.
+- Continue nested UI closure: category management, pricing views/history, deeper supplier/purchasing/finance nested states where contracts already exist.
+- Keep Promotions unimplemented until its business/data contract is defined in the canonical schema/requirements.
+- Continue individual SECURITY DEFINER classification and legacy Markdown semantic consolidation.
