@@ -1,7 +1,7 @@
 # 🔴 AGHBARI LATEST EXECUTION STATE
 
 **Last verified working runtime baseline:** `9b489b4f6b196eb2894dc3c8b1337eab00e9a867`
-**Actual current Git HEAD at write-back:** `e2b67f6a47af3b8b377001fb1c7c7eeec9a4ca99`
+**Exact implementation/write-back base HEAD:** `4d098d337e09236d0c39b4fe0dadc2040073ce35`
 **Branch:** `main`
 **Production:** NO TOUCH
 **Certification:** NOT CLAIMED
@@ -37,7 +37,7 @@
 - Security advisor still reports 62 authenticated-executable SECURITY DEFINER warnings. This remains an OPEN security workstream; no false clean/PASS claim is made.
 
 ## Verification
-- Remote `main` ref was directly verified at `c9df2fc8ce11c76817e3d2e349e39bda034be4ce` before write-back, then advanced through this controlled documentation commit to the current HEAD above.
+- Remote `main` ref was directly verified at the implementation/write-back base `4d098d337e09236d0c39b4fe0dadc2040073ce35`; this state-file commit is documentation-only and therefore advances Git by one checkpoint commit without changing functional code.
 - Local clone/build/typecheck/lint could not run because the execution container could not resolve `github.com`.
 - GitHub Actions were observed for the preceding exact SHA `c07ef194...`; no executable PASS is transferred to this newer HEAD.
 - No candidate, deployment or production claim is made.
@@ -53,7 +53,7 @@
 - Local verification is limited by network DNS in the execution container.
 
 ## CURRENT RESUME POINTER
-START FROM CURRENT ACTUAL HEAD `e2b67f6a47af3b8b377001fb1c7c7eeec9a4ca99`.
+START FROM the Git `main` commit created by this state checkpoint; its functional parent is `4d098d337e09236d0c39b4fe0dadc2040073ce35`.
 
 UI FRONT:
 Re-open `src/AppV3Fixed.tsx`, `src/AdminPanel.tsx`, `src/PurchasingPanel.tsx`, `src/FinancePanel.tsx` only for regressions; next priority is exact browser proof of customer order detail, checkout retry/idempotency behavior, offline state, account refresh, admin command navigation and staff loading/error recovery.
