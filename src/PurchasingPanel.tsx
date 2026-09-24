@@ -61,12 +61,12 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
     setLoading(false);
   }, [canManage, productId, selectedOrderId, supplierId, warehouseId]);
 
-  useEffect(() => { void load().catch((e) => setError(e instanceof Error ? e.message : 'تعذر تحميل المشتريات.')); }, [load]);
+  useEffect(() => { void load().catch((e) => { setLoading(false); setError(e instanceof Error ? e.message : 'تعذر تحميل المشتريات.'); }); }, [load]);
 
   async function run(action: () => Promise<unknown>, success: string) {
     setBusy(true); setError(null); setMessage(null);
     try { await action(); setMessage(success); await load(); }
-    catch (e) { setError(e instanceof Error ? e.message : 'تعذر تنفيذ العملية.'); }
+    catch (e) { setLoading(false); setError(e instanceof Error ? e.message : 'تعذر تنفيذ العملية.'); }
     finally { setBusy(false); }
   }
 
@@ -97,7 +97,7 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
         <button disabled={busy || !supplierId || !warehouseId || !productId}>إنشاء أمر شراء</button>
       </form>
 
-      <div className="admin-card"><h3>اعتماد أوامر الشراء</h3>{orders.length === 0 ? <small>لا توجد أوامر شراء بعد.</small> : <div className="cart-lines">{orders.slice(0, 8).map((order) => <article className="cart-line" key={order.id}><div><strong>أمر #{order.purchase_order_number}</strong><small>{supplierNameFor(order.supplier_id)}</small></div><div><strong>{order.total} {order.currency}</strong><small>{statusLabels[order.status]}</small></div><div className="status-actions">{order.status === 'draft' && <button disabled={busy} onClick={() => void run(() => submitPurchaseOrder(order.id), 'تم إرسال أمر الشراء للاعتماد.')}>إرسال</button>}{canApprove && order.status === 'submitted' && <button disabled={busy} onClick={() => void run(() => approvePurchaseOrder(order.id), 'تم اعتماد أمر الشراء.')}>اعتماد</button>}</div></article>)}</div>}</div>
+      <div className="admin-card"><h3>اعتماد أوامر الشراء</h3>{loading ? <div className="portal-loading" role="status">جارٍ تحميل أوامر الشراء…</div> : orders.length === 0 ? <div className="empty-state"><strong>لا توجد أوامر شراء بعد.</strong><button type="button" onClick={() => void load()}>إعادة المحاولة</button></div> : <div className="cart-lines">{orders.slice(0, 8).map((order) => <article className="cart-line" key={order.id}><div><strong>أمر #{order.purchase_order_number}</strong><small>{supplierNameFor(order.supplier_id)}</small></div><div><strong>{order.total} {order.currency}</strong><small>{statusLabels[order.status]}</small></div><div className="status-actions">{order.status === 'draft' && <button disabled={busy} onClick={() => void run(() => submitPurchaseOrder(order.id), 'تم إرسال أمر الشراء للاعتماد.')}>إرسال</button>}{canApprove && order.status === 'submitted' && <button disabled={busy} onClick={() => void run(() => approvePurchaseOrder(order.id), 'تم اعتماد أمر الشراء.')}>اعتماد</button>}</div></article>)}</div>}</div>
 
       <form className="admin-card" onSubmit={(e) => { e.preventDefault(); if (!selectedOrderId || !selectedReceiveItem) return; void run(() => receivePurchaseOrder({ purchaseOrderId: selectedOrderId, idempotencyKey: `agh-receive-${crypto.randomUUID()}`, lines: [{ purchaseOrderItemId: selectedReceiveItem.id, productId: selectedReceiveItem.product_id, quantity: Number(receiveQuantity) }] }), 'تم الاستلام وتحديث المخزون وتسجيل الحركة.'); }}>
         <h3>استلام البضاعة</h3>
@@ -107,6 +107,6 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
         <button disabled={busy || !selectedOrderId || !selectedReceiveItem}>تسجيل الاستلام</button>
       </form>
     </div>
-    {error && <div className="error-banner" role="alert">{error}</div>}{message && <div className="success" role="status">{message}</div>}
+    {error && <div className="error-banner" role="alert"><span>{error}</span><button type="button" className="ghost" onClick={() => void load()} disabled={loading}>إعادة تحميل المشتريات</button></div>{message && <div className="success" role="status">{message}</div>}
   </div>;
 }
