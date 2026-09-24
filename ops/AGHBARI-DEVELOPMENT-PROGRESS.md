@@ -1,3 +1,50 @@
+## Run 2026-09-25 — Offline replay/state closure + cross-panel recovery hardening
+
+### Start
+- Functional base before write-back: `20ecd588696918a1bd3ce8410b0ae1057b943163`.
+- Branch: `main`.
+- Production: NO TOUCH.
+- Certification: NOT CLAIMED.
+
+### Changes
+- `src/AppV3Fixed.tsx`: fixed reconnect-effect declaration order (removed a real TDZ/runtime defect); reconnect now invokes `syncOfflineCart()`, reports sync outcome, and refreshes authoritative data.
+- `src/services/offlineQueue.ts`: explicit operation lifecycle states `queued|retrying|conflicted|terminal`; classifies 409/412 as conflicts, authorization/validation 4xx as terminal, transient failures as retryable; terminal/conflicted records are not replayed.
+- `src/services/offlineQueue.test.ts`: lifecycle classification assertions and state expectations added.
+- `src/ClientControlPanel.tsx`: explicit loading/error/retry path and stabilized reload hook dependency.
+- `src/CustomerPanel.tsx`: recoverable error/reload action.
+- `src/InventoryPanel.tsx`: explicit loading state and recoverable error/reload action.
+
+### Exact code commits in this run
+- `9c7fa8965a38bf7de55a44d190a1f8f608243bff` offline state classification.
+- `8d3085b5f81a662c36b2365ceafdf493577ed0c6` offline tests.
+- `5fbfced9c9f1ea5383bed525f1223370c184588c` terminal/conflict replay guard.
+- `20ecd588696918a1bd3ce8410b0ae1057b943163` reconnect effect order fix.
+- `c7911c865c25422da57f566553c01d5ce947728a` client-control hook fix.
+- `6cee75243514b5e30f2cf7b9e43762b3a6b434cf` customer-panel recovery.
+- `f59f4baff99997e0c52a16ad8e0f522fd8b135d2` inventory loading/recovery.
+
+### Executable verification
+- Independent local TypeScript compile + Node execution of the updated offline queue passed with: `OFFLINE_QUEUE_EXECUTION_PASS`.
+- This local proof covered conflict classification, terminal classification, retry classification, queued-state creation, conflict terminalization and replay prevention.
+- Full repository typecheck/lint/build remains unexecuted locally because dependencies/network bootstrap are unavailable in the container.
+- GitHub Actions for the newest code are queued; no PASS transferred from older SHAs.
+
+### Live security/runtime evidence
+- Live Supabase project `mrcyqezbhpncuvaehwgf`: ACTIVE_HEALTHY, Postgres 17.6.1.
+- Live SQL snapshot: 60/60 public tables have RLS enabled; 66 public SECURITY DEFINER routines exist; 62 are executable by `authenticated`; 0 are executable by `anon`.
+- No public SECURITY DEFINER routine inspected is missing an explicit `search_path` setting; selected mutators enforce organization/role boundaries.
+- Security advisor classification remains OPEN because callable SECURITY DEFINER warnings must be reviewed per RPC; no bulk revoke was applied.
+
+### Deployment reality
+- Existing Netlify project `aghbari-commerce-web` is free-plan/claimed and currently has an older ready deployment. The connected deployment writer returned an authenticated command, but this execution session did not run the shell-side deploy command; therefore no exact-current-SHA Netlify deployment is claimed.
+- Vercel connected API access currently returned a scope authorization error for the remembered team identifier, so no Vercel mutation or deployment claim was made.
+
+### Remaining
+- Exact current-SHA CI gates and browser/runtime evidence.
+- Full SECURITY DEFINER RPC classification/remediation.
+- Semantic merge/reference audit for the 50 Markdown source corpus.
+- Exact candidate deployment and production certification.
+
 ## Run 2026-09-24/25 — Parallel UI resilience + order-runtime hardening
 
 ### Start
