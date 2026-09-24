@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import type { CustomerOrderSummary, CustomerOrderDetail } from './services/customerOrders';
+import type { CustomerOrderSummary } from './services/customerOrders';
 
 const PAGE_SIZE = 10;
 const STATUS_LABELS: Record<string,string> = {
