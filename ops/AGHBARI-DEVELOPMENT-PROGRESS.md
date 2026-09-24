@@ -1,3 +1,39 @@
+## Run 2026-09-25 — Checkout schema drift closure + exact proof hardening
+
+### Functional checkpoint
+- Exact functional SHA: `973ce4aa32f532269b5955a58a1d19f8c502d759`.
+- Branch: `main`.
+- Production: NO TOUCH.
+- Certification: NOT CLAIMED.
+
+### Root cause closed
+- Fresh migrations created `orders` without `payment_method`, while the live schema and the authoritative 4-argument `create_order` RPC depended on it. This caused fresh-DB checkout-policy and Test-the-Test failures after the earlier fixture mismatch was fixed.
+
+### Fix
+- Added `supabase/migrations/20260925000000_restore_order_payment_method.sql` to restore `payment_method text NOT NULL DEFAULT 'credit'` plus the canonical `credit|cash|transfer` check constraint.
+- Existing live data was checked: no invalid payment methods were present and the live constraint matched the canonical values.
+
+### UI/runtime work already on this checkpoint
+- Customer Portal: reconnect-driven offline cart replay, stable checkout idempotency, order detail/tracking, account refresh, explicit offline/recovery states.
+- Admin: complete operational navigation, order/customer search, dashboard/export recovery.
+- Offline queue: explicit queued/retrying/conflicted/terminal lifecycle and replay prevention for conflict/terminal records.
+- Dynamic client control, customers and inventory now expose loading/error/retry states.
+
+### Exact-SHA proof
+- Application Quality: PASS.
+- Security Audit: PASS.
+- Order Workflow Proof: PASS.
+- G1 Domain Proof: PASS.
+- Bootstrap Release Lockfile: PASS.
+- Browser Contract: PASS.
+- Concurrency on the preceding functional checkpoint passed, but new exact-SHA concurrency evidence for this schema checkpoint is still pending/in progress.
+- Migration and Test-the-Test are executing against the corrected schema checkpoint; no PASS is claimed until final results.
+- Fresh Local Browser and Local Production Artifact browser runs were launched against this checkpoint; no PASS is claimed until they complete.
+- Vercel Deployment Protection still prevents the hosted Browser E2E artifact-identity step from proving the protected deployment via GitHub curl. This is an external deployment gate, not an application failure.
+
+### Memory note
+- This run record is followed by a documentation-only checkpoint commit; the functional evidence remains explicitly bound to the exact functional SHA above.
+
 ## Run 2026-09-25 — Offline replay/state closure + cross-panel recovery hardening
 
 ### Start

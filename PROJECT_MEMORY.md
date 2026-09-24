@@ -166,3 +166,9 @@ Command "1" means:
 - Queued operations now carry explicit lifecycle state: `queued`, `retrying`, `conflicted`, or `terminal`.
 - HTTP conflict responses (409/412) are terminal-conflict records and are never replayed automatically; authorization/validation 4xx failures are terminal; transient failures remain bounded retries.
 - A local execution test passed for the offline queue classification/replay guard. This is source-level/executable local evidence only and is not CI or browser certification.
+
+
+## 17. DURABLE SCHEMA DECISION — 2026-09-25
+
+- `public.orders.payment_method` is part of the canonical order contract and must exist on every fresh database. Migration `20260925000000_restore_order_payment_method.sql` restores the live schema contract with default `credit` and allowed values `credit|cash|transfer`.
+- Any future `create_order(..., p_payment_method)` change must update schema, fresh-DB tests and runtime/browser evidence together; live-schema presence alone is insufficient.

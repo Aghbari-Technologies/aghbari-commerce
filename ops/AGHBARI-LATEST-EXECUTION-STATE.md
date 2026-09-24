@@ -1,55 +1,61 @@
 # 🔴 AGHBARI LATEST EXECUTION STATE
 
-**Functional code checkpoint:** `20ecd588696918a1bd3ce8410b0ae1057b943163`
-**Documentation/current main HEAD before this state write-back:** `fbd3b01a3a78ae33138641db7162063679753caa`
+**Functional code checkpoint:** `973ce4aa32f532269b5955a58a1d19f8c502d759`
+**Documentation checkpoint:** to be created from this functional SHA
 **Branch:** `main`
 **Production:** NO TOUCH
 **Certification:** NOT CLAIMED
 
 ## Current reality
-- Customer Portal, Admin/Staff, Purchasing, Finance, Customer, Inventory and dynamic client-control surfaces now have explicit runtime recovery UX on the current functional checkpoint.
-- Offline cart synchronization is now wired into reconnect: only safe cart mutations are replayed, scoped to the authenticated user, and the authoritative server state is refreshed afterward.
-- Offline queue now explicitly classifies operations as queued/retrying/conflicted/terminal. Conflict and terminal failures are not replayed automatically.
-- A standalone local execution check compiled and executed the updated offline queue and returned `OFFLINE_QUEUE_EXECUTION_PASS`.
-- A real TDZ/runtime hazard in the reconnect effect was found and corrected before claiming verification.
-- Current Supabase live snapshot: 60/60 public tables RLS-enabled, 66 public SECURITY DEFINER routines, 62 executable by authenticated, 0 executable by anon; inspected public definer routines carry explicit `search_path` configuration.
-- Security advisor warnings are still OPEN because callable SECURITY DEFINER functions require per-RPC classification; the workflow must remain evidence-backed and must not bulk-revoke required business commands.
-- GitHub Actions for the latest code are queued; older PASS evidence is not transferred.
-- No exact-current-SHA deployment is claimed. Existing Netlify project is available, but the connected deploy writer only returned a shell command and it was not executed in this session. Vercel API access currently fails scope authorization for the remembered team scope.
+- The functional checkout/schema checkpoint is `973ce4a…` and includes the canonical `orders.payment_method` migration required by the authoritative payment-aware `create_order` RPC.
+- The exact-head application suite is green: typecheck, 198 tests across 25 files, lint, production build and release audit.
+- Exact-head Security Audit, Order Workflow, G1 Domain Proof, Bootstrap and Browser Contract have passed.
+- A dedicated exact-SHA Browser E2E path against the protected Vercel deployment still cannot cross the Deployment Protection artifact-identity gate because the GitHub curl receives a redirect loop; this does not invalidate the application build.
+- Fresh Local Supabase/Migration, Test-the-Test, Concurrency and local Browser/Artifact runs were launched against the corrected checkpoint and remain the outstanding runtime/deep-database evidence set at this checkpoint.
+- Live Supabase remains healthy; 60/60 public tables have RLS enabled, 0 SECURITY DEFINER functions are executable by anon, and the current live schema contains the same payment_method constraint now restored into fresh migrations.
 
-## Open work
-1. Exact current-SHA application-quality, security, migration, concurrency, Test-the-Test, Order Workflow and browser/runtime evidence.
-2. Full per-RPC SECURITY DEFINER remediation/classification.
-3. Semantic consolidation/reference audit of the 50 Markdown sources.
-4. Candidate deployment parity and certification.
-5. Production remains NO TOUCH.
+## Implemented frontier
+### Customer Portal
+- Product discovery/search/category filtering.
+- Authorized pricing/stock visibility.
+- Cart persistence and quantity confirmation.
+- Stable checkout idempotency key.
+- Offline cart draft and automatic safe replay on reconnect.
+- Order list, persisted detail, line items and lifecycle timeline.
+- Reorder action.
+- Account/session context and refresh.
+- Loading/empty/error/success/offline recovery states.
+
+### Admin / Staff
+- Operational Command Center.
+- Orders/workflow and order search.
+- Customer management/search/invitations.
+- Catalog/products/categories/pricing/media/import/export.
+- Inventory/adjustment/purchasing/finance.
+- Dynamic customer UI settings and reporting gateway boundary.
+- Cross-panel loading/error/retry behavior.
+
+### Reliability / Security
+- Offline operation states: queued/retrying/conflicted/terminal.
+- Conflict/terminal records never replay automatically.
+- Strict customer order-detail response validation.
+- Server-authoritative payment, stock, price and order acceptance.
+- 60/60 public tables RLS-enabled in live Supabase; 0 anon-executable SECURITY DEFINER routines.
+
+## Open proof gates
+1. Fresh migration/pgTAP proof on `973ce4a…`.
+2. Test-the-Test proof on `973ce4a…`.
+3. Fresh local Customer/Admin browser E2E on the corrected schema.
+4. Exact current-SHA concurrency proof.
+5. Full per-RPC SECURITY DEFINER classification/remediation.
+6. Exact deployed runtime parity and candidate certification.
+7. Full semantic merge/reference audit of the 50 historical Markdown sources.
 
 ## CURRENT RESUME POINTER
-START FROM the latest Git `main` HEAD after this state write-back.
+START FROM functional checkpoint `973ce4aa32f532269b5955a58a1d19f8c502d759`.
 
-UI FRONT:
-Verify exact current checkpoint for:
-- Customer Portal reconnect/replay, order detail/timeline, account refresh.
-- Admin navigation and all existing anchors.
-- Purchasing/Finance/Inventory/Customers/Client Control loading, empty, error and retry states.
-Do not reopen earlier closed UI unless current proof finds a regression.
+Next executable action: inspect final results of Migration/Test-the-Test/Concurrency/Fresh Local Browser. If any fail, fix the root cause and rerun only the affected exact-SHA gates. Do not reopen catalog/cart/order foundations unless a regression is proven.
 
-CORE/OFFLINE FRONT:
-- Run the full existing offlineQueue and customer-order contract suites on the exact SHA.
-- Verify reconnect replays only safe cart operations for the current authenticated user and never replays conflict/terminal entries.
-- Preserve server authority for stock, prices, permissions and order submission.
+Vercel: do not claim runtime certification from a protected deployment until artifact identity and Playwright run both pass. The current deployment gate is external protection behavior.
 
-SECURITY FRONT:
-- Use the live advisor findings as a queue. Inspect each callable SECURITY DEFINER body for tenant/role authorization, search_path, and returned-data scope.
-- Do not weaken required transactional RPCs simply to reduce the advisor count.
-
-PROOF FRONT:
-- Bind every PASS to one exact SHA, executable workflow/test, environment and evidence.
-- Browser proof must include desktop/mobile RTL, reload, offline/online transition and recovery UX.
-- No candidate/production certification until exact deployment/browser parity is independently proven.
-
-DOCUMENT FRONT:
-- Continue full semantic merge/reference audit of the 50 legacy Markdown sources. Classification alone is not retirement evidence.
-
-NO-REGRESSION:
-Do not restart catalog/cart/checkout/order foundations unless exact-current evidence proves regression or invalidates prior proof.
+Production remains NO TOUCH.
