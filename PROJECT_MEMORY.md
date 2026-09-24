@@ -172,3 +172,13 @@ Command "1" means:
 
 - `public.orders.payment_method` is part of the canonical order contract and must exist on every fresh database. Migration `20260925000000_restore_order_payment_method.sql` restores the live schema contract with default `credit` and allowed values `credit|cash|transfer`.
 - Any future `create_order(..., p_payment_method)` change must update schema, fresh-DB tests and runtime/browser evidence together; live-schema presence alone is insufficient.
+
+
+## 18. DURABLE RBAC/GOVERNANCE DECISION — 2026-09-25
+
+- Staff/user role management uses the pre-existing canonical RPC surface list_organization_users() + set_organization_user_role(uuid,user_role); duplicate list_staff_members / set_staff_role RPCs were introduced during exploration and then retired immediately to preserve one active authority.
+- set_organization_user_role is hardened with owner-only mutation, self-role-change rejection, tenant-scoped row locking, customer-to-staff promotion rejection, last-owner protection, empty search_path, authenticated-only EXECUTE and success audit emission.
+- Admin Access Control UI uses the canonical organization-user RPCs and exposes explicit read-only behavior for non-owners; the final database/RPC boundary remains authoritative.
+- Governance UI now exposes real notifications, audit records and outbox state with search/filter/reload/error/empty handling. Audit metadata is redacted for token/secret/password/authorization/cookie fields before display.
+- The Supabase security advisory remains a classification queue: 62 authenticated-executable SECURITY DEFINER warnings plus the external leaked-password-protection warning. No blanket revoke was applied because these RPCs are part of the transactional application boundary.
+
