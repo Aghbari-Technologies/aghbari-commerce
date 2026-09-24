@@ -88,7 +88,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
       <div><span className="executive-eyebrow">لوحة التحكم · الإدارة التنفيذية</span><h1>مرحباً بك في بوابة الأغبري التجارية</h1><p>رؤية تشغيلية موحدة للمبيعات، المخزون، العملاء والسيولة — مبنية على بيانات النظام الحالية.</p></div>
       <div className="executive-header-actions"><span className="live-dot">● النظام يعمل</span><button type="button" onClick={() => setRefreshTick((value) => value + 1)} disabled={loading} aria-busy={loading}>تحديث البيانات ↻</button></div>
     </header>
-    {error && <div className="executive-error" role="alert">تعذر تحديث بعض المؤشرات: {error}</div>}
+    {error && <div className="executive-error" role="alert"><span>تعذر تحديث بعض المؤشرات: {error}</span><button type="button" onClick={() => setRefreshTick((value) => value + 1)} disabled={loading}>إعادة المحاولة</button></div>}
     <div className="executive-layout">
       <aside className="executive-sidebar">
         <div className="executive-brand"><span>أ</span><div><strong>الأغبري</strong><small>Enterprise B2B</small></div></div>

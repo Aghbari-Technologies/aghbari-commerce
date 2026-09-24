@@ -106,7 +106,7 @@ export default function ExportPanel({ role }: { role: UserRole }) {
     <p>تمر البيانات إلى بوابة التقارير فقط؛ لا توجد صلاحية للمستهلك التحليلي لتعديل معاملات الأغبري.</p>
     {canPublish && <button disabled={busy || publishing} onClick={() => void publishForReporting()}>{publishing ? 'جارٍ تمرير البيانات…' : 'حلّل متجري'}</button>}
     <button disabled={busy || publishing} onClick={() => void exportProducts()}>{busy ? 'جارٍ التصدير…' : 'تصدير الكتالوج والأسعار'}</button>
-    {error && <div className="error-banner" role="alert">{error}</div>}
+    {error && <div className="error-banner" role="alert"><span>{error}</span><button type="button" className="ghost" onClick={() => void exportProducts()} disabled={busy || publishing}>إعادة محاولة التصدير</button></div>}
     {message && <div className="success" role="status">{message}</div>}
     {gatewayMessage && <div className="success" role="status">{gatewayMessage}</div>}
   </div>;

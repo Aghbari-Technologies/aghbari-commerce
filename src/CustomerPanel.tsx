@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { CustomerTier } from './domain/types';
 import { createCustomer, getCustomers, setCustomerActive, setCustomerTier, type StaffCustomer } from './services/customers';
 import { supabase } from './lib/supabase';
@@ -21,7 +21,7 @@ export default function CustomerPanel({ role }: { role: UserRole }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); const [customerQuery, setCustomerQuery] = useState('');
   const reload = useCallback(async () => { setLoading(true); try { setCustomers(await getCustomers(200)); } finally { setLoading(false); } }, []);
   useEffect(() => { void reload().catch((e) => setError(e instanceof Error ? e.message : 'تعذر تحميل العملاء.')); }, [reload]);
   async function run(action: () => Promise<unknown>, success: string) { setBusy(true); setError(null); setMessage(null); try { await action(); setMessage(success); await reload(); } catch (e) { setError(e instanceof Error ? e.message : 'تعذر تنفيذ العملية.'); } finally { setBusy(false); } }
@@ -38,6 +38,7 @@ export default function CustomerPanel({ role }: { role: UserRole }) {
     } catch (e) { setError(e instanceof Error ? e.message : 'تعذر إرسال الدعوة.'); }
     finally { setInviteBusy(null); }
   }
+  const visibleCustomers = useMemo(() => { const needle = customerQuery.trim().toLowerCase(); if (!needle) return customers; return customers.filter((customer) => customer.name.toLowerCase().includes(needle) || String(customer.phone ?? '').toLowerCase().includes(needle) || tierLabels[customer.tier].toLowerCase().includes(needle)); }, [customerQuery, customers]);
   if (!canCreate && !canManage) return null;
   return <div className="cart-panel" id="customers">
     <div className="section-heading"><div><span className="eyebrow">العملاء</span><h2>دورة العميل</h2></div><span>{customers.length} عملاء</span></div>
@@ -50,8 +51,8 @@ export default function CustomerPanel({ role }: { role: UserRole }) {
         <button disabled={busy}>حفظ العميل</button>
       </form>}
       <div className="admin-card">
-        <h3>العملاء الحاليون</h3>
-        {loading ? <div className="portal-loading">جارٍ تحميل العملاء…</div> : !customers.length ? <div className="empty-state"><strong>لا يوجد عملاء مسجلون بعد.</strong><button type="button" onClick={() => void reload()}>إعادة المحاولة</button></div> : <div className="cart-lines">{customers.map((customer) => <article className="cart-line" key={customer.id}>
+        <h3>العملاء الحاليون</h3><input aria-label="بحث العملاء" placeholder="بحث بالاسم أو الهاتف أو الفئة" value={customerQuery} onChange={(e) => setCustomerQuery(e.target.value)} disabled={loading} />
+        {loading ? <div className="portal-loading">جارٍ تحميل العملاء…</div> : !customers.length ? <div className="empty-state"><strong>لا يوجد عملاء مسجلون بعد.</strong><button type="button" onClick={() => void reload()}>إعادة المحاولة</button></div> : !visibleCustomers.length ? <div className="empty-state"><strong>لا توجد نتائج مطابقة.</strong><button type="button" onClick={() => setCustomerQuery('')}>مسح البحث</button></div> : <div className="cart-lines">{visibleCustomers.map((customer) => <article className="cart-line" key={customer.id}>
           <div><strong>{customer.name}</strong><small>{customer.phone ?? 'بدون هاتف'} · {customer.is_active ? 'نشط' : 'موقوف'}</small></div>
           <select aria-label={`فئة ${customer.name}`} disabled={!canManage || busy} value={customer.tier} onChange={(e) => void run(() => setCustomerTier(customer.id, e.target.value as CustomerTier), 'تم تحديث فئة العميل.')}>{tiers.map((item) => <option key={item} value={item}>{tierLabels[item]}</option>)}</select>
           {canManage && <button disabled={busy} onClick={() => void run(() => setCustomerActive(customer.id, !customer.is_active), customer.is_active ? 'تم إيقاف العميل.' : 'تم تفعيل العميل.')}>{customer.is_active ? 'إيقاف' : 'تفعيل'}</button>}
