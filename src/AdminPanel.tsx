@@ -17,6 +17,7 @@ import AdminExecutiveDashboard from './AdminExecutiveDashboard';
 import NotificationPanel from './NotificationPanel';
 import StaffOperationsPanel from './StaffOperationsPanel';
 import StaffAccessPanel from './StaffAccessPanel';
+import CatalogManagementPanel from './CatalogManagementPanel';
 import './admin-executive-dashboard.css';
 
 interface StaffProduct { id: string; sku: string; name: string; unit: string; }
@@ -53,7 +54,7 @@ export default function AdminPanel({ role }: { role: UserRole }) {
         <a href="#account">المركز</a>
         {canOrderWorkflow&&<a href="#admin-orders">الطلبات وسير العمل</a>}
         {canCatalog&&<a href="#admin-customers">العملاء</a>}
-        {canCatalog&&<a href="#admin-product-create">إضافة منتج</a>}
+        {canCatalog&&<a href="#admin-catalog">الكتالوج والمنتجات</a>}
         {canCategory&&<a href="#admin-category-create">التصنيفات</a>}
         {canCatalog&&<a href="#admin-pricing">التسعير</a>}
         {canCatalog&&<a href="#admin-product-image">صور المنتجات</a>}
@@ -81,6 +82,7 @@ export default function AdminPanel({ role }: { role: UserRole }) {
       </div>
       {canOrderWorkflow && <div className="cart-panel" id="admin-orders"><div className="section-heading"><div><span className="eyebrow">التشغيل</span><h2>إدارة الطلبات</h2></div><span>{visibleOrders.length}/{orders.length} طلبات</span></div><div className="admin-card admin-order-filter"><label htmlFor="admin-order-search">بحث الطلبات</label><input id="admin-order-search" value={orderQuery} onChange={(e) => setOrderQuery(e.target.value)} placeholder="رقم الطلب أو اسم العميل أو الحالة" /></div>{ordersLoading ? <div className="cart-empty">جارٍ تحميل الطلبات…</div> : !orders.length ? <div className="cart-empty">لا توجد طلبات تشغيلية بعد.</div> : !visibleOrders.length ? <div className="cart-empty">لا توجد نتائج مطابقة للبحث.</div> : <div className="cart-lines">{visibleOrders.map((order) => <article className="cart-line" key={order.id}><div><strong>طلب #{order.order_number}</strong><small>العميل: {order.customer_name}</small></div><div><strong>{formatMoney(order.total)} {order.currency}</strong><small>الحالة: {STATUS_LABELS[order.status]}</small></div><div className="status-actions">{allowedNextStatuses(order.status, role).map((next) => <button key={next} disabled={busy} onClick={() => void changeOrderStatus(order.id, next)}>{STATUS_LABELS[next]}</button>)}</div></article>)}</div>}</div>}
       {error && <div className="error-banner" role="alert"><span>{error}</span><button type="button" className="ghost" disabled={ordersLoading} onClick={() => void reload()}>إعادة تحميل مركز التحكم</button></div>}{message && <div className="success" role="status">{message}</div>}
+      {canCatalog && <CatalogManagementPanel role={role} />}
       {canCatalog && <div id="admin-customers"><CustomerPanel role={role} /></div>}
       {canInventory && <div id="admin-inventory"><InventoryPanel role={role} /></div>}
       {canInventory && <div id="admin-purchasing"><PurchasingPanel role={role} /></div>}
