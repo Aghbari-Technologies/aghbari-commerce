@@ -9,7 +9,8 @@ import {
   MAX_OFFLINE_PAYLOAD_BYTES,
   OFFLINE_CART_REMOVE_ITEM,
   OFFLINE_CART_SET_ITEM,
-  pendingOfflineOperations
+  pendingOfflineOperations,
+  classifyOfflineFailure
 } from './offlineQueue';
 
 const storage = new Map<string, string>();
@@ -31,6 +32,17 @@ Object.defineProperty(globalThis, 'localStorage', {
 describe('offline operation queue', () => {
   beforeEach(() => storage.clear());
 
+  it('classifies authorization/validation failures as terminal and conflicts as conflicted', () => {
+    expect(classifyOfflineFailure({ status: 401 })).toBe('terminal');
+    expect(classifyOfflineFailure({ status: 403 })).toBe('terminal');
+    expect(classifyOfflineFailure({ status: 422 })).toBe('terminal');
+    expect(classifyOfflineFailure({ status: 409 })).toBe('conflicted');
+    expect(classifyOfflineFailure({ status: 412 })).toBe('conflicted');
+    expect(classifyOfflineFailure({ status: 503 })).toBe('retrying');
+    expect(classifyOfflineFailure(new TypeError('Failed to fetch'))).toBe('retrying');
+  });
+
+
   it('rejects empty and unsafe operation types', () => {
     expect(() => enqueueOfflineOperation(USER_A, '   ', {})).toThrow('نوع العملية مطلوب');
     expect(() => enqueueOfflineOperation(USER_A, 'order:submit', {})).toThrow('لا يُسمح بتأجيلها');
@@ -45,7 +57,7 @@ describe('offline operation queue', () => {
   it('tracks attempts without losing operation identity', () => {
     const operation = enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: 1 });
     markOfflineOperationAttempt(operation.operationId, 1_000);
-    expect(pendingOfflineOperations(USER_A)[0]).toMatchObject({ operationId: operation.operationId, userId: USER_A, attempts: 1, type: OFFLINE_CART_SET_ITEM });
+    expect(pendingOfflineOperations(USER_A)[0]).toMatchObject({ operationId: operation.operationId, userId: USER_A, attempts: 1, state: 'retrying', type: OFFLINE_CART_SET_ITEM });
     expect(Date.parse(pendingOfflineOperations(USER_A)[0].nextAttemptAt!)).toBe(3_000);
   });
 
@@ -70,7 +82,7 @@ describe('offline operation queue', () => {
     expect(result).toEqual({ processed: 1, failed: 0 });
     expect(seen).toEqual([following.operationId]);
     expect(pendingOfflineOperations(USER_A)).toHaveLength(1);
-    expect(pendingOfflineOperations(USER_A)[0]).toMatchObject({ operationId: exhausted.operationId, attempts: MAX_OFFLINE_ATTEMPTS, terminal: true });
+    expect(pendingOfflineOperations(USER_A)[0]).toMatchObject({ operationId: exhausted.operationId, attempts: MAX_OFFLINE_ATTEMPTS, state: 'terminal', terminal: true });
   });
 
   it('returns no records for an invalid user filter instead of exposing the full queue', () => {
@@ -168,7 +180,7 @@ describe('offline operation queue', () => {
     const result = await drainOfflineOperations(async () => { calls += 1; }, USER_A, Date.now() + 10_000_000);
     expect(result).toEqual({ processed: 0, failed: 0 });
     expect(calls).toBe(0);
-    expect(pendingOfflineOperations(USER_A)[0].terminal).toBe(true);
+    expect(pendingOfflineOperations(USER_A)[0]).toMatchObject({ state: 'terminal', terminal: true });
   });
 
   it('rejects cyclic payloads instead of persisting an unserializable record', () => {
