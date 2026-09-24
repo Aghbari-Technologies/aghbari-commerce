@@ -50,7 +50,11 @@ type CustomerOrderDetailRow = { id:string; product_id:string; quantity:number|st
 type CustomerOrderHistoryRow = { from_status:OrderStatus|null; to_status:OrderStatus; created_at:string };
 
 export function buildCustomerOrderTimeline(orderStatus: OrderStatus, history: CustomerOrderHistoryRow[]): CustomerOrderTimelineStep[] {
-  const reached = new Set<OrderStatus>(history.map((entry) => entry.to_status));
+  const reached = new Set<OrderStatus>();
+  for (const entry of history) {
+    if (entry.from_status) reached.add(entry.from_status);
+    reached.add(entry.to_status);
+  }
   const currentIndex = STATUS_FLOW.indexOf(orderStatus);
   return STATUS_FLOW.map((status, index) => ({
     status,
