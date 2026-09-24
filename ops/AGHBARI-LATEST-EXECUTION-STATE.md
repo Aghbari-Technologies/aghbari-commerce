@@ -1,59 +1,71 @@
 # 🔴 AGHBARI LATEST EXECUTION STATE
 
-**Last verified working runtime baseline:** c249f4ec9930d7007e4efd35bdefea0acf9c9e5a
-**Actual current Git HEAD at write-back:** 8e329ae21975d9df77dc268499af4989bd2f4981
-**Branch:** main
+**Last verified working runtime baseline:** `9b489b4f6b196eb2894dc3c8b1337eab00e9a867`
+**Actual current Git HEAD at write-back:** `e2b67f6a47af3b8b377001fb1c7c7eeec9a4ca99`
+**Branch:** `main`
 **Production:** NO TOUCH
 **Certification:** NOT CLAIMED
 
 ## Current reality
-- Exact repository HEAD advanced from `ba6f999...` through three implementation commits for the customer experience.
-- Customer order history now exposes a real order-detail/tracking surface backed by `orders`, `order_items`, and `order_status_history`, using the existing customer-scoped RLS boundary.
-- Customer account now exposes session/customer/organization/warehouse context and a direct secure sign-out action.
-- Exact-head verification found and fixed three defects in this frontier: generated TypeScript newline corruption, the missing SQL function-statement terminator in the client checkout-policy migration, and two explicit `any` lint violations in customer order detail mapping. On the current SHA, Application Quality, Security Audit, G1 Domain Proof, Order Workflow Proof, Browser E2E / Exact Deployment, and Bootstrap Release Lockfile are green. Concurrency Proof, Test-the-Test, and Supabase Migration Proof remain in progress; therefore certification is not claimed.
-- Production remains untouched.
+- Repository HEAD was reconciled from the actual `main` ref; historical SHA values in older state files were not used as the execution baseline.
+- The current code frontier closes important customer and staff UX gaps while preserving the server as the transactional authority.
+- Customer checkout now reuses one idempotency key for an active submission attempt and rotates only after successful order creation.
+- Customer portal now exposes actual online/offline state, blocks checkout while offline, keeps cart editing behavior intact, adds account refresh, and exposes accessible navigation state.
+- Customer order-detail mapping now validates runtime identifiers/numeric values and builds the status timeline deterministically without treating draft orders as pending.
+- Admin command-center navigation now exposes the existing operational anchor set rather than only the primary sections.
+- Purchasing and finance screens now have explicit loading and recovery behavior.
 
 ## Implemented frontier
-### UI
-- Customer orders: detail modal, line items, total, status label, status timeline, reorder, close.
-- Customer account: customer/session context, organization/warehouse context, role context, secure sign-out.
-- Responsive CSS added for order details and account cards.
 
-### Core
-- `getCustomerOrderDetail(orderId)` validates UUID, reads only the requested order, its items, and status history, and relies on database RLS for customer scope.
-- Product identity in order details is read through the existing `order_items -> products` relationship; no client-side authorization was introduced.
+### Customer Portal
+- Orders: detail/tracking data contract hardened; draft/completed/cancelled timeline semantics covered by tests.
+- Checkout: stable idempotency key across ambiguous retry attempts; explicit connectivity gate.
+- Account: explicit context refresh action.
+- Runtime UX: offline banner, retry/recovery action, accessible current-navigation state, safer product-detail add behavior.
+
+### Admin / Staff
+- Command navigation includes orders, customers, product creation, categories, pricing, media, import, inventory, inventory adjustment, purchasing, finance, export and client settings.
+- Top-level error state can trigger a controlled reload.
+
+### Purchasing / Finance
+- Explicit loading state and empty/retry recovery.
+- Load failures reset the loading state so the interface cannot remain permanently “busy/loading”.
+
+### Core / Security
+- `getCustomerOrderDetail` now has a strict runtime trust boundary for line identifiers, quantities, prices, currency and status history.
+- Live Supabase inspection confirms the project is healthy and the inspected SECURITY DEFINER functions use an empty `search_path`; selected mutating functions enforce organization and role boundaries.
+- Security advisor still reports 62 authenticated-executable SECURITY DEFINER warnings. This remains an OPEN security workstream; no false clean/PASS claim is made.
+
+## Verification
+- Remote `main` ref was directly verified at `c9df2fc8ce11c76817e3d2e349e39bda034be4ce` before write-back, then advanced through this controlled documentation commit to the current HEAD above.
+- Local clone/build/typecheck/lint could not run because the execution container could not resolve `github.com`.
+- GitHub Actions were observed for the preceding exact SHA `c07ef194...`; no executable PASS is transferred to this newer HEAD.
+- No candidate, deployment or production claim is made.
 
 ## Open gaps
-- Exact-head executable verification for the new frontier.
-- Explicit loading/empty/error/retry states on every major customer sub-view.
-- Full semantic consolidation/reference audit of all 50 legacy Markdown sources.
-- Deployment/candidate/runtime certification remains open.
+1. Run and bind Application Quality, Security Audit, Supabase Migration Proof, Concurrency Proof, Test-the-Test and Browser/Runtime proof to the exact current HEAD.
+2. Classify/remediate the full 62-function SECURITY DEFINER advisor set without revoking required customer/staff RPCs blindly.
+3. Complete semantic consolidation and reference audit of all 50 historical Markdown sources before retirement.
+4. Close candidate/deployment/runtime certification; production remains HOLD / NO TOUCH.
 
-## Evidence / blockers
-- Code commits:
-  - `d81b9284c56877ad94eefa75c10ad192c92a97d2` customer UI.
-  - `09e65a2c8587fad04d1f57a277448e4bdd87634` order-detail service.
-  - `8e329ae21975d9df77dc268499af4989bd2f4981` customer UI CSS.
-  - `5d95f45cd1f1986da5299db810f9e8ddbab7a476`, `db6265859c8893c442c5e7450e1909f6112a947f`, `db659012e1b7c2340118648e2f2c6d88d1dad5ec` source normalization/fix commits.
-  - `c5d55244d3c978321fc3154376c53921614c1b44` CSV newline fix.
-  - `a76ce031e0c881ede78dea45ee39155006f0238b` checkout-policy SQL terminator fix.
-  - `9ee05e5dcfdd5e507feb4981962fb7e6f0071d31` typed customer-order mapping fix and current HEAD.
-- No PASS claim is made from source inspection.
-- No production deployment is claimed.
+## Blockers
+- Vercel remains a deployment-control concern under the existing free-plan/build-rate-limit protection; deployment evidence is not accepted until an exact-SHA runtime target is proven.
+- Local verification is limited by network DNS in the execution container.
 
 ## CURRENT RESUME POINTER
-START FROM CURRENT ACTUAL HEAD `9ee05e5dcfdd5e507feb4981962fb7e6f0071d31`.
+START FROM CURRENT ACTUAL HEAD `e2b67f6a47af3b8b377001fb1c7c7eeec9a4ca99`.
 
 UI FRONT:
-Customer Portal → Orders → Order Details/Tracking → verify real line items + status timeline + reorder; Customer Portal → Account → verify session context + sign-out; then close explicit loading/empty/error/retry states.
+Re-open `src/AppV3Fixed.tsx`, `src/AdminPanel.tsx`, `src/PurchasingPanel.tsx`, `src/FinancePanel.tsx` only for regressions; next priority is exact browser proof of customer order detail, checkout retry/idempotency behavior, offline state, account refresh, admin command navigation and staff loading/error recovery.
 
-CORE FRONT:
-Validate `getCustomerOrderDetail` against customer-scoped RLS for `orders`, `order_items`, `order_status_history`; confirm no cross-customer access and no unauthorized product leakage.
+CORE/SECURITY FRONT:
+Run exact-SHA security/migration/concurrency workflows against the current HEAD. Use the live Supabase advisor set as a classification queue; do not bulk-revoke callable business RPCs. Preserve the tenant/role checks and `search_path='' ` boundary verified on inspected functions.
 
-PROOF:
-Wait for the three remaining exact-SHA workflows on `9ee05e5dcfdd5e507feb4981962fb7e6f0071d31`: Concurrency Proof, Test-the-Test, and Supabase Migration Proof. If any fails, fix its root cause and rerun on the new exact HEAD. Browser proof must exercise order detail, timeline, reorder, account, refresh and mobile/RTL behavior.
+PROOF FRONT:
+Bind every PASS to current SHA `e2b67f6a47af3b8b377001fb1c7c7eeec9a4ca99`, environment and executable evidence. Browser proof must cover desktop/mobile RTL, loading/empty/error/success/offline and persistence/refresh. Deployment/candidate/production remain NO TOUCH until independently proven.
+
+DOCUMENT FRONT:
+Continue the 50-source semantic merge/reference audit. The manifest currently describes classification, not semantic-complete retirement.
 
 DO NOT REPEAT:
-Do not reopen catalog/cart/checkout foundations unless exact-head evidence identifies a regression.
-
-Production remains NO TOUCH until candidate/deployment evidence is independently bound to the exact release SHA.
+Do not reopen earlier catalog/cart/order foundations unless exact-current-HEAD evidence identifies regression or invalidated evidence.
