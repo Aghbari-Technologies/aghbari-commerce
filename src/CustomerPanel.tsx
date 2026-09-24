@@ -59,6 +59,6 @@ export default function CustomerPanel({ role }: { role: UserRole }) {
         </article>)}</div>}
       </div>
     </div>
-    {error && <div className="error-banner" role="alert">{error}</div>}{message && <div className="success" role="status">{message}</div>}
+    {error && <div className="error-banner" role="alert"><span>{error}</span><button type="button" className="ghost" onClick={() => void reload()} disabled={loading}>إعادة تحميل العملاء</button></div>}{message && <div className="success" role="status">{message}</div>}
   </div>;
 }
