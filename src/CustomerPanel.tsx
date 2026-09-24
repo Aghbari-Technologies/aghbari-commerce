@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { CustomerTier } from './domain/types';
 import { createCustomer, getCustomers, setCustomerActive, setCustomerTier, type StaffCustomer } from './services/customers';
 import { supabase } from './lib/supabase';
+import './customer-directory.css';
 
 const tiers: CustomerTier[] = ['retail', 'wholesale', 'distributor'];
 const tierLabels: Record<CustomerTier, string> = { retail: 'تجزئة', wholesale: 'جملة', distributor: 'موزع' };
