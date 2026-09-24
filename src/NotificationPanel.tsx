@@ -2,6 +2,7 @@ import { useCallback,useEffect,useMemo,useState } from 'react';
 import { getSession } from './services/auth';
 import { supabase } from './lib/supabase';
 import { canMarkNotificationRead,filterNotifications,type NotificationKind,type NotificationRow } from './domain/operations';
+import './operations.css';
 type Audience='customer'|'staff';
 const KINDS:Array<{key:'all'|NotificationKind;label:string}>=[{key:'all',label:'الكل'},{key:'order',label:'طلبات'},{key:'inventory',label:'مخزون'},{key:'security',label:'أمان'},{key:'system',label:'نظام'},{key:'task',label:'مهام'}];
 const KIND_LABELS:Record<NotificationKind,string>={order:'طلب',inventory:'مخزون',security:'أمان',system:'نظام',task:'مهمة'};
