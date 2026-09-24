@@ -24,12 +24,13 @@ export default function InventoryPanel({ role }: { role: UserRole }) {
   const [thresholdProduct, setThresholdProduct] = useState('');
   const [minQuantity, setMinQuantity] = useState('0');
   const [reorderQuantity, setReorderQuantity] = useState('1');
-  const [busy, setBusy] = useState(false);
+  const [busy, setBusy] = useState(false); const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const reload = useCallback(async () => {
-    if (!supabase || !canUse) return;
+    if (!supabase || !canUse) { setLoading(false); return; }
+    setLoading(true);
     const [productResult, warehouseResult, lowRows, openCount] = await Promise.all([
       supabase.from('products').select('id,sku,name').eq('status','active').order('name').limit(500),
       supabase.from('warehouses').select('id,name').eq('is_active',true).order('created_at'),
@@ -50,14 +51,15 @@ export default function InventoryPanel({ role }: { role: UserRole }) {
     if (!thresholdWarehouse && nextWarehouses[0]) setThresholdWarehouse(nextWarehouses[0].id);
     if (!productId && productRows?.[0]) setProductId(productRows[0].id);
     if (!thresholdProduct && productRows?.[0]) setThresholdProduct(productRows[0].id);
+    setLoading(false);
   }, [canUse, countWarehouse, destination, productId, source, thresholdWarehouse, thresholdProduct]);
 
-  useEffect(() => { void reload().catch((e) => setError(e instanceof Error ? e.message : 'تعذر تحميل المخزون.')); }, [reload]);
+  useEffect(() => { void reload().catch((e) => { setLoading(false); setError(e instanceof Error ? e.message : 'تعذر تحميل المخزون.'); }); }, [reload]);
 
   async function run(action: () => Promise<unknown>, success: string) {
     setBusy(true); setError(null); setMessage(null);
     try { await action(); setMessage(success); await reload(); }
-    catch (e) { setError(e instanceof Error ? e.message : 'تعذر تنفيذ العملية.'); }
+    catch (e) { setLoading(false); setError(e instanceof Error ? e.message : 'تعذر تنفيذ العملية.'); }
     finally { setBusy(false); }
   }
 
@@ -67,8 +69,8 @@ export default function InventoryPanel({ role }: { role: UserRole }) {
   const countCompleted = stockLines.filter((line) => line.counted_quantity !== null).length;
 
   return <div className="cart-panel" id="inventory">
-    <div className="section-heading"><div><span className="eyebrow">المخزون</span><h2>النقل والجرد والتنبيهات التشغيلية</h2></div><span>{lowStock.length} أصناف منخفضة</span></div>
-    <div className="admin-grid">
+    <div className="section-heading"><div><span className="eyebrow">المخزون</span><h2>النقل والجرد والتنبيهات التشغيلية</h2></div><span aria-live="polite">{loading ? 'جارٍ التحديث…' : `${lowStock.length} أصناف منخفضة`}</span></div>
+    {loading ? <div className="portal-loading" role="status">جارٍ تحميل بيانات المخزون…</div> : <div className="admin-grid">
       <form className="admin-card" onSubmit={(e) => { e.preventDefault(); void run(() => transferInventory(source,destination,makeKey('transfer'),[{productId,quantity:Number(quantity)}],notes), 'تم نقل المخزون ذريًا وتسجيل الحركتين.'); }}>
         <h3>تحويل بين المستودعات</h3>
         <select aria-label="المستودع المصدر" value={source} onChange={(e) => setSource(e.target.value)} required><option value="">من المستودع</option>{warehouses.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}</select>
@@ -85,7 +87,7 @@ export default function InventoryPanel({ role }: { role: UserRole }) {
         <select aria-label="منتج الحد" value={thresholdProduct} onChange={(e) => setThresholdProduct(e.target.value)} required><option value="">اختر المنتج</option>{products.map((p) => <option key={p.id} value={p.id}>{p.name} · {p.sku}</option>)}</select>
         <input aria-label="الحد الأدنى" type="number" min="0" step="1" value={minQuantity} onChange={(e) => setMinQuantity(e.target.value)} required />
         <input aria-label="كمية إعادة الطلب" type="number" min="1" step="1" value={reorderQuantity} onChange={(e) => setReorderQuantity(e.target.value)} required />
-        <button disabled={busy}>حفظ الحد</button>
+        <button disabled={busy||loading}>حفظ الحد</button>
       </form>
 
       <div className="admin-card">
@@ -102,7 +104,7 @@ export default function InventoryPanel({ role }: { role: UserRole }) {
       </div>
 
       <div className="admin-card"><h3>الأصناف التي تحتاج إجراء</h3>{!lowStock.length ? <small>لا توجد أصناف تحت حدود إعادة الطلب.</small> : <div className="cart-lines">{lowStock.slice(0,20).map((row) => <article className="cart-line" key={`${row.warehouse_id}:${row.product_id}`}><div><strong>{row.product_name}</strong><small>{row.sku} · {row.warehouse_name}</small></div><div><strong>{row.current_quantity}</strong><small>الحد {row.min_quantity} · إعادة {row.reorder_quantity}</small></div></article>)}</div>}</div>
-    </div>
+    </div>}
     {error && <div className="error-banner" role="alert"><span>{error}</span><button type="button" className="ghost" onClick={() => void reload()} disabled={busy}>إعادة تحميل المخزون</button></div>}{message && <div className="success" role="status">{message}</div>}
   </div>;
 }
