@@ -48,14 +48,19 @@ export default function AdminPanel({ role }: { role: UserRole }) {
     <AdminExecutiveDashboard role={role} />
       <nav className="admin-command-nav" aria-label="تنقل مركز التشغيل">
         <a href="#account">المركز</a>
-        {canOrderWorkflow&&<a href="#admin-orders">الطلبات</a>}
+        {canOrderWorkflow&&<a href="#admin-orders">الطلبات وسير العمل</a>}
         {canCatalog&&<a href="#admin-customers">العملاء</a>}
-        {canCatalog&&<a href="#admin-product-create">الكتالوج</a>}
+        {canCatalog&&<a href="#admin-product-create">إضافة منتج</a>}
+        {canCategory&&<a href="#admin-category-create">التصنيفات</a>}
+        {canCatalog&&<a href="#admin-pricing">التسعير</a>}
+        {canCatalog&&<a href="#admin-product-image">صور المنتجات</a>}
+        {canCatalog&&<a href="#admin-import">الاستيراد الآمن</a>}
         {canInventory&&<a href="#admin-inventory">المخزون</a>}
-        {canInventory&&<a href="#admin-purchasing">المشتريات</a>}
+        {canInventory&&<a href="#admin-inventory-adjust">تعديل المخزون</a>}
+        {canInventory&&<a href="#admin-purchasing">المشتريات والموردون</a>}
         {canFinance&&<a href="#admin-finance">المالية</a>}
         {canInventory&&<a href="#admin-export">التصدير</a>}
-        {canCategory&&<a href="#admin-settings">الإعدادات</a>}
+        {canCategory&&<a href="#admin-settings">إعدادات العميل</a>}
       </nav>
     <details className="admin-operations" open>
       <summary>مركز التشغيل التفصيلي وإدارة البيانات</summary>
@@ -69,7 +74,7 @@ export default function AdminPanel({ role }: { role: UserRole }) {
         {canInventory && <form className="admin-card" id="admin-inventory-adjust" onSubmit={(e) => { e.preventDefault(); if (!selectedProduct || !warehouseId || !delta) return; void run(() => adjustInventory(warehouseId, selectedProduct, Number(delta), reason.trim()), 'تم تعديل المخزون وتسجيل الحركة.'); }}><h3>تعديل المخزون</h3><select aria-label="المستودع" value={warehouseId} onChange={(e) => setWarehouseId(e.target.value)} required><option value="">اختر المستودع</option>{warehouses.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}</select><select aria-label="المنتج" value={selectedProduct} onChange={(e) => setSelectedProduct(e.target.value)} required><option value="">اختر المنتج</option>{products.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select><input aria-label="التغيير" type="number" step="1" placeholder="+ أو - الكمية" value={delta} onChange={(e) => setDelta(e.target.value)} required /><input aria-label="سبب التعديل" placeholder="سبب التعديل" value={reason} onChange={(e) => setReason(e.target.value)} required /><button disabled={busy}>تسجيل الحركة</button></form>}
       </div>
       {canOrderWorkflow && <div className="cart-panel" id="admin-orders"><div className="section-heading"><div><span className="eyebrow">التشغيل</span><h2>إدارة الطلبات</h2></div><span>{orders.length} طلبات</span></div>{ordersLoading ? <div className="cart-empty">جارٍ تحميل الطلبات…</div> : !orders.length ? <div className="cart-empty">لا توجد طلبات تشغيلية بعد.</div> : <div className="cart-lines">{orders.map((order) => <article className="cart-line" key={order.id}><div><strong>طلب #{order.order_number}</strong><small>العميل: {order.customer_name}</small></div><div><strong>{formatMoney(order.total)} {order.currency}</strong><small>الحالة: {STATUS_LABELS[order.status]}</small></div><div className="status-actions">{allowedNextStatuses(order.status, role).map((next) => <button key={next} disabled={busy} onClick={() => void changeOrderStatus(order.id, next)}>{STATUS_LABELS[next]}</button>)}</div></article>)}</div>}</div>}
-      {error && <div className="error-banner" role="alert">{error}</div>}{message && <div className="success" role="status">{message}</div>}
+      {error && <div className="error-banner" role="alert"><span>{error}</span><button type="button" className="ghost" disabled={ordersLoading} onClick={() => void reload()}>إعادة تحميل مركز التحكم</button></div>}{message && <div className="success" role="status">{message}</div>}
       {canCatalog && <div id="admin-customers"><CustomerPanel role={role} /></div>}
       {canInventory && <div id="admin-inventory"><InventoryPanel role={role} /></div>}
       {canInventory && <div id="admin-purchasing"><PurchasingPanel role={role} /></div>}
