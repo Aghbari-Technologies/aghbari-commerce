@@ -195,3 +195,14 @@ Command "1" means:
 - RLS helper EXECUTE was tested and intentionally restored for authenticated users because policies invoke these SECURITY DEFINER helpers directly; anon/public remain denied.
 - Current Supabase security posture: 62 authenticated-executable SECURITY DEFINER findings plus one external leaked-password-protection warning. This is an intentional application-RPC review queue; do not blanket revoke transactional RPCs.
 - Promotions remains a contract gap: canonical docs mention the bounded context, but the live schema has no promotions/discount/campaign table and no detailed business contract. Do not fabricate the feature.
+
+
+## 9. UI/Core closure checkpoint — 2026-09-25
+
+- Latest functional implementation SHA: `ce79c609ae1507060711fbe0d2fb9e78e522ba06` on `main`.
+- Admin UI now has a real Catalog & Products workspace with search, category/status filters, sort, pagination, edit and controlled activation changes.
+- Staff customer directory now has search, active/inactive and tier filters, pagination, invitations, tier management and activation controls.
+- Staff order queue now has status filtering, search and pagination while preserving server-side workflow transitions.
+- Customer order history now has its own responsive workspace with search, status filtering, pagination, detail/tracking and reorder actions.
+- Checkout payment selection is now passed to the canonical `create_order` RPC through `createOrder(...,{paymentMethod})`; the UI normalizes to the first enabled payment method when configuration changes.
+- Do not claim exact-SHA PASS until gates for `ce79c609ae1507060711fbe0d2fb9e78e522ba06` finish. Hosted Browser E2E remains subject to the existing Vercel Deployment Protection artifact-identity gate.
