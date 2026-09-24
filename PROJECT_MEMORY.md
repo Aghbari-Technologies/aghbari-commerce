@@ -151,3 +151,10 @@ Build a serious sellable Arabic-first B2B operational commerce product:
 
 Command "1" means:
 **EXECUTE NOW FROM THE LATEST EXACT HEAD.**
+
+## 15. DURABLE IMPLEMENTATION DECISIONS — 2026-09-24
+
+- Customer checkout keeps one idempotency key for the active submission attempt and rotates it only after a successful order response; retrying an ambiguous failure must not silently create a new key.
+- Customer portal editing may continue offline where the existing cart queue supports it, but order submission remains server-bound and is explicitly blocked without connectivity.
+- Customer order-detail mapping is a runtime trust boundary: UUIDs, quantities, prices, totals/currency and status-history states are validated before presentation.
+- Security advisory warnings for intentionally callable `SECURITY DEFINER` RPCs are classified against the function's tenant/role checks and `search_path`; an advisor warning is never represented as a clean security result without evidence.
