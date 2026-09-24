@@ -160,7 +160,7 @@ export async function drainOfflineOperations(
   let processed = 0;
   let failed = 0;
   for (const operation of operations) {
-    if (operation.terminal) continue;
+    if (operation.terminal || operation.state === 'conflicted' || operation.state === 'terminal') continue;
     if (operation.nextAttemptAt && Date.parse(operation.nextAttemptAt) > now) continue;
     try {
       await processor(operation);
