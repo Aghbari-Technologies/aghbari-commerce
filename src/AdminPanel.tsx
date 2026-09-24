@@ -51,7 +51,7 @@ export default function AdminPanel({ role }: { role: UserRole }) {
     ['المشتريات والموردون', '#admin-purchasing', canInventory], ['المالية', '#admin-finance', canFinance], ['التصدير', '#admin-export', canInventory],
     ['إعدادات العميل', '#admin-settings', canCategory]
   ] as const;
-  const visibleCommands = commands.filter(([label]) => label.includes(commandQuery.trim()) || !commandQuery.trim());
+  const visibleCommands = commands.filter(([label, , allowed]) => allowed && (label.includes(commandQuery.trim()) || !commandQuery.trim()));
 
   return <section className="admin-panel" id="account">
     <AdminExecutiveDashboard role={role} />
