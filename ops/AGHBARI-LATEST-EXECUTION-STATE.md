@@ -1,58 +1,77 @@
 # 🔴 AGHBARI LATEST EXECUTION STATE
 
-**Functional exact checkpoint:** `5ea7e162289af8e56e88ecdd4e44ee44f3566b25`
-**Documentation checkpoint:** to be written from this functional checkpoint
-**Branch:** `main`
+**Actual Git HEAD:** c0267343aadf5db11f696f54d40e969582f23e16
+**Documentation write-back:** d093ff83f7a2ce05a431fdf53b2c6fabe8c6821b / 2d15bd3dda1c6fc4c37bb62a342fdb0439ce67e4
+**Latest functional code SHA:** 991622fcb16c899a4028ab6975410f3023294ebb
+**Branch:** main
 **Production:** NO TOUCH
 **Certification:** NOT CLAIMED
 
-## Current reality
-- Functional code and canonical schema are at `5ea7e162289af8e56e88ecdd4e44ee44f3566b25`.
-- Fresh-DB migration drift found during exact proof was closed for `orders.payment_method` and `notifications`.
-- Exact Application Quality, Security, Migration, Concurrency, Test-the-Test, G1, Order Workflow and Bootstrap all PASS on this checkpoint.
-- Exact local browser proof PASS: local production artifact with Customer/Admin browser E2E and Fresh Local Supabase with Customer/Admin browser E2E + Storage adversarial runtime.
-- Vercel deployment metadata identifies the exact functional SHA and READY state. Hosted Browser E2E still fails at Deployment Protection curl before Playwright, so hosted runtime certification is not claimed.
-- Live Supabase: 60/60 public tables RLS-enabled; 0 anon-executable SECURITY DEFINER routines; all inspected public definer routines have explicit search_path configuration. SECURITY DEFINER advisory count remains 62 authenticated-executable routines and requires per-RPC classification rather than blind revocation.
+## CURRENT REALITY
+- The live repository advanced through functional commits to 991622fc and documentation write-back to 2d15bd3d.
+- Notifications, governance/audit/outbox, and Admin Access Control are now real UI surfaces backed by Supabase.
+- Canonical organization-user role management is hardened in the live database and represented by migration 20260925030000_harden_canonical_staff_role_management.sql.
+- Exploratory duplicate role RPCs are retired; active authority is list_organization_users + set_organization_user_role.
+- Audit metadata shown in the Staff Governance UI is redacted for token/secret/password/authorization/cookie keys and bearer values.
+- Vercel project aghbari-commerce-c2dd picked up the current code line. A c026 deployment failed because the redaction helper import had not reached that deployment; the import was fixed on functional SHA 991622fc. A fresh deployment is now expected for 991622fc.
+- Supabase security advisor currently reports 62 authenticated-executable SECURITY DEFINER warnings plus 1 external leaked-password-protection warning. This is an open classification queue, not a blanket security failure.
+- Live canonical role functions: SECURITY DEFINER, search_path="", anon EXECUTE=false, authenticated EXECUTE=true.
 
-## Implemented product frontier
+## IMPLEMENTED PRODUCT FRONTIER
 ### Customer Portal
-- Catalog/search/category filtering and authorized tier pricing.
-- Cart persistence, quantity confirmation and stable idempotent checkout.
-- Offline-safe cart queue with reconnect replay, bounded retries and conflict/terminal classification.
-- Orders list/detail, real line items, status timeline, reorder and account/session context.
-- Finance/ledger view and export.
-- Dynamic configuration, loading/empty/error/success/offline recovery states.
+- Catalog/search/category filtering, tier pricing, cart persistence, idempotent checkout.
+- Offline-safe cart queue with reconnect replay and bounded conflict/terminal classification.
+- Orders list/detail, line items, status timeline, reorder and account/session context.
+- Finance/ledger/export and recovery states.
+- Customer notifications with unread filtering, persistence, reload/retry, loading/empty/error handling.
 
 ### Admin / Staff
-- Executive dashboard and operational Command Center.
-- Orders/workflow, order search, customers/search/invitations.
-- Products/categories/pricing/media/import/export.
-- Inventory/adjustment/journal, purchasing, finance.
-- Dynamic customer UI configuration and recovery states.
-- Permission-aware navigation and operational recovery.
+- Command Center, orders/workflow, customers, catalog/products/categories/pricing/media.
+- Inventory, purchasing, finance, imports/exports, client controls.
+- Staff notifications.
+- Audit and outbox operational views.
+- Organization user directory, role management and capability matrix with server-side authorization.
 
-## Proof status
-| Gate | Exact SHA | Status |
-|---|---|---|
-| Application Quality | 5ea7e162289af8e56e88ecdd4e44ee44f3566b25 | PASS |
-| Security Audit | 5ea7e162289af8e56e88ecdd4e44ee44f3566b25 | PASS |
-| Migration Proof | 5ea7e162289af8e56e88ecdd4e44ee44f3566b25 | PASS |
-| Concurrency Proof | 5ea7e162289af8e56e88ecdd4e44ee44f3566b25 | PASS |
-| Test-the-Test | 5ea7e162289af8e56e88ecdd4e44ee44f3566b25 | PASS |
-| G1 Domain Proof | 5ea7e162289af8e56e88ecdd4e44ee44f3566b25 | PASS |
-| Order Workflow | 5ea7e162289af8e56e88ecdd4e44ee44f3566b25 | PASS |
-| Bootstrap Lockfile | 5ea7e162289af8e56e88ecdd4e44ee44f3566b25 | PASS |
-| Local Production Artifact Browser | 5ea7e162289af8e56e88ecdd4e44ee44f3566b25 | PASS |
-| Fresh Local Supabase Browser | 5ea7e162289af8e56e88ecdd4e44ee44f3566b25 | PASS |
-| Hosted Vercel Browser | 5ea7e162289af8e56e88ecdd4e44ee44f3566b25 | BLOCKED at Deployment Protection curl 47 |
+## EXACT-SHA PROOF RULE
+No PASS is transferred to the current functional SHA until the gate executes against that exact SHA.
+
+| Gate | Current status |
+|---|---|
+| Application Quality | RUNNING/QUEUED on 991622fc |
+| Security Audit | PASS on c0267343; fresh run RUNNING on 991622fc |
+| Browser Contract | PASS on c0267343; fresh run QUEUED/RUNNING on 991622fc |
+| G1 Domain Proof | QUEUED/RUNNING on 991622fc |
+| Order Workflow Proof | QUEUED/RUNNING on 991622fc |
+| Migration Proof | RUNNING/QUEUED on 991622fc |
+| Concurrency Proof | RUNNING on 991622fc |
+| Test-the-Test | RUNNING on 991622fc |
+| Bootstrap Lockfile | PASS on 991622fc |
+| Hosted Vercel runtime | NOT PROVEN; latest c026 deployment failed before runtime |
+| Production | NO TOUCH |
+
+## OPEN GAPS
+1. Finish exact-SHA CI results for 991622fc after the import/type fixes.
+2. Verify fresh Vercel 991622fc build and hosted browser/runtime; deployment protection must remain uncompromised.
+3. Classify/remediate the 62 intended authenticated SECURITY DEFINER findings individually; preserve required transactional RPCs.
+4. Complete semantic merge/reference audit of the 50 Markdown sources before any retirement.
+5. Continue remaining product surfaces: promotions and any nested states/actions not yet proven end-to-end.
 
 ## CURRENT RESUME POINTER
-START FROM functional checkpoint `5ea7e162289af8e56e88ecdd4e44ee44f3566b25` and the latest main documentation checkpoint after this write-back.
+START FROM ACTUAL CURRENT HEAD / LATEST FUNCTIONAL SHA 991622fcb16c899a4028ab6975410f3023294ebb.
 
-NEXT:
-- Do not reopen closed functional foundations.
-- Resolve hosted Vercel Deployment Protection only when a free project-level path is available; never weaken artifact identity checks.
-- Continue per-RPC SECURITY DEFINER classification and the 50-source semantic consolidation audit.
-- Certification remains HOLD until hosted runtime policy is independently satisfied.
+UI FRONT:
+Admin → Access Control → verify owner/non-owner/customer role states in browser; Customer → Notifications → verify unread persistence and error/retry.
+
+CORE FRONT:
+Verify canonical set_organization_user_role against fresh DB migration chain; prove tenant isolation, self-role rejection, customer→staff rejection, last-owner protection, audit emission.
+
+VERIFY:
+Use only 991622fc exact-SHA CI, fresh Supabase migration proof, exact browser contract, concurrency, Test-the-Test, G1 and Order Workflow evidence.
+
+DEPLOY:
+Inspect Vercel deployment for 991622fc. If READY, use protected-access verification without weakening Deployment Protection. If blocked, record the exact external gate and continue independent fronts.
+
+DO NOT REPEAT:
+Do not reopen the previously proven checkout/order/idempotency/offline foundations unless a current exact-SHA regression appears.
 
 Production remains NO TOUCH.
