@@ -278,3 +278,47 @@ The customer portal previously exposed only order summaries and reorder behavior
 - Per-RPC SECURITY DEFINER classification queue.
 - Full semantic consolidation/reference audit for the 50 legacy Markdown sources.
 - Final certification/production remains HOLD / NO TOUCH.
+
+
+## Run 2026-09-25 — Follow-up Security/RLS/Release Closure
+
+### Start
+- Functional baseline: 0bf3322f007227eed4eeec54c8943f33caee5e9f.
+- Branch: main.
+- Production: NO TOUCH.
+
+### Implemented / corrected
+- Recorded canonical notification/user RPC contracts in migration 20260925034000_reassert_canonical_release_rpc_contracts.sql so release-audit can prove frontend RPC provenance.
+- Detected and fixed an unsafe attempt to revoke RLS helper EXECUTE: policies directly invoke current_role/current_customer_id/current_organization_id/is_staff/is_staff_reader. Restored authenticated EXECUTE in migration 20260925035000_restore_rls_helper_execute_boundary.sql; anon/public stay denied.
+- Live RLS runtime test after restore returned 1 visible notification row inside the test tenant.
+- Added server-backed Admin Access Control, Staff Governance, Customer/Staff Notifications, responsive operational styling, tests, and sensitive audit redaction.
+- No placeholder or dead control was introduced for Promotions because its business/data contract is absent.
+
+### Exact-SHA evidence on 0bf3322f...
+- Application Quality: PASS (run 3786).
+- Security Audit: PASS (run 3476).
+- G1 Domain Proof: PASS (run 3743).
+- Order Workflow Proof: PASS (run 1982).
+- Browser Contract: PASS (run 1110).
+- Bootstrap Release Lockfile: PASS (run 1191).
+- Browser E2E / Exact Deployment: NOT_PROVEN / BLOCKED by Vercel Deployment Protection at deployed build-meta fetch. Exact failure: curl followed 50 redirects using VERCEL_AUTOMATION_BYPASS_SECRET.
+- Migration Proof: still running at last observation (run 3760).
+- Concurrency Proof: still running at last observation (run 985).
+- Test-the-Test: still running at last observation (run 1125).
+
+### Runtime / hosting
+- Vercel production deployment is READY for exact SHA 0bf3322f... at deployment dpl_9dvUwuWFZPisrC76b9vGWpEA6TRq.
+- Official alias returned HTTP 200 and Arabic RTL HTML. Security headers include CSP, HSTS, X-Frame-Options DENY and nosniff.
+- Vercel hosted Browser E2E remains blocked only by protection-bypass secret validity; application build/runtime itself is live.
+
+### Security
+- Supabase Security Advisor currently reports 62 authenticated-executable SECURITY DEFINER findings plus the external leaked-password-protection warning.
+- Direct EXECUTE is intentionally restricted to authenticated for required RLS helpers and application RPCs; anonymous EXECUTE remains denied.
+- Exact live RLS test proved notifications policy works after the helper privilege correction.
+
+### Remaining
+- Finish migration proof, concurrency proof and Test-the-Test on the exact SHA.
+- Resolve Vercel automation bypass secret or configure a supported trusted automation source; do not disable protection merely to manufacture browser PASS.
+- Continue individual SECURITY DEFINER classification.
+- Continue legacy Markdown semantic consolidation and Promotions contract definition.
+- Certification and production remain HOLD / NO TOUCH until exact end-to-end evidence is complete.

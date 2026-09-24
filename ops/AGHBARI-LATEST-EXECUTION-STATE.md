@@ -1,77 +1,58 @@
 # 🔴 AGHBARI LATEST EXECUTION STATE
 
-**Actual Git HEAD:** 462acfdd82948a54a5e6314553b52fa6da8f20a4
-**Documentation write-back:** d093ff83f7a2ce05a431fdf53b2c6fabe8c6821b / 2d15bd3dda1c6fc4c37bb62a342fdb0439ce67e4 / 462acfdd82948a54a5e6314553b52fa6da8f20a4
-**Latest functional code SHA:** 991622fcb16c899a4028ab6975410f3023294ebb
+**Verified Functional HEAD:** 0bf3322f007227eed4eeec54c8943f33caee5e9f
+**Documentation checkpoint:** this write-back follows the verified functional HEAD above.
 **Branch:** main
 **Production:** NO TOUCH
 **Certification:** NOT CLAIMED
 
 ## CURRENT REALITY
-- The live repository advanced through functional commits to 991622fc and documentation write-back to 2d15bd3d.
-- Notifications, governance/audit/outbox, and Admin Access Control are now real UI surfaces backed by Supabase.
-- Canonical organization-user role management is hardened in the live database and represented by migration 20260925030000_harden_canonical_staff_role_management.sql.
-- Exploratory duplicate role RPCs are retired; active authority is list_organization_users + set_organization_user_role.
-- Audit metadata shown in the Staff Governance UI is redacted for token/secret/password/authorization/cookie keys and bearer values.
-- Vercel project aghbari-commerce-c2dd picked up the current code line. A c026 deployment failed because the redaction helper import had not reached that deployment; the import was fixed on functional SHA 991622fc. A fresh deployment is now expected for 991622fc.
-- Supabase security advisor currently reports 62 authenticated-executable SECURITY DEFINER warnings plus 1 external leaked-password-protection warning. This is an open classification queue, not a blanket security failure.
-- Live canonical role functions: SECURITY DEFINER, search_path="", anon EXECUTE=false, authenticated EXECUTE=true.
+- The functional product baseline is 0bf3322f007227eed4eeec54c8943f33caee5e9f.
+- Governance/RBAC/notifications UI is real, persisted, permission-aware, and connected to canonical RPCs.
+- Canonical role management and notification read RPCs are hardened with SECURITY DEFINER + empty search_path and authenticated-only execution.
+- RLS helper execution is intentionally retained for authenticated users because RLS policies call those helpers; anon/public remain denied.
+- Live Vercel deployment for 0bf3322f... is READY and official alias returns HTTP 200.
+- The newest Browser E2E run fails only at Vercel Deployment Protection bypass: 50 redirects while fetching build-meta with the configured automation secret. No application assertion ran after that gate.
+- Security Advisor is 62 authenticated SECURITY DEFINER findings plus one external leaked-password-protection warning.
+- Promotions is not implemented because its business/data contract is not present in the live schema/canonical contract.
 
-## IMPLEMENTED PRODUCT FRONTIER
-### Customer Portal
-- Catalog/search/category filtering, tier pricing, cart persistence, idempotent checkout.
-- Offline-safe cart queue with reconnect replay and bounded conflict/terminal classification.
-- Orders list/detail, line items, status timeline, reorder and account/session context.
-- Finance/ledger/export and recovery states.
-- Customer notifications with unread filtering, persistence, reload/retry, loading/empty/error handling.
-
-### Admin / Staff
-- Command Center, orders/workflow, customers, catalog/products/categories/pricing/media.
-- Inventory, purchasing, finance, imports/exports, client controls.
-- Staff notifications.
-- Audit and outbox operational views.
-- Organization user directory, role management and capability matrix with server-side authorization.
-
-## EXACT-SHA PROOF RULE
-No PASS is transferred to the current functional SHA until the gate executes against that exact SHA.
-
-| Gate | Current status |
+## EXACT-SHA PROOF MATRIX — FUNCTIONAL HEAD 0bf3322f...
+| Gate | Status |
 |---|---|
-| Application Quality | RUNNING/QUEUED on 991622fc |
-| Security Audit | PASS on c0267343; fresh run RUNNING on 991622fc |
-| Browser Contract | PASS on c0267343; fresh run QUEUED/RUNNING on 991622fc |
-| G1 Domain Proof | QUEUED/RUNNING on 991622fc |
-| Order Workflow Proof | QUEUED/RUNNING on 991622fc |
-| Migration Proof | RUNNING/QUEUED on 991622fc |
-| Concurrency Proof | RUNNING on 991622fc |
-| Test-the-Test | RUNNING on 991622fc |
-| Bootstrap Lockfile | PASS on 991622fc |
-| Hosted Vercel runtime | NOT PROVEN; latest c026 deployment failed before runtime |
-| Production | NO TOUCH |
+| Application Quality | PASS — run 3786 |
+| Security Audit | PASS — run 3476 |
+| G1 Domain Proof | PASS — run 3743 |
+| Order Workflow Proof | PASS — run 1982 |
+| Browser Contract | PASS — run 1110 |
+| Bootstrap Release Lockfile | PASS — run 1191 |
+| Migration Proof | IN PROGRESS — run 3760 |
+| Concurrency Proof | IN PROGRESS — run 985 |
+| Test-the-Test | IN PROGRESS — run 1125 |
+| Browser E2E | BLOCKED at Vercel Protection bypass gate — run 1111 |
 
 ## OPEN GAPS
-1. Finish exact-SHA CI results for 991622fc after the import/type fixes.
-2. Verify fresh Vercel 991622fc build and hosted browser/runtime; deployment protection must remain uncompromised.
-3. Classify/remediate the 62 intended authenticated SECURITY DEFINER findings individually; preserve required transactional RPCs.
-4. Complete semantic merge/reference audit of the 50 Markdown sources before any retirement.
-5. Continue remaining product surfaces: promotions and any nested states/actions not yet proven end-to-end.
+1. Complete the three heavy exact-SHA proofs above.
+2. Repair the Vercel automation bypass secret/trusted-source path without weakening deployment protection.
+3. Complete SECURITY DEFINER classification individually; retain intentional transactional RPC access.
+4. Finish semantic consolidation of legacy Markdown sources.
+5. Define Promotions business/data contract before implementation.
 
 ## CURRENT RESUME POINTER
-START FROM ACTUAL CURRENT HEAD / LATEST FUNCTIONAL SHA 991622fcb16c899a4028ab6975410f3023294ebb.
+START FROM ACTUAL REPOSITORY HEAD, THEN VERIFY THE FUNCTIONAL BASELINE 0bf3322f007227eed4eeec54c8943f33caee5e9f.
 
 UI FRONT:
-Admin → Access Control → verify owner/non-owner/customer role states in browser; Customer → Notifications → verify unread persistence and error/retry.
+Admin → Access Control → owner/non-owner/customer role states; Staff → Notifications/Governance; Customer → Notifications → unread persistence and retry/error states.
 
 CORE FRONT:
-Verify canonical set_organization_user_role against fresh DB migration chain; prove tenant isolation, self-role rejection, customer→staff rejection, last-owner protection, audit emission.
+Canonical organization user role RPC + RLS helper privilege boundary; prove tenant isolation, self-role rejection, customer promotion rejection, last-owner protection, audit emission.
 
 VERIFY:
-Use only 991622fc exact-SHA CI, fresh Supabase migration proof, exact browser contract, concurrency, Test-the-Test, G1 and Order Workflow evidence.
+Use only exact-SHA evidence on the current functional baseline and do not transfer evidence from any earlier SHA.
 
 DEPLOY:
-Inspect Vercel deployment for 991622fc. If READY, use protected-access verification without weakening Deployment Protection. If blocked, record the exact external gate and continue independent fronts.
+Vercel production deployment dpl_9dvUwuWFZPisrC76b9vGWpEA6TRq. Runtime is READY. Browser E2E is blocked only by protection-bypass authentication at build-meta fetch.
 
 DO NOT REPEAT:
-Do not reopen the previously proven checkout/order/idempotency/offline foundations unless a current exact-SHA regression appears.
+Do not reopen proven catalog/search/checkout/order/idempotency foundations unless current exact-SHA regression appears.
 
 Production remains NO TOUCH.

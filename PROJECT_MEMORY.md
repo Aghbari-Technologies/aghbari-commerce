@@ -182,3 +182,16 @@ Command "1" means:
 - Governance UI now exposes real notifications, audit records and outbox state with search/filter/reload/error/empty handling. Audit metadata is redacted for token/secret/password/authorization/cookie fields before display.
 - The Supabase security advisory remains a classification queue: 62 authenticated-executable SECURITY DEFINER warnings plus the external leaked-password-protection warning. No blanket revoke was applied because these RPCs are part of the transactional application boundary.
 
+
+
+## 19. DURABLE EXECUTION CHECKPOINT — 2026-09-25
+
+- Functional baseline for this execution wave: 0bf3322f007227eed4eeec54c8943f33caee5e9f.
+- Governance surfaces are real and server-backed: Customer/Staff notifications, Staff audit/outbox, and Admin organization user/role management.
+- Role management authority is canonical: list_organization_users() + set_organization_user_role(uuid,user_role). Exploratory duplicate RPCs were retired.
+- Canonical role hardening includes owner-only mutation, self-role rejection, customer-to-staff promotion rejection, last-owner protection, tenant row lock, SECURITY DEFINER, empty search_path, authenticated-only execution, and audit emission.
+- Notification read state uses the canonical mark_notification_read(uuid) RPC. Direct table mutation from the UI was removed.
+- Audit metadata is redacted before display.
+- RLS helper EXECUTE was tested and intentionally restored for authenticated users because policies invoke these SECURITY DEFINER helpers directly; anon/public remain denied.
+- Current Supabase security posture: 62 authenticated-executable SECURITY DEFINER findings plus one external leaked-password-protection warning. This is an intentional application-RPC review queue; do not blanket revoke transactional RPCs.
+- Promotions remains a contract gap: canonical docs mention the bounded context, but the live schema has no promotions/discount/campaign table and no detailed business contract. Do not fabricate the feature.
