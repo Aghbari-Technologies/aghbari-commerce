@@ -1,61 +1,58 @@
 # 🔴 AGHBARI LATEST EXECUTION STATE
 
-**Functional code checkpoint:** `973ce4aa32f532269b5955a58a1d19f8c502d759`
-**Documentation checkpoint:** to be created from this functional SHA
+**Functional exact checkpoint:** `5ea7e162289af8e56e88ecdd4e44ee44f3566b25`
+**Documentation checkpoint:** to be written from this functional checkpoint
 **Branch:** `main`
 **Production:** NO TOUCH
 **Certification:** NOT CLAIMED
 
 ## Current reality
-- The functional checkout/schema checkpoint is `973ce4a…` and includes the canonical `orders.payment_method` migration required by the authoritative payment-aware `create_order` RPC.
-- The exact-head application suite is green: typecheck, 198 tests across 25 files, lint, production build and release audit.
-- Exact-head Security Audit, Order Workflow, G1 Domain Proof, Bootstrap and Browser Contract have passed.
-- A dedicated exact-SHA Browser E2E path against the protected Vercel deployment still cannot cross the Deployment Protection artifact-identity gate because the GitHub curl receives a redirect loop; this does not invalidate the application build.
-- Fresh Local Supabase/Migration, Test-the-Test, Concurrency and local Browser/Artifact runs were launched against the corrected checkpoint and remain the outstanding runtime/deep-database evidence set at this checkpoint.
-- Live Supabase remains healthy; 60/60 public tables have RLS enabled, 0 SECURITY DEFINER functions are executable by anon, and the current live schema contains the same payment_method constraint now restored into fresh migrations.
+- Functional code and canonical schema are at `5ea7e162289af8e56e88ecdd4e44ee44f3566b25`.
+- Fresh-DB migration drift found during exact proof was closed for `orders.payment_method` and `notifications`.
+- Exact Application Quality, Security, Migration, Concurrency, Test-the-Test, G1, Order Workflow and Bootstrap all PASS on this checkpoint.
+- Exact local browser proof PASS: local production artifact with Customer/Admin browser E2E and Fresh Local Supabase with Customer/Admin browser E2E + Storage adversarial runtime.
+- Vercel deployment metadata identifies the exact functional SHA and READY state. Hosted Browser E2E still fails at Deployment Protection curl before Playwright, so hosted runtime certification is not claimed.
+- Live Supabase: 60/60 public tables RLS-enabled; 0 anon-executable SECURITY DEFINER routines; all inspected public definer routines have explicit search_path configuration. SECURITY DEFINER advisory count remains 62 authenticated-executable routines and requires per-RPC classification rather than blind revocation.
 
-## Implemented frontier
+## Implemented product frontier
 ### Customer Portal
-- Product discovery/search/category filtering.
-- Authorized pricing/stock visibility.
-- Cart persistence and quantity confirmation.
-- Stable checkout idempotency key.
-- Offline cart draft and automatic safe replay on reconnect.
-- Order list, persisted detail, line items and lifecycle timeline.
-- Reorder action.
-- Account/session context and refresh.
-- Loading/empty/error/success/offline recovery states.
+- Catalog/search/category filtering and authorized tier pricing.
+- Cart persistence, quantity confirmation and stable idempotent checkout.
+- Offline-safe cart queue with reconnect replay, bounded retries and conflict/terminal classification.
+- Orders list/detail, real line items, status timeline, reorder and account/session context.
+- Finance/ledger view and export.
+- Dynamic configuration, loading/empty/error/success/offline recovery states.
 
 ### Admin / Staff
-- Operational Command Center.
-- Orders/workflow and order search.
-- Customer management/search/invitations.
-- Catalog/products/categories/pricing/media/import/export.
-- Inventory/adjustment/purchasing/finance.
-- Dynamic customer UI settings and reporting gateway boundary.
-- Cross-panel loading/error/retry behavior.
+- Executive dashboard and operational Command Center.
+- Orders/workflow, order search, customers/search/invitations.
+- Products/categories/pricing/media/import/export.
+- Inventory/adjustment/journal, purchasing, finance.
+- Dynamic customer UI configuration and recovery states.
+- Permission-aware navigation and operational recovery.
 
-### Reliability / Security
-- Offline operation states: queued/retrying/conflicted/terminal.
-- Conflict/terminal records never replay automatically.
-- Strict customer order-detail response validation.
-- Server-authoritative payment, stock, price and order acceptance.
-- 60/60 public tables RLS-enabled in live Supabase; 0 anon-executable SECURITY DEFINER routines.
-
-## Open proof gates
-1. Fresh migration/pgTAP proof on `973ce4a…`.
-2. Test-the-Test proof on `973ce4a…`.
-3. Fresh local Customer/Admin browser E2E on the corrected schema.
-4. Exact current-SHA concurrency proof.
-5. Full per-RPC SECURITY DEFINER classification/remediation.
-6. Exact deployed runtime parity and candidate certification.
-7. Full semantic merge/reference audit of the 50 historical Markdown sources.
+## Proof status
+| Gate | Exact SHA | Status |
+|---|---|---|
+| Application Quality | 5ea7e162289af8e56e88ecdd4e44ee44f3566b25 | PASS |
+| Security Audit | 5ea7e162289af8e56e88ecdd4e44ee44f3566b25 | PASS |
+| Migration Proof | 5ea7e162289af8e56e88ecdd4e44ee44f3566b25 | PASS |
+| Concurrency Proof | 5ea7e162289af8e56e88ecdd4e44ee44f3566b25 | PASS |
+| Test-the-Test | 5ea7e162289af8e56e88ecdd4e44ee44f3566b25 | PASS |
+| G1 Domain Proof | 5ea7e162289af8e56e88ecdd4e44ee44f3566b25 | PASS |
+| Order Workflow | 5ea7e162289af8e56e88ecdd4e44ee44f3566b25 | PASS |
+| Bootstrap Lockfile | 5ea7e162289af8e56e88ecdd4e44ee44f3566b25 | PASS |
+| Local Production Artifact Browser | 5ea7e162289af8e56e88ecdd4e44ee44f3566b25 | PASS |
+| Fresh Local Supabase Browser | 5ea7e162289af8e56e88ecdd4e44ee44f3566b25 | PASS |
+| Hosted Vercel Browser | 5ea7e162289af8e56e88ecdd4e44ee44f3566b25 | BLOCKED at Deployment Protection curl 47 |
 
 ## CURRENT RESUME POINTER
-START FROM functional checkpoint `973ce4aa32f532269b5955a58a1d19f8c502d759`.
+START FROM functional checkpoint `5ea7e162289af8e56e88ecdd4e44ee44f3566b25` and the latest main documentation checkpoint after this write-back.
 
-Next executable action: inspect final results of Migration/Test-the-Test/Concurrency/Fresh Local Browser. If any fail, fix the root cause and rerun only the affected exact-SHA gates. Do not reopen catalog/cart/order foundations unless a regression is proven.
-
-Vercel: do not claim runtime certification from a protected deployment until artifact identity and Playwright run both pass. The current deployment gate is external protection behavior.
+NEXT:
+- Do not reopen closed functional foundations.
+- Resolve hosted Vercel Deployment Protection only when a free project-level path is available; never weaken artifact identity checks.
+- Continue per-RPC SECURITY DEFINER classification and the 50-source semantic consolidation audit.
+- Certification remains HOLD until hosted runtime policy is independently satisfied.
 
 Production remains NO TOUCH.

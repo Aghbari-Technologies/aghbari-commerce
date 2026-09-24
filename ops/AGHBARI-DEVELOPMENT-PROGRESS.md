@@ -1,3 +1,36 @@
+## Run 2026-09-25 — Exact certification closure checkpoint
+
+### Exact functional SHA
+- `5ea7e162289af8e56e88ecdd4e44ee44f3566b25`
+- Branch: `main`
+- Production: NO TOUCH
+- Certification: NOT CLAIMED
+
+### Functional/schema closure
+- Restored missing canonical `orders.payment_method` schema with default `credit` and allowed payment values.
+- Restored missing canonical `notifications` table, constraints, indexes and tenant/customer/staff RLS policies required by the authoritative customer order command.
+
+### Exact proof bundle — PASS
+- Application Quality: PASS
+- Security Audit: PASS
+- Supabase Migration Proof: PASS
+- Concurrency Proof / Exact SHA: PASS
+- Test-the-Test / Exact SHA: PASS
+- G1 Domain Proof: PASS
+- Order Workflow Proof: PASS
+- Bootstrap Release Lockfile: PASS
+- Browser E2E / Local Production Artifact: PASS — exact SHA; Customer + Admin browser E2E and artifact checksum verification.
+- Browser E2E / Fresh Local Supabase: PASS — exact SHA; Customer + Admin real browser E2E plus Storage adversarial runtime.
+
+### Hosted deployment reality
+- Vercel deployment metadata reports a READY deployment tied to `main` and exact SHA `5ea7e162289af8e56e88ecdd4e44ee44f3566b25`.
+- Hosted Browser E2E workflow fails before Playwright at the Deployment Protection artifact-identity curl with HTTP redirect-loop (curl 47). This is an external protection gate; no hosted-runtime PASS is claimed.
+
+### Remaining non-certifying work
+- Per-RPC SECURITY DEFINER advisor classification remains an OPEN security optimization queue despite green security workflow; 62 authenticated-executable SECURITY DEFINER routines remain advisory findings and are not bulk-revoked.
+- Full semantic consolidation/reference audit of the 50 legacy Markdown sources remains open.
+- Certification/production promotion remains HOLD until hosted/runtime deployment proof policy is satisfied.
+
 ## Run 2026-09-25 — Checkout schema drift closure + exact proof hardening
 
 ### Functional checkpoint
