@@ -49,6 +49,24 @@ const STATUS_FLOW: OrderStatus[] = ['pending','confirmed','preparing','ready','c
 type CustomerOrderDetailRow = { id:string; product_id:string; quantity:number|string; unit_price:number|string; line_total:number|string; currency:string|null; products:{sku:string|null;name:string|null;unit:string|null}|{sku:string|null;name:string|null;unit:string|null}[]|null };
 type CustomerOrderHistoryRow = { from_status:OrderStatus|null; to_status:OrderStatus; created_at:string };
 
+export function buildCustomerOrderTimeline(orderStatus: OrderStatus, history: CustomerOrderHistoryRow[]): CustomerOrderTimelineStep[] {
+  const reached = new Set<OrderStatus>(history.map((entry) => entry.to_status));
+  const currentIndex = STATUS_FLOW.indexOf(orderStatus);
+  return STATUS_FLOW.map((status, index) => ({
+    status,
+    label: STATUS_LABELS[status],
+    active: reached.has(status) || (currentIndex >= 0 && index <= currentIndex)
+  }));
+}
+
+function assertDetailNumber(value: unknown, label: string, integer = false): number {
+  const normalized = typeof value === 'number' ? value : Number(value);
+  if (!Number.isFinite(normalized) || normalized < 0 || (integer && !Number.isSafeInteger(normalized))) {
+    throw new Error(`قيمة ${label} غير صالحة. لم يتم إثبات نجاح العملية.`);
+  }
+  return normalized;
+}
+
 export async function getCustomerOrderDetail(orderId:string): Promise<CustomerOrderDetail> {
   if (!UUID_PATTERN.test(orderId)) throw new Error('معرّف الطلب غير صالح.');
   const client = requireSupabase();
@@ -62,10 +80,22 @@ export async function getCustomerOrderDetail(orderId:string): Promise<CustomerOr
   if (itemsError) throw itemsError;
   if (historyError) throw historyError;
   const mappedItems: CustomerOrderDetailItem[] = (items??[]).map((row:CustomerOrderDetailRow) => {
+    if (typeof row.id !== 'string' || !UUID_PATTERN.test(row.id) || typeof row.product_id !== 'string' || !UUID_PATTERN.test(row.product_id)) {
+      throw new Error('بيانات أصناف الطلب غير صالحة. لم يتم إثبات نجاح العملية.');
+    }
     const product = Array.isArray(row.products) ? row.products[0] : row.products;
-    return { id:String(row.id), product_id:String(row.product_id), sku:String(product?.sku??'—'), name:String(product?.name??'صنف غير متاح'), unit:String(product?.unit??'وحدة'), quantity:Number(row.quantity), unit_price:Number(row.unit_price), line_total:Number(row.line_total), currency:String(row.currency??order.currency) };
+    const quantity = assertDetailNumber(row.quantity, 'كمية الصنف', true);
+    if (quantity < 1) throw new Error('كمية الصنف غير صالحة. لم يتم إثبات نجاح العملية.');
+    const unitPrice = assertDetailNumber(row.unit_price, 'سعر الوحدة');
+    const lineTotal = assertDetailNumber(row.line_total, 'إجمالي السطر');
+    const currency = String(row.currency??order.currency);
+    if (!/^[A-Z]{3}$/.test(currency)) throw new Error('عملة السطر غير صالحة. لم يتم إثبات نجاح العملية.');
+    return { id:row.id, product_id:row.product_id, sku:String(product?.sku??'—'), name:String(product?.name??'صنف غير متاح'), unit:String(product?.unit??'وحدة'), quantity, unit_price:unitPrice, line_total:lineTotal, currency };
   });
-  const reached = new Set<string>(['pending', ...((history??[] as CustomerOrderHistoryRow[]).map((h)=>String(h.to_status)))]);
-  const timeline = STATUS_FLOW.map(status=>({status,label:STATUS_LABELS[status],active:reached.has(status) || status===order.status}));
+  const safeHistory = (history??[] as CustomerOrderHistoryRow[]).map((entry) => {
+    if (!ORDER_STATUSES.has(entry.to_status)) throw new Error('سجل حالة الطلب غير صالح. لم يتم إثبات نجاح العملية.');
+    return { ...entry, to_status: entry.to_status as OrderStatus };
+  });
+  const timeline = buildCustomerOrderTimeline(order.status as OrderStatus, safeHistory);
   return { ...assertCustomerOrderSummary({...order, order_number:Number(order.order_number), total:Number(order.total)}), items:mappedItems, timeline, statusLabel:STATUS_LABELS[order.status]??order.status };
 }
