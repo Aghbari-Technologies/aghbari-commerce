@@ -158,3 +158,11 @@ Command "1" means:
 - Customer portal editing may continue offline where the existing cart queue supports it, but order submission remains server-bound and is explicitly blocked without connectivity.
 - Customer order-detail mapping is a runtime trust boundary: UUIDs, quantities, prices, totals/currency and status-history states are validated before presentation.
 - Security advisory warnings for intentionally callable `SECURITY DEFINER` RPCs are classified against the function's tenant/role checks and `search_path`; an advisor warning is never represented as a clean security result without evidence.
+
+## 16. DURABLE OFFLINE RELIABILITY RULE — 2026-09-24
+
+- Offline cart mutations are the only currently permitted queued mutations.
+- Reconnect must automatically re-authenticate through the current session, replay the user-scoped cart queue, and refresh authoritative server state.
+- Queued operations now carry explicit lifecycle state: `queued`, `retrying`, `conflicted`, or `terminal`.
+- HTTP conflict responses (409/412) are terminal-conflict records and are never replayed automatically; authorization/validation 4xx failures are terminal; transient failures remain bounded retries.
+- A local execution test passed for the offline queue classification/replay guard. This is source-level/executable local evidence only and is not CI or browser certification.
