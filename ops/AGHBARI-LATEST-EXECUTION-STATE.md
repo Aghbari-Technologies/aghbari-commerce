@@ -1,58 +1,75 @@
 # 🔴 AGHBARI LATEST EXECUTION STATE
 
-**Verified Functional HEAD:** 0bf3322f007227eed4eeec54c8943f33caee5e9f
-**Documentation checkpoint:** this write-back follows the verified functional HEAD above.
+**Actual Git HEAD:** ac81fac0ea240d871a4aabd5044cc1a06075960f
+**Latest functional code HEAD:** ce79c609ae1507060711fbe0d2fb9e78e522ba06
+**Documentation checkpoint:** ac81fac0ea240d871a4aabd5044cc1a06075960f
 **Branch:** main
 **Production:** NO TOUCH
 **Certification:** NOT CLAIMED
 
 ## CURRENT REALITY
-- The functional product baseline is 0bf3322f007227eed4eeec54c8943f33caee5e9f.
-- Governance/RBAC/notifications UI is real, persisted, permission-aware, and connected to canonical RPCs.
-- Canonical role management and notification read RPCs are hardened with SECURITY DEFINER + empty search_path and authenticated-only execution.
-- RLS helper execution is intentionally retained for authenticated users because RLS policies call those helpers; anon/public remain denied.
-- Live Vercel deployment for 0bf3322f... is READY and official alias returns HTTP 200.
-- The newest Browser E2E run fails only at Vercel Deployment Protection bypass: 50 redirects while fetching build-meta with the configured automation secret. No application assertion ran after that gate.
-- Security Advisor is 62 authenticated SECURITY DEFINER findings plus one external leaked-password-protection warning.
-- Promotions is not implemented because its business/data contract is not present in the live schema/canonical contract.
 
-## EXACT-SHA PROOF MATRIX — FUNCTIONAL HEAD 0bf3322f...
-| Gate | Status |
-|---|---|
-| Application Quality | PASS — run 3786 |
-| Security Audit | PASS — run 3476 |
-| G1 Domain Proof | PASS — run 3743 |
-| Order Workflow Proof | PASS — run 1982 |
-| Browser Contract | PASS — run 1110 |
-| Bootstrap Release Lockfile | PASS — run 1191 |
-| Migration Proof | IN PROGRESS — run 3760 |
-| Concurrency Proof | IN PROGRESS — run 985 |
-| Test-the-Test | IN PROGRESS — run 1125 |
-| Browser E2E | BLOCKED at Vercel Protection bypass gate — run 1111 |
+- The repository has advanced beyond the older 0bf3322 baseline through a sequence of real UI/core commits; the latest functional SHA is ce79c609.
+- Admin now exposes a real Catalog & Products workspace with product search, category/status filters, sorting, pagination, edit dialog and controlled active/inactive changes.
+- Staff customer directory now has search, active/inactive and tier filters, pagination, invitations, tier management and activation controls.
+- Staff order queue now has search, status filtering and pagination while preserving server-side workflow transition authorization.
+- Customer order history now has a dedicated responsive workspace with search, status filtering, pagination, detail/tracking and reorder.
+- Checkout now persists the selected payment method by passing it to the canonical create_order RPC and normalizes selection when configuration changes.
+- No fake Promotions feature was introduced because the business/data contract is still absent.
 
-## OPEN GAPS
-1. Complete the three heavy exact-SHA proofs above.
-2. Repair the Vercel automation bypass secret/trusted-source path without weakening deployment protection.
-3. Complete SECURITY DEFINER classification individually; retain intentional transactional RPC access.
-4. Finish semantic consolidation of legacy Markdown sources.
-5. Define Promotions business/data contract before implementation.
+## EXACT-SHA PROOF
+
+For functional SHA ce79c609:
+- Application Quality: QUEUED
+- Security Audit: QUEUED
+- Supabase Migration Proof: QUEUED
+- Concurrency Proof: QUEUED
+- Test-the-Test: QUEUED
+- G1 Domain Proof: QUEUED
+- Order Workflow Proof: QUEUED
+- Browser E2E / Exact Deployment: QUEUED
+- Bootstrap Release Lockfile: QUEUED
+
+No proof is transferred from older SHAs.
+
+## HOSTED DEPLOYMENT
+
+- Previous functional SHA 43d245c34c6f33a23a9882eec400634de1bd5745 has a READY Vercel production deployment and its hosted root returned HTTP 200.
+- Its newest Exact Deployment Browser E2E failed before Playwright at Vercel Deployment Protection artifact-identity verification; this is an external protection gate.
+- No hosted-runtime PASS is claimed for ce79c609 until a deployment exists and the exact-SHA protected browser gate succeeds.
+
+## OPEN UI FRONTIER
+
+- Category management: deeper list/hierarchy/state actions where backend contracts already exist.
+- Pricing: richer matrix/history/detail states where the existing data contract supports them.
+- Purchasing/suppliers: deeper nested workflow views, receiving detail and recovery states.
+- Finance: deeper invoice/payment/expense detail states.
+- Customer account/profile: enrich only with fields and mutation contracts already supported by the backend.
+- Continue responsive/accessibility/error/empty/permission/offline closure across nested views.
+
+## OPEN CORE / SECURITY / RELEASE
+
+- Finish exact-SHA gates on ce79c609 and repair any failures.
+- Continue individual SECURITY DEFINER classification; preserve required transactional and RLS-helper boundaries.
+- Finish semantic consolidation/reference audit of the legacy Markdown corpus.
+- Certification and production remain HOLD / NO TOUCH until exact end-to-end evidence is complete.
 
 ## CURRENT RESUME POINTER
-START FROM ACTUAL REPOSITORY HEAD, THEN VERIFY THE FUNCTIONAL BASELINE 0bf3322f007227eed4eeec54c8943f33caee5e9f.
+
+START FROM ACTUAL GIT HEAD ac81fac0ea240d871a4aabd5044cc1a06075960f; use latest functional base ce79c609ae1507060711fbe0d2fb9e78e522ba06.
 
 UI FRONT:
-Admin → Access Control → owner/non-owner/customer role states; Staff → Notifications/Governance; Customer → Notifications → unread persistence and retry/error states.
+Admin → Category management / Pricing nested states → Purchasing/Suppliers → Finance nested detail.
+Customer → Account/Profile enrichment → Orders nested filters/states → responsive/mobile verification.
 
 CORE FRONT:
-Canonical organization user role RPC + RLS helper privilege boundary; prove tenant isolation, self-role rejection, customer promotion rejection, last-owner protection, audit emission.
+Checkout payment-method persistence → exact order/payment schema proof; preserve canonical create_order contract.
 
 VERIFY:
-Use only exact-SHA evidence on the current functional baseline and do not transfer evidence from any earlier SHA.
+Use only exact ce79c609 evidence. Do not transfer PASS from older SHAs.
 
 DEPLOY:
-Vercel production deployment dpl_9dvUwuWFZPisrC76b9vGWpEA6TRq. Runtime is READY. Browser E2E is blocked only by protection-bypass authentication at build-meta fetch.
+Wait for/scope the exact ce79 deployment and inspect protected artifact-identity verification without weakening Deployment Protection.
 
 DO NOT REPEAT:
-Do not reopen proven catalog/search/checkout/order/idempotency foundations unless current exact-SHA regression appears.
-
-Production remains NO TOUCH.
+Do not reopen checkout/order/idempotency/offline foundations unless a current exact-SHA regression appears.
