@@ -1,6 +1,7 @@
 export const OFFLINE_CART_SET_ITEM = 'cart:set_item';
 export const OFFLINE_CART_REMOVE_ITEM = 'cart:remove_item';
 export const OFFLINE_SAFE_OPERATION_TYPES = new Set([OFFLINE_CART_SET_ITEM, OFFLINE_CART_REMOVE_ITEM]);
+export type OfflineOperationState = 'queued' | 'retrying' | 'conflicted' | 'terminal';
 
 export interface OfflineOperation<T = unknown> {
   operationId: string;
@@ -10,6 +11,7 @@ export interface OfflineOperation<T = unknown> {
   attempts: number;
   userId: string;
   nextAttemptAt?: string;
+  state?: OfflineOperationState;
   terminal?: boolean;
 }
 
@@ -60,6 +62,7 @@ function read<T>(): OfflineOperation<T>[] {
           typeof (item as OfflineOperation).userId === 'string' &&
           UUID_PATTERN.test((item as OfflineOperation).userId) &&
           ((item as OfflineOperation).nextAttemptAt === undefined || Number.isFinite(Date.parse((item as OfflineOperation).nextAttemptAt!))) &&
+          ((item as OfflineOperation).state === undefined || ['queued','retrying','conflicted','terminal'].includes((item as OfflineOperation).state as string)) &&
           ((item as OfflineOperation).terminal === undefined || typeof (item as OfflineOperation).terminal === 'boolean') &&
           isSafePayload((item as OfflineOperation).type, (item as OfflineOperation).payload) &&
           payloadBytes((item as OfflineOperation).payload) <= MAX_OFFLINE_PAYLOAD_BYTES
@@ -100,7 +103,7 @@ export function enqueueOfflineOperation<T>(userId: string, type: string, payload
   if (!isSafePayload(normalizedType, payload)) {
     throw new Error('بيانات العملية غير المتصلة غير صالحة.');
   }
-  const operation: OfflineOperation<T> = { operationId: crypto.randomUUID(), userId: userId.trim(), type: normalizedType, payload, createdAt: new Date().toISOString(), attempts: 0 };
+  const operation: OfflineOperation<T> = { operationId: crypto.randomUUID(), userId: userId.trim(), type: normalizedType, payload, createdAt: new Date().toISOString(), attempts: 0, state: 'queued' };
   const queue = read<unknown>();
   persist([...queue, operation as OfflineOperation<unknown>]);
   return operation;
@@ -119,17 +122,31 @@ export function removeOfflineOperation(operationId: string): void {
   persist(read<unknown>().filter((item) => item.operationId !== operationId));
 }
 
-export function markOfflineOperationAttempt(operationId: string, now = Date.now()): void {
+function errorStatus(error: unknown): number | null {
+  const value = error && typeof error === 'object' ? (error as { status?: unknown }).status : undefined;
+  return typeof value === 'number' && Number.isInteger(value) ? value : null;
+}
+
+export function classifyOfflineFailure(error: unknown): OfflineOperationState {
+  const status = errorStatus(error);
+  if (status === 409 || status === 412) return 'conflicted';
+  if (status === 401 || status === 403 || (status !== null && status >= 400 && status < 500 && status !== 408 && status !== 429)) return 'terminal';
+  return 'retrying';
+}
+
+export function markOfflineOperationAttempt(operationId: string, now = Date.now(), state: OfflineOperationState = 'retrying'): void {
   const queue = read<unknown>();
   const existing = queue.find((item) => item.operationId === operationId);
   if (!existing) return;
-  if (existing.attempts >= MAX_OFFLINE_ATTEMPTS || existing.terminal) {
+  if (existing.attempts >= MAX_OFFLINE_ATTEMPTS || existing.terminal || existing.state === 'conflicted' || existing.state === 'terminal') {
     throw new Error(`تجاوزت العملية الحد الأقصى لإعادة المحاولة (${MAX_OFFLINE_ATTEMPTS}).`);
   }
   const attempts = existing.attempts + 1;
+  const terminal = attempts >= MAX_OFFLINE_ATTEMPTS || state === 'terminal';
+  const persistedState: OfflineOperationState = terminal ? 'terminal' : state;
   const delay = Math.min(MAX_RETRY_DELAY_MS, INITIAL_RETRY_DELAY_MS * 2 ** (attempts - 1));
   persist(queue.map((item) => item.operationId === operationId
-    ? { ...item, attempts, terminal: attempts >= MAX_OFFLINE_ATTEMPTS, nextAttemptAt: new Date(now + delay).toISOString() }
+    ? { ...item, attempts, state: persistedState, terminal, nextAttemptAt: new Date(now + delay).toISOString() }
     : item));
 }
 
@@ -149,11 +166,16 @@ export async function drainOfflineOperations(
       await processor(operation);
       removeOfflineOperation(operation.operationId);
       processed += 1;
-    } catch {
-      if (operation.attempts < MAX_OFFLINE_ATTEMPTS) {
-        markOfflineOperationAttempt(operation.operationId, now);
+    } catch (error) {
+      const failureState = classifyOfflineFailure(error);
+      if (failureState === 'conflicted') {
+        persist(read<unknown>().map((item) => item.operationId === operation.operationId ? { ...item, state: 'conflicted' as OfflineOperationState, terminal: true } : item));
+      } else if (failureState === 'terminal') {
+        markOfflineOperationAttempt(operation.operationId, now, 'terminal');
+      } else if (operation.attempts < MAX_OFFLINE_ATTEMPTS) {
+        markOfflineOperationAttempt(operation.operationId, now, 'retrying');
       } else {
-        persist(read<unknown>().map((item) => item.operationId === operation.operationId ? { ...item, terminal: true } : item));
+        persist(read<unknown>().map((item) => item.operationId === operation.operationId ? { ...item, state: 'terminal' as OfflineOperationState, terminal: true } : item));
       }
       failed += 1;
     }
