@@ -1,3 +1,50 @@
+## Run 2026-09-24/25 — Parallel UI resilience + order-runtime hardening
+
+### Start
+- Exact repository HEAD before this run: `9b489b4f6b196eb2894dc3c8b1337eab00e9a867`.
+- Branch: `main`.
+- Production: NO TOUCH.
+- Certification: NOT CLAIMED.
+
+### Root causes closed
+- Customer checkout generated a fresh idempotency key on every submit attempt, making an ambiguous network retry capable of creating a new server operation instead of reusing the original key.
+- Customer portal presented a permanently “connected” status and lacked an explicit server-connectivity gate for checkout.
+- Customer order-detail timeline unconditionally treated `pending` as reached, which could misrepresent a draft order.
+- Customer order-detail mapping trusted runtime numeric/identifier values without a strict presentation-boundary contract.
+- Admin command navigation exposed only a subset of already-implemented operational sections.
+- Purchasing and finance panels lacked consistent explicit loading/recovery UX.
+
+### Changes
+- `src/AppV3Fixed.tsx`: active checkout idempotency key, real online/offline state, offline checkout guard/banner, account refresh action, navigation accessibility state, safer product-detail add behavior, recoverable global data error state.
+- `src/services/customerOrders.ts`: deterministic timeline builder plus runtime validation for detail identifiers, quantities, prices, currency and status-history states.
+- `src/services/customerOrders.test.ts`: tests for summary trust boundaries and draft/completed/cancelled timeline behavior.
+- `src/customer-portal-v3-dynamic.css`: offline banner and compact recovery styling.
+- `src/AdminPanel.tsx`: command-center navigation expanded to existing product/category/pricing/media/import/inventory/purchasing/finance/export/settings anchors and recoverable top-level error state.
+- `src/PurchasingPanel.tsx`, `src/FinancePanel.tsx`: explicit loading states, retry/reload recovery, and fail-safe error loading-state reset.
+
+### Exact implementation commits
+- `2cbf847199c272ee4647bb59b66d81bd086bdf40` customer-order detail hardening.
+- `2555d00eb276084e13631b370ea70d7d27d29dd8` customer-order runtime tests.
+- `6d021dfaedfd85ffb29a4d912d227ff565312a0c` customer portal resilience/idempotency.
+- `41c72a2d0ae673693772ba164183abca74233f92` customer offline/recovery styling.
+- `233f2fa96e49fec5659c778300d4c106c1cafcd2` admin navigation/recovery.
+- `59645b3630fd15ff7f95213ce4fe5cee4b3d7cfb`, `6d8197d3cef72bfd74a26ce2f710fd59ad2d68fe` purchasing recovery.
+- `c9df2fc8ce11c76817e3d2e349e39bda034be4ce` finance recovery.
+- Current write-back commit: to be recorded below.
+
+### Verification reality
+- Remote Git ref `main` was verified during execution at `c9df2fc8ce11c76817e3d2e349e39bda034be4ce` before documentation write-back.
+- Local clone/build could not be executed because the execution container cannot resolve `github.com`; this is an environment limitation, not a PASS.
+- GitHub Actions for the preceding `c07ef194...` push were observed queued/in progress; no final exact-SHA PASS is claimed for the later `c9df2fc...` code.
+- Live Supabase project `mrcyqezbhpncuvaehwgf` is ACTIVE_HEALTHY (Postgres 17.6.1). Security advisor reports 62 authenticated-executable SECURITY DEFINER warnings. The live check also showed `search_path` pinned empty on the inspected public definer functions and selected mutators enforce organization/role boundaries; the advisor set remains OPEN until each warning is classified/closed or explicitly accepted with evidence.
+- Vercel integration had a prior failure tied to the account/build-rate-limit gate; deployment/candidate/production remain unclaimed.
+
+### Remaining
+- Exact-SHA application-quality, security, migration, concurrency, test-the-test and runtime/browser proof on the final post-writeback HEAD.
+- Security classification/remediation of the full SECURITY DEFINER advisor set without weakening required business RPCs.
+- Full semantic consolidation/reference audit of the 50 historical Markdown sources; classification alone is not sufficient for retirement.
+- Candidate deployment and production certification remain HOLD / NO TOUCH.
+
 # 🔴 AGHBARI DEVELOPMENT PROGRESS — CANONICAL LIVE LEDGER
 
 ## Run 2026-09-23 — Exact-head reconciliation + UI/core frontier audit
@@ -68,4 +115,3 @@ The customer portal previously exposed only order summaries and reorder behavior
 - Explicit loading/empty/error/retry closure across major customer subviews.
 - Semantic merge/reference audit for all 50 legacy Markdown sources.
 - Deployment/candidate/runtime certification.
-
