@@ -30,7 +30,8 @@
 - `233f2fa96e49fec5659c778300d4c106c1cafcd2` admin navigation/recovery.
 - `59645b3630fd15ff7f95213ce4fe5cee4b3d7cfb`, `6d8197d3cef72bfd74a26ce2f710fd59ad2d68fe` purchasing recovery.
 - `c9df2fc8ce11c76817e3d2e349e39bda034be4ce` finance recovery.
-- Current write-back commit: to be recorded below.
+- Documentation manifest checkpoint: `ceef6494605fb876b5688aa4a71cd9a35c276b82`.
+- Live execution-state checkpoint is updated immediately after this ledger commit.
 
 ### Verification reality
 - Remote Git ref `main` was verified during execution at `c9df2fc8ce11c76817e3d2e349e39bda034be4ce` before documentation write-back.
