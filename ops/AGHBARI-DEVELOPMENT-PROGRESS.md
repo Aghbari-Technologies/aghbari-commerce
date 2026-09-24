@@ -232,3 +232,49 @@ The customer portal previously exposed only order summaries and reorder behavior
 - Explicit loading/empty/error/retry closure across major customer subviews.
 - Semantic merge/reference audit for all 50 legacy Markdown sources.
 - Deployment/candidate/runtime certification.
+
+
+## Run 2026-09-25 — Governance/RBAC + operational UI closure
+
+### Start
+- Actual HEAD at start: fa37d98cc2333038ace38937e078c50b55cb0c44.
+- Branch: main.
+- Production: NO TOUCH.
+- Certification: NOT CLAIMED.
+
+### Changes
+- Added real Customer and Staff notification surfaces with server-backed reads, unread filtering, mark-read persistence, reload/retry, loading/empty/error states.
+- Added real Staff Governance surface for audit_events and outbox_events with filtering, status visibility, retry/reload-safe read-only behavior, and sensitive metadata redaction.
+- Added Admin Access Control UI for organization users, roles and capability matrix.
+- Hardened the canonical set_organization_user_role(uuid,user_role) RPC instead of keeping a duplicate authority: owner-only mutation, self-role-change rejection, tenant row lock, customer-to-staff promotion rejection, last-owner protection, empty search_path, authenticated-only EXECUTE, audit emission.
+- Retired the exploratory duplicate list_staff_members/set_staff_role RPCs immediately after discovering the pre-existing canonical organization-user role surface.
+- Corrected notification unit fixtures and redaction import after exact CI typecheck/test failures.
+
+### Exact code SHAs
+- 664062c54c9af5bd620dc3641cf4e27eeaef8d56 — notifications/audit/outbox surfaces.
+- 78ac4eeb96fa28984d0d14679f6f48c23af790fb — operational styling + redaction.
+- 044a54c5a07cbf9220f9eb3067305b20da5bff9f — redaction test.
+- fd6d48a71aeff59136f32d7b5b803a1475a8353d — notification fixture correction.
+- ad09bdd6803e2ff66fe06a6ef82044759162bbba — initial RBAC UI/RPC exploration.
+- f7f75e4dfdbd601a316cef7cdc05347806c4af70 — switched UI to canonical organization-user RPCs.
+- 47594d31664badd154ceffe420b4de499d5b2491 — canonical RBAC pgTAP assertions.
+- 90cd95186c2f073ae535b53d9e3e28d44503b116 — customer role typing fix.
+- c0267343aadf5db11f696f54d40e969582f23e16 — test import checkpoint.
+- 991622fcb16c899a4028ab6975410f3023294ebb — final import fix; current functional HEAD before documentation write-back.
+- d093ff83f7a2ce05a431fdf53b2c6fabe8c6821b — memory write-back checkpoint.
+
+### Evidence / Verification
+- Browser Contract: PASS on c0267343aadf5db11f696f54d40e969582f23e16; no transfer to newer SHAs.
+- Security Audit: PASS on c0267343aadf5db11f696f54d40e969582f23e16; a fresh exact-SHA run is executing for 991622f...
+- G1 Domain Proof, Order Workflow, Migration, Concurrency and Test-the-Test are executing or queued for the current 991622f... line; no PASS is transferred from older SHAs.
+- Exact CI failure diagnosis: application-quality on 1d467ae... failed because operations.test.ts lacked the redaction helper import and StaffAccessPanel had a string indexing type error. Both were fixed and the new 991622f... quality run was launched.
+- Vercel build on c0267343... failed with the same missing redaction import; this exact root cause was corrected on 991622f... and a new Vercel production build is queued/building for that SHA.
+- Live Supabase verification: canonical role functions are SECURITY DEFINER with search_path="" and anon EXECUTE=false; duplicate exploratory role RPCs are absent. Security advisor count is 62 authenticated-executable SECURITY DEFINER findings plus the external leaked-password-protection warning.
+- Live hardening migration applied: 20260925030000_harden_canonical_staff_role_management.
+
+### Remaining
+- Exact current-SHA CI results for 991622f...
+- Hosted Vercel runtime/browser proof after the current build, with deployment protection handled without weakening artifact identity.
+- Per-RPC SECURITY DEFINER classification queue.
+- Full semantic consolidation/reference audit for the 50 legacy Markdown sources.
+- Final certification/production remains HOLD / NO TOUCH.
