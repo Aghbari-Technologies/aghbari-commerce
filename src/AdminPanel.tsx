@@ -14,6 +14,8 @@ import InventoryPanel from './InventoryPanel';
 import FinancePanel from './FinancePanel';
 import ClientControlPanel from './ClientControlPanel';
 import AdminExecutiveDashboard from './AdminExecutiveDashboard';
+import NotificationPanel from './NotificationPanel';
+import StaffOperationsPanel from './StaffOperationsPanel';
 import './admin-executive-dashboard.css';
 
 interface StaffProduct { id: string; sku: string; name: string; unit: string; }
@@ -61,6 +63,8 @@ export default function AdminPanel({ role }: { role: UserRole }) {
         {canFinance&&<a href="#admin-finance">المالية</a>}
         {canInventory&&<a href="#admin-export">التصدير</a>}
         {canCategory&&<a href="#admin-settings">إعدادات العميل</a>}
+        {canOrderWorkflow&&<a href="#admin-notifications">الإشعارات</a>}
+        {canOrderWorkflow&&<a href="#admin-governance">التدقيق والتكاملات</a>}
       </nav>
     <details className="admin-operations" open>
       <summary>مركز التشغيل التفصيلي وإدارة البيانات</summary>
@@ -80,7 +84,9 @@ export default function AdminPanel({ role }: { role: UserRole }) {
       {canInventory && <div id="admin-purchasing"><PurchasingPanel role={role} /></div>}
       {canFinance && <div id="admin-finance"><FinancePanel role={role} /></div>}
       {canInventory && <div id="admin-export"><ExportPanel role={role}/></div>}
-      {canCategory && <div id="admin-settings"><ClientControlPanel role={role}/></div>} 
+      {canCategory && <div id="admin-settings"><ClientControlPanel role={role}/></div>}
+      {canOrderWorkflow && <div id="admin-notifications"><NotificationPanel audience="staff" /></div>}
+      {canOrderWorkflow && <div id="admin-governance"><StaffOperationsPanel /></div>} 
     </details>
   </section>;
 }

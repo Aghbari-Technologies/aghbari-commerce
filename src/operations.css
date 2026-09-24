@@ -1,0 +1,30 @@
+.operations-panel { margin-top: 18px; }
+.operations-toolbar { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:12px 0 16px; }
+.operations-toolbar > input { flex:1 1 260px; min-width:220px; }
+.operations-toolbar > select { min-width:150px; }
+.inline-toggle { display:inline-flex; align-items:center; gap:7px; padding:9px 12px; border:1px solid var(--aghbari-border); border-radius:12px; background:#fff; }
+.operations-tabs { display:flex; gap:8px; flex-wrap:wrap; margin:10px 0; }
+.operations-tabs button { border:1px solid var(--aghbari-border); background:#fff; color:var(--aghbari-text); border-radius:11px; padding:9px 13px; }
+.operations-tabs button.active { background:#eef9fa; border-color:#9fcbd3; }
+.notification-list,.operations-list { display:grid; gap:10px; }
+.notification-row,.operation-record { display:grid; grid-template-columns:auto 1fr auto; gap:12px; align-items:start; padding:14px; border:1px solid var(--aghbari-border); border-radius:14px; background:#fff; }
+.notification-row.read { opacity:.72; }
+.notification-icon { width:36px; height:36px; border-radius:11px; display:grid; place-items:center; background:#eef7f8; font-weight:900; }
+.notification-body { min-width:0; }
+.notification-head { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.notification-head span { font-size:11px; border-radius:999px; padding:3px 7px; background:#f4f7f8; }
+.notification-body p { margin:5px 0; line-height:1.6; }
+.notification-body small,.notification-state { color:var(--aghbari-muted); font-size:12px; }
+.operation-record { grid-template-columns:1fr auto auto; }
+.operation-record details { grid-column:1 / -1; }
+.operation-record pre,.operation-error { margin:8px 0 0; overflow:auto; background:#f7fafb; border:1px solid #e5eef1; border-radius:9px; padding:9px; font-size:11px; direction:ltr; text-align:left; white-space:pre-wrap; }
+.operation-result { white-space:nowrap; border-radius:999px; padding:4px 8px; font-size:11px; font-weight:800; }
+.operation-result.success,.operation-result.delivered { background:#eaf8ef; color:#166534; }
+.operation-result.failure,.operation-result.dead { background:#fff1f2; color:#9f1239; }
+.operation-result.denied { background:#fff7ed; color:#9a3412; }
+.operation-result.pending,.operation-result.processing { background:#eef4ff; color:#1d4ed8; }
+@media (max-width: 700px) {
+  .notification-row,.operation-record { grid-template-columns:auto 1fr; }
+  .notification-row .notification-read,.operation-record time,.operation-record .operation-result { grid-column:2; justify-self:start; }
+  .operations-toolbar > input { min-width:100%; }
+}

@@ -17,6 +17,10 @@ test.describe('Admin control plane exact browser path', () => {
     await expect(page.getByText('الصلاحيات تُفرض على الخادم أيضًا')).toBeVisible();
     await expect(page.getByRole('heading', { name: 'إدارة الطلبات' })).toBeVisible();
     await expect(page.getByText('مركز التشغيل التفصيلي وإدارة البيانات')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'إشعارات مركز التشغيل' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'التدقيق والتكاملات' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'سجل التدقيق', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'صندوق التكاملات', exact: true })).toBeVisible();
 
     await expect(page.getByRole('heading', { name: 'منتج جديد' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'تعديل المخزون' })).toBeVisible();
