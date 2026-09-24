@@ -6,10 +6,10 @@ select is((select value from unnest(coalesce(proconfig,array[]::text[])) value w
 from pg_proc where oid='public.list_staff_members()'::regprocedure;
 select is((select value from unnest(coalesce(proconfig,array[]::text[])) value where value like 'search_path=%' limit 1),'search_path=""','set_staff_role pins empty search_path')
 from pg_proc where oid='public.set_staff_role(uuid,public.user_role)'::regprocedure;
-select has_function_privilege('anon','public.list_staff_members()','EXECUTE') is false,'anon cannot execute staff directory';
-select has_function_privilege('authenticated','public.list_staff_members()','EXECUTE'),'authenticated can execute staff directory';
-select has_function_privilege('anon','public.set_staff_role(uuid,public.user_role)','EXECUTE') is false,'anon cannot execute role mutation';
-select has_function_privilege('authenticated','public.set_staff_role(uuid,public.user_role)','EXECUTE'),'authenticated can execute role mutation';
+select ok(has_function_privilege('anon','public.list_staff_members()','EXECUTE') is false,'anon cannot execute staff directory');
+select ok(has_function_privilege('authenticated','public.list_staff_members()','EXECUTE'),'authenticated can execute staff directory');
+select ok(has_function_privilege('anon','public.set_staff_role(uuid,public.user_role)','EXECUTE') is false,'anon cannot execute role mutation');
+select ok(has_function_privilege('authenticated','public.set_staff_role(uuid,public.user_role)','EXECUTE'),'authenticated can execute role mutation');
 
 set local role postgres;
 insert into auth.users(id,email) values
