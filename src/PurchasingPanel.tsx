@@ -33,12 +33,13 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
   const [selectedOrderId, setSelectedOrderId] = useState('');
   const [receiveItemId, setReceiveItemId] = useState('');
   const [receiveQuantity, setReceiveQuantity] = useState('1');
-  const [busy, setBusy] = useState(false);
+  const [busy, setBusy] = useState(false); const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
-    if (!supabase || !canManage) return;
+    if (!supabase || !canManage) { setLoading(false); return; }
+    setLoading(true);
     const [{ data: productRows, error: productError }, { data: warehouseRows, error: warehouseError }, { data: supplierRows, error: supplierError }, { data: orderRows, error: orderError }, { data: itemRows, error: itemError }] = await Promise.all([
       supabase.from('products').select('id,sku,name,unit').eq('status', 'active').order('name').limit(500),
       supabase.from('warehouses').select('id,name').eq('is_active', true).order('created_at'),
@@ -57,6 +58,7 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
     if (!supplierId && supplierRows?.[0]) setSupplierId(supplierRows[0].id);
     if (!productId && productRows?.[0]) setProductId(productRows[0].id);
     if (!selectedOrderId) setSelectedOrderId(nextOrders.find((o) => o.status === 'approved' || o.status === 'partially_received')?.id ?? '');
+    setLoading(false);
   }, [canManage, productId, selectedOrderId, supplierId, warehouseId]);
 
   useEffect(() => { void load().catch((e) => setError(e instanceof Error ? e.message : 'تعذر تحميل المشتريات.')); }, [load]);
@@ -75,7 +77,7 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
   const selectedReceiveItem = selectedOrderItems.find((item) => item.id === receiveItemId) ?? selectedOrderItems[0];
 
   return <div className="cart-panel" id="purchasing">
-    <div className="section-heading"><div><span className="eyebrow">المشتريات والمستودع</span><h2>دورة التوريد</h2></div><span>{orders.length} أوامر شراء</span></div>
+    <div className="section-heading"><div><span className="eyebrow">المشتريات والمستودع</span><h2>دورة التوريد</h2></div><span aria-live="polite">{loading ? 'جارٍ التحديث…' : `${orders.length} أوامر شراء`}</span></div>
     <div className="admin-grid">
       <form className="admin-card" onSubmit={(e) => { e.preventDefault(); void run(() => createSupplier({ name: supplierName, phone: supplierPhone, address: supplierAddress }), 'تم إنشاء المورد وتسجيل أثر العملية.').then(() => { setSupplierName(''); setSupplierPhone(''); setSupplierAddress(''); }); }}>
         <h3>مورد جديد</h3>
