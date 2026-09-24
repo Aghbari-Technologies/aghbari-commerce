@@ -1,6 +1,6 @@
 # 🔴 AGHBARI — CANONICAL DOCUMENT SYSTEM & RETIREMENT MANIFEST
 
-**Baseline:** main HEAD 3888835f297e972ab2892c51643041bf4c904d26
+**Manifest metadata last reconciled before current write-back:** main HEAD `e2b67f6a47af3b8b377001fb1c7c7eeec9a4ca99`
 **Purpose:** replace fragmented documentation with a controlled canonical system without losing content.
 
 ## 1. FINAL DOCUMENT ARCHITECTURE
@@ -80,7 +80,7 @@
 - docs/EXECUTION-STATE.md
 - docs/EVIDENCE-BATCH-2026-09-07-RPC-PRIVILEGE.md
 
-**Coverage:** 50/50 Markdown source documents classified exactly once.
+**Coverage:** 50/50 Markdown source documents are classified in the map. **Semantic consolidation is NOT certified complete:** each source still requires full-content merge/reconciliation before retirement.
 
 ## 3. MERGE METHOD — MANDATORY
 
