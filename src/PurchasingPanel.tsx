@@ -107,6 +107,6 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
         <button disabled={busy || !selectedOrderId || !selectedReceiveItem}>تسجيل الاستلام</button>
       </form>
     </div>
-    {error && <div className="error-banner" role="alert"><span>{error}</span><button type="button" className="ghost" onClick={() => void load()} disabled={loading}>إعادة تحميل المشتريات</button></div>{message && <div className="success" role="status">{message}</div>}
+    {error && <div className="error-banner" role="alert"><span>{error}</span><button type="button" className="ghost" onClick={() => void load()} disabled={loading}>إعادة تحميل المشتريات</button></div>}{message && <div className="success" role="status">{message}</div>}
   </div>;
 }
