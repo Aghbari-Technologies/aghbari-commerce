@@ -88,11 +88,11 @@ export default function StaffAccessPanel({ role }: { role: UserRole }) {
       : !visible.length ? <div className="empty-state"><strong>لا توجد حسابات مطابقة.</strong><span>النتائج محصورة في المنظمة الحالية عبر المسار المحمي.</span></div>
       : <div className="access-table" role="table" aria-label="دليل مستخدمي المنظمة"><div className="access-row access-head" role="row"><span>الحساب</span><span>النوع</span><span>الدور</span><span>الإنشاء</span><span>الإجراء</span></div>{visible.map((user) => {
         const customer = Boolean(user.customer_id);
-        const editable = canManage && (!customer || user.role !== 'viewer');
+        const editable = canManage && !customer;
         return <div className="access-row" role="row" key={user.user_id}>
           <div><strong>{user.email}</strong><code dir="ltr">{user.user_id.slice(0, 12)}…</code></div>
           <span>{customer ? 'عميل' : 'موظف'}</span>
-          {canManage ? <select aria-label={'دور '+user.email} value={drafts[user.user_id] ?? user.role} onChange={(e) => setDrafts((current) => ({ ...current, [user.user_id]: e.target.value as UserRole }))}>{(customer ? ['viewer'] : (Object.keys(ROLE_LABELS) as UserRole[])).map((item) => <option key={item} value={item}>{ROLE_LABELS[item]}</option>)}</select> : <strong>{ROLE_LABELS[user.role]}</strong>}
+          {canManage ? <select aria-label={'دور '+user.email} value={drafts[user.user_id] ?? user.role} onChange={(e) => setDrafts((current) => ({ ...current, [user.user_id]: e.target.value as UserRole }))}>{(customer ? (['viewer'] as UserRole[]) : (Object.keys(ROLE_LABELS) as UserRole[])).map((item) => <option key={item} value={item}>{ROLE_LABELS[item]}</option>)}</select> : <strong>{ROLE_LABELS[user.role]}</strong>}
           <time>{new Date(user.created_at).toLocaleDateString('ar-YE')}</time>
           <button type="button" disabled={!editable || busyId === user.user_id || (drafts[user.user_id] ?? user.role) === user.role} onClick={() => void saveRole(user)}>{busyId === user.user_id ? 'جارٍ الحفظ…' : 'اعتماد'}</button>
         </div>;
