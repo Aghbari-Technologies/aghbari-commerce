@@ -450,3 +450,30 @@ The customer portal previously exposed only order summaries and reorder behavior
 - Consume exact-SHA CI results and repair any compile/test regressions.
 - Keep production HOLD/NO TOUCH until exact browser/runtime evidence and certification.
 - Continue only the remaining nested/detail UI surfaces supported by existing contracts.
+
+
+## Run 2026-09-25 — Nested operational UI closure
+
+### Start
+- Actual main baseline verified before this wave: `0bc7c89f4c18255ae518781b45e901f735e84bf7`.
+- Functional UI baseline carried forward from the current main line: `2bea11707d9a5ba4241fcc59ae05e761fb12fe10`.
+- Execution branch: `execution/ui-closure-20260925`.
+- Production: NO TOUCH.
+
+### Implemented
+- Added shared accessible `RecordDetailDrawer` for progressive disclosure of dense operational records.
+- Purchasing orders, purchase receipts, inventory transfers/stock counts/reconciliations, finance invoice/payment/expense history, pricing rows, supplier records/bills/ledger and warehouse records now expose record-level detail using already-available fields.
+- Added bounded pagination and filter/tab page resets to supplier, warehouse, inventory activity, governance audit/outbox, notifications and organization access views.
+- Corrected inventory activity pagination so all three tabs (transfers, counts, reconciliations) use the active page window.
+- Added Staff/Admin order detail workspace without introducing a new transaction contract.
+
+### Verification boundary
+- Source inspection on the execution branch confirms the new shared drawer, row actions and pagination wiring are present.
+- This is implementation verification only. No exact-SHA CI/browser PASS is claimed yet.
+- Vercel remains deployment-rate-limited; hosted runtime proof is not claimed.
+- Production remains NO TOUCH.
+
+### Remaining
+- Run exact-SHA application quality, security, domain, migration, concurrency, Test-the-Test and browser workflows on the final branch head.
+- Continue nested detail/recovery only where the current schema/contracts expose real data; do not fabricate Promotions.
+- Continue individual SECURITY DEFINER classification and semantic merge of the 50 legacy Markdown sources.
