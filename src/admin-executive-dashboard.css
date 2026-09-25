@@ -593,3 +593,105 @@
   .control-plane-footer{flex-direction:column}
   .system-status,.role-chip,.refresh-control{min-height:36px}
 }
+
+
+.control-tile-boundary{
+  cursor:default;
+  background:#f8fafb;
+  border-style:dashed;
+  color:#71828c;
+}
+.control-tile-boundary .control-tile-icon{color:#9aabb3}
+.control-tile-boundary small{
+  margin-inline-start:auto;
+  flex:0 0 auto;
+  padding:3px 6px;
+  border-radius:999px;
+  background:#eef2f4;
+  color:#7a8a93;
+  font-size:8px;
+  font-weight:900;
+}
+.control-structure-index{
+  margin-top:14px;
+  background:#f8fbfc;
+  border:1px solid #dcecef;
+  border-radius:20px;
+  padding:15px;
+}
+.control-structure-index-header{
+  display:flex;
+  align-items:end;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:11px;
+}
+.control-structure-index-header>div>span{
+  color:#118ea3;
+  font-size:10px;
+  font-weight:900;
+}
+.control-structure-index-header h2{
+  margin:4px 0 0;
+  font-size:20px;
+}
+.control-structure-index-header>small{
+  max-width:560px;
+  color:#758994;
+  font-size:9px;
+  line-height:1.7;
+}
+.control-structure-groups{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+.control-structure-group{
+  background:#fff;
+  border:1px solid #e0ebee;
+  border-radius:15px;
+  overflow:hidden;
+}
+.control-structure-group>header{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 11px;
+  background:#eaf6f8;
+  border-bottom:1px solid #dcebed;
+}
+.control-structure-group-icon{
+  width:31px;height:31px;
+  display:grid;place-items:center;
+  border-radius:10px;
+  background:#fff;
+  color:#0c8fa2;
+}
+.control-structure-group>header h3{
+  margin:0;
+  font-size:12px;
+}
+.control-structure-group>header small{
+  display:block;
+  margin-top:2px;
+  color:#8a9aa3;
+  font-size:8px;
+  direction:ltr;
+  text-align:right;
+}
+.control-structure-group>div{
+  padding:9px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+}
+.control-structure-group .control-tile{
+  min-height:39px;
+}
+@media(max-width:800px){
+  .control-structure-groups{grid-template-columns:1fr}
+  .control-structure-index-header{align-items:flex-start;flex-direction:column}
+}
+@media(max-width:520px){
+  .control-structure-group>div{grid-template-columns:1fr}
+}
