@@ -1,6 +1,6 @@
 begin;
 
-select plan(18);
+select plan(22);
 
 -- Exposed SECURITY DEFINER functions must pin search_path to the safe value declared by the implementation.
 select is((select proconfig @> array['search_path=""'] from pg_proc where oid='public.adjust_inventory(uuid,uuid,integer,text)'::regprocedure), true, 'adjust_inventory pins search_path');
@@ -24,6 +24,10 @@ select is((select prosecdef from pg_proc where oid='public.set_product_price(uui
 select is((select prosecdef from pg_proc where oid='public.transfer_inventory(uuid,uuid,text,jsonb,text)'::regprocedure), true, 'transfer_inventory remains SECURITY DEFINER');
 select is((select prosecdef from pg_proc where oid='public.record_payment(uuid,numeric,public.payment_method,uuid,text,text)'::regprocedure), true, 'record_payment remains SECURITY DEFINER');
 select is((select prosecdef from pg_proc where oid='public.record_expense(uuid,uuid,text,numeric,text,text,date,text)'::regprocedure), true, 'record_expense remains SECURITY DEFINER');
+select is((select attnotnull from pg_attribute where attrelid='public.payments'::regclass and attname='idempotency_key' and attnum>0 and not attisdropped), true, 'payments idempotency_key is NOT NULL');
+select is((select attnotnull from pg_attribute where attrelid='public.expenses'::regclass and attname='idempotency_key' and attnum>0 and not attisdropped), true, 'expenses idempotency_key is NOT NULL');
+select is((select count(*) from pg_indexes where schemaname='public' and indexname='payments_org_idempotency_key_idx'), 1::bigint, 'payments idempotency key index exists');
+select is((select count(*) from pg_indexes where schemaname='public' and indexname='expenses_org_idempotency_key_idx'), 1::bigint, 'expenses idempotency key index exists');
 
 select * from finish();
 rollback;
