@@ -1,46 +1,62 @@
 # 🔴 AGHBARI LATEST EXECUTION STATE
 
 **Project:** Aghbari Commerce | الأغبري
-**Actual Git HEAD verified immediately before this checkpoint write-back:** `3c02c8a1109dd813b5d3f64d49a28f74dff1a1dc`
+**Actual Git HEAD at execution checkpoint:** `c765e87bb08a32f684e3438c00d8ac7f98ca9e52`
 **Branch:** `main`
 **Production:** HOLD / NO TOUCH
 **Certification:** NOT CLAIMED
 
 ## Current Reality
 - Scope remains Aghbari Commerce only.
-- The current session moved from UI closure into real core transactional closure.
-- Finance payment recording is now contract-aligned with the live six-argument idempotency RPC.
-- Purchase creation/submission/approval and invoice creation now persist audit/outbox effects.
-- Customer creation and customer tier/status mutations now persist audit effects.
-- Purchasing/receiving/inventory-transfer client boundaries match the 100-line server command cap; purchasing/inventory idempotency keys are bounded to 128 characters.
-- No BI/reporting source or unsupported Promotions feature was introduced.
+- Continued directly from the verified `main` line; no rollback to historical UI commits.
+- Two real UI closure improvements were implemented on the current head: notification bulk-read workflow and stricter dynamic customer-control validation.
+- No new dependency, fake transaction source, Promotions placeholder, or Report-Advisor/BI authority was introduced.
 
-## Core Changes
-- `src/services/finance.ts`: mandatory 16–128 character payment idempotency key validation and RPC binding.
-- `src/FinancePanel.tsx`: retry-safe payment key persistence; key rotates only after successful command completion.
-- `supabase/migrations/20260925110000_harden_finance_payment_idempotency.sql`: atomic payment, numeric NaN/Infinity guard, payload conflict detection, invoice/cash locks, audit and outbox.
-- `supabase/migrations/20260925113000_core_mutation_audit_outbox_contract.sql`: invoice/purchase workflow audit+outbox and hardened cash/customer/supplier creation.
-- `supabase/migrations/20260925115000_customer_mutation_audit_contract.sql`: customer lifecycle audit.
-- `supabase/tests/029-core-command-audit-contract.test.sql`: 18/18 live contract checks.
-- `supabase/tests/030-payment-runtime-idempotency.test.sql`: 13/13 planned live runtime assertions.
+## UI Changes
+- `src/NotificationPanel.tsx`: added bounded bulk marking of currently actionable notifications as read, per-row/bulk busy states, partial-progress handling, disabled pagination/actions during mutation, and explicit reload/error recovery.
+- `src/ClientControlPanel.tsx`: normalized numeric controls to safe integers, bounded saved templates to 0–500, rejects inverted order-value bounds, requires at least one payment method when payment-method display is enabled, and reports the validated save state.
 
-## Exact-SHA Evidence
-| Check | Result | SHA / Evidence |
-|---|---|---|
-| Core implementation head before documentation checkpoint | PROVEN | `c5eba4a42af2543b4d1cf06180caa1ecb7316c59` |
-| Live core contract check | PROVEN | 18/18 |
-| Live payment runtime test | PROVEN | 13/13 planned assertions |
-| Documentation memory checkpoint | PROVEN | `7eed5961ee96e8b41c55889425e56d78b8b8aa65` |
-| Development progress checkpoint | PROVEN | `3c02c8a1109dd813b5d3f64d49a28f74dff1a1dc` |
-| Current exact-head GitHub workflows | QUEUED | exact current source head |
-| Build | NOT_PROVEN | fresh exact-SHA CI pending |
-| Browser/runtime | NOT_PROVEN | fresh exact-source deployment pending |
-| Hosted exact-source match | NOT_PROVEN | deployment proof pending |
-| Certification | NOT CLAIMED | gate not complete |
+## Exact Code Commits
+- `3955a9c0a630d910c3af995896cef40a0368f267` — notification bulk-read workflow.
+- `c765e87bb08a32f684e3438c00d8ac7f98ca9e52` — dynamic customer-control validation hardening.
+
+## Verification Boundary
+- Git ref update to `main` was fast-forwarded to `c765e87bb08a32f684e3438c00d8ac7f98ca9e52`.
+- Source-level implementation is confirmed by exact Git objects.
+- Fresh exact-SHA CI/build/browser/security evidence has NOT been claimed for `c765e87...`.
+- Existing evidence from earlier SHAs is historical and is not transferred.
+- Hosted runtime/candidate/production proof remains NOT_PROVEN.
+
+## Known Open Gates
+1. Consume fresh exact-SHA application-quality/security/migration/concurrency/domain/Test-the-Test/order-workflow/browser results.
+2. Repair any regression found on `c765e87...` and rerun the affected exact-SHA gate.
+3. Continue nested contract-backed UI closure where a real backend contract exists; do not fabricate unsupported modules.
+4. Continue per-RPC SECURITY DEFINER classification without weakening required business/RLS helper boundaries.
+5. Complete semantic reconciliation/reference audit of the 50 historical Markdown sources before retirement.
+6. Certification and production promotion remain HOLD / NO TOUCH until exact candidate/runtime evidence is complete.
 
 ## CURRENT RESUME POINTER
-Continue from the new main HEAD after this checkpoint. Do not restart prior UI waves.
-Next execution should consume exact-head CI results, repair any proven regressions, then continue contract-backed core closure where live or source evidence identifies a real gap.
+START FROM EXACT `main` HEAD `c765e87bb08a32f684e3438c00d8ac7f98ca9e52`.
+
+UI FRONT:
+- Customer Portal → notifications → bulk-read/reload/error edge verification.
+- Admin → Dynamic Client Control → payment-method and order-limit validation states.
+- Next contract-backed UI frontier: inspect remaining nested detail/edit/recovery states only where existing services/RPCs provide real persistence.
+
+CORE FRONT:
+- Keep finance/purchasing/customer audit-outbox closure intact.
+- Consume exact-head CI and runtime results before changing proven core contracts.
+
+VERIFY:
+- Exact-SHA application quality.
+- Security/RLS/RPC privilege evidence.
+- Migration/concurrency/Test-the-Test/domain/order-workflow evidence.
+- Browser route → interaction → persistence → refresh/reopen proof.
+
+DO NOT REPEAT:
+- Historical UI waves already merged into current `main`.
+- Prior PASS evidence unless its SHA/evidence remains exactly valid.
+- Promotions or unsupported business features without a canonical contract.
 
 ## PRODUCTION
 HOLD / NO TOUCH.
