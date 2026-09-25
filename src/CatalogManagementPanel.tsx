@@ -53,7 +53,7 @@ export default function CatalogManagementPanel({ role }: { role: UserRole }) {
     return products
       .filter(p=>status==='all'||p.status===status)
       .filter(p=>!categoryId||p.category_id===categoryId)
-      .filter(p=>!needle||p.name.toLocaleLowerCase().includes(needle)||p.sku.toLocaleLowerCase().includes(needle)||p.unit.toLocaleLowerCase().includes(needle)||(p.description??'').toLocaleLowerCase().includes(needle))
+      .filter(p=>!needle||p.name.toLocaleLowerCase().includes(needle)||p.sku.toLocaleLowerCase().includes(needle)||p.unit.toLocaleLowerCase().includes(needle)||(p.barcode??'').toLocaleLowerCase().includes(needle)||(p.description??'').toLocaleLowerCase().includes(needle))
       .sort((a,b)=>{
         if(sort==='sku') return a.sku.localeCompare(b.sku,'ar');
         if(sort==='newest') return b.created_at.localeCompare(a.created_at);
