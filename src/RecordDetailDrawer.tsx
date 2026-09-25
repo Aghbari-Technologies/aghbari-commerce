@@ -14,6 +14,8 @@ interface RecordDetailDrawerProps {
   onClose: () => void;
 }
 
+const FOCUSABLE = 'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+
 export default function RecordDetailDrawer({
   eyebrow,
   title,
@@ -22,26 +24,40 @@ export default function RecordDetailDrawer({
   onClose,
 }: RecordDetailDrawerProps) {
   const closeRef = useRef<HTMLButtonElement>(null);
+  const drawerRef = useRef<HTMLElement>(null);
+  const previousActiveRef = useRef<HTMLElement | null>(null);
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
+    previousActiveRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     document.body.style.overflow = 'hidden';
     closeRef.current?.focus();
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') onCloseRef.current();
+      if (event.key !== 'Tab') return;
+      const root = drawerRef.current;
+      if (!root) return;
+      const focusables = Array.from(root.querySelectorAll<HTMLElement>(FOCUSABLE)).filter((node) => node.offsetParent !== null);
+      if (!focusables.length) { event.preventDefault(); return; }
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
     };
     document.addEventListener('keydown', onKeyDown);
     return () => {
       document.body.style.overflow = previousOverflow;
       document.removeEventListener('keydown', onKeyDown);
+      previousActiveRef.current?.focus();
     };
   }, []);
 
   return (
     <div className="record-detail-backdrop" role="presentation" onMouseDown={onClose}>
       <aside
+        ref={drawerRef}
         className="record-detail-drawer"
         role="dialog"
         aria-modal="true"
