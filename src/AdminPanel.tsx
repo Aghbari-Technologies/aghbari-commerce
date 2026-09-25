@@ -169,24 +169,24 @@ export default function AdminPanel({ role }: { role: UserRole }) {
       {canOrderWorkflow && <div className="cart-panel" id="admin-orders"><div className="section-heading"><div><span className="eyebrow">التشغيل</span><h2>إدارة الطلبات</h2></div><span>{visibleOrders.length}/{orders.length} طلبات</span></div><div className="admin-card admin-order-filter"><label htmlFor="admin-order-search">بحث الطلبات</label><div className="order-queue-toolbar"><input id="admin-order-search" value={orderQuery} onChange={(e) => setOrderQuery(e.target.value)} placeholder="رقم الطلب أو اسم العميل أو الحالة" /><select aria-label="فلترة حالة الطلب" value={orderStatusFilter} onChange={(e) => setOrderStatusFilter(e.target.value as 'all'|OrderStatus)}><option value="all">كل الحالات</option>{(Object.keys(STATUS_LABELS) as OrderStatus[]).map((key) => <option key={key} value={key}>{STATUS_LABELS[key]}</option>)}</select><button type="button" className="ghost" onClick={() => { setOrderQuery(''); setOrderStatusFilter('all'); setOrderPage(1); }} disabled={!orderQuery && orderStatusFilter === 'all'}>مسح</button></div></div>{ordersLoading ? <div className="cart-empty">جارٍ تحميل الطلبات…</div> : !orders.length ? <div className="cart-empty">لا توجد طلبات تشغيلية بعد.</div> : !visibleOrders.length ? <div className="cart-empty">لا توجد نتائج مطابقة للبحث.</div> : <div className="cart-lines">{pagedOrders.map((order) => <article className="cart-line" key={order.id}><div><strong>طلب #{order.order_number}</strong><small>العميل: {order.customer_name}</small></div><div><strong>{formatMoney(order.total)} {order.currency}</strong><small>الحالة: {STATUS_LABELS[order.status]}</small></div><div className="status-actions"><button type="button" className="ghost" onClick={() => setDetailOrderId(order.id)}>التفاصيل</button>{allowedNextStatuses(order.status, role).map((next) => <button key={next} disabled={busy} onClick={() => void changeOrderStatus(order.id, next)}>{STATUS_LABELS[next]}</button>)}</div></article>)}</div>}{visibleOrders.length > 0 && <div className="order-queue-pagination" aria-label="صفحات الطلبات"><span>صفحة {activeOrderPage} / {orderPages} · {visibleOrders.length} نتيجة</span><div><button type="button" className="ghost" onClick={() => setOrderPage(p => Math.max(1,p-1))} disabled={activeOrderPage===1}>السابق</button><button type="button" className="ghost" onClick={() => setOrderPage(p => Math.min(orderPages,p+1))} disabled={activeOrderPage===orderPages}>التالي</button></div></div>}</div>}
       {detailOrderId&&(()=>{const order=orders.find(item=>item.id===detailOrderId);if(!order)return null;return <RecordDetailDrawer eyebrow="Operations" title={`طلب #${order.order_number}`} summary={`${order.customer_name} · ${STATUS_LABELS[order.status]}`} fields={[{label:'العميل',value:order.customer_name},{label:'الحالة',value:STATUS_LABELS[order.status]},{label:'الإجمالي',value:`${formatMoney(order.total)} ${order.currency}`},{label:'المعرّف',value:order.id},{label:'الحركات التالية المتاحة',value:allowedNextStatuses(order.status,role).length?allowedNextStatuses(order.status,role).map(s=>STATUS_LABELS[s]).join(' · '):'لا توجد حركة متاحة لهذه الصلاحية'}]} onClose={()=>setDetailOrderId(null)}/>})()}
       {error && <div className="error-banner" role="alert"><span>{error}</span><button type="button" className="ghost" disabled={ordersLoading} onClick={() => void reload()}>إعادة تحميل مركز التحكم</button></div>}{message && <div className="success" role="status">{message}</div>}
-      {canCatalog && <CatalogManagementPanel role={role} />}
-      {canCatalog && <CategoryManagementPanel role={role} />}
-      {canCatalog && <PricingMatrixPanel role={role as 'owner'|'admin'|'sales'} />}
-      {canCatalog && <div id="admin-customers"><CustomerPanel role={role} /></div>}
-      {canInventory && <div id="admin-inventory"><InventoryPanel role={role} /></div>}
-      {canInventory && <InventoryHistoryPanel role={role as 'owner'|'admin'|'warehouse'} />}
-      {canInventory && <InventoryActivityPanel role={role as 'owner'|'admin'|'warehouse'} />}
-      {canInventory && <WarehouseDirectoryPanel role={role as 'owner'|'admin'|'warehouse'} />}
-      {canInventory && <div id="admin-purchasing"><PurchasingPanel role={role} /></div>}
-      {canInventory && <PurchaseReceiptHistoryPanel role={role as 'owner'|'admin'|'warehouse'} />}
-      {canInventory && <SupplierLedgerPanel role={role as 'owner'|'admin'|'warehouse'} />}
-      {canFinance && <div id="admin-finance"><FinancePanel role={role} /></div>}
-      {canFinance && <FinanceOperationsHistoryPanel role={role as 'owner'|'admin'|'sales'} />}
-      {canInventory && <div id="admin-export"><ExportPanel role={role}/></div>}
-      {canCategory && <div id="admin-settings"><ClientControlPanel role={role}/></div>}
-      {canOrderWorkflow && <div id="admin-notifications"><NotificationPanel audience="staff" /></div>}
-      {canOrderWorkflow && <div id="admin-governance"><StaffOperationsPanel /></div>}
-      {canOrderWorkflow && <div id="admin-access"><StaffAccessPanel role={role} /></div>} 
+      {canCatalog && <div className="admin-workspace-section" data-label="01 · الكتالوج والمنتجات"><CatalogManagementPanel role={role} /></div>}
+{canCatalog && <div className="admin-workspace-section" data-label="02 · التصنيفات وبنية الكتالوج"><CategoryManagementPanel role={role} /></div>}
+{canCatalog && <div className="admin-workspace-section" data-label="03 · التسعير وقوائم الأسعار"><PricingMatrixPanel role={role as 'owner'|'admin'|'sales'} /></div>}
+{canCatalog && <div className="admin-workspace-section" data-label="04 · العملاء ودورة الحساب"><div id="admin-customers"><CustomerPanel role={role} /></div></div>}
+{canInventory && <div className="admin-workspace-section" data-label="05 · المخزون والتشغيل الميداني"><div id="admin-inventory"><InventoryPanel role={role} /></div></div>}
+{canInventory && <div className="admin-workspace-section" data-label="06 · دفتر حركة المخزون"><InventoryHistoryPanel role={role as 'owner'|'admin'|'warehouse'} /></div>}
+{canInventory && <div className="admin-workspace-section" data-label="07 · نشاط التحويلات والجرد والتسويات"><InventoryActivityPanel role={role as 'owner'|'admin'|'warehouse'} /></div>}
+{canInventory && <div className="admin-workspace-section" data-label="08 · المستودعات والفروع"><WarehouseDirectoryPanel role={role as 'owner'|'admin'|'warehouse'} /></div>}
+{canInventory && <div className="admin-workspace-section" data-label="09 · المشتريات ودورة التوريد"><div id="admin-purchasing"><PurchasingPanel role={role} /></div></div>}
+{canInventory && <div className="admin-workspace-section" data-label="10 · سجل الاستلام"><PurchaseReceiptHistoryPanel role={role as 'owner'|'admin'|'warehouse'} /></div>}
+{canInventory && <div className="admin-workspace-section" data-label="11 · الموردون والحساب التشغيلي"><SupplierLedgerPanel role={role as 'owner'|'admin'|'warehouse'} /></div>}
+{canFinance && <div className="admin-workspace-section" data-label="12 · المالية التشغيلية"><div id="admin-finance"><FinancePanel role={role} /></div></div>}
+{canFinance && <div className="admin-workspace-section" data-label="13 · سجل العمليات المالية"><FinanceOperationsHistoryPanel role={role as 'owner'|'admin'|'sales'} /></div>}
+{canInventory && <div className="admin-workspace-section" data-label="14 · التصدير ومركز البيانات"><div id="admin-export"><ExportPanel role={role}/></div></div>}
+{canCategory && <div className="admin-workspace-section" data-label="15 · تخصيص بوابة العميل"><div id="admin-settings"><ClientControlPanel role={role}/></div></div>}
+{canOrderWorkflow && <div className="admin-workspace-section" data-label="16 · الإشعارات التشغيلية"><div id="admin-notifications"><NotificationPanel audience="staff" /></div></div>}
+{canOrderWorkflow && <div className="admin-workspace-section" data-label="17 · التدقيق والتكاملات"><div id="admin-governance"><StaffOperationsPanel /></div></div>}
+{canOrderWorkflow && <div className="admin-workspace-section" data-label="18 · المستخدمون والأدوار والصلاحيات"><div id="admin-access"><StaffAccessPanel role={role} /></div></div>
     </details>
   </section>;
 }
