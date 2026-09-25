@@ -3,7 +3,7 @@ import { getStaffOrders, type StaffOrderSummary } from './services/staffOrders';
 import { formatMoney } from './domain/pricing';
 import { supabase } from './lib/supabase';
 import { buildSevenDaySales, calculateSevenDaySales, type DashboardSaleRow } from './domain/adminDashboard';
-import { AGHBARI_ADMIN_STRUCTURE } from './structure/admin-structure';
+import { getAdminStructureForRole } from './structure/admin-structure';
 
 type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer';
 
@@ -219,6 +219,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
   );
 
   const latestOrders = orders.slice(0, 6);
+  const structure = useMemo(() => getAdminStructureForRole(role), [role]);
   const canOrders = ['owner', 'admin', 'sales', 'warehouse'].includes(role);
   const canInventory = ['owner', 'admin', 'warehouse'].includes(role);
   const canCustomers = ['owner', 'admin', 'sales'].includes(role);
@@ -406,7 +407,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
               <small>العناصر الحية تفتح مساحات العمل الحالية، وحدود النطاق تظهر صراحة ولا تتحول إلى وظائف وهمية.</small>
             </header>
             <div className="control-structure-groups">
-              {AGHBARI_ADMIN_STRUCTURE.map((group) => {
+              {structure.map((group) => {
                 const boundaryItems = group.items.filter((item) => item.status !== 'live').slice(0, 8);
                 const liveItems = group.items.filter((item) => item.status === 'live').slice(0, 8);
                 if (!boundaryItems.length && !liveItems.length) return null;
