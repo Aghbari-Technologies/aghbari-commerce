@@ -294,3 +294,7 @@ Command "1" means:
 - Current staff-role visibility is centralized in `src/structure/role-matrix.ts` and remains only a presentation contract; Supabase/RLS/server authorization remains authoritative.
 - Admin deep-link resolution is encoded through `adminTargetForPath()` and Vercel SPA fallback routing.
 - The supplied AI/advanced-reporting/Developer AI/Onyx analytical list is treated as legacy structural input and boundary documentation, not permission to move BI or external analytical snapshots into Commerce transactional truth.
+
+## 26. STRUCTURE-DRIVEN ADMIN NAVIGATION — 2026-09-25
+- Admin dashboard structure, deep links, and Command Palette now derive from the same code-level structure manifest rather than independent hardcoded navigation lists.
+- Role visibility for the structure navigator uses `src/structure/role-matrix.ts`; this is UI visibility only and never replaces server-side authorization.
