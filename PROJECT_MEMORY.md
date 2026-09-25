@@ -264,3 +264,13 @@ Command "1" means:
 - Live Supabase verification confirms all five authorization helpers use SECURITY DEFINER + empty search_path and expose EXECUTE to authenticated while denying anon/PUBLIC.
 - Current exact-SHA CI/browser results for the latest code remain NOT_PROVEN because the branch verification runs are queued; no historical PASS was transferred.
 - Vercel hosted runtime remains an external rate-limit/protection gate. Production is NO TOUCH.
+
+
+## 2026-09-25 — Deep UI + core transactional closure wave
+- Actual implementation HEAD for this wave: `1ca0af47aeee5ab670c690794c8da5843c2840e4` on `execution/ui-closure-20260925`.
+- Purchasing UI now builds multi-line purchase orders through the existing atomic `create_purchase_order` RPC, with duplicate-product, numeric and bounded-line validation.
+- Receiving UI now builds multi-line receipts through the existing atomic `receive_purchase_order` RPC, with remaining-quantity checks, duplicate-line protection, notes and responsive editing.
+- Inventory transfer UI now builds multi-line atomic transfers; frontend/service limits match the database's 100-line and integer-quantity contract.
+- Staff order detail, purchase receipt detail and finance invoice detail now load persisted line-level records and histories using current tenant-scoped tables/services.
+- Finance payment and expense writes now use organization-scoped idempotency keys through migration `20260925050000_finance_idempotency.sql`.
+- Exact-SHA CI for this implementation HEAD is queued/not proven; no PASS or certification is claimed. Production remains NO TOUCH.

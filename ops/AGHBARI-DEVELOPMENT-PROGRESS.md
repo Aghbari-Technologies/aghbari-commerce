@@ -538,3 +538,31 @@ The customer portal previously exposed only order summaries and reorder behavior
 - Continue nested UI closure only where existing contracts provide a real action/read path.
 - Complete semantic consolidation/reference verification of the 50 mapped legacy Markdown sources.
 - Certification and production remain HOLD / NO TOUCH.
+
+
+## Run 2026-09-25 — Deep UI + core transactional closure
+### Start
+- Implementation HEAD: `1ca0af47aeee5ab670c690794c8da5843c2840e4`.
+- Branch: `execution/ui-closure-20260925`.
+- Production: NO TOUCH.
+- Certification: NOT CLAIMED.
+
+### Implemented
+- Purchasing: multi-line purchase-order builder with existing atomic `create_purchase_order` contract.
+- Receiving: multi-line receipt builder with existing atomic `receive_purchase_order` contract and per-line remaining checks.
+- Inventory: multi-line transfer builder with existing atomic `transfer_inventory`; service/UI bounds aligned to the DB.
+- Orders: staff order detail service and drawer expose persisted items and status history.
+- Receiving history: receipt detail service and drawer expose persisted receipt lines, costs and total.
+- Finance: invoice detail service and drawer expose invoice lines, payment history, paid total and outstanding balance.
+- Finance core: payment and expense writes use organization-scoped idempotency keys with replay/conflict protection.
+
+### Verification boundary
+- Exact-SHA workflows for the current implementation head are queued; current-head PASS remains NOT_PROVEN.
+- The finance idempotency migration is not treated as production-applied until Fresh Supabase migration proof passes.
+- Vercel hosted browser proof remains externally gated; no hosted browser PASS is claimed.
+
+### Remaining
+- Consume exact-SHA application-quality, migration, security, domain, concurrency, Test-the-Test and browser workflows.
+- Repair only failures demonstrated at the exact SHA under test.
+- Continue remaining customer mobile/accessibility and nested admin recovery/detail work only where existing contracts provide real behavior.
+- Continue SECURITY DEFINER classification and semantic consolidation/reference verification of the 50 mapped legacy Markdown sources.

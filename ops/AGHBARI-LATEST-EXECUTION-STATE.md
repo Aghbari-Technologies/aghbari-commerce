@@ -59,3 +59,13 @@ checkout payment contract, canonical role-management RPC boundary, RLS helper ex
 ## WRITE-BACK NOTE
 
 This documentation checkpoint records the latest verified code checkpoint before the write-back. The next session must inspect the actual branch ref first; documentation commits never override the repository's actual HEAD.
+
+
+## 2026-09-25 — Latest implementation checkpoint
+- Current implementation SHA: `1ca0af47aeee5ab670c690794c8da5843c2840e4`.
+- Multi-line purchasing, receiving and inventory transfer workflows are now exposed through existing atomic contracts.
+- Staff order detail, receiving detail and finance invoice detail expose persisted line-level records.
+- Finance payment/expense writes now carry idempotency keys with replay/conflict semantics.
+- Exact-SHA verification for this SHA is queued/not proven. No PASS transfer.
+- Production remains NO TOUCH.
+- Next resume: inspect actual branch HEAD first, consume current-SHA workflows, then repair the first demonstrated failure before further proof.
