@@ -224,3 +224,12 @@ Command "1" means:
 - Customer surface now includes catalog pagination, dedicated order history with filters/pagination/detail/reorder, richer account dashboard, finance center, templates, notifications, Excel quick order and controlled checkout/payment flow.
 - All new UI read workspaces use current tenant-scoped backend tables/RPCs already present; no new schema contract was invented for presentation-only work.
 - Vercel currently reports a deployment rate-limit failure on current pushes; this is a hosting/quota gate, not accepted as UI proof. Exact browser/CI evidence remains required before certification.
+
+
+## 12. UI closure expansion — latest functional checkpoint
+
+- Latest functional UI SHA: 2bea11707d9a5ba4241fcc59ae05e761fb12fe10 on main.
+- Customer Portal: catalog pagination and richer account dashboard are active.
+- Admin: dedicated Catalog, Category, Pricing, Customer, Purchasing, Receiving, Supplier, Warehouse, Inventory Ledger/Activity, Finance history, Notifications, Governance and Access workspaces are wired.
+- Deep read workspaces use current tenant-scoped operational contracts already present in Commerce; no Promotions surface was fabricated.
+- Vercel currently reports a deployment-rate-limit failure with a 24-hour retry window; this is not UI certification evidence.
