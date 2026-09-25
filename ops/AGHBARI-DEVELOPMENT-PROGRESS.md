@@ -389,3 +389,32 @@ The customer portal previously exposed only order summaries and reorder behavior
 - Close all exact-SHA CI gates for `1482a7e...` and investigate any failures.
 - Continue deeper UI closure in purchasing receiving, inventory reconciliation/history, finance payment/expense details and access/governance nested states where backend contracts already exist.
 - Continue individual SECURITY DEFINER classification and legacy Markdown semantic consolidation.
+
+
+## Run 2026-09-25 — Full UI surface expansion
+
+### Functional SHA
+- `37cc8687bb89e47357c96e04d0921662be2fa4e4`
+- Branch: `main`
+- Production: NO TOUCH
+- Certification: NOT CLAIMED
+
+### Implemented UI closure
+- Added purchase receipt history workspace with search, retry/error/empty states and pagination.
+- Added inventory movement ledger with source filtering, search, tenant-scoped reads and pagination.
+- Added finance operations history with invoice/payment/expense tabs, search, retry/error/empty states and pagination.
+- Added pricing matrix with tier filter, product/list/currency visibility, validity status and pagination.
+- Added warehouse/branch directory with active/inactive filters and search.
+- Added supplier workspace covering supplier directory, bills and supplier ledger.
+- Customer catalog now uses backend-supported offset pagination; customer account is upgraded to an operational summary dashboard.
+- Admin Command Center navigation exposes the new workspaces directly.
+
+### Verification boundary
+- Exact current SHA has not earned CI PASS yet. GitHub Actions are queued behind the current execution burst.
+- Vercel reports a deployment-rate-limit failure with a 24-hour retry window on current pushes. This blocks hosted deployment proof but does not change the UI implementation itself.
+- Local container clone/build verification was attempted but outbound DNS/network access was unavailable in this runtime; therefore no local build PASS is claimed.
+
+### Remaining
+- Consume exact-SHA CI results and repair any compile/test regressions.
+- Complete deeper receipt/order detail and reconciliation history only where the current schema supports them.
+- Keep production NO TOUCH until exact browser/runtime proof and certification are complete.
