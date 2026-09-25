@@ -102,7 +102,47 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
         <button disabled={busy || !supplierId || !warehouseId || !productId}>إنشاء أمر شراء</button>
       </form>
 
-      <div className="admin-card"><h3>اعتماد أوامر الشراء</h3><div className="order-queue-toolbar"><input aria-label="بحث أوامر الشراء" value={orderQuery} onChange={e=>setOrderQuery(e.target.value)} placeholder="رقم الأمر أو المورد" disabled={loading}/><select aria-label="حالة أمر الشراء" value={orderStatus} onChange={e=>setOrderStatus(e.target.value as 'all'|Status)} disabled={loading}><option value="all">كل الحالات</option>{(Object.keys(statusLabels) as Status[]).map(k=><option key={k} value={k}>{statusLabels[k]}</option>)}</select><button type="button" className="ghost" onClick={()=>{setOrderQuery('');setOrderStatus('all');}} disabled={!orderQuery&&orderStatus==='all'}>مسح</button></div>{loading ? <div className="portal-loading" role="status">جارٍ تحميل أوامر الشراء…</div> : orders.length === 0 ? <div className="empty-state"><strong>لا توجد أوامر شراء بعد.</strong><button type="button" onClick={() => void load()}>إعادة المحاولة</button></div> : !visibleOrders.length ? <div className="empty-state"><strong>لا توجد نتائج مطابقة.</strong><button type="button" onClick={()=>{setOrderQuery('');setOrderStatus('all');}}>مسح الفلاتر</button></div> : <><div className="cart-lines">{pagedOrders.map((order) => <article className="cart-line" key={order.id}><div><strong>أمر #{order.purchase_order_number}</strong><small>{supplierNameFor(order.supplier_id)}</small></div><div><strong>{order.total} {order.currency}</strong><small>{statusLabels[order.status]}</small></div><div className="status-actions"><button type="button" className="ghost" onClick={() => setDetailOrderId(order.id)}>التفاصيل</button>{order.status === 'draft' && <button disabled={busy} onClick={() => void run(() => submitPurchaseOrder(order.id), 'تم إرسال أمر الشراء للاعتماد.')}>إرسال</button>}{canApprove && order.status === 'submitted' && <button disabled={busy} onClick={() => void run(() => approvePurchaseOrder(order.id), 'تم اعتماد أمر الشراء.')}>اعتماد</button>}</div></article>)}</div>{visibleOrders.length>0&&<div className="directory-pagination"><span>صفحة {activeOrderPage} / {orderPages} · {visibleOrders.length} نتيجة</span><div><button type="button" className="ghost" onClick={()=>setOrderPage(p=>Math.max(1,p-1))} disabled={activeOrderPage===1}>السابق</button><button type="button" className="ghost" onClick={()=>setOrderPage(p=>Math.min(orderPages,p+1))} disabled={activeOrderPage===orderPages}>التالي</button></div></div></>}</div>
+      <div className="admin-card">
+        <h3>اعتماد أوامر الشراء</h3>
+        <div className="order-queue-toolbar">
+          <input aria-label="بحث أوامر الشراء" value={orderQuery} onChange={(e) => setOrderQuery(e.target.value)} placeholder="رقم الأمر أو المورد" disabled={loading} />
+          <select aria-label="حالة أمر الشراء" value={orderStatus} onChange={(e) => setOrderStatus(e.target.value as 'all' | Status)} disabled={loading}>
+            <option value="all">كل الحالات</option>
+            {(Object.keys(statusLabels) as Status[]).map((key) => <option key={key} value={key}>{statusLabels[key]}</option>)}
+          </select>
+          <button type="button" className="ghost" onClick={() => { setOrderQuery(''); setOrderStatus('all'); }} disabled={!orderQuery && orderStatus === 'all'}>مسح</button>
+        </div>
+        {loading ? (
+          <div className="portal-loading" role="status">جارٍ تحميل أوامر الشراء…</div>
+        ) : orders.length === 0 ? (
+          <div className="empty-state"><strong>لا توجد أوامر شراء بعد.</strong><button type="button" onClick={() => void load()}>إعادة المحاولة</button></div>
+        ) : visibleOrders.length === 0 ? (
+          <div className="empty-state"><strong>لا توجد نتائج مطابقة.</strong><button type="button" onClick={() => { setOrderQuery(''); setOrderStatus('all'); }}>مسح الفلاتر</button></div>
+        ) : (
+          <>
+            <div className="cart-lines">
+              {pagedOrders.map((order) => (
+                <article className="cart-line" key={order.id}>
+                  <div><strong>أمر #{order.purchase_order_number}</strong><small>{supplierNameFor(order.supplier_id)}</small></div>
+                  <div><strong>{order.total} {order.currency}</strong><small>{statusLabels[order.status]}</small></div>
+                  <div className="status-actions">
+                    <button type="button" className="ghost" onClick={() => setDetailOrderId(order.id)}>التفاصيل</button>
+                    {order.status === 'draft' && <button type="button" disabled={busy} onClick={() => void run(() => submitPurchaseOrder(order.id), 'تم إرسال أمر الشراء للاعتماد.')}>إرسال</button>}
+                    {canApprove && order.status === 'submitted' && <button type="button" disabled={busy} onClick={() => void run(() => approvePurchaseOrder(order.id), 'تم اعتماد أمر الشراء.')}>اعتماد</button>}
+                  </div>
+                </article>
+              ))}
+            </div>
+            <div className="directory-pagination">
+              <span>صفحة {activeOrderPage} / {orderPages} · {visibleOrders.length} نتيجة</span>
+              <div>
+                <button type="button" className="ghost" onClick={() => setOrderPage((page) => Math.max(1, page - 1))} disabled={activeOrderPage === 1}>السابق</button>
+                <button type="button" className="ghost" onClick={() => setOrderPage((page) => Math.min(orderPages, page + 1))} disabled={activeOrderPage === orderPages}>التالي</button>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
 
       <form className="admin-card" onSubmit={(e) => { e.preventDefault(); if (!selectedOrderId || !selectedReceiveItem) return; void run(() => receivePurchaseOrder({ purchaseOrderId: selectedOrderId, idempotencyKey: `agh-receive-${crypto.randomUUID()}`, lines: [{ purchaseOrderItemId: selectedReceiveItem.id, productId: selectedReceiveItem.product_id, quantity: Number(receiveQuantity) }] }), 'تم الاستلام وتحديث المخزون وتسجيل الحركة.'); }}>
         <h3>استلام البضاعة</h3>
