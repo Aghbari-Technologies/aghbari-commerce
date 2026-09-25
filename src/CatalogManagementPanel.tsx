@@ -3,6 +3,7 @@ import { getCategories, type CategoryOption } from './services/categories';
 import { upsertProduct } from './services/admin';
 import { supabase } from './lib/supabase';
 import './catalog-management.css';
+import RecordDetailDrawer from './RecordDetailDrawer';
 
 type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer';
 type ProductStatus = 'active' | 'inactive';
@@ -173,13 +174,14 @@ export default function CatalogManagementPanel({ role }: { role: UserRole }) {
             <span>{product.category_id?categoryNames.get(product.category_id)??'تصنيف محذوف':'بدون تصنيف'}</span>
             <span>{product.unit}</span>
             <span className={'catalog-status '+product.status}>{STATUS_LABELS[product.status]}</span>
-            <div className="catalog-actions"><button type="button" className="ghost" onClick={()=>openEdit(product)} disabled={Boolean(busyId)}>تعديل</button>{canToggle&&<button type="button" className="ghost" onClick={()=>void toggleStatus(product)} disabled={busyId===product.id}>{busyId===product.id?'جارٍ الحفظ…':product.status==='active'?'إيقاف':'تفعيل'}</button>}</div>
+            <div className="catalog-actions"><button type="button" className="ghost" onClick={()=>setSelectedProduct(product)}>التفاصيل</button><button type="button" className="ghost" onClick={()=>openEdit(product)} disabled={Boolean(busyId)}>تعديل</button>{canToggle&&<button type="button" className="ghost" onClick={()=>void toggleStatus(product)} disabled={busyId===product.id}>{busyId===product.id?'جارٍ الحفظ…':product.status==='active'?'إيقاف':'تفعيل'}</button>}</div>
           </article>)}
         </div>}
 
     {!loading&&filtered.length>0&&<div className="catalog-pagination" aria-label="صفحات المنتجات"><span>عرض {(currentPage-1)*PAGE_SIZE+1}–{Math.min(currentPage*PAGE_SIZE,filtered.length)} من {filtered.length}</span><div><button type="button" className="ghost" onClick={()=>setPage(p=>Math.max(1,p-1))} disabled={currentPage===1}>السابق</button><strong>صفحة {currentPage} / {totalPages}</strong><button type="button" className="ghost" onClick={()=>setPage(p=>Math.min(totalPages,p+1))} disabled={currentPage===totalPages}>التالي</button></div></div>}
 
     {message&&<div className="success" role="status">{message}</div>}
+    {selectedProduct&&<RecordDetailDrawer eyebrow="Catalog / Products" title={selectedProduct.name} summary={STATUS_LABELS[selectedProduct.status]} fields={[{label:"SKU",value:selectedProduct.sku},{label:"الباركود",value:selectedProduct.barcode??"غير محدد"},{label:"الوحدة",value:selectedProduct.unit},{label:"التصنيف",value:selectedProduct.category_id?categoryNames.get(selectedProduct.category_id)??"تصنيف غير موجود":"بدون تصنيف"},{label:"الحالة",value:STATUS_LABELS[selectedProduct.status]},{label:"تاريخ الإنشاء",value:new Date(selectedProduct.created_at).toLocaleString("ar-YE")},{label:"آخر تحديث",value:new Date(selectedProduct.updated_at).toLocaleString("ar-YE")},{label:"الوصف",value:selectedProduct.description??"بدون وصف",wide:true},{label:"المعرّف",value:selectedProduct.id,wide:true}]} onClose={()=>setSelectedProduct(null)}/>
 
     {editing&&<dialog className="catalog-dialog" open aria-label="تعديل المنتج">
       <form method="dialog" className="catalog-dialog-card" onSubmit={e=>{e.preventDefault();void saveEdit();}}>
