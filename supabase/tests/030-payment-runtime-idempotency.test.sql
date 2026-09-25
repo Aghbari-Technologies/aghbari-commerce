@@ -47,9 +47,9 @@ select order_id,org_id,customer_id,warehouse_id,'completed'::order_status,'YER',
 from payment_fixture;
 
 insert into public.operational_invoices(
-  id,organization_id,order_id,customer_id,invoice_number,status,currency,subtotal,total,created_by
+  id,organization_id,order_id,customer_id,status,currency,subtotal,total,created_by
 )
-select invoice_id,org_id,order_id,customer_id,invoice_number,'issued'::invoice_status,'YER',100,100,user_id
+select invoice_id,org_id,order_id,customer_id,'issued'::invoice_status,'YER',100,100,user_id
 from payment_fixture;
 
 insert into public.cash_accounts(id,organization_id,branch_id,name,currency,opening_balance,is_active)
