@@ -113,6 +113,19 @@ export default function AdminPanel({ role }: { role: UserRole }) {
         {canOrderWorkflow&&<a href="#admin-access">الأدوار والصلاحيات</a>}
       </nav>
       <button type="button" className="admin-command-trigger" aria-haspopup="dialog" aria-expanded={commandOpen} onClick={() => { setCommandOpen(true); setCommandQuery(''); }}>⌘ مركز الأوامر <kbd>Ctrl K</kbd></button>
+      <div className="admin-workspace-strip" aria-label="مساحات العمل السريعة">
+        <div className="admin-workspace-strip-label">
+          <span className="eyebrow">مساحات العمل</span>
+          <strong>الوصول المباشر</strong>
+        </div>
+        <div className="admin-workspace-links">
+          {getAdminStructureForRole(role).flatMap((group) => group.items.filter((item) => item.status === 'live' && item.target).map((item) => (
+            <a key={item.id} href={item.target} title={item.note ?? item.label}>
+              <span>{item.label}</span><i aria-hidden="true">↗</i>
+            </a>
+          ))).slice(0, 18)}
+        </div>
+      </div>
       {commandOpen && <div className="admin-command-backdrop" role="presentation" onClick={() => setCommandOpen(false)}>
         <section className="admin-command-dialog" role="dialog" aria-modal="true" aria-labelledby="admin-command-title" onClick={(event) => event.stopPropagation()}>
           <div className="section-heading"><div><span className="eyebrow">تشغيل سريع</span><h2 id="admin-command-title">مركز الأوامر</h2></div><button type="button" className="ghost" onClick={() => setCommandOpen(false)}>إغلاق</button></div>

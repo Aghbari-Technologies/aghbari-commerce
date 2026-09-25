@@ -1,0 +1,37 @@
+/* Aghbari UI Closure Layer — visual completion without new runtime dependencies */
+.customer-overview-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0 16px}
+.customer-overview-card{min-width:0;display:flex;align-items:center;gap:11px;padding:13px 14px;border:1px solid #dce9ee;border-radius:16px;background:rgba(255,255,255,.92);box-shadow:0 6px 18px rgba(11,48,66,.045);transition:.16s ease}
+.customer-overview-card:hover{border-color:#bddde4;transform:translateY(-1px)}
+.customer-overview-card .overview-icon{flex:0 0 38px;width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:#edf8fa;color:#0b8496;font-weight:900;font-size:16px}
+.customer-overview-card>div{min-width:0}
+.customer-overview-card small,.customer-overview-card em{display:block}
+.customer-overview-card small{color:#78909a;font-size:9px;font-weight:900}
+.customer-overview-card strong{display:block;margin-top:2px;color:#103b50;font-size:17px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.customer-overview-card em{margin-top:3px;color:#82949d;font-size:9px;font-style:normal;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.customer-overview-primary{background:linear-gradient(145deg,#effbfc,#ffffff);border-color:#cde7eb}
+.customer-overview-primary .overview-icon{background:#d9f2f5;color:#087689}
+.admin-workspace-strip{position:sticky;top:72px;z-index:8;display:grid;grid-template-columns:145px minmax(0,1fr);align-items:center;gap:12px;margin:10px 0 14px;padding:9px 10px;border:1px solid #d8e8ed;border-radius:15px;background:rgba(255,255,255,.96);box-shadow:0 8px 24px rgba(14,57,73,.055);backdrop-filter:blur(10px)}
+.admin-workspace-strip-label{display:flex;flex-direction:column;gap:2px;padding-inline:4px;border-inline-end:1px solid #e6eff2}
+.admin-workspace-strip-label strong{font-size:11px;color:#173d52}
+.admin-workspace-links{min-width:0;display:flex;gap:7px;overflow-x:auto;padding-bottom:1px;scrollbar-width:thin}
+.admin-workspace-links a{flex:0 0 auto;min-height:35px;display:inline-flex;align-items:center;gap:7px;padding:6px 10px;border:1px solid #dfeaec;border-radius:999px;background:#fbfdfe;color:#2a5264;text-decoration:none;font-size:9px;font-weight:900;transition:.16s ease}
+.admin-workspace-links a i{color:#0c8ca0;font-style:normal}
+.admin-workspace-links a:hover,.admin-workspace-links a:focus-visible{background:#eef9fa;border-color:#9fcfd6;outline:none;transform:translateY(-1px)}
+.admin-panel .admin-operations,.admin-panel .cart-panel,.admin-panel .content-card{scroll-margin-top:150px}
+.admin-panel .admin-card{transition:border-color .16s ease,box-shadow .16s ease,transform .16s ease}
+.admin-panel .admin-card:hover{border-color:#cbdfe5;box-shadow:0 8px 24px rgba(10,57,75,.055)}
+.admin-panel .section-heading h2{text-wrap:balance}
+.customer-app .search-panel{box-shadow:0 6px 18px rgba(11,48,66,.045)}
+.customer-app .category-row button{transition:.16s ease}
+.customer-app .category-row button:hover{transform:translateY(-1px)}
+.customer-app .product-card{display:flex;min-width:0;flex-direction:column;height:100%}
+.customer-app .product-card .product-body{display:flex;min-width:0;flex:1;flex-direction:column}
+.customer-app .product-card .product-body .add-button{margin-top:auto}
+.customer-app .product-card img,.customer-app .product-placeholder{aspect-ratio:1.18;width:100%;object-fit:cover}
+.customer-app .product-card .sku{display:inline-flex;width:max-content;max-width:100%;padding:4px 7px;border-radius:7px;background:#f3f8f9}
+.customer-app .portal-nav button{position:relative}
+.customer-app .portal-nav button.active::after{content:"";position:absolute;inset-inline-start:8px;inset-inline-end:8px;bottom:5px;height:2px;border-radius:99px;background:#0e91a4}
+@media (max-width:1100px){.customer-overview-strip{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-workspace-strip{top:106px}}
+@media (max-width:760px){.customer-overview-strip{grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}.customer-overview-card{padding:11px}.customer-overview-card .overview-icon{flex-basis:34px;width:34px;height:34px}.customer-overview-card strong{font-size:15px}.customer-overview-card em{font-size:8px}.admin-workspace-strip{position:relative;top:auto;grid-template-columns:1fr;align-items:start;gap:7px;padding:10px}.admin-workspace-strip-label{border-inline-end:0;border-bottom:1px solid #e6eff2;padding-bottom:7px}}
+@media (max-width:520px){.customer-overview-strip{grid-template-columns:1fr}.customer-overview-card{min-height:62px}.admin-workspace-links a{font-size:8px;min-height:33px}}
+@media (prefers-reduced-motion:reduce){.customer-overview-card,.admin-workspace-links a,.admin-panel .admin-card,.customer-app .category-row button{transition:none!important}}
