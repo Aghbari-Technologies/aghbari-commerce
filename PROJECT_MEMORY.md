@@ -259,3 +259,12 @@ Command "1" means:
 - Added safe redaction for outbox error display.
 - Prior exact proof bundle `5ea7e162…` remains valid only for that exact SHA. New code checkpoint `2fae69ec7e274b92a895ade22561752ab495709b` requires fresh exact-SHA verification.
 - Vercel deployment is subject to current build-rate-limit; hosted deployment proof is not claimed. Netlify free project exists but connector requires local source command and the execution container has no GitHub DNS.
+
+## 22. DURABLE CUSTOMER QUICK-ORDER / CATALOG DECISION — 2026-09-25
+
+- Customer quick-order and Excel identifier resolution now use the canonical `public.get_catalog_with_barcode(text,uuid,integer,integer,uuid)` RPC through `src/services/catalog.ts`.
+- The catalog client contract includes `barcode` so customer-facing identifier resolution can distinguish an exact SKU from an exact barcode without heuristic acceptance of an arbitrary single search result.
+- Customer portal section navigation is URL-hash resumable (`#catalog`, `#orders`, `#finance`, `#templates`, `#account`, `#notifications`) and browser Back/Forward state is synchronized.
+- Customer modal/drawer interactions support Escape dismissal and explicit dialog/accessibility labels.
+- `src/services/quickOrder.ts` now enforces UUID, idempotency-key, quantity, line-count and duplicate-product boundaries before calling `apply_quick_order`; boundary tests live in `src/services/quickOrder.test.ts`.
+- The live Supabase barcode-aware RPC is present, `SECURITY DEFINER`, `search_path=""`, callable by `authenticated`, and denied to `anon`. These facts are live-environment evidence and are not substitutes for exact-SHA application/security certification.
