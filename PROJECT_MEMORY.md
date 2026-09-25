@@ -351,3 +351,9 @@ Command "1" means:
 - Customer portal settings validation is performed before persistence: numeric limits are normalized/bounded, payment configuration cannot produce a zero-method enabled state, and the saved-template ceiling is bounded.
 - Finance, Purchasing and Inventory reload hooks use stable dependencies so selection defaults do not cause unnecessary network reload loops.
 - Dynamic operational labels must derive from actual context (for example the active warehouse name) rather than hardcoded business state.
+
+## 2026-09-25 — DURABLE MIGRATION LINEAGE DECISION
+- Supabase live verification found the barcode-aware get_catalog_with_barcode RPC existed with the correct signature and privileges but was absent from migration history. The canonical SQL was applied through Supabase apply_migration under canonicalize_barcode_catalog_rpc_lineage, then re-verified in migration history and pg_proc.
+- Migration lineage is part of Commerce correctness: live object existence without repository/live migration provenance is treated as drift.
+- Live database snapshot now reports 60/60 public tables with RLS enabled; 0 public SECURITY DEFINER functions executable by anon; 62 executable by authenticated; all inspected public SECURITY DEFINER routines have an explicit empty search_path.
+- client_ui_settings UPDATE remains staff-gated; notifications read/update remain tenant/customer/recipient scoped.
