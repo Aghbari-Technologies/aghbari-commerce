@@ -2,6 +2,16 @@
 -- These helpers are authorization primitives used by protected server functions/RLS,
 -- not application RPCs. Their direct PostgREST EXECUTE privilege is revoked.
 
+create or replace function public.is_staff_reader()
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $
+  select public.current_role() in ('owner','admin','sales','warehouse','viewer');
+$;
+
 revoke all on function public.current_role() from public, anon, authenticated;
 revoke all on function public.current_customer_id() from public, anon, authenticated;
 revoke all on function public.current_organization_id() from public, anon, authenticated;
