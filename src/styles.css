@@ -85,3 +85,46 @@ footer { padding: 30px 16px; text-align: center; color: #8b93a1; }
 .admin-command-nav a { display:inline-flex; align-items:center; min-height:36px; padding:7px 12px; border:1px solid #dfe4ec; border-radius:10px; color:#172033; background:#fff; text-decoration:none; font-size:13px; font-weight:700; }
 .admin-command-nav a:hover, .admin-command-nav a:focus-visible { border-color:#8b5cf6; outline:none; }
 @media (max-width:560px) { .admin-command-nav { overflow-x:auto; flex-wrap:nowrap; position:relative; top:auto; } .admin-command-nav a { flex:0 0 auto; } }
+
+
+.staff-topbar{
+  position:sticky;
+  top:0;
+  z-index:90;
+  min-height:58px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:8px 18px;
+  color:#fff;
+  background:linear-gradient(90deg,#0b8fa3 0%,#11a4b6 100%);
+  border-bottom:1px solid rgba(0,0,0,.08);
+  box-shadow:0 7px 20px rgba(12,79,94,.13);
+}
+.staff-topbar>strong{font-size:16px;letter-spacing:-.2px}
+.staff-topbar>div{display:flex;align-items:center;gap:8px}
+.staff-topbar span{
+  padding:7px 10px;
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:999px;
+  background:rgba(255,255,255,.1);
+  color:#e4f7fa;
+  font-size:10px;
+  font-weight:900;
+}
+.staff-topbar button{
+  min-height:38px;
+  border:1px solid rgba(255,255,255,.25);
+  border-radius:10px;
+  background:#fff;
+  color:#0e6979;
+  padding:8px 12px;
+  font-weight:900;
+}
+.staff-topbar button:hover{transform:translateY(-1px)}
+@media(max-width:560px){
+  .staff-topbar{padding-inline:10px}
+  .staff-topbar>strong{font-size:13px}
+  .staff-topbar span{display:none}
+}
