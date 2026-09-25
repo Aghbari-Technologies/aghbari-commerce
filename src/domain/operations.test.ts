@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { canMarkNotificationRead, filterAudit, filterNotifications, filterOutbox, outboxLifecycle, redactAuditMetadata, type AuditRow, type NotificationRow, type OutboxRow } from './operations';
+import { canMarkNotificationRead, filterAudit, filterNotifications, filterOutbox, outboxLifecycle, redactAuditMetadata, redactSensitiveText, type AuditRow, type NotificationRow, type OutboxRow } from './operations';
 const notification=(overrides:Partial<NotificationRow>={}):NotificationRow=>({id:'n1',kind:'order',title:'تم تأكيد الطلب',body:'طلب #1001 أصبح مؤكدًا',entity_type:'order',entity_id:'o1',read_at:null,recipient_user_id:null,customer_id:'c1',created_at:'2026-09-25T00:00:00Z',...overrides});
 describe('operations filters',()=>{
  it('filters notifications by query, kind, and unread state',()=>{expect(filterNotifications([notification(),notification({id:'n2',kind:'inventory',title:'مخزون منخفض',body:'تنبيه مخزون عام',customer_id:null})],'طلب #1001','all',false)).toHaveLength(1);expect(filterNotifications([notification(),notification({id:'n2',kind:'inventory',title:'مخزون منخفض',read_at:'2026-09-25T01:00:00Z'})],'','inventory',true)).toHaveLength(0);});
