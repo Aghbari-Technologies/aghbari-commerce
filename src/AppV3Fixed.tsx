@@ -19,6 +19,7 @@ import NotificationPanel from './NotificationPanel';
 import './styles.css';
 import './customer-portal-v3.css';
 import './customer-portal-v3-dynamic.css';
+import './customer-account-catalog.css';
 
 type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer' | 'customer';
 const STAFF_ROLES = new Set<UserRole>(['owner', 'admin', 'sales', 'warehouse']);
