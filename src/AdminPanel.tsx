@@ -67,6 +67,10 @@ export default function AdminPanel({ role }: { role: UserRole }) {
   async function commitImport() { if (!importJobId || !warehouseId) return; await run(async () => { const result = await commitProductImport(importJobId, warehouseId); setLastImportResult(result); setImportJobId(null); setImportFile(null); setImportPreview(null); return result; }, 'تم اعتماد الاستيراد بالكامل وتسجيل أثر المخزون والتدقيق.'); }
   async function changeOrderStatus(orderId: string, status: OrderStatus) { await run(async () => transitionOrder(orderId, status), `تم تحديث حالة الطلب إلى: ${STATUS_LABELS[status]}.`); }
   const canCatalog = role === 'owner' || role === 'admin' || role === 'sales';
+  const canCategory = role === 'owner' || role === 'admin';
+  const canInventory = role === 'owner' || role === 'admin' || role === 'warehouse';
+  const canOrderWorkflow = STAFF_ROLES.has(role);
+  const canFinance = ['owner', 'admin', 'sales'].includes(role);
   const commands = [
     ['الطلبات وسير العمل', '#admin-orders', canOrderWorkflow],
     ['العملاء', '#admin-customers', canCatalog],
@@ -87,7 +91,13 @@ export default function AdminPanel({ role }: { role: UserRole }) {
     ['إعدادات العميل', '#admin-settings', canCategory]
   ] as const;
   const visibleCommands = commands.filter(([label, , allowed]) => allowed && (label.includes(commandQuery.trim()) || !commandQuery.trim()));
- const canCategory = role === 'owner' || role === 'admin'; const canInventory = role === 'owner' || role === 'admin' || role === 'warehouse'; const canOrderWorkflow = STAFF_ROLES.has(role); const canFinance = ['owner', 'admin', 'sales'].includes(role); const visibleOrders = useMemo(() => { const needle = orderQuery.trim().toLowerCase(); return orders.filter((order) => (orderStatusFilter === 'all' || order.status === orderStatusFilter) && (!needle || String(order.order_number).includes(needle) || String(order.customer_name ?? '').toLowerCase().includes(needle) || String(STATUS_LABELS[order.status] ?? order.status).toLowerCase().includes(needle))); }, [orders, orderQuery, orderStatusFilter]); const orderPages = Math.max(1, Math.ceil(visibleOrders.length / 10)); const activeOrderPage = Math.min(orderPage, orderPages); const pagedOrders = visibleOrders.slice((activeOrderPage - 1) * 10, activeOrderPage * 10);
+  const visibleOrders = useMemo(() => {
+    const needle = orderQuery.trim().toLowerCase();
+    return orders.filter((order) => (orderStatusFilter === 'all' || order.status === orderStatusFilter) && (!needle || String(order.order_number).includes(needle) || String(order.customer_name ?? '').toLowerCase().includes(needle) || String(STATUS_LABELS[order.status] ?? order.status).toLowerCase().includes(needle)));
+  }, [orders, orderQuery, orderStatusFilter]);
+  const orderPages = Math.max(1, Math.ceil(visibleOrders.length / 10));
+  const activeOrderPage = Math.min(orderPage, orderPages);
+  const pagedOrders = visibleOrders.slice((activeOrderPage - 1) * 10, activeOrderPage * 10);
 
   return <section className="admin-panel" id="account">
     <AdminExecutiveDashboard role={role} />
