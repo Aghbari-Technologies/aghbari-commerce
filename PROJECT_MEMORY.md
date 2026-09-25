@@ -298,3 +298,13 @@ Command "1" means:
 ## 26. STRUCTURE-DRIVEN ADMIN NAVIGATION — 2026-09-25
 - Admin dashboard structure, deep links, and Command Palette now derive from the same code-level structure manifest rather than independent hardcoded navigation lists.
 - Role visibility for the structure navigator uses `src/structure/role-matrix.ts`; this is UI visibility only and never replaces server-side authorization.
+
+
+## 25. UI CLOSURE RUN — 2026-09-25
+- Implementation line advanced through the customer and operational UI closure wave; exact implementation commits: `f5b5e98e1a3e880ca7b1928543261a73397b408b`, `460c4c81d6d5ef286d9f3a777b7c9476df2e5721`, `c29b2b9bcfd39d502743e04b9db1735e88f48326`, `26d828e35ace7fd8f968cd08eb103f881d383403`, `63d29c38539ab000780388e3bc18f7a035b17175`, `cabf7f16b7a614f886933680e59c860495e0a5f2`, `6f0a489e7b2e90eccb1bd83fd1075514c1b07e92`.
+- Customer portal now has explicit product-detail inspection, quantity-aware add-to-cart, cart clearing, checkout readiness summary and corrected saved-orders label.
+- Catalog now has a real new-product creation form using the existing canonical `upsert_product` RPC contract.
+- Finance invoices now expose record-level detail through the shared drawer.
+- Low-stock inventory rows now link directly into the real transfer workspace; approved/partially-received purchase orders link directly into receiving.
+- No new transactional backend authority, Promotions surface, or BI/reporting source was introduced.
+- Current verification status remains implementation-only until fresh exact-SHA CI/browser/runtime evidence is available.
