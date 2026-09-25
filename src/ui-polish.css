@@ -323,3 +323,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 @keyframes record-detail-in{from{transform:translateX(-18px);opacity:.7}to{transform:translateX(0);opacity:1}}
 @media (max-width:720px){.record-detail-drawer{padding:18px}.record-detail-fields{grid-template-columns:1fr}.record-detail-field.wide{grid-column:auto}.record-detail-footer{align-items:flex-start;flex-direction:column}}
 @media (prefers-reduced-motion:reduce){.record-detail-drawer{animation:none}}
+
+.record-detail-lines{display:grid;gap:8px;width:100%}
+.record-detail-lines>div{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid var(--border,#e5e7eb)}
+.record-detail-lines>div:first-child{border-top:0;padding-top:0}
+.record-detail-lines span,.record-detail-lines strong{font-size:.82rem}
+@media (max-width:520px){.record-detail-lines>div{align-items:flex-start;flex-direction:column;gap:3px}}
