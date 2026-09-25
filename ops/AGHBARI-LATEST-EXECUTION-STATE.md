@@ -91,3 +91,23 @@ HOLD / NO TOUCH.
 - Proof: consume exact-SHA quality/security/domain/migration/concurrency/Test-the-Test/browser results for the final head only.
 - Hosting: verify Vercel/Netlify deployment metadata matches the final Git SHA before browser PASS.
 - Production: HOLD / NO TOUCH.
+
+## CURRENT UI/STRUCTURE WAVE — 2026-09-25
+- Last source head before this state write-back: `8194a01d6b021c05912cecf4f9aebe7504c6cc88`.
+- Implemented premium Control Plane visual system aligned to the supplied screenshots: RTL-first teal/white hierarchy, KPI tiles, hero/focus cards, operational widgets, dense section cards and right-side rail.
+- Added executable structure manifests: `src/structure/admin-structure.ts`, `src/structure/customer-structure.ts`, `src/structure/role-matrix.ts`, `src/structure/index.ts`.
+- Added Admin deep-link mapping and SPA fallback routing through `adminTargetForPath()` + `vercel.json`.
+- Added explicit `live`, `boundary`, and `contract-gap` status to legacy v2.0 structures so unsupported AI/BI/Developer/Onyx surfaces cannot masquerade as transactional features.
+- Viewer now remains in the staff control plane.
+
+## EVIDENCE CURRENT REALITY
+- Current-head GitHub workflows have been triggered by push and were observed queued on the previous exact SHA; fresh exact-SHA evidence must be consumed after this state write-back as the final SHA.
+- Vercel connected project remains blocked by free-plan build-rate-limit on current pushes; hosted exact-source proof is NOT_PROVEN.
+- Production remains HOLD / NO TOUCH.
+
+## CURRENT RESUME POINTER
+- START FROM THE FINAL HEAD CREATED BY THIS STATE WRITE-BACK.
+- UI FRONT: verify Control Plane at desktop/tablet/mobile and verify every live structure anchor; verify boundary tiles remain non-actionable; verify Customer Portal unaffected.
+- CORE FRONT: consume application-quality/security/domain/migration/concurrency/Test-the-Test results for the exact final SHA.
+- BROWSER/DEPLOY: obtain a deployment whose metadata exactly equals the final SHA before claiming runtime PASS.
+- DO NOT REPEAT: previously proven barcode/quick-order foundations unless current gates detect regression.
