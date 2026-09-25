@@ -26,3 +26,8 @@ The consolidation manifest lists the architecture/data source set that must be f
 - src/structure/role-matrix.ts centralizes the current staff-role permission visibility contract for the UI. Server/database authorization remains authoritative.
 - vercel.json now rewrites application paths to index.html, allowing the SPA to resolve registered admin deep links without introducing a second routing source of truth.
 - The legacy v2.0 route list is therefore an input to reconciliation, not permission to invent unsupported database contracts.
+
+## 2026-09-25 — Migration lineage integrity
+- A live schema object is not considered canonical merely because it exists in PostgreSQL; remote schema changes must be represented in the repository migration lineage.
+- The barcode-aware catalog RPC is now recorded in the live migration history as canonicalize_barcode_catalog_rpc_lineage, while the repository retains the equivalent canonical migration SQL.
+- Future drift checks must compare both the live function contract and migration history, not only object existence.
