@@ -32,6 +32,15 @@ const gap = (id: string, label: string, path: string, permission: string, note: 
 
 export const AGHBARI_ADMIN_STRUCTURE: AdminStructureGroup[] = [
   {
+    id: 'dashboard',
+    label: 'لوحة المعلومات',
+    path: '/admin',
+    icon: '⌂',
+    items: [
+      live('dashboard', 'الرئيسية', '/admin', 'dashboard.view', '#admin-dashboard', ['view']),
+    ],
+  },
+  {
     id: 'sales-customers',
     label: 'المبيعات والعملاء',
     path: '/admin/orders',
@@ -161,4 +170,16 @@ export function getAdminStructureForRole(role: string) {
       items: group.items.filter((item) => roleCan(role, item.permission)),
     }))
     .filter((group) => group.items.length > 0);
+}
+
+
+export const AGHBARI_ADMIN_PATH_TARGETS = Object.fromEntries(
+  AGHBARI_ADMIN_LIVE_ITEMS
+    .filter((item) => item.target)
+    .map((item) => [item.path, item.target as string]),
+) as Record<string, string>;
+
+export function adminTargetForPath(pathname: string) {
+  if (pathname === '/admin' || pathname === '/admin/') return '#admin-dashboard';
+  return AGHBARI_ADMIN_PATH_TARGETS[pathname] ?? '#admin-dashboard';
 }
