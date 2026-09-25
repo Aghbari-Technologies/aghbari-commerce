@@ -658,3 +658,22 @@ The customer portal previously exposed only order summaries and reorder behavior
 - Consume exact current-head CI results when available and repair any regressions.
 - Continue nested contract-backed UI state closure, especially responsive/error/permission edges that remain in existing Admin and Customer surfaces.
 - Keep production HOLD / NO TOUCH until exact-SHA runtime/browser/certification gates are satisfied.
+
+
+## Run 2026-09-25 — Customer / Operations UI deepening
+
+### Implementation
+- Customer portal: Account + Notifications + Offline Recovery surfaces; URL hash navigation with Back/Forward synchronization; explicit overlay dialog semantics; Escape dismissal; visible order-success feedback.
+- Customer orders: integrated dedicated `CustomerOrdersPanel` and verified `getCustomerOrderDetail` service for status timeline, items and detail inspection.
+- Purchasing: replaced the single-line order-entry limitation with a dynamic multi-line builder using the existing `createPurchaseOrder` contract and bounded validation.
+- Governance: audit records now use bounded pagination and progressive detail inspection; Outbox retains sensitive-error redaction and detail inspection.
+- Staff Access: organization-user records now have progressive detail inspection.
+- Customer detail styling, purchase builder responsive styling and account/notification/recovery presentation were added through existing CSS layers.
+
+### Exact source line
+- Code implementation commits in this wave: `8cf277fdd860c123217615535175eee8102e38a6`, `68136bdf423d36e73721e1ccbc82af2652b95aed`, `86d5bc319da352bdab136db4d83b51f2273df76d`, `a3b458d3c134868af757489a8832b948621454e4`, `5be6b2454a8163b33ab030b9daa398e295f7bceb`, `0e9aa729213698c3a63d498eccd9b525ed1eb275`, `664180920ab374d8991eff3d9020b09663976f28`, `1d98cb2a64277d8e88ac446e72f23833e668df96`, `0af53288a3320873eddc16672fdb4c9991ffc69f`, `d443751b6e030c4ab300059b1b6e0ca12fee1cf5`, `88f7fca7db57250f6d9799ab1441a54f68cb16b6`, `b36574a62606de7a7f6b07a4688fba505a380654`.
+
+### Verification boundary
+- Fresh GitHub Actions for the latest source head are queued: application-quality, security-audit, migration proof, concurrency proof, domain proof, order workflow, Test-the-Test, bootstrap lockfile and exact browser deployment.
+- Vercel status is deployment-rate-limited for the newest source head. This is not an application failure and is not treated as runtime proof.
+- Production: NO TOUCH. Certification: NOT CLAIMED.
