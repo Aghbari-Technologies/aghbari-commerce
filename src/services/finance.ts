@@ -39,6 +39,12 @@ function requireCurrency(value: unknown): string {
   return normalized;
 }
 
+function requireIdempotencyKey(value: unknown): string {
+  const normalized = requireString(value, 'مفتاح منع التكرار').trim();
+  if (normalized.length < 16 || normalized.length > 200) throw new Error('مفتاح منع التكرار يجب أن يكون بين 16 و200 حرف.');
+  return normalized;
+}
+
 export function validatePaymentInput(invoiceId: string, amount: number, method: string, cashAccountId: string | null, reference: string): void {
   requireUuid(invoiceId, 'الفاتورة');
   requirePositiveAmount(amount, 'مبلغ الدفع');
@@ -91,15 +97,17 @@ export async function createInvoiceFromOrder(orderId: string) {
   if (error) throw error;
   return data as OperationalInvoice;
 }
-export async function recordPayment(invoiceId: string, amount: number, method: 'cash'|'bank_transfer'|'card'|'other', cashAccountId: string | null, reference: string) {
+export async function recordPayment(invoiceId: string, amount: number, method: 'cash'|'bank_transfer'|'card'|'other', cashAccountId: string | null, reference: string, idempotencyKey = `agh-payment-${crypto.randomUUID()}`) {
   validatePaymentInput(invoiceId, amount, method, cashAccountId, reference);
-  const { data, error } = await requireSupabase().rpc('record_payment',{p_invoice_id:invoiceId.trim(),p_amount:amount,p_method:method,p_cash_account_id:cashAccountId?.trim() ?? null,p_reference:reference.trim()||null});
+  const key=requireIdempotencyKey(idempotencyKey);
+  const { data, error } = await requireSupabase().rpc('record_payment',{p_invoice_id:invoiceId.trim(),p_amount:amount,p_method:method,p_cash_account_id:cashAccountId?.trim() ?? null,p_reference:reference.trim()||null,p_idempotency_key:key});
   if (error) throw error;
   return data;
 }
-export async function recordExpense(branchId: string, cashAccountId: string, category: string, amount: number, currency: string, description: string) {
+export async function recordExpense(branchId: string, cashAccountId: string, category: string, amount: number, currency: string, description: string, idempotencyKey = `agh-expense-${crypto.randomUUID()}`) {
   validateExpenseInput(branchId, cashAccountId, category, amount, currency, description);
-  const { data, error } = await requireSupabase().rpc('record_expense',{p_branch_id:branchId.trim(),p_cash_account_id:cashAccountId.trim(),p_category:category.trim(),p_amount:amount,p_currency:currency.trim().toUpperCase(),p_description:description.trim()||null});
+  const key=requireIdempotencyKey(idempotencyKey);
+  const { data, error } = await requireSupabase().rpc('record_expense',{p_branch_id:branchId.trim(),p_cash_account_id:cashAccountId.trim(),p_category:category.trim(),p_amount:amount,p_currency:currency.trim().toUpperCase(),p_description:description.trim()||null,p_idempotency_key:key,p_expense_date:new Date().toISOString().slice(0,10)});
   if (error) throw error;
   return data;
 }

@@ -1,6 +1,6 @@
 begin;
 
-select plan(60);
+select plan(68);
 
 select is(has_function_privilege('anon', 'public.adjust_inventory(uuid,uuid,integer,text)', 'execute'), false, 'anon cannot execute adjust_inventory');
 select is(has_function_privilege('authenticated', 'public.adjust_inventory(uuid,uuid,integer,text)', 'execute'), true, 'authenticated can execute adjust_inventory');
@@ -63,6 +63,18 @@ select is(has_function_privilege('anon', 'public.is_staff_reader()', 'execute'),
 select is(has_function_privilege('authenticated', 'public.is_staff_reader()', 'execute'), true, 'authenticated can execute is_staff_reader for RLS evaluation');
 select is(has_function_privilege('public', 'public.is_staff_reader()', 'execute'), false, 'PUBLIC cannot execute is_staff_reader');
 
+
+select * from finish();
+rollback;
+
+select is(to_regprocedure('public.record_payment(uuid,numeric,public.payment_method,uuid,text)'), null, 'legacy non-idempotent record_payment signature is absent');
+select is(has_function_privilege('anon', 'public.record_payment(uuid,numeric,public.payment_method,uuid,text,text)', 'execute'), false, 'anon cannot execute idempotent record_payment');
+select is(has_function_privilege('authenticated', 'public.record_payment(uuid,numeric,public.payment_method,uuid,text,text)', 'execute'), true, 'authenticated can execute idempotent record_payment');
+select is(has_function_privilege('public', 'public.record_payment(uuid,numeric,public.payment_method,uuid,text,text)', 'execute'), false, 'PUBLIC cannot execute idempotent record_payment');
+select is(to_regprocedure('public.record_expense(uuid,uuid,text,numeric,text,text,date)'), null, 'legacy non-idempotent record_expense signature is absent');
+select is(has_function_privilege('anon', 'public.record_expense(uuid,uuid,text,numeric,text,text,date,text)', 'execute'), false, 'anon cannot execute idempotent record_expense');
+select is(has_function_privilege('authenticated', 'public.record_expense(uuid,uuid,text,numeric,text,text,date,text)', 'execute'), true, 'authenticated can execute idempotent record_expense');
+select is(has_function_privilege('public', 'public.record_expense(uuid,uuid,text,numeric,text,text,date,text)', 'execute'), false, 'PUBLIC cannot execute idempotent record_expense');
 
 select * from finish();
 rollback;
