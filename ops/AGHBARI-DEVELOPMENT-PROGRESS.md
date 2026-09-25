@@ -544,3 +544,28 @@ The customer portal previously exposed only order summaries and reorder behavior
 - Current Supabase Security Advisor classification queue: 62 authenticated-executable SECURITY DEFINER findings plus the external leaked-password-protection warning.
 - Full semantic reconciliation of the legacy Markdown corpus remains open; no source is retired merely for being old.
 - Certification/production remain HOLD / NO TOUCH.
+
+## Run 2026-09-25 — Fresh-DB barcode RPC lineage closure
+
+### Start
+- Functional source line: `eff8b07f625e57bb41648bfad8a682050cc92223`.
+- Discovered that live `get_catalog_with_barcode` existed but no matching repository migration existed.
+- Production: NO TOUCH.
+
+### Change
+- Added `supabase/migrations/20260925103000_canonical_barcode_catalog_rpc.sql`.
+- The migration installs the canonical barcode-aware customer catalog RPC with tenant/customer/warehouse checks, bounded pagination, tier-aware pricing, barcode exact-match search, `SECURITY DEFINER`, empty `search_path`, authenticated-only EXECUTE and anon denial.
+- Applied the exact migration content to live Supabase project `mrcyqezbhpncuvaehwgf`.
+- Customer `getCatalog` now consumes this migration-backed RPC, so Fresh DB and live runtime share one function authority.
+
+### Root Cause
+- Frontend barcode support had been relying on a function present in the live database but absent from the migration lineage. That was a Fresh DB drift risk.
+
+### Proof
+- Migration commit: `f7825e74c53e7d5a89a964a9ed8203a7cdcf124d`.
+- Live post-apply verification: signature `get_catalog_with_barcode(text,uuid,integer,integer,uuid)`; authenticated EXECUTE=true; anon EXECUTE=false; `search_path=""`; return shape includes `barcode text`.
+- No production promotion or evidence transfer was performed.
+
+### Remaining
+- Fresh exact-SHA migration/application-quality/security/domain/concurrency/Test-the-Test/browser evidence must be rerun after the new migration commit.
+- Keep production HOLD / NO TOUCH.

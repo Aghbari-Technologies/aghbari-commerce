@@ -268,3 +268,10 @@ Command "1" means:
 - Customer modal/drawer interactions support Escape dismissal and explicit dialog/accessibility labels.
 - `src/services/quickOrder.ts` now enforces UUID, idempotency-key, quantity, line-count and duplicate-product boundaries before calling `apply_quick_order`; boundary tests live in `src/services/quickOrder.test.ts`.
 - The live Supabase barcode-aware RPC is present, `SECURITY DEFINER`, `search_path=""`, callable by `authenticated`, and denied to `anon`. These facts are live-environment evidence and are not substitutes for exact-SHA application/security certification.
+
+## 23. DURABLE BARCODE CATALOG MIGRATION DECISION — 2026-09-25
+
+- The barcode-aware customer catalog RPC is now part of the repository's migration lineage through `supabase/migrations/20260925103000_canonical_barcode_catalog_rpc.sql`.
+- The migration recreates the exact live contract: warehouse/customer/tenant checks, bounded pagination, customer-tier pricing, barcode-aware search, `SECURITY DEFINER`, empty `search_path`, authenticated EXECUTE and anon denial.
+- The live Supabase project was updated from this migration content and re-queried successfully; the database function signature and privilege boundary match the migration contract.
+- Customer frontend barcode resolution must use this canonical RPC rather than a live-only or manually-created function.
