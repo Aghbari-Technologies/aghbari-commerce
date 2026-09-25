@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(4);
+select plan(5);
 
 select is(
   (select count(*) from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'public' and c.relkind = 'r' and c.relrowsecurity),
@@ -30,6 +30,14 @@ select is(
   (select count(*) from pg_policies where schemaname = 'storage' and tablename = 'objects' and policyname in ('product_media_select', 'product_media_insert', 'product_media_update', 'product_media_delete')),
   3::bigint,
   'Product media storage has explicit SELECT/INSERT/DELETE boundary policies; UPDATE is intentionally unsupported'
+);
+
+select is(
+  (select count(*) from pg_constraint
+    where conrelid='public.expenses'::regclass
+      and conname='expenses_cash_account_branch_org_fkey'),
+  1::bigint,
+  'expenses enforces cash account branch and organization ownership'
 );
 
 select * from finish();
