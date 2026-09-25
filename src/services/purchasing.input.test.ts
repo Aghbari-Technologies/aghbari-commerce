@@ -46,3 +46,18 @@ describe('purchasing input boundaries', () => {
     expect(() => validateReceiveInput({ purchaseOrderId: supplier, idempotencyKey: key, lines: [{ purchaseOrderItemId: item, productId: product, quantity: 10_001 }] })).toThrow();
   });
 });
+
+  it('rejects more than the database-supported 100 lines', () => {
+    const lines = Array.from({ length: 101 }, (_, index) => ({
+      productId: index === 0 ? product : product2,
+      quantity: 1,
+      unitCost: 10
+    }));
+    for (let index = 2; index < lines.length; index += 1) lines[index].productId = [
+      'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+      'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+      'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
+      'dddddddd-dddd-4ddd-8ddd-dddddddddddd'
+    ][(index - 2) % 4];
+    expect(() => validatePurchaseOrderInput({ ...validPurchase, lines })).toThrow();
+  });

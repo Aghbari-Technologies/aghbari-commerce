@@ -24,3 +24,18 @@ describe('inventory input boundaries', () => {
     expect(() => validateStockThresholdInput(warehouseA, productA, 1, 0, null)).toThrow();
   });
 });
+
+  it('rejects fractional transfer quantities instead of relying on RPC casting', () => {
+    expect(() => validateInventoryTransferInput(warehouseA, warehouseB, key, [{ productId: productA, quantity: 1.5 }])).toThrow();
+  });
+  it('rejects more than the database-supported 100 transfer lines', () => {
+    const ids = [
+      '55555555-5555-4555-8555-555555555555','66666666-6666-4666-8666-666666666666','77777777-7777-4777-8777-777777777777','88888888-8888-4888-8888-888888888888'
+    ];
+    const lines = Array.from({ length: 101 }, (_, index) => ({ productId: ids[index % ids.length], quantity: 1 }));
+    expect(() => validateInventoryTransferInput(warehouseA, warehouseB, key, lines)).toThrow();
+  });
+  it('rejects fractional stock count and threshold quantities', () => {
+    expect(() => validateStockThresholdInput(warehouseA, productA, 1.5, 2, null)).toThrow();
+    expect(() => validateStockThresholdInput(warehouseA, productA, 1, 2.5, null)).toThrow();
+  });

@@ -133,8 +133,8 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
           </div>)}
         </div>
         <div className="purchase-builder-actions">
-          <button type="button" className="ghost" onClick={() => setPurchaseLines((current) => [...current, { productId: products[0]?.id ?? '', quantity: '1', unitCost: '0' }])} disabled={busy || purchaseLines.length >= 200}>+ إضافة بند</button>
-          <span>{purchaseLines.length}/200 · إجمالي تقديري {purchaseLines.reduce((sum, line) => sum + (Number(line.quantity) || 0) * (Number(line.unitCost) || 0), 0)} YER</span>
+          <button type="button" className="ghost" onClick={() => setPurchaseLines((current) => [...current, { productId: products[0]?.id ?? '', quantity: '1', unitCost: '0' }])} disabled={busy || purchaseLines.length >= 100}>+ إضافة بند</button>
+          <span>{purchaseLines.length}/100 · إجمالي تقديري {purchaseLines.reduce((sum, line) => sum + (Number(line.quantity) || 0) * (Number(line.unitCost) || 0), 0)} YER</span>
         </div>
         <button disabled={busy || !supplierId || !warehouseId || !purchaseLines.some((line) => line.productId)}>إنشاء أمر شراء</button>
       </form>

@@ -35,7 +35,7 @@ export interface StockCountLine {
 }
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-const MAX_LINES = 200;
+const MAX_LINES = 100;
 
 function requireUuid(value: string, field: string): string {
   const normalized = value.trim();
@@ -55,7 +55,7 @@ function requireFiniteNonNegative(value: number, field: string): number {
 }
 
 function requirePositiveQuantity(value: number): number {
-  if (!Number.isFinite(value) || value <= 0) throw new Error('كمية المخزون يجب أن تكون أكبر من صفر.');
+  if (!Number.isSafeInteger(value) || value < 1 || value > 100000) throw new Error('كمية المخزون يجب أن تكون عددًا صحيحًا بين 1 و100000.');
   return value;
 }
 
@@ -77,10 +77,10 @@ export function validateInventoryTransferInput(sourceWarehouseId: string, destin
 export function validateStockThresholdInput(warehouseId: string, productId: string, minQuantity: number, reorderQuantity: number, maxQuantity?: number | null): void {
   requireUuid(warehouseId, 'المخزن');
   requireUuid(productId, 'المنتج');
-  requireFiniteNonNegative(minQuantity, 'الحد الأدنى');
+  if (!Number.isSafeInteger(minQuantity) || minQuantity < 0 || minQuantity > 100000) throw new Error('الحد الأدنى يجب أن يكون عددًا صحيحًا بين 0 و100000.');
   requirePositiveQuantity(reorderQuantity);
   if (maxQuantity !== undefined && maxQuantity !== null) {
-    requireFiniteNonNegative(maxQuantity, 'الحد الأقصى');
+    if (!Number.isSafeInteger(maxQuantity) || maxQuantity > 100000) throw new Error('الحد الأقصى يجب أن يكون عددًا صحيحًا بين الحد الأدنى و100000.');
     if (maxQuantity < minQuantity) throw new Error('الحد الأقصى لا يمكن أن يكون أقل من الحد الأدنى.');
   }
 }
@@ -140,7 +140,7 @@ export async function getStockCountLines(sessionId: string) {
 export async function setStockCountLine(sessionId: string, productId: string, countedQuantity: number) {
   requireUuid(sessionId, 'جلسة الجرد');
   requireUuid(productId, 'المنتج');
-  requireFiniteNonNegative(countedQuantity, 'الكمية المعدودة');
+  if (!Number.isSafeInteger(countedQuantity) || countedQuantity < 0 || countedQuantity > 100000) throw new Error('الكمية المعدودة يجب أن تكون عددًا صحيحًا بين 0 و100000.');
   const { data, error } = await requireSupabase().rpc('set_stock_count_line', { p_session_id: sessionId.trim(), p_product_id: productId.trim(), p_counted_quantity: countedQuantity });
   if (error) throw error;
   return data as StockCountLine;

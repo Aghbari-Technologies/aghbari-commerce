@@ -97,9 +97,9 @@ export default function InventoryPanel({ role }: { role: UserRole }) {
           </div>)}
         </div>
         <div className="transfer-builder-actions">
-          <button type="button" className="ghost" onClick={() => setTransferLines((current) => [...current, { productId: products[0]?.id ?? '', quantity: '1' }])} disabled={busy || transferLines.length >= 200}>+ إضافة صنف</button>
+          <button type="button" className="ghost" onClick={() => setTransferLines((current) => [...current, { productId: products[0]?.id ?? '', quantity: '1' }])} disabled={busy || transferLines.length >= 100}>+ إضافة صنف</button>
           <input aria-label="ملاحظات التحويل" placeholder="ملاحظة (اختياري)" value={notes} onChange={(e) => setNotes(e.target.value)} />
-          <span>{transferLines.length}/200 بند</span>
+          <span>{transferLines.length}/100 بند</span>
         </div>
         <button disabled={busy || !source || !destination || source === destination || !transferLines.some((line) => line.productId)}>تنفيذ التحويل الذري</button>
       </form>
