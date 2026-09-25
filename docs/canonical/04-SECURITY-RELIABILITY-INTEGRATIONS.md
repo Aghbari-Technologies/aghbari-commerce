@@ -19,3 +19,11 @@ Onyx/legacy migration, WhatsApp and Report-Advisor remain external boundaries. B
 
 ## Canonical source merge register
 The manifest lists the security/offline/integration sources that must be fully merged here before retirement.
+
+
+## 2026-09-25 — SECURITY DEFINER classification checkpoint
+- Live Supabase inspection found 62 public SECURITY DEFINER routines executable by `authenticated`, 0 executable by `anon`.
+- The live inspection found 0 public SECURITY DEFINER routines without an explicit empty `search_path`.
+- Canonical RLS helper functions `current_organization_id()`, `current_customer_id()`, `is_staff()` and `is_staff_reader()` remain executable by `authenticated` because policies invoke them; anonymous execution remains denied.
+- The advisor warning for authenticated-callable SECURITY DEFINER routines is therefore treated as an intentional per-RPC classification queue, not a reason for blanket privilege revocation.
+- Repository test `supabase/tests/031-security-definer-exposure-classification.test.sql` locks the intended exposure invariant for fresh verification.
