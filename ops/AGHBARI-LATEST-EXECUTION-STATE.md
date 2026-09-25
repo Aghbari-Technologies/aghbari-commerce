@@ -1,126 +1,73 @@
 # 🔴 AGHBARI LATEST EXECUTION STATE
 
-**Actual verified Git HEAD:** `f7e5f9e902f1a6161a4c7f7887c0608bc6410752`
-**Functional code SHA:** `eff8b07f625e57bb41648bfad8a682050cc92223`
-**Database migration SHA:** `f7825e74c53e7d5a89a964a9ed8203a7cdcf124d`
+**Project:** Aghbari Commerce | الأغبري
+**Actual Git HEAD:** `657a2a9417ce9b199aa158fb42775c79053afbc9`
 **Branch:** `main`
-**Production:** NO TOUCH
+**Production:** HOLD / NO TOUCH
 **Certification:** NOT CLAIMED
 
 ## Current Reality
-- Actual `main` is the only current implementation authority; historical state files and older SHA references are not execution baselines.
-- Customer Portal now has URL-hash-resumable sections, safe modal/drawer Escape behavior and explicit dialog accessibility semantics.
-- Customer Quick Order and Excel review resolve exact SKU or exact barcode through the canonical barcode-aware catalog RPC.
-- The barcode-aware RPC is now represented in the repository migration lineage and has been applied to the live Supabase project.
-- Quick-order command input is bounded before the transactional RPC.
-- Commerce remains the transactional source of truth. Report-Advisor is outside this repository's operating scope.
-- Promotions remains unimplemented until a complete canonical business/data contract exists.
+- The actual repository HEAD is authoritative. This checkpoint follows `8e85b2c9a5535d11e91dac525be74d97243f77dc` and does not revert prior UI work.
+- This execution wave remains focused on Aghbari Commerce only. Report-Advisor is outside scope.
+- No backend/database contract was introduced by the two implementation commits in this wave.
+- Hosted/browser certification is not claimed for the new SHA. Existing Vercel rate/protection gates remain separate from source implementation.
 
-## Current Functional Changes
-- `src/AppV3Fixed.tsx`: URL section persistence, Back/Forward synchronization, Escape dismissal, dialog labels, exact SKU/barcode resolution, action-driven section navigation.
-- `src/services/catalog.ts`: barcode-aware catalog contract through `get_catalog_with_barcode`.
-- `src/services/quickOrder.ts`: UUID/idempotency/quantity/line-count/duplicate guards.
-- `src/services/quickOrder.test.ts`: boundary tests for the quick-order input contract.
-- `supabase/migrations/20260925103000_canonical_barcode_catalog_rpc.sql`: canonical Fresh DB contract for the barcode-aware catalog RPC.
+## UI Work Completed In This Wave
+### Shared UI closure layer
+`src/ui-closure.css`
+- Deepened the existing UI closure system rather than introducing a second design system.
+- Added consistent form focus/disabled/error/success treatment across Admin and Customer surfaces.
+- Hardened responsive dense operational lists, toolbars, pagination, tables, status chips, bulk-action bars and workspace title bars.
+- Added explicit loading, empty, error, success and access-denied visual states.
+- Added responsive Record Detail Drawer styling with RTL-aware direction, sticky header/footer, field grids and mobile full-width behavior.
+- Added dense customer/admin record presentation, touch-first controls and keyboard focus treatment.
+- Preserved reduced-motion behavior and did not add runtime dependencies.
 
-## Exact Verification
-| Check | Result | Bound |
+### Customer Orders
+`src/CustomerOrdersPanel.tsx`
+- Order cards now expose a richer B2B record hierarchy: order identity, creation timestamp, total/currency, semantic status chip, progressive workflow timeline and action area.
+- Added explicit cancelled-order recovery context without fabricating a new transaction state.
+- Existing search, status filtering, pagination, reload, detail and reorder actions remain intact.
+- Timeline derives only from the existing canonical order status values: pending → confirmed → preparing → ready → completed.
+
+## Exact Implementation Evidence
+| Check | Result | Exact SHA |
 |---|---|---|
-| Git current head after documentation write-back | PROVEN | `f7e5f9e902f1a6161a4c7f7887c0608bc6410752` on `main` |
-| Live Supabase migration apply | PROVEN | exact migration file content, project `mrcyqezbhpncuvaehwgf` |
-| Barcode RPC signature/return shape | PROVEN | live database after apply |
-| Barcode RPC security boundary | PROVEN | authenticated EXECUTE=true, anon EXECUTE=false, empty `search_path` |
-| Isolated quick-order TypeScript check | PASS | fetched exact service logic with stubbed Supabase dependency; not full app build |
-| GitHub CI | NOT_PROVEN | no reported status entries for current source line |
-| Browser/runtime current source | NOT_PROVEN | no exact-SHA browser artifact consumed |
-| Hosted deployment current source | NOT_PROVEN | current Vercel deployment still trails the latest source line |
-| Security Advisor | OPEN QUEUE | 62 authenticated-executable SECURITY DEFINER findings + leaked-password-protection warning |
+| Actual Git HEAD before this state write-back | PROVEN | `657a2a9417ce9b199aa158fb42775c79053afbc9` |
+| UI closure CSS update | IMPLEMENTED | `b93538b51a3483670eaf2ce24097d4516daa8c58` |
+| Customer order-detail presentation update | IMPLEMENTED | `657a2a9417ce9b199aa158fb42775c79053afbc9` |
+| Full application build | NOT_PROVEN | current SHA |
+| Browser/runtime current SHA | NOT_PROVEN | current SHA |
+| Hosted deployment current SHA | NOT_PROVEN | current SHA |
+| Certification | NOT CLAIMED | current SHA |
 
-## Hosting Reality
-- Current verified Vercel project: `aghbari-commerce-c2dd`.
-- Latest observed READY production deployment: `dpl_3s733VxF8oC86QKfvtSyRnTWB5ud`, source SHA `24a6e33ccf8fe39fd1a2e55476764ce1dba88252`.
-- Older production deployment evidence is not transferable to the current source.
-- Historical project `aghbari-commerce-web4` is not used as current authority because its deployment metadata points at a different GitHub organization lineage.
+## Open UI Frontier
+1. Continue deep closure of each existing Admin workspace: Orders, Customers, Catalog, Categories, Pricing, Purchasing, Receiving, Suppliers, Warehouses, Inventory, Finance, Import/Export, Notifications, Governance, Access and Customer Settings.
+2. Continue deep closure of Customer Portal: catalog, product detail, cart, checkout, orders, tracking, reorder, templates, quick order, finance, account, notifications and offline recovery.
+3. For every existing surface, verify the full applicable state matrix: loading, empty, error, success, disabled, permission, responsive, RTL, accessibility and persistence.
+4. Use existing service/RPC contracts only; do not invent Promotions or BI/reporting transactional contracts.
 
-## Open Fronts
-1. Run exact-source CI/application-quality/security/domain/migration/concurrency/Test-the-Test after the barcode migration line.
-2. Verify the current Vercel Git-connected deployment source SHA before any browser proof.
-3. Run exact-SHA browser checks for Customer Portal and Admin/Staff on desktop/tablet/mobile and RTL.
-4. Continue individual SECURITY DEFINER classification without blanket revoke.
-5. Continue semantic consolidation/reference audit of the legacy Markdown corpus.
-6. Keep production HOLD / NO TOUCH until exact end-to-end evidence is complete.
+## Core / Security / QA Frontier
+- Continue exact-SHA application-quality, security, domain, migration, concurrency and Test-the-Test gates after UI changes.
+- Treat all current SECURITY DEFINER advisory findings as an explicit review queue; do not blanket revoke transactional RPC execution.
+- Browser proof must target a deployment whose source metadata exactly equals the tested SHA.
 
 ## CURRENT RESUME POINTER
-START FROM `f7e5f9e902f1a6161a4c7f7887c0608bc6410752` — actual current `main` HEAD.
+START FROM `657a2a9417ce9b199aa158fb42775c79053afbc9` — actual `main` HEAD.
 
 UI FRONT:
-`src/AppV3Fixed.tsx`
-- Verify `#catalog/#orders/#finance/#templates/#account/#notifications` persistence, Back/Forward and Escape dismissal.
-- Verify Quick Order and Excel using exact SKU, exact barcode, missing identifier, unauthorized identifier, unavailable quantity and lookup failure.
-
-CORE / DATABASE FRONT:
-`src/services/catalog.ts`
-`src/services/quickOrder.ts`
-`supabase/migrations/20260925103000_canonical_barcode_catalog_rpc.sql`
-- Run exact-SHA quality/security/migration/domain/concurrency/Test-the-Test gates.
-- Confirm Fresh DB applies the barcode RPC and that the frontend uses only the migrated contract.
+- Continue from `src/ui-closure.css` and `src/CustomerOrdersPanel.tsx`.
+- Next inspect and deepen the existing Admin workspace components one by one, prioritizing operationally dense screens and their detail/error/empty/permission states.
+- Then deepen Customer catalog/product/cart/checkout surfaces without duplicating already-closed foundations.
 
 PROOF:
-- Every PASS must identify the exact SHA, environment, executable check and evidence.
-- Browser evidence must target a deployment whose metadata exactly matches the source SHA.
-- Never transfer evidence from `24a6e33c...`, `11fd9c7...`, `eff8b07...` or any older SHA to a newer candidate.
+- Do not transfer browser/build PASS from an older SHA.
+- Every new PASS must bind exact SHA + environment + executable check + evidence.
 
 DO NOT REPEAT:
-- Existing catalog/customer/order/purchasing/finance/detail foundations unless a current gate reports regression or evidence invalidation.
+- Do not restart the prior structure/control-plane wave.
+- Do not fabricate missing backend contracts.
+- Do not add Promotions/BI/reporting features merely to fill visual space.
 
 PRODUCTION:
 HOLD / NO TOUCH.
-
-## UI Wave — Premium Control Plane Rebuild — 2026-09-25
-- Latest source head entering this state write-back: `7f5d69ad9af30b0268380ba3486582917b837878`.
-- `src/AdminExecutiveDashboard.tsx` is now the primary Aghbari control-plane dashboard matching the supplied visual quality bar: RTL-first, premium card system, right-side operational rail, KPI/focus widgets, order status distribution, recent orders and direct section tiles.
-- Dashboard navigation targets existing real Aghbari workspaces only; no placeholder reporting/BI or Promotions surface was added.
-- `viewer` now routes to the staff control plane; server-side authorization remains authoritative.
-- Staff chrome is branded `الأغبري` and responsive.
-- Exact CI/build/browser/deployment evidence for this new head is still NOT_PROVEN.
-
-## CURRENT RESUME POINTER — AFTER UI REBUILD
-- Start from the final state-writeback HEAD created by this update.
-- UI: verify the control-plane dashboard at desktop/tablet/mobile, RTL keyboard navigation, each rail/tile anchor, loading/error states and role visibility.
-- Customer: verify catalog/order/finance/templates/account/notifications flows remain intact after staff-shell changes.
-- Proof: consume exact-SHA quality/security/domain/migration/concurrency/Test-the-Test/browser results for the final head only.
-- Hosting: verify Vercel/Netlify deployment metadata matches the final Git SHA before browser PASS.
-- Production: HOLD / NO TOUCH.
-
-## CURRENT UI/STRUCTURE WAVE — 2026-09-25
-- Last source head before this state write-back: `8194a01d6b021c05912cecf4f9aebe7504c6cc88`.
-- Implemented premium Control Plane visual system aligned to the supplied screenshots: RTL-first teal/white hierarchy, KPI tiles, hero/focus cards, operational widgets, dense section cards and right-side rail.
-- Added executable structure manifests: `src/structure/admin-structure.ts`, `src/structure/customer-structure.ts`, `src/structure/role-matrix.ts`, `src/structure/index.ts`.
-- Added Admin deep-link mapping and SPA fallback routing through `adminTargetForPath()` + `vercel.json`.
-- Added explicit `live`, `boundary`, and `contract-gap` status to legacy v2.0 structures so unsupported AI/BI/Developer/Onyx surfaces cannot masquerade as transactional features.
-- Viewer now remains in the staff control plane.
-
-## EVIDENCE CURRENT REALITY
-- Current-head GitHub workflows have been triggered by push and were observed queued on the previous exact SHA; fresh exact-SHA evidence must be consumed after this state write-back as the final SHA.
-- Vercel connected project remains blocked by free-plan build-rate-limit on current pushes; hosted exact-source proof is NOT_PROVEN.
-- Production remains HOLD / NO TOUCH.
-
-## CURRENT RESUME POINTER
-- START FROM THE FINAL HEAD CREATED BY THIS STATE WRITE-BACK.
-- UI FRONT: verify Control Plane at desktop/tablet/mobile and verify every live structure anchor; verify boundary tiles remain non-actionable; verify Customer Portal unaffected.
-- CORE FRONT: consume application-quality/security/domain/migration/concurrency/Test-the-Test results for the exact final SHA.
-- BROWSER/DEPLOY: obtain a deployment whose metadata exactly equals the final SHA before claiming runtime PASS.
-- DO NOT REPEAT: previously proven barcode/quick-order foundations unless current gates detect regression.
-
-## FINAL STATE WRITE-BACK — 2026-09-25
-- Source head before this state commit: `25327bdddf126bc81e65309d58d8ab86836684fa`.
-- The UI/structure wave is complete at implementation level for this session: premium Control Plane, full structure manifests, centralized role visibility, admin deep links, SPA fallback, and structure-driven Command Palette.
-- Exact runtime/CI certification is intentionally not claimed until the current final SHA has fresh passing evidence.
-
-## CURRENT RESUME POINTER
-- START FROM THE ACTUAL HEAD CREATED BY THIS STATE WRITE-BACK.
-- UI: exact-SHA browser verification of Admin Control Plane, all live workspace anchors, role visibility, RTL, desktop/tablet/mobile, keyboard/focus states.
-- Customer: regression verification for catalog, barcode/quick-order, cart, checkout, orders, finance, templates, account, notifications, offline recovery.
-- Core: consume quality/security/domain/migration/concurrency/Test-the-Test results and repair regressions found by them.
-- Hosting: deploy the exact final SHA on a free host; verify deployment metadata matches the SHA before browser proof.
-- Production: HOLD / NO TOUCH.
