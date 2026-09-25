@@ -566,3 +566,19 @@ The customer portal previously exposed only order summaries and reorder behavior
 - Repair only failures demonstrated at the exact SHA under test.
 - Continue remaining customer mobile/accessibility and nested admin recovery/detail work only where existing contracts provide real behavior.
 - Continue SECURITY DEFINER classification and semantic consolidation/reference verification of the 50 mapped legacy Markdown sources.
+
+## Run 2026-09-25 — Retry-safe core + customer accessibility
+### Implemented
+- Preserved transaction idempotency keys across retries for finance, purchasing, receiving, inventory transfer and stock-count start operations; keys rotate only after success.
+- Added a shared customer modal keyboard/focus contract across product details, order details, quick order, Excel review and cart drawer: focus containment, Escape handling and focus restoration.
+
+### Verification boundary
+- Implementation HEAD: `46dde3758becee9f5f0ab514928bf0e764e653eb`.
+- Current GitHub Action runs are queued; current-SHA PASS remains NOT_PROVEN.
+- Vercel remains externally rate-limited/protected; no hosted browser PASS is claimed.
+- Production remains NO TOUCH.
+
+### Remaining
+- Consume current-SHA quality/migration/security/domain/concurrency/Test-the-Test/browser evidence.
+- Repair only exact-SHA failures.
+- Continue remaining customer/admin closure where existing contracts provide real functionality; do not fabricate unsupported domains.

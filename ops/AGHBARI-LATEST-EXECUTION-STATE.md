@@ -69,3 +69,12 @@ This documentation checkpoint records the latest verified code checkpoint before
 - Exact-SHA verification for this SHA is queued/not proven. No PASS transfer.
 - Production remains NO TOUCH.
 - Next resume: inspect actual branch HEAD first, consume current-SHA workflows, then repair the first demonstrated failure before further proof.
+
+
+## 2026-09-25 — Latest implementation checkpoint
+- Actual implementation SHA: `46dde3758becee9f5f0ab514928bf0e764e653eb`.
+- Customer modal accessibility is now covered for product detail, order detail, quick order, Excel review and cart drawer.
+- Transaction idempotency keys for finance/purchasing/receiving/inventory initiation survive retries and rotate after success.
+- Exact-SHA CI is pending/queued; PASS is NOT_PROVEN.
+- Production remains NO TOUCH.
+- Resume from the actual branch HEAD, then consume the exact-SHA verification queue before claiming any completion state.

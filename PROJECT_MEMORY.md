@@ -274,3 +274,10 @@ Command "1" means:
 - Staff order detail, purchase receipt detail and finance invoice detail now load persisted line-level records and histories using current tenant-scoped tables/services.
 - Finance payment and expense writes now use organization-scoped idempotency keys through migration `20260925050000_finance_idempotency.sql`.
 - Exact-SHA CI for this implementation HEAD is queued/not proven; no PASS or certification is claimed. Production remains NO TOUCH.
+
+## 2026-09-25 — Retry-safe core + customer accessibility checkpoint
+- Actual implementation HEAD: `46dde3758becee9f5f0ab514928bf0e764e653eb`.
+- Finance payment/expense idempotency keys now persist across UI retries and rotate only after successful completion.
+- Purchase-order, receiving, inventory-transfer and stock-count initiation idempotency keys now persist across retries and rotate after successful completion.
+- Customer product/order/quick-order/Excel/cart modal surfaces now share keyboard focus containment, Escape close and trigger-focus restoration behavior.
+- Exact-SHA CI remains pending/queued; no PASS or certification is claimed. Production remains NO TOUCH.
