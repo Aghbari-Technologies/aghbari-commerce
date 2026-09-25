@@ -285,3 +285,12 @@ Command "1" means:
 - Staff top chrome now uses the Aghbari brand and responsive RTL presentation.
 - UI implementation commits for this wave: `cf0798a02a593a4917be60c77e1ce59da4b04d87`, `e56945578ccf8a487e7a36d52e171e6a8f479fff`, `56b43e1e11d056f7c58f5f947cd72fe9c6b05abd`, `1f88db47c4b0267e4b837f5c33e38fdcd92b8a2f`, `ee960bb33b3c2b21f0892477bb07c8248a2072c0`.
 - This is implementation progress, not exact-SHA certification; fresh CI/browser/deployment evidence is still required.
+
+## 25. LEGACY V2 STRUCTURE RECONCILIATION — 2026-09-25
+- The supplied legacy v2.0 Admin information architecture has been encoded into `src/structure/admin-structure.ts` without restoring the old brand as active product identity.
+- Structure entries carry `path`, `permission`, `actions`, and status: `live`, `boundary`, or `contract-gap`.
+- Current live Commerce workspaces are linked to their existing AdminPanel anchors; unsupported legacy items are explicitly bounded instead of rendered as fake features.
+- Customer Portal capabilities are encoded in `src/structure/customer-structure.ts`.
+- Current staff-role visibility is centralized in `src/structure/role-matrix.ts` and remains only a presentation contract; Supabase/RLS/server authorization remains authoritative.
+- Admin deep-link resolution is encoded through `adminTargetForPath()` and Vercel SPA fallback routing.
+- The supplied AI/advanced-reporting/Developer AI/Onyx analytical list is treated as legacy structural input and boundary documentation, not permission to move BI or external analytical snapshots into Commerce transactional truth.
