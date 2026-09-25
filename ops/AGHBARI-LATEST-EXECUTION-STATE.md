@@ -1,60 +1,59 @@
 # 🔴 AGHBARI LATEST EXECUTION STATE
 
 **Project:** Aghbari Commerce | الأغبري  
-**Actual Git HEAD verified immediately before this checkpoint write-back:** `48fe6ea53c327adb4b2c7cbf6680c24828276e0c`  
+**Actual Git HEAD verified immediately before this checkpoint write-back:** `2e6bbd5921e698ff950c861a5300ae6f43aa4b4a`  
 **Branch:** `main`  
 **Production:** HOLD / NO TOUCH  
 **Certification:** NOT CLAIMED
 
 ## Current Reality
-- Aghbari Commerce only. Report-Advisor/BI is outside this scope.
-- The latest implementation wave is UI-first but contract-backed; no new transactional authority was invented.
-- Customer Portal now covers Account, Notifications, Recovery, deep product detail, verified order detail/tracking, cart/checkout readiness and URL-resumable navigation.
-- Admin/Staff now includes deeper Catalog creation, Purchasing multi-line entry, Receiving links, Inventory low-stock action links, Finance invoice detail, Governance detail/pagination and Access detail.
-- Exact current-head build/browser/certification remain unproven until the queued exact-SHA workflows and an exact-source hosted runtime complete.
+- Scope: Aghbari Commerce only.
+- The current implementation wave closes major nested UI paths without inventing transactional contracts.
+- Customer Portal now has catalog, product detail, cart, checkout readiness, orders/detail/tracking, reorder/templates, account, notifications and offline recovery surfaces.
+- Admin/Staff now has Catalog creation/detail, Purchasing multi-line creation, Receiving multi-line intake, Inventory action links, Finance invoice detail, Governance detail/pagination and Access detail.
+- Exact-SHA build/browser/runtime/certification remain pending the current-head GitHub gates and an exact-source deployment.
 
-## Latest UI Completion Wave
-### Customer Portal
-- Account workspace with customer context, finance shortcut and recovery center.
-- Notifications workspace backed by the canonical notification read RPC.
-- Order workspace now uses the dedicated order-history component and verified detail service for line items + status timeline.
-- Product cards open a full detail surface with quantity-aware add-to-cart and authorized tier visibility.
-- Cart has explicit clear action, checkout readiness and overlay Dialog semantics.
-- Quick Order remains identifier-based and backend-backed; all top customer overlays support Escape dismissal.
+## Latest Implementation
+### Customer
+- Exact product detail with quantity-aware add-to-cart.
+- Verified order detail service + tracking timeline.
+- URL hash + Back/Forward synchronization.
+- Quick Order exact SKU/Barcode resolution through the canonical catalog RPC when local data is insufficient.
+- Account + Notifications + Recovery Center.
+- Explicit dialog semantics and Escape dismissal for customer overlays.
 
 ### Admin / Staff
-- Catalog has real product creation plus edit/activation/bulk state controls.
-- Purchasing has a dynamic multi-line builder aligned with the existing 200-line service boundary.
-- Approved purchase orders link directly to receiving; low-stock inventory links directly to transfer.
-- Finance invoice history exposes record details; Governance audit/outbox and Access directories expose progressive detail views.
+- Real Catalog product creation and product detail inspection.
+- Dynamic purchase-order builder with up to 200 unique lines.
+- Dynamic receiving builder with up to 200 unique remaining PO lines and per-line remaining-quantity validation.
+- Governance audit pagination/details, Outbox detail, Staff Access detail.
+- Low-stock → transfer and PO → receiving direct workflow links.
+- Product image URL cache capped at 250 entries.
 
 ## Exact-SHA Evidence
 | Check | Result | SHA |
 |---|---|---|
-| Latest implementation head before checkpoint write-back | PROVEN | `48fe6ea53c327adb4b2c7cbf6680c24828276e0c` |
-| Latest UI changes | IMPLEMENTED | current wave |
-| GitHub Actions for latest head | QUEUED | `48fe6ea53c327adb4b2c7cbf6680c24828276e0c` |
-| Vercel | FAILURE / RATE LIMITED | `48fe6ea53c327adb4b2c7cbf6680c24828276e0c` |
-| Build | NOT_PROVEN | `48fe6ea53c327adb4b2c7cbf6680c24828276e0c` |
-| Browser/runtime | NOT_PROVEN | `48fe6ea53c327adb4b2c7cbf6680c24828276e0c` |
-| Hosted exact-source match | NOT_PROVEN | `48fe6ea53c327adb4b2c7cbf6680c24828276e0c` |
-| Certification | NOT CLAIMED | `48fe6ea53c327adb4b2c7cbf6680c24828276e0c` |
+| Latest code implementation before docs checkpoint | PROVEN | `9be1ba2f5d21c23be993b022e0b1565c83b7f534` |
+| Latest documentation checkpoint capture | PROVEN | `2e6bbd5921e698ff950c861a5300ae6f43aa4b4a` |
+| GitHub Actions on latest source line | QUEUED | source line |
+| Vercel | FAILURE / DEPLOYMENT RATE LIMITED | latest source line |
+| Build | NOT_PROVEN | latest source line |
+| Browser/runtime | NOT_PROVEN | latest source line |
+| Hosted exact-source match | NOT_PROVEN | latest source line |
+| Certification | NOT CLAIMED | latest source line |
 
 ## CURRENT RESUME POINTER
-Continue from the implementation line above after this write-back.
+Continue from the latest main HEAD after this checkpoint. Do not restart older UI waves.
 
-UI FRONT:
-- Exercise the now-complete customer flow: catalog → product detail → cart → checkout → orders → verified detail/tracking → reorder/templates → account/notifications/recovery.
-- Exercise the admin flow: catalog create/edit → purchasing multi-line → approval → receiving → inventory transfer/count → finance invoice/payment/expense → governance/access.
-- Close only remaining contract-backed state/permission/responsive/accessibility edges.
+UI/front-end execution next:
+- Consume queued exact-SHA results and repair only proven regressions.
+- Exercise customer catalog → product detail → cart → checkout → orders/detail/tracking → reorder/templates → account/notifications/recovery.
+- Exercise admin catalog → purchasing multi-line → approval → receiving multi-line → inventory transfer/count → finance → governance/access.
+- Close only remaining contract-backed responsive, permission, loading, empty, error, success, offline and accessibility edges.
 
 PROOF:
-- Consume the exact current-head Actions results.
-- No PASS is inherited from older SHA values.
-- Use a deployment whose source metadata exactly matches the tested SHA for browser/runtime proof.
+- Fresh exact-SHA application quality, security, migration, domain, concurrency, Test-the-Test, order workflow and browser evidence are required after the final code checkpoint.
+- Never transfer PASS/evidence from older SHA values.
 
 ## PRODUCTION
 HOLD / NO TOUCH.
-
-## NON-REGRESSION RULE
-Do not restart closed surfaces. Reopen only when code/dependency/environment/requirement/evidence/security posture changes.
