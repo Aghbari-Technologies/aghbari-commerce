@@ -32,3 +32,11 @@ docs/CANONICAL-DOCUMENT-SYSTEM.md identifies the legacy UI document that must be
 
 - Customer and Staff directories use the same progressive-disclosure rule: dense records expose a focused detail surface while the primary list remains scan-friendly.
 - Customer finance uses bounded pages for ledger movements; modal surfaces for product/order/quick-order/Excel workflows carry dialog semantics and remain compatible with keyboard dismissal patterns.
+
+## 2026-09-25 — Legacy v2.0 UI structure reconciled into Aghbari
+- The supplied بوابة العامري الذكية v2.0 information architecture is retained as a structural reference, but the active brand and product boundary are الأغبري | Aghbari Commerce.
+- The executable UI hierarchy is represented by src/structure/admin-structure.ts and src/structure/customer-structure.ts.
+- Admin deep-link paths are mapped to real current workspaces by adminTargetForPath() and served through the Vite entry via vercel.json.
+- Live items are wired to existing Commerce workspaces; external/boundary items remain visible as explicit scope boundaries rather than fake features.
+- Promotions is retained as a documented contract gap until a canonical business/data contract exists.
+- Advanced BI/AI, legacy Onyx analytical snapshots, Developer AI and unrelated operational surfaces remain outside Commerce transactional truth unless a separate canonical contract exists.
