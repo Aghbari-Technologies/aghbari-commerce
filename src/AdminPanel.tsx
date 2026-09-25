@@ -28,7 +28,7 @@ import SupplierLedgerPanel from './SupplierLedgerPanel';
 import InventoryActivityPanel from './InventoryActivityPanel';
 import RecordDetailDrawer from './RecordDetailDrawer';
 import './admin-executive-dashboard.css';
-import { adminTargetForPath } from './structure/admin-structure';
+import { adminTargetForPath, getAdminStructureForRole } from './structure/admin-structure';
 
 interface StaffProduct { id: string; sku: string; name: string; unit: string; }
 interface Warehouse { id: string; name: string; }
@@ -78,25 +78,10 @@ export default function AdminPanel({ role }: { role: UserRole }) {
   const canInventory = role === 'owner' || role === 'admin' || role === 'warehouse';
   const canOrderWorkflow = STAFF_ROLES.has(role);
   const canFinance = ['owner', 'admin', 'sales'].includes(role);
-  const commands = [
-    ['الطلبات وسير العمل', '#admin-orders', canOrderWorkflow],
-    ['العملاء', '#admin-customers', canCatalog],
-    ['إضافة منتج', '#admin-product-create', canCatalog],
-    ['التصنيفات', '#admin-category-create', canCategory],
-    ['التسعير', '#admin-pricing', canCatalog],
-    ['صور المنتجات', '#admin-product-image', canCatalog],
-    ['الاستيراد الآمن', '#admin-import', canCatalog],
-    ['المخزون', '#admin-inventory', canInventory],
-    ['نشاط المخزون', '#admin-inventory-activity', canInventory],
-    ['المستودعات والفروع', '#admin-warehouses', canInventory],
-    ['المشتريات والموردون', '#admin-purchasing', canInventory],
-    ['المالية', '#admin-finance', canFinance],
-    ['التصدير', '#admin-export', canInventory],
-    ['الإشعارات', '#admin-notifications', canOrderWorkflow],
-    ['التدقيق والتكاملات', '#admin-governance', canOrderWorkflow],
-    ['الأدوار والصلاحيات', '#admin-access', canOrderWorkflow],
-    ['إعدادات العميل', '#admin-settings', canCategory]
-  ] as const;
+  const commands = getAdminStructureForRole(role)
+    .flatMap((group) => group.items
+      .filter((item) => item.status === 'live' && item.target)
+      .map((item) => [item.label, item.target, true]));
   const visibleCommands = commands.filter(([label, , allowed]) => allowed && (label.includes(commandQuery.trim()) || !commandQuery.trim()));
   const visibleOrders = useMemo(() => {
     const needle = orderQuery.trim().toLowerCase();
