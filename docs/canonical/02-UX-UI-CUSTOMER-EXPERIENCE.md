@@ -19,3 +19,10 @@ Every meaningful action must terminate in real state and real persistence or a d
 
 ## Canonical source merge register
 docs/CANONICAL-DOCUMENT-SYSTEM.md identifies the legacy UI document that must be merged before retirement.
+
+
+## 2026-09-25 — Deep operational UI rule
+
+- Dense operational records must expose progressive disclosure instead of forcing every field into the table/list. Where the current backend contract supports it, rows open an accessible read-only detail drawer with Escape/backdrop close, focus entry, responsive fields and reduced-motion behavior.
+- Operational collections use bounded page sizes and reset pagination when the active tab/filter/search changes. The UI must not imply that the first loaded page is the complete dataset.
+- Detail drawers are presentation-only unless an existing service/RPC mutation contract is already available; no new backend authority is fabricated to make a screen look complete.
