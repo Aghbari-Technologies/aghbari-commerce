@@ -228,7 +228,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
 
   return (
     <section
-      className="control-plane-dashboard"
+      className="control-plane-dashboard"\n      id="admin-dashboard"
       dir="rtl"
       aria-label="لوحة التحكم الرئيسية للأغبري"
       aria-busy={loading}
