@@ -1,85 +1,60 @@
 # 🔴 AGHBARI LATEST EXECUTION STATE
 
 **Project:** Aghbari Commerce | الأغبري  
-**Implementation HEAD before state write-back:** `6f0a489e7b2e90eccb1bd83fd1075514c1b07e92`  
+**Actual Git HEAD verified immediately before this checkpoint write-back:** `48fe6ea53c327adb4b2c7cbf6680c24828276e0c`  
 **Branch:** `main`  
 **Production:** HOLD / NO TOUCH  
 **Certification:** NOT CLAIMED
 
 ## Current Reality
-- Main implementation advanced through the latest customer + operational UI closure wave.
-- The code implementation baseline immediately before this state write-back is `6f0a489e7b2e90eccb1bd83fd1075514c1b07e92`.
-- Scope remains Aghbari Commerce only; Report-Advisor is outside scope.
-- No invented transactional contracts were introduced in this UI wave.
-- Exact-SHA build/browser/runtime/certification are not claimed until fresh evidence is bound to the resulting main state.
+- Aghbari Commerce only. Report-Advisor/BI is outside this scope.
+- The latest implementation wave is UI-first but contract-backed; no new transactional authority was invented.
+- Customer Portal now covers Account, Notifications, Recovery, deep product detail, verified order detail/tracking, cart/checkout readiness and URL-resumable navigation.
+- Admin/Staff now includes deeper Catalog creation, Purchasing multi-line entry, Receiving links, Inventory low-stock action links, Finance invoice detail, Governance detail/pagination and Access detail.
+- Exact current-head build/browser/certification remain unproven until the queued exact-SHA workflows and an exact-source hosted runtime complete.
 
-## UI Work Completed
+## Latest UI Completion Wave
 ### Customer Portal
-- Product cards now expose explicit full product-detail inspection with quantity-aware add-to-cart.
-- Cart drawer now has bounded clear-cart action and a checkout readiness strip showing confirmed lines, connectivity and payment mode.
-- Saved-order navigation label corrected to `المحفوظة`.
-- Product detail and checkout surfaces received responsive styling without new dependencies.
+- Account workspace with customer context, finance shortcut and recovery center.
+- Notifications workspace backed by the canonical notification read RPC.
+- Order workspace now uses the dedicated order-history component and verified detail service for line items + status timeline.
+- Product cards open a full detail surface with quantity-aware add-to-cart and authorized tier visibility.
+- Cart has explicit clear action, checkout readiness and overlay Dialog semantics.
+- Quick Order remains identifier-based and backend-backed; all top customer overlays support Escape dismissal.
 
-### Catalog
-- Added real new-product creation form using existing canonical `upsertProduct` service/RPC contract.
-- Creation surface includes SKU/name/unit/barcode/category/description, bounded barcode input and explicit persistence messaging.
-
-### Purchasing / Receiving
-- Approved and partially received purchase-order rows now link directly to the existing receiving workspace.
-- No receiving backend contract was invented.
-
-### Inventory
-- Low-stock rows now prefill the real transfer workspace with product/source and scroll into the action area.
-
-### Finance
-- Invoice history rows now expose record-level details using the shared accessible detail drawer.
-
-### Cross-cutting
-- Reused the existing Aghbari design system and shared RecordDetailDrawer; no parallel UI system was created.
-
-## Current Existing Operational Surface
-The current application already composes Admin operational areas for dashboard/orders/catalog/categories/pricing/customers/inventory/history/warehouses/purchasing/receiving/suppliers/finance/export/customer-portal settings/notifications/governance/access. Existing components and service contracts are the implementation boundary; missing contracts are not to be fabricated.
+### Admin / Staff
+- Catalog has real product creation plus edit/activation/bulk state controls.
+- Purchasing has a dynamic multi-line builder aligned with the existing 200-line service boundary.
+- Approved purchase orders link directly to receiving; low-stock inventory links directly to transfer.
+- Finance invoice history exposes record details; Governance audit/outbox and Access directories expose progressive detail views.
 
 ## Exact-SHA Evidence
 | Check | Result | SHA |
 |---|---|---|
-| Implementation baseline before state write-back | PROVEN | `6f0a489e7b2e90eccb1bd83fd1075514c1b07e92` |
-| Latest UI changes | IMPLEMENTED | implementation series above |
-| GitHub Actions | NOT_REPROVEN_FOR_FINAL_STATE | post-wave exact SHA |
-| Build | NOT_PROVEN | post-wave exact SHA |
-| Browser/runtime | NOT_PROVEN | post-wave exact SHA |
-| Hosted deployment source match | NOT_PROVEN | post-wave exact SHA |
-| Certification | NOT CLAIMED | post-wave exact SHA |
-
-## Open UI Frontier
-1. Catalog: deepen product rows/forms/details, validation, permissions, empty/error/loading and mobile operation.
-2. Purchasing/Receiving: deepen supplier/order/detail/approval/receiving flows and their state matrix.
-3. Inventory: deepen barcode-first, transfer, stock count, thresholds and low-stock operational views.
-4. Finance: deepen invoice/payment/expense/cash-account flows and record detail states.
-5. Customer Portal: deepen catalog → product detail → cart → checkout → orders → tracking → reorder/templates/quick-order → account/notifications/offline recovery.
-6. Apply the same state matrix to all existing surfaces without creating a second design system.
-
-## Core / Security / QA Frontier
-- Keep existing service/RPC contracts authoritative.
-- Continue exact-SHA security, quality and Test-the-Test gates after implementation.
-- Browser proof must target a deployment whose source metadata exactly matches the tested SHA.
+| Latest implementation head before checkpoint write-back | PROVEN | `48fe6ea53c327adb4b2c7cbf6680c24828276e0c` |
+| Latest UI changes | IMPLEMENTED | current wave |
+| GitHub Actions for latest head | QUEUED | `48fe6ea53c327adb4b2c7cbf6680c24828276e0c` |
+| Vercel | FAILURE / RATE LIMITED | `48fe6ea53c327adb4b2c7cbf6680c24828276e0c` |
+| Build | NOT_PROVEN | `48fe6ea53c327adb4b2c7cbf6680c24828276e0c` |
+| Browser/runtime | NOT_PROVEN | `48fe6ea53c327adb4b2c7cbf6680c24828276e0c` |
+| Hosted exact-source match | NOT_PROVEN | `48fe6ea53c327adb4b2c7cbf6680c24828276e0c` |
+| Certification | NOT CLAIMED | `48fe6ea53c327adb4b2c7cbf6680c24828276e0c` |
 
 ## CURRENT RESUME POINTER
-START FROM `05fb418931d7563e12a0736453b239a7016fee00` — actual `main` HEAD.
+Continue from the implementation line above after this write-back.
 
 UI FRONT:
-- Continue deep closure of Catalog → Purchasing/Receiving → Inventory → Finance.
-- Then deep closure of Customer Catalog → Product Detail → Cart → Checkout → saved/reorder flows.
-- For each, inspect and strengthen real interactions and all applicable state/permission/responsive/accessibility paths.
+- Exercise the now-complete customer flow: catalog → product detail → cart → checkout → orders → verified detail/tracking → reorder/templates → account/notifications/recovery.
+- Exercise the admin flow: catalog create/edit → purchasing multi-line → approval → receiving → inventory transfer/count → finance invoice/payment/expense → governance/access.
+- Close only remaining contract-backed state/permission/responsive/accessibility edges.
 
 PROOF:
-- Do not transfer PASS/evidence from any other SHA.
-- Current SHA has no workflow run reported.
+- Consume the exact current-head Actions results.
+- No PASS is inherited from older SHA values.
+- Use a deployment whose source metadata exactly matches the tested SHA for browser/runtime proof.
 
-DO NOT REPEAT:
-- Do not restart the control-plane/18-section composition.
-- Do not invent Promotions/BI/reporting transactional contracts.
-- Do not claim browser/build/certification without exact-SHA evidence.
-
-PRODUCTION:
+## PRODUCTION
 HOLD / NO TOUCH.
+
+## NON-REGRESSION RULE
+Do not restart closed surfaces. Reopen only when code/dependency/environment/requirement/evidence/security posture changes.
