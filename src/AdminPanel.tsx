@@ -79,11 +79,11 @@ export default function AdminPanel({ role }: { role: UserRole }) {
   const canOrderWorkflow = STAFF_ROLES.has(role);
   const canFinance = ['owner', 'admin', 'sales'].includes(role);
   const canAdmin = role === 'owner' || role === 'admin';
-  const commands = getAdminStructureForRole(role)
+  const commands: Array<[string, string]> = getAdminStructureForRole(role)
     .flatMap((group) => group.items
-      .filter((item) => item.status === 'live' && item.target)
-      .map((item) => [item.label, item.target, true]));
-  const visibleCommands = commands.filter(([label, , allowed]) => allowed && (label.includes(commandQuery.trim()) || !commandQuery.trim()));
+      .filter((item) => item.status === 'live' && Boolean(item.target))
+      .map((item) => [item.label, item.target!] as [string, string]));
+  const visibleCommands = commands.filter(([label]) => label.includes(commandQuery.trim()) || !commandQuery.trim());
   const visibleOrders = useMemo(() => {
     const needle = orderQuery.trim().toLowerCase();
     return orders.filter((order) => (orderStatusFilter === 'all' || order.status === orderStatusFilter) && (!needle || String(order.order_number).includes(needle) || String(order.customer_name ?? '').toLowerCase().includes(needle) || String(STATUS_LABELS[order.status] ?? order.status).toLowerCase().includes(needle)));

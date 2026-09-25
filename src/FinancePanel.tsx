@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { supabase } from './lib/supabase';
 import { createCashAccount, createInvoiceFromOrder, getCashBalances, getInvoices, recordExpense, recordPayment, type CashBalance, type OperationalInvoice } from './services/finance';
+import RecordDetailDrawer from './RecordDetailDrawer';
 
 type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer';
 type PaymentMethod = 'cash' | 'bank_transfer' | 'card' | 'other';

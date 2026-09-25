@@ -101,7 +101,7 @@ export default function CustomerOrdersPanel({
       :<><div className={`orders-list ${density==='compact'?'is-compact':''}`}>{visible.map(order=>{
         const progress=statusProgress(order.status);
         return <article className="order-card" key={order.id}>
-          <div className="order-head"><div><span className="eyebrow">طلب B2B</span><strong>طلب #{order.order_number}</strong><small>{order.customer_name ?? 'حساب العميل'} · {new Date(order.created_at).toLocaleString('ar-YE')}</small></div><strong>{Number(order.total).toLocaleString('ar-YE')} {order.currency}</strong></div>
+          <div className="order-head"><div><span className="eyebrow">طلب B2B</span><strong>طلب #{order.order_number}</strong><small>{'حسابك الحالي'} · {new Date(order.created_at).toLocaleString('ar-YE')}</small></div><strong>{Number(order.total).toLocaleString('ar-YE')} {order.currency}</strong></div>
           <div className="order-status" data-status={order.status}>{STATUS_LABELS[order.status]??order.status}</div>
           {progress >= 0 && <div className="customer-order-timeline" aria-label={`تقدم الطلب: ${STATUS_LABELS[order.status]??order.status}`}>
             {STATUS_ORDER.map((step,index)=><div className={index < progress ? 'is-complete' : index === progress-1 ? 'is-current' : ''} key={step}><span aria-hidden="true">{index < progress ? '✓' : index + 1}</span><small>{STATUS_LABELS[step]}</small></div>)}

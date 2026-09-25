@@ -28,6 +28,8 @@ export default function CatalogManagementPanel({ role }: { role: UserRole }) {
   const [message,setMessage] = useState<string|null>(null);
   const [editing,setEditing] = useState<ProductRow|null>(null);
   const [draft,setDraft] = useState({sku:'',name:'',unit:'',barcode:'',categoryId:'',description:'',status:'active' as ProductStatus});
+  const [createDraft,setCreateDraft] = useState({sku:'',name:'',unit:'حبة',barcode:'',categoryId:'',description:'',status:'active' as ProductStatus});
+  const [selectedProduct,setSelectedProduct] = useState<ProductRow|null>(null);
   const [selectedIds,setSelectedIds] = useState<string[]>([]);
   const [bulkStatus,setBulkStatus] = useState<ProductStatus>('inactive');
   const [bulkBusy,setBulkBusy] = useState(false);
