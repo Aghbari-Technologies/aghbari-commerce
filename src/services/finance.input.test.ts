@@ -18,8 +18,8 @@ describe('finance input boundaries', () => {
     expect(() => validateExpenseInput(branch, cash, 123 as unknown as string, 10, 'YER', '')).toThrow();
     expect(() => validateExpenseInput(branch, cash, 'تشغيل', 10, 'YER', 123 as unknown as string)).toThrow();
     expect(() => validatePaymentInput(123 as unknown as string, 100, 'cash', cash, 'ref')).toThrow();
-    expect(() => validatePaymentInput(invoice, 100, 123 as unknown as string, cash, 'ref')).toThrow();
-    expect(() => validatePaymentInput(invoice, 100, 'cash', cash, 123 as unknown as string)).toThrow();
+    expect(() => validatePaymentInput(invoice, 100, 123 as unknown as string, cash, 'ref', 'payment-key-123456')).toThrow();
+    expect(() => validatePaymentInput(invoice, 100, 'cash', cash, 123 as unknown as string, 'payment-key-123456')).toThrow();
   });
   it('rejects invalid currency and negative opening balance', () => {
     expect(() => validateCashAccountInput(branch, 'Cash', 'Y', 0)).toThrow();
@@ -45,7 +45,13 @@ describe('finance input boundaries', () => {
     expect(() => validatePaymentInput(invoice, Number.MAX_SAFE_INTEGER + 1, 'cash', cash, 'ref')).toThrow();
     expect(() => validatePaymentInput(invoice, 100, 'cash', 'bad', 'ref')).toThrow();
   });
-  it('rejects overlong payment references', () => expect(() => validatePaymentInput(invoice, 100, 'cash', cash, 'x'.repeat(201))).toThrow());
+  it('rejects missing, short, and overlong payment idempotency keys', () => {
+    expect(() => validatePaymentInput(invoice, 100, 'cash', cash, 'ref', 'payment-key-123456')).toThrow();
+    expect(() => validatePaymentInput(invoice, 100, 'cash', cash, 'ref', 'short')).toThrow();
+    expect(() => validatePaymentInput(invoice, 100, 'cash', cash, 'ref', 'x'.repeat(129))).toThrow();
+    expect(() => validatePaymentInput(invoice, 100, 'cash', cash, 'ref', 'payment-key-123456')).not.toThrow();
+  });
+  it('rejects overlong payment references', () => expect(() => validatePaymentInput(invoice, 100, 'cash', cash, 'x'.repeat(201), 'payment-key-123456')).toThrow());
   it('accepts a valid expense', () => expect(() => validateExpenseInput(branch, cash, 'تشغيل', 250, 'YER', 'مصروف تشغيل')).not.toThrow());
   it('rejects malformed expense ids, empty category, invalid amount and currency', () => {
     expect(() => validateExpenseInput('bad', cash, 'تشغيل', 250, 'YER', '')).toThrow();
