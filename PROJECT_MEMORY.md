@@ -308,3 +308,14 @@ Command "1" means:
 - Low-stock inventory rows now link directly into the real transfer workspace; approved/partially-received purchase orders link directly into receiving.
 - No new transactional backend authority, Promotions surface, or BI/reporting source was introduced.
 - Current verification status remains implementation-only until fresh exact-SHA CI/browser/runtime evidence is available.
+
+
+## 26. UI CLOSURE RUN — 2026-09-25 — CUSTOMER / OPERATIONS DEEPENING
+- Customer Portal now exposes first-class Account, Notifications and Offline Recovery surfaces from the authenticated app, wired to the existing session/user and notification/offline contracts.
+- Customer Order history now uses the dedicated `CustomerOrdersPanel` plus `getCustomerOrderDetail` contract for verified order detail, line items and status timeline; detail presentation uses the shared RecordDetailDrawer.
+- Customer section navigation now persists via URL hash with `hashchange` + `popstate` handling and pushState, preserving browser back/forward semantics.
+- Customer overlays now have explicit dialog semantics; Escape closes the top active customer overlay. Successful order submission is now visibly acknowledged and dismissible.
+- Purchasing UI now matches its existing service contract by supporting a bounded multi-line purchase-order builder (up to 200 unique products) with client-side boundary validation before the canonical RPC call.
+- Governance audit now has bounded pagination and progressive detail drawers; Staff Access now exposes record details for organization users.
+- Catalog has a real new-product creation surface; Finance invoice rows expose detail; low-stock inventory links directly into transfer; approved/partial purchase orders link directly into receiving.
+- Current Vercel status remains an external deployment-rate-limit failure; exact GitHub workflow runs for the newest head are queued. No build/browser/certification PASS is claimed.
