@@ -357,3 +357,8 @@ Command "1" means:
 - Migration lineage is part of Commerce correctness: live object existence without repository/live migration provenance is treated as drift.
 - Live database snapshot now reports 60/60 public tables with RLS enabled; 0 public SECURITY DEFINER functions executable by anon; 62 executable by authenticated; all inspected public SECURITY DEFINER routines have an explicit empty search_path.
 - client_ui_settings UPDATE remains staff-gated; notifications read/update remain tenant/customer/recipient scoped.
+
+## 2026-09-25 — DURABLE CONTROL-PLANE AUTHORIZATION DECISION
+- client_ui_settings is an owner/admin control-plane resource, not a generic staff resource. Database RLS now enforces owner/admin for insert/update/delete while authenticated organization members retain scoped read access.
+- The Admin panel loading path now keeps default warehouse selection from becoming a reload dependency, avoiding repeated network fetches when the selection is initialized.
+- Live barcode catalog migration provenance is now recorded in supabase migration history; live object existence without migration provenance is a correctness defect.
