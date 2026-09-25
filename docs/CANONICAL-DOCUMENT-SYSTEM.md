@@ -80,7 +80,7 @@
 - docs/EXECUTION-STATE.md
 - docs/EVIDENCE-BATCH-2026-09-07-RPC-PRIVILEGE.md
 
-**Coverage:** 50/50 Markdown source documents are classified in the map. **Semantic consolidation is NOT certified complete:** each source still requires full-content merge/reconciliation before retirement.
+**Coverage:** 50/50 Markdown source documents are classified in the map. **Classification is complete; semantic consolidation is NOT certified complete:** each source still requires full-content merge/reconciliation before retirement. Current code execution does not treat classification as semantic merge proof.
 
 ## 3. MERGE METHOD — MANDATORY
 
