@@ -42,7 +42,7 @@
 
 ## Hosting Reality
 - Verified Vercel project for the Aghbari repository: `aghbari-commerce-c2dd`.
-- Latest observed READY production deployment is tied to `24a6e33ccf8fe39fd1a2e55476764ce1dba88252` or subsequent historical commits depending on the current polling window; no evidence is transferred to `eff8b07f...` or the documentation HEAD.
+- Latest observed READY production deployment is exactly `24a6e33ccf8fe39fd1a2e55476764ce1dba88252`; no evidence is transferred to `eff8b07f...` or the documentation HEAD.
 - Do not promote or manufacture a production proof from an older deployment.
 - Historical `aghbari-commerce-web4` project metadata points at the wrong GitHub organization lineage; it is not an authority for this repository and is not used for current certification.
 
