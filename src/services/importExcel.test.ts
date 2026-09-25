@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { IMPORT_CONTRACT_VERSION, describe, expect, it } from 'vitest';
 import { parseProductWorkbook } from './importExcel';
 
 describe('XLSX import guardrails', () => {

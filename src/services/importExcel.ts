@@ -2,6 +2,8 @@ import readSheet from '../lib/read-excel-file-browser';
 import { fingerprintImport, MAX_IMPORT_ROWS, normalizeSku, validateImportRows, type ImportRow } from '../domain/import';
 import { requireSupabase } from '../lib/supabase';
 
+export const IMPORT_CONTRACT_VERSION = 'xlsx-v1' as const;
+
 const REQUIRED_HEADERS = ['SKU', 'Name', 'Unit', 'Category', 'Quantity', 'Retail Price', 'Wholesale Price', 'Distributor Price'];
 const MAX_WORKBOOK_BYTES = 20 * 1024 * 1024;
 const MAX_DATA_ROWS = MAX_IMPORT_ROWS;
@@ -88,7 +90,7 @@ export async function stageProductImport(file: File) {
     p_rows: parsed.rows
   });
   if (error) throw error;
-  return { ...parsed, jobId: assertUuid(data, 'استجابة تجهيز الاستيراد غير صالحة. لم يتم إنشاء مهمة استيراد موثوقة.') };
+  return { ...parsed, contractVersion: IMPORT_CONTRACT_VERSION, jobId: assertUuid(data, 'استجابة تجهيز الاستيراد غير صالحة. لم يتم إنشاء مهمة استيراد موثوقة.') };
 }
 
 export async function commitProductImport(importJobId: string, warehouseId: string) {
