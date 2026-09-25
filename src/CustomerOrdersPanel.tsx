@@ -48,7 +48,7 @@ export default function CustomerOrdersPanel({
     return orders
       .filter(order=>
         (status==='all'||order.status===status) &&
-        (!needle||String(order.order_number).includes(needle)||String(order.customer_name ?? '').toLocaleLowerCase().includes(needle)||order.status.toLocaleLowerCase().includes(needle)||String(STATUS_LABELS[order.status]??'').includes(needle))
+        (!needle||String(order.order_number).includes(needle)||order.status.toLocaleLowerCase().includes(needle)||String(STATUS_LABELS[order.status]??'').includes(needle))
       )
       .sort((a,b)=>{
         if(sort==='highest') return Number(b.total)-Number(a.total);
