@@ -1,6 +1,6 @@
 begin;
 
-select plan(14);
+select plan(18);
 
 -- Exposed SECURITY DEFINER functions must pin search_path to the safe value declared by the implementation.
 select is((select proconfig @> array['search_path=""'] from pg_proc where oid='public.adjust_inventory(uuid,uuid,integer,text)'::regprocedure), true, 'adjust_inventory pins search_path');
@@ -10,6 +10,8 @@ select is((select proconfig @> array['search_path=""'] from pg_proc where oid='p
 select is((select proconfig @> array['search_path=""'] from pg_proc where oid='public.commit_product_import(uuid,uuid)'::regprocedure), true, 'commit_product_import pins search_path');
 select is((select proconfig @> array['search_path=""'] from pg_proc where oid='public.set_product_price(uuid,customer_tier,numeric,text)'::regprocedure), true, 'set_product_price pins search_path');
 select is((select proconfig @> array['search_path=""'] from pg_proc where oid='public.transfer_inventory(uuid,uuid,text,jsonb,text)'::regprocedure), true, 'transfer_inventory pins search_path');
+select is((select proconfig @> array['search_path=""'] from pg_proc where oid='public.record_payment(uuid,numeric,public.payment_method,uuid,text,text)'::regprocedure), true, 'record_payment pins search_path');
+select is((select proconfig @> array['search_path=""'] from pg_proc where oid='public.record_expense(uuid,uuid,text,numeric,text,text,date,text)'::regprocedure), true, 'record_expense pins search_path');
 
 -- The application boundary must remain SECURITY DEFINER for the RPCs that
 -- cross RLS-controlled tables and enforce their own tenant/role guards.
@@ -20,6 +22,8 @@ select is((select prosecdef from pg_proc where oid='public.stage_product_import(
 select is((select prosecdef from pg_proc where oid='public.commit_product_import(uuid,uuid)'::regprocedure), true, 'commit_product_import remains SECURITY DEFINER');
 select is((select prosecdef from pg_proc where oid='public.set_product_price(uuid,customer_tier,numeric,text)'::regprocedure), true, 'set_product_price remains SECURITY DEFINER');
 select is((select prosecdef from pg_proc where oid='public.transfer_inventory(uuid,uuid,text,jsonb,text)'::regprocedure), true, 'transfer_inventory remains SECURITY DEFINER');
+select is((select prosecdef from pg_proc where oid='public.record_payment(uuid,numeric,public.payment_method,uuid,text,text)'::regprocedure), true, 'record_payment remains SECURITY DEFINER');
+select is((select prosecdef from pg_proc where oid='public.record_expense(uuid,uuid,text,numeric,text,text,date,text)'::regprocedure), true, 'record_expense remains SECURITY DEFINER');
 
 select * from finish();
 rollback;
