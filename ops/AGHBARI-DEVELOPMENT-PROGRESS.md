@@ -509,3 +509,38 @@ The customer portal previously exposed only order summaries and reorder behavior
 - Verification inherited from previous exact checkpoint is not transferred. Fresh CI for `2fae69ec7e274b92a895ade22561752ab495709b` is queued.
 - Production: NO TOUCH. Certification: NOT CLAIMED.
 - Vercel current external status: build-rate-limit visible; no hosted runtime PASS.
+
+## Run 2026-09-25 — Customer identifier, navigation, quick-order hardening
+
+### Start
+- Actual `main` HEAD at start of this write: `2c38777038af2a43fe5f7cbbc1be2161d1e1a365`.
+- Production: NO TOUCH.
+- Scope: Aghbari Commerce only.
+
+### Change
+- Customer Portal navigation now persists the active section in the URL hash and synchronizes Back/Forward navigation.
+- Customer product detail and cart drawer use explicit dialog semantics/labels; Escape closes the top active modal/drawer when safe.
+- Customer Quick Order now resolves an exact SKU or exact barcode through the canonical barcode-aware catalog RPC instead of depending only on the current page.
+- Excel quick-order review now resolves exact SKU or exact barcode through the same canonical catalog contract.
+- `src/services/catalog.ts` now consumes `get_catalog_with_barcode` and carries `barcode` in the client catalog contract.
+- `src/services/quickOrder.ts` now validates UUIDs, bounded idempotency keys, safe positive quantities, line count and duplicate product IDs before `apply_quick_order`.
+- Added `src/services/quickOrder.test.ts` covering normalization and rejection boundaries.
+- No alternate transaction source, Promotions surface, or new backend authority was introduced.
+
+### Root Cause
+- The live customer catalog already had a dedicated `get_catalog_with_barcode` RPC, but the frontend was using the older catalog return shape, so fast SKU/barcode workflows could not prove an exact barcode match.
+- Quick-order service accepted only a non-empty operation id, warehouse presence, and line count; malformed identifiers, duplicates and unsafe quantities reached the RPC boundary.
+
+### Proof / Verification
+- Exact current `main` verification after source changes: `eff8b07f625e57bb41648bfad8a682050cc92223` and `main ↔ SHA` compare returned `identical`.
+- Live Supabase check on project `mrcyqezbhpncuvaehwgf`: `get_catalog_with_barcode` exists; authenticated EXECUTE is true; anon EXECUTE is false; function uses `SET search_path TO ''`.
+- Isolated TypeScript type-check of the exact `quickOrder.ts` contract logic with a stubbed Supabase dependency passed in the execution container (`tsc --noEmit`, TypeScript 5.8.3). This is not a full application build.
+- GitHub exact-commit status for `eff8b07f...` currently reports no status entries; no CI PASS is claimed.
+- Vercel project `aghbari-commerce-c2dd` is correctly associated with GitHub org `Aghbari-Technologies`; the newest deployed production artifact observed remains behind the source HEAD, so hosted evidence is not transferred.
+
+### Remaining
+- Fresh exact-SHA CI/application quality, security, domain, migration, concurrency and Test-the-Test evidence for the current head.
+- Fresh hosted/browser evidence bound to the exact deployed source SHA.
+- Current Supabase Security Advisor classification queue: 62 authenticated-executable SECURITY DEFINER findings plus the external leaked-password-protection warning.
+- Full semantic reconciliation of the legacy Markdown corpus remains open; no source is retired merely for being old.
+- Certification/production remain HOLD / NO TOUCH.
