@@ -45,7 +45,7 @@ function requireUuid(value: string, field: string): string {
 
 function requireIdempotencyKey(value: string): string {
   const normalized = value.trim();
-  if (normalized.length < 16 || normalized.length > 200) throw new Error('مفتاح منع التكرار يجب أن يكون بين 16 و128 حرف.');
+  if (normalized.length < 16 || normalized.length > 128) throw new Error('مفتاح منع التكرار يجب أن يكون بين 16 و128 حرف.');
   return normalized;
 }
 
