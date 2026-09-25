@@ -632,3 +632,29 @@ The customer portal previously exposed only order summaries and reorder behavior
 - Consume exact final-head workflows after the current write-back.
 - Verify browser/runtime against a deployment whose source metadata matches the final SHA.
 - Continue remaining contract-backed UI/core gaps without fabricating Promotions or importing external BI/AI truth into Commerce.
+
+
+## Run 2026-09-25 — Customer + operational UI closure continuation
+
+### Functional implementation commits
+- `f5b5e98e1a3e880ca7b1928543261a73397b408b` — customer product detail surface, cart clearing, checkout readiness summary, saved-orders label correction.
+- `460c4c81d6d5ef286d9f3a777b7c9476df2e5721` — customer product-detail/checkout responsive styling.
+- `c29b2b9bcfd39d502743e04b9db1735e88f48326` — real Catalog product creation UI via existing canonical product RPC.
+- `26d828e35ace7fd8f968cd08eb103f881d383403` — catalog creation responsive styling.
+- `63d29c38539ab000780388e3bc18f7a035b17175` — Finance invoice detail drawer.
+- `cabf7f16b7a614f886933680e59c860495e0a5f2` — low-stock → transfer workspace linkage.
+- `6f0a489e7b2e90eccb1bd83fd1075514c1b07e92` — approved purchase order → receiving workspace linkage.
+
+### Scope
+- Aghbari Commerce only. Production: NO TOUCH. Certification: NOT CLAIMED.
+- No invented transactional contract, Promotions surface, or BI/reporting boundary change.
+
+### Verification boundary
+- Current code was inspected through GitHub exact refs and committed on `main`.
+- Fresh exact-SHA build/test/browser evidence is still required for the post-wave state; no prior PASS is transferred.
+- Hosted runtime proof remains blocked by the existing deployment/protection constraints unless a deployment with exact source metadata is available.
+
+### Next executable work
+- Consume exact current-head CI results when available and repair any regressions.
+- Continue nested contract-backed UI state closure, especially responsive/error/permission edges that remain in existing Admin and Customer surfaces.
+- Keep production HOLD / NO TOUCH until exact-SHA runtime/browser/certification gates are satisfied.
