@@ -233,3 +233,12 @@ Command "1" means:
 - Admin: dedicated Catalog, Category, Pricing, Customer, Purchasing, Receiving, Supplier, Warehouse, Inventory Ledger/Activity, Finance history, Notifications, Governance and Access workspaces are wired.
 - Deep read workspaces use current tenant-scoped operational contracts already present in Commerce; no Promotions surface was fabricated.
 - Vercel currently reports a deployment-rate-limit failure with a 24-hour retry window; this is not UI certification evidence.
+
+
+## 20. DURABLE UI CLOSURE DECISION — 2026-09-25
+
+- Shared component `src/RecordDetailDrawer.tsx` is the standard progressive-disclosure surface for dense operational records. It is accessible, responsive, Escape-dismissible and read-only by default.
+- Purchasing, receiving, inventory activity, finance history, pricing matrix, supplier ledger and warehouse directory now expose record-level detail where existing fields are already available.
+- Governance audit/outbox, notifications and organization access directories now use bounded pagination and reset page state when the active filter/search/tab changes.
+- Inventory activity pagination applies uniformly to transfers, stock-count sessions and reconciliations; no tab may bypass the active page window.
+- These UI improvements reuse existing tenant-scoped service/table/RPC contracts. No reporting, promotions or parallel transactional source of truth was introduced.
