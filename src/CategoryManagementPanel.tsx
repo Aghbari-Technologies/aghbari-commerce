@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getCategories, type CategoryOption } from './services/categories';
 import './category-management.css';
 
@@ -7,7 +7,7 @@ type UserRole='owner'|'admin'|'sales'|'warehouse'|'viewer';
 export default function CategoryManagementPanel({role}:{role:UserRole}){
   const canView=['owner','admin','sales'].includes(role);
   const [categories,setCategories]=useState<CategoryOption[]>([]); const [query,setQuery]=useState(''); const [loading,setLoading]=useState(true); const [error,setError]=useState<string|null>(null);
-  async function reload(){setLoading(true);setError(null);try{setCategories(await getCategories());}catch(e){setError(e instanceof Error?e.message:'تعذر تحميل التصنيفات.');}finally{setLoading(false);}}
+  const reload=useCallback(async()=>{setLoading(true);setError(null);try{setCategories(await getCategories());}catch(e){setError(e instanceof Error?e.message:'تعذر تحميل التصنيفات.');}finally{setLoading(false);}},[]);
   useEffect(()=>{void reload();},[]);
   const rows=useMemo(()=>{const needle=query.trim().toLocaleLowerCase();const map=new Map(categories.map(item=>[item.id,item]));const children=new Map<string|null,CategoryOption[]>();for(const item of categories){const key=item.parent_id&&map.has(item.parent_id)?item.parent_id:null;const bucket=children.get(key)??[];bucket.push(item);children.set(key,bucket);}const result:Array<{item:CategoryOption;level:number;children:number}>=[],seen=new Set<string>();const walk=(parent:string|null,level:number)=>{for(const item of [...(children.get(parent)??[])].sort((a,b)=>a.name.localeCompare(b.name,'ar'))){const direct=children.get(item.id)?.length??0;if(!needle||item.name.toLocaleLowerCase().includes(needle))result.push({item,level,children:direct});seen.add(item.id);walk(item.id,level+1);}};walk(null,0);for(const item of categories)if(!seen.has(item.id)&&(!needle||item.name.toLocaleLowerCase().includes(needle)))result.push({item,level:0,children:children.get(item.id)?.length??0});return result;},[categories,query]);
   if(!canView)return null; const roots=categories.filter(c=>!c.parent_id).length;
