@@ -79,6 +79,7 @@ export default function StaffAccessPanel({ role }: { role: UserRole }) {
   }
 
   return <section className="content-card operations-panel" id="access-control" aria-busy={loading}>
+    <div className="ops-metrics-strip" aria-label="ملخص الوصول"><article><small>الحسابات</small><strong>{users.length.toLocaleString("ar")}</strong><span>ضمن المنظمة</span></article><article><small>موظفون</small><strong>{users.filter(user=>!user.customer_id).length.toLocaleString("ar")}</strong><span>حسابات فريق</span></article><article><small>عملاء</small><strong>{users.filter(user=>Boolean(user.customer_id)).length.toLocaleString("ar")}</strong><span>حسابات مرتبطة</span></article><article><small>الدور الحالي</small><strong>{ROLE_LABELS[role]}</strong><span>سياق الجلسة</span></article></div>
     <div className="section-title">
       <div><span className="eyebrow">Access Control</span><h2>الأدوار والصلاحيات</h2><p className="panel-note">التغيير يمر عبر RPC الكانوني على الخادم؛ حسابات العملاء لا يمكن ترقيتها إلى Staff.</p></div>
       <span>{users.filter((user) => !user.customer_id).length} موظفين · {users.filter((user) => Boolean(user.customer_id)).length} عملاء</span>
