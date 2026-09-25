@@ -240,7 +240,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
           <p>واجهة تشغيل موحدة للمبيعات والعملاء والكتالوج والمخزون والمالية والحوكمة.</p>
         </div>
         <div className="control-plane-status">
-          <span className="system-status"><i aria-hidden="true">●</i> النظام يعمل</span>
+          <span className={`system-status ${error ? "is-error" : loading ? "is-loading" : ""}`}><i aria-hidden="true">●</i> {error ? "تحتاج المزامنة إلى تدخل" : loading ? "جاري تحديث المركز" : "المركز التشغيلي متاح"}</span>
           <span className="role-chip">{roleLabels[role]}</span>
           <button
             type="button"
@@ -270,7 +270,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
             {canCustomers && <a href="#admin-product-create">إضافة صنف <span>＋</span></a>}
             {canAdmin && <a href="#admin-settings">إعدادات العميل <span>⚙</span></a>}
             {canOrders && <a href="#admin-governance">مركز العمليات <span>⌁</span></a>}
-            <a href="#admin-catalog">المساعد التشغيلي <span>◉</span></a>
+            <a href="#admin-catalog">استكشاف الكتالوج <span>↗</span></a>
           </div>
 
           <section className="control-hero-grid">
