@@ -45,6 +45,7 @@ export default function CustomerPanel({ role }: { role: UserRole }) {
   const CUSTOMER_PAGE_SIZE = 12; const customerPages = Math.max(1, Math.ceil(visibleCustomers.length / CUSTOMER_PAGE_SIZE)); const activeCustomerPage = Math.min(customerPage, customerPages); const pagedCustomers = visibleCustomers.slice((activeCustomerPage - 1) * CUSTOMER_PAGE_SIZE, activeCustomerPage * CUSTOMER_PAGE_SIZE);
   if (!canCreate && !canManage) return null;
   return <div className="cart-panel" id="customers">
+    <div className="ops-metrics-strip" aria-label="ملخص العملاء"><article><small>إجمالي العملاء</small><strong>{customers.length.toLocaleString('ar')}</strong><span>الحسابات المحملة</span></article><article><small>نشط</small><strong>{customers.filter(c=>c.is_active).length.toLocaleString('ar')}</strong><span>يمكنه الشراء</span></article><article><small>موقوف</small><strong>{customers.filter(c=>!c.is_active).length.toLocaleString('ar')}</strong><span>خارج التشغيل</span></article><article><small>النتائج الحالية</small><strong>{visibleCustomers.length.toLocaleString('ar')}</strong><span>بعد الفلاتر</span></article></div>
     <div className="section-heading"><div><span className="eyebrow">العملاء</span><h2>دورة العميل</h2></div><span>{customers.length} عملاء</span></div>
     <div className="admin-grid">
       {canCreate && <form className="admin-card" onSubmit={(e) => { e.preventDefault(); void run(async () => { await createCustomer(name.trim(), phone.trim(), tier); setName(''); setPhone(''); }, 'تم إنشاء العميل وتسجيل أثر العملية.'); }}>
