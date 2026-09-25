@@ -20,6 +20,8 @@ export interface CatalogItem {
 const SIGNED_URL_TTL_SECONDS = 3600;
 const SIGNED_URL_REUSE_MS = 50 * 60 * 1000;
 const imageUrlCache = new Map<string, { url: string; expiresAt: number }>();
+const MAX_IMAGE_CACHE_ENTRIES = 250;
+function cacheImageUrl(path: string, value: { url: string; expiresAt: number }) { if (!imageUrlCache.has(path) && imageUrlCache.size >= MAX_IMAGE_CACHE_ENTRIES) { const oldest = imageUrlCache.keys().next().value as string | undefined; if (oldest) imageUrlCache.delete(oldest); } imageUrlCache.set(path, value); }
 
 function finiteNumber(value: unknown, fallback = 0): number {
   const parsed = typeof value === 'number' ? value : Number(value);
@@ -80,7 +82,7 @@ export async function getProductImageUrls(paths: Array<string | null>) {
     for (const [index, item] of (data ?? []).entries()) {
       const path = missing[index];
       if (!path || !item.signedUrl) continue;
-      imageUrlCache.set(path, { url: item.signedUrl, expiresAt: now + SIGNED_URL_REUSE_MS });
+      cacheImageUrl(path, { url: item.signedUrl, expiresAt: now + SIGNED_URL_REUSE_MS });
       result.set(path, item.signedUrl);
     }
   }
