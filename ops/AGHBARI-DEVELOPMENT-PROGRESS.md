@@ -677,3 +677,26 @@ The customer portal previously exposed only order summaries and reorder behavior
 - Fresh GitHub Actions for the latest source head are queued: application-quality, security-audit, migration proof, concurrency proof, domain proof, order workflow, Test-the-Test, bootstrap lockfile and exact browser deployment.
 - Vercel status is deployment-rate-limited for the newest source head. This is not an application failure and is not treated as runtime proof.
 - Production: NO TOUCH. Certification: NOT CLAIMED.
+
+
+## Run 2026-09-25 — Final UI closure wave of this session
+
+### Implemented
+- Customer Portal account, notifications and offline recovery surfaces integrated into `App.tsx`.
+- Customer order history upgraded to `CustomerOrdersPanel` + `getCustomerOrderDetail`, with shared detail drawer showing verified items and status timeline.
+- Customer URL navigation corrected to support hash + popstate Back/Forward behavior.
+- Customer Quick Order now performs exact local SKU matching first and canonical server SKU/Barcode resolution when the item is not loaded in the current catalog page.
+- Catalog management now includes progressive product detail inspection and real product creation.
+- Purchasing supports up to 200 unique order lines; receiving supports multiple remaining PO lines in a single canonical receive operation.
+- Governance audit has bounded pagination and progressive details; Staff Access has progressive user details.
+- Customer product/order/checkout styles, multi-line purchasing styles and account/notification/recovery presentation were added without new dependencies.
+- Product image URL cache is bounded to 250 entries.
+
+### Exact implementation line
+- Latest implementation commit before documentation write-back: `9be1ba2f5d21c23be993b022e0b1565c83b7f534`.
+- Additional UI commits in the same session include `edaa6e6d6eb740f74c54df9c5d214b5234a002a6`, `e0eee697604413b79f4d7f99d7b667a6b5d2b4bc`, `d443751b6e030c4ab300059b1b6e0ca12fee1cf5`, `88f7fca7db57250f6d9799ab1441a54f68cb16b6`, `93fa447978a96a0452a9482f6fcee976fcafd474`, `dd1eb3e5cceaeab0e8aa44aa7f3bae71b748c4b4`, `b36574a62606de7a7f6b07a4688fba505a380654` and prior session UI commits.
+
+### Verification boundary
+- GitHub Actions are triggered by push for the current branch line but exact latest results remain queued at checkpoint time.
+- Vercel reports deployment rate limiting; no hosted exact-source browser proof is claimed.
+- Production: NO TOUCH. Certification: NOT CLAIMED.
