@@ -12,6 +12,12 @@ export interface PurchaseOrderInput {
   notes?: string;
 }
 export interface ReceiveLineInput { purchaseOrderItemId: string; productId: string; quantity: number; }
+export interface PurchaseReceiptDetailItem {
+  id: string; purchase_order_item_id: string; product_id: string;
+  sku: string; name: string; unit: string; quantity_received: number;
+  unit_cost: number; line_total: number;
+}
+
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const CURRENCY_PATTERN = /^[A-Z]{3}$/;
@@ -127,4 +133,66 @@ export async function receivePurchaseOrder(input: { purchaseOrderId: string; ide
   });
   if (error) throw error;
   return data?.[0] ?? null;
+}
+
+
+export function assertPurchaseReceiptDetailItem(value: unknown): PurchaseReceiptDetailItem {
+  if (!value || typeof value !== 'object') throw new Error('بند إيصال الاستلام غير صالح.');
+  const item = value as Record<string, unknown>;
+  for (const [field,label] of [['id','معرّف البند'],['purchase_order_item_id','بند أمر الشراء'],['product_id','المنتج']] as const) {
+    if (typeof item[field] !== 'string' || !UUID_PATTERN.test(item[field] as string)) throw new Error(`${label} في إيصال الاستلام غير صالح.`);
+  }
+  for (const [field,label] of [['sku','SKU'],['name','اسم الصنف'],['unit','الوحدة']] as const) {
+    if (typeof item[field] !== 'string' || !(item[field] as string).trim()) throw new Error(`${label} في إيصال الاستلام غير صالح.`);
+  }
+  const quantity = typeof item.quantity_received === 'number' ? item.quantity_received : Number(item.quantity_received);
+  const unitCost = typeof item.unit_cost === 'number' ? item.unit_cost : Number(item.unit_cost);
+  const lineTotal = typeof item.line_total === 'number' ? item.line_total : Number(item.line_total);
+  if (!Number.isSafeInteger(quantity) || quantity < 1) throw new Error('كمية الاستلام غير صالحة.');
+  if (!Number.isFinite(unitCost) || unitCost < 0 || !Number.isFinite(lineTotal) || lineTotal < 0) throw new Error('قيمة بند الاستلام غير صالحة.');
+  return { id:item.id as string, purchase_order_item_id:item.purchase_order_item_id as string, product_id:item.product_id as string, sku:item.sku as string, name:item.name as string, unit:item.unit as string, quantity_received:quantity, unit_cost:unitCost, line_total:lineTotal };
+}
+
+export async function getPurchaseReceiptDetail(receiptId: string) {
+  const id = requireUuid(receiptId, 'إيصال الاستلام');
+  const client = requireSupabase();
+  const { data: receipt, error: receiptError } = await client.from('purchase_receipts').select('id,receipt_number,purchase_order_id,warehouse_id,received_by,received_at,notes').eq('id', id).maybeSingle();
+  if (receiptError) throw receiptError;
+  if (!receipt) throw new Error('إيصال الاستلام غير موجود أو غير متاح لهذا الحساب.');
+  const [{ data: items, error: itemsError }, { data: order, error: orderError }, { data: warehouse, error: warehouseError }] = await Promise.all([
+    client.from('purchase_receipt_items').select('id,purchase_order_item_id,product_id,quantity_received,unit_cost,line_total,products(sku,name,unit)').eq('receipt_id', id).order('created_at'),
+    client.from('purchase_orders').select('id,purchase_order_number,supplier_id,warehouse_id,total,currency').eq('id', receipt.purchase_order_id).maybeSingle(),
+    client.from('warehouses').select('id,name').eq('id', receipt.warehouse_id).maybeSingle()
+  ]);
+  if (itemsError) throw itemsError;
+  if (orderError) throw orderError;
+  if (warehouseError) throw warehouseError;
+  let supplierName = 'مورد غير معروف';
+  if (order?.supplier_id) {
+    const { data: supplier, error: supplierError } = await client.from('suppliers').select('id,name').eq('id', order.supplier_id).maybeSingle();
+    if (supplierError) throw supplierError;
+    supplierName = supplier?.name ?? supplierName;
+  }
+  const mappedItems = (items ?? []).map((row) => {
+    const value = row as Record<string, unknown>;
+    const productRelation = value.products as { sku?: string; name?: string; unit?: string } | Array<{ sku?: string; name?: string; unit?: string }> | null;
+    const product = Array.isArray(productRelation) ? productRelation[0] : productRelation;
+    return assertPurchaseReceiptDetailItem({
+      ...value,
+      sku:product?.sku ?? '—',
+      name:product?.name ?? 'صنف غير متاح',
+      unit:product?.unit ?? 'وحدة'
+    });
+  });
+  return {
+    ...receipt,
+    receipt_number:Number(receipt.receipt_number),
+    purchase_order_number:order?.purchase_order_number ? Number(order.purchase_order_number) : null,
+    supplier_name:supplierName,
+    warehouse_name:warehouse?.name ?? 'مستودع غير معروف',
+    purchase_order_total:order?.total == null ? null : Number(order.total),
+    currency:order?.currency ?? 'YER',
+    items:mappedItems,
+    total:mappedItems.reduce((sum,item)=>sum+item.line_total,0)
+  };
 }
