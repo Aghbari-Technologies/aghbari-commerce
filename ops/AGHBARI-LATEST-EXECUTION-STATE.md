@@ -75,3 +75,19 @@ DO NOT REPEAT:
 
 PRODUCTION:
 HOLD / NO TOUCH.
+
+## UI Wave — Premium Control Plane Rebuild — 2026-09-25
+- Latest source head entering this state write-back: `7f5d69ad9af30b0268380ba3486582917b837878`.
+- `src/AdminExecutiveDashboard.tsx` is now the primary Aghbari control-plane dashboard matching the supplied visual quality bar: RTL-first, premium card system, right-side operational rail, KPI/focus widgets, order status distribution, recent orders and direct section tiles.
+- Dashboard navigation targets existing real Aghbari workspaces only; no placeholder reporting/BI or Promotions surface was added.
+- `viewer` now routes to the staff control plane; server-side authorization remains authoritative.
+- Staff chrome is branded `الأغبري` and responsive.
+- Exact CI/build/browser/deployment evidence for this new head is still NOT_PROVEN.
+
+## CURRENT RESUME POINTER — AFTER UI REBUILD
+- Start from the final state-writeback HEAD created by this update.
+- UI: verify the control-plane dashboard at desktop/tablet/mobile, RTL keyboard navigation, each rail/tile anchor, loading/error states and role visibility.
+- Customer: verify catalog/order/finance/templates/account/notifications flows remain intact after staff-shell changes.
+- Proof: consume exact-SHA quality/security/domain/migration/concurrency/Test-the-Test/browser results for the final head only.
+- Hosting: verify Vercel/Netlify deployment metadata matches the final Git SHA before browser PASS.
+- Production: HOLD / NO TOUCH.
