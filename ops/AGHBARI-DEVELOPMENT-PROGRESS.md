@@ -735,3 +735,63 @@ The customer portal previously exposed only order summaries and reorder behavior
 - Supabase live payment runtime test: 13/13 planned assertions.
 - Current post-change GitHub Actions for the exact source head are queued; no CI PASS transferred.
 - Production remains HOLD / NO TOUCH; certification NOT CLAIMED.
+
+
+## Run 2026-09-25 — Full closure continuation: UI integrity + runtime efficiency + security classification
+
+### Start
+- Exact main HEAD entering this checkpoint chain: `feb55aeb4346e3abacf0752511c5c9da6591ae6a`.
+- Production: NO TOUCH.
+- Certification: NOT CLAIMED.
+
+### Implemented
+- Fixed Admin Panel JSX integrity and restored the missing `canAdmin` declaration discovered during source inspection.
+- Added missing DOM anchors for the executable Admin deep-link manifest across dashboard, export, notifications, governance, access and client settings.
+- Verified the complete set of 17 live Admin hash targets now has a matching DOM anchor.
+- Replaced misleading Control Plane status copy with data-driven loading/error/available states and corrected the non-existent “assistant” shortcut label.
+- Implemented real browser voice search in the Customer Portal using Speech Recognition with Arabic locale, listening state and explicit unsupported-browser/permission recovery.
+- Replaced the former dead image-search button with an explicit non-action boundary until a canonical visual-search contract exists.
+- Updated CSP Permissions-Policy to permit same-origin microphone use for the real voice-search feature.
+- Replaced the hardcoded customer template branch label with the actual active warehouse name.
+- Stabilized Finance, Purchasing and Inventory data-loading dependencies so default selections no longer cause repeated reload loops.
+- Exposed real customer-control toggles for retail-price visibility information and voice search; preview reflects the current configuration.
+- Corrected Customer Portal catalog navigation so button-driven navigation uses the URL-synchronized `navigate()` path.
+- Reclassified legacy “inventory sync” navigation as a boundary because Commerce has no independent sync transaction contract.
+- Added `supabase/tests/031-security-definer-exposure-classification.test.sql` covering empty `search_path`, anonymous denial and required authenticated RLS-helper execution.
+
+### Exact code commits
+- `e508531cee460ddfc315316909efb7cca526c07e` — Admin Panel JSX/permitted action integrity.
+- `f6da6a56749e87c15fc079cfdc21e13aebd5611a`, `05cb7351d0785ccfc971e0344bc6e901446903d0`, `188652278d70d2d780b0d249d9be201a29ede258`, `0c7a6e59158f5d36f47593d8fcc3429d3705d76e`, `964fe3a7d89f65e0dcd2ed03b2133a8aaf1bf106`, `ea3f4c5c49e15d7bf531e18149b42288ab0846b6` — executable Admin anchors.
+- `6be211522eaf2c440d65a83ed155c06688bc831f` — runtime-status wording.
+- `cdd3dae5dae90d7f60832035e4d68454d3354cb1` — stable operational loading dependencies.
+- `2951873ff87e898cca50c09d6f536490b6a55542` — voice search and dead image control removal.
+- `812ff3f92c9ba683bb3a51e021cfebf9d8dd4994` — search capability styling.
+- `9d170b8bae0a26a91fdee7926d4aa8a0f1ed8548` — microphone Permissions-Policy.
+- `feb55aeb4346e3abacf0752511c5c9da6591ae6a` — warehouse-context template label.
+- `2af76bb0a2fe27379f7928caa0b9296541350511` — customer-control toggles/preview.
+- `0ce090933e27b8418af0403f6d49cc6252f1549b` — customer URL-synchronized navigation.
+- `d1850d0a940c1619bd2547e9884c68b9247f1506` — inventory-sync boundary classification.
+- `3fb92e0d0cb20815599543b385ab91d63688fff8` — security-definer classification test.
+- Documentation checkpoints: `8650374876ea9cd0ffe78ef2af3a0e97b076fd45`, `8c67363905dfe9df78809cb4a5323e2236d87d38`, `45075e8f3b6796cbdec46896f6a5532d589f5fb5`.
+
+### Live verification
+- Supabase project `mrcyqezbhpncuvaehwgf` direct SQL inspection:
+  - public SECURITY DEFINER routines missing explicit empty `search_path`: `0`.
+  - anonymous execution of public SECURITY DEFINER routines: `0`.
+  - authenticated execution of `current_organization_id()`, `current_customer_id()`, `is_staff()`, `is_staff_reader()`: all `true`.
+  - anonymous execution of tenant-context helpers: denied.
+  - authenticated-executable public SECURITY DEFINER routine count: `62`.
+- A direct SQL attempt to run pgTAP functions in the live project showed pgTAP functions are not exposed in the raw SQL session; therefore the new repository pgTAP file is not marked as a live PASS. The direct privilege/search_path invariants above are the live evidence.
+
+### Exact-SHA CI boundary
+- The newest repository source commits automatically trigger the exact quality/security/domain/migration/concurrency/Test-the-Test/order-workflow/browser pipelines.
+- Current latest documentation head is `45075e8f3b6796cbdec46896f6a5532d589f5fb5`; final exact-head workflow results have not yet been observed for this documentation checkpoint.
+- No prior PASS has been transferred to the latest SHA.
+- Production remains HOLD / NO TOUCH.
+
+### Remaining
+- Consume exact latest SHA CI and browser results; repair only proven regressions.
+- Obtain exact-source hosted deployment/runtime proof. Vercel current deployments are still source-mismatched/error-prone; Netlify free project remains the fallback but requires a source-side deploy command not executable from the GitHub connector alone.
+- Continue individual classification of the 62 authenticated SECURITY DEFINER advisor findings without blanket revocation.
+- Continue semantic reconciliation/reference audit of the legacy Markdown corpus and retire only after 50/50 coverage is proven.
+
