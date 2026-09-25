@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { supabase } from './lib/supabase';
+import './finance-history.css';
 
 type UserRole='owner'|'admin'|'sales';
 type Tab='invoices'|'payments'|'expenses';
