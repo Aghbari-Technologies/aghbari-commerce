@@ -25,6 +25,7 @@ import FinanceOperationsHistoryPanel from './FinanceOperationsHistoryPanel';
 import PricingMatrixPanel from './PricingMatrixPanel';
 import WarehouseDirectoryPanel from './WarehouseDirectoryPanel';
 import SupplierLedgerPanel from './SupplierLedgerPanel';
+import InventoryActivityPanel from './InventoryActivityPanel';
 import './admin-executive-dashboard.css';
 
 interface StaffProduct { id: string; sku: string; name: string; unit: string; }
@@ -68,7 +69,7 @@ export default function AdminPanel({ role }: { role: UserRole }) {
         {canCatalog&&<a href="#admin-product-image">صور المنتجات</a>}
         {canCatalog&&<a href="#admin-import">الاستيراد الآمن</a>}
         {canInventory&&<a href="#admin-inventory">المخزون</a>}
-        {canInventory&&<a href="#admin-inventory-adjust">تعديل المخزون</a>}{canInventory&&<a href="#admin-inventory-history">دفتر حركة المخزون</a>}{canInventory&&<a href="#admin-warehouses">المستودعات والفروع</a>}
+        {canInventory&&<a href="#admin-inventory-adjust">تعديل المخزون</a>}{canInventory&&<a href="#admin-inventory-history">دفتر حركة المخزون</a>}{canInventory&&<a href="#admin-inventory-activity">نشاط المخزون</a>}{canInventory&&<a href="#admin-warehouses">المستودعات والفروع</a>}
         {canInventory&&<a href="#admin-purchasing">المشتريات والموردون</a>}{canInventory&&<a href="#admin-suppliers">دليل الموردين والحساب</a>}{canInventory&&<a href="#admin-receipts">سجل الاستلام</a>}
         {canFinance&&<a href="#admin-finance">المالية</a>}{canFinance&&<a href="#admin-finance-history">السجل المالي</a>}
         {canInventory&&<a href="#admin-export">التصدير</a>}
@@ -96,6 +97,7 @@ export default function AdminPanel({ role }: { role: UserRole }) {
       {canCatalog && <div id="admin-customers"><CustomerPanel role={role} /></div>}
       {canInventory && <div id="admin-inventory"><InventoryPanel role={role} /></div>}
       {canInventory && <InventoryHistoryPanel role={role as 'owner'|'admin'|'warehouse'} />}
+      {canInventory && <InventoryActivityPanel role={role as 'owner'|'admin'|'warehouse'} />}
       {canInventory && <WarehouseDirectoryPanel role={role as 'owner'|'admin'|'warehouse'} />}
       {canInventory && <div id="admin-purchasing"><PurchasingPanel role={role} /></div>}
       {canInventory && <PurchaseReceiptHistoryPanel role={role as 'owner'|'admin'|'warehouse'} />}
