@@ -23,7 +23,6 @@ import './ui-polish.css';
 
 type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer';
 const STAFF_ROLES = new Set<UserRole>(['owner', 'admin', 'sales', 'warehouse']);
-const STATUS_STEPS: OrderStatus[] = ['pending', 'confirmed', 'preparing', 'ready', 'completed'];
 const UNIT_OPTIONS = ['حبة', 'كرتون', 'طن'];
 
 type PriceTier = { min_quantity: number; unit_price: number; currency: string };
