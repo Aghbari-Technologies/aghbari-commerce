@@ -242,3 +242,15 @@ Command "1" means:
 - Governance audit/outbox, notifications and organization access directories now use bounded pagination and reset page state when the active filter/search/tab changes.
 - Inventory activity pagination applies uniformly to transfers, stock-count sessions and reconciliations; no tab may bypass the active page window.
 - These UI improvements reuse existing tenant-scoped service/table/RPC contracts. No reporting, promotions or parallel transactional source of truth was introduced.
+
+
+## 2026-09-25 — EXECUTE NOW closure wave
+
+- Actual execution branch HEAD after this wave: `598216bcb5afe29c8be4354622eae2a97538370e`.
+- Fixed exact-SHA typecheck defects introduced in the nested operational UI wave: customer cart drawer JSX closure, inventory activity conditional output, purchasing queue fragment closure and governance conditional output.
+- Fixed Fresh Supabase migration drift: `is_staff_reader()` is now explicitly defined before the privilege-hardening migration, matching live RLS policy usage; later authenticated EXECUTE restoration remains the intended boundary.
+- Added movement-level detail disclosure to the inventory movement ledger using the shared `RecordDetailDrawer` and existing tenant-scoped data only.
+- Strengthened the RPC privilege regression test with explicit anon/authenticated/PUBLIC assertions for `is_staff_reader()`; test plan raised from 57 to 60.
+- Current exact-SHA CI evidence for `598216bcb5afe29c8be4354622eae2a97538370e` remains pending/queued; no PASS is transferred from an older SHA.
+- Supabase live security posture observed during this wave: 62 authenticated-executable SECURITY DEFINER advisory findings plus the external leaked-password-protection warning. No blanket revoke was applied because required transactional/RLS helper functions are part of the application boundary and individual classification remains necessary.
+- Vercel hosted proof remains blocked by the existing deployment/rate-limit/protection path; production remains NO TOUCH.

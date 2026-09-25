@@ -477,3 +477,35 @@ The customer portal previously exposed only order summaries and reorder behavior
 - Run exact-SHA application quality, security, domain, migration, concurrency, Test-the-Test and browser workflows on the final branch head.
 - Continue nested detail/recovery only where the current schema/contracts expose real data; do not fabricate Promotions.
 - Continue individual SECURITY DEFINER classification and semantic merge of the 50 legacy Markdown sources.
+
+
+## Run 2026-09-25 — EXECUTE NOW: UI/Core repair + security contract closure
+
+### Start
+- Actual execution branch baseline: `6184104ed37bcfe17e33f996b346bcc7f4085470`.
+- Branch: `execution/ui-closure-20260925`.
+- Production: NO TOUCH.
+- Certification: NOT CLAIMED.
+
+### Root causes found
+- Exact application-quality run on `6184104ed37bcfe17e33f996b346bcc7f4085470` failed TypeScript parsing in four nested UI files: `AppV3Fixed.tsx`, `InventoryActivityPanel.tsx`, `PurchasingPanel.tsx`, `StaffOperationsPanel.tsx`.
+- Exact Fresh Supabase migration proof failed at `20260925033000_reduce_internal_helper_api_surface.sql` because it referenced `public.is_staff_reader()` before that function existed in a fresh migration history, even though the live database and current RLS policies use it.
+
+### Fixes implemented
+- Repaired the four JSX closure/fragment defects.
+- Made the canonical helper migration define `is_staff_reader()` with SECURITY DEFINER + empty search_path before revoking its direct API privileges; the following migration restores authenticated EXECUTE required for RLS policy evaluation while anon/PUBLIC remain denied.
+- Added a real movement-detail drawer to `InventoryHistoryPanel` using existing movement, product and warehouse data.
+- Added three exact privilege assertions for `is_staff_reader()` to `supabase/tests/018-rpc-privilege-surface.test.sql` and raised the plan to 60.
+
+### Exact-SHA verification boundary
+- Latest branch HEAD: `598216bcb5afe29c8be4354622eae2a97538370e`.
+- CI runs for the latest HEAD are queued; therefore implementation is committed but current-SHA PASS is NOT_PROVEN.
+- Historical PASS results remain bound to their historical SHAs and are not transferred.
+- Prior Vercel status remains an external rate-limit/protection failure; no hosted browser PASS is claimed.
+
+### Remaining
+- Consume current-SHA application quality, migration, security, domain, concurrency, Test-the-Test and browser results; repair any exact-SHA regressions.
+- Continue individual SECURITY DEFINER classification without weakening required RLS/application boundaries.
+- Continue nested UI closure only where current service/RPC/schema contracts support real behavior; do not fabricate Promotions.
+- Complete semantic consolidation/reference verification for all 50 mapped legacy Markdown sources.
+- Certification and production remain HOLD / NO TOUCH.
