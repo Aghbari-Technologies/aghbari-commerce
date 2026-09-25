@@ -56,6 +56,8 @@ insert into public.cash_accounts(id,organization_id,branch_id,name,currency,open
 select cash_account_id,org_id,branch_id,'Payment Runtime Cash','YER',100,true
 from payment_fixture;
 
+grant select on payment_fixture to authenticated;
+
 set local role authenticated;
 set local request.jwt.claim.role='authenticated';
 select set_config('request.jwt.claim.sub',(select user_id::text from payment_fixture),true);
