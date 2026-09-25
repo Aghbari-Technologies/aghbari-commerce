@@ -16,9 +16,10 @@ describe('purchasing input boundaries', () => {
     expect(() => validatePurchaseOrderInput({ ...validPurchase, supplierId: 'bad' })).toThrow();
     expect(() => validatePurchaseOrderInput({ ...validPurchase, warehouseId: 'bad' })).toThrow();
   });
-  it('rejects missing lines and weak idempotency', () => {
+  it('rejects missing lines and weak or oversized idempotency', () => {
     expect(() => validatePurchaseOrderInput({ ...validPurchase, lines: [] })).toThrow();
     expect(() => validatePurchaseOrderInput({ ...validPurchase, idempotencyKey: 'short' })).toThrow();
+    expect(() => validatePurchaseOrderInput({ ...validPurchase, idempotencyKey: 'x'.repeat(129) })).toThrow();
   });
   it('rejects duplicate products and invalid quantities', () => {
     expect(() => validatePurchaseOrderInput({ ...validPurchase, lines: [{ productId: product, quantity: 1, unitCost: 10 }, { productId: product, quantity: 2, unitCost: 20 }] })).toThrow();
@@ -32,7 +33,11 @@ describe('purchasing input boundaries', () => {
     expect(() => validatePurchaseOrderInput({ ...validPurchase, lines: [{ productId: product, quantity: 1, unitCost: Infinity }] })).toThrow();
     expect(() => validatePurchaseOrderInput({ ...validPurchase, currency: 'YE' })).toThrow();
   });
-  it('accepts multiple distinct lines', () => expect(() => validatePurchaseOrderInput({ ...validPurchase, lines: [{ productId: product, quantity: 1, unitCost: 10 }, { productId: product2, quantity: 4, unitCost: 25 }] })).not.toThrow());
+  it('accepts multiple distinct lines within the server limit', () => expect(() => validatePurchaseOrderInput({ ...validPurchase, lines: [{ productId: product, quantity: 1, unitCost: 10 }, { productId: product2, quantity: 4, unitCost: 25 }] })).not.toThrow());
+  it('rejects more than 100 purchase lines to match the server command contract', () => {
+    const lines = Array.from({ length: 101 }, (_, index) => ({ productId: `${String(index + 100).padStart(8, '0')}-${String(index + 1).padStart(4, '0')}-4000-8000-000000000000`.replace(/-/g, '').slice(0, 8) as never, quantity: 1, unitCost: 1 }));
+    expect(() => validatePurchaseOrderInput({ ...validPurchase, lines })).toThrow();
+  });
 
   it('accepts a valid receipt', () => expect(() => validateReceiveInput({ purchaseOrderId: supplier, idempotencyKey: key, lines: [{ purchaseOrderItemId: item, productId: product, quantity: 2 }] })).not.toThrow());
   it('rejects malformed purchase or item ids', () => {
