@@ -418,3 +418,35 @@ The customer portal previously exposed only order summaries and reorder behavior
 - Consume exact-SHA CI results and repair any compile/test regressions.
 - Complete deeper receipt/order detail and reconciliation history only where the current schema supports them.
 - Keep production NO TOUCH until exact browser/runtime proof and certification are complete.
+
+
+## Run 2026-09-25 — Deep operational UI surface closure
+
+### Functional SHA
+- 2bea11707d9a5ba4241fcc59ae05e761fb12fe10
+- Branch: main
+- Production: NO TOUCH
+- Certification: NOT CLAIMED
+
+### Implemented
+- Customer catalog now uses backend-supported offset pagination and precise page-count language.
+- Customer account now presents connection state, outstanding/available finance, recent order context, template usage and quick navigation.
+- Added purchase receipt history workspace.
+- Added inventory movement ledger workspace.
+- Added inventory activity workspace covering transfers, stock counts and reconciliations.
+- Added finance operations history workspace with invoice, payment and expense tabs.
+- Added pricing matrix workspace with tier filter, price validity and pagination.
+- Added warehouse/branch directory workspace.
+- Added supplier workspace covering directory, supplier bills and supplier ledger.
+- Wired all new workspaces into Admin Command Center navigation.
+
+### Verification
+- Direct repository inspection confirms the new components are present and wired at the functional SHA.
+- GitHub Actions are queued for the current line; no CI PASS is claimed yet.
+- Vercel status is a deployment-rate-limit failure (24-hour retry message), so no current hosted PASS is claimed.
+- Local clone/build could not run because outbound DNS/network access is unavailable in this execution environment.
+
+### Remaining
+- Consume exact-SHA CI results and repair any compile/test regressions.
+- Keep production HOLD/NO TOUCH until exact browser/runtime evidence and certification.
+- Continue only the remaining nested/detail UI surfaces supported by existing contracts.
