@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { CustomerTier } from './domain/types';
 import { createCustomer, getCustomers, setCustomerActive, setCustomerTier, type StaffCustomer } from './services/customers';
 import { supabase } from './lib/supabase';
+import RecordDetailDrawer from './RecordDetailDrawer';
 import './customer-directory.css';
 
 const tiers: CustomerTier[] = ['retail', 'wholesale', 'distributor'];
@@ -22,7 +23,7 @@ export default function CustomerPanel({ role }: { role: UserRole }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true); const [customerQuery, setCustomerQuery] = useState(''); const [customerStatus, setCustomerStatus] = useState<'all'|'active'|'inactive'>('all'); const [customerTierFilter, setCustomerTierFilter] = useState<'all'|CustomerTier>('all'); const [customerPage, setCustomerPage] = useState(1);
+  const [loading, setLoading] = useState(true); const [selectedCustomer, setSelectedCustomer] = useState<StaffCustomer | null>(null); const [customerQuery, setCustomerQuery] = useState(''); const [customerStatus, setCustomerStatus] = useState<'all'|'active'|'inactive'>('all'); const [customerTierFilter, setCustomerTierFilter] = useState<'all'|CustomerTier>('all'); const [customerPage, setCustomerPage] = useState(1);
   const reload = useCallback(async () => { setLoading(true); try { setCustomers(await getCustomers(200)); } finally { setLoading(false); } }, []);
   useEffect(() => { void reload().catch((e) => setError(e instanceof Error ? e.message : 'تعذر تحميل العملاء.')); }, [reload]);
   useEffect(() => { setCustomerPage(1); }, [customerQuery, customerStatus, customerTierFilter]);
@@ -57,6 +58,7 @@ export default function CustomerPanel({ role }: { role: UserRole }) {
         <h3>العملاء الحاليون</h3><div className="directory-toolbar"><input aria-label="بحث العملاء" placeholder="بحث بالاسم أو الهاتف أو الفئة" value={customerQuery} onChange={(e) => setCustomerQuery(e.target.value)} disabled={loading} /><select aria-label="فلترة حالة العملاء" value={customerStatus} onChange={(e) => setCustomerStatus(e.target.value as typeof customerStatus)} disabled={loading}><option value="all">كل الحالات</option><option value="active">نشط فقط</option><option value="inactive">موقوف فقط</option></select><select aria-label="فلترة فئة العملاء" value={customerTierFilter} onChange={(e) => setCustomerTierFilter(e.target.value as typeof customerTierFilter)} disabled={loading}><option value="all">كل الفئات</option>{tiers.map(item => <option key={item} value={item}>{tierLabels[item]}</option>)}</select></div>
         {loading ? <div className="portal-loading">جارٍ تحميل العملاء…</div> : !customers.length ? <div className="empty-state"><strong>لا يوجد عملاء مسجلون بعد.</strong><button type="button" onClick={() => void reload()}>إعادة المحاولة</button></div> : !visibleCustomers.length ? <div className="empty-state"><strong>لا توجد نتائج مطابقة.</strong><button type="button" onClick={() => setCustomerQuery('')}>مسح البحث</button></div> : <div className="cart-lines">{pagedCustomers.map((customer) => <article className="cart-line" key={customer.id}>
           <div><strong>{customer.name}</strong><small>{customer.phone ?? 'بدون هاتف'} · {customer.is_active ? 'نشط' : 'موقوف'}</small></div>
+          <button type="button" className="ghost" onClick={() => setSelectedCustomer(customer)}>التفاصيل</button>
           <select aria-label={`فئة ${customer.name}`} disabled={!canManage || busy} value={customer.tier} onChange={(e) => void run(() => setCustomerTier(customer.id, e.target.value as CustomerTier), 'تم تحديث فئة العميل.')}>{tiers.map((item) => <option key={item} value={item}>{tierLabels[item]}</option>)}</select>
           {canManage && <button disabled={busy} onClick={() => void run(() => setCustomerActive(customer.id, !customer.is_active), customer.is_active ? 'تم إيقاف العميل.' : 'تم تفعيل العميل.')}>{customer.is_active ? 'إيقاف' : 'تفعيل'}</button>}
           {canInvite && customer.is_active && <div className="invite-controls"><input type="email" aria-label={`بريد دعوة ${customer.name}`} placeholder="بريد العميل" value={inviteEmail[customer.id] ?? ''} onChange={(e) => setInviteEmail((current) => ({ ...current, [customer.id]: e.target.value }))} /><button disabled={inviteBusy === customer.id || !(inviteEmail[customer.id] ?? '').trim()} onClick={() => void dispatchInvitation(customer)}>{inviteBusy === customer.id ? 'جارٍ إنشاء الدعوة…' : 'إرسال دعوة'}</button>{inviteLink[customer.id] && <a href={inviteLink[customer.id]} target="_blank" rel="noreferrer">فتح رابط الدعوة</a>}</div>}
@@ -64,5 +66,6 @@ export default function CustomerPanel({ role }: { role: UserRole }) {
       </div>
     </div>
     {error && <div className="error-banner" role="alert"><span>{error}</span><button type="button" className="ghost" onClick={() => void reload()} disabled={loading}>إعادة تحميل العملاء</button></div>}{message && <div className="success" role="status">{message}</div>}
+    {selectedCustomer&&<RecordDetailDrawer eyebrow="Customer Directory" title={selectedCustomer.name} summary={selectedCustomer.is_active?'عميل نشط':'عميل موقوف'} fields={[{label:'الفئة',value:tierLabels[selectedCustomer.tier]},{label:'الهاتف',value:selectedCustomer.phone??'غير متاح'},{label:'الحالة',value:selectedCustomer.is_active?'نشط':'موقوف'},{label:'معرّف العميل',value:selectedCustomer.id},{label:'رابط الدعوة',value:inviteLink[selectedCustomer.id]??'لم تُنشأ دعوة في هذه الجلسة.',wide:true}]} onClose={()=>setSelectedCustomer(null)}/>} 
   </div>;
 }
