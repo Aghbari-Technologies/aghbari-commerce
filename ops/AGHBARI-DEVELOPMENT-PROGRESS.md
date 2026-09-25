@@ -569,3 +569,23 @@ The customer portal previously exposed only order summaries and reorder behavior
 ### Remaining
 - Fresh exact-SHA migration/application-quality/security/domain/concurrency/Test-the-Test/browser evidence must be rerun after the new migration commit.
 - Keep production HOLD / NO TOUCH.
+
+## Run 2026-09-25 — Premium Control Plane UI rebuild
+
+### Start
+- Current source line before this UI wave: `90ba4a650e488bca576a0cee5fa98a3467366c4a`.
+- Scope: Aghbari Commerce only. Production: NO TOUCH.
+
+### Implemented
+- Rebuilt `src/AdminExecutiveDashboard.tsx` to a production-oriented RTL control-plane composition: teal/white premium visual hierarchy, compact KPI cards, operational hero/focus cards, seven-day sales visualization, order-state distribution, recent-order workspace, quick tools, primary section cards and a sticky right-side navigation rail.
+- All dashboard tiles target existing functional Aghbari anchors/workspaces instead of placeholder screens.
+- Added responsive desktop/tablet/mobile behavior and focus-visible/accessibility-friendly navigation.
+- Updated `src/admin-executive-dashboard.css` to carry the new visual system.
+- Added premium responsive `staff-topbar` styling in `src/styles.css`.
+- Corrected `src/AppV3Fixed.tsx` so `viewer` is routed to the staff control plane instead of the customer portal.
+- Confirmed repository code search returns no current occurrence of the old `العامري` brand token in the code search response used for this check.
+
+### Verification boundary
+- Source changes are committed to `main`.
+- Fresh exact-SHA application-quality, security, browser and hosted deployment proof is still required; no PASS is transferred from older SHA evidence.
+- Production remains NO TOUCH.
