@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { IMPORT_CONTRACT_VERSION } from './importExcel';
-import { redactSensitiveText } from '../domain/operations';
 import { parseProductWorkbook } from './importExcel';
 
 describe('XLSX import guardrails', () => {
