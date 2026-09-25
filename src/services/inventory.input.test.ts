@@ -13,6 +13,7 @@ describe('inventory input boundaries', () => {
   it('rejects same source and destination', () => expect(() => validateInventoryTransferInput(warehouseA, warehouseA, key, [{ productId: productA, quantity: 2 }])).toThrow());
   it('rejects weak or oversized idempotency keys', () => {
     expect(() => validateInventoryTransferInput(warehouseA, warehouseB, 'short', [{ productId: productA, quantity: 2 }])).toThrow();
+    expect(() => validateInventoryTransferInput(warehouseA, warehouseB, 'x'.repeat(128), [{ productId: productA, quantity: 2 }])).not.toThrow();
     expect(() => validateInventoryTransferInput(warehouseA, warehouseB, 'x'.repeat(129), [{ productId: productA, quantity: 2 }])).toThrow();
   });
   it('rejects duplicate products', () => expect(() => validateInventoryTransferInput(warehouseA, warehouseB, key, [{ productId: productA, quantity: 1 }, { productId: productA, quantity: 2 }])).toThrow());

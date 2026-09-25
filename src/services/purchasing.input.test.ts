@@ -19,6 +19,7 @@ describe('purchasing input boundaries', () => {
   it('rejects missing lines and weak or oversized idempotency', () => {
     expect(() => validatePurchaseOrderInput({ ...validPurchase, lines: [] })).toThrow();
     expect(() => validatePurchaseOrderInput({ ...validPurchase, idempotencyKey: 'short' })).toThrow();
+    expect(() => validatePurchaseOrderInput({ ...validPurchase, idempotencyKey: 'x'.repeat(128) })).not.toThrow();
     expect(() => validatePurchaseOrderInput({ ...validPurchase, idempotencyKey: 'x'.repeat(129) })).toThrow();
   });
   it('rejects duplicate products and invalid quantities', () => {

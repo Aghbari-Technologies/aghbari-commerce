@@ -48,6 +48,7 @@ describe('finance input boundaries', () => {
   it('rejects missing, short, and overlong payment idempotency keys', () => {
     expect(() => validatePaymentInput(invoice, 100, 'cash', cash, 'ref', 'x'.repeat(15))).toThrow();
     expect(() => validatePaymentInput(invoice, 100, 'cash', cash, 'ref', 'short')).toThrow();
+    expect(() => validatePaymentInput(invoice, 100, 'cash', cash, 'ref', 'x'.repeat(128))).not.toThrow();
     expect(() => validatePaymentInput(invoice, 100, 'cash', cash, 'ref', 'x'.repeat(129))).toThrow();
     expect(() => validatePaymentInput(invoice, 100, 'cash', cash, 'ref', 'payment-key-123456')).not.toThrow();
   });
