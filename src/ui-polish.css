@@ -306,3 +306,20 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .payment-option, .quantity-confirmation { display:flex; gap:9px; align-items:center; padding:9px 10px; border:1px solid #dbe7eb; border-radius:11px; background:#fff; cursor:pointer; }
 .payment-option:has(input:checked), .quantity-confirmation:has(input:checked) { border-color:#9fcbd3; background:#f1fafb; }
 .payment-option input, .quantity-confirmation input { accent-color: var(--aghbari-brand); }
+
+
+/* Operational detail drawers */
+.record-detail-backdrop{position:fixed;inset:0;z-index:1000;display:flex;justify-content:flex-start;background:rgba(15,23,42,.42);backdrop-filter:blur(2px)}
+.record-detail-drawer{width:min(560px,100vw);height:100%;overflow:auto;background:var(--panel,#fff);color:var(--text,#172033);box-shadow:0 24px 80px rgba(15,23,42,.22);padding:24px;display:flex;flex-direction:column;gap:20px;animation:record-detail-in .18s ease-out}
+.record-detail-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;position:sticky;top:0;background:inherit;padding-bottom:4px}
+.record-detail-head h3{margin:4px 0 0;font-size:1.35rem;line-height:1.3}
+.record-detail-summary{margin-top:8px;color:var(--muted,#687387);font-size:.92rem}
+.record-detail-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.record-detail-field{min-width:0;padding:14px;border:1px solid var(--border,#e5e7eb);border-radius:14px;background:var(--surface,#f8fafc);display:flex;flex-direction:column;gap:6px}
+.record-detail-field.wide{grid-column:1/-1}
+.record-detail-field span{font-size:.76rem;color:var(--muted,#687387)}
+.record-detail-field strong{overflow-wrap:anywhere;line-height:1.5}
+.record-detail-footer{margin-top:auto;padding-top:14px;border-top:1px solid var(--border,#e5e7eb);display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--muted,#687387);font-size:.78rem}
+@keyframes record-detail-in{from{transform:translateX(-18px);opacity:.7}to{transform:translateX(0);opacity:1}}
+@media (max-width:720px){.record-detail-drawer{padding:18px}.record-detail-fields{grid-template-columns:1fr}.record-detail-field.wide{grid-column:auto}.record-detail-footer{align-items:flex-start;flex-direction:column}}
+@media (prefers-reduced-motion:reduce){.record-detail-drawer{animation:none}}
