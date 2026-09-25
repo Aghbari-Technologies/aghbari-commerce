@@ -19,3 +19,6 @@
 
 /* Runtime connectivity / recovery */
 .offline-banner{margin:0 5vw;padding:12px 16px;border-bottom:1px solid #f1d49a;background:#fff8e7;color:#805b00;font-size:13px;font-weight:700;text-align:center}.connection-offline{color:#a46300!important}.error-banner{display:flex;align-items:center;justify-content:space-between;gap:12px}.error-banner .ghost{border:0;border-radius:10px;padding:8px 12px;background:#eef2f5;color:#243b53;font-weight:700;cursor:pointer}@media(max-width:560px){.offline-banner{margin:0;padding:11px 12px}.error-banner{align-items:flex-start;flex-direction:column}}
+
+.search-capability-disabled{display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:0 12px;border:1px dashed currentColor;border-radius:10px;opacity:.65;font-size:.82rem;}
+.search-panel button[aria-pressed="true"]{box-shadow:0 0 0 2px currentColor inset;}
