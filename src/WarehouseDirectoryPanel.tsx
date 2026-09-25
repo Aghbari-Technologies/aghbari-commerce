@@ -4,7 +4,6 @@ import RecordDetailDrawer from './RecordDetailDrawer';
 
 type UserRole='owner'|'admin'|'warehouse';
 interface Warehouse{id:string;name:string;branch_id:string;is_active:boolean;created_at:string;}
-interface Branch{id:string;name:string;is_active:boolean;}
 
 export default function WarehouseDirectoryPanel({role}:{role:UserRole}){
  const canUse=['owner','admin','warehouse'].includes(role); const [warehouses,setWarehouses]=useState<Warehouse[]>([]); const [branches,setBranches]=useState<Map<string,string>>(new Map()); const [query,setQuery]=useState(''); const [status,setStatus]=useState('all'); const [page,setPage]=useState(1); const [loading,setLoading]=useState(true); const [error,setError]=useState<string|null>(null); const [selectedWarehouse,setSelectedWarehouse]=useState<Warehouse|null>(null);
