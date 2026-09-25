@@ -355,3 +355,20 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .purchase-builder-actions > button,
   .transfer-builder-actions > button { width: 100%; }
 }
+
+
+/* Multi-line receiving builder */
+.receiving-builder .section-heading { align-items: flex-start; gap: 1rem; }
+.receiving-draft-lines { display: grid; gap: .65rem; }
+.receiving-draft-line { display: grid; grid-template-columns: minmax(0,2fr) minmax(7rem,.8fr) auto; gap: .55rem; align-items: center; }
+.receiving-builder-actions { display: flex; flex-wrap: wrap; gap: .65rem; align-items: center; justify-content: space-between; }
+.receiving-builder-actions > span { color: var(--muted-text, #697386); font-size: .85rem; }
+.receiving-builder-actions > button { width: auto; }
+.receiving-builder-actions > input { flex: 1 1 15rem; min-width: 12rem; }
+@media (max-width: 760px) {
+  .receiving-draft-line { grid-template-columns: 1fr; }
+  .receiving-draft-line button { justify-self: start; }
+  .receiving-builder-actions { align-items: stretch; }
+  .receiving-builder-actions > button,
+  .receiving-builder-actions > input { width: 100%; }
+}

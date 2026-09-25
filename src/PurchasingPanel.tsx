@@ -30,8 +30,8 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
   const [warehouseId, setWarehouseId] = useState('');
   const [purchaseLines, setPurchaseLines] = useState<Array<{ productId: string; quantity: string; unitCost: string }>>([{ productId: '', quantity: '1', unitCost: '0' }]);
   const [selectedOrderId, setSelectedOrderId] = useState('');
-  const [receiveItemId, setReceiveItemId] = useState('');
-  const [receiveQuantity, setReceiveQuantity] = useState('1');
+  const [receiveLines, setReceiveLines] = useState<Array<{ purchaseOrderItemId: string; quantity: string }>>([{ purchaseOrderItemId: '', quantity: '1' }]);
+  const [receiveNotes, setReceiveNotes] = useState('');
   const [busy, setBusy] = useState(false); const [loading, setLoading] = useState(true); const [orderQuery,setOrderQuery]=useState(''); const [orderStatus,setOrderStatus]=useState<'all'|Status>('all'); const [orderPage,setOrderPage]=useState(1);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -74,7 +74,11 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
   const selectedOrderItems = items.filter((item) => item.purchase_order_id === selectedOrderId && item.quantity_received < item.quantity_ordered);
   const supplierNameFor = (id: string) => suppliers.find((supplier) => supplier.id === id)?.name ?? 'مورد';
   const productNameFor = (id: string) => products.find((product) => product.id === id)?.name ?? id;
-  const selectedReceiveItem = selectedOrderItems.find((item) => item.id === receiveItemId) ?? selectedOrderItems[0];
+  const receivingDraftItems = receiveLines.map((line) => {
+    const item = selectedOrderItems.find((candidate) => candidate.id === line.purchaseOrderItemId);
+    return { ...line, item };
+  });
+  const receiveableRemaining = selectedOrderItems.filter((item) => !receiveLines.some((line) => line.purchaseOrderItemId === item.id)).length;
   const visibleOrders=useMemo(()=>{const needle=orderQuery.trim().toLocaleLowerCase();return orders.filter(o=>(orderStatus==='all'||o.status===orderStatus)&&(!needle||String(o.purchase_order_number).includes(needle)||(suppliers.find(s=>s.id===o.supplier_id)?.name??'').toLocaleLowerCase().includes(needle)||statusLabels[o.status].includes(needle)));},[orderQuery,orderStatus,orders,suppliers]); const orderPages=Math.max(1,Math.ceil(visibleOrders.length/8)); const activeOrderPage=Math.min(orderPage,orderPages); const pagedOrders=visibleOrders.slice((activeOrderPage-1)*8,activeOrderPage*8);
 
   if (!canManage) return null;
@@ -137,12 +141,53 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
 
       <div className="admin-card"><h3>اعتماد أوامر الشراء</h3><div className="order-queue-toolbar"><input aria-label="بحث أوامر الشراء" value={orderQuery} onChange={e=>setOrderQuery(e.target.value)} placeholder="رقم الأمر أو المورد" disabled={loading}/><select aria-label="حالة أمر الشراء" value={orderStatus} onChange={e=>setOrderStatus(e.target.value as 'all'|Status)} disabled={loading}><option value="all">كل الحالات</option>{(Object.keys(statusLabels) as Status[]).map(k=><option key={k} value={k}>{statusLabels[k]}</option>)}</select><button type="button" className="ghost" onClick={()=>{setOrderQuery('');setOrderStatus('all');}} disabled={!orderQuery&&orderStatus==='all'}>مسح</button></div>{loading ? <div className="portal-loading" role="status">جارٍ تحميل أوامر الشراء…</div> : orders.length === 0 ? <div className="empty-state"><strong>لا توجد أوامر شراء بعد.</strong><button type="button" onClick={() => void load()}>إعادة المحاولة</button></div> : !visibleOrders.length ? <div className="empty-state"><strong>لا توجد نتائج مطابقة.</strong><button type="button" onClick={()=>{setOrderQuery('');setOrderStatus('all');}}>مسح الفلاتر</button></div> : <><div className="cart-lines">{pagedOrders.map((order) => <article className="cart-line" key={order.id}><div><strong>أمر #{order.purchase_order_number}</strong><small>{supplierNameFor(order.supplier_id)}</small></div><div><strong>{order.total} {order.currency}</strong><small>{statusLabels[order.status]}</small></div><div className="status-actions"><button type="button" className="ghost" onClick={() => setDetailOrderId(order.id)}>التفاصيل</button>{order.status === 'draft' && <button disabled={busy} onClick={() => void run(() => submitPurchaseOrder(order.id), 'تم إرسال أمر الشراء للاعتماد.')}>إرسال</button>}{canApprove && order.status === 'submitted' && <button disabled={busy} onClick={() => void run(() => approvePurchaseOrder(order.id), 'تم اعتماد أمر الشراء.')}>اعتماد</button>}</div></article>)}</div>{visibleOrders.length>0&&<div className="directory-pagination"><span>صفحة {activeOrderPage} / {orderPages} · {visibleOrders.length} نتيجة</span><div><button type="button" className="ghost" onClick={()=>setOrderPage(p=>Math.max(1,p-1))} disabled={activeOrderPage===1}>السابق</button><button type="button" className="ghost" onClick={()=>setOrderPage(p=>Math.min(orderPages,p+1))} disabled={activeOrderPage===orderPages}>التالي</button></div></div></>}</div>
 
-      <form className="admin-card" onSubmit={(e) => { e.preventDefault(); if (!selectedOrderId || !selectedReceiveItem) return; void run(() => receivePurchaseOrder({ purchaseOrderId: selectedOrderId, idempotencyKey: `agh-receive-${crypto.randomUUID()}`, lines: [{ purchaseOrderItemId: selectedReceiveItem.id, productId: selectedReceiveItem.product_id, quantity: Number(receiveQuantity) }] }), 'تم الاستلام وتحديث المخزون وتسجيل الحركة.'); }}>
-        <h3>استلام البضاعة</h3>
-        <select aria-label="أمر الشراء" value={selectedOrderId} onChange={(e) => { setSelectedOrderId(e.target.value); setReceiveItemId(''); }} required><option value="">اختر أمرًا معتمدًا</option>{orders.filter((order) => order.status === 'approved' || order.status === 'partially_received').map((order) => <option key={order.id} value={order.id}>#{order.purchase_order_number} · {supplierNameFor(order.supplier_id)}</option>)}</select>
-        <select aria-label="صنف الاستلام" value={receiveItemId || selectedReceiveItem?.id || ''} onChange={(e) => setReceiveItemId(e.target.value)} required><option value="">اختر الصنف</option>{selectedOrderItems.map((item) => <option key={item.id} value={item.id}>{productNameFor(item.product_id)} · متبقٍ {item.quantity_ordered - item.quantity_received}</option>)}</select>
-        <input aria-label="كمية الاستلام" type="number" min="1" max={selectedReceiveItem ? selectedReceiveItem.quantity_ordered - selectedReceiveItem.quantity_received : undefined} step="1" value={receiveQuantity} onChange={(e) => setReceiveQuantity(e.target.value)} required />
-        <button disabled={busy || !selectedOrderId || !selectedReceiveItem}>تسجيل الاستلام</button>
+      <form className="admin-card receiving-builder" onSubmit={(e) => {
+        e.preventDefault();
+        if (!selectedOrderId) { setError('اختر أمر شراء قابلًا للاستلام.'); return; }
+        const normalized = receivingDraftItems.map((line) => ({
+          purchaseOrderItemId: line.purchaseOrderItemId,
+          productId: line.item?.product_id ?? '',
+          quantity: Number(line.quantity),
+          remaining: line.item ? line.item.quantity_ordered - line.item.quantity_received : -1
+        }));
+        if (!normalized.length || normalized.some((line) => !line.purchaseOrderItemId || !line.productId || !Number.isSafeInteger(line.quantity) || line.quantity < 1 || line.quantity > line.remaining)) {
+          setError('أكمل بنود الاستلام وتحقق من الكميات المتبقية قبل التسجيل.');
+          return;
+        }
+        const seen = new Set<string>();
+        if (normalized.some((line) => seen.has(line.purchaseOrderItemId) || (seen.add(line.purchaseOrderItemId), false))) {
+          setError('لا يمكن تكرار بند أمر الشراء داخل إيصال واحد.');
+          return;
+        }
+        void run(() => receivePurchaseOrder({
+          purchaseOrderId: selectedOrderId,
+          idempotencyKey: `agh-receive-${crypto.randomUUID()}`,
+          lines: normalized.map(({ purchaseOrderItemId, productId, quantity }) => ({ purchaseOrderItemId, productId, quantity })),
+          notes: receiveNotes.trim() || undefined
+        }), 'تم استلام جميع البنود ذريًا وتحديث المخزون وتسجيل الحركة.');
+      }}>
+        <div className="section-heading"><div><h3>استلام البضاعة</h3><small>إيصال متعدد البنود في عملية ذرية واحدة.</small></div><span>{receiveLines.length} بند</span></div>
+        <select aria-label="أمر الشراء" value={selectedOrderId} onChange={(e) => { setSelectedOrderId(e.target.value); setReceiveLines([{ purchaseOrderItemId: '', quantity: '1' }]); }} required>
+          <option value="">اختر أمرًا معتمدًا</option>{orders.filter((order) => order.status === 'approved' || order.status === 'partially_received').map((order) => <option key={order.id} value={order.id}>#{order.purchase_order_number} · {supplierNameFor(order.supplier_id)}</option>)}
+        </select>
+        {selectedOrderItems.length ? <div className="receiving-draft-lines">
+          {receivingDraftItems.map((line, index) => <div className="receiving-draft-line" key={index}>
+            <select aria-label={`بند الاستلام ${index + 1}`} value={line.purchaseOrderItemId} onChange={(e) => setReceiveLines((current) => current.map((item, i) => i === index ? { ...item, purchaseOrderItemId: e.target.value } : item))} required>
+              <option value="">اختر بند أمر الشراء</option>{selectedOrderItems.map((item) => <option key={item.id} value={item.id}>{productNameFor(item.product_id)} · متبقٍ {item.quantity_ordered - item.quantity_received}</option>)}
+            </select>
+            <input aria-label={`كمية الاستلام ${index + 1}`} type="number" min="1" max={line.item ? line.item.quantity_ordered - line.item.quantity_received : undefined} step="1" value={line.quantity} onChange={(e) => setReceiveLines((current) => current.map((item, i) => i === index ? { ...item, quantity: e.target.value } : item))} required />
+            <button type="button" className="ghost" onClick={() => setReceiveLines((current) => current.length === 1 ? current : current.filter((_, i) => i !== index))} disabled={busy || receiveLines.length === 1}>حذف</button>
+          </div>)}
+        </div> : <div className="empty-state"><strong>لا توجد بنود متبقية للاستلام.</strong><span>اختر أمرًا بحالة معتمد أو استلام جزئي.</span></div>}
+        <div className="receiving-builder-actions">
+          <button type="button" className="ghost" onClick={() => {
+            const next = selectedOrderItems.find((item) => !receiveLines.some((line) => line.purchaseOrderItemId === item.id));
+            if (next) setReceiveLines((current) => [...current, { purchaseOrderItemId: next.id, quantity: '1' }]);
+          }} disabled={busy || receiveableRemaining === 0 || receiveLines.length >= 100}>+ إضافة بند</button>
+          <input aria-label="ملاحظات إيصال الاستلام" value={receiveNotes} onChange={(e) => setReceiveNotes(e.target.value)} maxLength={2000} placeholder="ملاحظات الإيصال (اختياري)" />
+          <span>{receiveLines.length}/100 بند · المتاح لإضافته {receiveableRemaining}</span>
+        </div>
+        <button disabled={busy || !selectedOrderId || !receivingDraftItems.length || receivingDraftItems.some((line) => !line.item)}>تسجيل الاستلام الذري</button>
       </form>
     </div>
     {error && <div className="error-banner" role="alert"><span>{error}</span><button type="button" className="ghost" onClick={() => void load()} disabled={loading}>إعادة تحميل المشتريات</button></div>}{message && <div className="success" role="status">{message}</div>}
