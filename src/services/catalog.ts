@@ -5,6 +5,7 @@ import { retryRead } from '../lib/retry';
 export interface CatalogItem {
   id: string;
   sku: string;
+  barcode: string | null;
   name: string;
   unit: string;
   category_id: string | null;
@@ -41,7 +42,7 @@ export async function getCatalog(search = '', categoryId: string | null = null, 
     resolvedWarehouseId = data.id;
   }
   const { data } = await retryRead(async () => {
-    const result = await client.rpc('get_catalog', {
+    const result = await client.rpc('get_catalog_with_barcode', {
       p_search: query.search || null,
       p_category_id: categoryId,
       p_limit: query.limit,
