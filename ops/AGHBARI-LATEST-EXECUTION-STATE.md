@@ -1,6 +1,6 @@
 # 🔴 AGHBARI LATEST EXECUTION STATE
 
-**Actual verified Git HEAD before this write-back:** `f7825e74c53e7d5a89a964a9ed8203a7cdcf124d`
+**Actual verified Git HEAD:** `f7e5f9e902f1a6161a4c7f7887c0608bc6410752`
 **Functional code SHA:** `eff8b07f625e57bb41648bfad8a682050cc92223`
 **Database migration SHA:** `f7825e74c53e7d5a89a964a9ed8203a7cdcf124d`
 **Branch:** `main`
@@ -26,7 +26,7 @@
 ## Exact Verification
 | Check | Result | Bound |
 |---|---|---|
-| Git current head at write-back start | PROVEN | `f7825e74c53e7d5a89a964a9ed8203a7cdcf124d` on `main` |
+| Git current head after documentation write-back | PROVEN | `f7e5f9e902f1a6161a4c7f7887c0608bc6410752` on `main` |
 | Live Supabase migration apply | PROVEN | exact migration file content, project `mrcyqezbhpncuvaehwgf` |
 | Barcode RPC signature/return shape | PROVEN | live database after apply |
 | Barcode RPC security boundary | PROVEN | authenticated EXECUTE=true, anon EXECUTE=false, empty `search_path` |
@@ -51,7 +51,7 @@
 6. Keep production HOLD / NO TOUCH until exact end-to-end evidence is complete.
 
 ## CURRENT RESUME POINTER
-START FROM THE FINAL HEAD CREATED BY THIS WRITE-BACK.
+START FROM `f7e5f9e902f1a6161a4c7f7887c0608bc6410752` — actual current `main` HEAD.
 
 UI FRONT:
 `src/AppV3Fixed.tsx`
