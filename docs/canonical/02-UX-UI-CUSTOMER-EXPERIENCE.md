@@ -40,3 +40,10 @@ docs/CANONICAL-DOCUMENT-SYSTEM.md identifies the legacy UI document that must be
 - Live items are wired to existing Commerce workspaces; external/boundary items remain visible as explicit scope boundaries rather than fake features.
 - Promotions is retained as a documented contract gap until a canonical business/data contract exists.
 - Advanced BI/AI, legacy Onyx analytical snapshots, Developer AI and unrelated operational surfaces remain outside Commerce transactional truth unless a separate canonical contract exists.
+
+
+## 2026-09-25 — Current UI integrity hardening
+- Every executable Admin deep-link target in `src/structure/admin-structure.ts` must resolve to a matching DOM anchor in the current live workspace; unresolved anchors are a navigation defect.
+- Capability buttons may not be rendered as executable controls unless they have a real interaction. Unsupported capabilities such as image search remain explicit non-action boundaries.
+- Customer voice search is implemented through the browser Speech Recognition API with Arabic locale, explicit unsupported-browser/permission recovery, and a visible listening state. 
+- Dynamic customer-control settings expose only real controls; order limits, template limits and payment-method configuration are validated before persistence.
