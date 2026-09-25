@@ -206,3 +206,12 @@ Command "1" means:
 - Customer order history now has its own responsive workspace with search, status filtering, pagination, detail/tracking and reorder actions.
 - Checkout payment selection is now passed to the canonical `create_order` RPC through `createOrder(...,{paymentMethod})`; the UI normalizes to the first enabled payment method when configuration changes.
 - Do not claim exact-SHA PASS until gates for `ce79c609ae1507060711fbe0d2fb9e78e522ba06` finish. Hosted Browser E2E remains subject to the existing Vercel Deployment Protection artifact-identity gate.
+
+
+## 10. UI closure continuation — 2026-09-25
+
+- Latest functional code SHA: `1482a7eaa29162d96a4bf5d32e113f14226daa2b` on `main`.
+- Purchasing queue now has search/status filtering and pagination, with React hook ordering corrected before acceptance.
+- Finance now has a real invoice history workspace with search/status filtering/pagination, and React hook ordering corrected before acceptance.
+- Category management now has a real hierarchical read workspace with search, retry/error/empty states and responsive presentation.
+- No exact-SHA PASS is transferred from older checkpoints; current proof status must be read from CI for the exact current SHA.
