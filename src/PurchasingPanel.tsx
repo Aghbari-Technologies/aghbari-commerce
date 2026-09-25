@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createPurchaseOrder, createSupplier, approvePurchaseOrder, receivePurchaseOrder, submitPurchaseOrder } from './services/purchasing';
 import { supabase } from './lib/supabase';
 
@@ -33,7 +33,7 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
   const [selectedOrderId, setSelectedOrderId] = useState('');
   const [receiveItemId, setReceiveItemId] = useState('');
   const [receiveQuantity, setReceiveQuantity] = useState('1');
-  const [busy, setBusy] = useState(false); const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState(false); const [loading, setLoading] = useState(true); const [orderQuery,setOrderQuery]=useState(''); const [orderStatus,setOrderStatus]=useState<'all'|Status>('all'); const [orderPage,setOrderPage]=useState(1);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -62,6 +62,7 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
   }, [canManage, productId, selectedOrderId, supplierId, warehouseId]);
 
   useEffect(() => { void load().catch((e) => { setLoading(false); setError(e instanceof Error ? e.message : 'تعذر تحميل المشتريات.'); }); }, [load]);
+  useEffect(()=>{setOrderPage(1);},[orderQuery,orderStatus]);
 
   async function run(action: () => Promise<unknown>, success: string) {
     setBusy(true); setError(null); setMessage(null);
@@ -75,6 +76,7 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
   const supplierNameFor = (id: string) => suppliers.find((supplier) => supplier.id === id)?.name ?? 'مورد';
   const productNameFor = (id: string) => products.find((product) => product.id === id)?.name ?? id;
   const selectedReceiveItem = selectedOrderItems.find((item) => item.id === receiveItemId) ?? selectedOrderItems[0];
+  const visibleOrders=useMemo(()=>{const needle=orderQuery.trim().toLocaleLowerCase();return orders.filter(o=>(orderStatus==='all'||o.status===orderStatus)&&(!needle||String(o.purchase_order_number).includes(needle)||supplierNameFor(o.supplier_id).toLocaleLowerCase().includes(needle)||statusLabels[o.status].includes(needle)));},[orderQuery,orderStatus,orders,suppliers]); const orderPages=Math.max(1,Math.ceil(visibleOrders.length/8)); const activeOrderPage=Math.min(orderPage,orderPages); const pagedOrders=visibleOrders.slice((activeOrderPage-1)*8,activeOrderPage*8);
 
   return <div className="cart-panel" id="purchasing">
     <div className="section-heading"><div><span className="eyebrow">المشتريات والمستودع</span><h2>دورة التوريد</h2></div><span aria-live="polite">{loading ? 'جارٍ التحديث…' : `${orders.length} أوامر شراء`}</span></div>
@@ -97,7 +99,7 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
         <button disabled={busy || !supplierId || !warehouseId || !productId}>إنشاء أمر شراء</button>
       </form>
 
-      <div className="admin-card"><h3>اعتماد أوامر الشراء</h3>{loading ? <div className="portal-loading" role="status">جارٍ تحميل أوامر الشراء…</div> : orders.length === 0 ? <div className="empty-state"><strong>لا توجد أوامر شراء بعد.</strong><button type="button" onClick={() => void load()}>إعادة المحاولة</button></div> : <div className="cart-lines">{orders.slice(0, 8).map((order) => <article className="cart-line" key={order.id}><div><strong>أمر #{order.purchase_order_number}</strong><small>{supplierNameFor(order.supplier_id)}</small></div><div><strong>{order.total} {order.currency}</strong><small>{statusLabels[order.status]}</small></div><div className="status-actions">{order.status === 'draft' && <button disabled={busy} onClick={() => void run(() => submitPurchaseOrder(order.id), 'تم إرسال أمر الشراء للاعتماد.')}>إرسال</button>}{canApprove && order.status === 'submitted' && <button disabled={busy} onClick={() => void run(() => approvePurchaseOrder(order.id), 'تم اعتماد أمر الشراء.')}>اعتماد</button>}</div></article>)}</div>}</div>
+      <div className="admin-card"><h3>اعتماد أوامر الشراء</h3><div className="order-queue-toolbar"><input aria-label="بحث أوامر الشراء" value={orderQuery} onChange={e=>setOrderQuery(e.target.value)} placeholder="رقم الأمر أو المورد" disabled={loading}/><select aria-label="حالة أمر الشراء" value={orderStatus} onChange={e=>setOrderStatus(e.target.value as 'all'|Status)} disabled={loading}><option value="all">كل الحالات</option>{(Object.keys(statusLabels) as Status[]).map(k=><option key={k} value={k}>{statusLabels[k]}</option>)}</select><button type="button" className="ghost" onClick={()=>{setOrderQuery('');setOrderStatus('all');}} disabled={!orderQuery&&orderStatus==='all'}>مسح</button></div>{loading ? <div className="portal-loading" role="status">جارٍ تحميل أوامر الشراء…</div> : orders.length === 0 ? <div className="empty-state"><strong>لا توجد أوامر شراء بعد.</strong><button type="button" onClick={() => void load()}>إعادة المحاولة</button></div> : !visibleOrders.length ? <div className="empty-state"><strong>لا توجد نتائج مطابقة.</strong><button type="button" onClick={()=>{setOrderQuery('');setOrderStatus('all');}}>مسح الفلاتر</button></div> : <><div className="cart-lines">{pagedOrders.map((order) => <article className="cart-line" key={order.id}><div><strong>أمر #{order.purchase_order_number}</strong><small>{supplierNameFor(order.supplier_id)}</small></div><div><strong>{order.total} {order.currency}</strong><small>{statusLabels[order.status]}</small></div><div className="status-actions">{order.status === 'draft' && <button disabled={busy} onClick={() => void run(() => submitPurchaseOrder(order.id), 'تم إرسال أمر الشراء للاعتماد.')}>إرسال</button>}{canApprove && order.status === 'submitted' && <button disabled={busy} onClick={() => void run(() => approvePurchaseOrder(order.id), 'تم اعتماد أمر الشراء.')}>اعتماد</button>}</div></article>)}</div>}{visibleOrders.length>0&&<div className="directory-pagination"><span>صفحة {activeOrderPage} / {orderPages} · {visibleOrders.length} نتيجة</span><div><button type="button" className="ghost" onClick={()=>setOrderPage(p=>Math.max(1,p-1))} disabled={activeOrderPage===1}>السابق</button><button type="button" className="ghost" onClick={()=>setOrderPage(p=>Math.min(orderPages,p+1))} disabled={activeOrderPage===orderPages}>التالي</button></div></div></>}</div>
 
       <form className="admin-card" onSubmit={(e) => { e.preventDefault(); if (!selectedOrderId || !selectedReceiveItem) return; void run(() => receivePurchaseOrder({ purchaseOrderId: selectedOrderId, idempotencyKey: `agh-receive-${crypto.randomUUID()}`, lines: [{ purchaseOrderItemId: selectedReceiveItem.id, productId: selectedReceiveItem.product_id, quantity: Number(receiveQuantity) }] }), 'تم الاستلام وتحديث المخزون وتسجيل الحركة.'); }}>
         <h3>استلام البضاعة</h3>
