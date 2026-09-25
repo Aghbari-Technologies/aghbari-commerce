@@ -11,7 +11,10 @@ describe('inventory input boundaries', () => {
   it('accepts a valid transfer', () => expect(() => validateInventoryTransferInput(warehouseA, warehouseB, key, [{ productId: productA, quantity: 2 }])).not.toThrow());
   it('rejects invalid warehouse ids', () => expect(() => validateInventoryTransferInput('bad', warehouseB, key, [{ productId: productA, quantity: 2 }])).toThrow());
   it('rejects same source and destination', () => expect(() => validateInventoryTransferInput(warehouseA, warehouseA, key, [{ productId: productA, quantity: 2 }])).toThrow());
-  it('rejects weak idempotency keys', () => expect(() => validateInventoryTransferInput(warehouseA, warehouseB, 'short', [{ productId: productA, quantity: 2 }])).toThrow());
+  it('rejects weak or oversized idempotency keys', () => {
+    expect(() => validateInventoryTransferInput(warehouseA, warehouseB, 'short', [{ productId: productA, quantity: 2 }])).toThrow();
+    expect(() => validateInventoryTransferInput(warehouseA, warehouseB, 'x'.repeat(129), [{ productId: productA, quantity: 2 }])).toThrow();
+  });
   it('rejects duplicate products', () => expect(() => validateInventoryTransferInput(warehouseA, warehouseB, key, [{ productId: productA, quantity: 1 }, { productId: productA, quantity: 2 }])).toThrow());
   it('rejects non-positive quantities', () => expect(() => validateInventoryTransferInput(warehouseA, warehouseB, key, [{ productId: productA, quantity: 0 }])).toThrow());
   it('accepts ordered distinct products', () => expect(() => validateInventoryTransferInput(warehouseA, warehouseB, key, [{ productId: productA, quantity: 1 }, { productId: productB, quantity: 3 }])).not.toThrow());
