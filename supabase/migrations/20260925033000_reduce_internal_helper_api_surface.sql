@@ -1,4 +1,16 @@
--- Reduce exposed API surface for internal authorization helper SECURITY DEFINER functions.
+-- RLS policies use this reader helper on protected organization-scoped SELECT paths.
+-- Define it here so fresh databases contain the same contract as the live schema.
+create or replace function public.is_staff_reader()
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select public.current_role() in ('owner','admin','sales','warehouse','viewer');
+$$;
+
+-- Reduce exposed API surface for internal authorization helper SECURITY DEFINER functions used by RLS.
 -- These helpers are authorization primitives used by protected server functions/RLS,
 -- not application RPCs. Their direct PostgREST EXECUTE privilege is revoked.
 
