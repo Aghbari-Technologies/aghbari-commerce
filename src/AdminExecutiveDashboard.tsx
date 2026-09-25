@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { getStaffOrders, type StaffOrderSummary } from './services/staffOrders';
 import { formatMoney } from './domain/pricing';
 import { supabase } from './lib/supabase';
@@ -77,7 +77,7 @@ function SectionCard({
   icon: string;
   title: string;
   description?: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <article className="control-section-card">
