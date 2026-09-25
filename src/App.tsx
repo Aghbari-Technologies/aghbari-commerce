@@ -76,11 +76,12 @@ export default function App() {
     const allowed = new Set(['catalog','orders','finance','templates','account','notifications']);
     const readHash = () => { const value = window.location.hash.replace(/^#/, ''); if (allowed.has(value)) setSection(value as typeof section); };
     readHash();
-    const onHashChange = () => readHash();
-    window.addEventListener('hashchange', onHashChange);
-    return () => window.removeEventListener('hashchange', onHashChange);
+    const onNavigate = () => readHash();
+    window.addEventListener('hashchange', onNavigate);
+    window.addEventListener('popstate', onNavigate);
+    return () => { window.removeEventListener('hashchange', onNavigate); window.removeEventListener('popstate', onNavigate); };
   }, [role]);
-  useEffect(() => { if (STAFF_ROLES.has(role)) return; const hash = section; if (window.location.hash.replace(/^#/, '') !== hash) window.history.replaceState(null, '', '#' + hash); }, [role, section]);
+  useEffect(() => { if (STAFF_ROLES.has(role)) return; const hash = section; if (window.location.hash.replace(/^#/, '') !== hash) window.history.pushState(null, '', '#' + hash); }, [role, section]);
   useEffect(() => { if (!signedIn || !uiConfig.showSearch) return; const timer = window.setTimeout(() => setCatalogSearch(query.trim()), 220); return () => window.clearTimeout(timer); }, [query, signedIn, uiConfig.showSearch]);
   useEffect(() => { if (!signedIn || !uiConfig.showSearch) return; const onKeyDown = (event: KeyboardEvent) => { if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); searchInputRef.current?.focus(); searchInputRef.current?.select(); } if (event.key === 'Escape' && document.activeElement === searchInputRef.current) searchInputRef.current?.blur(); }; window.addEventListener('keydown', onKeyDown); return () => window.removeEventListener('keydown', onKeyDown); }, [signedIn, uiConfig.showSearch]);
   useEffect(() => { if (!signedIn) return; const onKeyDown = (event: KeyboardEvent) => { if (event.key !== 'Escape') return; if (selectedProduct) { setSelectedProduct(null); return; } if (quickOrderOpen) { setQuickOrderOpen(false); return; } if (cartOpen) setCartOpen(false); }; window.addEventListener('keydown', onKeyDown); return () => window.removeEventListener('keydown', onKeyDown); }, [signedIn, selectedProduct, quickOrderOpen, cartOpen]);
