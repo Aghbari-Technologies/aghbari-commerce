@@ -313,13 +313,19 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
             </article>
           </section>
 
-          <section className="control-kpi-grid" aria-label="مؤشرات سريعة">
-            <article><span>العملاء</span><strong>{loading ? '—' : snapshot.customers.toLocaleString('ar')}</strong><small>حسابات التجار</small></article>
-            <article><span>المنتجات</span><strong>{loading ? '—' : snapshot.products.toLocaleString('ar')}</strong><small>أصناف نشطة</small></article>
-            <article><span>الطلبات</span><strong>{loading ? '—' : snapshot.orders.toLocaleString('ar')}</strong><small>كل حالات الطلب</small></article>
-            <article><span>مخزون</span><strong>{loading ? '—' : snapshot.stockItems.toLocaleString('ar')}</strong><small>أرصدة تشغيلية</small></article>
-            <article><span>الطلبات التشغيلية</span><strong>{latestOrders.length.toLocaleString('ar')}</strong><small>آخر عينة معروضة</small></article>
-          </section>
+          {loading ? (
+            <section className="control-kpi-skeletons" aria-label="جارٍ تجهيز المؤشرات">
+              {Array.from({ length: 5 }).map((_, index) => <div className="control-kpi-skeleton" key={index}><i /><i /><i /></div>)}
+            </section>
+          ) : (
+            <section className="control-kpi-grid" aria-label="مؤشرات سريعة">
+              <article><span>العملاء</span><strong>{snapshot.customers.toLocaleString("ar")}</strong><small>حسابات التجار</small></article>
+              <article><span>المنتجات</span><strong>{snapshot.products.toLocaleString("ar")}</strong><small>أصناف نشطة</small></article>
+              <article><span>الطلبات</span><strong>{snapshot.orders.toLocaleString("ar")}</strong><small>كل حالات الطلب</small></article>
+              <article><span>مخزون</span><strong>{snapshot.stockItems.toLocaleString("ar")}</strong><small>أرصدة تشغيلية</small></article>
+              <article><span>الطلبات التشغيلية</span><strong>{latestOrders.length.toLocaleString("ar")}</strong><small>آخر عينة معروضة</small></article>
+            </section>
+          )}
 
           <div className="control-main-grid">
             <section className="control-widget">
