@@ -3,7 +3,7 @@ import { supabase } from './lib/supabase';
 import { completeStockCount, getLowStock, getOpenStockCount, getStockCountLines, setStockCountLine, setStockThreshold, startStockCount, transferInventory, type LowStockRow, type StockCountLine, type StockCountSession } from './services/inventory';
 
 type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer';
-interface Product { id: string; sku: string; name: string; }
+interface Product { id: string; sku: string; name: string; barcode: string | null; }
 interface Warehouse { id: string; name: string; }
 
 export default function InventoryPanel({ role }: { role: UserRole }) {
@@ -24,6 +24,9 @@ export default function InventoryPanel({ role }: { role: UserRole }) {
   const [thresholdProduct, setThresholdProduct] = useState('');
   const [minQuantity, setMinQuantity] = useState('0');
   const [reorderQuantity, setReorderQuantity] = useState('1');
+  const [barcode, setBarcode] = useState('');
+  const [barcodeBusy, setBarcodeBusy] = useState(false);
+  const [barcodeProductName, setBarcodeProductName] = useState('');
   const [busy, setBusy] = useState(false); const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -32,7 +35,7 @@ export default function InventoryPanel({ role }: { role: UserRole }) {
     if (!supabase || !canUse) { setLoading(false); return; }
     setLoading(true);
     const [productResult, warehouseResult, lowRows, openCount] = await Promise.all([
-      supabase.from('products').select('id,sku,name').eq('status','active').order('name').limit(500),
+      supabase.from('products').select('id,sku,name,barcode').eq('status','active').order('name').limit(500),
       supabase.from('warehouses').select('id,name').eq('is_active',true).order('created_at'),
       getLowStock(),
       getOpenStockCount()
@@ -56,6 +59,33 @@ export default function InventoryPanel({ role }: { role: UserRole }) {
 
   useEffect(() => { void reload().catch((e) => { setLoading(false); setError(e instanceof Error ? e.message : 'تعذر تحميل المخزون.'); }); }, [reload]);
 
+  async function resolveBarcode() {
+    const normalized = barcode.trim();
+    if (!normalized || !supabase) return;
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+      setError('البحث بالباركود يحتاج اتصالًا بالخادم حتى لا يتم اتخاذ قرار مخزني من بيانات قديمة.');
+      return;
+    }
+    setBarcodeBusy(true); setError(null);
+    try {
+      let result = await supabase.from('products').select('id,sku,name,barcode').eq('status','active').eq('barcode',normalized).maybeSingle();
+      if (result.error) throw result.error;
+      let product = result.data;
+      if (!product) {
+        result = await supabase.from('products').select('id,sku,name,barcode').eq('status','active').eq('sku',normalized).maybeSingle();
+        if (result.error) throw result.error;
+        product = result.data;
+      }
+      if (!product) throw new Error('لم يتم العثور على صنف بهذا الباركود أو SKU.');
+      setProductId(product.id);
+      setThresholdProduct(product.id);
+      setBarcodeProductName(product.name + ' · ' + product.sku);
+      setMessage('تم التعرف على الصنف وتعبئة نموذج العملية المخزنية.');
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'تعذر التعرف على الباركود.');
+    } finally { setBarcodeBusy(false); }
+  }
+
   async function run(action: () => Promise<unknown>, success: string) {
     setBusy(true); setError(null); setMessage(null);
     try { await action(); setMessage(success); await reload(); }
@@ -71,6 +101,14 @@ export default function InventoryPanel({ role }: { role: UserRole }) {
   return <div className="cart-panel" id="inventory">
     <div className="section-heading"><div><span className="eyebrow">المخزون</span><h2>النقل والجرد والتنبيهات التشغيلية</h2></div><span aria-live="polite">{loading ? 'جارٍ التحديث…' : `${lowStock.length} أصناف منخفضة`}</span></div>
     {loading ? <div className="portal-loading" role="status">جارٍ تحميل بيانات المخزون…</div> : <div className="admin-grid">
+      <div className="admin-card barcode-first-card">
+        <div className="section-heading"><div><span className="eyebrow">Barcode-first</span><h3>التعرّف السريع على الصنف</h3></div><span>لماسحات الباركود</span></div>
+        <form onSubmit={(e) => { e.preventDefault(); void resolveBarcode(); }}>
+          <input aria-label="باركود الصنف" autoComplete="off" placeholder="امسح الباركود أو أدخل SKU ثم Enter" value={barcode} onChange={(e) => setBarcode(e.target.value)} disabled={barcodeBusy || loading} />
+          <div className="barcode-first-actions"><button disabled={barcodeBusy || loading || !barcode.trim()}>{barcodeBusy ? 'جارٍ البحث…' : 'تحديد الصنف'}</button><button type="button" className="ghost" onClick={() => { setBarcode(''); setBarcodeProductName(''); }} disabled={!barcode && !barcodeProductName}>مسح</button></div>
+        </form>
+        <small aria-live="polite">{barcodeProductName ? 'الصنف المحدد: ' + barcodeProductName : 'سيتم تعبئة الصنف تلقائيًا في التحويل وحد إعادة الطلب.'}</small>
+      </div>
       <form className="admin-card" onSubmit={(e) => { e.preventDefault(); void run(() => transferInventory(source,destination,makeKey('transfer'),[{productId,quantity:Number(quantity)}],notes), 'تم نقل المخزون ذريًا وتسجيل الحركتين.'); }}>
         <h3>تحويل بين المستودعات</h3>
         <select aria-label="المستودع المصدر" value={source} onChange={(e) => setSource(e.target.value)} required><option value="">من المستودع</option>{warehouses.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}</select>
