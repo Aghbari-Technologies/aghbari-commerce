@@ -1,7 +1,9 @@
-import { IMPORT_CONTRACT_VERSION, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
+import { IMPORT_CONTRACT_VERSION } from './importExcel';
 import { parseProductWorkbook } from './importExcel';
 
 describe('XLSX import guardrails', () => {
+  it('uses an explicit versioned import contract', () => { expect(IMPORT_CONTRACT_VERSION).toBe('xlsx-v1'); });
   it('rejects non-XLSX files before parsing', async () => {
     await expect(parseProductWorkbook(new File(['x'], 'products.csv', { type: 'text/csv' })))
       .rejects.toThrow('XLSX');
