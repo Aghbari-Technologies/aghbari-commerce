@@ -28,6 +28,7 @@ import SupplierLedgerPanel from './SupplierLedgerPanel';
 import InventoryActivityPanel from './InventoryActivityPanel';
 import RecordDetailDrawer from './RecordDetailDrawer';
 import './admin-executive-dashboard.css';
+import './ui-polish.css';
 
 interface StaffProduct { id: string; sku: string; name: string; unit: string; }
 interface Warehouse { id: string; name: string; }
