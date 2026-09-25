@@ -44,18 +44,48 @@ function allowedNextStatuses(status: OrderStatus, role: UserRole): OrderStatus[]
 }
 
 export default function AdminPanel({ role }: { role: UserRole }) {
-  const [products, setProducts] = useState<StaffProduct[]>([]); const [warehouses, setWarehouses] = useState<Warehouse[]>([]); const [categories, setCategories] = useState<CategoryOption[]>([]); const [orders, setOrders] = useState<StaffOrderSummary[]>([]); const [ordersLoading, setOrdersLoading] = useState(false); const [orderQuery, setOrderQuery] = useState(''); const [orderStatusFilter, setOrderStatusFilter] = useState<'all'|OrderStatus>('all'); const [orderPage, setOrderPage] = useState(1);
+  const [products, setProducts] = useState<StaffProduct[]>([]); const [warehouses, setWarehouses] = useState<Warehouse[]>([]); const [categories, setCategories] = useState<CategoryOption[]>([]); const [orders, setOrders] = useState<StaffOrderSummary[]>([]); const [ordersLoading, setOrdersLoading] = useState(false); const [orderQuery, setOrderQuery] = useState('');
+  const [commandOpen, setCommandOpen] = useState(false); const [commandQuery, setCommandQuery] = useState(''); const [orderStatusFilter, setOrderStatusFilter] = useState<'all'|OrderStatus>('all'); const [orderPage, setOrderPage] = useState(1);
   const [product, setProduct] = useState({ sku: '', name: '', unit: 'كرتون', categoryId: '', description: '' }); const [category, setCategory] = useState({ name: '', slug: '', parentId: '' }); const [selectedProduct, setSelectedProduct] = useState(''); const [tier, setTier] = useState<CustomerTier>('wholesale'); const [price, setPrice] = useState(''); const [warehouseId, setWarehouseId] = useState(''); const [delta, setDelta] = useState(''); const [reason, setReason] = useState(''); const [imageFile, setImageFile] = useState<File | null>(null); const [importFile, setImportFile] = useState<File | null>(null); const [importJobId, setImportJobId] = useState<string | null>(null); const [importPreview, setImportPreview] = useState<{ rows: number; invalid: number } | null>(null); const [busy, setBusy] = useState(false); const [message, setMessage] = useState<string | null>(null); const [error, setError] = useState<string | null>(null);
 
   const reload = useCallback(async () => { if (!supabase) return; setOrdersLoading(true); try { const [{ data: productRows, error: productError }, { data: warehouseRows, error: warehouseError }, categoryRows, orderRows] = await Promise.all([supabase.from('products').select('id,sku,name,unit').eq('status', 'active').order('name').limit(200), supabase.from('warehouses').select('id,name').eq('is_active', true).order('created_at'), getCategories(), getStaffOrders(50)]); if (productError) throw productError; if (warehouseError) throw warehouseError; setProducts((productRows ?? []) as StaffProduct[]); setCategories(categoryRows); setOrders(orderRows); const nextWarehouses = (warehouseRows ?? []) as Warehouse[]; setWarehouses(nextWarehouses); if (!warehouseId && nextWarehouses[0]) setWarehouseId(nextWarehouses[0].id); } finally { setOrdersLoading(false); } }, [warehouseId]);
   useEffect(() => { void reload().catch((e) => setError(e instanceof Error ? e.message : 'تعذر تحميل مركز التحكم.')); }, [reload]);
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); setCommandOpen(true); setCommandQuery(''); }
+      if (event.key === 'Escape') setCommandOpen(false);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
+
   useEffect(() => { setOrderPage(1); }, [orderQuery, orderStatusFilter]);
   async function run(action: () => Promise<unknown>, success: string) { setBusy(true); setError(null); setMessage(null); try { await action(); setMessage(success); await reload(); } catch (e) { setError(e instanceof Error ? e.message : 'تعذر تنفيذ العملية.'); } finally { setBusy(false); } }
   async function uploadImage() { if (!selectedProduct || !imageFile) return; await run(async () => { await uploadProductImage(selectedProduct, imageFile); setImageFile(null); }, 'تم رفع الصورة ومعالجتها وتسجيلها بأمان.'); }
   async function stageImport() { if (!importFile) return; setBusy(true); setError(null); setMessage(null); setImportJobId(null); setImportPreview(null); try { const result = await stageProductImport(importFile); setImportPreview({ rows: result.rows.length, invalid: result.diagnostics.length }); if (result.jobId) { setImportJobId(result.jobId); setMessage('تمت المعاينة والتحقق على الخادم. يمكنك اعتماد الاستيراد الذري.'); } else setError('الملف يحتوي أخطاء ويجب إصلاحها قبل الاستيراد.'); } catch (e) { setError(e instanceof Error ? e.message : 'تعذر تجهيز ملف الاستيراد.'); } finally { setBusy(false); } }
   async function commitImport() { if (!importJobId || !warehouseId) return; await run(async () => { const result = await commitProductImport(importJobId, warehouseId); setImportJobId(null); setImportFile(null); setImportPreview(null); return result; }, 'تم اعتماد الاستيراد بالكامل وتسجيل أثر المخزون والتدقيق.'); }
   async function changeOrderStatus(orderId: string, status: OrderStatus) { await run(async () => transitionOrder(orderId, status), `تم تحديث حالة الطلب إلى: ${STATUS_LABELS[status]}.`); }
-  const canCatalog = role === 'owner' || role === 'admin' || role === 'sales'; const canCategory = role === 'owner' || role === 'admin'; const canInventory = role === 'owner' || role === 'admin' || role === 'warehouse'; const canOrderWorkflow = STAFF_ROLES.has(role); const canFinance = ['owner', 'admin', 'sales'].includes(role); const visibleOrders = useMemo(() => { const needle = orderQuery.trim().toLowerCase(); return orders.filter((order) => (orderStatusFilter === 'all' || order.status === orderStatusFilter) && (!needle || String(order.order_number).includes(needle) || String(order.customer_name ?? '').toLowerCase().includes(needle) || String(STATUS_LABELS[order.status] ?? order.status).toLowerCase().includes(needle))); }, [orders, orderQuery, orderStatusFilter]); const orderPages = Math.max(1, Math.ceil(visibleOrders.length / 10)); const activeOrderPage = Math.min(orderPage, orderPages); const pagedOrders = visibleOrders.slice((activeOrderPage - 1) * 10, activeOrderPage * 10);
+  const canCatalog = role === 'owner' || role === 'admin' || role === 'sales';  const commands = [
+    ['الطلبات وسير العمل', '#admin-orders', canOrderWorkflow],
+    ['العملاء', '#admin-customers', canCatalog],
+    ['إضافة منتج', '#admin-product-create', canCatalog],
+    ['التصنيفات', '#admin-category-create', canCategory],
+    ['التسعير', '#admin-pricing', canCatalog],
+    ['صور المنتجات', '#admin-product-image', canCatalog],
+    ['الاستيراد الآمن', '#admin-import', canCatalog],
+    ['المخزون', '#admin-inventory', canInventory],
+    ['نشاط المخزون', '#admin-inventory-activity', canInventory],
+    ['المستودعات والفروع', '#admin-warehouses', canInventory],
+    ['المشتريات والموردون', '#admin-purchasing', canInventory],
+    ['المالية', '#admin-finance', canFinance],
+    ['التصدير', '#admin-export', canInventory],
+    ['الإشعارات', '#admin-notifications', canOrderWorkflow],
+    ['التدقيق والتكاملات', '#admin-governance', canOrderWorkflow],
+    ['الأدوار والصلاحيات', '#admin-access', canOrderWorkflow],
+    ['إعدادات العميل', '#admin-settings', canCategory]
+  ] as const;
+  const visibleCommands = commands.filter(([label, , allowed]) => allowed && (label.includes(commandQuery.trim()) || !commandQuery.trim()));
+ const canCategory = role === 'owner' || role === 'admin'; const canInventory = role === 'owner' || role === 'admin' || role === 'warehouse'; const canOrderWorkflow = STAFF_ROLES.has(role); const canFinance = ['owner', 'admin', 'sales'].includes(role); const visibleOrders = useMemo(() => { const needle = orderQuery.trim().toLowerCase(); return orders.filter((order) => (orderStatusFilter === 'all' || order.status === orderStatusFilter) && (!needle || String(order.order_number).includes(needle) || String(order.customer_name ?? '').toLowerCase().includes(needle) || String(STATUS_LABELS[order.status] ?? order.status).toLowerCase().includes(needle))); }, [orders, orderQuery, orderStatusFilter]); const orderPages = Math.max(1, Math.ceil(visibleOrders.length / 10)); const activeOrderPage = Math.min(orderPage, orderPages); const pagedOrders = visibleOrders.slice((activeOrderPage - 1) * 10, activeOrderPage * 10);
 
   return <section className="admin-panel" id="account">
     <AdminExecutiveDashboard role={role} />
@@ -78,6 +108,15 @@ export default function AdminPanel({ role }: { role: UserRole }) {
         {canOrderWorkflow&&<a href="#admin-governance">التدقيق والتكاملات</a>}
         {canOrderWorkflow&&<a href="#admin-access">الأدوار والصلاحيات</a>}
       </nav>
+      <button type="button" className="admin-command-trigger" aria-haspopup="dialog" aria-expanded={commandOpen} onClick={() => { setCommandOpen(true); setCommandQuery(''); }}>⌘ مركز الأوامر <kbd>Ctrl K</kbd></button>
+      {commandOpen && <div className="admin-command-backdrop" role="presentation" onClick={() => setCommandOpen(false)}>
+        <section className="admin-command-dialog" role="dialog" aria-modal="true" aria-labelledby="admin-command-title" onClick={(event) => event.stopPropagation()}>
+          <div className="section-heading"><div><span className="eyebrow">تشغيل سريع</span><h2 id="admin-command-title">مركز الأوامر</h2></div><button type="button" className="ghost" onClick={() => setCommandOpen(false)}>إغلاق</button></div>
+          <input autoFocus aria-label="بحث أوامر الإدارة" placeholder="ابحث عن إجراء أو قسم…" value={commandQuery} onChange={(event) => setCommandQuery(event.target.value)} />
+          <div className="admin-command-results">{visibleCommands.length ? visibleCommands.map(([label,target]) => <a key={target} href={target} onClick={() => setCommandOpen(false)}>{label}<span>↗</span></a>) : <div className="cart-empty">لا توجد إجراءات مطابقة.</div>}</div>
+          <small>Ctrl+K أو ⌘K · تظهر فقط الإجراءات المسموح بها لدورك الحالي.</small>
+        </section>
+      </div>}
     <details className="admin-operations" open>
       <summary>مركز التشغيل التفصيلي وإدارة البيانات</summary>
       <div className="section-heading"><div><span className="eyebrow">إدارة التشغيل</span><h2>مركز التحكم</h2></div><span>الصلاحيات تُفرض على الخادم أيضًا</span></div>
