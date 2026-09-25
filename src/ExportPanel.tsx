@@ -101,7 +101,7 @@ export default function ExportPanel({ role }: { role: UserRole }) {
     } finally { setPublishing(false); }
   }
 
-  return <div className="admin-card">
+  return <div className="admin-card" id="admin-export">
     <div className="export-surface-header"><div><span className="eyebrow">Data Center</span><strong>إخراج البيانات والتحليل</strong><small>التصدير يحافظ على حدود الحجم، والتحليل يمر عبر بوابة التقارير فقط.</small></div><span className="export-surface-badge">Bounded</span></div>
     <h3>بيانات التقارير</h3>
     <p>تمر البيانات إلى بوابة التقارير فقط؛ لا توجد صلاحية للمستهلك التحليلي لتعديل معاملات الأغبري.</p>
