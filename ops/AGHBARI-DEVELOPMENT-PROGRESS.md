@@ -589,3 +589,26 @@ The customer portal previously exposed only order summaries and reorder behavior
 - Source changes are committed to `main`.
 - Fresh exact-SHA application-quality, security, browser and hosted deployment proof is still required; no PASS is transferred from older SHA evidence.
 - Production remains NO TOUCH.
+
+## Run 2026-09-25 — Full v2.0 structure reconciliation into Aghbari
+
+### Start
+- Actual source line after UI rebuild/routing/structure writes: `0adcca91ddf736775e595d72f8b6f22f8f80bf60`.
+- Scope: Aghbari Commerce only. Production: NO TOUCH.
+
+### Change
+- Added executable Admin information-architecture manifest: `src/structure/admin-structure.ts` with full legacy-v2 group/page mapping, permissions, actions, and explicit live/boundary/contract-gap status.
+- Added executable Customer Portal capability manifest: `src/structure/customer-structure.ts`.
+- Added centralized staff UI permission matrix: `src/structure/role-matrix.ts` and structure module exports.
+- Added actual Admin deep-link mapping and SPA fallback via `vercel.json`; direct `/admin/*` paths resolve to the corresponding existing workspace anchor.
+- Exposed the complete structure index visually inside the new premium Control Plane while keeping unsupported legacy modules visibly bounded rather than fake.
+
+### Verification
+- GitHub push workflows for `0adcca91ddf736775e595d72f8b6f22f8f80bf60` were observed queued for application-quality, security-audit, G1 domain, browser exact deployment, migration proof, order workflow, concurrency and Test-the-Test.
+- No exact-SHA PASS is claimed while those current-head workflows remain incomplete.
+- Vercel continues to report a free-plan build-rate-limit failure on the connected project; this is a deployment blocker, not a code PASS.
+
+### Remaining
+- Consume current-head workflow results, repair any regressions, then repeat on the final post-writeback SHA.
+- Browser proof must target a deployment whose metadata matches the exact tested SHA.
+- Continue contract-backed UI/core closure on remaining real gaps; do not fabricate Promotions or move Report-Advisor/BI into Commerce.
