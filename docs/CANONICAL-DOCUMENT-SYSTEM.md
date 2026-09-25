@@ -1,6 +1,6 @@
 # 🔴 AGHBARI — CANONICAL DOCUMENT SYSTEM & RETIREMENT MANIFEST
 
-**Manifest metadata last reconciled before current write-back:** execution branch parent `2bccf4585ced4858b3cc29b02e7afef0123c12a0`
+**Manifest metadata last reconciled before current write-back:** main HEAD `3b38d2eb058bc5d9b752d6c61b68e529c45acf0f`
 **Purpose:** replace fragmented documentation with a controlled canonical system without losing content.
 
 ## 1. FINAL DOCUMENT ARCHITECTURE
