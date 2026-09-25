@@ -700,3 +700,38 @@ The customer portal previously exposed only order summaries and reorder behavior
 - GitHub Actions are triggered by push for the current branch line but exact latest results remain queued at checkpoint time.
 - Vercel reports deployment rate limiting; no hosted exact-source browser proof is claimed.
 - Production: NO TOUCH. Certification: NOT CLAIMED.
+
+
+## Run 2026-09-25 — Core transactional closure: finance + purchasing + customer audit
+
+### Implemented
+- Repaired the live finance command contract: client payment recording now supplies and preserves a mandatory idempotency key across retry ambiguity.
+- Hardened the six-argument record_payment RPC with safe numeric validation, invoice/cash locking, payload-conflict detection, atomic cash movement, audit and outbox effects, and authenticated-only execution.
+- Added audit/outbox closure for invoice creation and purchase-order create/submit/approve commands.
+- Added server-side bounds for cash-account and customer/supplier creation inputs; customer tier/status mutations now emit audit events.
+- Aligned purchasing/receiving/inventory client line limits with the live 100-line transactional command cap; inventory/purchasing client idempotency keys are bounded to 128 characters.
+- Added exact contract tests 029 (18/18 live checks) and 030 (13/13 planned runtime payment assertions).
+
+### Exact implementation commits
+- d8ad7097649c46d08e1c580bb118dca146604705 — finance service idempotency contract.
+- c05bc30042ce70360864e4b7c4fc2c91c6539058 — finance input boundary alignment.
+- 8ade673dbdd4931cd7ee4288c58614951a4ff26a — FinancePanel retry-safe idempotency state.
+- aa46d27b1c5cb697f86d68b97d83bcb1a99cfae6 — finance validation tests.
+- 890a60e63e1f184a911e9c173774441f5ff6ea60 — payment DB hardening migration.
+- 29b8eedb6e05aaf38e148d9220f781b9a75ff159 — purchasing service boundary.
+- 96fa529011836c3e9948c0262fa0a40954382335 — inventory service boundary.
+- 31cfbf7e9a7322f3a002444506dfb23fc6d6f0be — purchasing test fixture correction.
+- 8fcf28741425c8227e1e65cf27caa39d4d9795ca — inventory boundary test.
+- 860cbe9f14b59ffcb6316dc50a4ee51d83ee9b5e — purchasing UI server-cap alignment.
+- 115a175f1d992afacf3316113363c24ca4e60763 — core mutation audit/outbox migration.
+- 3698f873c3c934f08572f8fced354db097fe3a3f — customer lifecycle audit migration.
+- 09f11cc32f2c8b437a03ce16327fc2ee3592783c — core command audit/outbox contract test.
+- b1e62e0b615576dbdf82687fff9c54c38b39743f — payment runtime test fixture.
+- e2f6491bb4dd420ab498abeed9148f7a6f87931b — payment runtime test harness permission correction.
+- c5eba4a42af2543b4d1cf06180caa1ecb7316c59 — final payment runtime test plan correction.
+
+### Exact live verification
+- Supabase live contract check: 18/18.
+- Supabase live payment runtime test: 13/13 planned assertions.
+- Current post-change GitHub Actions for the exact source head are queued; no CI PASS transferred.
+- Production remains HOLD / NO TOUCH; certification NOT CLAIMED.
