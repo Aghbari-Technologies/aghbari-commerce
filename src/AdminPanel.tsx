@@ -22,6 +22,9 @@ import CategoryManagementPanel from './CategoryManagementPanel';
 import PurchaseReceiptHistoryPanel from './PurchaseReceiptHistoryPanel';
 import InventoryHistoryPanel from './InventoryHistoryPanel';
 import FinanceOperationsHistoryPanel from './FinanceOperationsHistoryPanel';
+import PricingMatrixPanel from './PricingMatrixPanel';
+import WarehouseDirectoryPanel from './WarehouseDirectoryPanel';
+import SupplierLedgerPanel from './SupplierLedgerPanel';
 import './admin-executive-dashboard.css';
 
 interface StaffProduct { id: string; sku: string; name: string; unit: string; }
@@ -61,12 +64,12 @@ export default function AdminPanel({ role }: { role: UserRole }) {
         {canCatalog&&<a href="#admin-customers">العملاء</a>}
         {canCatalog&&<a href="#admin-catalog">الكتالوج والمنتجات</a>}
         {canCategory&&<a href="#admin-categories">دليل التصنيفات</a>}{canCategory&&<a href="#admin-category-create">إضافة تصنيف</a>}
-        {canCatalog&&<a href="#admin-pricing">التسعير</a>}
+        {canCatalog&&<a href="#admin-pricing">التسعير</a>}{canCatalog&&<a href="#admin-pricing-matrix">مصفوفة الأسعار</a>}
         {canCatalog&&<a href="#admin-product-image">صور المنتجات</a>}
         {canCatalog&&<a href="#admin-import">الاستيراد الآمن</a>}
         {canInventory&&<a href="#admin-inventory">المخزون</a>}
-        {canInventory&&<a href="#admin-inventory-adjust">تعديل المخزون</a>}{canInventory&&<a href="#admin-inventory-history">دفتر حركة المخزون</a>}
-        {canInventory&&<a href="#admin-purchasing">المشتريات والموردون</a>}{canInventory&&<a href="#admin-receipts">سجل الاستلام</a>}
+        {canInventory&&<a href="#admin-inventory-adjust">تعديل المخزون</a>}{canInventory&&<a href="#admin-inventory-history">دفتر حركة المخزون</a>}{canInventory&&<a href="#admin-warehouses">المستودعات والفروع</a>}
+        {canInventory&&<a href="#admin-purchasing">المشتريات والموردون</a>}{canInventory&&<a href="#admin-suppliers">دليل الموردين والحساب</a>}{canInventory&&<a href="#admin-receipts">سجل الاستلام</a>}
         {canFinance&&<a href="#admin-finance">المالية</a>}{canFinance&&<a href="#admin-finance-history">السجل المالي</a>}
         {canInventory&&<a href="#admin-export">التصدير</a>}
         {canCategory&&<a href="#admin-settings">إعدادات العميل</a>}
@@ -89,11 +92,14 @@ export default function AdminPanel({ role }: { role: UserRole }) {
       {error && <div className="error-banner" role="alert"><span>{error}</span><button type="button" className="ghost" disabled={ordersLoading} onClick={() => void reload()}>إعادة تحميل مركز التحكم</button></div>}{message && <div className="success" role="status">{message}</div>}
       {canCatalog && <CatalogManagementPanel role={role} />}
       {canCatalog && <CategoryManagementPanel role={role} />}
+      {canCatalog && <PricingMatrixPanel role={role as 'owner'|'admin'|'sales'} />}
       {canCatalog && <div id="admin-customers"><CustomerPanel role={role} /></div>}
       {canInventory && <div id="admin-inventory"><InventoryPanel role={role} /></div>}
       {canInventory && <InventoryHistoryPanel role={role as 'owner'|'admin'|'warehouse'} />}
+      {canInventory && <WarehouseDirectoryPanel role={role as 'owner'|'admin'|'warehouse'} />}
       {canInventory && <div id="admin-purchasing"><PurchasingPanel role={role} /></div>}
       {canInventory && <PurchaseReceiptHistoryPanel role={role as 'owner'|'admin'|'warehouse'} />}
+      {canInventory && <SupplierLedgerPanel role={role as 'owner'|'admin'|'warehouse'} />}
       {canFinance && <div id="admin-finance"><FinancePanel role={role} /></div>}
       {canFinance && <FinanceOperationsHistoryPanel role={role as 'owner'|'admin'|'sales'} />}
       {canInventory && <div id="admin-export"><ExportPanel role={role}/></div>}
