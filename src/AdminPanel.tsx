@@ -28,6 +28,7 @@ import SupplierLedgerPanel from './SupplierLedgerPanel';
 import InventoryActivityPanel from './InventoryActivityPanel';
 import RecordDetailDrawer from './RecordDetailDrawer';
 import './admin-executive-dashboard.css';
+import { adminTargetForPath } from './structure/admin-structure';
 
 interface StaffProduct { id: string; sku: string; name: string; unit: string; }
 interface Warehouse { id: string; name: string; }
@@ -60,6 +61,12 @@ export default function AdminPanel({ role }: { role: UserRole }) {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, []);
 
+  useEffect(() => {
+    const target = adminTargetForPath(window.location.pathname);
+    if (!target) return;
+    const id = window.setTimeout(() => document.querySelector(target)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 40);
+    return () => window.clearTimeout(id);
+  }, []);
   useEffect(() => { setOrderPage(1); }, [orderQuery, orderStatusFilter]);
   async function run(action: () => Promise<unknown>, success: string) { setBusy(true); setError(null); setMessage(null); try { await action(); setMessage(success); await reload(); } catch (e) { setError(e instanceof Error ? e.message : 'تعذر تنفيذ العملية.'); } finally { setBusy(false); } }
   async function uploadImage() { if (!selectedProduct || !imageFile) return; await run(async () => { await uploadProductImage(selectedProduct, imageFile); setImageFile(null); }, 'تم رفع الصورة ومعالجتها وتسجيلها بأمان.'); }
