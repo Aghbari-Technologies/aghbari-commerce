@@ -26,6 +26,7 @@ export default function StaffAccessPanel({ role }: { role: UserRole }) {
   const [users, setUsers] = useState<OrganizationUser[]>([]);
   const [drafts, setDrafts] = useState<Record<string, UserRole>>({});
   const [query, setQuery] = useState('');
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -49,11 +50,15 @@ export default function StaffAccessPanel({ role }: { role: UserRole }) {
   }, []);
 
   useEffect(() => { void reload(); }, [reload]);
+  useEffect(() => { setPage(1); }, [query]);
 
-  const visible = useMemo(() => {
+  const filtered = useMemo(() => {
     const needle = query.trim().toLocaleLowerCase();
     return users.filter((user) => !needle || user.user_id.toLocaleLowerCase().includes(needle) || user.email.toLocaleLowerCase().includes(needle) || ROLE_LABELS[user.role].toLocaleLowerCase().includes(needle));
   }, [users, query]);
+  const accessPages = Math.max(1, Math.ceil(filtered.length / 12));
+  const activeAccessPage = Math.min(page, accessPages);
+  const visible = filtered.slice((activeAccessPage - 1) * 12, activeAccessPage * 12);
 
   async function saveRole(user: OrganizationUser) {
     if (!supabase || !canManage) return;
@@ -97,7 +102,8 @@ export default function StaffAccessPanel({ role }: { role: UserRole }) {
           <button type="button" disabled={!editable || busyId === user.user_id || (drafts[user.user_id] ?? user.role) === user.role} onClick={() => void saveRole(user)}>{busyId === user.user_id ? 'جارٍ الحفظ…' : 'اعتماد'}</button>
         </div>;
       })}</div>}
-    <div className="permission-matrix" aria-label="مصفوفة القدرات التشغيلية">
+<div className="directory-pagination" aria-label="صفحات مستخدمي المنظمة"><span>صفحة {activeAccessPage} / {accessPages} · {filtered.length} حساب</span><div><button type="button" className="ghost" onClick={()=>setPage(p=>Math.max(1,p-1))} disabled={activeAccessPage===1}>السابق</button><button type="button" className="ghost" onClick={()=>setPage(p=>Math.min(accessPages,p+1))} disabled={activeAccessPage===accessPages}>التالي</button></div></div>
+        <div className="permission-matrix" aria-label="مصفوفة القدرات التشغيلية">
       <div className="matrix-title"><strong>مصفوفة القدرات الحالية</strong><small>مرآة لعقود مركز الإدارة الحالية؛ الحد الأمني النهائي هو RLS/RPC في قاعدة البيانات.</small></div>
       {CAPABILITIES.map((capability) => <div className="matrix-row" key={capability.key}><span>{capability.label}</span>{(['owner','admin','sales','warehouse','viewer'] as UserRole[]).map((item) => <span className={capability.roles.includes(item) ? 'allowed' : 'blocked'} key={item}>{ROLE_LABELS[item]} {capability.roles.includes(item) ? '✓' : '—'}</span>)}</div>)}
     </div>
