@@ -32,6 +32,8 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
   const [selectedOrderId, setSelectedOrderId] = useState('');
   const [receiveLines, setReceiveLines] = useState<Array<{ purchaseOrderItemId: string; quantity: string }>>([{ purchaseOrderItemId: '', quantity: '1' }]);
   const [receiveNotes, setReceiveNotes] = useState('');
+  const [purchaseIdempotencyKey,setPurchaseIdempotencyKey]=useState(()=>`agh-po-${crypto.randomUUID()}`);
+  const [receiveIdempotencyKey,setReceiveIdempotencyKey]=useState(()=>`agh-receive-${crypto.randomUUID()}`);
   const [busy, setBusy] = useState(false); const [loading, setLoading] = useState(true); const [orderQuery,setOrderQuery]=useState(''); const [orderStatus,setOrderStatus]=useState<'all'|Status>('all'); const [orderPage,setOrderPage]=useState(1);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -112,11 +114,12 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
           await createPurchaseOrder({
             supplierId,
             warehouseId,
-            idempotencyKey: `agh-po-${crypto.randomUUID()}`,
+            idempotencyKey: purchaseIdempotencyKey,
             lines: normalized,
             currency: 'YER'
           });
           setPurchaseLines([{ productId: products[0]?.id ?? '', quantity: '1', unitCost: '0' }]);
+          setPurchaseIdempotencyKey(`agh-po-${crypto.randomUUID()}`);
         }, 'تم إنشاء أمر الشراء متعدد البنود وتسجيل العملية.');
       }}>
         <div className="section-heading"><div><h3>أمر شراء جديد</h3><small>أنشئ أمرًا متعدد البنود في عملية ذرية واحدة.</small></div><span>{purchaseLines.length} بند</span></div>
@@ -161,10 +164,10 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
         }
         void run(() => receivePurchaseOrder({
           purchaseOrderId: selectedOrderId,
-          idempotencyKey: `agh-receive-${crypto.randomUUID()}`,
+          idempotencyKey: receiveIdempotencyKey,
           lines: normalized.map(({ purchaseOrderItemId, productId, quantity }) => ({ purchaseOrderItemId, productId, quantity })),
           notes: receiveNotes.trim() || undefined
-        }), 'تم استلام جميع البنود ذريًا وتحديث المخزون وتسجيل الحركة.');
+        }), 'تم استلام جميع البنود ذريًا وتحديث المخزون وتسجيل الحركة.').then(()=>setReceiveIdempotencyKey(`agh-receive-${crypto.randomUUID()}`));
       }}>
         <div className="section-heading"><div><h3>استلام البضاعة</h3><small>إيصال متعدد البنود في عملية ذرية واحدة.</small></div><span>{receiveLines.length} بند</span></div>
         <select aria-label="أمر الشراء" value={selectedOrderId} onChange={(e) => { setSelectedOrderId(e.target.value); setReceiveLines([{ purchaseOrderItemId: '', quantity: '1' }]); }} required>

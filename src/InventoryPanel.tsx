@@ -24,6 +24,8 @@ export default function InventoryPanel({ role }: { role: UserRole }) {
   const [minQuantity, setMinQuantity] = useState('0');
   const [reorderQuantity, setReorderQuantity] = useState('1');
   const [busy, setBusy] = useState(false); const [loading, setLoading] = useState(true);
+  const [transferIdempotencyKey,setTransferIdempotencyKey]=useState(()=>`agh-transfer-${crypto.randomUUID()}`);
+  const [stockCountIdempotencyKey,setStockCountIdempotencyKey]=useState(()=>`agh-stock-count-${crypto.randomUUID()}`);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -63,7 +65,6 @@ export default function InventoryPanel({ role }: { role: UserRole }) {
   }
 
   if (!canUse) return null;
-  const makeKey = (prefix: string) => `agh-${prefix}-${crypto.randomUUID()}`;
   const productName = new Map(products.map((p) => [p.id, `${p.name} · ${p.sku}`]));
   const countCompleted = stockLines.filter((line) => line.counted_quantity !== null).length;
 
@@ -82,7 +83,7 @@ export default function InventoryPanel({ role }: { role: UserRole }) {
           setError('لا يمكن تكرار الصنف داخل عملية التحويل.');
           return;
         }
-        void run(() => transferInventory(source, destination, makeKey('transfer'), normalized, notes), 'تم نقل جميع بنود المخزون ذريًا وتسجيل الحركات.');
+        void run(() => transferInventory(source, destination, transferIdempotencyKey, normalized, notes), 'تم نقل جميع بنود المخزون ذريًا وتسجيل الحركات.').then(() => setTransferIdempotencyKey(`agh-transfer-${crypto.randomUUID()}`));
       }}>
         <div className="section-heading"><div><h3>تحويل بين المستودعات</h3><small>عدة أصناف في عملية ذرية واحدة، مع منع التكرار وحماية حدود الكمية.</small></div><span>{transferLines.length} بند</span></div>
         <select aria-label="المستودع المصدر" value={source} onChange={(e) => setSource(e.target.value)} required><option value="">من المستودع</option>{warehouses.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}</select>
@@ -115,7 +116,7 @@ export default function InventoryPanel({ role }: { role: UserRole }) {
 
       <div className="admin-card">
         <h3>جرد مخزون فعلي</h3>
-        {!stockCount ? <form onSubmit={(e) => { e.preventDefault(); void run(() => startStockCount(countWarehouse,makeKey('stock-count'),countNotes), 'بدأت جلسة الجرد وتم أخذ لقطة الكميات المتوقعة.'); }}>
+        {!stockCount ? <form onSubmit={(e) => { e.preventDefault(); void run(() => startStockCount(countWarehouse,stockCountIdempotencyKey,countNotes), 'بدأت جلسة الجرد وتم أخذ لقطة الكميات المتوقعة.').then(() => setStockCountIdempotencyKey(`agh-stock-count-${crypto.randomUUID()}`)); }}>
           <select aria-label="مستودع الجرد" value={countWarehouse} onChange={(e) => setCountWarehouse(e.target.value)} required><option value="">اختر المستودع</option>{warehouses.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}</select>
           <input aria-label="ملاحظات الجرد" placeholder="ملاحظة الجرد (اختياري)" value={countNotes} onChange={(e) => setCountNotes(e.target.value)} />
           <small>لا يتم تعديل الرصيد عند البدء؛ التسوية تحدث فقط بعد اكتمال العد واعتماده.</small>
