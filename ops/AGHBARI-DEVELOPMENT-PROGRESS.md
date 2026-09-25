@@ -612,3 +612,23 @@ The customer portal previously exposed only order summaries and reorder behavior
 - Consume current-head workflow results, repair any regressions, then repeat on the final post-writeback SHA.
 - Browser proof must target a deployment whose metadata matches the exact tested SHA.
 - Continue contract-backed UI/core closure on remaining real gaps; do not fabricate Promotions or move Report-Advisor/BI into Commerce.
+
+## Run 2026-09-25 — Structure-driven navigation closure
+
+### Start
+- Current source head before this write-back: `537d66a27c36840ef51e1b5eeab21fcd8e478259`.
+- Scope: Aghbari Commerce only. Production: NO TOUCH.
+
+### Change
+- Unified the Admin Command Palette with `getAdminStructureForRole()` so the control plane and quick commands share one route/permission manifest.
+- Added Admin path deep-link handling through `adminTargetForPath()` and SPA fallback.
+
+### Proof boundary
+- Current-head GitHub workflows were triggered on `537d66a27c36840ef51e1b5eeab21fcd8e478259` and observed queued for quality, security, domain, migration, concurrency, Test-the-Test, order workflow and browser exact deployment.
+- No PASS is claimed for the newer final state-writeback SHA until fresh exact-SHA workflows complete.
+- Vercel connected project remains free-plan build-rate-limited; no hosted exact-source proof is claimed.
+
+### Remaining
+- Consume exact final-head workflows after the current write-back.
+- Verify browser/runtime against a deployment whose source metadata matches the final SHA.
+- Continue remaining contract-backed UI/core gaps without fabricating Promotions or importing external BI/AI truth into Commerce.
