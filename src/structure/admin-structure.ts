@@ -1,3 +1,5 @@
+import { roleCan } from './role-matrix';
+
 export type StructureStatus = 'live' | 'boundary' | 'contract-gap';
 
 export interface AdminStructureItem {
@@ -153,18 +155,10 @@ export const AGHBARI_ADMIN_BOUNDARY_ITEMS = AGHBARI_ADMIN_STRUCTURE.flatMap((gro
 );
 
 export function getAdminStructureForRole(role: string) {
-  const can = (permission: string) => {
-    if (role === 'owner' || role === 'admin') return true;
-    if (permission.startsWith('finance.') || permission.startsWith('reports.')) return role === 'sales';
-    if (permission.startsWith('stock.') || permission.startsWith('purchasing.')) return role === 'warehouse';
-    if (permission.startsWith('users.')) return role === 'owner' || role === 'admin';
-    if (permission === 'products.view' || permission === 'products.export' || permission === 'customers.view' || permission === 'orders.view') {
-      return ['sales', 'warehouse', 'viewer'].includes(role);
-    }
-    return role !== 'viewer' ? true : ['dashboard.view', 'orders.view', 'products.view'].includes(permission);
-  };
-  return AGHBARI_ADMIN_STRUCTURE.map((group) => ({
-    ...group,
-    items: group.items.filter((item) => can(item.permission)),
-  })).filter((group) => group.items.length > 0);
+  return AGHBARI_ADMIN_STRUCTURE
+    .map((group) => ({
+      ...group,
+      items: group.items.filter((item) => roleCan(role, item.permission)),
+    }))
+    .filter((group) => group.items.length > 0);
 }
