@@ -477,3 +477,27 @@ The customer portal previously exposed only order summaries and reorder behavior
 - Run exact-SHA application quality, security, domain, migration, concurrency, Test-the-Test and browser workflows on the final branch head.
 - Continue nested detail/recovery only where the current schema/contracts expose real data; do not fabricate Promotions.
 - Continue individual SECURITY DEFINER classification and semantic merge of the 50 legacy Markdown sources.
+
+
+## Run 2026-09-25 — Customer directory and finance UI closure
+
+### Functional code baseline
+- `3b38d2eb058bc5d9b752d6c61b68e529c45acf0f`
+- Branch: `main`
+- Production: NO TOUCH
+- Certification: NOT CLAIMED
+
+### Implemented
+- Customer directory: added record-level details through the shared accessible operational drawer without inventing a backend customer-detail contract.
+- Customer finance portal: added bounded ledger pagination with page reset on customer context change.
+- Customer portal modal surfaces: added dialog semantics/labels for order detail, quick order, Excel review and cart drawer.
+- Prior nested operational closure remains: Purchasing/Receiving, Inventory Activity, Finance History, Pricing, Suppliers, Warehouses, Governance/Outbox, Notifications and Access directories use progressive detail/pagination where supported by existing contracts.
+
+### Verification boundary
+- Current exact-SHA CI/browser gates must be consumed for the final post-writeback SHA. No PASS is transferred from earlier SHAs.
+- Vercel connected-app inspection returned 403; no current hosted proof is claimed.
+- Production remains NO TOUCH.
+
+### Remaining
+- Consume exact-SHA quality/security/domain/migration/concurrency/Test-the-Test/browser results.
+- Continue only contract-backed nested recovery/edit states and the 50-source semantic documentation consolidation.
