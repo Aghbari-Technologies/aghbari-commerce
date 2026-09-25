@@ -12,6 +12,7 @@ as $function$
   select public.current_role() in ('owner','admin','sales','warehouse','viewer');
 $function$;
 
+revoke all on function public.is_staff_reader() from public, anon, authenticated;
 revoke all on function public.current_role() from public, anon, authenticated;
 revoke all on function public.current_customer_id() from public, anon, authenticated;
 revoke all on function public.current_organization_id() from public, anon, authenticated;

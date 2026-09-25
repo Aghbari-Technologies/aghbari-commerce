@@ -1,6 +1,6 @@
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(12);
+select plan(13);
 
 select is((select value from unnest(coalesce(proconfig,array[]::text[])) value where value like 'search_path=%' limit 1),'search_path=""','list_organization_users uses empty search_path')
 from pg_proc where oid='public.list_organization_users()'::regprocedure;
@@ -32,7 +32,9 @@ set local role authenticated;
 select set_config('request.jwt.claim.sub','71111111-1111-4111-8111-111111111111',true);
 select results_eq($$select count(*)::bigint from public.list_organization_users()$$,$$values (3::bigint)$$,'owner sees only current organization users');
 select is(public.set_organization_user_role('72222222-2222-4222-8222-222222222222','sales'),'sales'::public.user_role,'owner can change staff role');
+set local role postgres;
 select is((select role from public.profiles where id='72222222-2222-4222-8222-222222222222'),'sales'::public.user_role,'staff role persists');
+set local role authenticated;
 
 create temp table rbac_expectations(name text primary key, passed boolean);
 do $$
