@@ -40,9 +40,9 @@ select warehouse_id,org_id,branch_id,'Payment Runtime Warehouse',true
 from payment_fixture;
 
 insert into public.orders(
-  id,organization_id,customer_id,warehouse_id,order_number,status,currency,subtotal,total,idempotency_key,created_by
+  id,organization_id,customer_id,warehouse_id,status,currency,subtotal,total,idempotency_key,created_by
 )
-select order_id,org_id,customer_id,warehouse_id,invoice_number,'completed'::order_status,'YER',100,100,
+select order_id,org_id,customer_id,warehouse_id,'completed'::order_status,'YER',100,100,
        'payment-runtime-order-key-'||replace(order_id::text,'-',''),user_id
 from payment_fixture;
 
