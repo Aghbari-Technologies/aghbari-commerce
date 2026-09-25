@@ -6,6 +6,13 @@ const STATUS_LABELS: Record<string,string> = {
   draft:'مسودة', pending:'قيد المراجعة', confirmed:'مؤكد', preparing:'قيد التجهيز',
   ready:'جاهز', completed:'مكتمل', cancelled:'ملغي'
 };
+const STATUS_ORDER = ['pending','confirmed','preparing','ready','completed'];
+
+function statusProgress(status: string) {
+  if (status === 'cancelled') return -1;
+  const index = STATUS_ORDER.indexOf(status);
+  return index < 0 ? 0 : index + 1;
+}
 
 export default function CustomerOrdersPanel({
   orders, loading, detailBusy, productsCount,
@@ -47,7 +54,7 @@ export default function CustomerOrdersPanel({
       <div><span className="eyebrow">التشغيل</span><h2>طلباتك وشحناتك</h2><p className="panel-note">{productsCount} أصناف محملة في سياق المتجر الحالي.</p></div>
       <span>{filtered.length}/{orders.length} طلب</span>
     </div>
-        <div className="customer-order-summary-strip" aria-label="ملخص حالات الطلبات">
+    <div className="customer-order-summary-strip" aria-label="ملخص حالات الطلبات">
       {orderSummary.map(([label,count,caption])=><article key={label}><span aria-hidden="true">▣</span><div><small>{label}</small><strong>{count.toLocaleString("ar")}</strong><em>{caption}</em></div></article>)}
     </div>
     <div className="customer-orders-toolbar">
@@ -60,12 +67,19 @@ export default function CustomerOrdersPanel({
     {loading?<div className="portal-loading" role="status">جارٍ تحميل الطلبات…</div>
       :!orders.length?<div className="empty-state"><strong>لا توجد طلبات سابقة بعد.</strong><span>بعد أول إرسال سيظهر سجل الطلبات والتتبع هنا.</span><button type="button" onClick={onReload}>إعادة المحاولة</button></div>
       :!filtered.length?<div className="empty-state"><strong>لا توجد طلبات مطابقة.</strong><span>غيّر البحث أو فلتر الحالة ثم أعد المحاولة.</span><button type="button" onClick={()=>{setQuery('');setStatus('all');}}>مسح الفلاتر</button></div>
-      :<><div className="orders-list">{visible.map(order=><article className="order-card" key={order.id}>
-        <div className="order-head"><strong>طلب #{order.order_number}</strong><strong>{order.total.toLocaleString('ar-YE')} {order.currency}</strong></div>
-        <small>{new Date(order.created_at).toLocaleString('ar-YE')}</small>
-        <div className="order-status">{STATUS_LABELS[order.status]??order.status}</div>
-        <div className="order-footer"><button disabled={detailBusy} onClick={()=>onOpenDetail(order)}>عرض التفاصيل والتتبع</button><button className="ghost" disabled={loading} onClick={()=>onReorder(order)}>إعادة الطلب</button></div>
-      </article>)}</div>
+      :<><div className="orders-list">{visible.map(order=>{
+        const progress=statusProgress(order.status);
+        return <article className="order-card" key={order.id}>
+          <div className="order-head"><div><span className="eyebrow">طلب B2B</span><strong>طلب #{order.order_number}</strong></div><strong>{order.total.toLocaleString('ar-YE')} {order.currency}</strong></div>
+          <small>{new Date(order.created_at).toLocaleString('ar-YE')}</small>
+          <div className="order-status" data-status={order.status}>{STATUS_LABELS[order.status]??order.status}</div>
+          {progress >= 0 && <div className="customer-order-timeline" aria-label={`تقدم الطلب: ${STATUS_LABELS[order.status]??order.status}`}>
+            {STATUS_ORDER.map((step,index)=><div className={index < progress ? 'is-complete' : index === progress-1 ? 'is-current' : ''} key={step}><span aria-hidden="true">{index < progress ? '✓' : index + 1}</span><small>{STATUS_LABELS[step]}</small></div>)}
+          </div>}
+          {order.status === 'cancelled' && <div className="state-panel" data-state="error"><strong>الطلب ملغي</strong><small>يمكنك فتح التفاصيل لمعرفة حالة السجل، أو إعادة الطلب لإنشاء محاولة جديدة.</small></div>}
+          <div className="order-footer"><button disabled={detailBusy} onClick={()=>onOpenDetail(order)}>عرض التفاصيل والتتبع</button><button className="ghost" disabled={loading} onClick={()=>onReorder(order)}>إعادة الطلب</button></div>
+        </article>;
+      })}</div>
       <div className="customer-orders-pagination" aria-label="صفحات الطلبات"><span>صفحة {activePage} / {pages} · عرض {((activePage-1)*PAGE_SIZE)+1}–{Math.min(activePage*PAGE_SIZE,filtered.length)}</span><div><button type="button" className="ghost" onClick={()=>setPage(value=>Math.max(1,value-1))} disabled={activePage===1}>السابق</button><button type="button" className="ghost" onClick={()=>setPage(value=>Math.min(pages,value+1))} disabled={activePage===pages}>التالي</button></div></div></>}
   </section>;
 }
