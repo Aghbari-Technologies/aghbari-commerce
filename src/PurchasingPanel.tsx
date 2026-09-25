@@ -83,6 +83,7 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
 
   return <div className="cart-panel" id="purchasing">
     <div className="section-heading"><div><span className="eyebrow">المشتريات والمستودع</span><h2>دورة التوريد</h2></div><span aria-live="polite">{loading ? 'جارٍ التحديث…' : `${orders.length} أوامر شراء`}</span></div>
+    <div className="ops-metrics-strip" aria-label="ملخص المشتريات"><article><small>أوامر الشراء</small><strong>{orders.length.toLocaleString('ar')}</strong><span>إجمالي السجل المحمل</span></article><article><small>مسودات</small><strong>{orders.filter(order=>order.status==='draft').length.toLocaleString('ar')}</strong><span>تحتاج إرسالًا</span></article><article><small>معتمدة</small><strong>{orders.filter(order=>order.status==='approved').length.toLocaleString('ar')}</strong><span>جاهزة للتوريد</span></article><article className={orders.some(order=>order.status==='partially_received')?'attention':''}><small>استلام جزئي</small><strong>{orders.filter(order=>order.status==='partially_received').length.toLocaleString('ar')}</strong><span>تحتاج متابعة</span></article></div>
     <div className="admin-grid">
       <form className="admin-card" onSubmit={(e) => { e.preventDefault(); void run(() => createSupplier({ name: supplierName, phone: supplierPhone, address: supplierAddress }), 'تم إنشاء المورد وتسجيل أثر العملية.').then(() => { setSupplierName(''); setSupplierPhone(''); setSupplierAddress(''); }); }}>
         <h3>مورد جديد</h3>
