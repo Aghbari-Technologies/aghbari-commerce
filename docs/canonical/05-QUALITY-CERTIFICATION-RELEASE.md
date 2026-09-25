@@ -22,3 +22,10 @@ Do not waste execution on unchanged proven fronts unless SHA, dependencies, envi
 
 ## Canonical source merge register
 The manifest lists the quality/certification/release documents that must be fully merged here before retirement.
+
+
+## 2026-09-25 — Exact current-head evidence boundary
+- Current implementation line must be revalidated after every source change; evidence from earlier SHAs is never transferred.
+- The latest source line includes Admin deep-link anchor fixes, real voice-search interaction, customer-control validation, stable operational reload dependencies, context-derived warehouse labels, and the security-definer exposure classification test.
+- Current exact-head GitHub workflows are queued; no CI/build/browser/certification PASS is claimed until those runs finish against the exact latest SHA.
+- Hosted Vercel evidence is still blocked by deployment mismatch/rate-limit/protection constraints; the existing free Netlify project remains the available fallback, but no exact-current-SHA deployment is claimed without source upload/build completion.
