@@ -6,7 +6,7 @@ import './catalog-management.css';
 
 type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer';
 type ProductStatus = 'active' | 'inactive';
-interface ProductRow { id: string; sku: string; name: string; unit: string; category_id: string | null; description: string | null; status: ProductStatus; created_at: string; updated_at: string; }
+interface ProductRow { id: string; sku: string; name: string; unit: string; barcode: string | null; category_id: string | null; description: string | null; status: ProductStatus; created_at: string; updated_at: string; }
 
 const PAGE_SIZE = 12;
 const STATUS_LABELS: Record<ProductStatus,string> = { active: 'نشط', inactive: 'موقوف' };
@@ -33,7 +33,7 @@ export default function CatalogManagementPanel({ role }: { role: UserRole }) {
     setLoading(true); setError(null);
     try {
       const [{data,error:productsError}, categoryRows] = await Promise.all([
-        supabase.from('products').select('id,sku,name,unit,category_id,description,status,created_at,updated_at').order('created_at',{ascending:false}).limit(1000),
+        supabase.from('products').select('id,sku,name,unit,barcode,category_id,description,status,created_at,updated_at').order('created_at',{ascending:false}).limit(1000),
         getCategories()
       ]);
       if (productsError) throw productsError;
@@ -45,7 +45,7 @@ export default function CatalogManagementPanel({ role }: { role: UserRole }) {
   },[canManage]);
 
   useEffect(()=>{ void reload(); },[reload]);
-  useEffect(()=>{ setPage(1); },[query,categoryId,status,sort]);
+  useEffect(()=>{ setPage(1); setSelectedIds([]); setBulkMessage(null); },[query,categoryId,status,sort]);
 
   const categoryNames = useMemo(()=>new Map(categories.map(item=>[item.id,item.name])),[categories]);
   const filtered = useMemo(()=>{
@@ -69,14 +69,14 @@ export default function CatalogManagementPanel({ role }: { role: UserRole }) {
 
   function openEdit(product:ProductRow){
     setEditing(product);
-    setDraft({sku:product.sku,name:product.name,unit:product.unit,categoryId:product.category_id??'',description:product.description??'',status:product.status});
+    setDraft({sku:product.sku,name:product.name,unit:product.unit,barcode:product.barcode??'',categoryId:product.category_id??'',description:product.description??'',status:product.status});
     setError(null); setMessage(null);
   }
   async function saveEdit(){
     if(!editing||busyId) return;
     setBusyId(editing.id); setError(null); setMessage(null);
     try {
-      await upsertProduct({productId:editing.id,sku:draft.sku,name:draft.name,unit:draft.unit,categoryId:draft.categoryId||null,description:draft.description,status:draft.status});
+      await upsertProduct({productId:editing.id,sku:draft.sku,name:draft.name,unit:draft.unit,barcode:draft.barcode||null,categoryId:draft.categoryId||null,description:draft.description,status:draft.status});
       setEditing(null);
       setMessage('تم حفظ بيانات المنتج وحالته في قاعدة البيانات.');
       await reload();
@@ -98,6 +98,30 @@ export default function CatalogManagementPanel({ role }: { role: UserRole }) {
     } finally { setBusyId(null); }
   }
 
+  async function applyBulkStatus() {
+    if (!canToggle || bulkBusy || !selectedIds.length) return;
+    if (selectedIds.length > 50) { setBulkMessage('الحد الأقصى للعملية الجماعية هو 50 منتجًا في الدفعة الواحدة.'); return; }
+    const targetIds = new Set(selectedIds);
+    const targets = products.filter((product) => targetIds.has(product.id) && product.status !== bulkStatus);
+    if (!targets.length) { setBulkMessage('لا توجد تغييرات فعلية في الاختيار الحالي.'); return; }
+    if (!window.confirm('معاينة العملية: سيتم تغيير حالة ' + targets.length + ' منتجًا إلى «' + STATUS_LABELS[bulkStatus] + '». كل منتج سيُسجّل عبر RPC الكانوني، ويمكن أن ينتج فشلًا جزئيًا يحتاج إعادة معالجة. اعتماد؟')) return;
+    setBulkBusy(true); setBulkMessage(null); setError(null);
+    let succeeded = 0; const failed: string[] = [];
+    try {
+      for (const product of targets) {
+        try {
+          await upsertProduct({ productId: product.id, sku: product.sku, name: product.name, unit: product.unit, barcode: product.barcode, categoryId: product.category_id, description: product.description, status: bulkStatus });
+          succeeded += 1;
+        } catch (e) {
+          failed.push(product.sku + ': ' + (e instanceof Error ? e.message : 'فشل غير معروف'));
+        }
+      }
+      setSelectedIds([]);
+      setBulkMessage(failed.length ? 'تمت معالجة ' + succeeded + ' من ' + targets.length + ' منتجًا. العناصر الفاشلة بقيت دون ادعاء نجاح وتحتاج إعادة معالجة.' : 'تم اعتماد العملية الجماعية على ' + succeeded + ' منتجًا وتسجيل كل تغيير عبر المسار الكانوني.');
+      await reload();
+    } finally { setBulkBusy(false); }
+  }
+
   if(!canManage) return null;
   return <section className="catalog-management cart-panel" id="admin-catalog" aria-busy={loading}>
     <div className="section-heading">
@@ -113,14 +137,23 @@ export default function CatalogManagementPanel({ role }: { role: UserRole }) {
       <button type="button" className="ghost" onClick={()=>void reload()} disabled={loading||Boolean(busyId)}>إعادة تحميل</button>
     </div>
 
+    {!loading && canToggle && filtered.length > 0 && <div className="bulk-action-center" aria-label="مركز العمليات الجماعية">
+      <div><strong>مركز العمليات الجماعية</strong><small>{selectedIds.length} محدد · الحد 50</small></div>
+      <label>الحالة الجديدة<select value={bulkStatus} onChange={e=>setBulkStatus(e.target.value as ProductStatus)}><option value="inactive">موقوف</option><option value="active">نشط</option></select></label>
+      <button type="button" disabled={bulkBusy || !selectedIds.length} onClick={()=>void applyBulkStatus()}>{bulkBusy?'جارٍ التنفيذ…':'معاينة واعتماد الحالة'}</button>
+      <button type="button" className="ghost" disabled={!selectedIds.length||bulkBusy} onClick={()=>setSelectedIds([])}>مسح التحديد</button>
+      {selectedIds.length > 50 && <span role="alert">الاختيار يتجاوز الحد. قلل العدد قبل الاعتماد.</span>}
+      {bulkMessage && <span role="status">{bulkMessage}</span>}
+    </div>}
     {loading ? <div className="portal-loading" role="status">جارٍ تحميل الكتالوج…</div>
       : error ? <div className="empty-state"><strong>تعذر تحميل كتالوج المنتجات.</strong><span>{error}</span><button type="button" onClick={()=>void reload()}>إعادة المحاولة</button></div>
       : !filtered.length ? <div className="empty-state"><strong>لا توجد منتجات مطابقة.</strong><span>{products.length?'غيّر الفلاتر أو عبارة البحث.':'ابدأ بإضافة أول منتج من بطاقة المنتج الجديدة أعلاه.'}</span>{(query||categoryId||status!=='all')&&<button type="button" onClick={()=>{setQuery('');setCategoryId('');setStatus('all');}}>مسح الفلاتر</button>}</div>
       : <div className="catalog-table" role="table" aria-label="جدول المنتجات">
-          <div className="catalog-row catalog-head" role="row"><span>المنتج</span><span>SKU</span><span>التصنيف</span><span>الوحدة</span><span>الحالة</span><span>الإجراء</span></div>
+          <div className="catalog-row catalog-head" role="row"><span>تحديد</span><span>المنتج</span><span>SKU / Barcode</span><span>التصنيف</span><span>الوحدة</span><span>الحالة</span><span>الإجراء</span></div>
           {visible.map(product=><article className="catalog-row" role="row" key={product.id}>
+            <label className="catalog-select"><input type="checkbox" aria-label={'تحديد '+product.name} checked={selectedIds.includes(product.id)} onChange={(e)=>setSelectedIds(current=>e.target.checked?[...new Set([...current,product.id])]:current.filter(id=>id!==product.id))} disabled={bulkBusy} /><span className="sr-only">تحديد</span></label>
             <div><strong>{product.name}</strong><small>{product.description||'بدون وصف'}</small></div>
-            <code dir="ltr">{product.sku}</code>
+            <code dir="ltr">{product.sku}{product.barcode?' · '+product.barcode:''}</code>
             <span>{product.category_id?categoryNames.get(product.category_id)??'تصنيف محذوف':'بدون تصنيف'}</span>
             <span>{product.unit}</span>
             <span className={'catalog-status '+product.status}>{STATUS_LABELS[product.status]}</span>
@@ -138,7 +171,7 @@ export default function CatalogManagementPanel({ role }: { role: UserRole }) {
         <div className="admin-grid">
           <label>SKU<input value={draft.sku} onChange={e=>setDraft(d=>({...d,sku:e.target.value}))} required /></label>
           <label>اسم المنتج<input value={draft.name} onChange={e=>setDraft(d=>({...d,name:e.target.value}))} required /></label>
-          <label>الوحدة<input value={draft.unit} onChange={e=>setDraft(d=>({...d,unit:e.target.value}))} required /></label>
+          <label>الوحدة<input value={draft.unit} onChange={e=>setDraft(d=>({...d,unit:e.target.value}))} required /></label><label>الباركود<input inputMode="numeric" autoComplete="off" maxLength={80} value={draft.barcode} onChange={e=>setDraft(d=>({...d,barcode:e.target.value}))} placeholder="باركود اختياري" /></label>
           <label>التصنيف<select value={draft.categoryId} onChange={e=>setDraft(d=>({...d,categoryId:e.target.value}))}><option value="">بدون تصنيف</option>{categories.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select></label>
           <label className="catalog-dialog-wide">الوصف<textarea rows={4} value={draft.description} onChange={e=>setDraft(d=>({...d,description:e.target.value}))} /></label>
           {canToggle&&<label>الحالة<select value={draft.status} onChange={e=>setDraft(d=>({...d,status:e.target.value as ProductStatus}))}><option value="active">نشط</option><option value="inactive">موقوف</option></select></label>}
