@@ -343,3 +343,11 @@ Command "1" means:
 - Exact core implementation head at the start of documentation write-back: c5eba4a42af2543b4d1cf06180caa1ecb7316c59.
 - Current exact-head GitHub workflows for this code line were observed queued: Test-the-Test, security-audit, G1 Domain Proof, application-quality, Concurrency Proof, bootstrap-release-lockfile, Browser E2E / Exact Deployment and Order Workflow Proof.
 - Production remains HOLD / NO TOUCH. Certification is NOT CLAIMED until fresh exact-SHA CI/browser/deployment evidence is complete.
+
+
+## 2026-09-25 — DURABLE UI INTEGRITY / RESOURCE DECISIONS
+- Admin deep-link manifest entries are treated as executable navigation contracts: each live target must have a matching DOM anchor in the current workspace. This prevents apparently valid menu links from silently landing at the dashboard.
+- Customer voice search is a real browser capability with explicit fallback/error handling; image search is not an executable feature until a canonical visual-search contract exists.
+- Customer portal settings validation is performed before persistence: numeric limits are normalized/bounded, payment configuration cannot produce a zero-method enabled state, and the saved-template ceiling is bounded.
+- Finance, Purchasing and Inventory reload hooks use stable dependencies so selection defaults do not cause unnecessary network reload loops.
+- Dynamic operational labels must derive from actual context (for example the active warehouse name) rather than hardcoded business state.
