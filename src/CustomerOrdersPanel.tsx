@@ -36,11 +36,19 @@ export default function CustomerOrdersPanel({
   const pages=Math.max(1,Math.ceil(filtered.length/PAGE_SIZE));
   const activePage=Math.min(page,pages);
   const visible=filtered.slice((activePage-1)*PAGE_SIZE,activePage*PAGE_SIZE);
+  const orderSummary=[
+    ['المفتوحة',orders.filter(order=>['pending','confirmed','preparing','ready'].includes(order.status)).length,'تحت المعالجة'],
+    ['المكتملة',orders.filter(order=>order.status==='completed').length,'تم إنجازها'],
+    ['الملغاة',orders.filter(order=>order.status==='cancelled').length,'ملغاة'],
+  ] as const;
 
   return <section className="content-card customer-orders-panel" aria-busy={loading}>
     <div className="section-title">
       <div><span className="eyebrow">التشغيل</span><h2>طلباتك وشحناتك</h2><p className="panel-note">{productsCount} أصناف محملة في سياق المتجر الحالي.</p></div>
       <span>{filtered.length}/{orders.length} طلب</span>
+    </div>
+        <div className="customer-order-summary-strip" aria-label="ملخص حالات الطلبات">
+      {orderSummary.map(([label,count,caption])=><article key={label}><span aria-hidden="true">▣</span><div><small>{label}</small><strong>{count.toLocaleString("ar")}</strong><em>{caption}</em></div></article>)}
     </div>
     <div className="customer-orders-toolbar">
       <label><span>بحث</span><input aria-label="بحث الطلبات" value={query} onChange={e=>setQuery(e.target.value)} placeholder="رقم الطلب أو الحالة" disabled={loading}/></label>
