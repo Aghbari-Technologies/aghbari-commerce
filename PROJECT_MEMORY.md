@@ -329,3 +329,17 @@ Command "1" means:
 - Operations: Governance audit pagination/detail, Outbox detail, Staff Access detail, low-stock-to-transfer and approved-PO-to-receiving links are all wired to existing operational surfaces.
 - Catalog image URL cache is bounded to 250 entries; no second transaction source of truth was introduced.
 - Current Vercel status remains deployment-rate-limited; the newest GitHub Actions for the current source line are queued. No certification/build/browser PASS is claimed.
+
+
+## 28. CORE CLOSURE RUN — 2026-09-25 — FINANCE / PURCHASING / CUSTOMER TRUTH
+- Fixed a real finance contract drift: the live canonical record_payment RPC requires a six-argument idempotency-aware call, while the client previously sent five arguments.
+- src/services/finance.ts now validates a 16–128 character payment idempotency key and sends p_idempotency_key; FinancePanel.tsx keeps the same key across ambiguous/retry outcomes and rotates it only after a successful command.
+- Added supabase/migrations/20260925110000_harden_finance_payment_idempotency.sql: payment command now has bounded numeric validation (including NaN/Infinity rejection), tenant/role checks, invoice/cash-account locking, payload-hash conflict detection, atomic cash movement, audit emission and payment.received outbox emission; anonymous/public execution remains revoked.
+- Added supabase/migrations/20260925113000_core_mutation_audit_outbox_contract.sql: invoice creation and purchase-order create/submit/approve commands now persist audit/outbox effects; cash-account/customer/supplier creation has durable audit records; unsafe cash/customer/supplier input ranges are rejected server-side.
+- Added supabase/migrations/20260925115000_customer_mutation_audit_contract.sql: customer tier/status mutations now emit audit events.
+- Aligned purchasing and inventory-transfer client line/idempotency boundaries with the current server contracts: purchasing/receiving/transfer client builders cap at 100 lines, inventory/purchasing idempotency keys are bounded to 128 characters.
+- Added supabase/tests/029-core-command-audit-contract.test.sql; the live database contract check passed 18/18 assertions.
+- Added supabase/tests/030-payment-runtime-idempotency.test.sql; the live transaction test passed its 13 planned assertions, covering first payment, partial invoice state, cash movement, audit/outbox, idempotent replay, payload conflict and rejection of NaN.
+- Exact core implementation head at the start of documentation write-back: c5eba4a42af2543b4d1cf06180caa1ecb7316c59.
+- Current exact-head GitHub workflows for this code line were observed queued: Test-the-Test, security-audit, G1 Domain Proof, application-quality, Concurrency Proof, bootstrap-release-lockfile, Browser E2E / Exact Deployment and Order Workflow Proof.
+- Production remains HOLD / NO TOUCH. Certification is NOT CLAIMED until fresh exact-SHA CI/browser/deployment evidence is complete.
