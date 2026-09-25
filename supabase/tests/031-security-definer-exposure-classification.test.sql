@@ -76,8 +76,11 @@ select is(
 
 select ok(
   exists(select 1 from pg_policies where schemaname='public' and tablename='client_ui_settings'
-         and cmd='UPDATE' and roles @> array['authenticated']::name[] and qual ilike '%is_staff%'),
-  'client_ui_settings UPDATE remains staff-gated at the database boundary'
+         and cmd='UPDATE' and roles @> array['authenticated']::name[]
+         and qual ilike '%current_role%'
+         and qual ilike '%owner%'
+         and qual ilike '%admin%'),
+  'client_ui_settings UPDATE remains owner/admin-gated at the database boundary'
 );
 
 select ok(
