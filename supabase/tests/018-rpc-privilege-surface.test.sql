@@ -1,6 +1,6 @@
 begin;
 
-select plan(57);
+select plan(60);
 
 select is(has_function_privilege('anon', 'public.adjust_inventory(uuid,uuid,integer,text)', 'execute'), false, 'anon cannot execute adjust_inventory');
 select is(has_function_privilege('authenticated', 'public.adjust_inventory(uuid,uuid,integer,text)', 'execute'), true, 'authenticated can execute adjust_inventory');
@@ -59,6 +59,10 @@ select is(has_function_privilege('public', 'public.current_role()', 'execute'), 
 select is(has_function_privilege('anon', 'public.is_staff()', 'execute'), false, 'anon cannot execute is_staff');
 select is(has_function_privilege('authenticated', 'public.is_staff()', 'execute'), true, 'authenticated can execute is_staff');
 select is(has_function_privilege('public', 'public.is_staff()', 'execute'), false, 'PUBLIC cannot execute is_staff');
+select is(has_function_privilege('anon', 'public.is_staff_reader()', 'execute'), false, 'anon cannot execute is_staff_reader');
+select is(has_function_privilege('authenticated', 'public.is_staff_reader()', 'execute'), true, 'authenticated can execute is_staff_reader for RLS evaluation');
+select is(has_function_privilege('public', 'public.is_staff_reader()', 'execute'), false, 'PUBLIC cannot execute is_staff_reader');
+
 
 select * from finish();
 rollback;
