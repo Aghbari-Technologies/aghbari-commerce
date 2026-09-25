@@ -254,3 +254,13 @@ Command "1" means:
 - Current exact-SHA CI evidence for `598216bcb5afe29c8be4354622eae2a97538370e` remains pending/queued; no PASS is transferred from an older SHA.
 - Supabase live security posture observed during this wave: 62 authenticated-executable SECURITY DEFINER advisory findings plus the external leaked-password-protection warning. No blanket revoke was applied because required transactional/RLS helper functions are part of the application boundary and individual classification remains necessary.
 - Vercel hosted proof remains blocked by the existing deployment/rate-limit/protection path; production remains NO TOUCH.
+
+
+## 2026-09-25 — Latest execution checkpoint
+
+- Latest code HEAD before documentation checkpoint: `68947aa307aa1359083859adc4c0073295e87c23`.
+- UI/Core repair wave completed with real commits: JSX closure repairs, Fresh DB helper contract repair, movement-detail disclosure, and detail-drawer keyboard focus containment/restoration.
+- Security test contract now explicitly covers `is_staff_reader()` anon/authenticated/PUBLIC privilege boundaries.
+- Live Supabase verification confirms all five authorization helpers use SECURITY DEFINER + empty search_path and expose EXECUTE to authenticated while denying anon/PUBLIC.
+- Current exact-SHA CI/browser results for the latest code remain NOT_PROVEN because the branch verification runs are queued; no historical PASS was transferred.
+- Vercel hosted runtime remains an external rate-limit/protection gate. Production is NO TOUCH.

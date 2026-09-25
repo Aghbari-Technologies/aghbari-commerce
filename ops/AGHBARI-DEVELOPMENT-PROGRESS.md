@@ -509,3 +509,32 @@ The customer portal previously exposed only order summaries and reorder behavior
 - Continue nested UI closure only where current service/RPC/schema contracts support real behavior; do not fabricate Promotions.
 - Complete semantic consolidation/reference verification for all 50 mapped legacy Markdown sources.
 - Certification and production remain HOLD / NO TOUCH.
+
+
+## Run 2026-09-25 — Latest UI accessibility + security-boundary checkpoint
+
+### Code checkpoint
+- Code HEAD: `68947aa307aa1359083859adc4c0073295e87c23`.
+- Branch: `execution/ui-closure-20260925`.
+- Production: NO TOUCH.
+- Certification: NOT CLAIMED.
+
+### Implemented
+- Repaired four exact TypeScript JSX parse defects from the nested operational UI wave.
+- Repaired Fresh Supabase migration ordering by defining the RLS `is_staff_reader()` helper before privilege hardening; the subsequent migration restores authenticated execution required by RLS while anon/PUBLIC stay denied.
+- Added movement-level detail disclosure to the inventory movement ledger using existing tenant-scoped product/warehouse/movement data.
+- Hardened the shared `RecordDetailDrawer` accessibility contract with focus trapping, Escape close, and trigger-focus restoration.
+- Expanded `supabase/tests/018-rpc-privilege-surface.test.sql` from plan 57 to plan 60 with three explicit `is_staff_reader()` privilege assertions.
+
+### Proof / runtime
+- Live Supabase SQL verification at project `mrcyqezbhpncuvaehwgf` confirmed `current_customer_id`, `current_organization_id`, `current_role`, `is_staff`, and `is_staff_reader` all have `search_path=""`, SECURITY DEFINER, authenticated EXECUTE and anon/PUBLIC denied.
+- Current exact-SHA GitHub Actions for the latest code checkpoint are queued; current-SHA PASS is NOT_PROVEN.
+- Earlier exact-SHA failures that motivated the fixes are recorded in history and are not treated as current PASS/FAIL for the new SHA.
+- Hosted Vercel proof remains blocked by deployment rate-limit/protection; historical Netlify deployment is not used as proof for this SHA.
+
+### Remaining
+- Consume current-SHA application quality, migration, security, domain, concurrency, Test-the-Test and browser results.
+- Repair only exact-SHA failures found by those gates; do not reopen already proven transaction boundaries without regression evidence.
+- Continue nested UI closure only where existing contracts provide a real action/read path.
+- Complete semantic consolidation/reference verification of the 50 mapped legacy Markdown sources.
+- Certification and production remain HOLD / NO TOUCH.

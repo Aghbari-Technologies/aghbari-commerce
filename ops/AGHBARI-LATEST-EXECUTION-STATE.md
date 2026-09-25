@@ -1,61 +1,61 @@
 # AGHBARI LATEST EXECUTION STATE
 
 Last verified working code HEAD: 2bccf4585ced4858b3cc29b02e7afef0123c12a0
-Actual verified Git HEAD: 598216bcb5afe29c8be4354622eae2a97538370e
+Actual verified code HEAD before this documentation checkpoint: 68947aa307aa1359083859adc4c0073295e87c23
 Execution branch: execution/ui-closure-20260925
 Production: NO TOUCH
 Certification: NOT CLAIMED
 
 ## CURRENT REALITY
 
-- Current executable branch contains the full Admin/Staff operational UI expansion plus Customer Portal catalog, checkout, orders, account, finance, templates, notifications and invitation paths.
-- Shared record-level progressive disclosure is now used across purchasing, receiving, inventory activity/history, finance, pricing, suppliers and warehouses.
-- Inventory movement history now has movement-level detail disclosure using existing tenant-scoped data.
-- Governance, notifications and organization access use bounded pagination with search/filter/tab resets.
-- The Fresh DB migration path now defines `is_staff_reader()` before privilege hardening, matching live RLS policy usage. Authenticated EXECUTE is deliberately restored in the following migration because RLS policies call the helper; anon/PUBLIC remain denied.
-- Security regression coverage now explicitly tests the `is_staff_reader()` privilege boundary.
+- Aghbari Commerce only; Report-Advisor remains outside operational scope.
+- Admin/Staff has real operational workspaces for orders, customers, catalog/products, categories, pricing, purchasing, receiving, inventory, warehouses, suppliers, finance, exports, notifications, governance and access control, with shared record detail disclosure where contracts permit.
+- Customer Portal is the active `AppV3Fixed` surface with catalog search/filter/categories, server-backed catalog pagination, product detail, cart, checkout/payment selection, order history/detail/tracking/reorder, templates/quick order/Excel, finance, account, notifications, invitation acceptance, offline/recovery primitives.
+- Latest UI accessibility closure added focus trapping and restoration to the shared operational detail drawer.
+- Inventory movement ledger now supports row-level operational details.
 
 ## EXACT-SHA PROOF
 
-- Current implementation HEAD: `598216bcb5afe29c8be4354622eae2a97538370e`.
-- Current-SHA GitHub Actions are queued; no PASS is claimed for this HEAD yet.
-- Historical PASS evidence from earlier SHAs is not transferred.
-- The latest prior exact-SHA failures that triggered this repair were TypeScript JSX parse errors and the Fresh DB missing-helper migration error; those root causes are now patched in code but await current-SHA verification.
-- Vercel remains an external hosted gate due deployment rate limiting/protection; no hosted browser PASS is claimed.
+- Current code checkpoint SHA: `68947aa307aa1359083859adc4c0073295e87c23`.
+- Current-SHA GitHub Actions are queued; no PASS is claimed for this SHA.
+- Historical PASS evidence is not transferred.
+- The current Fresh DB migration fix addresses the previously observed missing `is_staff_reader()` function failure by defining the helper before privilege hardening; current exact-SHA migration proof is still pending.
+- Vercel hosted proof remains externally gated by deployment rate limiting/protection; no hosted browser PASS is claimed.
+- Live Supabase authorization-helper inspection is verified separately and does not constitute application-CI or browser proof.
 
 ## OPEN UI FRONTIER
 
-- Customer: mobile/accessibility refinement and only profile fields backed by existing contracts.
-- Admin/Staff: deeper recovery/detail actions for governance/outbox, receiving and reconciliation only where existing service/RPC contracts expose a real mutation path.
-- Catalog/pricing: richer history/edit flows only through existing authoritative service/RPC contracts.
+- Customer: mobile/accessibility refinement and profile actions only where backed by existing contracts.
+- Admin/Staff: deeper recovery actions for governance/outbox, receiving and reconciliation only when an existing service/RPC mutation exists.
+- Catalog/Pricing: richer history/edit detail only through current service/RPC contracts.
 
 ## OPEN CORE / SECURITY / RELEASE
 
-- Exact-SHA application-quality, migration, security, domain, concurrency, Test-the-Test and browser proof for current HEAD.
-- Individual SECURITY DEFINER classification; current Supabase advisor observed 62 authenticated-executable findings plus one external leaked-password-protection warning.
-- 50/50 legacy Markdown semantic consolidation and stale-reference verification.
-- Hosted runtime/browser proof and final candidate certification.
+- Exact-SHA application-quality, migration, security, domain, concurrency, Test-the-Test and browser evidence for `68947aa307aa1359083859adc4c0073295e87c23`.
+- Individual SECURITY DEFINER classification; live advisor currently shows 62 authenticated-executable findings plus the external leaked-password warning. Do not blanket revoke required application/RLS helpers.
+- 50/50 legacy Markdown semantic consolidation/reference verification.
+- Hosted runtime/browser/candidate certification path.
 - Production remains HOLD / NO TOUCH.
 
 ## CURRENT RESUME POINTER
 
-START FROM ACTUAL EXECUTION HEAD `598216bcb5afe29c8be4354622eae2a97538370e`.
+START FROM THE CURRENT EXECUTION BRANCH HEAD, then identify the code checkpoint `68947aa307aa1359083859adc4c0073295e87c23` and any later documentation-only checkpoint.
 
 UI FRONT:
-Inventory Ledger → movement detail/accessibility polish; then Receiving/Purchasing nested recovery and Pricing/Finance detail only through existing contracts.
+Customer mobile/accessibility states → Admin Receiving/Purchasing nested recovery → Inventory reconciliation detail/recovery → Pricing/Finance detail, only where existing contracts expose real behavior.
 
 CORE FRONT:
-Consume exact-SHA CI results. First priority is application-quality + Fresh Supabase migration proof; next repair any exact-SHA security/domain/concurrency/Test-the-Test failure without weakening RLS/RPC boundaries.
+Consume the exact-SHA CI queue first. Priority order: application-quality and Fresh Supabase migration proof, then security/domain/concurrency/Test-the-Test/browser. Fix the first exact-SHA failure and re-run only affected gates where possible.
 
 PROOF:
-Bind every PASS to `598216bcb5afe29c8be4354622eae2a97538370e` or a newer exact SHA. Run local-production browser E2E on the same proven SHA; do not transfer evidence across commits.
+No PASS transfer. Bind every result to the exact SHA under test. Browser proof must cover real route, interaction, persistence, refresh/re-open and responsive/RTL/accessibility checks.
 
 HOSTING:
-Vercel rate-limit/protection remains external. Existing Netlify project `aghbari-commerce-web` is available as a zero-cost fallback, but do not treat its historical deploy as proof for the current SHA.
+Do not weaken Vercel Deployment Protection. Existing Netlify site `aghbari-commerce-web` is an available zero-cost fallback, but its historical deploy `6aaf1c861e08e126409753e0` is NOT proof for the current SHA.
 
 DO NOT REOPEN:
-Checkout payment contract, canonical role-management RPC boundary, tenant/RLS helper boundary, offline queue foundation, or other previously proven flows unless current exact-SHA evidence demonstrates regression.
+checkout payment contract, canonical role-management RPC boundary, RLS helper execution boundary, offline queue foundation, or previously proven transaction invariants unless exact current evidence shows regression.
 
-## WRITE-BACK INVARIANT
+## WRITE-BACK NOTE
 
-This state file is the resumable checkpoint. The next programmer must use the actual Git HEAD first, then this pointer. No older SHA or historical log may override current repository reality.
+This documentation checkpoint records the latest verified code checkpoint before the write-back. The next session must inspect the actual branch ref first; documentation commits never override the repository's actual HEAD.
