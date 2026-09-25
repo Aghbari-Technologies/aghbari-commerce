@@ -249,3 +249,13 @@ Command "1" means:
 - Customer Directory now exposes record-level details through the shared `RecordDetailDrawer`, including tier, contact/state and the invitation link generated during the active session.
 - Customer finance ledger is bounded to ten movements per page so the portal remains usable on large statements; authoritative export still reads the full loaded ledger set.
 - Staff/Admin nested records consistently use the shared detail workspace where the existing data contract exposes useful fields; the list remains the primary scan surface.
+
+
+## Durable checkpoint — 2026-09-25 03:13
+- Functional main checkpoint: `2fae69ec7e274b92a895ade22561752ab495709b`.
+- Added visible Customer offline Recovery Center with bounded failure metadata.
+- Added Admin permission-aware Command Palette (Ctrl+K/⌘K).
+- Added inventory Barcode-first lookup and product barcode persistence through canonical 8-argument upsert RPC.
+- Added safe redaction for outbox error display.
+- Prior exact proof bundle `5ea7e162…` remains valid only for that exact SHA. New code checkpoint `2fae69ec7e274b92a895ade22561752ab495709b` requires fresh exact-SHA verification.
+- Vercel deployment is subject to current build-rate-limit; hosted deployment proof is not claimed. Netlify free project exists but connector requires local source command and the execution container has no GitHub DNS.

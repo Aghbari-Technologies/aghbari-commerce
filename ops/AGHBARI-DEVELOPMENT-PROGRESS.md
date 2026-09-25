@@ -501,3 +501,11 @@ The customer portal previously exposed only order summaries and reorder behavior
 ### Remaining
 - Consume exact-SHA quality/security/domain/migration/concurrency/Test-the-Test/browser results.
 - Continue only contract-backed nested recovery/edit states and the 50-source semantic documentation consolidation.
+
+
+## Run — 2026-09-25 03:13 — operational speed / recovery / barcode / trust
+- Exact functional SHA: `2fae69ec7e274b92a895ade22561752ab495709b`.
+- Implemented: offline recovery center + bounded failure state metadata; permission-aware admin command palette; barcode-first inventory lookup; product barcode CRUD via canonical RPC; outbox error redaction.
+- Verification inherited from previous exact checkpoint is not transferred. Fresh CI for `2fae69ec7e274b92a895ade22561752ab495709b` is queued.
+- Production: NO TOUCH. Certification: NOT CLAIMED.
+- Vercel current external status: build-rate-limit visible; no hosted runtime PASS.
