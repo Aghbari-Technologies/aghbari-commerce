@@ -61,7 +61,7 @@ export const AGHBARI_ADMIN_STRUCTURE: AdminStructureGroup[] = [
     items: [
       live('catalog', 'إدارة الأصناف', '/admin/catalog', 'products.view', '#admin-catalog', ['view', 'create', 'edit', 'export', 'import']),
       live('pricing', 'محرك التسعير', '/admin/pricing', 'pricing.rules.view', '#admin-pricing-matrix', ['view', 'create', 'edit', 'approve']),
-      live('inventory-sync', 'مزامنة المخزون', '/admin/ai/stock-sync', 'ai.sync.preview', '#admin-inventory', ['view']),
+      boundary('inventory-sync', 'مزامنة المخزون', '/admin/ai/stock-sync', 'ai.sync.preview', 'لا توجد شاشة مزامنة مستقلة أو مصدر sync canonical في Commerce؛ المخزون التشغيلي يُدار من مساحة المخزون الحالية.'),
       live('inventory-ledger', 'دفتر حركة المخزون', '/admin/inventory/history', 'stock.view', '#admin-inventory-history', ['view']),
       live('warehouses', 'المستودعات والفروع', '/admin/inventory/warehouses', 'stock.view', '#admin-warehouses', ['view', 'edit']),
       live('suppliers', 'الموردون', '/admin/purchasing/suppliers', 'purchasing.view', '#admin-suppliers', ['view', 'edit']),
