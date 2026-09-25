@@ -17,7 +17,7 @@ describe('finance input boundaries', () => {
     expect(() => validateExpenseInput(123 as unknown as string, cash, 'تشغيل', 10, 'YER', '')).toThrow();
     expect(() => validateExpenseInput(branch, cash, 123 as unknown as string, 10, 'YER', '')).toThrow();
     expect(() => validateExpenseInput(branch, cash, 'تشغيل', 10, 'YER', 123 as unknown as string)).toThrow();
-    expect(() => validatePaymentInput(123 as unknown as string, 100, 'cash', cash, 'ref')).toThrow();
+    expect(() => validatePaymentInput(123 as unknown as string, 100, 'cash', cash, 'ref', 'payment-key-123456')).toThrow();
     expect(() => validatePaymentInput(invoice, 100, 123 as unknown as string, cash, 'ref', 'payment-key-123456')).toThrow();
     expect(() => validatePaymentInput(invoice, 100, 'cash', cash, 123 as unknown as string, 'payment-key-123456')).toThrow();
   });
@@ -33,16 +33,16 @@ describe('finance input boundaries', () => {
     for (const method of ['cash', 'bank_transfer', 'card', 'other']) {
       expect(() => validatePaymentInput(invoice, 100, method, cash, 'ref-1')).not.toThrow();
     }
-    expect(() => validatePaymentInput(invoice, 100, ' cash ', cash, 'ref-1')).not.toThrow();
+    expect(() => validatePaymentInput(invoice, 100, ' cash ', cash, 'ref-1', 'payment-key-123456')).not.toThrow();
   });
   it('rejects malformed invoice, zero amount and unsupported method', () => {
     expect(() => validatePaymentInput('bad', 100, 'cash', cash, 'ref')).toThrow();
-    expect(() => validatePaymentInput(invoice, 0, 'cash', cash, 'ref')).toThrow();
-    expect(() => validatePaymentInput(invoice, 100, 'crypto', cash, 'ref')).toThrow();
+    expect(() => validatePaymentInput(invoice, 0, 'cash', cash, 'ref', 'payment-key-123456')).toThrow();
+    expect(() => validatePaymentInput(invoice, 100, 'crypto', cash, 'ref', 'payment-key-123456')).toThrow();
   });
   it('rejects non-finite and unsafe payment amounts and malformed cash account', () => {
-    expect(() => validatePaymentInput(invoice, Infinity, 'cash', cash, 'ref')).toThrow();
-    expect(() => validatePaymentInput(invoice, Number.MAX_SAFE_INTEGER + 1, 'cash', cash, 'ref')).toThrow();
+    expect(() => validatePaymentInput(invoice, Infinity, 'cash', cash, 'ref', 'payment-key-123456')).toThrow();
+    expect(() => validatePaymentInput(invoice, Number.MAX_SAFE_INTEGER + 1, 'cash', cash, 'ref', 'payment-key-123456')).toThrow();
     expect(() => validatePaymentInput(invoice, 100, 'cash', 'bad', 'ref')).toThrow();
   });
   it('rejects missing, short, and overlong payment idempotency keys', () => {
