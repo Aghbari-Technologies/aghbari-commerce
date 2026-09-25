@@ -242,3 +242,10 @@ Command "1" means:
 - Governance audit/outbox, notifications and organization access directories now use bounded pagination and reset page state when the active filter/search/tab changes.
 - Inventory activity pagination applies uniformly to transfers, stock-count sessions and reconciliations; no tab may bypass the active page window.
 - These UI improvements reuse existing tenant-scoped service/table/RPC contracts. No reporting, promotions or parallel transactional source of truth was introduced.
+
+
+## 21. UI CLOSURE CHECKPOINT — 2026-09-25
+
+- Customer Directory now exposes record-level details through the shared `RecordDetailDrawer`, including tier, contact/state and the invitation link generated during the active session.
+- Customer finance ledger is bounded to ten movements per page so the portal remains usable on large statements; authoritative export still reads the full loaded ledger set.
+- Staff/Admin nested records consistently use the shared detail workspace where the existing data contract exposes useful fields; the list remains the primary scan surface.
