@@ -111,3 +111,16 @@ HOLD / NO TOUCH.
 - CORE FRONT: consume application-quality/security/domain/migration/concurrency/Test-the-Test results for the exact final SHA.
 - BROWSER/DEPLOY: obtain a deployment whose metadata exactly equals the final SHA before claiming runtime PASS.
 - DO NOT REPEAT: previously proven barcode/quick-order foundations unless current gates detect regression.
+
+## FINAL STATE WRITE-BACK — 2026-09-25
+- Source head before this state commit: `25327bdddf126bc81e65309d58d8ab86836684fa`.
+- The UI/structure wave is complete at implementation level for this session: premium Control Plane, full structure manifests, centralized role visibility, admin deep links, SPA fallback, and structure-driven Command Palette.
+- Exact runtime/CI certification is intentionally not claimed until the current final SHA has fresh passing evidence.
+
+## CURRENT RESUME POINTER
+- START FROM THE ACTUAL HEAD CREATED BY THIS STATE WRITE-BACK.
+- UI: exact-SHA browser verification of Admin Control Plane, all live workspace anchors, role visibility, RTL, desktop/tablet/mobile, keyboard/focus states.
+- Customer: regression verification for catalog, barcode/quick-order, cart, checkout, orders, finance, templates, account, notifications, offline recovery.
+- Core: consume quality/security/domain/migration/concurrency/Test-the-Test results and repair regressions found by them.
+- Hosting: deploy the exact final SHA on a free host; verify deployment metadata matches the SHA before browser proof.
+- Production: HOLD / NO TOUCH.
