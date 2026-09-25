@@ -48,14 +48,14 @@ export default function InventoryPanel({ role }: { role: UserRole }) {
     setProducts((productRows ?? []) as Product[]); setWarehouses(nextWarehouses); setLowStock(lowRows); setStockCount(openCount);
     if (openCount) setStockLines(await getStockCountLines(openCount.id));
     else setStockLines([]);
-    if (!source && nextWarehouses[0]) setSource(nextWarehouses[0].id);
-    if (!destination && nextWarehouses[1]) setDestination(nextWarehouses[1].id);
-    if (!countWarehouse && nextWarehouses[0]) setCountWarehouse(nextWarehouses[0].id);
-    if (!thresholdWarehouse && nextWarehouses[0]) setThresholdWarehouse(nextWarehouses[0].id);
-    if (!productId && productRows?.[0]) setProductId(productRows[0].id);
-    if (!thresholdProduct && productRows?.[0]) setThresholdProduct(productRows[0].id);
+    setSource(current=>current||nextWarehouses[0]?.id||'');
+    setDestination(current=>current||nextWarehouses[1]?.id||'');
+    setCountWarehouse(current=>current||nextWarehouses[0]?.id||'');
+    setThresholdWarehouse(current=>current||nextWarehouses[0]?.id||'');
+    setProductId(current=>current||productRows?.[0]?.id||'');
+    setThresholdProduct(current=>current||productRows?.[0]?.id||'');
     setLoading(false);
-  }, [canUse, countWarehouse, destination, productId, source, thresholdWarehouse, thresholdProduct]);
+  }, [canUse]);
 
   useEffect(() => { void reload().catch((e) => { setLoading(false); setError(e instanceof Error ? e.message : 'تعذر تحميل المخزون.'); }); }, [reload]);
 
