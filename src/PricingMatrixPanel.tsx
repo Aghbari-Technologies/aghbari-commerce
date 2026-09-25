@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { supabase } from './lib/supabase';
+import './pricing-matrix.css';
 
 type UserRole='owner'|'admin'|'sales';
 interface PriceList{id:string;tier:string;name:string;currency:string;is_active:boolean;}
