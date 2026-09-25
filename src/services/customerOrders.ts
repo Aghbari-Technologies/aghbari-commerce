@@ -30,6 +30,52 @@ export function assertCustomerOrderSummary(value: unknown): CustomerOrderSummary
   return { id: item.id, order_number: item.order_number, status: item.status as OrderStatus, total: item.total, currency: item.currency, created_at: item.created_at };
 }
 
+export interface CustomerOrderPage {
+  items: CustomerOrderSummary[];
+  total: number;
+  hasMore: boolean;
+}
+
+export type CustomerOrderStatusFilter = 'all' | OrderStatus;
+
+export async function getCustomerOrdersPage({
+  limit = 10,
+  offset = 0,
+  query = '',
+  status = 'all'
+}: {
+  limit?: number;
+  offset?: number;
+  query?: string;
+  status?: CustomerOrderStatusFilter;
+} = {}): Promise<CustomerOrderPage> {
+  const safeLimit = Math.min(Math.max(Number.isSafeInteger(limit) ? limit : 10, 1), 50);
+  const safeOffset = Math.min(Math.max(Number.isSafeInteger(offset) ? offset : 0, 0), 100000);
+  const needle = query.trim().toLocaleLowerCase();
+  const statusByLabel = Object.entries(STATUS_LABELS).find(([key, label]) => key === needle || label.toLocaleLowerCase() === needle)?.[0];
+  const numericOrderNumber = /^\\d+$/.test(needle) ? Number(needle) : NaN;
+  if (needle && !Number.isSafeInteger(numericOrderNumber) && !statusByLabel) return { items: [], total: 0, hasMore: false };
+
+  const { data, count } = await retryRead(async () => {
+    let request = requireSupabase().from('orders')
+      .select('id,order_number,status,total,currency,created_at', { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .range(safeOffset, safeOffset + safeLimit - 1);
+    if (status !== 'all') request = request.eq('status', status);
+    if (Number.isSafeInteger(numericOrderNumber)) request = request.eq('order_number', numericOrderNumber);
+    else if (statusByLabel) request = request.eq('status', statusByLabel);
+    const result = await request;
+    if (result.error) throw result.error;
+    return result;
+  });
+  const items = (data ?? []).map((item) => assertCustomerOrderSummary({
+    ...item,
+    order_number: Number(item.order_number),
+    total: typeof item.total === 'number' ? item.total : Number(item.total)
+  }));
+  const total = Math.max(0, count ?? items.length);
+  return { items, total, hasMore: safeOffset + items.length < total };
+}
 export async function getCustomerOrders(limit = 20): Promise<CustomerOrderSummary[]> {
   const safeLimit = Math.min(Math.max(Math.trunc(limit), 1), 50);
   const { data } = await retryRead(async () => {
