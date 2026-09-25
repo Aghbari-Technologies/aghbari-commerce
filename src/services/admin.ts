@@ -80,6 +80,7 @@ export async function upsertProduct(input: {
   categoryId?: string | null;
   description?: string | null;
   status?: 'active' | 'inactive';
+  barcode?: string | null;
 }) {
   const productId = input.productId ? assertUuid(input.productId, 'المنتج') : null;
   const categoryId = input.categoryId ? assertUuid(input.categoryId, 'التصنيف') : null;
@@ -88,6 +89,8 @@ export async function upsertProduct(input: {
   const unit = assertNonBlank(input.unit, 'وحدة المنتج');
   const description = input.description?.trim() || null;
   const status = input.status === undefined ? 'active' : assertProductStatus(input.status);
+  const barcode = input.barcode?.trim() || null;
+  if (barcode && barcode.length > 80) throw new Error('الباركود يجب ألا يتجاوز 80 حرفًا.');
   const { data, error } = await requireSupabase().rpc('upsert_product', {
     p_product_id: productId,
     p_sku: sku,
@@ -95,7 +98,8 @@ export async function upsertProduct(input: {
     p_unit: unit,
     p_category_id: categoryId,
     p_description: description,
-    p_status: status
+    p_status: status,
+    p_barcode: barcode
   });
   if (error) throw error;
   return assertEntityId(data, 'حفظ المنتج');

@@ -13,6 +13,8 @@ export interface OfflineOperation<T = unknown> {
   nextAttemptAt?: string;
   state?: OfflineOperationState;
   terminal?: boolean;
+  lastFailure?: OfflineOperationState;
+  lastFailureCode?: number | null;
 }
 
 const STORAGE_KEY = 'aghbari.offline.operations.v1';
@@ -64,6 +66,8 @@ function read<T>(): OfflineOperation<T>[] {
           ((item as OfflineOperation).nextAttemptAt === undefined || Number.isFinite(Date.parse((item as OfflineOperation).nextAttemptAt!))) &&
           ((item as OfflineOperation).state === undefined || ['queued','retrying','conflicted','terminal'].includes((item as OfflineOperation).state as string)) &&
           ((item as OfflineOperation).terminal === undefined || typeof (item as OfflineOperation).terminal === 'boolean') &&
+          ((item as OfflineOperation).lastFailure === undefined || ['retrying','conflicted','terminal'].includes((item as OfflineOperation).lastFailure as string)) &&
+          ((item as OfflineOperation).lastFailureCode === undefined || (item as OfflineOperation).lastFailureCode === null || (typeof (item as OfflineOperation).lastFailureCode === 'number' && Number.isInteger((item as OfflineOperation).lastFailureCode))) &&
           isSafePayload((item as OfflineOperation).type, (item as OfflineOperation).payload) &&
           payloadBytes((item as OfflineOperation).payload) <= MAX_OFFLINE_PAYLOAD_BYTES
         )) continue;
@@ -134,7 +138,7 @@ export function classifyOfflineFailure(error: unknown): OfflineOperationState {
   return 'retrying';
 }
 
-export function markOfflineOperationAttempt(operationId: string, now = Date.now(), state: OfflineOperationState = 'retrying'): void {
+export function markOfflineOperationAttempt(operationId: string, now = Date.now(), state: OfflineOperationState = 'retrying', failureCode: number | null = null): void {
   const queue = read<unknown>();
   const existing = queue.find((item) => item.operationId === operationId);
   if (!existing) return;
@@ -146,7 +150,7 @@ export function markOfflineOperationAttempt(operationId: string, now = Date.now(
   const persistedState: OfflineOperationState = terminal ? 'terminal' : state;
   const delay = Math.min(MAX_RETRY_DELAY_MS, INITIAL_RETRY_DELAY_MS * 2 ** (attempts - 1));
   persist(queue.map((item) => item.operationId === operationId
-    ? { ...item, attempts, state: persistedState, terminal, nextAttemptAt: new Date(now + delay).toISOString() }
+    ? { ...item, attempts, state: persistedState, terminal, nextAttemptAt: new Date(now + delay).toISOString(), lastFailure: state, lastFailureCode: failureCode }
     : item));
 }
 
@@ -169,13 +173,13 @@ export async function drainOfflineOperations(
     } catch (error) {
       const failureState = classifyOfflineFailure(error);
       if (failureState === 'conflicted') {
-        persist(read<unknown>().map((item) => item.operationId === operation.operationId ? { ...item, state: 'conflicted' as OfflineOperationState, terminal: true } : item));
+        persist(read<unknown>().map((item) => item.operationId === operation.operationId ? { ...item, state: 'conflicted' as OfflineOperationState, terminal: true, lastFailure: 'conflicted' as OfflineOperationState, lastFailureCode: errorStatus(error) } : item));
       } else if (failureState === 'terminal') {
-        markOfflineOperationAttempt(operation.operationId, now, 'terminal');
+        markOfflineOperationAttempt(operation.operationId, now, 'terminal', errorStatus(error));
       } else if (operation.attempts < MAX_OFFLINE_ATTEMPTS) {
         markOfflineOperationAttempt(operation.operationId, now, 'retrying');
       } else {
-        persist(read<unknown>().map((item) => item.operationId === operation.operationId ? { ...item, state: 'terminal' as OfflineOperationState, terminal: true } : item));
+        persist(read<unknown>().map((item) => item.operationId === operation.operationId ? { ...item, state: 'terminal' as OfflineOperationState, terminal: true, lastFailure: 'terminal' as OfflineOperationState, lastFailureCode: errorStatus(error) } : item));
       }
       failed += 1;
     }

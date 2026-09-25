@@ -32,6 +32,18 @@ Object.defineProperty(globalThis, 'localStorage', {
 describe('offline operation queue', () => {
   beforeEach(() => storage.clear());
 
+  it('persists only bounded failure-state metadata for recovery', async () => {
+    const conflict = enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: 1 });
+    const terminal = enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_B, quantity: 2 });
+    const result = await drainOfflineOperations(async (operation) => {
+      if (operation.operationId === conflict.operationId) throw { status: 409 };
+      throw { status: 403 };
+    }, USER_A, Date.now());
+    expect(result).toEqual({ processed: 0, failed: 2 });
+    expect(pendingOfflineOperations(USER_A).find(x => x.operationId === conflict.operationId)).toMatchObject({ state: 'conflicted', terminal: true, lastFailure: 'conflicted', lastFailureCode: 409 });
+    expect(pendingOfflineOperations(USER_A).find(x => x.operationId === terminal.operationId)).toMatchObject({ state: 'terminal', terminal: true, lastFailure: 'terminal', lastFailureCode: 403 });
+  });
+
   it('classifies authorization/validation failures as terminal and conflicts as conflicted', () => {
     expect(classifyOfflineFailure({ status: 401 })).toBe('terminal');
     expect(classifyOfflineFailure({ status: 403 })).toBe('terminal');
