@@ -795,3 +795,44 @@ The customer portal previously exposed only order summaries and reorder behavior
 - Continue individual classification of the 62 authenticated SECURITY DEFINER advisor findings without blanket revocation.
 - Continue semantic reconciliation/reference audit of the legacy Markdown corpus and retire only after 50/50 coverage is proven.
 
+
+
+## Run 2026-09-25 — Core/security/runtime lineage closure
+
+### Additional root causes closed
+- Admin control-plane initialization was causing a redundant reload after the default warehouse was selected; the reload callback is now stable and selection defaults are applied functionally.
+- client_ui_settings was protected only by the broad is_staff() boundary even though the actual Control Plane UI is owner/admin. This was a server-side authorization mismatch, not merely a UI concern.
+- The barcode-aware catalog RPC existed in the live database but had not been recorded in live migration history, leaving object existence without migration provenance.
+
+### Fixes
+- Added and applied migration 20260925042000_harden_client_ui_settings_admin_boundary.sql: INSERT/UPDATE/DELETE now require organization owner/admin; SELECT remains organization-scoped.
+- Applied the repository barcode RPC contract to live Supabase through canonicalize_barcode_catalog_rpc_lineage, bringing the live migration history in line with the canonical function contract.
+- Added/extended supabase/tests/031-security-definer-exposure-classification.test.sql for empty search_path, anonymous denial, RLS helper privileges, table RLS, notification scoping and owner/admin control-plane authorization.
+- Removed non-functional buttons from the dynamic client live-preview so preview affordances cannot be mistaken for executable actions.
+
+### Live evidence
+- Live Supabase project mrcyqezbhpncuvaehwgf composite SQL check:
+  - orders.payment_method: present.
+  - notifications table: present.
+  - client_ui_settings table: present.
+  - get_catalog_with_barcode(text,uuid,integer,integer,uuid): present.
+  - public tables with RLS: 60/60.
+  - public SECURITY DEFINER functions executable by anon: 0.
+  - public SECURITY DEFINER routines missing explicit empty search_path: 0.
+  - required authenticated RLS helper execution: true.
+  - required migration provenance entries recorded: 2 (canonicalize_barcode_catalog_rpc_lineage, harden_client_ui_settings_admin_boundary).
+- Live client_ui_settings policies were directly re-read and show owner/admin-only INSERT/UPDATE/DELETE.
+- The raw SQL session does not expose pgTAP plan(); the repository pgTAP test therefore remains CI/test-harness evidence only.
+
+### Exact Git line
+- Admin reload stabilization: dad7e4686aa3198e233a48aaf833658821d9631d.
+- Client preview hardening and styling: 215323e2589d0f539f9cdc7035083704a478c55e, f101edbe584c2df96981a74b670d5d20c4980737.
+- Security classification test: f0b4c8c909533201a47795ab4d13fd75f5ffc1eb lineage.
+- Client settings server authorization migration: repository f8b7be20cc83bac2ba633083bff2241c9ae2aab8; live migration applied and re-read.
+- Current documentation line reaches this checkpoint after durable-memory updates.
+
+### Verification / release boundary
+- GitHub exact-head workflows for the current main line remain queued; no PASS is transferred.
+- Vercel current project still has no deployment matching this current source line; the latest known recent deployment metadata is source-mismatched/error.
+- Production: HOLD / NO TOUCH.
+- Certification: NOT CLAIMED.
