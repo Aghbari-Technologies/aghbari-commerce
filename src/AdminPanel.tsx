@@ -18,6 +18,7 @@ import NotificationPanel from './NotificationPanel';
 import StaffOperationsPanel from './StaffOperationsPanel';
 import StaffAccessPanel from './StaffAccessPanel';
 import CatalogManagementPanel from './CatalogManagementPanel';
+import CategoryManagementPanel from './CategoryManagementPanel';
 import './admin-executive-dashboard.css';
 
 interface StaffProduct { id: string; sku: string; name: string; unit: string; }
@@ -56,7 +57,7 @@ export default function AdminPanel({ role }: { role: UserRole }) {
         {canOrderWorkflow&&<a href="#admin-orders">الطلبات وسير العمل</a>}
         {canCatalog&&<a href="#admin-customers">العملاء</a>}
         {canCatalog&&<a href="#admin-catalog">الكتالوج والمنتجات</a>}
-        {canCategory&&<a href="#admin-category-create">التصنيفات</a>}
+        {canCategory&&<a href="#admin-categories">دليل التصنيفات</a>}{canCategory&&<a href="#admin-category-create">إضافة تصنيف</a>}
         {canCatalog&&<a href="#admin-pricing">التسعير</a>}
         {canCatalog&&<a href="#admin-product-image">صور المنتجات</a>}
         {canCatalog&&<a href="#admin-import">الاستيراد الآمن</a>}
@@ -84,6 +85,7 @@ export default function AdminPanel({ role }: { role: UserRole }) {
       {canOrderWorkflow && <div className="cart-panel" id="admin-orders"><div className="section-heading"><div><span className="eyebrow">التشغيل</span><h2>إدارة الطلبات</h2></div><span>{visibleOrders.length}/{orders.length} طلبات</span></div><div className="admin-card admin-order-filter"><label htmlFor="admin-order-search">بحث الطلبات</label><div className="order-queue-toolbar"><input id="admin-order-search" value={orderQuery} onChange={(e) => setOrderQuery(e.target.value)} placeholder="رقم الطلب أو اسم العميل أو الحالة" /><select aria-label="فلترة حالة الطلب" value={orderStatusFilter} onChange={(e) => setOrderStatusFilter(e.target.value as 'all'|OrderStatus)}><option value="all">كل الحالات</option>{(Object.keys(STATUS_LABELS) as OrderStatus[]).map((key) => <option key={key} value={key}>{STATUS_LABELS[key]}</option>)}</select><button type="button" className="ghost" onClick={() => { setOrderQuery(''); setOrderStatusFilter('all'); setOrderPage(1); }} disabled={!orderQuery && orderStatusFilter === 'all'}>مسح</button></div></div>{ordersLoading ? <div className="cart-empty">جارٍ تحميل الطلبات…</div> : !orders.length ? <div className="cart-empty">لا توجد طلبات تشغيلية بعد.</div> : !visibleOrders.length ? <div className="cart-empty">لا توجد نتائج مطابقة للبحث.</div> : <div className="cart-lines">{pagedOrders.map((order) => <article className="cart-line" key={order.id}><div><strong>طلب #{order.order_number}</strong><small>العميل: {order.customer_name}</small></div><div><strong>{formatMoney(order.total)} {order.currency}</strong><small>الحالة: {STATUS_LABELS[order.status]}</small></div><div className="status-actions">{allowedNextStatuses(order.status, role).map((next) => <button key={next} disabled={busy} onClick={() => void changeOrderStatus(order.id, next)}>{STATUS_LABELS[next]}</button>)}</div></article>)}</div>}{visibleOrders.length > 0 && <div className="order-queue-pagination" aria-label="صفحات الطلبات"><span>صفحة {activeOrderPage} / {orderPages} · {visibleOrders.length} نتيجة</span><div><button type="button" className="ghost" onClick={() => setOrderPage(p => Math.max(1,p-1))} disabled={activeOrderPage===1}>السابق</button><button type="button" className="ghost" onClick={() => setOrderPage(p => Math.min(orderPages,p+1))} disabled={activeOrderPage===orderPages}>التالي</button></div></div>}</div>}
       {error && <div className="error-banner" role="alert"><span>{error}</span><button type="button" className="ghost" disabled={ordersLoading} onClick={() => void reload()}>إعادة تحميل مركز التحكم</button></div>}{message && <div className="success" role="status">{message}</div>}
       {canCatalog && <CatalogManagementPanel role={role} />}
+      {canCatalog && <CategoryManagementPanel role={role} />}
       {canCatalog && <div id="admin-customers"><CustomerPanel role={role} /></div>}
       {canInventory && <div id="admin-inventory"><InventoryPanel role={role} /></div>}
       {canInventory && <div id="admin-purchasing"><PurchasingPanel role={role} /></div>}
