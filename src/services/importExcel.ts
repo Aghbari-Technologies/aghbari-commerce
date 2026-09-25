@@ -77,12 +77,12 @@ export async function parseProductWorkbook(file: File) {
     }
   }));
 
-  return { rows: parsed, diagnostics: validateImportRows(parsed), fingerprint: await fingerprintImport(parsed) };
+  return { rows: parsed, diagnostics: validateImportRows(parsed), fingerprint: await fingerprintImport(parsed), contractVersion: IMPORT_CONTRACT_VERSION };
 }
 
 export async function stageProductImport(file: File) {
   const parsed = await parseProductWorkbook(file);
-  if (parsed.diagnostics.length) return { ...parsed, jobId: null };
+  if (parsed.diagnostics.length) return { ...parsed, jobId: null as string | null };
   const sourceName = file.name.trim().slice(0, MAX_SOURCE_NAME_LENGTH) || 'products.xlsx';
   const { data, error } = await requireSupabase().rpc('stage_product_import', {
     p_source_name: sourceName,
