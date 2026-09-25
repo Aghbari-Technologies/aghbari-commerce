@@ -1,47 +1,47 @@
 # AGHBARI LATEST EXECUTION STATE
 
-Actual Git HEAD: 2bea11707d9a5ba4241fcc59ae05e761fb12fe10
-Latest functional UI HEAD: 2bea11707d9a5ba4241fcc59ae05e761fb12fe10
-Branch: main
+Last verified working code HEAD: 2bccf4585ced4858b3cc29b02e7afef0123c12a0
+Observed execution branch HEAD before this write-back: d0089f6efc20824d40fd956569601a2738fbdcc7
+Execution branch: execution/ui-closure-20260925
 Production: NO TOUCH
 Certification: NOT CLAIMED
 
 ## CURRENT REALITY
 
-- Customer Portal has catalog search/categories, backend offset pagination, product detail, cart, Excel quick order, templates, orders/detail/tracking/reorder, account dashboard, finance center, notifications, offline/recovery states and payment-aware checkout.
-- Admin/Staff has dedicated operational workspaces for Catalog, Category hierarchy, Pricing matrix, Customers, Purchase Orders, Purchase Receipts, Suppliers/Bills/Ledger, Warehouses/Branches, Inventory Ledger/Activity, Finance operations history, Notifications, Governance and Access Control.
-- New read-oriented panels are connected to existing tenant-scoped Commerce tables and do not create a reporting or Promotions data model.
-- UI mutations continue to use existing service/RPC contracts; presentation-only panels remain read-focused where no mutation contract exists.
+- Customer Portal remains the active `AppV3Fixed` surface with catalog pagination/search/categories, product detail, cart, Excel quick order, templates, order history/detail/reorder, account dashboard, finance center, notifications, offline/recovery and payment-aware checkout.
+- Admin/Staff now includes dedicated operational workspaces plus record-level progressive disclosure for Purchasing, Receiving, Inventory Activity, Finance History, Pricing, Suppliers and Warehouses.
+- Governance audit/outbox, notifications and organization access now use bounded pagination that resets when filters/search/tabs change.
+- Inventory Activity pagination is uniform across transfers, stock counts and reconciliations.
+- All new detail workspaces are read-only unless an existing mutation contract already exists; no Promotions/reporting contract was invented.
 
 ## EXACT-SHA PROOF
 
-Current functional SHA: 2bea11707d9a5ba4241fcc59ae05e761fb12fe10.
-- GitHub Actions for the current execution line are queued; no PASS claimed yet.
-- Previous PASS results remain bound to their original SHAs and are not transferred.
-- Local clone/build verification was unavailable because this runtime cannot resolve outbound GitHub DNS.
-- Vercel reports deployment rate limiting for current pushes; no hosted PASS is claimed for 2bea117.
+- Last verified working implementation SHA: 2bccf4585ced4858b3cc29b02e7afef0123c12a0.
+- The documentation write-back after that implementation is intentionally not treated as a code proof transfer.
+- Exact CI/browser proof for the final branch head is still pending.
+- Vercel currently reports deployment rate limiting; no hosted browser PASS is claimed.
+- Local container build remains unavailable because outbound network/DNS access is not available in the execution runtime.
 
 ## OPEN UI FRONTIER
 
-- Purchasing: richer purchase-order/receipt detail and line-level receiving history.
-- Inventory: deeper reconciliation/stock-count detail and recovery states.
-- Finance: richer invoice/payment/expense detail interactions.
-- Pricing: deeper price history/edit states where current contracts support them.
 - Customer: further mobile/accessibility refinement and profile fields only from existing backend contracts.
-- Governance/Access: nested audit/outbox detail and recovery.
+- Admin/Staff: deeper recovery/detail interactions in governance/outbox, receiving and reconciliation only where existing service/RPC data supports them.
+- Catalog/pricing: richer history/edit workflows where current mutation contracts already exist.
 
 ## OPEN CORE / SECURITY / RELEASE
 
-- Finish exact-SHA CI gates and repair regressions.
-- Continue individual SECURITY DEFINER classification without weakening required transaction/RLS-helper boundaries.
-- Continue legacy Markdown semantic consolidation/reference audit.
+- Exact-SHA application quality, security, domain, migration, concurrency and Test-the-Test gates.
+- Exact-SHA local production browser artifact proof.
+- Hosted browser/deployment proof remains blocked by the external Vercel deployment-rate-limit/protection path.
+- Individual SECURITY DEFINER classification.
+- 50/50 legacy Markdown semantic consolidation/reference verification remains open.
 - Certification and production remain HOLD / NO TOUCH.
 
 ## CURRENT RESUME POINTER
 
-START FROM ACTUAL HEAD 2bea11707d9a5ba4241fcc59ae05e761fb12fe10.
-UI FRONT: Admin Catalog -> Category -> Pricing -> Customers -> Purchasing -> Receiving -> Suppliers -> Warehouses -> Inventory Activity -> Finance History -> Governance/Access.
-Customer: Catalog pagination -> Orders -> Account dashboard -> Finance -> Templates -> Notifications -> Checkout/Offline.
-VERIFY: Use only exact 2bea117 evidence. No PASS transfer.
-DEPLOY: Vercel is currently rate-limited; do not weaken deployment protection.
-DO NOT REPEAT: Do not reopen proven order/idempotency/offline foundations unless current exact-SHA evidence shows regression.
+START FROM THE CURRENT EXECUTION BRANCH HEAD, THEN MOVE MAIN ONLY BY FAST-FORWARD TO THE EXACT PROVED SHA.
+UI FRONT: inspect Customer mobile/accessibility states; Admin Governance/Outbox -> Receiving -> Inventory reconciliation recovery -> Pricing edit/history using only existing contracts.
+CORE FRONT: consume exact-SHA quality/security/domain/migration/concurrency/Test-the-Test results and repair regressions.
+PROOF: bind every PASS to one exact branch SHA; run local-production browser E2E on that same SHA; do not transfer evidence across commits.
+HOSTING: Vercel rate-limit/protection remains an external gate; do not weaken it.
+DO NOT REOPEN: completed checkout payment contract, canonical role-management RPC boundary, tenant/RLS helper boundary, offline queue foundation, or previously proven flows unless exact evidence shows regression.
