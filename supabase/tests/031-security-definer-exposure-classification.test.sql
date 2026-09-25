@@ -6,7 +6,7 @@
 
 begin;
 
-select plan(8);
+select plan(12);
 
 select is(
   (select count(*)::int
@@ -64,6 +64,32 @@ select ok(
       and p.prosecdef
       and has_function_privilege('authenticated',p.oid,'execute')) >= 1,
   'authenticated SECURITY DEFINER application boundary remains classified as intentionally callable'
+);
+
+
+select is(
+  (select count(*)::int from pg_class c join pg_namespace n on n.oid=c.relnamespace
+   where n.nspname='public' and c.relname in ('client_ui_settings','notifications') and c.relrowsecurity),
+  2,
+  'customer control and notification tables keep RLS enabled'
+);
+
+select ok(
+  exists(select 1 from pg_policies where schemaname='public' and tablename='client_ui_settings'
+         and cmd='UPDATE' and roles @> array['authenticated']::name[] and qual ilike '%is_staff%'),
+  'client_ui_settings UPDATE remains staff-gated at the database boundary'
+);
+
+select ok(
+  exists(select 1 from pg_policies where schemaname='public' and tablename='notifications'
+         and cmd='SELECT' and roles @> array['authenticated']::name[] and qual ilike '%current_customer_id%'),
+  'notifications SELECT remains customer/recipient scoped'
+);
+
+select ok(
+  exists(select 1 from pg_policies where schemaname='public' and tablename='notifications'
+         and cmd='UPDATE' and roles @> array['authenticated']::name[] and qual ilike '%auth.uid()%'),
+  'notifications UPDATE remains recipient/customer scoped'
 );
 
 select * from finish();
