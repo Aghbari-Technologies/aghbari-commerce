@@ -17,8 +17,7 @@ export default function InventoryPanel({ role }: { role: UserRole }) {
   const [countNotes, setCountNotes] = useState('');
   const [source, setSource] = useState('');
   const [destination, setDestination] = useState('');
-  const [productId, setProductId] = useState('');
-  const [quantity, setQuantity] = useState('1');
+  const [transferLines, setTransferLines] = useState<Array<{ productId: string; quantity: string }>>([{ productId: '', quantity: '1' }]);
   const [notes, setNotes] = useState('');
   const [thresholdWarehouse, setThresholdWarehouse] = useState('');
   const [thresholdProduct, setThresholdProduct] = useState('');
@@ -49,10 +48,10 @@ export default function InventoryPanel({ role }: { role: UserRole }) {
     if (!destination && nextWarehouses[1]) setDestination(nextWarehouses[1].id);
     if (!countWarehouse && nextWarehouses[0]) setCountWarehouse(nextWarehouses[0].id);
     if (!thresholdWarehouse && nextWarehouses[0]) setThresholdWarehouse(nextWarehouses[0].id);
-    if (!productId && productRows?.[0]) setProductId(productRows[0].id);
+    setTransferLines((current) => current.map((line) => ({ ...line, productId: line.productId || productRows?.[0]?.id || '' })));
     if (!thresholdProduct && productRows?.[0]) setThresholdProduct(productRows[0].id);
     setLoading(false);
-  }, [canUse, countWarehouse, destination, productId, source, thresholdWarehouse, thresholdProduct]);
+  }, [canUse, countWarehouse, destination, source, thresholdWarehouse, thresholdProduct]);
 
   useEffect(() => { void reload().catch((e) => { setLoading(false); setError(e instanceof Error ? e.message : 'تعذر تحميل المخزون.'); }); }, [reload]);
 
@@ -71,14 +70,38 @@ export default function InventoryPanel({ role }: { role: UserRole }) {
   return <div className="cart-panel" id="inventory">
     <div className="section-heading"><div><span className="eyebrow">المخزون</span><h2>النقل والجرد والتنبيهات التشغيلية</h2></div><span aria-live="polite">{loading ? 'جارٍ التحديث…' : `${lowStock.length} أصناف منخفضة`}</span></div>
     {loading ? <div className="portal-loading" role="status">جارٍ تحميل بيانات المخزون…</div> : <div className="admin-grid">
-      <form className="admin-card" onSubmit={(e) => { e.preventDefault(); void run(() => transferInventory(source,destination,makeKey('transfer'),[{productId,quantity:Number(quantity)}],notes), 'تم نقل المخزون ذريًا وتسجيل الحركتين.'); }}>
-        <h3>تحويل بين المستودعات</h3>
+      <form className="admin-card inventory-transfer-builder" onSubmit={(e) => {
+        e.preventDefault();
+        const normalized = transferLines.filter((line) => line.productId).map((line) => ({ productId: line.productId, quantity: Number(line.quantity) }));
+        if (!source || !destination || source === destination || !normalized.length || normalized.some((line) => !Number.isSafeInteger(line.quantity) || line.quantity < 1 || line.quantity > 100000)) {
+          setError('أكمل المستودعين وبنود التحويل بكميات صحيحة قبل التنفيذ.');
+          return;
+        }
+        const seen = new Set<string>();
+        if (normalized.some((line) => seen.has(line.productId) || (seen.add(line.productId), false))) {
+          setError('لا يمكن تكرار الصنف داخل عملية التحويل.');
+          return;
+        }
+        void run(() => transferInventory(source, destination, makeKey('transfer'), normalized, notes), 'تم نقل جميع بنود المخزون ذريًا وتسجيل الحركات.');
+      }}>
+        <div className="section-heading"><div><h3>تحويل بين المستودعات</h3><small>عدة أصناف في عملية ذرية واحدة، مع منع التكرار وحماية حدود الكمية.</small></div><span>{transferLines.length} بند</span></div>
         <select aria-label="المستودع المصدر" value={source} onChange={(e) => setSource(e.target.value)} required><option value="">من المستودع</option>{warehouses.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}</select>
         <select aria-label="المستودع الوجهة" value={destination} onChange={(e) => setDestination(e.target.value)} required><option value="">إلى المستودع</option>{warehouses.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}</select>
-        <select aria-label="منتج التحويل" value={productId} onChange={(e) => setProductId(e.target.value)} required><option value="">اختر المنتج</option>{products.map((p) => <option key={p.id} value={p.id}>{p.name} · {p.sku}</option>)}</select>
-        <input aria-label="كمية التحويل" type="number" min="1" max="100000" step="1" value={quantity} onChange={(e) => setQuantity(e.target.value)} required />
-        <input aria-label="ملاحظات التحويل" placeholder="ملاحظة (اختياري)" value={notes} onChange={(e) => setNotes(e.target.value)} />
-        <button disabled={busy || !source || !destination || source === destination}>تنفيذ التحويل</button>
+        <div className="transfer-draft-lines">
+          {transferLines.map((line, index) => <div className="transfer-draft-line" key={index}>
+            <select aria-label={`منتج التحويل ${index + 1}`} value={line.productId} onChange={(e) => setTransferLines((current) => current.map((item, i) => i === index ? { ...item, productId: e.target.value } : item))} required>
+              <option value="">اختر المنتج</option>{products.map((p) => <option key={p.id} value={p.id}>{p.name} · {p.sku}</option>)}
+            </select>
+            <input aria-label={`كمية التحويل ${index + 1}`} type="number" min="1" max="100000" step="1" value={line.quantity} onChange={(e) => setTransferLines((current) => current.map((item, i) => i === index ? { ...item, quantity: e.target.value } : item))} required />
+            <button type="button" className="ghost" onClick={() => setTransferLines((current) => current.length === 1 ? current : current.filter((_, i) => i !== index))} disabled={busy || transferLines.length === 1}>حذف</button>
+          </div>)}
+        </div>
+        <div className="transfer-builder-actions">
+          <button type="button" className="ghost" onClick={() => setTransferLines((current) => [...current, { productId: products[0]?.id ?? '', quantity: '1' }])} disabled={busy || transferLines.length >= 200}>+ إضافة صنف</button>
+          <input aria-label="ملاحظات التحويل" placeholder="ملاحظة (اختياري)" value={notes} onChange={(e) => setNotes(e.target.value)} />
+          <span>{transferLines.length}/200 بند</span>
+        </div>
+        <button disabled={busy || !source || !destination || source === destination || !transferLines.some((line) => line.productId)}>تنفيذ التحويل الذري</button>
       </form>
 
       <form className="admin-card" onSubmit={(e) => { e.preventDefault(); void run(() => setStockThreshold(thresholdWarehouse,thresholdProduct,Number(minQuantity),Number(reorderQuantity)), 'تم حفظ حد إعادة الطلب.'); }}>
