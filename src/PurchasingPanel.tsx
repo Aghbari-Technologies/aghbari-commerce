@@ -31,6 +31,7 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
   const [warehouseId, setWarehouseId] = useState('');
   const [quantity, setQuantity] = useState('1');
   const [unitCost, setUnitCost] = useState('0');
+  const [purchaseLines, setPurchaseLines] = useState<Array<{id:string;productId:string;quantity:string;unitCost:string}>>([{ id: 'line-1', productId: '', quantity: '1', unitCost: '0' }]);
   const [selectedOrderId, setSelectedOrderId] = useState('');
   const [receiveItemId, setReceiveItemId] = useState('');
   const [receiveQuantity, setReceiveQuantity] = useState('1');
@@ -93,16 +94,13 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
         <button disabled={busy}>حفظ المورد</button>
       </form>
 
-      <form className="admin-card" onSubmit={(e) => { e.preventDefault(); void run(async () => { await createPurchaseOrder({ supplierId, warehouseId, idempotencyKey: `agh-po-${crypto.randomUUID()}`, lines: [{ productId, quantity: Number(quantity), unitCost: Number(unitCost) }], currency: 'YER' }); }, 'تم إنشاء أمر الشراء.'); }}>
-        <h3>أمر شراء جديد</h3>
+      <form className="admin-card purchase-order-builder" onSubmit={(e) => { e.preventDefault(); const normalized = purchaseLines.filter(line=>line.productId); if (!supplierId || !warehouseId || !normalized.length) { setError('اختر المورد والمستودع وأضف بندًا واحدًا على الأقل.'); return; } const ids = normalized.map(line=>line.productId); if (new Set(ids).size !== ids.length) { setError('لا يمكن تكرار المنتج داخل أمر الشراء.'); return; } const invalid = normalized.find(line=>!Number.isSafeInteger(Number(line.quantity)) || Number(line.quantity) < 1 || Number(line.quantity) > 10000 || !Number.isFinite(Number(line.unitCost)) || Number(line.unitCost) < 0); if (invalid) { setError('تحقق من الكميات وتكلفة كل بند قبل إنشاء أمر الشراء.'); return; } void run(async () => { await createPurchaseOrder({ supplierId, warehouseId, idempotencyKey: `agh-po-${crypto.randomUUID()}`, lines: normalized.map(line=>({productId:line.productId,quantity:Number(line.quantity),unitCost:Number(line.unitCost)})), currency:'YER' }); }, 'تم إنشاء أمر الشراء متعدد البنود.').then(()=>setPurchaseLines([{id:`line-${Date.now()}`,productId:products[0]?.id ?? '',quantity:'1',unitCost:'0'}])); }}>
+        <div className="purchase-builder-head"><div><span className="eyebrow">أمر شراء</span><h3>إنشاء أمر شراء متعدد البنود</h3><small>العقد التشغيلي يسمح ببنود متعددة؛ كل منتج يظهر مرة واحدة ويُرسل للمسار الكانوني.</small></div><strong>{purchaseLines.length} بند</strong></div>
         <select aria-label="المورد" value={supplierId} onChange={(e) => setSupplierId(e.target.value)} required><option value="">اختر المورد</option>{suppliers.map((supplier) => <option key={supplier.id} value={supplier.id}>{supplier.name}</option>)}</select>
         <select aria-label="مستودع الاستلام" value={warehouseId} onChange={(e) => setWarehouseId(e.target.value)} required><option value="">اختر المستودع</option>{warehouses.map((warehouse) => <option key={warehouse.id} value={warehouse.id}>{warehouse.name}</option>)}</select>
-        <select aria-label="منتج الشراء" value={productId} onChange={(e) => setProductId(e.target.value)} required><option value="">اختر المنتج</option>{products.map((product) => <option key={product.id} value={product.id}>{product.name} · {product.sku}</option>)}</select>
-        <input aria-label="كمية الشراء" type="number" min="1" step="1" value={quantity} onChange={(e) => setQuantity(e.target.value)} required />
-        <input aria-label="تكلفة الوحدة" type="number" min="0" step="0.01" value={unitCost} onChange={(e) => setUnitCost(e.target.value)} required />
-        <button disabled={busy || !supplierId || !warehouseId || !productId}>إنشاء أمر شراء</button>
+        <div className="purchase-line-stack">{purchaseLines.map((line,index)=><div className="purchase-line-editor" key={line.id}><div><small>البند {index+1}</small><select aria-label={`منتج البند ${index+1}`} value={line.productId} onChange={(e)=>setPurchaseLines(current=>current.map(item=>item.id===line.id?{...item,productId:e.target.value}:item))} required><option value="">اختر المنتج</option>{products.map(product=><option key={product.id} value={product.id}>{product.name} · {product.sku}</option>)}</select></div><label>الكمية<input aria-label={`كمية البند ${index+1}`} type="number" min="1" max="10000" step="1" value={line.quantity} onChange={e=>setPurchaseLines(current=>current.map(item=>item.id===line.id?{...item,quantity:e.target.value}:item))} required/></label><label>تكلفة الوحدة<input aria-label={`تكلفة البند ${index+1}`} type="number" min="0" step="0.01" value={line.unitCost} onChange={e=>setPurchaseLines(current=>current.map(item=>item.id===line.id?{...item,unitCost:e.target.value}:item))} required/></label>{purchaseLines.length>1&&<button type="button" className="ghost purchase-line-remove" onClick={()=>setPurchaseLines(current=>current.filter(item=>item.id!==line.id))} disabled={busy}>حذف</button>}</div>)}</div>
+        <div className="purchase-builder-actions"><button type="button" className="ghost" onClick={()=>setPurchaseLines(current=>[...current,{id:`line-${Date.now()}-${current.length}`,productId:'',quantity:'1',unitCost:'0'}])} disabled={busy||purchaseLines.length>=200||!products.length}>+ إضافة بند</button><small>حتى 200 بند · لا تكرر المنتج داخل نفس الأمر.</small><button disabled={busy || !supplierId || !warehouseId || !products.length}>إنشاء أمر شراء</button></div>
       </form>
-
       <div className="admin-card">
         <h3>اعتماد أوامر الشراء</h3>
         <div className="order-queue-toolbar">
