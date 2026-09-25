@@ -29,8 +29,6 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
   const [supplierId, setSupplierId] = useState('');
   const [productId, setProductId] = useState('');
   const [warehouseId, setWarehouseId] = useState('');
-  const [quantity, setQuantity] = useState('1');
-  const [unitCost, setUnitCost] = useState('0');
   const [purchaseLines, setPurchaseLines] = useState<Array<{id:string;productId:string;quantity:string;unitCost:string}>>([{ id: 'line-1', productId: '', quantity: '1', unitCost: '0' }]);
   const [selectedOrderId, setSelectedOrderId] = useState('');
   const [receiveItemId, setReceiveItemId] = useState('');
@@ -59,10 +57,10 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
     const nextOrders = (orderRows ?? []) as PurchaseOrder[]; setOrders(nextOrders); setItems((itemRows ?? []) as PurchaseItem[]);
     if (!warehouseId && warehouseRows?.[0]) setWarehouseId(warehouseRows[0].id);
     if (!supplierId && supplierRows?.[0]) setSupplierId(supplierRows[0].id);
-    if (!productId && productRows?.[0]) setProductId(productRows[0].id);
+    if (productRows?.[0] && !purchaseLines.some(line=>line.productId)) setPurchaseLines([{id:purchaseLines[0]?.id??'line-1',productId:productRows[0].id,quantity:purchaseLines[0]?.quantity??'1',unitCost:purchaseLines[0]?.unitCost??'0'}]);
     if (!selectedOrderId) setSelectedOrderId(nextOrders.find((o) => o.status === 'approved' || o.status === 'partially_received')?.id ?? '');
     setLoading(false);
-  }, [canManage, productId, selectedOrderId, supplierId, warehouseId]);
+  }, [canManage, purchaseLines, selectedOrderId, supplierId, warehouseId]);
 
   useEffect(() => { void load().catch((e) => { setLoading(false); setError(e instanceof Error ? e.message : 'تعذر تحميل المشتريات.'); }); }, [load]);
   useEffect(()=>{setOrderPage(1);},[orderQuery,orderStatus]);
