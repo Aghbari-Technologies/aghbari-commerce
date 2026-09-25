@@ -329,3 +329,29 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .record-detail-lines>div:first-child{border-top:0;padding-top:0}
 .record-detail-lines span,.record-detail-lines strong{font-size:.82rem}
 @media (max-width:520px){.record-detail-lines>div{align-items:flex-start;flex-direction:column;gap:3px}}
+
+
+/* Multi-line operational builders */
+.purchasing-builder .section-heading,
+.inventory-transfer-builder .section-heading { align-items: flex-start; gap: 1rem; }
+.purchase-draft-lines,
+.transfer-draft-lines { display: grid; gap: .65rem; }
+.purchase-draft-line,
+.transfer-draft-line { display: grid; grid-template-columns: minmax(0,2fr) minmax(6rem,.7fr) minmax(7rem,.8fr) auto; gap: .55rem; align-items: center; }
+.transfer-draft-line { grid-template-columns: minmax(0,2fr) minmax(7rem,.8fr) auto; }
+.purchase-builder-actions,
+.transfer-builder-actions { display: flex; flex-wrap: wrap; gap: .65rem; align-items: center; justify-content: space-between; }
+.purchase-builder-actions > span,
+.transfer-builder-actions > span { color: var(--muted-text, #697386); font-size: .85rem; }
+.purchase-builder-actions > button,
+.transfer-builder-actions > button { width: auto; }
+@media (max-width: 760px) {
+  .purchase-draft-line,
+  .transfer-draft-line { grid-template-columns: 1fr; }
+  .purchase-draft-line button,
+  .transfer-draft-line button { justify-self: start; }
+  .purchase-builder-actions,
+  .transfer-builder-actions { align-items: stretch; }
+  .purchase-builder-actions > button,
+  .transfer-builder-actions > button { width: 100%; }
+}
