@@ -1,47 +1,47 @@
 # AGHBARI LATEST EXECUTION STATE
 
-Last verified working code HEAD: 2bccf4585ced4858b3cc29b02e7afef0123c12a0
-Observed execution branch HEAD before this write-back: d0089f6efc20824d40fd956569601a2738fbdcc7
-Execution branch: execution/ui-closure-20260925
+Latest verified functional code baseline: 3b38d2eb058bc5d9b752d6c61b68e529c45acf0f
+Observed main HEAD before this state write-back: 915d080c2d15d2f52f1e8b6301b3a19d098402fc
+Branch: main
 Production: NO TOUCH
 Certification: NOT CLAIMED
 
 ## CURRENT REALITY
 
-- Customer Portal remains the active `AppV3Fixed` surface with catalog pagination/search/categories, product detail, cart, Excel quick order, templates, order history/detail/reorder, account dashboard, finance center, notifications, offline/recovery and payment-aware checkout.
-- Admin/Staff now includes dedicated operational workspaces plus record-level progressive disclosure for Purchasing, Receiving, Inventory Activity, Finance History, Pricing, Suppliers and Warehouses.
-- Governance audit/outbox, notifications and organization access now use bounded pagination that resets when filters/search/tabs change.
-- Inventory Activity pagination is uniform across transfers, stock counts and reconciliations.
-- All new detail workspaces are read-only unless an existing mutation contract already exists; no Promotions/reporting contract was invented.
+- Customer Portal remains the active `AppV3Fixed` experience with catalog/search/categories, backend pagination, product detail, cart, Excel quick order, templates, order history/detail/reorder, account dashboard, finance center, notifications, offline/recovery and payment-aware checkout.
+- Customer finance now uses bounded ledger pagination. Customer order/quick-order/Excel/cart modal surfaces expose dialog semantics.
+- Admin/Staff contains dedicated operational workspaces for Catalog, Categories, Customers, Pricing, Purchasing, Receiving, Suppliers, Warehouses, Inventory Ledger/Activity, Finance History, Notifications, Governance and Access.
+- Dense operational records now use a shared accessible detail drawer where existing backend fields are available.
+- Supplier, Warehouse, Inventory Activity, Governance/Outbox, Notifications, Organization Access and Customer Finance collections use bounded pagination with filter/tab resets.
+- No reporting or Promotions transactional model was fabricated.
 
 ## EXACT-SHA PROOF
 
-- Last verified working implementation SHA: 2bccf4585ced4858b3cc29b02e7afef0123c12a0.
-- The documentation write-back after that implementation is intentionally not treated as a code proof transfer.
-- Exact CI/browser proof for the final branch head is still pending.
-- Vercel currently reports deployment rate limiting; no hosted browser PASS is claimed.
-- Local container build remains unavailable because outbound network/DNS access is not available in the execution runtime.
+- Implementation code before the documentation-only checkpoint: `3b38d2eb058bc5d9b752d6c61b68e529c45acf0f`.
+- Documentation write-back commits preserve the same implementation tree; however PASS must only be claimed from a CI/browser run whose `head_sha` equals the final observed main SHA.
+- Final exact-SHA gates are currently queued/pending; no PASS is claimed.
+- The current Vercel connected-app check returned HTTP 403, so no new hosted runtime proof is claimed.
+- Production remains NO TOUCH.
 
 ## OPEN UI FRONTIER
 
-- Customer: further mobile/accessibility refinement and profile fields only from existing backend contracts.
-- Admin/Staff: deeper recovery/detail interactions in governance/outbox, receiving and reconciliation only where existing service/RPC data supports them.
-- Catalog/pricing: richer history/edit workflows where current mutation contracts already exist.
+- Customer: deeper mobile/accessibility refinements and additional profile fields only where an existing service/schema contract exists.
+- Admin/Staff: nested recovery/detail for governance/outbox, receiving and reconciliation where current contracts expose actionable state.
+- Pricing/Catalog: richer edit/history only through existing mutation contracts.
 
 ## OPEN CORE / SECURITY / RELEASE
 
-- Exact-SHA application quality, security, domain, migration, concurrency and Test-the-Test gates.
-- Exact-SHA local production browser artifact proof.
-- Hosted browser/deployment proof remains blocked by the external Vercel deployment-rate-limit/protection path.
-- Individual SECURITY DEFINER classification.
-- 50/50 legacy Markdown semantic consolidation/reference verification remains open.
+- Exact-SHA application-quality, security, G1/domain, migration, concurrency, Test-the-Test, browser-local and deployment workflows.
+- Individual SECURITY DEFINER classification remains open; required authenticated RLS-helper privileges must not be revoked blindly.
+- Legacy Markdown semantic consolidation remains 50/50 classified but not certified retired.
+- Vercel deployment/protection remains an external gate; do not weaken artifact identity.
 - Certification and production remain HOLD / NO TOUCH.
 
 ## CURRENT RESUME POINTER
 
-START FROM THE CURRENT EXECUTION BRANCH HEAD, THEN MOVE MAIN ONLY BY FAST-FORWARD TO THE EXACT PROVED SHA.
-UI FRONT: inspect Customer mobile/accessibility states; Admin Governance/Outbox -> Receiving -> Inventory reconciliation recovery -> Pricing edit/history using only existing contracts.
-CORE FRONT: consume exact-SHA quality/security/domain/migration/concurrency/Test-the-Test results and repair regressions.
-PROOF: bind every PASS to one exact branch SHA; run local-production browser E2E on that same SHA; do not transfer evidence across commits.
-HOSTING: Vercel rate-limit/protection remains an external gate; do not weaken it.
-DO NOT REOPEN: completed checkout payment contract, canonical role-management RPC boundary, tenant/RLS helper boundary, offline queue foundation, or previously proven flows unless exact evidence shows regression.
+START FROM ACTUAL MAIN HEAD, THEN VERIFY THE FINAL SHA BEFORE ANY NEW CODE.
+UI: Customer mobile/a11y -> Admin Governance/Outbox -> Receiving/Reconciliation recovery -> Pricing edit/history, only with existing contracts.
+CORE: consume exact-SHA CI/security/domain/migration/concurrency/Test-the-Test results and repair regressions.
+PROOF: one exact SHA at a time; no evidence transfer between code, CI, artifact, deployment or production.
+RESOURCE: avoid additional push-triggered builds until current final SHA gates are consumed.
+DO NOT REOPEN: checkout payment/idempotency, canonical RBAC RPC boundary, offline cart queue, tenant/RLS helper boundary, or already-closed UI surfaces unless exact evidence shows regression.
