@@ -27,10 +27,8 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
   const [supplierPhone, setSupplierPhone] = useState('');
   const [supplierAddress, setSupplierAddress] = useState('');
   const [supplierId, setSupplierId] = useState('');
-  const [productId, setProductId] = useState('');
   const [warehouseId, setWarehouseId] = useState('');
-  const [quantity, setQuantity] = useState('1');
-  const [unitCost, setUnitCost] = useState('0');
+  const [purchaseLines, setPurchaseLines] = useState<Array<{ productId: string; quantity: string; unitCost: string }>>([{ productId: '', quantity: '1', unitCost: '0' }]);
   const [selectedOrderId, setSelectedOrderId] = useState('');
   const [receiveItemId, setReceiveItemId] = useState('');
   const [receiveQuantity, setReceiveQuantity] = useState('1');
@@ -58,10 +56,10 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
     const nextOrders = (orderRows ?? []) as PurchaseOrder[]; setOrders(nextOrders); setItems((itemRows ?? []) as PurchaseItem[]);
     if (!warehouseId && warehouseRows?.[0]) setWarehouseId(warehouseRows[0].id);
     if (!supplierId && supplierRows?.[0]) setSupplierId(supplierRows[0].id);
-    if (!productId && productRows?.[0]) setProductId(productRows[0].id);
+    setPurchaseLines((current) => current.map((line) => ({ ...line, productId: line.productId || productRows?.[0]?.id || '' })));
     if (!selectedOrderId) setSelectedOrderId(nextOrders.find((o) => o.status === 'approved' || o.status === 'partially_received')?.id ?? '');
     setLoading(false);
-  }, [canManage, productId, selectedOrderId, supplierId, warehouseId]);
+  }, [canManage, selectedOrderId, supplierId, warehouseId]);
 
   useEffect(() => { void load().catch((e) => { setLoading(false); setError(e instanceof Error ? e.message : 'تعذر تحميل المشتريات.'); }); }, [load]);
   useEffect(()=>{setOrderPage(1);},[orderQuery,orderStatus]);
@@ -92,14 +90,49 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
         <button disabled={busy}>حفظ المورد</button>
       </form>
 
-      <form className="admin-card" onSubmit={(e) => { e.preventDefault(); void run(async () => { await createPurchaseOrder({ supplierId, warehouseId, idempotencyKey: `agh-po-${crypto.randomUUID()}`, lines: [{ productId, quantity: Number(quantity), unitCost: Number(unitCost) }], currency: 'YER' }); }, 'تم إنشاء أمر الشراء.'); }}>
-        <h3>أمر شراء جديد</h3>
+      <form className="admin-card purchasing-builder" onSubmit={(e) => {
+        e.preventDefault();
+        const normalized = purchaseLines
+          .filter((line) => line.productId)
+          .map((line) => ({ productId: line.productId, quantity: Number(line.quantity), unitCost: Number(line.unitCost) }));
+        if (!supplierId || !warehouseId || !normalized.length || normalized.some((line) => !Number.isSafeInteger(line.quantity) || line.quantity < 1 || !Number.isFinite(line.unitCost) || line.unitCost < 0)) {
+          setError('أكمل المورد والمستودع وبنود أمر الشراء قبل الإنشاء.');
+          return;
+        }
+        const seen = new Set<string>();
+        if (normalized.some((line) => seen.has(line.productId) || (seen.add(line.productId), false))) {
+          setError('لا يمكن تكرار المنتج داخل أمر الشراء.');
+          return;
+        }
+        void run(async () => {
+          await createPurchaseOrder({
+            supplierId,
+            warehouseId,
+            idempotencyKey: `agh-po-${crypto.randomUUID()}`,
+            lines: normalized,
+            currency: 'YER'
+          });
+          setPurchaseLines([{ productId: products[0]?.id ?? '', quantity: '1', unitCost: '0' }]);
+        }, 'تم إنشاء أمر الشراء متعدد البنود وتسجيل العملية.');
+      }}>
+        <div className="section-heading"><div><h3>أمر شراء جديد</h3><small>أنشئ أمرًا متعدد البنود في عملية ذرية واحدة.</small></div><span>{purchaseLines.length} بند</span></div>
         <select aria-label="المورد" value={supplierId} onChange={(e) => setSupplierId(e.target.value)} required><option value="">اختر المورد</option>{suppliers.map((supplier) => <option key={supplier.id} value={supplier.id}>{supplier.name}</option>)}</select>
         <select aria-label="مستودع الاستلام" value={warehouseId} onChange={(e) => setWarehouseId(e.target.value)} required><option value="">اختر المستودع</option>{warehouses.map((warehouse) => <option key={warehouse.id} value={warehouse.id}>{warehouse.name}</option>)}</select>
-        <select aria-label="منتج الشراء" value={productId} onChange={(e) => setProductId(e.target.value)} required><option value="">اختر المنتج</option>{products.map((product) => <option key={product.id} value={product.id}>{product.name} · {product.sku}</option>)}</select>
-        <input aria-label="كمية الشراء" type="number" min="1" step="1" value={quantity} onChange={(e) => setQuantity(e.target.value)} required />
-        <input aria-label="تكلفة الوحدة" type="number" min="0" step="0.01" value={unitCost} onChange={(e) => setUnitCost(e.target.value)} required />
-        <button disabled={busy || !supplierId || !warehouseId || !productId}>إنشاء أمر شراء</button>
+        <div className="purchase-draft-lines">
+          {purchaseLines.map((line, index) => <div className="purchase-draft-line" key={index}>
+            <select aria-label={`منتج بند الشراء ${index + 1}`} value={line.productId} onChange={(e) => setPurchaseLines((current) => current.map((item, i) => i === index ? { ...item, productId: e.target.value } : item))} required>
+              <option value="">اختر المنتج</option>{products.map((product) => <option key={product.id} value={product.id}>{product.name} · {product.sku}</option>)}
+            </select>
+            <input aria-label={`كمية بند الشراء ${index + 1}`} type="number" min="1" step="1" value={line.quantity} onChange={(e) => setPurchaseLines((current) => current.map((item, i) => i === index ? { ...item, quantity: e.target.value } : item))} required />
+            <input aria-label={`تكلفة بند الشراء ${index + 1}`} type="number" min="0" step="0.01" value={line.unitCost} onChange={(e) => setPurchaseLines((current) => current.map((item, i) => i === index ? { ...item, unitCost: e.target.value } : item))} required />
+            <button type="button" className="ghost" onClick={() => setPurchaseLines((current) => current.length === 1 ? current : current.filter((_, i) => i !== index))} disabled={busy || purchaseLines.length === 1}>حذف</button>
+          </div>)}
+        </div>
+        <div className="purchase-builder-actions">
+          <button type="button" className="ghost" onClick={() => setPurchaseLines((current) => [...current, { productId: products[0]?.id ?? '', quantity: '1', unitCost: '0' }])} disabled={busy || purchaseLines.length >= 200}>+ إضافة بند</button>
+          <span>{purchaseLines.length}/200 · إجمالي تقديري {purchaseLines.reduce((sum, line) => sum + (Number(line.quantity) || 0) * (Number(line.unitCost) || 0), 0)} YER</span>
+        </div>
+        <button disabled={busy || !supplierId || !warehouseId || !purchaseLines.some((line) => line.productId)}>إنشاء أمر شراء</button>
       </form>
 
       <div className="admin-card"><h3>اعتماد أوامر الشراء</h3><div className="order-queue-toolbar"><input aria-label="بحث أوامر الشراء" value={orderQuery} onChange={e=>setOrderQuery(e.target.value)} placeholder="رقم الأمر أو المورد" disabled={loading}/><select aria-label="حالة أمر الشراء" value={orderStatus} onChange={e=>setOrderStatus(e.target.value as 'all'|Status)} disabled={loading}><option value="all">كل الحالات</option>{(Object.keys(statusLabels) as Status[]).map(k=><option key={k} value={k}>{statusLabels[k]}</option>)}</select><button type="button" className="ghost" onClick={()=>{setOrderQuery('');setOrderStatus('all');}} disabled={!orderQuery&&orderStatus==='all'}>مسح</button></div>{loading ? <div className="portal-loading" role="status">جارٍ تحميل أوامر الشراء…</div> : orders.length === 0 ? <div className="empty-state"><strong>لا توجد أوامر شراء بعد.</strong><button type="button" onClick={() => void load()}>إعادة المحاولة</button></div> : !visibleOrders.length ? <div className="empty-state"><strong>لا توجد نتائج مطابقة.</strong><button type="button" onClick={()=>{setOrderQuery('');setOrderStatus('all');}}>مسح الفلاتر</button></div> : <><div className="cart-lines">{pagedOrders.map((order) => <article className="cart-line" key={order.id}><div><strong>أمر #{order.purchase_order_number}</strong><small>{supplierNameFor(order.supplier_id)}</small></div><div><strong>{order.total} {order.currency}</strong><small>{statusLabels[order.status]}</small></div><div className="status-actions"><button type="button" className="ghost" onClick={() => setDetailOrderId(order.id)}>التفاصيل</button>{order.status === 'draft' && <button disabled={busy} onClick={() => void run(() => submitPurchaseOrder(order.id), 'تم إرسال أمر الشراء للاعتماد.')}>إرسال</button>}{canApprove && order.status === 'submitted' && <button disabled={busy} onClick={() => void run(() => approvePurchaseOrder(order.id), 'تم اعتماد أمر الشراء.')}>اعتماد</button>}</div></article>)}</div>{visibleOrders.length>0&&<div className="directory-pagination"><span>صفحة {activeOrderPage} / {orderPages} · {visibleOrders.length} نتيجة</span><div><button type="button" className="ghost" onClick={()=>setOrderPage(p=>Math.max(1,p-1))} disabled={activeOrderPage===1}>السابق</button><button type="button" className="ghost" onClick={()=>setOrderPage(p=>Math.min(orderPages,p+1))} disabled={activeOrderPage===orderPages}>التالي</button></div></div></>}</div>
