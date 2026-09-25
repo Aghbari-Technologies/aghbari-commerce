@@ -19,3 +19,10 @@ Historical implementation choices are evidence, not commands. Optimize for secur
 
 ## Canonical source merge register
 The consolidation manifest lists the architecture/data source set that must be fully integrated here before retirement.
+
+## 2026-09-25 — Executable UI structure and route authority
+- src/structure/admin-structure.ts is the code-level information-architecture manifest for Admin/Staff groups, paths, permissions, actions and status (live, boundary, contract-gap).
+- src/structure/customer-structure.ts is the code-level Customer Portal capability manifest for catalog, search, product detail, cart, checkout, orders, templates, quick order, account, notifications, invitations, offline recovery and finance.
+- src/structure/role-matrix.ts centralizes the current staff-role permission visibility contract for the UI. Server/database authorization remains authoritative.
+- vercel.json now rewrites application paths to index.html, allowing the SPA to resolve registered admin deep links without introducing a second routing source of truth.
+- The legacy v2.0 route list is therefore an input to reconciliation, not permission to invent unsupported database contracts.
