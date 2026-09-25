@@ -78,6 +78,7 @@ export default function AdminPanel({ role }: { role: UserRole }) {
   const canInventory = role === 'owner' || role === 'admin' || role === 'warehouse';
   const canOrderWorkflow = STAFF_ROLES.has(role);
   const canFinance = ['owner', 'admin', 'sales'].includes(role);
+  const canAdmin = role === 'owner' || role === 'admin';
   const commands = getAdminStructureForRole(role)
     .flatMap((group) => group.items
       .filter((item) => item.status === 'live' && item.target)
@@ -135,18 +136,6 @@ export default function AdminPanel({ role }: { role: UserRole }) {
         {canOrderWorkflow && <a href="#admin-governance"><span className="workspace-overview-icon" aria-hidden="true">✓</span><div><small>الحوكمة</small><strong>التدقيق والتكاملات</strong><em>سجل الأحداث وصندوق التكاملات</em></div><b>↗</b></a>}
         {canAdmin && <a href="#admin-access"><span className="workspace-overview-icon" aria-hidden="true">♙</span><div><small>الوصول</small><strong>المستخدمون والصلاحيات</strong><em>إدارة أدوار الفريق</em></div><b>↗</b></a>}
       </section>
-        <div className="admin-workspace-strip-label">
-          <span className="eyebrow">مساحات العمل</span>
-          <strong>الوصول المباشر</strong>
-        </div>
-        <div className="admin-workspace-links">
-          {getAdminStructureForRole(role).flatMap((group) => group.items.filter((item) => item.status === 'live' && item.target).map((item) => (
-            <a key={item.id} href={item.target} title={item.note ?? item.label}>
-              <span>{item.label}</span><i aria-hidden="true">↗</i>
-            </a>
-          ))).slice(0, 18)}
-        </div>
-      </div>
       {commandOpen && <div className="admin-command-backdrop" role="presentation" onClick={() => setCommandOpen(false)}>
         <section className="admin-command-dialog" role="dialog" aria-modal="true" aria-labelledby="admin-command-title" onClick={(event) => event.stopPropagation()}>
           <div className="section-heading"><div><span className="eyebrow">تشغيل سريع</span><h2 id="admin-command-title">مركز الأوامر</h2></div><button type="button" className="ghost" onClick={() => setCommandOpen(false)}>إغلاق</button></div>
