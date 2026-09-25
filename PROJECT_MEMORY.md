@@ -215,3 +215,12 @@ Command "1" means:
 - Finance now has a real invoice history workspace with search/status filtering/pagination, and React hook ordering corrected before acceptance.
 - Category management now has a real hierarchical read workspace with search, retry/error/empty states and responsive presentation.
 - No exact-SHA PASS is transferred from older checkpoints; current proof status must be read from CI for the exact current SHA.
+
+
+## 11. Full UI surface expansion — 2026-09-25
+
+- Latest functional UI SHA: `37cc8687bb89e47357c96e04d0921662be2fa4e4` on `main`.
+- Admin surface now exposes dedicated workspaces for catalog products, category hierarchy, pricing matrix, customers, purchase orders, purchase receipts, suppliers/supplier ledger, warehouses/branches, inventory movement ledger, finance operations history, notifications, governance and access control.
+- Customer surface now includes catalog pagination, dedicated order history with filters/pagination/detail/reorder, richer account dashboard, finance center, templates, notifications, Excel quick order and controlled checkout/payment flow.
+- All new UI read workspaces use current tenant-scoped backend tables/RPCs already present; no new schema contract was invented for presentation-only work.
+- Vercel currently reports a deployment rate-limit failure on current pushes; this is a hosting/quota gate, not accepted as UI proof. Exact browser/CI evidence remains required before certification.
