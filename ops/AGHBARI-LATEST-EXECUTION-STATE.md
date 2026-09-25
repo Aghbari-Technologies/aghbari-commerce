@@ -1,67 +1,59 @@
 # 🔴 AGHBARI LATEST EXECUTION STATE
 
-**Actual Git HEAD:** 1482a7eaa29162d96a4bf5d32e113f14226daa2b
-**Latest functional code HEAD:** 1482a7eaa29162d96a4bf5d32e113f14226daa2b
+**Actual Git HEAD:** 37cc8687bb89e47357c96e04d0921662be2fa4e4
+**Latest functional UI HEAD:** 37cc8687bb89e47357c96e04d0921662be2fa4e4
 **Branch:** main
 **Production:** NO TOUCH
 **Certification:** NOT CLAIMED
 
 ## CURRENT REALITY
 
-- Admin Catalog & Products is a real management workspace: search, category/status filters, sorting, pagination, edit and controlled active/inactive state.
-- Staff customer directory is a real operational workspace with search, active/inactive and tier filters, pagination, invitations, tier changes and activation controls.
-- Staff order queue is a real operational workspace with search, status filtering and pagination while retaining server-authorized state transitions.
-- Customer order history is a dedicated workspace with search, status filtering, pagination, detail/tracking and reorder.
-- Checkout passes the selected payment method to the canonical create_order RPC and normalizes to the first enabled method when configuration changes.
-- Purchasing now has queue filtering/pagination; Finance has invoice history filtering/pagination; Category Management has a hierarchical read workspace.
-- No Promotions UI has been invented because its business/data contract is still absent.
+- Admin now exposes dedicated Catalog, Category, Pricing, Customer, Purchasing, Receiving, Supplier, Warehouse, Inventory Ledger, Finance, Notifications, Governance and Access workspaces.
+- Customer Portal now has catalog offset pagination, filtered/paged order history, detail/tracking/reorder, richer account summary, finance center, templates, Excel quick order, offline/recovery states and controlled payment-aware checkout.
+- New read-oriented workspaces are backed by existing tenant-scoped commerce tables; no presentation feature was invented without an existing data contract.
+- Promotions remains intentionally absent because its business/data contract is not defined in the current canonical schema.
 
 ## EXACT-SHA PROOF
 
-Current functional SHA: `1482a7eaa29162d96a4bf5d32e113f14226daa2b`.
+Current functional SHA: `37cc8687bb89e47357c96e04d0921662be2fa4e4`.
 
-- Prior checks on older SHAs are historical only and are not transferred.
-- Last direct status check on 1482a7e reported GitHub commit status pending with zero completed statuses.
-- Therefore current SHA certification state is **NOT_PROVEN / HOLD**, not PASS.
-
-## HOSTED DEPLOYMENT
-
-- Hosted Vercel deployment was previously READY for the earlier functional SHA `ce79c609...`, and the root returned HTTP 200 with the new UI bundle.
-- The exact hosted Browser E2E path has previously been blocked at Vercel Deployment Protection artifact-identity verification.
-- A current exact deployment for 1482a7e must be independently verified before any hosted-runtime PASS can be claimed.
+- Exact current CI runs are queued; no PASS is claimed.
+- Earlier PASS evidence belongs to earlier SHAs and is not transferable.
+- Local build verification could not run because this execution environment has no outbound DNS/network access for cloning dependencies; no local PASS is claimed.
+- Current Vercel status is blocked by deployment rate limiting, so hosted runtime proof for this SHA is not available yet.
 
 ## OPEN UI FRONTIER
 
-- Purchasing: receiving detail, receipt history, recovery/empty/error states.
-- Inventory: transfer history, reconciliation detail, stock-count history and mobile interaction hardening.
-- Finance: invoice detail, payment history, expense history and currency/account validation feedback.
-- Category/Pricing: richer pricing matrix/history states only where current backend contracts support them.
-- Customer account/profile: enrichment only from existing backend fields/mutation contracts.
-- Access/Governance: nested audit/outbox/integration detail and recovery states.
-- Continue responsive/accessibility/permission/offline state closure.
+- Purchasing: deeper receipt/order detail views and line-level receiving history.
+- Inventory: reconciliation history and stock-count history/detail.
+- Finance: richer payment/expense detail and account-level filtering.
+- Pricing: richer active-list matrix only where existing backend read contracts support it.
+- Customer: further mobile/accessibility refinement and profile fields only from existing backend columns.
+- Admin governance/access: nested audit/outbox detail and recovery states.
 
 ## OPEN CORE / SECURITY / RELEASE
 
-- Finish exact-SHA CI gates for 1482a7e and repair regressions.
-- Continue SECURITY DEFINER routine-by-routine classification; preserve required transaction and RLS-helper boundaries.
-- Finish semantic consolidation/reference audit of the legacy Markdown corpus.
+- Finish exact-SHA CI gates and repair regressions.
+- Continue routine-by-routine SECURITY DEFINER classification.
+- Continue semantic consolidation/reference audit of legacy Markdown.
 - Certification and production remain HOLD / NO TOUCH.
 
 ## CURRENT RESUME POINTER
 
-START FROM ACTUAL HEAD 1482a7eaa29162d96a4bf5d32e113f14226daa2b.
+START FROM ACTUAL HEAD 37cc8687bb89e47357c96e04d0921662be2fa4e4.
 
 UI FRONT:
-Admin → Purchasing receiving → Inventory reconciliation/history → Finance invoice/payment/expense detail → Access/Governance nested states.
+Admin → Catalog/Category/Pricing → Customers → Purchasing/Receiving/Suppliers → Warehouses/Inventory Ledger → Finance → Governance/Access.
+Customer → Catalog → Orders → Account → Finance → Templates → Notifications → Checkout/Offline recovery.
 
 CORE FRONT:
-Preserve canonical create_order/payment method contract, tenant/RLS boundaries and audit/outbox semantics.
+Preserve current create_order/payment method, tenant/RLS, audit/outbox and idempotency contracts.
 
 VERIFY:
-Use only exact 1482a7e evidence. No PASS transfer from previous SHAs.
+Use only exact 37cc868 evidence; no PASS transfer.
 
 DEPLOY:
-Inspect the exact 1482a7e deployment and protected browser artifact-identity check before any release conclusion.
+Vercel is currently rate limited for new deployments. Do not treat failed Vercel status as an application failure; use the last known good hosted runtime only as historical proof, never as evidence for 37cc.
 
 DO NOT REPEAT:
-Do not reopen proven order/idempotency/offline foundations unless a current exact-SHA regression appears.
+Do not reopen proven order/idempotency/offline foundations unless exact 37cc CI or runtime evidence shows regression.
