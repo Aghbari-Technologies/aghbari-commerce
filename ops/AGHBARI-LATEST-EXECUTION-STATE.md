@@ -78,3 +78,11 @@ This documentation checkpoint records the latest verified code checkpoint before
 - Exact-SHA CI is pending/queued; PASS is NOT_PROVEN.
 - Production remains NO TOUCH.
 - Resume from the actual branch HEAD, then consume the exact-SHA verification queue before claiming any completion state.
+
+## 2026-09-25 — Latest implementation checkpoint
+- Implementation SHA: `cfc9ced57ba0e4411b36147ed1ec17fec3eb537f`.
+- Customer order history now pages from the server with exact counts and backend-side filters.
+- Finance security-definer search_path and expense branch/cash-account integrity boundaries are hardened by migrations and regression tests.
+- Exact-SHA CI is pending/queued; PASS is NOT_PROVEN.
+- Production remains NO TOUCH.
+- Resume from actual branch HEAD first; consume the current SHA verification queue before certification.

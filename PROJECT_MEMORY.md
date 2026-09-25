@@ -281,3 +281,10 @@ Command "1" means:
 - Purchase-order, receiving, inventory-transfer and stock-count initiation idempotency keys now persist across retries and rotate after successful completion.
 - Customer product/order/quick-order/Excel/cart modal surfaces now share keyboard focus containment, Escape close and trigger-focus restoration behavior.
 - Exact-SHA CI remains pending/queued; no PASS or certification is claimed. Production remains NO TOUCH.
+
+## 2026-09-25 — Customer history and security integrity closure
+- Implementation checkpoint: `cfc9ced57ba0e4411b36147ed1ec17fec3eb537f`.
+- Customer order history now uses server-side pagination with exact total count and source-side order-number/status filtering instead of slicing only the first bounded client load.
+- Finance SECURITY DEFINER idempotency RPCs now pin `search_path=''` in a follow-up migration and their schema/index contract is covered by security tests.
+- Expense writes now have a composite branch/cash-account/organization foreign-key integrity boundary (NOT VALID rollout) to prevent new cross-branch postings.
+- Exact-SHA verification remains queued/not proven; production remains NO TOUCH.

@@ -582,3 +582,20 @@ The customer portal previously exposed only order summaries and reorder behavior
 - Consume current-SHA quality/migration/security/domain/concurrency/Test-the-Test/browser evidence.
 - Repair only exact-SHA failures.
 - Continue remaining customer/admin closure where existing contracts provide real functionality; do not fabricate unsupported domains.
+
+## Run 2026-09-25 — Customer history + finance integrity closure
+### Implemented
+- Customer order history: real server-side paging, exact total count, order-number/status source filtering, bounded page size and explicit loading/error states.
+- Finance security: pinned `record_payment` and `record_expense` SECURITY DEFINER functions to empty search_path and extended contract assertions.
+- Finance integrity: enforced same-branch cash-account linkage for new expense writes with an organization-scoped composite foreign key using NOT VALID rollout semantics.
+
+### Verification boundary
+- Implementation checkpoint: `cfc9ced57ba0e4411b36147ed1ec17fec3eb537f`.
+- GitHub workflows for this exact implementation are expected to be queued; no PASS is claimed until conclusions are recorded for this exact SHA.
+- Hosted browser proof remains gated by the existing deployment/protection path.
+- Production: NO TOUCH.
+
+### Remaining
+- Consume exact-SHA quality/migration/security/domain/concurrency/Test-the-Test/browser results.
+- Repair only exact-SHA failures.
+- Continue only contract-backed UI/core gaps; do not fabricate unsupported domains.
