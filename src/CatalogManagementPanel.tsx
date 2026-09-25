@@ -26,7 +26,11 @@ export default function CatalogManagementPanel({ role }: { role: UserRole }) {
   const [error,setError] = useState<string|null>(null);
   const [message,setMessage] = useState<string|null>(null);
   const [editing,setEditing] = useState<ProductRow|null>(null);
-  const [draft,setDraft] = useState({sku:'',name:'',unit:'',categoryId:'',description:'',status:'active' as ProductStatus});
+  const [draft,setDraft] = useState({sku:'',name:'',unit:'',barcode:'',categoryId:'',description:'',status:'active' as ProductStatus});
+  const [selectedIds,setSelectedIds] = useState<string[]>([]);
+  const [bulkStatus,setBulkStatus] = useState<ProductStatus>('inactive');
+  const [bulkBusy,setBulkBusy] = useState(false);
+  const [bulkMessage,setBulkMessage] = useState<string|null>(null);
 
   const reload = useCallback(async() => {
     if (!supabase || !canManage) { setLoading(false); return; }
@@ -130,7 +134,7 @@ export default function CatalogManagementPanel({ role }: { role: UserRole }) {
     </div>
 
     <div className="catalog-toolbar" role="search">
-      <label><span>البحث</span><input aria-label="بحث المنتجات" value={query} onChange={e=>setQuery(e.target.value)} placeholder="الاسم أو SKU أو الوحدة أو الوصف" /></label>
+      <label><span>البحث</span><input aria-label="بحث المنتجات" value={query} onChange={e=>setQuery(e.target.value)} placeholder="الاسم أو SKU أو الباركود أو الوحدة أو الوصف" /></label>
       <label><span>التصنيف</span><select aria-label="فلترة التصنيف" value={categoryId} onChange={e=>setCategoryId(e.target.value)}><option value="">كل التصنيفات</option>{categories.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select></label>
       <label><span>الحالة</span><select aria-label="فلترة الحالة" value={status} onChange={e=>setStatus(e.target.value as 'all'|ProductStatus)}><option value="all">كل الحالات</option><option value="active">نشط</option><option value="inactive">موقوف</option></select></label>
       <label><span>الترتيب</span><select aria-label="ترتيب المنتجات" value={sort} onChange={e=>setSort(e.target.value as typeof sort)}><option value="name">الاسم</option><option value="sku">SKU</option><option value="newest">الأحدث</option></select></label>
