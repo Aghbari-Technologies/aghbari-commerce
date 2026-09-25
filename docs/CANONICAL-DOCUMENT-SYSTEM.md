@@ -121,3 +121,11 @@ Then reconcile all fronts into PROJECT_MEMORY and LATEST EXECUTION STATE.
 ## 6. IMPORTANT
 
 Do not make the mistake of requiring every future session to reread all historical source files. After the consolidation gate passes, future sessions read the canonical system only. Historical source files survive only in Git history.
+
+## 7. CODE-LEVEL STRUCTURE MANIFESTS
+- src/structure/admin-structure.ts — active Admin/Staff information architecture and legacy-v2 reconciliation status.
+- src/structure/customer-structure.ts — active Customer Portal information architecture.
+- src/structure/role-matrix.ts — current UI role visibility matrix.
+- src/structure/index.ts — public structure module exports.
+- vercel.json — SPA deep-link routing for registered application paths.
+These files are implementation manifests and do not replace the canonical documentation authority above.
