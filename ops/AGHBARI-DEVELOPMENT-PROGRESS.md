@@ -836,3 +836,28 @@ The customer portal previously exposed only order summaries and reorder behavior
 - Vercel current project still has no deployment matching this current source line; the latest known recent deployment metadata is source-mismatched/error.
 - Production: HOLD / NO TOUCH.
 - Certification: NOT CLAIMED.
+
+
+## Run 2026-09-25 — UI + Core closure from exact HEAD
+
+### Start
+- Actual HEAD at start of wave: `c9458154c0a18ce6d32d0597ccbfc630758e27f3` on `main`; stale state pointer was not used as execution source.
+
+### Change
+- Closed customer catalog/bulk-order interaction gaps: server-backed pagination, exact SKU/barcode resolution for Quick Order and Excel import, bounded inputs, visible completion/errors, warehouse-aware template context, finance/order retry states and finance pagination.
+- Restored Admin/Catalog/Staff governance JSX and TypeScript integrity; rebuilt Staff Operations audit/outbox UI with real detail drawers.
+- Standardized client idempotency validation to 16..128 and added exact boundary tests across Finance/Inventory/Purchasing.
+- Removed stale/unused UI symbols and unsupported data-field filtering.
+
+### Root Cause
+- Current source had several presentation-to-contract mismatches: static/over-broad catalog fetch, local-only bulk resolution, stale JSX fragments, unsupported fields, and inconsistent idempotency limits between client/runtime contracts.
+
+### Proof
+- Exact SHA `8c1d817ff67165f4844571f2e9cbb55c5cc3e38a`: application-quality PASS including typecheck, 218/218 tests, lint, production build and release audit.
+- Same exact SHA: Browser E2E / Exact Deployment PASS, Order Workflow PASS, G1 PASS, Security Audit PASS, Bootstrap PASS.
+- Live Supabase security invariants re-read: 60/60 public tables RLS; 0 anon-executable SECURITY DEFINER; 0 unpinned SECURITY DEFINER search_path.
+
+### Remaining
+- Consume final Test-the-Test, Concurrency and Migration Proof results for the exact documentation/source SHA after write-back.
+- Live purchase/receipt RPC idempotency upper bound remains 200 vs repository/client 128; no over-128 live records exist. Production remains HOLD / NO TOUCH.
+- Hosted exact-source runtime/certification remains open.

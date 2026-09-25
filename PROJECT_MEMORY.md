@@ -362,3 +362,13 @@ Command "1" means:
 - client_ui_settings is an owner/admin control-plane resource, not a generic staff resource. Database RLS now enforces owner/admin for insert/update/delete while authenticated organization members retain scoped read access.
 - The Admin panel loading path now keeps default warehouse selection from becoming a reload dependency, avoiding repeated network fetches when the selection is initialized.
 - Live barcode catalog migration provenance is now recorded in supabase migration history; live object existence without migration provenance is a correctness defect.
+
+
+## 2026-09-25 — UI/core closure wave
+- Current main source HEAD before documentation write-back: `8c1d817ff67165f4844571f2e9cbb55c5cc3e38a`.
+- Customer Portal closure: canonical SKU/barcode resolution for Quick Order and Excel import, bounded bulk input (100 rows / 100000 qty), catalog pagination, warehouse-aware template labels, product detail, order/finance retry states, finance ledger pagination, visible import feedback.
+- Admin/governance closure: restored JSX/TypeScript integrity in Admin/Catalog/Staff panels; Audit and Outbox now expose real paginated detail drawers with redaction.
+- Core validator closure: Finance/Inventory/Purchasing client idempotency validators standardized at 16..128; boundary tests explicitly cover 128 accepted / 129 rejected.
+- Exact verification on `8c1d817ff67165f4844571f2e9cbb55c5cc3e38a`: application-quality PASS (typecheck, 218/218 tests, lint, production build, release audit); Browser E2E / Exact Deployment PASS; Order Workflow PASS; G1 PASS; Security Audit PASS; Bootstrap PASS. Remaining concurrent Test-the-Test, Concurrency, Migration Proof were still running at last observation and must remain unclaimed until completed on an exact SHA.
+- Live Supabase: 60/60 public tables have RLS; 0 public SECURITY DEFINER routines executable by anon; 0 public SECURITY DEFINER routines with unpinned search_path. Current live purchase/receipt RPCs still accept idempotency keys up to 200 while client validators use 128; no live records exceed 128. Do not alter production under HOLD; treat server/client bound normalization as an open environment-drift item until a canonical migration is safely applied.
+- Vercel hosted exact-source proof remains blocked by current deployment/rate/protection state; production stays HOLD / NO TOUCH.

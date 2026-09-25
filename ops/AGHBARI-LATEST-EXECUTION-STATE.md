@@ -1,7 +1,7 @@
 # 🔴 AGHBARI LATEST EXECUTION STATE
 
 Project: Aghbari Commerce | الأغبري
-Source/functional HEAD represented by this checkpoint: da87d139e3e2f74370598601edb7c059ebcae6c8
+Source/functional HEAD represented by this checkpoint: 8c1d817ff67165f4844571f2e9cbb55c5cc3e38a
 Branch: main
 Production: HOLD / NO TOUCH
 Certification: NOT CLAIMED
@@ -48,22 +48,26 @@ Certification: NOT CLAIMED
 - Existing Netlify project is free/claimed, but its deployment writer requires a source-directory command that is not executable from the GitHub connector alone.
 
 ## OPEN EXECUTION FRONTIER
-1. Consume exact-head CI results and repair only proven regressions.
-2. Continue nested contract-backed UI edit/recovery states where current backend contracts exist.
-3. Continue individual classification of the 62 authenticated-callable SECURITY DEFINER advisor findings; never blanket revoke application/RLS helper RPCs.
-4. Complete semantic 50/50 legacy Markdown consolidation/reference audit before retirement.
-5. Obtain exact-source hosted browser/runtime proof; keep production NO TOUCH.
+1. Consume final exact-SHA Test-the-Test, Concurrency and Migration Proof results after this documentation write-back.
+2. Continue nested contract-backed UI gaps only where a real backend contract exists; do not re-open proven customer/Admin surfaces.
+3. Normalize live purchase/receipt idempotency server bound from 200 to the canonical 128 only through a reviewed migration; production stays NO TOUCH until safely evidenced.
+4. Complete semantic legacy Markdown reconciliation/reference audit before retirement; do not claim 100% consolidation early.
+5. Obtain exact-source hosted browser/runtime proof and resolve release/certification gate; keep production HOLD.
 
 ## CURRENT RESUME POINTER
-START FROM SOURCE HEAD da87d139e3e2f74370598601edb7c059ebcae6c8 ON main.
+START FROM CURRENT VERIFIED HEAD `8c1d817ff67165f4844571f2e9cbb55c5cc3e38a` on main; after documentation write-back, rerun exact-SHA evidence on the new docs HEAD.
 
-UI: Customer Portal -> verify voice-search, URL navigation and control-setting runtime states; Admin -> consume exact CI/browser evidence, then close only remaining contract-backed nested edit/recovery surfaces.
+UI FRONT:
+Customer Portal -> catalog pagination / quick order / Excel resolution / order retry / finance retry are closed. Continue Admin -> remaining contract-backed nested edit/recovery surfaces only after exact evidence scan.
 
-CORE: Preserve finance/payment idempotency, purchasing/receiving, inventory concurrency, notifications, RBAC and audit/outbox contracts. Security: classify each remaining authenticated SECURITY DEFINER advisory finding by actual caller, tenant boundary and privilege requirement.
+CORE FRONT:
+Purchase/receipt idempotency server bound drift (200 live vs 128 client/repo) is the next explicit contract gap; do not touch production while HOLD.
 
-VERIFY: exact SHA -> application quality -> security/RLS -> migration provenance -> concurrency -> Test-the-Test -> G1/order workflow -> browser/runtime -> hosted exact-source match.
+VERIFY:
+Exact SHA -> application quality -> security -> migration -> concurrency -> Test-the-Test -> G1/order workflow -> browser/runtime -> hosted exact-source match.
 
-DO NOT REPEAT: historical UI waves, transferred evidence, unsupported image search, unsupported Promotions, or Report-Advisor/BI transaction logic.
+DO NOT REPEAT:
+Closed catalog pagination, bulk SKU/barcode resolution, Admin JSX repairs, Staff Operations detail UI, idempotency boundary tests, historical UI waves, unsupported Promotions/image-search, or Report-Advisor/BI transaction logic.
 
 ## PRODUCTION
 HOLD / NO TOUCH
