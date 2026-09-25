@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { supabase } from './lib/supabase';
+import './finance-history.css';
 
 type UserRole='owner'|'admin'|'warehouse';
 interface Supplier{id:string;name:string;phone:string|null;email:string|null;address:string|null;is_active:boolean;created_at:string;}
