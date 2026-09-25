@@ -110,7 +110,7 @@ export default function InventoryPanel({ role }: { role: UserRole }) {
         </form>
         <small aria-live="polite">{barcodeProductName ? 'الصنف المحدد: ' + barcodeProductName : 'سيتم تعبئة الصنف تلقائيًا في التحويل وحد إعادة الطلب.'}</small>
       </div>
-      <form className="admin-card" onSubmit={(e) => { e.preventDefault(); void run(() => transferInventory(source,destination,makeKey('transfer'),[{productId,quantity:Number(quantity)}],notes), 'تم نقل المخزون ذريًا وتسجيل الحركتين.'); }}>
+      <form className="admin-card" id="inventory-transfer" onSubmit={(e) => { e.preventDefault(); void run(() => transferInventory(source,destination,makeKey('transfer'),[{productId,quantity:Number(quantity)}],notes), 'تم نقل المخزون ذريًا وتسجيل الحركتين.'); }}>
         <h3>تحويل بين المستودعات</h3>
         <select aria-label="المستودع المصدر" value={source} onChange={(e) => setSource(e.target.value)} required><option value="">من المستودع</option>{warehouses.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}</select>
         <select aria-label="المستودع الوجهة" value={destination} onChange={(e) => setDestination(e.target.value)} required><option value="">إلى المستودع</option>{warehouses.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}</select>
@@ -142,7 +142,7 @@ export default function InventoryPanel({ role }: { role: UserRole }) {
         </div>}
       </div>
 
-      <div className="admin-card"><h3>الأصناف التي تحتاج إجراء</h3>{!lowStock.length ? <small>لا توجد أصناف تحت حدود إعادة الطلب.</small> : <div className="cart-lines">{lowStock.slice(0,20).map((row) => <article className="cart-line" key={`${row.warehouse_id}:${row.product_id}`}><div><strong>{row.product_name}</strong><small>{row.sku} · {row.warehouse_name}</small></div><div><strong>{row.current_quantity}</strong><small>الحد {row.min_quantity} · إعادة {row.reorder_quantity}</small></div></article>)}</div>}</div>
+      <div className="admin-card"><h3>الأصناف التي تحتاج إجراء</h3>{!lowStock.length ? <small>لا توجد أصناف تحت حدود إعادة الطلب.</small> : <div className="cart-lines">{lowStock.slice(0,20).map((row) => <article className="cart-line" key={`${row.warehouse_id}:${row.product_id}`}><div><strong>{row.product_name}</strong><small>{row.sku} · {row.warehouse_name}</small></div><div><strong>{row.current_quantity}</strong><small>الحد {row.min_quantity} · إعادة {row.reorder_quantity}</small></div><button type="button" className="ghost" onClick={() => { setProductId(row.product_id); setSource(row.warehouse_id); document.getElementById('inventory-transfer')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }}>استخدام في التحويل</button></article>)}</div>}</div>
     </div>}
     {error && <div className="error-banner" role="alert"><span>{error}</span><button type="button" className="ghost" onClick={() => void reload()} disabled={busy}>إعادة تحميل المخزون</button></div>}{message && <div className="success" role="status">{message}</div>}
   </div>;
