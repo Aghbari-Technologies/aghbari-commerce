@@ -76,6 +76,17 @@ export default function CatalogManagementPanel({ role }: { role: UserRole }) {
     setDraft({sku:product.sku,name:product.name,unit:product.unit,barcode:product.barcode??'',categoryId:product.category_id??'',description:product.description??'',status:product.status});
     setError(null); setMessage(null);
   }
+  async function createNewProduct(){
+    if(busyId) return;
+    setBusyId('__new__'); setError(null); setMessage(null);
+    try {
+      await upsertProduct({productId:null,sku:createDraft.sku,name:createDraft.name,unit:createDraft.unit,barcode:createDraft.barcode||null,categoryId:createDraft.categoryId||null,description:createDraft.description,status:createDraft.status});
+      setCreateDraft({sku:'',name:'',unit:'حبة',barcode:'',categoryId:'',description:'',status:'active'});
+      setMessage('تم إنشاء المنتج وحفظه عبر المسار الكانوني.');
+      await reload();
+    } catch(e) { setError(e instanceof Error?e.message:'تعذر إنشاء المنتج.'); }
+    finally { setBusyId(null); }
+  }
   async function saveEdit(){
     if(!editing||busyId) return;
     setBusyId(editing.id); setError(null); setMessage(null);
@@ -133,6 +144,7 @@ export default function CatalogManagementPanel({ role }: { role: UserRole }) {
       <div className="catalog-stats" aria-label="ملخص المنتجات"><span>{products.length} إجمالي</span><span>{activeCount} نشط</span><span>{inactiveCount} موقوف</span></div>
     </div>
 
+    <form className="catalog-create-card" onSubmit={e=>{e.preventDefault();void createNewProduct();}} aria-label="إنشاء منتج جديد"><div><span className="eyebrow">إضافة صنف</span><h3>منتج جديد</h3><p>إنشاء منتج حقيقي في الكتالوج. لن يظهر كمتاح للبيع للعميل إلا بعد نجاح الحفظ ووصوله من المصدر التشغيلي.</p></div><div className="catalog-create-grid"><label>SKU<input value={createDraft.sku} onChange={e=>setCreateDraft(d=>({...d,sku:e.target.value}))} required placeholder="مثال: SKU-1001" /></label><label>اسم المنتج<input value={createDraft.name} onChange={e=>setCreateDraft(d=>({...d,name:e.target.value}))} required /></label><label>الوحدة<select value={createDraft.unit} onChange={e=>setCreateDraft(d=>({...d,unit:e.target.value}))}>{['حبة','كرتون','طن'].map(unit=><option key={unit} value={unit}>{unit}</option>)}</select></label><label>الباركود<input inputMode="numeric" autoComplete="off" maxLength={80} value={createDraft.barcode} onChange={e=>setCreateDraft(d=>({...d,barcode:e.target.value}))} placeholder="اختياري" /></label><label>التصنيف<select value={createDraft.categoryId} onChange={e=>setCreateDraft(d=>({...d,categoryId:e.target.value}))}><option value="">بدون تصنيف</option>{categories.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select></label><label className="catalog-create-wide">الوصف<textarea rows={2} value={createDraft.description} onChange={e=>setCreateDraft(d=>({...d,description:e.target.value}))} placeholder="وصف تشغيلي مختصر للمنتج" /></label></div><div className="catalog-create-actions"><span>سيتم تسجيل الإنشاء على قاعدة البيانات عبر RPC المصرح.</span><button type="submit" disabled={busyId==='__new__'}>{busyId==='__new__'?'جارٍ الإنشاء…':'إنشاء المنتج'}</button></div></form>
     <div className="catalog-toolbar" role="search">
       <label><span>البحث</span><input aria-label="بحث المنتجات" value={query} onChange={e=>setQuery(e.target.value)} placeholder="الاسم أو SKU أو الباركود أو الوحدة أو الوصف" /></label>
       <label><span>التصنيف</span><select aria-label="فلترة التصنيف" value={categoryId} onChange={e=>setCategoryId(e.target.value)}><option value="">كل التصنيفات</option>{categories.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select></label>
