@@ -3,6 +3,7 @@ import { getStaffOrders, type StaffOrderSummary } from './services/staffOrders';
 import { formatMoney } from './domain/pricing';
 import { supabase } from './lib/supabase';
 import { buildSevenDaySales, calculateSevenDaySales, type DashboardSaleRow } from './domain/adminDashboard';
+import { AGHBARI_ADMIN_STRUCTURE } from './structure/admin-structure';
 
 type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer';
 
@@ -65,6 +66,16 @@ function Tile({
       <span>{title}</span>
       <b aria-hidden="true">←</b>
     </a>
+  );
+}
+
+function BoundaryTile({ item }: { item: { label: string; note?: string } }) {
+  return (
+    <div className="control-tile control-tile-boundary" title={item.note ?? 'ضمن الهيكلة المرجعية وليس عقدًا تنفيذيًا في Commerce الحالي.'}>
+      <span className="control-tile-icon" aria-hidden="true">◌</span>
+      <span>{item.label}</span>
+      <small aria-hidden="true">حد</small>
+    </div>
   );
 }
 
@@ -388,6 +399,29 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
             </section>
           </div>
 
+
+          <section className="control-structure-index" aria-label="شجرة النظام الكاملة">
+            <header className="control-structure-index-header">
+              <div><span>الهيكلة الكاملة</span><h2>شجرة الأغبري التشغيلية</h2></div>
+              <small>العناصر الحية تفتح مساحات العمل الحالية، وحدود النطاق تظهر صراحة ولا تتحول إلى وظائف وهمية.</small>
+            </header>
+            <div className="control-structure-groups">
+              {AGHBARI_ADMIN_STRUCTURE.map((group) => {
+                const boundaryItems = group.items.filter((item) => item.status !== 'live').slice(0, 8);
+                const liveItems = group.items.filter((item) => item.status === 'live').slice(0, 8);
+                if (!boundaryItems.length && !liveItems.length) return null;
+                return (
+                  <article className="control-structure-group" key={group.id}>
+                    <header><span className="control-structure-group-icon">{group.icon}</span><div><h3>{group.label}</h3><small>{group.path}</small></div></header>
+                    <div>
+                      {liveItems.map((item) => item.target ? <Tile key={item.id} icon="↗" title={item.label} target={item.target} /> : null)}
+                      {boundaryItems.map((item) => <BoundaryTile key={item.id} item={item} />)}
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </section>
           <section className="control-section-grid-shell">
             <div className="control-section-grid-title">
               <div><span>الأقسام الرئيسية</span><h2>مركز الأغبري التشغيلي</h2></div>
