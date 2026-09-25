@@ -1,75 +1,67 @@
 # 🔴 AGHBARI LATEST EXECUTION STATE
 
-**Actual Git HEAD:** ac81fac0ea240d871a4aabd5044cc1a06075960f
-**Latest functional code HEAD:** ce79c609ae1507060711fbe0d2fb9e78e522ba06
-**Documentation checkpoint:** ac81fac0ea240d871a4aabd5044cc1a06075960f
+**Actual Git HEAD:** 1482a7eaa29162d96a4bf5d32e113f14226daa2b
+**Latest functional code HEAD:** 1482a7eaa29162d96a4bf5d32e113f14226daa2b
 **Branch:** main
 **Production:** NO TOUCH
 **Certification:** NOT CLAIMED
 
 ## CURRENT REALITY
 
-- The repository has advanced beyond the older 0bf3322 baseline through a sequence of real UI/core commits; the latest functional SHA is ce79c609.
-- Admin now exposes a real Catalog & Products workspace with product search, category/status filters, sorting, pagination, edit dialog and controlled active/inactive changes.
-- Staff customer directory now has search, active/inactive and tier filters, pagination, invitations, tier management and activation controls.
-- Staff order queue now has search, status filtering and pagination while preserving server-side workflow transition authorization.
-- Customer order history now has a dedicated responsive workspace with search, status filtering, pagination, detail/tracking and reorder.
-- Checkout now persists the selected payment method by passing it to the canonical create_order RPC and normalizes selection when configuration changes.
-- No fake Promotions feature was introduced because the business/data contract is still absent.
+- Admin Catalog & Products is a real management workspace: search, category/status filters, sorting, pagination, edit and controlled active/inactive state.
+- Staff customer directory is a real operational workspace with search, active/inactive and tier filters, pagination, invitations, tier changes and activation controls.
+- Staff order queue is a real operational workspace with search, status filtering and pagination while retaining server-authorized state transitions.
+- Customer order history is a dedicated workspace with search, status filtering, pagination, detail/tracking and reorder.
+- Checkout passes the selected payment method to the canonical create_order RPC and normalizes to the first enabled method when configuration changes.
+- Purchasing now has queue filtering/pagination; Finance has invoice history filtering/pagination; Category Management has a hierarchical read workspace.
+- No Promotions UI has been invented because its business/data contract is still absent.
 
 ## EXACT-SHA PROOF
 
-For functional SHA ce79c609:
-- Application Quality: QUEUED
-- Security Audit: QUEUED
-- Supabase Migration Proof: QUEUED
-- Concurrency Proof: QUEUED
-- Test-the-Test: QUEUED
-- G1 Domain Proof: QUEUED
-- Order Workflow Proof: QUEUED
-- Browser E2E / Exact Deployment: QUEUED
-- Bootstrap Release Lockfile: QUEUED
+Current functional SHA: `1482a7eaa29162d96a4bf5d32e113f14226daa2b`.
 
-No proof is transferred from older SHAs.
+- Prior checks on older SHAs are historical only and are not transferred.
+- Last direct status check on 1482a7e reported GitHub commit status pending with zero completed statuses.
+- Therefore current SHA certification state is **NOT_PROVEN / HOLD**, not PASS.
 
 ## HOSTED DEPLOYMENT
 
-- Previous functional SHA 43d245c34c6f33a23a9882eec400634de1bd5745 has a READY Vercel production deployment and its hosted root returned HTTP 200.
-- Its newest Exact Deployment Browser E2E failed before Playwright at Vercel Deployment Protection artifact-identity verification; this is an external protection gate.
-- No hosted-runtime PASS is claimed for ce79c609 until a deployment exists and the exact-SHA protected browser gate succeeds.
+- Hosted Vercel deployment was previously READY for the earlier functional SHA `ce79c609...`, and the root returned HTTP 200 with the new UI bundle.
+- The exact hosted Browser E2E path has previously been blocked at Vercel Deployment Protection artifact-identity verification.
+- A current exact deployment for 1482a7e must be independently verified before any hosted-runtime PASS can be claimed.
 
 ## OPEN UI FRONTIER
 
-- Category management: deeper list/hierarchy/state actions where backend contracts already exist.
-- Pricing: richer matrix/history/detail states where the existing data contract supports them.
-- Purchasing/suppliers: deeper nested workflow views, receiving detail and recovery states.
-- Finance: deeper invoice/payment/expense detail states.
-- Customer account/profile: enrich only with fields and mutation contracts already supported by the backend.
-- Continue responsive/accessibility/error/empty/permission/offline closure across nested views.
+- Purchasing: receiving detail, receipt history, recovery/empty/error states.
+- Inventory: transfer history, reconciliation detail, stock-count history and mobile interaction hardening.
+- Finance: invoice detail, payment history, expense history and currency/account validation feedback.
+- Category/Pricing: richer pricing matrix/history states only where current backend contracts support them.
+- Customer account/profile: enrichment only from existing backend fields/mutation contracts.
+- Access/Governance: nested audit/outbox/integration detail and recovery states.
+- Continue responsive/accessibility/permission/offline state closure.
 
 ## OPEN CORE / SECURITY / RELEASE
 
-- Finish exact-SHA gates on ce79c609 and repair any failures.
-- Continue individual SECURITY DEFINER classification; preserve required transactional and RLS-helper boundaries.
+- Finish exact-SHA CI gates for 1482a7e and repair regressions.
+- Continue SECURITY DEFINER routine-by-routine classification; preserve required transaction and RLS-helper boundaries.
 - Finish semantic consolidation/reference audit of the legacy Markdown corpus.
-- Certification and production remain HOLD / NO TOUCH until exact end-to-end evidence is complete.
+- Certification and production remain HOLD / NO TOUCH.
 
 ## CURRENT RESUME POINTER
 
-START FROM ACTUAL GIT HEAD ac81fac0ea240d871a4aabd5044cc1a06075960f; use latest functional base ce79c609ae1507060711fbe0d2fb9e78e522ba06.
+START FROM ACTUAL HEAD 1482a7eaa29162d96a4bf5d32e113f14226daa2b.
 
 UI FRONT:
-Admin → Category management / Pricing nested states → Purchasing/Suppliers → Finance nested detail.
-Customer → Account/Profile enrichment → Orders nested filters/states → responsive/mobile verification.
+Admin → Purchasing receiving → Inventory reconciliation/history → Finance invoice/payment/expense detail → Access/Governance nested states.
 
 CORE FRONT:
-Checkout payment-method persistence → exact order/payment schema proof; preserve canonical create_order contract.
+Preserve canonical create_order/payment method contract, tenant/RLS boundaries and audit/outbox semantics.
 
 VERIFY:
-Use only exact ce79c609 evidence. Do not transfer PASS from older SHAs.
+Use only exact 1482a7e evidence. No PASS transfer from previous SHAs.
 
 DEPLOY:
-Wait for/scope the exact ce79 deployment and inspect protected artifact-identity verification without weakening Deployment Protection.
+Inspect the exact 1482a7e deployment and protected browser artifact-identity check before any release conclusion.
 
 DO NOT REPEAT:
-Do not reopen checkout/order/idempotency/offline foundations unless a current exact-SHA regression appears.
+Do not reopen proven order/idempotency/offline foundations unless a current exact-SHA regression appears.
