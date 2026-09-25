@@ -319,3 +319,13 @@ Command "1" means:
 - Governance audit now has bounded pagination and progressive detail drawers; Staff Access now exposes record details for organization users.
 - Catalog has a real new-product creation surface; Finance invoice rows expose detail; low-stock inventory links directly into transfer; approved/partial purchase orders link directly into receiving.
 - Current Vercel status remains an external deployment-rate-limit failure; exact GitHub workflow runs for the newest head are queued. No build/browser/certification PASS is claimed.
+
+
+## 27. UI CLOSURE RUN — 2026-09-25 — FINAL SESSION WAVE
+- Customer Portal: Account, Notifications and Recovery are first-class sections; section navigation uses URL hash + popstate/hashchange; order history uses the dedicated verified detail service; Quick Order resolves exact SKU/Barcode against the canonical barcode-aware catalog RPC when the identifier is not already loaded locally.
+- Customer overlays now carry explicit dialog semantics and Escape dismissal; successful order submission remains visible until explicitly dismissed.
+- Catalog: new-product creation and progressive product detail inspection are available using the existing canonical product RPC and shared detail drawer.
+- Purchasing: order entry supports multiple unique lines within the existing 200-line service boundary; Receiving now supports multiple remaining PO lines in one bounded operation.
+- Operations: Governance audit pagination/detail, Outbox detail, Staff Access detail, low-stock-to-transfer and approved-PO-to-receiving links are all wired to existing operational surfaces.
+- Catalog image URL cache is bounded to 250 entries; no second transaction source of truth was introduced.
+- Current Vercel status remains deployment-rate-limited; the newest GitHub Actions for the current source line are queued. No certification/build/browser PASS is claimed.
