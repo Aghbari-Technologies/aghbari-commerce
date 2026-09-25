@@ -12,7 +12,7 @@ const DEFAULT_CONFIG: ClientUiConfig = {
   paymentOnCredit:true, paymentCash:true, paymentTransfer:true, minOrderValue:0, maxOrderValue:0, maxTemplates:50
 };
 const BOOLEAN_LABELS: Array<[keyof ClientUiConfig, string, string]> = [
-  ['showSearch','شريط البحث','البحث بالاسم وSKU والباركود'],['showCategories','التصنيفات','فلاتر التصنيفات في الكتالوج'],['showExcel','رفع Excel','الطلب الجماعي من ملف Excel'],['showQuickOrder','الطلب السريع','إدخال SKU والكمية بسرعة'],
+  ['showSearch','شريط البحث','البحث بالاسم وSKU والباركود'],['showCategories','التصنيفات','فلاتر التصنيفات في الكتالوج'],['showExcel','رفع Excel','الطلب الجماعي من ملف Excel'],['showQuickOrder','الطلب السريع','إدخال SKU والكمية بسرعة'],['showRetailPrice','معلومات سعر التجزئة','إظهار حالة توفر سعر التجزئة فقط إذا كانت صلاحية الحساب تسمح بها'],['showVoiceSearch','البحث الصوتي','إتاحة تحويل الكلام العربي إلى عبارة بحث داخل المتصفح'],
   ['showTemplates','المسحات','قوائم الطلبات المتكررة'],['showCredit','المركز المالي','الائتمان وكشف الحساب'],['showInventory','إظهار المخزون','حالة التوفر والكمية'],
   ['requireQuantityConfirmation','اعتماد الكمية','إلزام العميل بتأكيد الكمية قبل الإرسال'],['showTieredPricing','شرائح أسعار الجملة','إظهار مستويات السعر حسب الكمية'],['showSavingsCalculator','حاسبة التوفير','إظهار المتبقي للشريحة التالية'],
   ['showPaymentMethods','وسائل الدفع','إظهار خيارات الدفع المتاحة']
@@ -42,7 +42,7 @@ export default function ClientControlPanel({ role }: { role: string }) {
         <div className="client-preview-body">
           <div className="client-preview-hero"><div><small>تجارة جملة أسرع</small><strong>احتياج متجرك، جاهز للطلب.</strong><p>واجهة مبسطة للأصناف والأسعار والكميات.</p></div>{config.showCredit&&<div><small>المتاح الائتماني</small><strong>125,000 ر.ي</strong></div>}</div>
           {config.showCategories&&<div className="client-preview-chips"><span className="active">الكل</span><span>مواد غذائية</span><span>منظفات</span><span>مشروبات</span></div>}
-          <div className="client-preview-content">{config.showQuickOrder&&<button>⚡ طلب سريع</button>}{config.showExcel&&<button>رفع Excel</button>}{config.showTieredPricing&&<span>شرائح أسعار الجملة</span>}{config.showInventory&&<span>حالة المخزون ظاهرة</span>}</div>
+          <div className="client-preview-content">{config.showQuickOrder&&<button>⚡ طلب سريع</button>}{config.showExcel&&<button>رفع Excel</button>}{config.showTieredPricing&&<span>شرائح أسعار الجملة</span>}{config.showInventory&&<span>حالة المخزون ظاهرة</span>}{config.showVoiceSearch&&<span>بحث صوتي مفعّل</span>}{config.showRetailPrice&&<span>معلومة سعر التجزئة حسب الصلاحية</span>}</div>
           <div className="client-preview-product-grid">{[1,2,3].map((n)=><article key={n}><div className="client-preview-image">أ</div><small>SKU-00{n}</small><strong>مثال عرض · المعاينة فقط</strong><span>{config.showInventory?"متوفر":"المخزون مخفي"}</span>{config.showTieredPricing&&<em>من 10 · سعر الجملة</em>}<button>{config.showQuickOrder?"إضافة للسلة":"عرض"}</button></article>)}</div>
         </div>
       </div>
