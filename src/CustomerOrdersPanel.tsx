@@ -60,9 +60,9 @@ export default function CustomerOrdersPanel({
     </div>
     <div className="customer-orders-toolbar">
       <label><span>بحث</span><input aria-label="بحث الطلبات" value={query} onChange={e=>setQuery(e.target.value)} placeholder="رقم الطلب أو الحالة" disabled={loading}/></label>
-      <label><span>الحالة</span><select aria-label="فلترة حالة الطلب" value={status} onChange={e=>setStatus(e.target.value)} disabled={loading||pageBusy}><option value="all">كل الحالات</option>{statuses.map(item=><option key={item} value={item}>{STATUS_LABELS[item]??item}</option>)}</select></label>
+      <label><span>الحالة</span><select aria-label="فلترة حالة الطلب" value={status} onChange={e=>setStatus(e.target.value as CustomerOrderStatusFilter)} disabled={loading||pageBusy}><option value="all">كل الحالات</option>{statuses.map(item=><option key={item} value={item}>{STATUS_LABELS[item]??item}</option>)}</select></label>
       <button type="button" className="ghost" onClick={()=>{setQuery('');setStatus('all');setPage(1);}} disabled={loading||(!query&&status==='all')}>مسح</button>
-      <button type="button" className="ghost" onClick={onReload} disabled={loading}>إعادة تحميل</button>
+      <button type="button" className="ghost" onClick={onReload} disabled={loading||pageBusy}>إعادة تحميل</button>
     </div>
     {detailBusy&&<div className="portal-loading" role="status">جارٍ تحميل تفاصيل الطلب…</div>}
     {loading||pageBusy?<div className="portal-loading" role="status">جارٍ تحميل الطلبات…</div>
