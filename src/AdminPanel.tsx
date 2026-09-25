@@ -117,6 +117,27 @@ export default function AdminPanel({ role }: { role: UserRole }) {
         <div className="admin-workspace-strip-label">
           <span className="eyebrow">مساحات العمل</span>
           <strong>الوصول المباشر</strong>
+          <small>كل رابط يفتح القسم الفعلي في نفس مركز التشغيل.</small>
+        </div>
+        <div className="admin-workspace-links">
+          {getAdminStructureForRole(role).flatMap((group) => group.items.filter((item) => item.status === 'live' && item.target).map((item) => (
+            <a key={item.id} href={item.target} title={item.note ?? item.label}>
+              <span>{item.label}</span><i aria-hidden="true">↗</i>
+            </a>
+          ))).slice(0, 18)}
+        </div>
+      </div>
+      <section className="admin-command-overview" aria-label="موجز مساحات العمل">
+        {role !== 'viewer' && <a href="#admin-orders"><span className="workspace-overview-icon" aria-hidden="true">🧾</span><div><small>المبيعات</small><strong>الطلبات والعملاء</strong><em>متابعة الدورة اليومية</em></div><b>↗</b></a>}
+        {canCatalog && <a href="#admin-catalog"><span className="workspace-overview-icon" aria-hidden="true">▣</span><div><small>الكتالوج</small><strong>الأصناف والتسعير</strong><em>تحرير ونشر بيانات البيع</em></div><b>↗</b></a>}
+        {canInventory && <a href="#admin-inventory"><span className="workspace-overview-icon" aria-hidden="true">⌂</span><div><small>المخزون</small><strong>المستودعات والحركات</strong><em>تنفيذ العمليات الميدانية</em></div><b>↗</b></a>}
+        {canFinance && <a href="#admin-finance"><span className="workspace-overview-icon" aria-hidden="true">◫</span><div><small>المالية</small><strong>الفواتير والتحصيل</strong><em>الحركة المالية التشغيلية</em></div><b>↗</b></a>}
+        {canOrderWorkflow && <a href="#admin-governance"><span className="workspace-overview-icon" aria-hidden="true">✓</span><div><small>الحوكمة</small><strong>التدقيق والتكاملات</strong><em>سجل الأحداث وصندوق التكاملات</em></div><b>↗</b></a>}
+        {canAdmin && <a href="#admin-access"><span className="workspace-overview-icon" aria-hidden="true">♙</span><div><small>الوصول</small><strong>المستخدمون والصلاحيات</strong><em>إدارة أدوار الفريق</em></div><b>↗</b></a>}
+      </section>
+        <div className="admin-workspace-strip-label">
+          <span className="eyebrow">مساحات العمل</span>
+          <strong>الوصول المباشر</strong>
         </div>
         <div className="admin-workspace-links">
           {getAdminStructureForRole(role).flatMap((group) => group.items.filter((item) => item.status === 'live' && item.target).map((item) => (

@@ -121,6 +121,15 @@ export default function AppV3Fixed(){
           <div><small>حالة الاتصال</small><strong>{online?'متصل':'غير متصل'}</strong><em>{offlineSyncing?'تتم المزامنة الآمنة الآن':'الخدمة الأساسية'}</em></div>
         </article>
       </section>
+      <section className="portal-quick-actions" aria-label="اختصارات بوابة الأغبري">
+        <div className="portal-quick-lead"><span className="eyebrow">تشغيل سريع</span><strong>من نفس الشاشة إلى الإجراء التالي</strong><small>ابدأ الطلب، راجع طلباتك، أو افتح حسابك دون فقدان سياق المتجر.</small></div>
+        <div className="portal-quick-grid">
+          <button type="button" className="portal-quick-item primary" onClick={()=>setCartOpen(true)}><span aria-hidden="true">🛒</span><div><strong>مراجعة السلة</strong><small>{cartCount?cartCount.toLocaleString('ar')+' وحدة في السلة':'السلة فارغة'}</small></div><b>↗</b></button>
+          <button type="button" className="portal-quick-item" onClick={()=>navigate('orders')}><span aria-hidden="true">🧾</span><div><strong>آخر الطلبات</strong><small>{orders.length?orders.length.toLocaleString('ar')+' طلب في السجل':'لم تُرسل طلبات بعد'}</small></div><b>↗</b></button>
+          {config.showTemplates&&<button type="button" className="portal-quick-item" onClick={()=>navigate('templates')}><span aria-hidden="true">▤</span><div><strong>المسحات الجاهزة</strong><small>{templates.length} مسحة محفوظة</small></div><b>↗</b></button>}
+          {config.showCredit&&<button type="button" className="portal-quick-item" onClick={()=>navigate('finance')}><span aria-hidden="true">◫</span><div><strong>المركز المالي</strong><small>{finance?money(finance.available,finance.currency):'بيانات الحساب'}</small></div><b>↗</b></button>}
+        </div>
+      </section>
       {config.showSearch&&<section className="search-panel"><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="ابحث باسم الصنف، SKU أو الباركود…" aria-label="البحث في الكتالوج"/><div>{config.showVoiceSearch&&<button title="البحث الصوتي">🎙</button>}{config.showImageSearch&&<button title="البحث بالصور">⌕</button>}{config.showExcel&&<label className="file-button">رفع Excel<input type="file" accept=".xlsx" disabled={excelBusy} onChange={async e=>{const f=e.target.files?.[0];if(f)await stageQuickExcel(f);e.currentTarget.value='';}}/></label>}{config.showQuickOrder&&<button onClick={()=>setQuickOpen(true)}>طلب سريع</button>}</div></section>}
       {config.showCategories&&<div className="category-row">{categoriesView.map(c=><button key={c.id??"all"} className={categoryId===c.id?"active":""} onClick={()=>setCategoryId(c.id)}>{c.name}</button>)}</div>}
       <div className="catalog-context-bar" aria-live="polite">
