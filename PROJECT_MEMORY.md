@@ -275,3 +275,13 @@ Command "1" means:
 - The migration recreates the exact live contract: warehouse/customer/tenant checks, bounded pagination, customer-tier pricing, barcode-aware search, `SECURITY DEFINER`, empty `search_path`, authenticated EXECUTE and anon denial.
 - The live Supabase project was updated from this migration content and re-queried successfully; the database function signature and privilege boundary match the migration contract.
 - Customer frontend barcode resolution must use this canonical RPC rather than a live-only or manually-created function.
+
+
+## 24. CONTROL PLANE UI REBUILD — 2026-09-25
+- Rebuilt `src/AdminExecutiveDashboard.tsx` into the Aghbari Control Plane visual system based on the supplied reference level: RTL-first operations dashboard, premium teal/white cards, compact KPI rail, quick actions, recent orders, status distribution, data-management tiles, and right-side section rail.
+- The new dashboard links only to existing Aghbari operational surfaces already present in `AdminPanel.tsx`: orders, customers, catalog, pricing, inventory, purchasing, receipts, suppliers, finance, import/export, notifications, governance, access and customer settings.
+- No reporting/BI surface or Promotions feature was fabricated. Reporting remains outside the Commerce transaction source of truth.
+- Viewer-role routing was corrected so authenticated `viewer` users remain in the staff/admin control plane with their server-enforced read-only permissions rather than falling through to the customer portal.
+- Staff top chrome now uses the Aghbari brand and responsive RTL presentation.
+- UI implementation commits for this wave: `cf0798a02a593a4917be60c77e1ce59da4b04d87`, `e56945578ccf8a487e7a36d52e171e6a8f479fff`, `56b43e1e11d056f7c58f5f947cd72fe9c6b05abd`, `1f88db47c4b0267e4b837f5c33e38fdcd92b8a2f`, `ee960bb33b3c2b21f0892477bb07c8248a2072c0`.
+- This is implementation progress, not exact-SHA certification; fresh CI/browser/deployment evidence is still required.
