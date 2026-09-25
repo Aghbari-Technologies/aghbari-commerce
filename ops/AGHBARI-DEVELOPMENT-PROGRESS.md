@@ -365,3 +365,27 @@ The customer portal previously exposed only order summaries and reorder behavior
 - Continue nested UI closure: category management, pricing views/history, deeper supplier/purchasing/finance nested states where contracts already exist.
 - Keep Promotions unimplemented until its business/data contract is defined in the canonical schema/requirements.
 - Continue individual SECURITY DEFINER classification and legacy Markdown semantic consolidation.
+
+
+## Run 2026-09-25 — Purchasing / Finance / Category UI closure continuation
+
+### Functional SHA
+- `1482a7eaa29162d96a4bf5d32e113f14226daa2b`
+- Branch: `main`
+- Production: NO TOUCH
+- Certification: NOT CLAIMED
+
+### Implemented
+- Purchasing: purchase-order queue search, status filter and pagination.
+- Finance: independent invoice history with search, status filter and pagination; creation and payment flows remain intact.
+- Category taxonomy: hierarchical category browser with search, retry, empty/error states and responsive styling.
+- Corrected React hook ordering in Purchasing and Finance before accepting the changes.
+
+### Verification boundary
+- Last direct status check for `1482a7e...` reported GitHub commit status pending with zero completed statuses.
+- Older exact-SHA PASS results remain historical and are not transferred.
+
+### Remaining
+- Close all exact-SHA CI gates for `1482a7e...` and investigate any failures.
+- Continue deeper UI closure in purchasing receiving, inventory reconciliation/history, finance payment/expense details and access/governance nested states where backend contracts already exist.
+- Continue individual SECURITY DEFINER classification and legacy Markdown semantic consolidation.
