@@ -1,160 +1,233 @@
 # Aghbari Commerce — UI Reference Asset Index
 
-> Canonical drop-zone for visual references that the implementation team must use when matching the Aghbari Commerce UI.
-> Project identity: **الأغبري | Aghbari Commerce**.
+> **Canonical visual reference source for Aghbari Commerce / الأغبري.**
+> Current reference pack: **84 PNG screenshots** under this directory.
 
-## 1. Purpose
+## 1. Role of this directory
 
-ضع هنا الصور والملفات المرجعية التي تريد أن تُبنى الواجهات على أساسها. هذه المراجع تُستخدم كـ **مصدر بصري مباشر** عند تنفيذ أو مطابقة:
+هذا المجلد هو **مصدر المطابقة البصرية** للواجهات، وليس مصدرًا وظيفيًا أو Backend contract.
 
-- Admin / Staff Dashboard
+استخدم المراجع لبناء ومراجعة:
+- Admin / Staff Command Center
+- Orders / Customers / Catalog / Pricing
+- Inventory / Warehouses / Purchasing / Receiving
+- Finance / Import / Export / Governance / Settings
 - Customer Portal / Storefront
-- Catalog, Product Details, Cart, Quick Order, Reorder
-- Orders, Invoices, Payments, Statements
-- Inventory, Warehouses, Transfers, Stock Count
-- Suppliers, Purchasing, Receiving
-- Roles, Permissions, Import / Export, Invitations
-- Audit / Outbox / operational states
-- Navigation, dialogs, drawers, forms, tables, filters, responsive states
+- shared navigation, tables, cards, dialogs, drawers and responsive states
 
-## 2. Where to add reference assets
+**كل صورة مرجعية = P0 بصريًا افتراضيًا** إلى أن تُصنّف صراحةً كغير ذلك.
 
-Use this directory structure when uploading files:
+## 2. Current reference pack
+
+تمت إضافة 84 صورة إلى هذه الشجرة في commit:
+`93b6fd2987ca670a07ebc0bc4449c5cbc550dfa7`
+
+الأسماء الحالية محفوظة كما رُفعت. لا تعِد تسمية الملفات لمجرد التجميل، ولا تنشئ نسخة ثانية منها.
+
+أمثلة ممثلة تمت مراجعتها بصريًا:
+- `1.png`, `2.png`, `3.png` — لوحة التحكم وشجرة النظام والـrail.
+- `لقطة شاشة 2026-08-06 150354.png` — قائمة الطلبات وسير الحالات.
+- `لقطة شاشة 2026-08-06 150421.png` — تفاصيل الطلب والتقدم المرحلي.
+- `لقطة شاشة 2026-08-06 151523.png` — سجل عمليات الاستيراد.
+- `لقطة شاشة 2026-08-06 153435.png` — تقرير المبيعات.
+- `لقطة شاشة 2026-08-06 153758.png` — حالة خدمات النظام.
+- `لقطة شاشة 2026-08-06 154115.png` — واجهة الأصناف/العروض.
+- `لقطة شاشة 2026-08-06 154245.png` — إعدادات الملكية والإشعارات.
+- `لقطة شاشة 2026-08-06 154358.png` — واجهة تكامل Onyx.
+- `لقطة شاشة 2026-08-06 154438.png` — سجل عمليات المزامنة.
+- `لقطة شاشة 2026-08-06 154521.png` — أدوات المطور/الإعدادات.
+
+هذه الأمثلة لا تلغي بقية الـ84 صورة؛ **كل pack كامل يدخل في visual audit**.
+
+## 3. Visual contract
+
+عند مطابقة أي P0 reference، يجب الحفاظ على ما ينطبق من:
 
 ```text
-docs/ui-reference/
-├── UI-REFERENCE-ASSET-INDEX.md        # this file
-├── admin/
-│   ├── dashboard/
-│   ├── catalog/
-│   ├── orders/
-│   ├── inventory/
-│   ├── purchasing/
-│   ├── finance/
-│   ├── customers/
-│   ├── staff/
-│   └── settings/
-├── customer/
-│   ├── storefront/
-│   ├── catalog/
-│   ├── product/
-│   ├── cart/
-│   ├── quick-order/
-│   ├── orders/
-│   ├── finance/
-│   └── account/
-├── shared/
-│   ├── navigation/
-│   ├── components/
-│   ├── modals/
-│   ├── tables/
-│   ├── forms/
-│   └── responsive/
-└── source-files/
-    ├── pdf/
-    ├── figma-export/
-    ├── html/
-    └── notes/
+Page composition
+Information hierarchy
+RTL reading order
+Header/topbar hierarchy
+Contextual right-side navigation
+Grouped panels
+Rounded operational cards
+Compact pill actions
+KPI/summary cards
+Dense but readable tables
+Status badges
+Breadcrumbs
+Quick actions
+Progressive disclosure
+Dialogs / drawers
+Loading / empty / error / success / disabled states
+Desktop / tablet / mobile behavior
+Keyboard focus / accessibility
 ```
 
-**ارفع الصور الأصلية والملفات المرجعية كما هي، ويفضل عدم ضغطها أو قصها أو إعادة تحجيمها.**
+المرجع يحدد **شكل التجربة**.  
+العقد canonical يحدد **وظيفة التجربة**.
 
-## 3. Naming convention
+## 4. Brand boundary
 
-Use stable names so each reference can be mapped to one implementation target:
+المراجع قد تحتوي على تسميات تاريخية أو هوية مختلفة. لا تنقلها حرفيًا إلى المنتج.
+
+الهوية الوحيدة للتطبيق:
+**الأغبري | Aghbari Commerce**
+
+ولا يجوز أن يؤدي أي screenshot إلى إعادة إدخال:
+- العامري كاسم منتج؛
+- Report-Advisor / Report-Engainall logic؛
+- AI/BI/Onyx/Developer AI transactional logic؛
+- Promotions أو أي feature بلا canonical Commerce contract.
+
+يمكن إعادة استخدام **الأسلوب البصري** لهذه الأجزاء، لكن لا تُختلق وظائف أو بيانات أو mutations غير مدعومة.
+
+## 5. Asset storage law
+
+المجلد نفسه هو **النسخة المرجعية الوحيدة**.
+
+ممنوع:
+
+```text
+docs/ui-reference → src/
+docs/ui-reference → public/
+docs/ui-reference → dist/
+duplicate image copies
+duplicate export packs
+image-to-base64 bundles
+temporary image copies in test artifacts
+```
+
+الصور المرجعية لا تدخل production bundle ما لم توجد حاجة runtime حقيقية مثبتة.
+
+## 6. Mapping without document bloat
+
+لا تنشئ Markdown مستقلًا لكل صورة.
+
+استخدم هذا الملف لتسجيل:
+- screen family؛
+- route؛
+- state؛
+- viewport؛
+- priority؛
+- implementation status.
+
+عند الحاجة، أنشئ **صفًا واحدًا لكل screen pack** بدل تكرار 20–80 صفًا للمكونات نفسها.
+
+## 7. Naming
+
+للمراجع الجديدة:
 
 ```text
 <area>__<screen>__<state>__<viewport>__<sequence>.<ext>
 ```
 
-Examples:
-
+مثال:
 ```text
-admin__dashboard__default__desktop__01.png
 admin__orders__details__desktop__01.png
-admin__orders__empty__desktop__01.png
-admin__catalog__product-detail__mobile__01.png
-customer__storefront__home__desktop__01.png
-customer__quick-order__validation-error__mobile__01.png
+customer__catalog__default__mobile__01.png
 shared__table__filters__tablet__01.png
 ```
 
-## 4. Reference mapping
+حافظ على الأسماء التاريخية الموجودة دون إعادة تسمية غير ضرورية.
 
-| Reference file | Target route / surface | Viewport | State | Matching priority | Notes |
-|---|---|---|---|---|---|
-| — | — | — | — | — | Add rows as files are uploaded |
+## 8. Visual implementation procedure
 
-Priority meanings:
-
-- **P0** = exact visual source; must be matched before considering the surface complete.
-- **P1** = strong visual reference; preserve hierarchy, spacing, density and interaction model.
-- **P2** = supporting reference; use for components or states only.
-
-## 5. What must be matched
-
-For every P0/P1 reference, compare the implementation against the source for:
-
-1. Page composition and information hierarchy.
-2. RTL layout, alignment and reading order.
-3. Typography scale, weights, line-height and truncation.
-4. Spacing rhythm, container widths and grid density.
-5. Colors, borders, radii, shadows and surfaces.
-6. Navigation, tabs, breadcrumbs and selected states.
-7. Tables, filters, search, sorting and pagination.
-8. Forms, validation, loading, empty, success and error states.
-9. Dialogs, drawers, confirmations and destructive-action treatment.
-10. Responsive behavior across desktop, tablet and mobile.
-11. Keyboard focus, hover/active/disabled states and accessibility affordances.
-12. Real application data shape and interaction behavior where the reference implies it.
-
-## 6. Source-of-truth rule
-
-When a reference is marked **P0**, do not replace its visual structure with a generic component merely because the generic component is easier to implement.
-
-The implementation should reproduce the reference's **visual hierarchy and interaction intent** while preserving Aghbari's real backend contracts, permissions, tenant isolation and transactional rules.
-
-Do not copy:
-
-- logos, trademarks or proprietary brand assets from unrelated products into Aghbari;
-- secrets, credentials, tokens or private customer data;
-- Report-Advisor / Report-Engainall application logic or transaction models.
-
-## 7. Completion evidence
-
-A visual surface is not considered matched solely because the route renders.
-
-The final verification for a reference-backed screen should capture:
-
-- reference image;
-- implementation screenshot;
-- route;
-- viewport;
-- relevant state;
-- exact source commit SHA.
-
-Keep the evidence tied to the exact commit that was tested. Do not transfer PASS evidence between different SHAs.
-
-## 8. Upload instruction
-
-### For images
-
-Place them under the closest matching folder above and add one row to the **Reference mapping** table.
-
-### For supporting files
-
-Place PDFs, HTML exports, design exports, annotations or specification files under `source-files/` and record what screen(s) they govern.
-
-### For a multi-screen pack
-
-Create a dedicated subfolder, for example:
-
-```text
-docs/ui-reference/admin/catalog/product-management-pack/
+```REFERENCE
+→ EXTRACT SHARED VISUAL PRIMITIVES
+→ REUSE EXISTING COMPONENTS
+→ IMPLEMENT SCREEN
+→ IMPLEMENT STATES
+→ CONNECT REAL ACTIONS
+→ CHECK RESPONSIVE
+→ VISUAL COMPARE
+→ EXACT-SHA VERIFY
 ```
 
-and add a short note in the mapping table identifying the primary screen and related states.
+لا تبدأ بتكرار CSS لكل صفحة.
 
-## 9. Current target
+أولًا أصلح:
+- design tokens؛
+- shared primitives؛
+- common cards;
+- common pills;
+- common tables;
+- common dialogs/drawers;
+- common responsive rules.
 
-The purpose of this directory is to drive **Aghbari Commerce / الأغبري** toward high-fidelity visual implementation. Existing functional work and backend contracts remain authoritative; uploaded references determine the intended visual target and interaction detail for the affected surfaces.
+ثم طبّقها على الصفحات.
+
+## 9. Evidence
+
+لأي شاشة P0 مكتملة بصريًا:
+
+```Reference image
++
+Route
++
+Viewport
++
+State
++
+Implementation screenshot
++
+Exact source SHA
+```
+
+ولا يكفي:
+`route renders`
+
+ولا يكفي:
+`build passes`
+
+ولا يكفي:
+`looks similar`
+
+## 10. Completion status
+
+الشاشة تعتبر مكتملة عندما يكون:
+
+```VISUAL MATCH
++
+REAL INTERACTION
++
+REAL STATE
++
+REAL PERSISTENCE (where applicable)
++
+SERVER AUTHORIZATION
++
+TEST COVERAGE
++
+RUNTIME/BROWSER PROOF
++
+EXACT-SHA EVIDENCE
+```
+
+## 11. Space preservation
+
+عند إضافة أي reference أو visual evidence:
+
+**اسأل قبل الإضافة: هل هذه نسخة جديدة ضرورية فعلًا؟**
+
+الأولوية:
+
+```REUSE
+→ LINK / REFERENCE
+→ DEDUPLICATE
+→ COMPRESS ONLY WHEN QUALITY REMAINS ACCEPTABLE
+→ STORE ONCE
+```
+
+لا تحذف صورًا مرجعية لمجرد أنها قديمة. احذف/ادمج فقط بعد تحقق أنها duplicate أو بعد بوابة retirement موثقة.
+
+## 12. Working rule for the programmer
+
+ابدأ بالمراجع الحالية مباشرة.
+
+لا تنتظر مصدرًا جديدًا.
+
+لا تحول الصور إلى قائمة تحليلية طويلة.
+
+استخدمها كمصدر تنفيذ واختبار، وأنهِ أكبر قدر ممكن من **in-scope live UI** في كل جلسة بالتوازي مع CORE/SECURITY/QA.
+
