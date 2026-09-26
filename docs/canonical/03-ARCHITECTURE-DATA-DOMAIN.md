@@ -31,3 +31,12 @@ The consolidation manifest lists the architecture/data source set that must be f
 - A live schema object is not considered canonical merely because it exists in PostgreSQL; remote schema changes must be represented in the repository migration lineage.
 - The barcode-aware catalog RPC is now recorded in the live migration history as canonicalize_barcode_catalog_rpc_lineage, while the repository retains the equivalent canonical migration SQL.
 - Future drift checks must compare both the live function contract and migration history, not only object existence.
+
+
+## 2026-09-27 — Reference assets and resource-efficient implementation
+
+- `docs/ui-reference/` is documentation/reference data, not runtime data.
+- Reference assets must not be duplicated into application bundles or parallel asset directories.
+- UI visual fidelity must reuse existing domain/service/component boundaries; visual work must not introduce a second source of truth.
+- Generated build/test/deployment outputs are disposable artifacts and remain outside the tracked source tree.
+- When a UI reference implies unsupported business behavior, architecture authority remains with the canonical Commerce contract; do not introduce parallel AI/BI/Onyx/legacy transaction models.
