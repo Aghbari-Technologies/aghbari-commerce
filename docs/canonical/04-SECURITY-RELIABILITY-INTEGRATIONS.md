@@ -32,3 +32,11 @@ The manifest lists the security/offline/integration sources that must be fully m
 - The customer UI settings control plane is now database-gated to organization owner/admin roles for INSERT, UPDATE and DELETE. Organization-scoped SELECT remains available to authenticated organization members.
 - UI visibility is therefore aligned with the server/RLS boundary: client-side hiding is not treated as authorization.
 - The barcode catalog RPC is recorded in live migration provenance and remains authenticated-only with empty search_path and anonymous denial.
+
+
+## 2026-09-27 — Reference asset safety and bounded resources
+
+- Reference screenshots are treated as untrusted documentation inputs and must not contain or reproduce secrets, access tokens, session material or private business data.
+- Visual fidelity work cannot weaken RLS, RBAC, tenant isolation, storage policies or RPC authorization to reproduce a screenshot.
+- Local caches, offline queues, retries and temporary artifacts must remain bounded and must not become alternate sources of transactional truth.
+- Security evidence remains exact-SHA evidence; screenshot/reference comparison never substitutes for runtime security verification.
