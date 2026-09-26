@@ -372,3 +372,37 @@ Command "1" means:
 - Exact verification on `8c1d817ff67165f4844571f2e9cbb55c5cc3e38a`: application-quality PASS (typecheck, 218/218 tests, lint, production build, release audit); Browser E2E / Exact Deployment PASS; Order Workflow PASS; G1 PASS; Security Audit PASS; Bootstrap PASS. Remaining concurrent Test-the-Test, Concurrency, Migration Proof were still running at last observation and must remain unclaimed until completed on an exact SHA.
 - Live Supabase: 60/60 public tables have RLS; 0 public SECURITY DEFINER routines executable by anon; 0 public SECURITY DEFINER routines with unpinned search_path. Current live purchase/receipt RPCs still accept idempotency keys up to 200 while client validators use 128; no live records exceed 128. Do not alter production under HOLD; treat server/client bound normalization as an open environment-drift item until a canonical migration is safely applied.
 - Vercel hosted exact-source proof remains blocked by current deployment/rate/protection state; production stays HOLD / NO TOUCH.
+
+
+## 20. FINAL CLOSURE EXECUTION CONTRACT — 2026-09-27
+
+- Execution phase is now final closure/hardening, not open-ended discovery.
+- Every session must start from Actual Exact HEAD and current state, then execute only open gaps, regressions, invalidated evidence, environment drift, security defects, missing contracts, or missing reference-backed UI.
+- Independent fronts must continue in parallel: UI/visual fidelity, domain/transactions, database/security, QA/browser/test-the-test, deployment/runtime, performance/resource preservation, and semantic documentation consolidation.
+- Do not stop an executable front because another front is blocked; record the exact blocker and continue other fronts.
+
+## 21. REFERENCE-BACKED UI CONTRACT — 2026-09-27
+
+- `docs/ui-reference/` is the canonical visual-reference source for Aghbari UI work.
+- The current reference pack contains 84 PNG images uploaded to this directory on the main line.
+- Reference images are P0 visual requirements by default unless explicitly classified otherwise.
+- Reference intent covers composition, hierarchy, RTL alignment, spacing, typography, cards, navigation, tables, status badges, responsive behavior, progressive disclosure and interaction presentation.
+- Reference screenshots do not create backend/business contracts. Unsupported legacy/AI/Onyx/Promotions visuals may guide visual language, but must not cause fake transactional functionality to be introduced.
+- Aghbari branding remains authoritative; legacy brand names from screenshots must not be copied into the product.
+
+## 22. MAXIMUM SPACE / RESOURCE PRESERVATION CONTRACT — 2026-09-27
+
+- Reuse > refactor > deduplicate > bound > intelligently cache > build only when needed > deploy only when needed.
+- Reference images must remain in one source location and must never be copied into `src/`, `public/`, `dist/`, test artifacts or duplicate documentation.
+- Generated outputs, coverage, browser reports, build directories, node_modules, temporary dumps and local credentials remain outside version control.
+- Prefer existing dependencies, existing components and existing CSS tokens before adding new packages/files.
+- Caches, offline queues and retries must remain bounded and observable; no unbounded local growth.
+- Do not delete business, financial, audit or security evidence to save space.
+- Do not create duplicate CI workflows, redundant builds, repeated deployments or oversized execution logs without a specific proof value.
+- Keep write-back records compact; store durable facts, not raw dumps.
+
+## 23. CURRENT REFERENCE / CLOSURE RULE
+
+- Before declaring UI complete, every applicable P0 reference must have a corresponding implemented surface or an explicit scope-boundary classification.
+- Visual evidence must bind the reference, route, viewport, state and exact source SHA.
+- Closed UI/core work is not reopened unless the no-regression exceptions in the execution protocol are met.
