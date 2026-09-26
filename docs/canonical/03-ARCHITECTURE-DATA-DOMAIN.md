@@ -40,3 +40,10 @@ The consolidation manifest lists the architecture/data source set that must be f
 - UI visual fidelity must reuse existing domain/service/component boundaries; visual work must not introduce a second source of truth.
 - Generated build/test/deployment outputs are disposable artifacts and remain outside the tracked source tree.
 - When a UI reference implies unsupported business behavior, architecture authority remains with the canonical Commerce contract; do not introduce parallel AI/BI/Onyx/legacy transaction models.
+
+## 2026-09-27 — Closure acceleration and requirement ownership
+
+- Parallel UI implementation must reuse existing domain/service contracts; visual work is never a reason to create a second source of transactional truth.
+- Newly discovered requirements are routed to their canonical bounded context and owner before implementation.
+- UI reference assets remain documentation/reference data and must never enter runtime bundles merely to simplify visual matching.
+- Expensive or unbounded local artifacts, caches, queues and generated outputs are non-authoritative and must remain bounded/disposable.
