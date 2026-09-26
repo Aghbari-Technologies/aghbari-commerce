@@ -27,66 +27,31 @@ Certification: NOT CLAIMED
 
 ## Open execution frontier
 
-### UI FRONT — highest active build front
-- Execute the 84-image P0 reference pack against the live in-scope Admin/Staff surfaces.
-- Use existing shared components/tokens first; do not create a parallel design system.
-- Close nested route/view/action/state gaps only where a real Commerce contract exists.
-- Apply the same reference-derived visual language to Customer Portal while preserving its real B2B flows.
-- Maintain explicit boundary treatment for unsupported AI/BI/Onyx/Promotions/Developer surfaces instead of fabricating transactions.
+### UI
+- Execute full P0 coverage of all 84 references using the canonical screen-pack index.
+- Build actual Admin/Staff and Customer Portal surfaces, including nested states and real interactions, using shared tokens/components before screen-specific overrides.
+- Carry newly discovered UX/product requirements into the correct canonical document immediately.
 
-### CORE FRONT
-- Normalize live purchase/receipt idempotency server upper bound from 200 to canonical 128 through a reviewed migration.
-- Re-run migration, concurrency and Test-the-Test evidence on the resulting exact SHA.
+### CORE
+- Normalize purchase/receipt idempotency server upper bound 200 → 128 through reviewed migration and exact proof.
+- Continue remaining domain/integrity gaps.
 
-### SECURITY FRONT
-- Continue per-RPC classification of the authenticated-callable SECURITY DEFINER advisory set without blanket revocation.
-- Preserve RLS, tenant isolation, storage boundaries, invitation security and privilege checks.
+### SECURITY
+- Continue per-RPC SECURITY DEFINER classification without blanket revocation.
+- Preserve RLS, tenant isolation, storage, invitation and privilege boundaries.
 
-### QA / PROOF FRONT
-- Re-run exact-current-SHA application quality, security, migration, concurrency, Test-the-Test, G1/order workflow and browser/runtime verification after source changes.
-- Visual proof must bind reference + route + viewport + state + exact SHA.
+### QA / PROOF
+- Re-run only proof invalidated by the changed SHA/environment/dependency/regression.
+- New visual proof must bind reference/pack + route + viewport + state + implementation screenshot + exact SHA.
 
-### DEPLOY / RELEASE FRONT
-- Obtain exact-current-source hosted runtime proof.
-- Free deployment path first; production remains HOLD / NO TOUCH.
-- Do not spend resources on repeated blocked deployment attempts without a change capable of altering the outcome.
+### DEPLOY / RELEASE
+- Free exact-source hosted proof first.
+- No repeated deployment attempts unless the root cause or relevant deployment state has changed.
+- Production remains HOLD / NO TOUCH.
 
-### DOC FRONT
-- Complete semantic consolidation of the historical Markdown corpus before retirement; current 50/50 classification is not yet semantic merge proof.
-
-## Resource preservation
-
-- Reuse > refactor > deduplicate > bound > cache intelligently > build only when needed > deploy only when needed.
-- Reference images are stored once in `docs/ui-reference/`; never copy into `src/`, `public/`, `dist/` or test artifacts.
-- Shared reference visual tokens were added to `src/styles.css`; the change is not yet covered by full exact-SHA runtime/browser PASS.
-- Generated artifacts/caches/local credentials remain untracked.
-- Do not delete business, financial, audit or security evidence to save space.
-- Keep execution logs compact and evidence-specific.
-
-## CURRENT RESUME POINTER
-
-START FROM ACTUAL CURRENT VERIFIED HEAD `0c7b0971d8b679d79d875bc48cd29f564fd200df` ON `main`.
-
-UI:
-`docs/ui-reference/` → execute P0 visual-fidelity closure across all in-scope Admin/Staff screens → nested states → shared design-system reuse → Customer Portal fidelity pass.
-
-CORE:
-purchase/receipt idempotency `200 → 128` → reviewed migration → exact migration/concurrency/Test-the-Test proof.
-
-SECURITY:
-classify/remediate each remaining authenticated SECURITY DEFINER advisory finding according to actual caller, role, tenant scope, privilege and search_path.
-
-VERIFY:
-exact SHA → quality → security → migration → concurrency → Test-the-Test → G1/order workflow → browser/runtime → visual comparison.
-
-DEPLOY:
-exact-source hosted runtime proof using free path first; keep production HOLD.
-
-DOCS:
-semantic consolidation/reference audit of legacy corpus.
-
-DO NOT REPEAT:
-historical UI waves, closed customer/Admin surfaces, duplicate CSS work, unsupported Promotions/image-search/AI/BI/Onyx transaction logic, or evidence from an older SHA.
+### DOCS
+- Complete semantic consolidation of the legacy Markdown corpus.
+- Keep all write-backs compact and authoritative.
 
 ## Production
 
