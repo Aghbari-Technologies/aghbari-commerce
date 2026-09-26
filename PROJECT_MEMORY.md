@@ -63,13 +63,15 @@ Reopen closed work only when there is:
 
 ## 5. EXECUTION ALLOCATION — EVERY LAUNCH
 
-Approximately 50% of execution capacity:
-**FULL UI/UX CLOSURE**
+Execution capacity is **parallel and gap-driven**, not a fixed 50/50 split.
 
-Approximately 50%:
-**CORE / DATABASE / SECURITY / QA / INTEGRATION / PERFORMANCE / RELEASE CLOSURE**
+Required active fronts:
+- FULL UI/UX CLOSURE;
+- CORE / DATABASE / SECURITY / QA / INTEGRATION / PERFORMANCE / RELEASE.
 
-The split is a control rule. Production-critical defects may temporarily override it, but UI cannot be postponed indefinitely while UI gaps remain.
+Allocate effort by risk, dependency and closure value. However, while UI gaps and core/security gaps are independently executable, neither may be postponed behind the other.
+
+A blocked front never blocks an independent executable front.
 
 ## 6. UI COMPLETENESS STANDARD
 
