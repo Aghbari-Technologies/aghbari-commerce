@@ -1,6 +1,6 @@
 # 🔴 AGHBARI — CANONICAL DOCUMENT SYSTEM & RETIREMENT MANIFEST
 
-**Manifest metadata last reconciled before current write-back:** main HEAD `3b38d2eb058bc5d9b752d6c61b68e529c45acf0f`
+**Manifest metadata is descriptive only; ACTUAL GIT HEAD must always be read from Git at execution time.
 **Purpose:** replace fragmented documentation with a controlled canonical system without losing content.
 
 ## 1. FINAL DOCUMENT ARCHITECTURE
@@ -136,3 +136,11 @@ These files are implementation manifests and do not replace the canonical docume
 ### UX/UI supporting reference
 - `docs/ui-reference/UI-REFERENCE-ASSET-INDEX.md` — canonical index and operating rules for the 84 currently uploaded PNG visual references.
 - The reference directory is an input to UX/UI implementation and visual verification; it is not a second product authority.
+
+## 8. REFERENCE COVERAGE GATE — 2026-09-27
+
+- docs/ui-reference/UI-REFERENCE-ASSET-INDEX.md is the single compact coverage register for the 84 current PNG references.
+- Every reference must map to a screen pack, route/surface, state, viewport, implementation status and proof status, or be explicitly classified as a scope boundary.
+- No per-image Markdown backlog is permitted.
+- Reference-derived requirements discovered during execution must be merged into the relevant canonical document in the same closure wave.
+- Classification or visual resemblance is not proof of functionality; exact-SHA runtime/backend evidence remains mandatory.
