@@ -129,3 +129,10 @@ Do not make the mistake of requiring every future session to reread all historic
 - src/structure/index.ts — public structure module exports.
 - vercel.json — SPA deep-link routing for registered application paths.
 These files are implementation manifests and do not replace the canonical documentation authority above.
+
+
+## 2026-09-27 — UI reference source
+
+### UX/UI supporting reference
+- `docs/ui-reference/UI-REFERENCE-ASSET-INDEX.md` — canonical index and operating rules for the 84 currently uploaded PNG visual references.
+- The reference directory is an input to UX/UI implementation and visual verification; it is not a second product authority.
