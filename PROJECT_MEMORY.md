@@ -414,3 +414,11 @@ Command "1" means:
 - Product/business requirements belong in `docs/canonical/01-PRODUCT-REQUIREMENTS.md`; UX/UI in `02-UX-UI-CUSTOMER-EXPERIENCE.md`; architecture/data/domain in `03-ARCHITECTURE-DATA-DOMAIN.md`; security/reliability/offline/integrations in `04-SECURITY-RELIABILITY-INTEGRATIONS.md`; quality/certification/release in `05-QUALITY-CERTIFICATION-RELEASE.md`; market/differentiation in `06-MARKET-DIFFERENTIATION-PORTFOLIO.md`.
 - Cross-cutting requirements must have one authoritative owner with linked references rather than duplicated full text.
 - Adding a requirement to documentation does not close it: it must become implemented/verified/proven or be explicitly classified as boundary/blocked with the exact reason and next executable action.
+
+## 25. DURABLE EXECUTION RULE — PARALLEL CLOSURE + CONTEXT ECONOMY — 2026-09-27
+
+- Final closure is a parallel execution mode, not a 50/50 time split and not a serial queue: open UI and core/security/QA fronts must progress together whenever they are independently executable.
+- The 84-image pack under docs/ui-reference/ is a P0 visual input. Every reference must be classified through the canonical asset index into a route/screen/state/viewport pack or an explicit boundary.
+- New requirements discovered during reference review, implementation or legacy consolidation must be inserted into the correct canonical specialist document, with source and scope classification, rather than stored in chat or a parallel backlog.
+- Communication and repository records must use compact evidence pointers instead of repeated dumps; preserve knowledge, not repetition.
+- Resource preservation includes context/message space as well as Git/storage/build/deployment resources.
