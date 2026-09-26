@@ -899,3 +899,18 @@ The customer portal previously exposed only order summaries and reorder behavior
 ### Certification
 - NOT CLAIMED.
 - Production HOLD / NO TOUCH.
+
+
+## Follow-up 2026-09-27 — Visual foundation + artifact hygiene
+
+### Change
+- Added shared Aghbari reference visual tokens to `src/styles.css` for teal primary surfaces, soft panels, borders and muted text, and aligned global focus/eyebrow/action accents with the uploaded visual reference language.
+- Removed the duplicated customer pagination CSS block without creating a replacement style family.
+- No reference image was copied into runtime assets.
+
+### Proof boundary
+- Current source commit: `abd3b5fdf659694f79e639f6a1aa8659d2a0ba3b`.
+- This is source-level implementation evidence only; full application/browser proof remains open and must run on the exact current source SHA.
+
+### Remaining
+- Continue the actual P0 visual-fidelity implementation across the 84-reference pack, then exact-SHA browser/visual proof.
