@@ -932,3 +932,23 @@ The customer portal previously exposed only order summaries and reorder behavior
 - Normalize purchase/receipt idempotency bound 200→128 and re-prove.
 - Continue SECURITY DEFINER classification.
 - Run exact-current-SHA QA/browser/runtime/deployment proof.
+
+## Run 2026-09-27 — Protocol v2: maximum parallel closure + context economy
+
+### Change
+- Tightened AGHBARI-EXECUTION-START.md into closure-only parallel execution: UI + CORE/SECURITY/QA must advance together when independently executable; no fixed 50/50 queue.
+- Added maximum context/message/storage economy: no repeated dumps, no duplicate memory/backlog, compact evidence pointers, one UI reference index.
+- Strengthened full 84-reference UI closure: every reference must map to a screen pack with route/state/viewport/contract/implementation/proof or an explicit boundary.
+- Added requirement-gap ingestion: newly discovered product/UX/architecture/security/quality requirements must be placed in the correct canonical authority during the same closure wave when practical.
+- Updated canonical Product, UX/UI, Architecture, Security/Reliability and Quality documents plus the UI reference index.
+
+### Proof boundary
+- Protocol/documentation changes are exact-source documentation evidence only.
+- Prior functional/security/browser PASS evidence remains bound to its original exact SHA and is not transferred.
+- Current production remains HOLD / NO TOUCH.
+
+### Remaining
+- Execute the actual 84-reference visual-fidelity closure across in-scope Admin/Staff and Customer Portal surfaces.
+- Normalize purchase/receipt idempotency bound 200 → 128 and re-prove migration/concurrency/Test-the-Test.
+- Continue per-RPC SECURITY DEFINER classification and exact-current-SHA proof.
+- Obtain free exact-source hosted runtime proof and finish semantic legacy consolidation.
