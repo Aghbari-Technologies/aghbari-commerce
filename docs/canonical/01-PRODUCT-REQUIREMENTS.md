@@ -19,3 +19,14 @@ Preserve business capability, redesign weak legacy implementation. Market signal
 
 ## Canonical source merge register
 The consolidation manifest in docs/CANONICAL-DOCUMENT-SYSTEM.md lists the 9 source product documents that must be fully merged into this document before retirement. Their content must not be lost.
+
+
+## 2026-09-27 — Final-closure acceptance rules
+
+The remaining work is closure of the existing Commerce capability map, not expansion into unrelated products.
+
+Reference-backed UI is an acceptance input for in-scope capabilities. A capability is not accepted when the implementation merely reproduces a screenshot; it must also satisfy the existing completion contract: real interaction, domain/service behavior, persistence, authorization, audit, tests and applicable runtime evidence.
+
+The current `docs/ui-reference/` pack contains 84 PNG reference screens. They are treated as P0 visual sources by default. Where a screenshot contains a capability that lacks a canonical Commerce business/data contract, the visual pattern may be reused but the unsupported transaction must remain an explicit boundary.
+
+No additional product scope is created solely because a legacy screenshot contains AI/BI/Onyx/Developer tooling or Promotions.
