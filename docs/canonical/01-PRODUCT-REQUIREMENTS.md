@@ -30,3 +30,10 @@ Reference-backed UI is an acceptance input for in-scope capabilities. A capabili
 The current `docs/ui-reference/` pack contains 84 PNG reference screens. They are treated as P0 visual sources by default. Where a screenshot contains a capability that lacks a canonical Commerce business/data contract, the visual pattern may be reused but the unsupported transaction must remain an explicit boundary.
 
 No additional product scope is created solely because a legacy screenshot contains AI/BI/Onyx/Developer tooling or Promotions.
+
+## 2026-09-27 — Reference-driven requirement ingestion
+
+- Visual references are evidence for experience requirements, not permission to fabricate backend behavior.
+- When reference review reveals a missing product requirement, classify it explicitly as in-scope Commerce requirement, boundary, or unsupported historical behavior.
+- In-scope missing requirements must be added to this canonical document and converted into an executable gap in the same closure cycle where practical.
+- Product closure for a UI surface requires real interaction, state, persistence where applicable, authorization and proof; visual presence alone is insufficient.
