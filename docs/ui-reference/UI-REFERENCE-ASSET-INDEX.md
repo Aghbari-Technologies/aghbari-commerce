@@ -262,3 +262,15 @@ PRIMARY REFERENCE
 لا تُكرر التنفيذ لمجرد اختلاف اسم الملف.
 لا تحذف النسخ المكررة تلقائيًا؛ يحافظ عليها المصدر ما لم تُعتمد بوابة retirement.
 استخدم packs لتقليل مساحة الذاكرة والتوثيق، مع الحفاظ على provenance الكامل.
+
+## 16. Fast-path visual processing — 2026-09-27
+
+Do not inspect every file independently when the same screen family/state is already represented.
+
+```text
+EXACT HASH DUPLICATE → VISUAL EQUIVALENCE → SCREEN PACK → UNIQUE IMPLEMENTATION TARGET → ALIASES / PROVENANCE
+```
+
+Once a reference is proven equivalent to an implemented pack, do not rebuild or restyle the same target. Verify the alias against the existing result and move forward.
+
+Read screenshots only for decisions that affect layout, hierarchy, state, interaction, responsive behavior, accessibility or scope boundary.
