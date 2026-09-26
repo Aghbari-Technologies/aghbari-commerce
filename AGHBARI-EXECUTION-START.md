@@ -125,25 +125,43 @@ Security Finding
 Requirement Change
 ```
 
-# 4. EXECUTION FRONTIER — العمل بالتوازي
+# 4. MANDATORY PARALLEL EXECUTION FRONTIER — لا انتظار ولا تسلسل زائف
 
-أنشئ Execution Frontier من الفجوات المفتوحة الفعلية، ثم نفّذ بالتوازي على الجبهات المستقلة:
+أنشئ Execution Frontier من الفجوات المفتوحة الفعلية، ثم نفّذ بالتوازي على الجبهات المستقلة.
 
-```text
-FRONT A — FULL UI / VISUAL FIDELITY
-FRONT B — PRODUCT / DOMAIN / TRANSACTIONS
-FRONT C — DATABASE / RLS / RPC / SECURITY
-FRONT D — QA / TEST-THE-TEST / BROWSER
-FRONT E — DEPLOYMENT / RUNTIME / RELEASE
-FRONT F — PERFORMANCE / RESOURCE PRESERVATION
-FRONT G — DOCUMENT CONSOLIDATION
-```
+~~~text
+A — FULL UI / VISUAL FIDELITY
+B — CORE / DOMAIN / TRANSACTIONS
+C — DATABASE / RLS / RPC / SECURITY
+D — QA / TEST-THE-TEST / BROWSER / VISUAL PROOF
+E — DEPLOYMENT / RUNTIME / RELEASE
+F — PERFORMANCE / RESOURCE PRESERVATION
+G — DOCUMENT / REQUIREMENT CONSOLIDATION
+~~~
 
-**جبهة متوقفة لا توقف الجبهات الأخرى.**
+## قاعدة التوازي الإلزامية
+- لا تعمل الجبهات كطابور انتظار.
+- طالما توجد فجوة UI قابلة للتنفيذ، يجب تنفيذ UI وفي الوقت نفسه تنفيذ CORE/SECURITY/QA القابل للتنفيذ.
+- لا يوجد تقسيم 50/50 جامد؛ وزّع القدرة حسب المخاطر والاعتماديات، لكن ممنوع ترك UI أو القلب متوقفًا بلا سبب تقني.
+- نفّذ بالتوازي على ملفات/نطاقات مستقلة، ولا تنشئ تعديلات متعارضة لمجرد ادعاء parallelism.
+- إغلاق جبهة يفتح الجبهة التالية فورًا في نفس الدورة؛ لا تنتظر نهاية المشروع لتبدأ البقية.
+- إذا كانت جبهة محجوزة بسبب blocker خارجي، احفظها كـBLOCKED وانتقل فورًا إلى جبهة مستقلة.
 
-إذا تعطل deployment، أكمل UI/core/security/docs.  
-إذا تعطل test runner، أكمل إصلاحات الكود والاختبارات القابلة للتنفيذ.  
-إذا تطلبت جبهة تدخلًا بشريًا حقيقيًا، سجل blocker بدقة وانتقل فورًا إلى الجبهة التالية.
+## الحلقة التنفيذية لكل gap
+~~~text
+EXACT GAP
+→ ROOT CAUSE
+→ REUSE EXISTING CODE/CONTRACT
+→ MINIMUM SAFE CHANGE
+→ IMPLEMENT
+→ IMMEDIATE TEST
+→ FIX REGRESSION
+→ EXACT-SHA PROOF
+→ COMPACT WRITE-BACK
+→ NEXT GAP
+~~~
+
+الهدف ليس كثرة النشاط؛ الهدف خفض عدد OPEN GAPS فعليًا في كل دورة.
 
 # 5. قاعدة الإنجاز الفعلي — لا وقت ضائع
 
@@ -168,43 +186,49 @@ FRONT G — DOCUMENT CONSOLIDATION
 
 **اتخذ القرار التقني المناسب ونفّذه مباشرة.**
 
-# 6. REFERENCE-FIRST UI — المرجع البصري أصبح جزءًا من العقد
+# 6. REFERENCE-FIRST UI — تنفيذ كامل للمراجع وليس معاينة شكلية
 
-المصدر البصري الرسمي الحالي موجود تحت:
+المصدر البصري الإلزامي:
+docs/ui-reference/
 
-`docs/ui-reference/`
+يوجد حاليًا 84 PNG. هذه ليست مادة إلهام اختيارية؛ هي P0 visual input لكل سطح ينتمي إلى Commerce ما لم تُصنّف الصورة صراحةً كـboundary/out-of-scope.
 
-يوجد حاليًا **84 صورة PNG مرجعية** مرفوعة في هذا المسار.
+## قاعدة التغطية الكاملة
+يجب حساب الـ84 مرجعًا كلها دون استثناء عبر UI-REFERENCE-ASSET-INDEX.md باستخدام screen packs مضغوطة، وليس 84 ملف توثيق منفصل.
 
-قاعدة التنفيذ:
+لكل مرجع/pack يجب أن يمكن معرفة:
+~~~text
+REFERENCE(S) → AREA → ROUTE / SURFACE → VIEW / NESTED VIEW → STATE → VIEWPORT
+→ CONTRACT STATUS → IMPLEMENTATION STATUS → EXACT-SHA PROOF
+~~~
 
-**كل صورة مرجعية في `docs/ui-reference/` تعتبر P0 بصريًا افتراضيًا ما لم تُصنف صراحةً كغير ذلك.**
+ولا يجوز إغلاق UI reference batch طالما يوجد مرجع غير مصنّف أو غير مفسّر.
 
-المراجع تحدد:
+## عند بناء الواجهة
+~~~text
+REFERENCE
+→ EXTRACT SHARED VISUAL LANGUAGE
+→ SHARED TOKENS / PRIMITIVES
+→ SHARED COMPONENTS
+→ REAL SCREEN
+→ NESTED VIEWS
+→ REAL STATES
+→ REAL ACTIONS
+→ RESPONSIVE / ACCESSIBILITY
+→ VISUAL COMPARISON
+→ EXACT-SHA PROOF
+~~~
 
-- تركيب الشاشة؛
-- hierarchy؛
-- كثافة المعلومات؛
-- RTL alignment؛
-- المسافات؛
-- البطاقات؛
-- الحواف والـradius؛
-- الأزرار والحالات؛
-- الجداول؛
-- الشرائح/الـpills؛
-- التنقل الجانبي؛
-- الشريط العلوي؛
-- progressive disclosure؛
-- responsive composition؛
-- loading/empty/error/success presentation؛
-- interaction intent.
+## المرجع لا يبرر اختلاق Backend
+إذا عرض المرجع AI/BI/Onyx/Promotions/Developer tooling أو وظيفة غير موجودة في عقد Commerce:
+- خذ اللغة البصرية فقط حيث تنطبق؛
+- أظهر boundary واضحة؛
+- لا تنشئ fake data أو dead button أو mutation وهمية أو مصدر حقيقة ثانٍ.
 
-**المرجع البصري لا يخلق عقدًا backend غير موجود.**
+الهوية الوحيدة:
+الأغبري | Aghbari Commerce
 
-إذا عرضت الصورة وظيفة غير موجودة في Commerce مثل AI/BI/Onyx/Promotions بلا عقد canonical:
-- طبّق أسلوبها البصري على المساحات الحقيقية عند انطباقه؛
-- أظهر حدود النطاق بوضوح؛
-- لا تصنع fake data أو fake mutation أو زرًا ميتًا ليبدو التطبيق مكتملًا.
+ولا تنقل العامري أو أي هوية خارجية إلى المنتج.
 
 # 7. FULL UI CLOSURE — القسم مكتمل من أول route إلى آخر state
 
@@ -748,6 +772,35 @@ duplicate exports
 → change only when it can change the outcome
 ```
 
+## 17-A. MAXIMUM CONTEXT / MESSAGE / STORAGE ECONOMY — بدون فقد المعرفة
+
+هذه القاعدة مستقلة عن Resource Preservation وهي إلزامية للحفاظ على مساحة التنفيذ والإرسال.
+
+### في المحادثة
+- لا تُعد نشر النصوص أو الملفات أو القوائم الموجودة بالفعل.
+- لا تُلصق dumps ضخمة أو logs كاملة؛ احتفظ فقط بالنتيجة، السبب، SHA، المرجع والدليل.
+- لا تعِد شرح التاريخ أو closed work؛ استخدم canonical pointer.
+- التحديثات أثناء التنفيذ = معلومة تنفيذية جديدة فقط.
+- التقرير النهائي = compact: HEAD / changed / proven / open / blocker / resume.
+- عند الحاجة إلى تفاصيل، استخدم reference للملف/السطر بدل إعادة المحتوى.
+
+### داخل Git
+~~~text
+ONE CANONICAL MEMORY
+ONE SPECIALIST DOC PER CONCERN
+ONE UI REFERENCE INDEX
+ONE COMPACT PROGRESS LEDGER
+ONE LIVE STATE FILE
+~~~
+- لا تنشئ backlog أو memory system موازيًا.
+- لا تنشئ Markdown لكل screenshot أو لكل gap.
+- لا تكرر requirement نفسها في ملفات متعددة؛ اذكر المصدر واجعل authority في قسم واحد.
+- لا تحفظ artifacts مؤقتة أو generated reports في Git.
+- الصور المرجعية تُحفظ مرة واحدة فقط في docs/ui-reference/.
+
+### قاعدة أصغر كتابة تثبت أكبر قدر
+كل write-back يجب أن يضيف معلومة جديدة أو يصحح الواقع؛ غير ذلك = ضوضاء ومساحة مهدرة.
+
 # 18. NO-WASTE EXECUTION LOOP
 
 لكل gap:
@@ -813,6 +866,32 @@ PRECISE NEXT ACTION
 
 حتى يثبت الدمج الدلالي الكامل.
 
+# 20-A. REQUIREMENT GAP INGESTION — لا تضيع المتطلبات الجديدة
+
+إذا كشف التنفيذ أو المراجع أو legacy source عن Requirement/Constraint/Acceptance Criterion غير موجودة في الـcanonical system:
+
+~~~text
+DETECT → CLASSIFY → PLACE IN CORRECT CANONICAL SECTION
+→ RECORD SOURCE → DECIDE IN-SCOPE / BOUNDARY
+→ CREATE EXECUTABLE GAP ONLY IF IN-SCOPE
+→ IMPLEMENT IN SAME EXECUTION WAVE WHEN PRACTICAL
+→ VERIFY
+~~~
+
+التصنيف الإلزامي:
+~~~text
+PRODUCT / REQUIREMENTS → 01
+UX / UI / EXPERIENCE   → 02
+ARCHITECTURE / DATA    → 03
+SECURITY / RELIABILITY → 04
+QUALITY / RELEASE      → 05
+MARKET / PORTFOLIO     → 06
+EXECUTION HISTORY      → DEVELOPMENT-PROGRESS
+CURRENT REALITY        → LATEST-EXECUTION-STATE
+~~~
+
+لا تُسجل المتطلبات الجديدة كقائمة منفصلة في المحادثة، ولا تُخفيها داخل comments أو logs فقط.
+
 # 21. WRITE-BACK — إلزامي بعد كل جلسة
 
 ### `PROJECT_MEMORY.md`
@@ -854,43 +933,34 @@ CURRENT RESUME POINTER
 
 لا تضف سجلات ضخمة أو dumps.
 
-# 22. CURRENT RESUME POINTER — أمر تنفيذي وليس وصفًا عامًا
+# 22. CURRENT RESUME POINTER — أمر تنفيذي قابل للتنفيذ فورًا
 
-يجب أن يستطيع مبرمج جديد تنفيذها دون إعادة تحقيق.
+يجب أن تكون pointer التالية دائمًا أكثر تقدمًا من السابقة، وأن تحتوي فقط ما يحتاجه المبرمج للانطلاق دون إعادة تحقيق:
 
-صيغة إلزامية:
+~~~text
+START FROM ACTUAL CURRENT VERIFIED HEAD.
 
-```CURRENT RESUME POINTER
+UI:
+reference pack / exact route / exact missing state / relevant files
 
-START FROM CURRENT ACTUAL VERIFIED HEAD.
+CORE:
+exact contract gap / affected service-RPC-migration
 
-UI FRONT:
-docs/ui-reference/
-→ implement remaining P0 visual references across live Admin/Staff surfaces
-→ then apply same shared design system to Customer Portal
-→ close nested states only where backend contracts exist
+SECURITY:
+exact boundary / role / tenant / RPC / policy issue
 
-CORE FRONT:
-normalize purchase/receipt idempotency 200 → 128 safely
-→ re-run migration + concurrency + Test-the-Test
+QA:
+exact test/proof still required
 
-SECURITY FRONT:
-classify/close remaining authenticated SECURITY DEFINER advisory findings
+DEPLOY:
+exact current blocker or free next executable path
 
-QA FRONT:
-exact-SHA quality/security/migration/concurrency/browser proof
-
-DEPLOY FRONT:
-exact-current-source hosted runtime proof
-→ free fallback first
-→ no paid spend
-
-DOC FRONT:
-complete semantic legacy source consolidation
+DOCS:
+exact canonical source still unmerged, if any
 
 DO NOT REPEAT:
-anything already proven unless evidence is invalidated.
-```
+closed work unless evidence is invalidated.
+~~~
 
 # 23. SCOPE LOCK
 
@@ -950,39 +1020,53 @@ Production يبقى:
 
 حتى يصبح exact-source evidence مكتملًا.
 
-# 25. FINAL ORDER
+# 25. FINAL ORDER — الإغلاق الكامل لا التوقف المبكر
 
-**EXECUTE NOW.**
+EXECUTE NOW.
 
-ابدأ من:
-
-```ACTUAL CURRENT HEAD
+~~~text
+ACTUAL CURRENT HEAD
 → CANONICAL MEMORY
 → CURRENT STATE
 → OPEN-GAP FRONTIER
 → PARALLEL UI + CORE + SECURITY + QA + RELEASE
-→ TEST
-→ TEST-THE-TEST
-→ BROWSER/RUNTIME
-→ PROVE
-→ WRITE-BACK
+→ REFERENCE-DRIVEN UI CLOSURE
+→ REAL ACTIONS / PERSISTENCE
+→ TEST + TEST-THE-TEST
+→ SECURITY / BROWSER / RUNTIME
+→ EXACT-SHA PROOF
+→ REQUIREMENT WRITE-BACK
+→ COMPACT STATE WRITE-BACK
+→ OPEN NEXT GAP
 → CONTINUE
-```
+~~~
 
-ولا تتوقف عند نجاح workflow واحد.
+## ممنوعات الإغلاق المبكر
+- لا تعتبر route مكتملًا لمجرد أنه يفتح.
+- لا تعتبر screenshot مطابقًا إذا كانت الوظيفة وهمية.
+- لا تعتبر build أو CI بديلًا عن runtime/browser proof.
+- لا تنقل evidence من SHA سابق.
+- لا تعيد العمل المغلق دون سبب موثق.
+- لا توقف UI حتى يكتمل backend إذا كان هناك UI work مستقل وآمن.
+- لا توقف CORE/SECURITY لأن UI أو deployment متوقف.
+- لا تنتظر المستخدم إلا في خطوة بشرية حقيقية بعد استنفاد البدائل المجانية العملية.
+- لا تنفق موارد مدفوعة لمجرد إعادة محاولة blocker لم يتغير سببه.
 
-لا تعد إلى الصفر.  
-لا تعيد المكتمل.  
-لا تترك UI نصف مكتملة.  
-لا تترك زرًا بلا وظيفة.  
-لا تترك وظيفة بلا persistence.  
-لا تترك persistence بلا authorization.  
-لا تترك authorization بلا evidence.  
-لا تعلن PASS بلا إثبات.  
-لا تستهلك مساحة أو موارد بلا قيمة تنفيذية.
+## Definition of Done
+~~~text
+FULL REFERENCE COVERAGE
++ FULL UI / STATES / ACTIONS
++ FULL CORE CLOSURE
++ SECURITY / RLS / RBAC
++ TEST-THE-TEST
++ BROWSER / RUNTIME
++ EXACT-SHA EVIDENCE
++ CANONICAL DOCUMENTATION
++ COMPACT RESUMABLE STATE
+~~~
 
-**كل جلسة يجب أن تقلّل عدد الـopen gaps فعليًا، وتزيد مساحة الواجهة المكتملة والقلب التشغيلي المثبت، وتترك المشروع في Exact State قابل للاستئناف دون إعادة تحقيق.**
+### Production
+ HOLD / NO TOUCH حتى يكتمل exact-source evidence وجميع بوابات الإصدار المطلوبة.
 
 # الأغبري ليس Demo.
-
-# الأغبري منتج B2B جاد يجب إغلاقه بالكامل.
+# الأغبري منتج B2B جاد يجب أن يُغلق فعليًا، لا أن يبدو مغلقًا.
