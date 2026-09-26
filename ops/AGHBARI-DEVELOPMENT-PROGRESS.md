@@ -861,3 +861,41 @@ The customer portal previously exposed only order summaries and reorder behavior
 - Consume final Test-the-Test, Concurrency and Migration Proof results for the exact documentation/source SHA after write-back.
 - Live purchase/receipt RPC idempotency upper bound remains 200 vs repository/client 128; no over-128 live records exist. Production remains HOLD / NO TOUCH.
 - Hosted exact-source runtime/certification remains open.
+
+
+## Run 2026-09-27 — Final-closure protocol + UI reference pack
+
+### Start
+- Actual current line was verified from `main`; the latest user upload added 84 PNG visual references under `docs/ui-reference/`.
+- Execution moved from broad discovery to final closure/hardening mode.
+
+### Change
+- Rewrote `AGHBARI-EXECUTION-START.md` as a closure-only execution protocol.
+- Enforced parallel UI/core/security/QA/release/document fronts and an explicit no-wait blocker rule.
+- Added maximum space/resource preservation rules covering reference assets, generated artifacts, dependencies, CSS/components, caches, queues, builds and deployments.
+- Promoted `docs/ui-reference/` to the canonical visual-reference source; all 84 current PNGs are P0 visual references by default unless explicitly classified.
+- Added reference-derived UI requirements to the canonical Product, UX/UI, Architecture, Security/Reliability and Quality documents.
+- Registered the UI reference pack in `docs/CANONICAL-DOCUMENT-SYSTEM.md`.
+- Tightened `.gitignore` for additional local caches/build metadata/deployment working directories.
+- Removed a duplicated customer pagination CSS block from `src/customer-portal-v3.css`.
+
+### Root Cause
+- The project had already closed much of the transactional/core and baseline UI work, while the original execution prompt still described an earlier broad-build phase.
+- The new 84-image reference pack also required an explicit canonical visual contract and storage policy so the programmer cannot ignore visual fidelity or duplicate assets.
+
+### Proof
+- Current main HEAD after this run: `b0645ddd7318f42f9f1d6dcd2411ba60490a6bdb`.
+- Reference pack presence and count verified from upload commit `93b6fd2987ca670a07ebc0bc4449c5cbc550dfa7`: 84 PNG files under `docs/ui-reference/`.
+- Existing functional/security evidence remains bound to its original exact SHAs; no evidence was transferred to this documentation/current-head line.
+
+### Remaining
+- Execute the 84-image P0 visual-fidelity closure over all in-scope Admin/Staff screens and carry the shared visual language into Customer Portal.
+- Normalize live purchase/receipt idempotency bound 200 → 128 through reviewed migration and re-prove.
+- Continue per-RPC SECURITY DEFINER classification.
+- Re-run exact-current-SHA QA/security/migration/concurrency/Test-the-Test/browser/runtime proof after source changes.
+- Obtain exact-source hosted runtime/deployment proof.
+- Complete semantic consolidation of the legacy Markdown corpus before retirement.
+
+### Certification
+- NOT CLAIMED.
+- Production HOLD / NO TOUCH.
