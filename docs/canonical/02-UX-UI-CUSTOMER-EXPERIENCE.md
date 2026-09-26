@@ -77,3 +77,11 @@ UI work must proceed by closure batches:
 `reference pack → shared design primitives → live screen → nested states → real actions → exact-SHA verification`.
 
 Do not create a second design system, duplicate CSS family or duplicate asset copy for the same visual requirement.
+
+## 2026-09-27 — Full reference pack closure
+
+- All 84 current docs/ui-reference/ PNGs are P0 visual inputs until explicitly classified otherwise.
+- Full UI construction means reference coverage across Admin/Staff and Customer Portal, including nested views, actions, validation, permissions and all applicable states; it is not limited to the first visible route.
+- Use a shared visual system first, then close screens in dependency batches. Do not create duplicate CSS/component families to match isolated screenshots.
+- Every reference-backed screen must have a route/surface, state, viewport, implementation status and exact-SHA visual/runtime proof, or an explicit boundary classification.
+- Reference-derived UI requirements discovered during execution must be added here when they concern user experience, navigation, interaction or accessibility.
