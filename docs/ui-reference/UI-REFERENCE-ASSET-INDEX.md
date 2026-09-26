@@ -231,3 +231,17 @@ EXACT-SHA EVIDENCE
 
 استخدمها كمصدر تنفيذ واختبار، وأنهِ أكبر قدر ممكن من **in-scope live UI** في كل جلسة بالتوازي مع CORE/SECURITY/QA.
 
+## 13. Mandatory 84-reference coverage gate
+
+The 84 current PNGs must all be accounted for without creating 84 separate documents.
+
+Use one compact row per screen pack with:
+reference(s) | area | route/surface | view/state | viewport | contract/boundary | implementation | proof
+
+A pack is not closed while any member reference is unclassified, visually unimplemented, or lacking an explicit boundary decision.
+
+Reference review may discover missing product/UX/security/quality requirements. Such requirements must be routed into the corresponding canonical document; this index records the visual source and coverage, not a parallel requirements authority.
+
+## 14. Execution economy
+
+Do not repeat screenshots, crops, reports, comparisons or local artifacts when an existing proof already answers the same question. Generate new visual evidence only when it closes a distinct gap, changed SHA, changed viewport/state, or invalidated evidence.
