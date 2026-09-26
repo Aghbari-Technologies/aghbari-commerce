@@ -1,8 +1,8 @@
 # 🔴 AGHBARI LATEST EXECUTION STATE
 
 Project: Aghbari Commerce | الأغبري
-Actual source HEAD at start of this write-back: `245a8bc0f2b99a0676f0e1e4c74edf2eb7b76c35`
-Verified functional checkpoint: `8c1d817ff67165f4844571f2e9cbb55c5cc3e38a`
+Actual current Git HEAD before this final write-back: 1ed8f0c1ee58071d4477fc8e69cd073bb83f2913
+Verified functional checkpoint remains historically bound to its original exact SHA; no evidence transfer.
 Branch: main
 Production: HOLD / NO TOUCH
 Certification: NOT CLAIMED
@@ -57,10 +57,3 @@ Certification: NOT CLAIMED
 
 HOLD / NO TOUCH
 
-
-## 2026-09-27 — Canonical requirement-intake hardening write-back
-
-- Actual current repository HEAD: `aecae4125a8193c26596faea20e347800d06b8cf`.
-- The execution protocol now explicitly requires newly discovered requirements/specifications to be classified into the owning canonical specialist document and then driven to implemented/verified/proven or explicit boundary/blocked status.
-- This is documentation/control-plane hardening; prior functional PASS evidence remains bound to its original exact SHA.
-- Current resume pointer remains the final-closure frontier: 84-reference P0 visual implementation, purchase/receipt idempotency normalization 200→128, per-RPC security classification, exact-SHA QA/browser/runtime, free hosted proof, semantic legacy consolidation.
