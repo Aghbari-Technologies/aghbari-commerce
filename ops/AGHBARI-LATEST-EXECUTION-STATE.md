@@ -91,3 +91,11 @@ historical UI waves, closed customer/Admin surfaces, duplicate CSS work, unsuppo
 ## Production
 
 HOLD / NO TOUCH
+
+
+## 2026-09-27 — Canonical requirement-intake hardening write-back
+
+- Actual current repository HEAD: `aecae4125a8193c26596faea20e347800d06b8cf`.
+- The execution protocol now explicitly requires newly discovered requirements/specifications to be classified into the owning canonical specialist document and then driven to implemented/verified/proven or explicit boundary/blocked status.
+- This is documentation/control-plane hardening; prior functional PASS evidence remains bound to its original exact SHA.
+- Current resume pointer remains the final-closure frontier: 84-reference P0 visual implementation, purchase/receipt idempotency normalization 200→128, per-RPC security classification, exact-SHA QA/browser/runtime, free hosted proof, semantic legacy consolidation.
