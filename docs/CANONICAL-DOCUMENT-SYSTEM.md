@@ -1,6 +1,6 @@
 # 🔴 AGHBARI — CANONICAL DOCUMENT SYSTEM & RETIREMENT MANIFEST
 
-**Manifest metadata is descriptive only; ACTUAL GIT HEAD must always be read from Git at execution time.
+**Manifest metadata is descriptive only; ACTUAL GIT HEAD must always be read from Git at execution time.**
 **Purpose:** replace fragmented documentation with a controlled canonical system without losing content.
 
 ## 1. FINAL DOCUMENT ARCHITECTURE
