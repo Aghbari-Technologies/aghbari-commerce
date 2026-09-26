@@ -40,3 +40,10 @@ The manifest lists the security/offline/integration sources that must be fully m
 - Visual fidelity work cannot weaken RLS, RBAC, tenant isolation, storage policies or RPC authorization to reproduce a screenshot.
 - Local caches, offline queues, retries and temporary artifacts must remain bounded and must not become alternate sources of transactional truth.
 - Security evidence remains exact-SHA evidence; screenshot/reference comparison never substitutes for runtime security verification.
+
+## 2026-09-27 — Visual implementation cannot weaken boundaries
+
+- A screenshot/reference is untrusted input for visual fidelity and cannot justify relaxing RLS, RBAC, tenant isolation, storage policies, RPC privilege boundaries or audit requirements.
+- Missing requirements discovered from UI references must be classified against actual callers, roles, tenant scope and data sensitivity before any implementation.
+- Reference-driven error/loading/offline states must preserve the same authorization and server-authoritative truth model as the happy path.
+- Bounded resource rules apply to offline queues, retries, caches, browser persistence and visual test artifacts.
