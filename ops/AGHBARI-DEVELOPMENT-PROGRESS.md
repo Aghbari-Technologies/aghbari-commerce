@@ -914,3 +914,21 @@ The customer portal previously exposed only order summaries and reorder behavior
 
 ### Remaining
 - Continue the actual P0 visual-fidelity implementation across the 84-reference pack, then exact-SHA browser/visual proof.
+
+
+## Run 2026-09-27 — Canonical requirement intake enforcement
+
+### Change
+- Added mandatory canonical classification for requirements/specifications discovered from UI references, historical documents, code, tests, runtime and security review.
+- The protocol now requires each requirement to become implemented/verified/proven or explicitly boundary/blocked; documentation alone is not completion.
+- Updated current state to the exact post-hardening HEAD.
+
+### Proof
+- Exact current HEAD: `aecae4125a8193c26596faea20e347800d06b8cf`.
+- No prior evidence was transferred to this SHA.
+
+### Remaining
+- Execute the 84-image P0 visual-fidelity closure across in-scope UI.
+- Normalize purchase/receipt idempotency bound 200→128 and re-prove.
+- Continue SECURITY DEFINER classification.
+- Run exact-current-SHA QA/browser/runtime/deployment proof.
