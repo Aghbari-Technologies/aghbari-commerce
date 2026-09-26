@@ -406,3 +406,11 @@ Command "1" means:
 - Before declaring UI complete, every applicable P0 reference must have a corresponding implemented surface or an explicit scope-boundary classification.
 - Visual evidence must bind the reference, route, viewport, state and exact source SHA.
 - Closed UI/core work is not reopened unless the no-regression exceptions in the execution protocol are met.
+
+
+## 24. CANONICAL REQUIREMENT INTAKE — 2026-09-27
+
+- Any new requirement/specification discovered from references, code, tests, runtime, security review or operational evidence must be classified into the canonical specialist document that owns it.
+- Product/business requirements belong in `docs/canonical/01-PRODUCT-REQUIREMENTS.md`; UX/UI in `02-UX-UI-CUSTOMER-EXPERIENCE.md`; architecture/data/domain in `03-ARCHITECTURE-DATA-DOMAIN.md`; security/reliability/offline/integrations in `04-SECURITY-RELIABILITY-INTEGRATIONS.md`; quality/certification/release in `05-QUALITY-CERTIFICATION-RELEASE.md`; market/differentiation in `06-MARKET-DIFFERENTIATION-PORTFOLIO.md`.
+- Cross-cutting requirements must have one authoritative owner with linked references rather than duplicated full text.
+- Adding a requirement to documentation does not close it: it must become implemented/verified/proven or be explicitly classified as boundary/blocked with the exact reason and next executable action.
