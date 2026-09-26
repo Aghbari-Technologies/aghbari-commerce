@@ -37,3 +37,11 @@ The manifest lists the quality/certification/release documents that must be full
 - Visual closure evidence must bind reference, route, viewport, state, exact source SHA and implementation result.
 - Use visual comparison to detect hierarchy/spacing/state regressions, but do not treat a screenshot match as proof of backend correctness.
 - Do not generate duplicate visual reports, build artifacts or deployment attempts solely for repetition; retain only evidence with distinct proof value.
+
+## 2026-09-27 — Reference coverage is a release gate
+
+- P0 visual closure requires coverage of all 84 current PNG references through the canonical asset index.
+- Visual proof must bind reference/pack, route, state, viewport, implementation screenshot and exact source SHA.
+- A visual match does not substitute for functional, security, persistence, browser or runtime proof.
+- New requirements discovered during visual or runtime review must be routed to the correct canonical document before the corresponding feature can be considered fully closed.
+- Do not spend build/deployment resources on redundant evidence; each artifact must answer a distinct verification question.
