@@ -952,3 +952,15 @@ The customer portal previously exposed only order summaries and reorder behavior
 - Normalize purchase/receipt idempotency bound 200 → 128 and re-prove migration/concurrency/Test-the-Test.
 - Continue per-RPC SECURITY DEFINER classification and exact-current-SHA proof.
 - Obtain free exact-source hosted runtime proof and finish semantic legacy consolidation.
+
+## Run 2026-09-27 — Reference deduplication + session continuity hardening
+
+### Change
+- Clarified that 84 PNG files do not equal 84 unique implementations; duplicates/visual equivalents must be grouped and implemented once with provenance preserved.
+- Added mandatory session write-back contract so a new session can resume from Git + canonical memory + live state without chat-history reconstruction.
+
+### Proof boundary
+- Control/documentation rule only; does not transfer prior functional or browser evidence.
+
+### Remaining
+- Apply deduplicated 84-reference screen-pack coverage to actual in-scope UI and maintain the exact next-action resume pointer after each execution.
