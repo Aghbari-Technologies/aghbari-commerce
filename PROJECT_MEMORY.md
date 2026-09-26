@@ -429,3 +429,13 @@ Command "1" means:
 - Every execution session must leave a compact resumable checkpoint in `ops/AGHBARI-LATEST-EXECUTION-STATE.md` and a progress record in `ops/AGHBARI-DEVELOPMENT-PROGRESS.md`. A new session must be able to resume from Git + canonical memory + live state without depending on chat history.
 - The resume pointer must contain an exact next executable action, relevant files/domain, proof required, blockers, and do-not-repeat boundary.
 - Chat history is convenience only; repository state is the durable execution memory.
+
+## 27. DURABLE EXECUTION EFFICIENCY RULES — 2026-09-27
+
+- Execution is read-to-act: start from the live resume pointer, read only the minimum files/ranges needed for the current gap, then implement.
+- Closed/proven work is locked unless Regression, Dependency Change, Environment Change, Evidence Invalidation, Security Finding or Requirement Change is documented.
+- Two unchanged failures trigger a stop-retry rule: change the root cause or switch fronts.
+- Every meaningful closure batch must write a compact exact checkpoint before proceeding.
+- A session interruption must never require chat-history reconstruction; Git + canonical memory + live state are the durable resume source.
+- The 84 reference files are deduplicated into the smallest correct implementation set while preserving provenance.
+- Success is measured by fewer open gaps and more verified closure, not by files read, searches run, commits made or reports generated.
