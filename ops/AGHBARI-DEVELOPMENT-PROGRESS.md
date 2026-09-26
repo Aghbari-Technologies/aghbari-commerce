@@ -964,3 +964,16 @@ The customer portal previously exposed only order summaries and reorder behavior
 
 ### Remaining
 - Apply deduplicated 84-reference screen-pack coverage to actual in-scope UI and maintain the exact next-action resume pointer after each execution.
+
+## Run 2026-09-27 — Execution acceleration / anti-rework lock
+
+### Change
+- Added read-to-act fast path, closed-work lock, same-failure brake, closure-batch discipline and continuous checkpoints.
+- Strengthened session continuity so each meaningful closure writes an exact compact resume state.
+- Tightened reference processing to deduplicate before implementation and preserve provenance without duplicate work.
+
+### Proof boundary
+- Control/documentation hardening only; prior functional/security/browser evidence remains bound to its original exact SHA.
+
+### Remaining
+- Apply the fast-path method to the actual remaining UI/core/security gaps.
