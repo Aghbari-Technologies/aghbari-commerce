@@ -390,7 +390,7 @@ bundle references into production assets
 
 لا تحفظ نسخة ثانية من الصورة نفسها إلا إذا كانت مطلوبة لسبب تقني واضح ومثبت.
 
-# 10. MISSING REQUIREMENTS / SPEC INTAKE — لا تسمح بفقد أي متطلب جديد
+# 10-A. MISSING REQUIREMENTS / SPEC INTAKE — لا تسمح بفقد أي متطلب جديد
 
 أي متطلب أو مواصفة تظهر من:
 - الصور والمراجع البصرية؛
