@@ -1,8 +1,8 @@
 # 🔴 AGHBARI LATEST EXECUTION STATE
 
 Project: Aghbari Commerce | الأغبري
-Actual HEAD at start of this write-back: `7c85eb892e378ce73917824f66e07323d5fd9944`
-Functional source checkpoint: `8c1d817ff67165f4844571f2e9cbb55c5cc3e38a`
+Actual source HEAD at start of this write-back: `245a8bc0f2b99a0676f0e1e4c74edf2eb7b76c35`
+Verified functional checkpoint: `8c1d817ff67165f4844571f2e9cbb55c5cc3e38a`
 Branch: main
 Production: HOLD / NO TOUCH
 Certification: NOT CLAIMED
@@ -58,6 +58,7 @@ Certification: NOT CLAIMED
 
 - Reuse > refactor > deduplicate > bound > cache intelligently > build only when needed > deploy only when needed.
 - Reference images are stored once in `docs/ui-reference/`; never copy into `src/`, `public/`, `dist/` or test artifacts.
+- Shared reference visual tokens were added to `src/styles.css`; the change is not yet covered by full exact-SHA runtime/browser PASS.
 - Generated artifacts/caches/local credentials remain untracked.
 - Do not delete business, financial, audit or security evidence to save space.
 - Keep execution logs compact and evidence-specific.
