@@ -47,3 +47,33 @@ docs/CANONICAL-DOCUMENT-SYSTEM.md identifies the legacy UI document that must be
 - Capability buttons may not be rendered as executable controls unless they have a real interaction. Unsupported capabilities such as image search remain explicit non-action boundaries.
 - Customer voice search is implemented through the browser Speech Recognition API with Arabic locale, explicit unsupported-browser/permission recovery, and a visible listening state. 
 - Dynamic customer-control settings expose only real controls; order limits, template limits and payment-method configuration are validated before persistence.
+
+
+## 2026-09-27 — Reference-driven visual closure
+
+`docs/ui-reference/` is now a mandatory visual reference source for UI execution. The current pack contains 84 PNG screenshots.
+
+For every reference-backed surface, preserve the reference's visual intent across:
+- page composition and information hierarchy;
+- Arabic/RTL alignment and reading order;
+- top navigation/header hierarchy;
+- contextual right-side navigation where applicable;
+- grouped pale-cyan panels, rounded operational cards and compact pill actions;
+- dense tables with clear column hierarchy, badges and action affordances;
+- KPI/summary cards and quick-action strips;
+- responsive desktop/tablet/mobile composition;
+- dialogs/drawers, focus behavior and progressive disclosure;
+- loading/empty/error/success/disabled/permission/offline states.
+
+Visual fidelity must be implemented through shared tokens/primitives and reused components before screen-specific overrides.
+
+The screenshot pack is a visual contract only. A screenshot that shows AI/BI/Onyx/Promotions or other unsupported functionality does not authorize fabrication of a Commerce backend contract. Such surfaces must remain explicit boundaries until canonical product/data contracts exist.
+
+Every applicable P0 reference must be mapped to a real in-scope route or an explicit boundary classification. A render-only approximation is not closure.
+
+## 2026-09-27 — UI time-efficiency rule
+
+UI work must proceed by closure batches:
+`reference pack → shared design primitives → live screen → nested states → real actions → exact-SHA verification`.
+
+Do not create a second design system, duplicate CSS family or duplicate asset copy for the same visual requirement.
