@@ -1,73 +1,89 @@
 # 🔴 AGHBARI LATEST EXECUTION STATE
 
 Project: Aghbari Commerce | الأغبري
-Source/functional HEAD represented by this checkpoint: 8c1d817ff67165f4844571f2e9cbb55c5cc3e38a
+Actual Git HEAD: `0c7b0971d8b679d79d875bc48cd29f564fd200df`
+Functional source checkpoint remains: `8c1d817ff67165f4844571f2e9cbb55c5cc3e38a`
 Branch: main
 Production: HOLD / NO TOUCH
 Certification: NOT CLAIMED
 
-## Current Reality
-- The current execution continued on the live main line and closed additional UI, security, performance and migration-provenance gaps.
-- No rollback, fake feature, parallel transaction source or Report-Advisor/BI operational dependency was introduced.
+## Current reality
 
-## Closed in the current execution chain
-- AdminPanel JSX integrity repaired; missing canAdmin permission variable restored.
-- All 17 live Admin deep-link targets were checked and now resolve to matching DOM anchors.
-- Control Plane runtime status is data-driven; misleading assistant wording removed.
-- Customer voice search is real, Arabic-locale browser Speech Recognition with listening/permission/unsupported fallback.
-- Image search is explicitly non-interactive until a canonical visual-search contract exists.
-- Same-origin microphone Permissions-Policy enabled for the implemented voice-search capability.
-- Customer template branch labels derive from the active warehouse context instead of hardcoded business state.
-- Finance, Purchasing, Inventory and Admin data-load callbacks no longer depend on initialized selection values that can trigger reload loops.
-- Customer control settings expose real voice/retail-price-information controls and validate limits/payment configuration before save.
-- Customer navigation uses the URL-synchronized navigate() path.
-- Legacy inventory-sync navigation is explicitly bounded because there is no independent canonical sync transaction.
-- Dynamic client preview no longer contains fake interactive buttons.
-- client_ui_settings database INSERT/UPDATE/DELETE is now owner/admin-gated at RLS level.
-- Barcode-aware catalog RPC was applied through the migration mechanism and is now present in live migration provenance.
-- Security classification test 031 covers public SECURITY DEFINER exposure, RLS, notification scope and client-control authorization.
+- The project is in final closure/hardening mode, not initial discovery.
+- 84 PNG visual-reference assets are now stored under `docs/ui-reference/` and governed by the canonical reference index.
+- The execution protocol was rewritten to force closure-only execution, parallel UI/core/security/QA/release fronts, exact-SHA proof and maximum resource preservation.
+- Canonical Product, UX/UI, Architecture, Security/Reliability and Quality documents now explicitly include the reference-backed UI and resource-preservation rules.
+- `.gitignore` now excludes additional local caches/build metadata and deployment working directories.
+- Duplicate customer pagination CSS was removed from `src/customer-portal-v3.css`; no reference assets were duplicated into runtime folders.
 
-## Live verification — Supabase project mrcyqezbhpncuvaehwgf
-- orders.payment_method: present.
-- notifications table: present.
-- client_ui_settings: present.
-- get_catalog_with_barcode(text,uuid,integer,integer,uuid): present; SECURITY DEFINER; search_path empty; authenticated execute true; anon execute false.
-- public tables with RLS: 60/60.
-- public SECURITY DEFINER routines executable by anon: 0.
-- public SECURITY DEFINER routines missing explicit empty search_path: 0.
-- current_organization_id(), current_customer_id(), is_staff(), is_staff_reader(): authenticated execute true; tenant-context helpers denied to anon.
-- client_ui_settings policies: owner/admin-only INSERT, UPDATE and DELETE; organization-scoped SELECT.
-- latest required live migration provenance entries recorded: 2 — canonicalize_barcode_catalog_rpc_lineage and harden_client_ui_settings_admin_boundary.
+## Confirmed existing closure
 
-## Evidence boundary
-- Live SQL evidence above is current environment evidence only.
-- The repository pgTAP test cannot be marked as live PASS because raw SQL access does not expose pgTAP plan(); it remains test-harness/CI evidence.
-- Exact-SHA application-quality, security, migration, concurrency, G1, order workflow, Test-the-Test and browser runs must be consumed for the latest exact source SHA.
-- Existing PASS evidence from older SHAs is never transferred.
-- Vercel current project has recent source-mismatched/error deployments and no exact-current-source deployment proof is claimed.
-- Existing Netlify project is free/claimed, but its deployment writer requires a source-directory command that is not executable from the GitHub connector alone.
+- Customer catalog pagination / Quick Order / Excel SKU-barcode resolution / bounded bulk input / product detail / order and finance recovery are closed at the prior functional checkpoint.
+- Admin/Catalog/Staff JSX and TypeScript integrity, governance detail surfaces, role hardening and operational recovery work were previously closed at their exact evidence checkpoint.
+- Live Supabase invariants previously re-read: 60/60 public tables RLS, 0 anon-executable public SECURITY DEFINER routines, and 0 inspected public SECURITY DEFINER routines missing the required explicit search_path setting.
 
-## OPEN EXECUTION FRONTIER
-1. Consume final exact-SHA Test-the-Test, Concurrency and Migration Proof results after this documentation write-back.
-2. Continue nested contract-backed UI gaps only where a real backend contract exists; do not re-open proven customer/Admin surfaces.
-3. Normalize live purchase/receipt idempotency server bound from 200 to the canonical 128 only through a reviewed migration; production stays NO TOUCH until safely evidenced.
-4. Complete semantic legacy Markdown reconciliation/reference audit before retirement; do not claim 100% consolidation early.
-5. Obtain exact-source hosted browser/runtime proof and resolve release/certification gate; keep production HOLD.
+## Open execution frontier
+
+### UI FRONT — highest active build front
+- Execute the 84-image P0 reference pack against the live in-scope Admin/Staff surfaces.
+- Use existing shared components/tokens first; do not create a parallel design system.
+- Close nested route/view/action/state gaps only where a real Commerce contract exists.
+- Apply the same reference-derived visual language to Customer Portal while preserving its real B2B flows.
+- Maintain explicit boundary treatment for unsupported AI/BI/Onyx/Promotions/Developer surfaces instead of fabricating transactions.
+
+### CORE FRONT
+- Normalize live purchase/receipt idempotency server upper bound from 200 to canonical 128 through a reviewed migration.
+- Re-run migration, concurrency and Test-the-Test evidence on the resulting exact SHA.
+
+### SECURITY FRONT
+- Continue per-RPC classification of the authenticated-callable SECURITY DEFINER advisory set without blanket revocation.
+- Preserve RLS, tenant isolation, storage boundaries, invitation security and privilege checks.
+
+### QA / PROOF FRONT
+- Re-run exact-current-SHA application quality, security, migration, concurrency, Test-the-Test, G1/order workflow and browser/runtime verification after source changes.
+- Visual proof must bind reference + route + viewport + state + exact SHA.
+
+### DEPLOY / RELEASE FRONT
+- Obtain exact-current-source hosted runtime proof.
+- Free deployment path first; production remains HOLD / NO TOUCH.
+- Do not spend resources on repeated blocked deployment attempts without a change capable of altering the outcome.
+
+### DOC FRONT
+- Complete semantic consolidation of the historical Markdown corpus before retirement; current 50/50 classification is not yet semantic merge proof.
+
+## Resource preservation
+
+- Reuse > refactor > deduplicate > bound > cache intelligently > build only when needed > deploy only when needed.
+- Reference images are stored once in `docs/ui-reference/`; never copy into `src/`, `public/`, `dist/` or test artifacts.
+- Generated artifacts/caches/local credentials remain untracked.
+- Do not delete business, financial, audit or security evidence to save space.
+- Keep execution logs compact and evidence-specific.
 
 ## CURRENT RESUME POINTER
-START FROM CURRENT VERIFIED HEAD `8c1d817ff67165f4844571f2e9cbb55c5cc3e38a` on main; after documentation write-back, rerun exact-SHA evidence on the new docs HEAD.
 
-UI FRONT:
-Customer Portal -> catalog pagination / quick order / Excel resolution / order retry / finance retry are closed. Continue Admin -> remaining contract-backed nested edit/recovery surfaces only after exact evidence scan.
+START FROM ACTUAL CURRENT VERIFIED HEAD `0c7b0971d8b679d79d875bc48cd29f564fd200df` ON `main`.
 
-CORE FRONT:
-Purchase/receipt idempotency server bound drift (200 live vs 128 client/repo) is the next explicit contract gap; do not touch production while HOLD.
+UI:
+`docs/ui-reference/` → execute P0 visual-fidelity closure across all in-scope Admin/Staff screens → nested states → shared design-system reuse → Customer Portal fidelity pass.
+
+CORE:
+purchase/receipt idempotency `200 → 128` → reviewed migration → exact migration/concurrency/Test-the-Test proof.
+
+SECURITY:
+classify/remediate each remaining authenticated SECURITY DEFINER advisory finding according to actual caller, role, tenant scope, privilege and search_path.
 
 VERIFY:
-Exact SHA -> application quality -> security -> migration -> concurrency -> Test-the-Test -> G1/order workflow -> browser/runtime -> hosted exact-source match.
+exact SHA → quality → security → migration → concurrency → Test-the-Test → G1/order workflow → browser/runtime → visual comparison.
+
+DEPLOY:
+exact-source hosted runtime proof using free path first; keep production HOLD.
+
+DOCS:
+semantic consolidation/reference audit of legacy corpus.
 
 DO NOT REPEAT:
-Closed catalog pagination, bulk SKU/barcode resolution, Admin JSX repairs, Staff Operations detail UI, idempotency boundary tests, historical UI waves, unsupported Promotions/image-search, or Report-Advisor/BI transaction logic.
+historical UI waves, closed customer/Admin surfaces, duplicate CSS work, unsupported Promotions/image-search/AI/BI/Onyx transaction logic, or evidence from an older SHA.
 
-## PRODUCTION
+## Production
+
 HOLD / NO TOUCH
