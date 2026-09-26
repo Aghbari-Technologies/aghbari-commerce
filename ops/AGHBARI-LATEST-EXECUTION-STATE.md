@@ -2,7 +2,7 @@
 
 Project: Aghbari Commerce | الأغبري
 Branch: main
-Current documentation/control HEAD before this state write-back: 3ab635750af76b604de74bd0c1de96aea27f173a
+Current Git HEAD is authoritative; this checkpoint intentionally avoids a stale pinned HEAD.
 Production: HOLD / NO TOUCH
 Certification: NOT CLAIMED
 
@@ -48,21 +48,32 @@ Reuse → refactor → deduplicate → bound → cache intelligently → build o
 
 START FROM ACTUAL CURRENT VERIFIED HEAD.
 
-UI: deduplicate/group all 84 references → implement only unique live screen packs → close nested states/actions → visual/browser proof.
+READ ONLY:
+PROJECT_MEMORY.md + this state + relevant canonical specialist document + exact files named by the active gap.
 
-CORE: purchase/receipt idempotency 200 → 128 → migration → concurrency → Test-the-Test.
+UI:
+deduplicate 84 references → unique screen packs → implement highest-priority unclosed pack → nested states/actions → exact visual/browser proof.
 
-SECURITY: remaining authenticated SECURITY DEFINER classification + tenant/RLS/privilege proof.
+CORE:
+purchase/receipt idempotency 200 → 128 → migration → concurrency → Test-the-Test.
 
-QA: exact-SHA proofs required after changed source/environment/dependency/regression.
+SECURITY:
+remaining authenticated SECURITY DEFINER classification + tenant/RLS/privilege proof.
 
-DEPLOY: free exact-source runtime proof; no unchanged retries.
+QA:
+run only newly required or invalidated proofs.
 
-DOCS: semantic legacy merge/retirement; maintain compact state.
+DEPLOY:
+free exact-source runtime proof; no unchanged retries.
 
-NEXT EXECUTABLE ACTION: start from actual HEAD, verify the reference pack grouping/index, then implement the highest-value still-unclosed unique UI pack while advancing CORE/SECURITY/QA in parallel.
+DOCS:
+semantic legacy consolidation only where needed for an active gap.
 
-DO NOT REPEAT: closed work without Regression / Dependency Change / Environment Change / Evidence Invalidation / Security Finding / Requirement Change.
+NEXT EXECUTABLE ACTION:
+start from actual HEAD, inspect only the files required for the highest-value open gap, implement the smallest safe closure batch, test immediately, then checkpoint the exact result.
+
+DO NOT REPEAT:
+closed/proven work without an allowed reopening condition.
 
 ## Definition of done
 
