@@ -366,6 +366,55 @@ bundle references into production assets
 
 لا تحفظ نسخة ثانية من الصورة نفسها إلا إذا كانت مطلوبة لسبب تقني واضح ومثبت.
 
+# 10. MISSING REQUIREMENTS / SPEC INTAKE — لا تسمح بفقد أي متطلب جديد
+
+أي متطلب أو مواصفة تظهر من:
+- الصور والمراجع البصرية؛
+- الوثائق التاريخية؛
+- الكود الحالي؛
+- اكتشاف فجوة أثناء التنفيذ؛
+- نتيجة اختبار أو Browser/Runtime؛
+- Security review؛
+- ملاحظة تشغيلية حقيقية؛
+
+يجب تصنيفها فورًا ووضعها **تحت القسم canonical المتخصص الذي يملكها**، وليس في ملف ملاحظات عشوائي.
+
+قاعدة التصنيف:
+
+```text
+PRODUCT / BUSINESS
+→ docs/canonical/01-PRODUCT-REQUIREMENTS.md
+
+UX / UI / EXPERIENCE
+→ docs/canonical/02-UX-UI-CUSTOMER-EXPERIENCE.md
+
+ARCHITECTURE / DATA / DOMAIN
+→ docs/canonical/03-ARCHITECTURE-DATA-DOMAIN.md
+
+SECURITY / RELIABILITY / OFFLINE / INTEGRATIONS
+→ docs/canonical/04-SECURITY-RELIABILITY-INTEGRATIONS.md
+
+QUALITY / TEST / CERTIFICATION / RELEASE
+→ docs/canonical/05-QUALITY-CERTIFICATION-RELEASE.md
+
+MARKET / VALUE / DIFFERENTIATION
+→ docs/canonical/06-MARKET-DIFFERENTIATION-PORTFOLIO.md
+```
+
+إذا كان المتطلب يمس أكثر من قسم:
+- ضع الـauthoritative rule في القسم المالك؛
+- اربط الأقسام الأخرى به بدل تكرار النص كاملًا؛
+- حدّث `PROJECT_MEMORY.md` فقط إذا أصبح القرار durable/global؛
+- حدّث `docs/CANONICAL-DOCUMENT-SYSTEM.md` إذا أضيف مصدر أو authority جديدة.
+
+لا تفقد أي requirement فريد بسبب اختصار أو ضغط السجلات.
+
+**REFERENCE → REQUIREMENT EXTRACTION → CLASSIFICATION → CANONICAL INSERTION → IMPLEMENTATION → TEST → PROOF**
+
+لا تعتبر المرجع "معلومة بصرية فقط" إذا استخرج منه متطلب تشغيل أو قبول أو أمان أو responsive behavior.
+
+ولا تعتبر إضافة المتطلب إلى الوثائق إنجازًا بحد ذاته؛ يجب أن يتحول إلى **implemented/verified/proven** أو إلى **explicit boundary/blocked** بسبب عقد مفقود.
+
 # 10. CORE PRODUCT CLOSURE
 
 بالتوازي مع UI، أغلق:
