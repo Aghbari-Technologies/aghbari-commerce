@@ -230,6 +230,37 @@ REFERENCE
 
 ولا تنقل العامري أو أي هوية خارجية إلى المنتج.
 
+## 6-A. REFERENCE DEDUPLICATION — لا تنفذ المرجع المكرر مرتين
+
+الـ84 ملفًا هو عدد الملفات المرفوعة، وليس عدد الشاشات/التجارب الفريدة.
+
+قد تحتوي الحزمة على:
+- byte-identical duplicates؛
+- visually equivalent screenshots؛
+- نفس الشاشة/الحالة من لقطات مختلفة؛
+- صورًا تعرض نفس component/pattern ضمن أكثر من شاشة.
+
+قاعدة التنفيذ:
+```text
+DISCOVER
+→ HASH / EXACT-DUP CHECK
+→ VISUAL-EQUIVALENCE CHECK WHEN NEEDED
+→ GROUP INTO REFERENCE PACKS
+→ CHOOSE ONE IMPLEMENTATION TARGET
+→ KEEP SOURCE REFERENCES FOR PROVENANCE
+→ IMPLEMENT ONCE
+→ VERIFY ALL ALIASED REFERENCES AGAINST THE SAME RESULT
+```
+
+- لا تنشئ شاشة أو component أو CSS أو route مرتين بسبب صورتين متطابقتين.
+- لا تحذف الصورة المكررة لمجرد التوفير؛ احتفظ بالمصدر ما لم توجد بوابة retirement/duplicate موثقة.
+- سجّل التكرار في `UI-REFERENCE-ASSET-INDEX.md` كسطر/pack مضغوط: `primary reference + aliases + route/state/viewport + implementation/proof`.
+- إذا اختلفت الصور في viewport أو state أو content meaningful، فهي ليست duplicate حتى لو كان التخطيط متشابهًا.
+- عند الشك، لا تحذف؛ صنّفها كـsame-family وراجع الفرق قبل الدمج.
+- المطلوب النهائي ليس `84 implementations` بل **100% reference coverage مع أقل عدد صحيح من implementations الفريدة**.
+
+ولا يجوز استخدام الـ84 كسبب لتضخيم backlog أو الذاكرة أو مساحة المستودع.
+
 # 7. FULL UI CLOSURE — القسم مكتمل من أول route إلى آخر state
 
 لكل surface قابل للانطباق افحص:
