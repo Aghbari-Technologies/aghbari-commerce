@@ -245,3 +245,20 @@ Reference review may discover missing product/UX/security/quality requirements. 
 ## 14. Execution economy
 
 Do not repeat screenshots, crops, reports, comparisons or local artifacts when an existing proof already answers the same question. Generate new visual evidence only when it closes a distinct gap, changed SHA, changed viewport/state, or invalidated evidence.
+
+## 15. Reference equivalence / duplicate rule — 2026-09-27
+
+الـ84 PNG تمثل files/reference inputs، وليست 84 implementations.
+
+عند اكتشاف duplicate أو visually equivalent reference:
+```text
+PRIMARY REFERENCE
++ ALIASED REFERENCES
+→ ONE IMPLEMENTATION TARGET
+→ ONE SHARED COMPONENT / SCREEN WHEN APPLICABLE
+→ ONE PROOF SET THAT EXPLAINS ALL ALIASES
+```
+
+لا تُكرر التنفيذ لمجرد اختلاف اسم الملف.
+لا تحذف النسخ المكررة تلقائيًا؛ يحافظ عليها المصدر ما لم تُعتمد بوابة retirement.
+استخدم packs لتقليل مساحة الذاكرة والتوثيق، مع الحفاظ على provenance الكامل.
