@@ -422,3 +422,10 @@ Command "1" means:
 - New requirements discovered during reference review, implementation or legacy consolidation must be inserted into the correct canonical specialist document, with source and scope classification, rather than stored in chat or a parallel backlog.
 - Communication and repository records must use compact evidence pointers instead of repeated dumps; preserve knowledge, not repetition.
 - Resource preservation includes context/message space as well as Git/storage/build/deployment resources.
+
+## 26. DURABLE SESSION CONTINUITY + REFERENCE DEDUP RULE — 2026-09-27
+
+- The 84 UI-reference files are inputs, not 84 separate implementation targets. Exact duplicates and visually equivalent references must be grouped into compact screen packs and implemented once, while preserving aliases/provenance.
+- Every execution session must leave a compact resumable checkpoint in `ops/AGHBARI-LATEST-EXECUTION-STATE.md` and a progress record in `ops/AGHBARI-DEVELOPMENT-PROGRESS.md`. A new session must be able to resume from Git + canonical memory + live state without depending on chat history.
+- The resume pointer must contain an exact next executable action, relevant files/domain, proof required, blockers, and do-not-repeat boundary.
+- Chat history is convenience only; repository state is the durable execution memory.
