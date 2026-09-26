@@ -1,13 +1,16 @@
 # 🔴 AGHBARI LATEST EXECUTION STATE
 
 Project: Aghbari Commerce | الأغبري
-Actual Git HEAD: `0c7b0971d8b679d79d875bc48cd29f564fd200df`
-Functional source checkpoint remains: `8c1d817ff67165f4844571f2e9cbb55c5cc3e38a`
+Actual HEAD at start of this write-back: `7c85eb892e378ce73917824f66e07323d5fd9944`
+Functional source checkpoint: `8c1d817ff67165f4844571f2e9cbb55c5cc3e38a`
 Branch: main
 Production: HOLD / NO TOUCH
 Certification: NOT CLAIMED
 
 ## Current reality
+
+- This state file is a documentation write-back. The source changes in this closure round remain separate from functional UI/core evidence and must be re-proven on the exact current source SHA before certification.
+
 
 - The project is in final closure/hardening mode, not initial discovery.
 - 84 PNG visual-reference assets are now stored under `docs/ui-reference/` and governed by the canonical reference index.
