@@ -125,6 +125,36 @@ Security Finding
 Requirement Change
 ```
 
+## 3-A. EXECUTION FAST-PATH — اقرأ فقط ما سيغيّر القرار
+
+هذه القاعدة تمنع تحويل التنفيذ إلى جلسة بحث.
+
+### قاعدة القراءة
+ابدأ دائمًا من CURRENT RESUME POINTER.
+اقرأ الملفات المذكورة فيه أولًا، وبالنطاق الذي يكفي لاتخاذ قرار التنفيذ.
+لا تقرأ repository أو legacy corpus كاملًا لمجرد الفهم العام.
+
+لكل قراءة يجب أن تجيب على سؤال تنفيذي واحد على الأقل:
+WHAT MUST CHANGE? / WHAT CONTRACT GOVERNS IT? / WHAT DEPENDENCY MUST STAY IN SYNC? / WHAT PROOF IS REQUIRED? / WHAT REQUIREMENT IS MISSING?
+
+إذا لم تُجب القراءة عن سؤال تنفيذي جديد: توقف عن القراءة وابدأ العمل.
+
+### بحث موجّه فقط
+- استخدم البحث باسم الملف/المسار/الدالة/الـRPC/النص المستهدف، وليس بحثًا عامًا مفتوحًا.
+- وسّع البحث فقط عندما تظهر معلومة جديدة تغيّر النتيجة.
+- إذا أصبح مسار التعديل واضحًا، لا تعاود البحث عنه من زاوية أخرى.
+- لا تعيد فتح ملف مغلق أو فحصًا سبق إثباته إلا بسبب إعادة فتح معتمد.
+
+### Read-to-Act / Stop Rule
+```text
+POINTER → TARGET FILES → MINIMUM REQUIRED RANGE → IMPLEMENT
+
+وليس:
+POINTER → READ EVERYTHING → COMPARE EVERYTHING → PLAN AGAIN → IMPLEMENT
+```
+
+الهدف: أصغر قدر من القراءة ينتج أكبر قدر من التنفيذ.
+
 # 4. MANDATORY PARALLEL EXECUTION FRONTIER — لا انتظار ولا تسلسل زائف
 
 أنشئ Execution Frontier من الفجوات المفتوحة الفعلية، ثم نفّذ بالتوازي على الجبهات المستقلة.
@@ -162,6 +192,34 @@ EXACT GAP
 ~~~
 
 الهدف ليس كثرة النشاط؛ الهدف خفض عدد OPEN GAPS فعليًا في كل دورة.
+
+## 4-A. CLOSED-WORK LOCK + WORK CLAIM — لا تعيد العمل المنجز
+
+قبل تعديل أي gap:
+```text
+CLAIM GAP
+→ NAME EXACT FILES / DOMAIN
+→ CHECK DO-NOT-REPEAT
+→ CHECK EXISTING PROOF
+→ IMPLEMENT ONLY THE MISSING DELTA
+```
+
+إذا كان الشيء PROVEN/CLOSED ولا يوجد استثناء موثق: ممنوع لمسه.
+
+كل gap في الدورة يجب أن ينتهي بحالة واضحة:
+```text
+CLOSED / PROVEN
+VERIFIED — MORE PROOF REQUIRED
+BLOCKED — EXACT ROOT CAUSE
+OPEN — PRECISE NEXT ACTION
+```
+
+### Same-failure brake
+إذا فشل نفس المسار مرتين دون تغير في السبب:
+STOP RETRY → CHANGE ROOT CAUSE OR SWITCH TO ANOTHER EXECUTABLE FRONT.
+
+### Change-set discipline
+اجمع تغييرات gap الواحد في closure batch متماسك، اختبره مباشرة، ولا تكرر إصلاحات صغيرة لنفس السبب.
 
 # 5. قاعدة الإنجاز الفعلي — لا وقت ضائع
 
