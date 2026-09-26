@@ -29,3 +29,11 @@ The manifest lists the quality/certification/release documents that must be full
 - The latest source line includes Admin deep-link anchor fixes, real voice-search interaction, customer-control validation, stable operational reload dependencies, context-derived warehouse labels, and the security-definer exposure classification test.
 - Current exact-head GitHub workflows are queued; no CI/build/browser/certification PASS is claimed until those runs finish against the exact latest SHA.
 - Hosted Vercel evidence is still blocked by deployment mismatch/rate-limit/protection constraints; the existing free Netlify project remains the available fallback, but no exact-current-SHA deployment is claimed without source upload/build completion.
+
+
+## 2026-09-27 — Reference visual proof and resource-efficient release
+
+- The current reference pack under `docs/ui-reference/` contains 84 PNG screens and is the visual source for applicable P0 UI closure.
+- Visual closure evidence must bind reference, route, viewport, state, exact source SHA and implementation result.
+- Use visual comparison to detect hierarchy/spacing/state regressions, but do not treat a screenshot match as proof of backend correctness.
+- Do not generate duplicate visual reports, build artifacts or deployment attempts solely for repetition; retain only evidence with distinct proof value.
