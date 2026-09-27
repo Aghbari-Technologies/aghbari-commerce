@@ -1,31 +1,31 @@
 # 🔴 AGHBARI DEVELOPMENT PROGRESS — CANONICAL LIVE LEDGER
 
-## Run 2026-09-27 — Exact current main closure
+## Run 2026-09-27 — Final synchronized checkpoint
 
 - Run: `2026-09-27`
-- SHA: `62fc9c88acb73ac435ff0a18605f402304959b64`
+- SHA: `524d468837f0b613ab2eb17c659a3c7a8cd4227b`
 - Branch: `main`
 - Implemented:
-  - Customer-bound viewer routing fix and boot-order identity guard.
-  - Customer authorized pricing/currency preservation and resilient atomic reorder.
-  - Central quantity/idempotency boundary hardening across online/offline/order/template paths.
-  - Customer offline remote-load guard with 5 unit assertions.
-  - Application SECURITY DEFINER contract suite 034 (15 assertions) on main.
+  - Customer routing + boot identity guard.
+  - Customer authorized pricing/currency and resilient atomic reorder.
+  - Central quantity/idempotency boundaries across online/offline/order/template paths.
+  - Offline remote-load guard and runtime unit coverage.
+  - Application SECURITY DEFINER contract suite 034.
+  - DB-only startup for migration/concurrency/Test-the-Test workflows where direct Postgres is sufficient.
+  - Same-branch stale-run cancellation to reduce runner queue pressure.
 - Verified:
-  - Exact source is on `main` at `62fc9c88acb73ac435ff0a18605f402304959b64`.
-  - Live Supabase remains ACTIVE_HEALTHY and production was not mutated.
-  - Live read-only security contract corresponding to test 034 passes 15/15.
+  - Exact main source is `524d468837f0b613ab2eb17c659a3c7a8cd4227b`.
+  - Live read-only security contract is 15/15 true.
+  - Production database was not mutated by this execution.
 - Proven:
-  - Source implementation: VERIFIED at exact HEAD.
-  - Previous SHA `627e4bba29b2b64f7faabf2fe43091f1b391377a` application-quality: SUCCESS, historical and not transferred.
-  - Current SHA CI: NOT_PROVEN until its queued runs complete.
+  - Current-SHA source content: VERIFIED.
+  - Current-SHA CI: NOT_PROVEN while queued.
+  - Prior SHA CI evidence remains historical and not transferable.
 - Environment drift:
-  - Live `apply_quick_order` idempotency remains 16–200 until release migration.
-  - Live order-template quantity behavior remains pre-migration until deliberate release application.
-- Blocked:
-  - Vercel free-plan build-rate-limit and SSO-gated hosted UI.
+  - Live quick-order idempotency remains 16–200 until release migration.
+  - Live order-template quantity behavior remains pre-migration until release migration.
 - Certification: `NOT CLAIMED`
 - Production: `HOLD / NO TOUCH`
 
 ## Next
-Complete exact current-SHA CI/browser/runtime evidence; act on failures immediately and continue independent closure work without reopening closed paths.
+Complete exact-SHA CI/runtime/browser evidence for the current main HEAD, then close the remaining controlled migrations and certification gates.
