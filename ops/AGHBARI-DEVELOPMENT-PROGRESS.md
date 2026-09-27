@@ -31,3 +31,16 @@
 
 ## Next
 Inspect the newest exact-main check runs/logs, fix the first material failure once, then advance the next independent UI/core/reference gap.
+
+
+## Run 2026-09-28 — Customer Portal account/address closure + quality recovery
+- Run: `2026-09-28`
+- SHA: `24934e5815d47faf448835a65c79bc13b7dee82c` (exact checkpoint before subsequent branch movement)
+- Branch: `main`
+- Implemented: account/profile/company/settings workspace; real customer delivery-address domain/service/UI; address RLS + RPC source contract; bounded address contract tests; removed duplicate address panel; repaired active-runtime/admin/catalog type mismatches exposed by quality.
+- Verified: active entry remains `AppV3Fixed`; address capability is wired in customer structure; no duplicate `CustomerAddressesPanel` references remain.
+- Proven: Browser E2E had exact-SHA PASS on earlier checkpoints; for this checkpoint the current address migration/runtime proof remains NOT_PROVEN until the current exact run completes.
+- Blocked: Production migration/staging and free-plan hosted protection remain outside direct mutation.
+- Certification: `NOT CLAIMED`
+- Production: `HOLD / NO TOUCH`
+- Next: inspect exact current-main Quality + migration + Test-the-Test results, fix first material failure once, then advance the next unproven reference-pack surface.
