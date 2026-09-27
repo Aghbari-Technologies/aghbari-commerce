@@ -192,6 +192,14 @@ export const AGHBARI_ADMIN_PATH_TARGETS = Object.fromEntries(
 ) as Record<string, string>;
 
 export function adminTargetForPath(pathname: string) {
-  if (pathname === '/admin' || pathname === '/admin/') return '#admin-dashboard';
-  return AGHBARI_ADMIN_PATH_TARGETS[pathname] ?? '#admin-dashboard';
+  const normalized = pathname.replace(/\\/+$/, '') || '/';
+  if (normalized === '/admin') return '#admin-dashboard';
+
+  const exactTarget = AGHBARI_ADMIN_PATH_TARGETS[normalized];
+  if (exactTarget) return exactTarget;
+
+  // Resolve registered dynamic admin detail routes into their existing workspaces.
+  if (/^\\/admin\\/order\\/[^/]+$/.test(normalized)) return '#admin-orders';
+
+  return '#admin-dashboard';
 }
