@@ -108,3 +108,15 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Certification: `NOT CLAIMED`
 - Production: `HOLD / NO TOUCH`
 - Next: inspect exact-current CI; fix first material failure once; continue next independent UI/core gap.
+
+## Run 2026-09-28 — Customer self-profile closure
+- Run: `2026-09-28`
+- SHA: current checkpoint head to be re-read before next execution
+- Branch: `main`
+- Implemented: customer self-profile mutation/service/UI; tests; canonical docs.
+- Verified: source-controlled; production untouched.
+- Proven: structural security contract only; exact current build/browser pending.
+- Blocked: actual browser-e2e remains skipped in the current hosted workflow; Vercel/hosted protection is external.
+- Certification: `NOT CLAIMED`
+- Production: `HOLD / NO TOUCH`
+- Next: inspect CI; fix first material failure; continue next open gap.
