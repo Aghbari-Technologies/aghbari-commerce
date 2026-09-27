@@ -4,7 +4,20 @@ function Block({ className = '' }: { className?: string }) {
   return <i className={'operational-skeleton-block ' + className} aria-hidden="true" />;
 }
 
-export default function OperationalLoadingSkeleton({ variant }: { variant: 'inventory' | 'purchasing' }) {
+export default function OperationalLoadingSkeleton({ variant }: { variant: 'inventory' | 'purchasing' | 'collection' }) {
+  if (variant === 'collection') {
+    return (
+      <div className="operational-loading-skeleton operational-loading-skeleton-collection" role="status" aria-label="جارٍ تحميل السجلات">
+        <div className="operational-skeleton-collection-head"><Block className="w-34 h-14" /><Block className="w-16 h-28" /></div>
+        <div className="operational-skeleton-collection-rows">
+          {Array.from({ length: 7 }).map((_, index) => (
+            <div key={index}><Block className="w-20" /><Block className="w-52" /><Block className="w-28" /><Block className="w-14 h-32" /></div>
+          ))}
+        </div>
+        <span className="operational-loading-skeleton-text">جارٍ تجهيز السجل…</span>
+      </div>
+    );
+  }
   const cards = variant === 'inventory' ? ['search', 'form', 'form', 'table'] : ['form', 'form', 'table', 'receive'];
   return (
     <div className={'operational-loading-skeleton operational-loading-skeleton-' + variant} role="status" aria-label={variant === 'inventory' ? 'جارٍ تحميل بيانات المخزون' : 'جارٍ تحميل بيانات المشتريات'}>
