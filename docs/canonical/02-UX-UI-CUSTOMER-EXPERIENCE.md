@@ -122,3 +122,9 @@ Do not create a second design system, duplicate CSS family or duplicate asset co
 - Detail loading is explicit; successful detail reads expose customer, state, totals, payment method and every authorized order line with quantity, unit price, line total and pricing tier.
 - Client parsing rejects malformed order IDs, invalid line identifiers and inconsistent line totals; the service also verifies subtotal against the sum of line totals before rendering.
 - Detail read failure preserves the record unchanged and exposes an explicit retry action. The drawer remains keyboard-accessible and reusable across operational record surfaces.
+
+
+## 2026-09-28 — Staff reorder and template boundary
+- Customer Portal `reorder` and `order_templates` remain live customer-owned capabilities with real persistence and server authorization.
+- Admin/Staff navigation must not expose a fake management workspace for these customer-owned records until a canonical staff permission, read contract and mutation contract are defined.
+- The Admin structure therefore classifies `/admin/reorder` and `/admin/order-templates` as explicit boundaries rather than render-only screens.
