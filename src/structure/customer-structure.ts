@@ -22,7 +22,7 @@ export const AGHBARI_CUSTOMER_STRUCTURE: CustomerStructureItem[] = [
   { id: 'account', label: 'حساب التاجر', section: 'account', status: 'live', description: 'السياق والاتصال والمنظمة والمستودع والتعافي.' },
   { id: 'profile', label: 'الهوية والجلسة', section: 'account', status: 'live', description: 'هوية العميل والجلسة والصلاحية التشغيلية.' },
   { id: 'company', label: 'الشركة والحساب', section: 'account', status: 'live', description: 'سياق المنظمة والعميل والمستودع والفئة التجارية.' },
-  { id: 'addresses', label: 'العناوين', section: 'account', status: 'boundary', description: 'موضع واجهة محفوظ؛ لا يوجد عقد عناوين canonical مستقل في schema الحالي.' },
+  { id: 'addresses', label: 'العناوين', section: 'account', status: 'live', description: 'عناوين تسليم محفوظة للعميل مع إضافة وتعديل وحذف وتعيين عنوان افتراضي، محمية بسياق المؤسسة/العميل ومدققة.' },
   { id: 'account-settings', label: 'إعدادات الحساب', section: 'account', status: 'live', description: 'عرض الحالة الفعلية لإعدادات بوابة العميل وتطبيقها على runtime.' },
   { id: 'notifications', label: 'الإشعارات', section: 'notifications', status: 'live', description: 'إشعارات مرتبطة بسياق العميل.' },
   { id: 'offline', label: 'العمل دون اتصال / الشبكة الضعيفة', section: 'account', status: 'live', description: 'تعديل السلة محليًا مع مزامنة bounded؛ الخادم هو المرجع النهائي.' },
