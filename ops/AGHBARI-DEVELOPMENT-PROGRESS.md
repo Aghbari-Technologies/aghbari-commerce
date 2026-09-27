@@ -201,3 +201,15 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Certification: `NOT CLAIMED`
 - Production: `HOLD / NO TOUCH`
 - Next: close the next independent canonical UI/domain gap with a focused implementation + test, then checkpoint exact HEAD again.
+
+## Run 2026-09-28 — Customer/Admin loading-state closure
+- Run: `2026-09-28`
+- SHA: `4d736b5eb660cafe9713c1b968629e0d4e01599f`
+- Branch: `main`
+- Implemented: responsive loading skeletons for Customer orders/finance and Admin orders/Customer Directory; reduced-motion fallbacks; focused loading-state tests; CI quality inclusion; preserved existing catalog filter/skeleton and workspace rail closure.
+- Verified: current main source re-read after concurrent visibility refactor; all new surfaces remain wired on active runtime.
+- Proven: source-level only. Current connected combined status exposes Vercel free-plan failure; workflow-run reader exposes no push run records. Browser/hosted/build runtime remains NOT_PROVEN.
+- Blocked: exact hosted proof; local clone/build blocked by environment DNS; purchase/receipt 200→128 live migration remains release-gated.
+- Certification: `NOT CLAIMED`
+- Production: `HOLD / NO TOUCH`
+- Next: next exact current UI/core gap, implementation + focused test + checkpoint.
