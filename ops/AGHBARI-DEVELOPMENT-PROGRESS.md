@@ -189,3 +189,15 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Certification: `NOT CLAIMED`
 - Production: `HOLD / NO TOUCH`
 - Next: implement the next independent customer/admin UI closure, then update this ledger at the next material checkpoint.
+
+## Run 2026-09-28 — Workspace Surface + Customer Catalog closure
+- Run: `2026-09-28`
+- SHA: `c9a16d1b9d0e3a856e19b4cd746003c344b6c458`
+- Branch: `main`
+- Implemented: customer catalog filter state/loading UX; Admin active-workspace navigation; shared responsive WorkspaceSurfaceRail for Customer/Staff; customer feature-aware visibility; role-aware Staff surface; workspace-rail contract test; repaired malformed Admin import separator.
+- Verified: current main source re-read; canonical customer six-section structure intact; workspace rail CSS and runtime mounts confirmed; production untouched.
+- Proven: source-level only on current exact SHA. GitHub combined status exposes Vercel failure only; connected workflow read returns no quality-run records. Exact build/typecheck/browser/hosted proof remains NOT_PROVEN.
+- Blocked: Vercel free-plan build-rate-limit/protection; exact-current Netlify deploy trigger unavailable through connected source-only tooling; purchase/receipt live migration remains 200 and release-gated.
+- Certification: `NOT CLAIMED`
+- Production: `HOLD / NO TOUCH`
+- Next: close the next independent canonical UI/domain gap with a focused implementation + test, then checkpoint exact HEAD again.
