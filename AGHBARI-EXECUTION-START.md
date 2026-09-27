@@ -68,24 +68,55 @@ CURRENT LIVE STATE
 VERIFIED EXACT-SHA EVIDENCE
 ```
 
-# 2. BOOT SEQUENCE — CANONICAL ONLY
+# 2. BOOT SEQUENCE — CANONICAL + LAZY READING
 
-بعد التحقق من HEAD اقرأ:
+القراءة الإلزامية عند كل انطلاقة هي فقط:
 
 1. `PROJECT_MEMORY.md`
-2. `docs/CANONICAL-DOCUMENT-SYSTEM.md`
-3. `docs/canonical/01-PRODUCT-REQUIREMENTS.md`
-4. `docs/canonical/02-UX-UI-CUSTOMER-EXPERIENCE.md`
-5. `docs/canonical/03-ARCHITECTURE-DATA-DOMAIN.md`
-6. `docs/canonical/04-SECURITY-RELIABILITY-INTEGRATIONS.md`
-7. `docs/canonical/05-QUALITY-CERTIFICATION-RELEASE.md`
-8. `docs/canonical/06-MARKET-DIFFERENTIATION-PORTFOLIO.md`
-9. `ops/AGHBARI-DEVELOPMENT-PROGRESS.md`
-10. `ops/AGHBARI-LATEST-EXECUTION-STATE.md`
+2. `ops/AGHBARI-LATEST-EXECUTION-STATE.md`
+3. `docs/ui-reference/UI-REFERENCE-ASSET-INDEX.md` إذا كانت جبهة UI/visual مفتوحة.
+4. **الـcanonical specialist document المرتبط مباشرةً بالـCURRENT RESUME POINTER.**
 
-ثم اقرأ فقط الوثيقة/الملف التاريخي الضروري لإغلاق gap حقيقي.
+اقرأ `docs/CANONICAL-DOCUMENT-SYSTEM.md` عند الحاجة إلى source mapping/legacy consolidation أو عندما يطلب الـgap أكثر من canonical authority.
 
-**ممنوع إنشاء Memory System جديد أو Backlog موازٍ للمحادثة.**
+اقرأ بقية canonical documents **عند الحاجة فقط**، وليس كلها تلقائيًا.
+
+اقرأ legacy source فقط إذا كان مرتبطًا بفجوة تنفيذية محددة.
+
+### قاعدة منع إعادة القراءة
+
+إذا كانت الوثيقة:
+- قرئت وأُغلقت لصالح gap حالي؛
+- لم يتغير محتواها؛
+- ولم تتغير dependency/environment/evidence؛
+
+فلا تعاود قراءتها في الجلسة التالية.
+
+**لا تقرأ التاريخ لتعرف ما تعرفه الحالة الحية مسبقًا.**
+
+### ملفات التشغيل التاريخية غير الموجودة
+
+الأسماء التاريخية مثل:
+- `ops/AGHBARI-EXECUTION-CONTROL-PLANE.md`
+- `ONE-PROGRAMMER-SESSION-MEMORY.md`
+- `docs/MASTER_PRODUCT_REFERENCE.md`
+- `docs/MASTER_EXECUTION_INDEX.md`
+
+ليست ملفات تشغيل حالية على `main`.
+
+**ممنوع إعادة إنشائها فقط لأن اسمًا قديمًا ظهر في ذاكرة أو محادثة.**
+
+مصدر الحقيقة الحالي هو:
+
+`PROJECT_MEMORY.md`
++
+`docs/CANONICAL-DOCUMENT-SYSTEM.md`
++
+`ops/AGHBARI-LATEST-EXECUTION-STATE.md`
++
+`ops/AGHBARI-DEVELOPMENT-PROGRESS.md`
++
+الـcanonical specialist docs.
 
 # 3. CLOSURE MODE — لا تعِد الاستكشاف
 
