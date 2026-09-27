@@ -41,7 +41,7 @@ Certification: NOT CLAIMED
 - Bounded GitHub quality workflow added: typecheck + focused detail test + build, canceling stale runs.
 
 ## NEXT EXECUTABLE ACTION
-Read the final exact `main` HEAD, verify the order-detail batch at that exact SHA, then advance the next independent uncovered reference-pack/core gap. Keep purchase/receipt and address migrations source-only until their exact migration/runtime proof exists.
+Read the live refs/heads/main, inspect the current exact application-quality / G1 Domain Proof / security-audit / Test-the-Test results, fix only the first material failure on that exact SHA, then continue the next unproven 84-reference screen-pack gap. Do not transfer evidence from prior SHAs.
 
 ## DO NOT REPEAT
 Do not transfer evidence across SHAs. Do not mutate Production directly. Do not retry unchanged Vercel rate-limit/protection. Do not reopen closed finance, deep-link, recovery, bulk-order, cache-isolation, trust/theme, import-reconciliation, or the now-closed Staff order-detail implementation work.
@@ -58,3 +58,12 @@ Do not transfer evidence across SHAs. Do not mutate Production directly. Do not 
 - Added `src/structure/admin-structure.anchor.test.ts` to assert every live Admin structure target resolves to an actual `AdminPanel` id.
 - Extended the bounded quality workflow to include the anchor contract test.
 - Purchase/receipt live 200-character idempotency bound remains unchanged and is still a controlled migration gate; no production mutation performed.
+
+
+## 2026-09-28 — Full UI closure wave / current checkpoint
+- Current live HEAD: 2361acda811159bfa7f8e0d414c2ebc70c16fe92 (must be re-read at every resume; not cached as mutable truth).
+- Implemented: Customer Account workspace (overview/profile/company/addresses/settings); canonical customer-address source contract (domain/service/UI/migration/RLS/RPC/audit/contract test); executable Stock Count workspace; Admin inventory screen pack for transfers/count/reconciliations; real Staff order-detail surfaces; explicit Admin contract-boundary center; safe boundary links for unsupported warehouse/supplier edits.
+- Verified: Admin live-target scan currently resolves all unique DOM targets with zero missing anchors; active customer IA exposes catalog/orders/finance/templates/account/notifications and nested invoice/order/address surfaces.
+- Exact current proof: Browser E2E passed on immediately preceding exact SHA a7d41f43152e18d281a72e0720e1a49d070ad71c; this is historical because HEAD is now 2361acda811159bfa7f8e0d414c2ebc70c16fe92. Current exact Quality/G1/Security/Test-the-Test must finish on the current SHA before certification claims.
+- Known quality correction: older 741f7c1c quality failure was an unclosed JSX expression in InventoryActivityPanel; fixed at a4cd8b63 and carried forward to current main.
+- Production: HOLD / NO TOUCH. Purchase/receipt 16..128 and customer-address migrations remain source-only until exact migration/runtime proof.
