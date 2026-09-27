@@ -1,3 +1,4 @@
+@keyframes aghbari-shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 .operational-loading-skeleton{display:grid;gap:12px;margin-top:12px}
 .operational-skeleton-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
 .operational-skeleton-metric,.operational-skeleton-card{min-width:0;border:1px solid #dfe9ec;border-radius:15px;background:#fff}
