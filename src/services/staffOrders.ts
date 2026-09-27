@@ -42,42 +42,102 @@ export async function transitionOrder(orderId: string, toStatus: OrderStatus): P
   return assertStaffOrderSummary(data as unknown);
 }
 
-export const MAX_BULK_ORDER_TRANSITIONS = 100;
 
-export function validateBulkOrderTransitionInput(orderIds: string[], toStatus: OrderStatus): string[] {
-  if (!Array.isArray(orderIds) || orderIds.length < 1 || orderIds.length > MAX_BULK_ORDER_TRANSITIONS) {
-    throw new Error(`يجب تحديد 1 إلى ${MAX_BULK_ORDER_TRANSITIONS} طلبات للعملية الجماعية.`);
-  }
-  if (!ORDER_STATUSES.has(toStatus)) throw new Error('حالة انتقال الطلب الجماعي غير صالحة.');
-  const normalized = orderIds.map((id) => {
-    if (typeof id !== 'string' || !UUID_PATTERN.test(id.trim())) throw new Error('معرّف طلب غير صالح ضمن العملية الجماعية.');
-    return id.trim();
-  });
-  if (new Set(normalized).size !== normalized.length) throw new Error('لا يمكن تكرار الطلب داخل العملية الجماعية.');
-  return normalized;
+export interface StaffOrderDetailItem {
+  id: string;
+  product_id: string;
+  sku: string;
+  name: string;
+  unit: string;
+  quantity: number;
+  unit_price: number;
+  line_total: number;
+  pricing_tier: string;
 }
 
-export interface BulkTransitionResult {
-  order_id: string;
-  from_status: OrderStatus;
-  to_status: OrderStatus;
+export interface StaffOrderDetail extends StaffOrderSummary {
+  subtotal: number;
+  payment_method: string;
+  items: StaffOrderDetailItem[];
 }
 
-export async function bulkTransitionOrders(orderIds: string[], toStatus: OrderStatus, idempotencyKey = crypto.randomUUID()): Promise<BulkTransitionResult[]> {
-  const ids = validateBulkOrderTransitionInput(orderIds, toStatus);
-  const key = idempotencyKey.trim();
-  if (key.length < 16 || key.length > 128) throw new Error('مفتاح العملية الجماعية يجب أن يكون بين 16 و128 حرف.');
-  const { data, error } = await requireSupabase().rpc('bulk_transition_orders', {
-    p_idempotency_key: key,
-    p_order_ids: ids,
-    p_to_status: toStatus,
+function finiteMoney(value: unknown): number {
+  const parsed = typeof value === 'number' ? value : Number(value);
+  if (!Number.isFinite(parsed) || parsed < 0) throw new Error('القيمة المالية في تفاصيل الطلب غير صالحة.');
+  return parsed;
+}
+
+function assertStaffOrderDetailItem(value: unknown): StaffOrderDetailItem {
+  if (!value || typeof value !== 'object') throw new Error('بند الطلب غير صالح.');
+  const item = value as Record<string, unknown>;
+  const quantity = Number(item.quantity);
+  const unitPrice = finiteMoney(item.unit_price);
+  const lineTotal = item.line_total == null ? quantity * unitPrice : finiteMoney(item.line_total);
+  if (
+    typeof item.id !== 'string' || !UUID_PATTERN.test(item.id) ||
+    typeof item.product_id !== 'string' || !UUID_PATTERN.test(item.product_id) ||
+    typeof item.sku !== 'string' || !item.sku.trim() ||
+    typeof item.name !== 'string' || !item.name.trim() ||
+    typeof item.unit !== 'string' || !item.unit.trim() ||
+    !Number.isSafeInteger(quantity) || quantity <= 0 ||
+    typeof item.pricing_tier !== 'string' || !item.pricing_tier.trim() ||
+    Math.abs(lineTotal - quantity * unitPrice) > 0.01
+  ) throw new Error('بيانات بند الطلب غير صالحة.');
+  return {
+    id: item.id as string,
+    product_id: item.product_id as string,
+    sku: item.sku as string,
+    name: item.name as string,
+    unit: item.unit as string,
+    quantity,
+    unit_price: unitPrice,
+    line_total: lineTotal,
+    pricing_tier: item.pricing_tier as string,
+  };
+}
+
+export async function getStaffOrderDetail(orderId: string): Promise<StaffOrderDetail> {
+  if (typeof orderId !== 'string' || !UUID_PATTERN.test(orderId)) throw new Error('معرّف الطلب غير صالح.');
+  const client = requireSupabase();
+  const [{ data: order, error: orderError }, { data: itemRows, error: itemError }] = await Promise.all([
+    client.from('orders').select('id,order_number,customer_id,warehouse_id,status,total,subtotal,currency,payment_method,created_at,updated_at,customers(name)').eq('id', orderId).single(),
+    client.from('order_items').select('id,product_id,quantity,unit_price,pricing_tier,line_total,products(sku,name,unit)').eq('order_id', orderId).order('created_at', { ascending: true }),
+  ]);
+  if (orderError) throw orderError;
+  if (itemError) throw itemError;
+  if (!order) throw new Error('الطلب غير موجود أو غير متاح لهذه الصلاحية.');
+  const item = order as typeof order & { customers?: { name?: string } | null };
+  const items = (itemRows ?? []).map((row) => {
+    const value = row as typeof row & { products?: { sku?: string; name?: string; unit?: string } | null };
+    return assertStaffOrderDetailItem({
+      id: value.id,
+      product_id: value.product_id,
+      quantity: Number(value.quantity),
+      unit_price: Number(value.unit_price),
+      pricing_tier: value.pricing_tier,
+      line_total: value.line_total == null ? null : Number(value.line_total),
+      sku: value.products?.sku,
+      name: value.products?.name,
+      unit: value.products?.unit,
+    });
   });
-  if (error) throw error;
-  if (!Array.isArray(data)) throw new Error('استجابة العملية الجماعية غير صالحة.');
-  return data.map((row) => {
-    if (!row || typeof row !== 'object' || !UUID_PATTERN.test(String((row as Record<string, unknown>).order_id)) || !ORDER_STATUSES.has(String((row as Record<string, unknown>).from_status)) || !ORDER_STATUSES.has(String((row as Record<string, unknown>).to_status))) {
-      throw new Error('نتيجة العملية الجماعية تحتوي بيانات غير صالحة.');
-    }
-    return row as BulkTransitionResult;
-  });
+  const detail: StaffOrderDetail = {
+    ...assertStaffOrderSummary({
+      id: item.id,
+      order_number: Number(item.order_number),
+      customer_id: item.customer_id,
+      customer_name: item.customers?.name ?? 'عميل غير معروف',
+      warehouse_id: item.warehouse_id,
+      status: item.status,
+      total: finiteMoney(item.total),
+      currency: item.currency,
+      created_at: item.created_at,
+      updated_at: item.updated_at,
+    }),
+    subtotal: finiteMoney(item.subtotal),
+    payment_method: typeof item.payment_method === 'string' ? item.payment_method : '—',
+    items,
+  };
+  if (detail.total < detail.subtotal) throw new Error('إجمالي الطلب غير متسق.');
+  return detail;
 }
