@@ -155,6 +155,27 @@ export function markOfflineOperationAttempt(operationId: string, now = Date.now(
     : item));
 }
 
+export function retryOfflineOperationNow(operationId: string, userId?: string): void {
+  if (!UUID_PATTERN.test(operationId)) throw new Error('معرّف العملية غير صالح.');
+  if (userId !== undefined && !UUID_PATTERN.test(userId.trim())) throw new Error('هوية المستخدم غير صالحة.');
+
+  const queue = read<unknown>();
+  const operation = queue.find((item) => item.operationId === operationId);
+  if (!operation) throw new Error('العملية غير موجودة في الطابور.');
+
+  if (userId !== undefined && operation.userId !== userId.trim()) {
+    throw new Error('لا يمكن إعادة محاولة عملية تخص مستخدمًا آخر.');
+  }
+
+  if (operation.state === 'conflicted' || operation.state === 'terminal' || operation.terminal) {
+    throw new Error('هذه العملية متعارضة أو نهائية وتحتاج مراجعة قبل إعادة الإرسال.');
+  }
+
+  persist(queue.map((item) => item.operationId === operationId
+    ? { ...item, state: 'queued' as OfflineOperationState, terminal: false, nextAttemptAt: undefined }
+    : item));
+}
+
 export async function drainOfflineOperations(
   processor: (operation: OfflineOperation) => Promise<void>,
   userId?: string,
