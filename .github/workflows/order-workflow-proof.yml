@@ -2,10 +2,22 @@ name: Order Workflow Proof
 
 on:
   push:
+    paths:
+      - 'poc/order-workflow/**'
+      - 'src/domain/**'
+      - 'src/services/orders.ts'
+      - 'supabase/**'
+      - '.github/workflows/order-workflow-proof.yml'
     branches:
       - main
       - 'execution/**'
   pull_request:
+    paths:
+      - 'poc/order-workflow/**'
+      - 'src/domain/**'
+      - 'src/services/orders.ts'
+      - 'supabase/**'
+      - '.github/workflows/order-workflow-proof.yml'
     branches: [main]
   workflow_dispatch:
     inputs:
