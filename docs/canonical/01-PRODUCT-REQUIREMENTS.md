@@ -37,3 +37,8 @@ No additional product scope is created solely because a legacy screenshot contai
 - When reference review reveals a missing product requirement, classify it explicitly as in-scope Commerce requirement, boundary, or unsupported historical behavior.
 - In-scope missing requirements must be added to this canonical document and converted into an executable gap in the same closure cycle where practical.
 - Product closure for a UI surface requires real interaction, state, persistence where applicable, authorization and proof; visual presence alone is insufficient.
+
+## 2026-09-28 — Customer delivery addresses
+- Customer Portal requires a real saved delivery-address capability: create, read, update, delete and one optional default address per customer.
+- Address records are customer-owned Commerce data, tenant-scoped and auditable. The UI may not fabricate addresses or imply persistence when offline.
+- Checkout/order binding is deliberately outside this requirement until an explicit transactional shipping-address contract exists; saving an address must not mutate an existing order or invoice implicitly.
