@@ -2,7 +2,7 @@
 
 ## Run 2026-09-27 — Active runtime + transactional/UI hardening
 - Run: `2026-09-27`
-- SHA: `bbf595ee7657add03a7696f28a528d6e9b2cf3a9`
+- SHA: `e6fcd516699f544668694744f10bd191c1364d12`
 - Branch: `main`
 - Implemented:
   - Customer finance document workspace + admin finance navigation.

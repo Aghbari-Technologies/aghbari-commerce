@@ -2,7 +2,7 @@
 
 Project: Aghbari Commerce | الأغبري
 Branch: `main`
-Current Git HEAD: `bbf595ee7657add03a7696f28a528d6e9b2cf3a9`
+Current Git HEAD: `e6fcd516699f544668694744f10bd191c1364d12`
 Production: HOLD / NO TOUCH
 Certification: NOT CLAIMED
 
@@ -15,7 +15,7 @@ Certification: NOT CLAIMED
 - Production has not been mutated by these execution changes.
 
 ## Exact proof status
-- Source implementation: VERIFIED at exact main HEAD `bbf595ee7657add03a7696f28a528d6e9b2cf3a9`.
+- Source implementation: VERIFIED at exact main HEAD `e6fcd516699f544668694744f10bd191c1364d12`.
 - Active runtime wiring: VERIFIED — `main.tsx` imports `AppV3Fixed`; active runtime includes cache scope, trust surface and persisted theme.
 - Live purchase/receipt drift: VERIFIED read-only; both still expose legacy 200; anon EXECUTE remains false.
 - Live bulk-transition RPC: NOT_PRESENT; repository migration is source-only.
