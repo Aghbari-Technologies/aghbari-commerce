@@ -19,6 +19,60 @@ export interface CommittedImportResult {
   inventory_changed: number;
 }
 
+export interface ImportReconciliationReport {
+  sourceName: string;
+  contractVersion: typeof IMPORT_CONTRACT_VERSION;
+  sourceFingerprint: string;
+  correlationId: string;
+  inputRows: number;
+  invalidRows: number;
+  committedRows: number;
+  productsCreated: number;
+  productsUpdated: number;
+  inventoryChanged: number;
+  completedAt: string;
+  status: 'committed';
+}
+
+export function buildImportReconciliationReport(input: {
+  sourceName: string;
+  sourceFingerprint: string;
+  correlationId: string;
+  inputRows: number;
+  invalidRows: number;
+  result: CommittedImportResult;
+  completedAt?: string;
+}): ImportReconciliationReport {
+  if (!assertSafeNonNegativeInteger(input.inputRows)
+    || !assertSafeNonNegativeInteger(input.invalidRows)
+    || !input.correlationId.trim()
+    || !input.sourceFingerprint.trim()) {
+    throw new Error('بيانات تقرير مصالحة الاستيراد غير صالحة.');
+  }
+  if (input.result.imported_rows + input.invalidRows > input.inputRows) {
+    throw new Error('نتيجة المصالحة تتجاوز عدد صفوف المصدر.');
+  }
+  return {
+    sourceName: input.sourceName.trim().slice(0, MAX_SOURCE_NAME_LENGTH) || 'products.xlsx',
+    contractVersion: IMPORT_CONTRACT_VERSION,
+    sourceFingerprint: input.sourceFingerprint.trim(),
+    correlationId: input.correlationId.trim(),
+    inputRows: input.inputRows,
+    invalidRows: input.invalidRows,
+    committedRows: input.result.imported_rows,
+    productsCreated: input.result.products_created,
+    productsUpdated: input.result.products_updated,
+    inventoryChanged: input.result.inventory_changed,
+    completedAt: input.completedAt ?? new Date().toISOString(),
+    status: 'committed',
+  };
+}
+
+
+function assertSafeNonNegativeInteger(value: unknown): value is number {
+  return Number.isSafeInteger(value) && (value as number) >= 0;
+}
+
 function assertUuid(value: unknown, message: string): string {
   if (typeof value !== 'string' || !UUID_PATTERN.test(value)) throw new Error(message);
   return value;
