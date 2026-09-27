@@ -1,25 +1,25 @@
 # 🔴 AGHBARI DEVELOPMENT PROGRESS — CANONICAL LIVE LEDGER
 
-## Run 2026-09-27 — Main reconciled; purchase/receipt migration controlled in PR #128
+## Run 2026-09-27 — Purchase/receipt idempotency closure
 
 - Run: `2026-09-27`
-- SHA: `367a1938fbc60259ff99578549773d6d8893db38`
-- Branch: `main`
+- SHA: `b3f1c6093c113d6a9e3e9a4d9c46e5153c03b4d1`
+- Branch: `execution/purchase-receipt-idempotency-128-20260927`
+- Merge-base: `main@52c3ce9a52600e056ecfb6a6f847326693123cfd`
 - Implemented:
-  - Main functional baseline retained: customer routing, authorized pricing/currency, atomic reorder, quantity ceilings, offline guards, security contract suite and prepared quick-order/order-template migrations.
-  - Accidental off-branch purchase/receipt migration/proof files removed from main and retained only on PR #128 execution branch.
+  - Source migration normalizing `create_purchase_order` and `receive_purchase_order` idempotency keys from 16..200 to 16..128.
+  - Exact migration lineage and pgTAP negative/privilege/security contract coverage.
+  - Receipt client boundary test for 128 accepted / 129 rejected; purchase client boundary already present.
 - Verified:
   - Production database unchanged.
-  - Live purchase/receipt drift remains 16..200; anon EXECUTE false.
-  - Main source reconciled at exact SHA.
+  - Live read-only check confirms both production RPCs remain at legacy 200 and anon EXECUTE remains false.
+  - Branch source/test content verified at the exact SHA.
 - Proven:
-  - Main source/state: VERIFIED.
-  - Purchase/receipt 16..128 implementation: source VERIFIED on controlled PR branch, not proven on main.
-  - CI/runtime/browser/certification: NOT_PROVEN.
-- Blocked:
-  - Vercel remains the known unchanged free-plan build-rate-limit/protection path; no retry.
+  - Source-level implementation: VERIFIED.
+  - Exact-SHA CI / migration / concurrency / Test-the-Test / runtime / browser: NOT_PROVEN until workflows complete.
+- Blocked: Vercel status is the known unchanged free-plan build-rate-limit path; no retry.
 - Certification: `NOT CLAIMED`
 - Production: `HOLD / NO TOUCH`
 
 ## Next
-Finish PR #128 exact-SHA migration/concurrency/Test-the-Test/application proof. Do not apply the production migration until those proofs are exact and the release gate is open.
+Inspect exact-SHA migration, concurrency, Test-the-Test, application-quality and affected test results; fix the first material failure and rerun only the affected proof.

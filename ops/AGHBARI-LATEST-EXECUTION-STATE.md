@@ -1,30 +1,31 @@
 # 🔴 AGHBARI LATEST EXECUTION STATE
 
 Project: Aghbari Commerce | الأغبري
-Branch: `main`
-Current Git HEAD: `226f4403f565981ed40ecb81293d34830335c6b4`
-Functional baseline: `52c3ce9a52600e056ecfb6a6f847326693123cfd`
+Branch: `execution/purchase-receipt-idempotency-128-20260927`
+Current Git HEAD: `07533793040a9c935a946e84a7af407bcfb27349`
+Base lineage: `main` merge-base `52c3ce9a52600e056ecfb6a6f847326693123cfd`
 Production: HOLD / NO TOUCH
 Certification: NOT CLAIMED
 
 ## Current reality
-- Main functional baseline remains unchanged from `52c3ce9a52600e056ecfb6a6f847326693123cfd`.
-- Two accidental off-branch migration/proof files were reverted from main; the controlled purchase/receipt migration remains only on execution branch `execution/purchase-receipt-idempotency-128-20260927`.
-- Customer routing/pricing/reorder/quantity/offline hardening, order-template source migration and security contract suite remain on main.
-- Live production quick-order and order-template migrations remain intentionally unapplied.
+- Source migration now normalizes both `create_purchase_order` and `receive_purchase_order` from 16..200 to 16..128.
+- Client purchase/receipt validation is 16..128; receipt tests explicitly cover 128 accepted / 129 rejected.
+- pgTAP coverage locks signature, canonical 128 maximum, removal of legacy 200 maximum, authenticated-only execution and retained SECURITY DEFINER posture.
+- Production database was not mutated; live read-only verification still shows both RPCs at the legacy 200 bound, confirming the intended release drift remains controlled.
 
 ## Exact proof status
-- Main source: VERIFIED at exact HEAD `226f4403f565981ed40ecb81293d34830335c6b4`.
-- Live security read-only proof: 15/15 current conditions true.
-- Purchase/receipt live drift: VERIFIED read-only — both production RPCs still use the legacy 16..200 idempotency bound; anon EXECUTE remains false.
-- No current main certification claim.
+- Source implementation: VERIFIED at exact branch HEAD `07533793040a9c935a946e84a7af407bcfb27349`.
+- Live read-only drift proof: VERIFIED — both production RPCs still expose legacy 200; anon EXECUTE is false for both.
+- Exact-SHA CI: QUEUED/PENDING; no PASS claimed.
+- Migration proof / concurrency proof / Test-the-Test / runtime / browser: NOT_PROVEN for this SHA.
 
 ## OPEN GAPS
-- PR #128 exact-SHA proof for controlled purchase/receipt 16..128 migration.
-- Remaining controlled quick-order/order-template production migrations and final runtime/browser evidence.
+- Complete exact-SHA CI and affected proof workflows.
+- Resolve any real migration/concurrency/test failure once; do not loop unchanged failures.
+- Only after exact proof, apply the controlled production migration in the approved release path.
 
 ## NEXT EXECUTABLE ACTION
-Complete PR #128 exact-SHA migration/concurrency/Test-the-Test/application proof. If green, keep the migration on the controlled branch until the release gate authorizes production application.
+Inspect exact-SHA `supabase-migration-proof`, `concurrency-proof`, `test-the-test`, application-quality and affected test results for `07533793040a9c935a946e84a7af407bcfb27349`; fix the first material failure and re-check only affected proof.
 
 ## DO NOT REPEAT
-Do not transfer evidence across SHAs. Do not mutate production directly. Do not retry unchanged Vercel build-rate-limit/protection. Do not reopen proven customer routing, quick-order, order-template or security-contract work.
+Do not transfer evidence across SHAs. Do not mutate production directly. Do not retry unchanged Vercel build-rate-limit/protection. Do not reopen the already-closed customer routing, quick-order, order-template or security-contract work.
