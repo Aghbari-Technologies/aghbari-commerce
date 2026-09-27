@@ -67,7 +67,11 @@ jobs:
         with:
           version: 2.117.0
       - name: Start Postgres-only local database
-        run: supabase db start
+        shell: bash
+        run: |
+          set -o pipefail
+          timeout --foreground 8m supabase db start --debug 2>&1 | tee /tmp/supabase-db-start.log
+          test ${PIPESTATUS[0]} -eq 0
       - name: Apply migrations from empty database
         run: supabase db reset --local
       - name: Verify effective final order authority in Fresh DB
