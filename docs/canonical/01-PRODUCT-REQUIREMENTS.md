@@ -52,3 +52,17 @@ No additional product scope is created solely because a legacy screenshot contai
 ## 2026-09-28 — Customer self profile
 - Customer Portal profile supports self-service editing of display name and phone only.
 - Email, customer tier and account active state remain outside customer self-service and are rendered as protected/read-only data.
+
+## 2026-09-28 — Visual references are not product-scope expansion
+
+The supplied `docs/ui-reference/` screenshots originate from another application/context and are used only as visual references. They do not enlarge the Aghbari Commerce product scope.
+
+A screenshot may reveal:
+- an applicable UX pattern;
+- a missing in-scope Commerce capability;
+- a reusable state/layout pattern;
+- or an unsupported external capability.
+
+Only the first three may influence Aghbari implementation, and only after reconciliation with the canonical Commerce contract. Unsupported functionality remains an explicit boundary.
+
+The number of reference assets is not a completion denominator. Product closure is measured against the canonical Aghbari capability map and its implementation/evidence contract.
