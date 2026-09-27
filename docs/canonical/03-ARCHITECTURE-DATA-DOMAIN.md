@@ -77,3 +77,8 @@ The consolidation manifest lists the architecture/data source set that must be f
 - update_supplier and update_warehouse are canonical transactional commands; they derive organization from the authenticated profile and never accept caller-supplied organization identifiers.
 - Both commands lock the target row, validate ownership, require owner/admin role, update updated_at, and emit canonical supplier.update / warehouse.update audit events.
 - Warehouse branch reassignment is accepted only for an active branch inside the same organization.
+
+
+## 2026-09-28 — Customer self profile command
+- update_customer_self_profile is the canonical self-service customer mutation for display name and phone. It derives organization/customer context from authenticated state and locks the current customer row before update.
+- The command never accepts or changes tenant ownership, pricing tier, or active state and emits customer_profile.self_update to the audit log.
