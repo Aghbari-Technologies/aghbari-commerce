@@ -1,3 +1,5 @@
+import './operational-loading-skeleton.css';
+
 function Block({ className = '' }: { className?: string }) {
   return <i className={'operational-skeleton-block ' + className} aria-hidden="true" />;
 }
