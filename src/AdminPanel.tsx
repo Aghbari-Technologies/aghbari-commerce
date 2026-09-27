@@ -88,8 +88,7 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
       selectedOrders.every((order) => allowedNextStatuses(order.status, role).includes(candidate))
     );
   }, [selectedOrders, role]);
-  const pageOrderIds = pagedOrders.map((order) => order.id);
-  const allPageSelected = pageOrderIds.length > 0 && pageOrderIds.every((id) => selectedOrderIds.has(id));
+  const allPageSelected = pagedOrders.length > 0 && pagedOrders.every((order) => selectedOrderIds.has(order.id));
   function togglePageSelection() {
     setSelectedOrderIds((current) => {
       const next = new Set(current);
@@ -98,6 +97,7 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
       return next;
     });
   }
+  const pageOrderIds = pagedOrders.map((order) => order.id);
   function openBulkPreview() {
     const target = bulkAllowedTargets[0] ?? '';
     if (!selectedOrders.length || !target) {

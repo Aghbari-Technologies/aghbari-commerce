@@ -28,7 +28,7 @@ const UNIT_OPTIONS = ['حبة', 'كرتون', 'طن'];
 
 type PriceTier = { min_quantity: number; unit_price: number; currency: string };
 type Finance = { currency: string; creditLimit: number; outstanding: number; available: number; entries: Array<{ id: string; reference?: string; description: string; debit: number; credit: number; due_date?: string; status: string; created_at: string }> };
-import { DEFAULT_CUSTOMER_PORTAL_CONFIG, firstEnabledPaymentMethod, isPaymentMethodEnabled, validateCheckoutPolicy, type ClientUiConfig, type PaymentMethod } from './domain/customerPolicy';
+import { DEFAULT_CUSTOMER_PORTAL_CONFIG, firstEnabledPaymentMethod, isPaymentMethodEnabled, normalizePortalAccentColor, validateCheckoutPolicy, type ClientUiConfig, type PaymentMethod } from './domain/customerPolicy';
 
 function mapCatalogItem(item: CatalogItem, categoryName: string, imageUrl?: string): Product & { authorizedPrice?: number } { return { id: item.id, sku: item.sku, name: item.name, unit: item.unit, category: categoryName, description: item.description ?? undefined, availableQuantity: item.available_quantity, status: item.status === 'active' ? 'active' : 'inactive', imageUrl, authorizedPrice: item.authorized_price ?? undefined }; }
 function currencyLabel(currency = 'YER') { return currency === 'YER' ? 'ر.ي' : currency; }

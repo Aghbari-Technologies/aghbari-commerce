@@ -63,7 +63,7 @@ export interface BulkTransitionResult {
   to_status: OrderStatus;
 }
 
-export async function bulkTransitionOrders(orderIds: string[], toStatus: OrderStatus, idempotencyKey = crypto.randomUUID()): Promise<BulkTransitionResult[]> {
+export async function bulkTransitionOrders(orderIds: string[], toStatus: OrderStatus, idempotencyKey: string = crypto.randomUUID()): Promise<BulkTransitionResult[]> {
   const ids = validateBulkOrderTransitionInput(orderIds, toStatus);
   const key = idempotencyKey.trim();
   if (key.length < 16 || key.length > 128) throw new Error('مفتاح العملية الجماعية يجب أن يكون بين 16 و128 حرف.');

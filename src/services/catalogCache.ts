@@ -92,10 +92,10 @@ export function cacheCatalogSnapshot(scope: string, search: string, categoryId: 
   writeEntries(next);
 }
 
-export function getCachedCatalogSnapshot(search: string, categoryId: string | null, now = Date.now()): CatalogItem[] {
-  if (typeof localStorage === 'undefined') return [];
-  const key = cacheKey(search, categoryId);
-  const entry = readEntries().find((item) => item.key === key);
+export function getCachedCatalogSnapshot(scope: string, search: string, categoryId: string | null, now = Date.now()): CatalogItem[] {
+  if (typeof localStorage === 'undefined' || !scope.trim()) return [];
+  const key = cacheKey(scope, search, categoryId);
+  const entry = readEntries().find((item) => item.key === key && item.scope === scope.trim());
   if (!entry) return [];
   const age = now - Date.parse(entry.fetchedAt);
   if (age < 0 || age > CATALOG_CACHE_TTL_MS) return [];
