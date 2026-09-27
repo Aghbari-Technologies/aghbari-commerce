@@ -90,14 +90,13 @@
 - Customer Portal self-service profile now permits only display name and phone updates through update_customer_self_profile.
 - Email, pricing tier, active state and tenant ownership remain protected/read-only. The command rejects staff contexts and is audited.
 
-## 2026-09-28 — Durable UI reference coverage contract
+## 2026-09-28 — External visual reference corpus contract
 
-- The canonical visual source remains `docs/ui-reference/UI-REFERENCE-ASSET-INDEX.md`.
-- `src/structure/ui-reference-packs.ts` is the compact code registry for exactly 84 current reference PNGs grouped into 8 implementation packs.
-- `src/UiReferenceCoveragePanel.tsx` provides a real Admin QA/coverage workspace; it is not a second transactional data source.
-- `src/structure/ui-reference-packs.test.ts` enforces exact 84-file registry parity and uniqueness.
-- `src/brand-identity.test.ts` guards runtime source against historical product-identity residue and intentionally excludes test/spec sources.
-- Classification/mapping is not browser proof; final P0 visual closure still requires exact-SHA runtime/browser evidence bound to viewport/state.
+- `docs/ui-reference/` contains screenshots captured from another application/context. They provide visual language and UX patterns only.
+- The 84-asset count is provenance/accounting only, not Aghbari screen count or UI completion denominator.
+- `src/structure/ui-reference-packs.ts` is retained for traceability/tests only; it must not become production UI.
+- Duplicate/equivalent references map to one shared implementation where applicable.
+- Unsupported behaviors remain explicit boundaries and never become fake Commerce transactions.
 
 ## 2026-09-28 — Customer mobile navigation and Admin boundary integrity
 
