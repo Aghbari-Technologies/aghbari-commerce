@@ -186,3 +186,16 @@ Re-read exact main HEAD and inspect fresh current-SHA workflow evidence. Fix onl
 - 84 is an asset/provenance count only, not the number of required Aghbari screens and not a UI completion denominator.
 - The code registry remains for traceability; implementation must collapse duplicate/visually equivalent references into shared Aghbari patterns and existing canonical screens.
 - Unsupported reference behaviors remain boundaries.
+
+## 2026-09-28 — Quality root-cause correction checkpoint
+
+- Current main HEAD: `298f8cdd35629f27ce03dae93aca88b49f4b6fe9`.
+- Fixed real `src/AdminPanel.tsx` type errors: order pagination declaration before use and staff-order detail currency source.
+- Fixed the test/typecheck boundary by excluding Vitest `.test.ts/.spec.ts` files from application `tsconfig.app.json`; test execution remains in the Vitest quality steps.
+- Removed the reference coverage panel/CSS from the production Admin workspace. The external 84-image corpus remains provenance/tests/docs only.
+- Preserved the external-reference rule: screenshots from another application are visual inspiration, not Aghbari screen inventory.
+
+### CURRENT PROOF
+- G1 and security have exact-SHA success on the proof branch before the latest refresh.
+- Latest quality runs are being regenerated against the corrected source; no stale failure is treated as current proof.
+- Production remains HOLD / NO TOUCH.
