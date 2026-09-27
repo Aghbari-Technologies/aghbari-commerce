@@ -98,3 +98,11 @@
 - `src/structure/ui-reference-packs.test.ts` enforces exact 84-file registry parity and uniqueness.
 - `src/brand-identity.test.ts` guards runtime source against historical product-identity residue and intentionally excludes test/spec sources.
 - Classification/mapping is not browser proof; final P0 visual closure still requires exact-SHA runtime/browser evidence bound to viewport/state.
+
+## 2026-09-28 — Customer mobile navigation and Admin boundary integrity
+
+- The active Customer Portal mobile navigation now covers all six logical sections without crowding the primary dock: Catalog, Orders, Cart and Account are primary; Templates, Notifications and Finance are available in the compact More sheet.
+- `src/customer-mobile-more.css` contains the responsive secondary navigation sheet and reduced-motion-safe behavior.
+- `src/customer-mobile-navigation.test.ts` guards section reachability and the More-sheet mount.
+- `src/admin-boundary-navigation.test.ts` guards every safe Boundary alternative against missing Admin anchors.
+- These are source contracts, not browser certification evidence; exact-SHA runtime/browser proof remains a separate gate.
