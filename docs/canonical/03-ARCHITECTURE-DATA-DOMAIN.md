@@ -66,3 +66,9 @@ The consolidation manifest lists the architecture/data source set that must be f
 - `AppV3Fixed` is the active browser entrypoint and owns Customer Portal runtime behavior.
 - Catalog cache identity is `organizationId:customerId:warehouseId:userId`; missing segments are omitted and an empty overall scope disables caching.
 - This scope is a presentation/cache boundary only and does not replace tenant enforcement in Supabase/RLS.
+
+## 2026-09-28 — Customer address domain contract
+- public.customer_addresses is the canonical saved-delivery-address table. It stores organization/customer ownership plus recipient/contact/location fields and is_default.
+- customer_addresses_one_default_idx enforces at most one default address per customer at database level. Address commands serialize per customer with an advisory transaction lock before changing the default flag.
+- create_customer_address, update_customer_address and delete_customer_address derive tenant/customer context from authenticated server state; callers do not provide organization/customer identifiers.
+- Address mutations are audited as customer_address.create, customer_address.update and customer_address.delete. No address table becomes an alternate order/invoice source of truth.
