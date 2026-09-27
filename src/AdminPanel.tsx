@@ -30,7 +30,7 @@ import RecordDetailDrawer from './RecordDetailDrawer';
 import OfflineRecoveryPanel from './OfflineRecoveryPanel';
 import AdminBoundaryCenter from './AdminBoundaryCenter';
 import './admin-executive-dashboard.css';
-import { adminTargetForPath, getAdminStructureForRole } from './structure/admin-structure';
+import { adminTargetForPath, getAdminStructureForRole } from './structure/admin-structure';\nimport WorkspaceSurfaceRail from './WorkspaceSurfaceRail';
 
 interface StaffProduct { id: string; sku: string; name: string; unit: string; }
 interface Warehouse { id: string; name: string; }
@@ -189,7 +189,7 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
         {userId&&<a className={activeAdminTarget === '#admin-recovery' ? 'active' : ''} href="#admin-recovery">التعارض والاسترداد</a>}
         {canOrderWorkflow&&<a className={activeAdminTarget === '#admin-access' ? 'active' : ''} href="#admin-access">الأدوار والصلاحيات</a>}
       </nav>
-      <button type="button" className="admin-command-trigger" aria-haspopup="dialog" aria-expanded={commandOpen} onClick={() => { setCommandOpen(true); setCommandQuery(''); }}>⌘ مركز الأوامر <kbd>Ctrl K</kbd></button>
+      <WorkspaceSurfaceRail variant="staff" role={role} />\n      <button type="button" className="admin-command-trigger" aria-haspopup="dialog" aria-expanded={commandOpen} onClick={() => { setCommandOpen(true); setCommandQuery(''); }}>⌘ مركز الأوامر <kbd>Ctrl K</kbd></button>
       <div className="admin-workspace-strip" aria-label="مساحات العمل السريعة">
         <div className="admin-workspace-strip-label">
           <span className="eyebrow">مساحات العمل</span>
