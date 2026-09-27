@@ -83,3 +83,16 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Certification: NOT CLAIMED
 - Production: HOLD / NO TOUCH
 - Next: exact-current quality/security/test results, first material failure only, then next uncovered reference screen pack.
+
+
+## Run 2026-09-28 — Staff reorder/template boundary
+- Run: `2026-09-28`
+- SHA: `35f5b272870f48b09a29b12f7c433716fb05579d` at checkpoint creation
+- Branch: `main`
+- Implemented: explicit Admin boundaries for Staff reorder and Staff order-template management; no unsupported Staff permission or mutation invented.
+- Verified: Customer Portal already owns real reorder/template flows and persistence; Admin structure remains explicit boundary.
+- Proven: source contract only; browser/runtime/hosted proof remains `NOT_PROVEN`.
+- Blocked: live purchase/receipt 200→128 migration is not applied; Vercel access/protection remains external (`403 Not authorized` via connected app).
+- Certification: `NOT CLAIMED`
+- Production: `HOLD / NO TOUCH`
+- Next: exact-head runtime/source verification, then next independent uncovered reference-backed UI/core gap.
