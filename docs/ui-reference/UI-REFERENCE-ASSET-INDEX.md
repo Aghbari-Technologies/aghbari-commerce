@@ -264,6 +264,18 @@ PRIMARY REFERENCE
 استخدم packs لتقليل مساحة الذاكرة والتوثيق، مع الحفاظ على provenance الكامل.
 
 
+## 16. Fast-path visual processing — 2026-09-27
+
+Do not inspect every file independently when the same screen family/state is already represented.
+
+```text
+EXACT HASH DUPLICATE → VISUAL EQUIVALENCE → SCREEN PACK → UNIQUE IMPLEMENTATION TARGET → ALIASES / PROVENANCE
+```
+
+Once a reference is proven equivalent to an implemented pack, do not rebuild or restyle the same target. Verify the alias against the existing result and move forward.
+
+Read screenshots only for decisions that affect layout, hierarchy, state, interaction, responsive behavior, accessibility or scope boundary.
+
 ## 17. Compact screen-pack coverage register — 2026-09-28
 
 All 84 current PNG references are accounted for exactly once in the code-level registry at `src/structure/ui-reference-packs.ts`. The registry intentionally groups equivalent/adjacent visual references into implementation packs; it does not duplicate screens.
@@ -282,15 +294,3 @@ All 84 current PNG references are accounted for exactly once in the code-level r
 **Coverage invariant:** 8 packs / 84 references / 84 unique filenames. The automated contract test `src/structure/ui-reference-packs.test.ts` also verifies every registered filename resolves to an existing tracked PNG under this directory.
 
 **Important:** classification and implementation mapping are not final visual/browser proof. Final P0 closure still requires reference + route/surface + state + viewport + exact source SHA + implementation browser evidence, as defined by the canonical UX/QA documents.
-
-## 16. Fast-path visual processing — 2026-09-27
-
-Do not inspect every file independently when the same screen family/state is already represented.
-
-```text
-EXACT HASH DUPLICATE → VISUAL EQUIVALENCE → SCREEN PACK → UNIQUE IMPLEMENTATION TARGET → ALIASES / PROVENANCE
-```
-
-Once a reference is proven equivalent to an implemented pack, do not rebuild or restyle the same target. Verify the alias against the existing result and move forward.
-
-Read screenshots only for decisions that affect layout, hierarchy, state, interaction, responsive behavior, accessibility or scope boundary.
