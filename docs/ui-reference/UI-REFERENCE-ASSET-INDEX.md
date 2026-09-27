@@ -263,6 +263,26 @@ PRIMARY REFERENCE
 لا تحذف النسخ المكررة تلقائيًا؛ يحافظ عليها المصدر ما لم تُعتمد بوابة retirement.
 استخدم packs لتقليل مساحة الذاكرة والتوثيق، مع الحفاظ على provenance الكامل.
 
+
+## 17. Compact screen-pack coverage register — 2026-09-28
+
+All 84 current PNG references are accounted for exactly once in the code-level registry at `src/structure/ui-reference-packs.ts`. The registry intentionally groups equivalent/adjacent visual references into implementation packs; it does not duplicate screens.
+
+| Pack | References | Surface / route target | Commerce classification |
+|---|---:|---|---|
+| Command Center | 5 | Admin Command Center / `#admin-dashboard` | LIVE |
+| Sales & Orders | 20 | Orders, customers and operational details / `#admin-orders` | LIVE |
+| Data & Imports | 7 | Import, reconciliation and data operations / `#admin-import` | LIVE |
+| Inventory | 18 | Inventory, movements, count, transfers and warehouses / `#admin-inventory` | LIVE |
+| Analytics / AI | 13 | External/advanced analytics references / `#admin-boundaries` | BOUNDARY |
+| Health / Governance | 7 | Audit, outbox, notifications and unsupported health surfaces / `#admin-governance` | MIXED |
+| Catalog / Settings | 9 | Catalog, presentation settings and unsupported historical offers / `#admin-catalog` | MIXED |
+| Integrations / Developer | 5 | Onyx, integration and Developer-AI references / `#admin-boundaries` | BOUNDARY |
+
+**Coverage invariant:** 8 packs / 84 references / 84 unique filenames. The automated contract test `src/structure/ui-reference-packs.test.ts` also verifies every registered filename resolves to an existing tracked PNG under this directory.
+
+**Important:** classification and implementation mapping are not final visual/browser proof. Final P0 closure still requires reference + route/surface + state + viewport + exact source SHA + implementation browser evidence, as defined by the canonical UX/QA documents.
+
 ## 16. Fast-path visual processing — 2026-09-27
 
 Do not inspect every file independently when the same screen family/state is already represented.
