@@ -69,3 +69,9 @@
 ## 2026-09-28 — Customer delivery-address contract
 - Saved delivery addresses are a canonical Customer Portal capability: CRUD plus one default address per customer, tenant/customer scoped, audited, and server-authorized through dedicated RPCs.
 - Address writes fail closed while offline; checkout/order binding is deliberately separate until an explicit shipping-address transactional contract is approved.
+
+
+## 2026-09-28 — Staff order detail contract
+- Admin/Staff order details use the real `orders` + `order_items` + `products` read contract through `getStaffOrderDetail`; the UI must not substitute fabricated line data.
+- The detail service validates UUIDs, monetary fields and line totals and rejects a subtotal that does not equal the sum of returned line totals within the repository tolerance.
+- The reusable operational detail drawer supports rich content and an explicit retry footer without adding mutation authority.
