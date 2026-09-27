@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { shouldLoadPortalData } from '../AppV3Fixed';
+import { catalogCacheScope, shouldLoadPortalData } from '../AppV3Fixed';
 
 describe('customer portal remote-load guard', () => {
   it('allows remote reads only for a signed-in identified online customer with Supabase', () => {
@@ -16,5 +16,15 @@ describe('customer portal remote-load guard', () => {
   });
   it('blocks remote reads when the Supabase client is unavailable', () => {
     expect(shouldLoadPortalData(true, 'customer-1', true, false)).toBe(false);
+  });
+});
+
+
+describe('active portal cache scope', () => {
+  it('builds an unambiguous authenticated scope', () => {
+    expect(catalogCacheScope('org-1','customer-1','warehouse-1','user-1')).toBe('org-1:customer-1:warehouse-1:user-1');
+  });
+  it('omits missing scope segments without fabricating identifiers', () => {
+    expect(catalogCacheScope('org-1',null,'warehouse-1','user-1')).toBe('org-1:warehouse-1:user-1');
   });
 });
