@@ -1,10 +1,10 @@
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import adminPanelSource from '../AdminPanel.tsx?raw';
 import { AGHBARI_ADMIN_LIVE_ITEMS } from './admin-structure';
 
 describe('admin live navigation anchors', () => {
   it('keeps every live structure target represented by a real AdminPanel DOM id', () => {
-    const source = readFileSync(new URL('../AdminPanel.tsx', import.meta.url), 'utf8');
+    const source = adminPanelSource;
     for (const item of AGHBARI_ADMIN_LIVE_ITEMS) {
       const target = item.target;
       if (!target || !target.startsWith('#')) continue;

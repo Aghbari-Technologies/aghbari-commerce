@@ -96,7 +96,6 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
       selectedOrders.every((order) => allowedNextStatuses(order.status, role).includes(candidate))
     );
   }, [selectedOrders, role]);
-  const pageOrderIds = pagedOrders.map((order) => order.id);
   const allPageSelected = pageOrderIds.length > 0 && pageOrderIds.every((id) => selectedOrderIds.has(id));
   function togglePageSelection() {
     setSelectedOrderIds((current) => {
@@ -154,6 +153,7 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
   const orderPages = Math.max(1, Math.ceil(visibleOrders.length / 10));
   const activeOrderPage = Math.min(orderPage, orderPages);
   const pagedOrders = visibleOrders.slice((activeOrderPage - 1) * 10, activeOrderPage * 10);
+  const pageOrderIds = pagedOrders.map((order) => order.id);
 
   return <section className="admin-panel" id="account">
     <AdminExecutiveDashboard role={role} />
@@ -250,7 +250,7 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
         const order = orders.find((item) => item.id === detailOrderId);
         if (!order) return null;
         const lineSummary = detailOrder?.items.map((item, index) =>
-          String(index + 1) + '. ' + item.name + ' · ' + item.sku + ' · ' + item.quantity + ' ' + item.unit + ' × ' + formatMoney(item.unit_price) + ' ' + item.currency + ' = ' + formatMoney(item.line_total) + ' ' + item.currency + ' · ' + item.pricing_tier
+          String(index + 1) + '. ' + item.name + ' · ' + item.sku + ' · ' + item.quantity + ' ' + item.unit + ' × ' + formatMoney(item.unit_price) + ' ' + (detailOrder?.currency ?? order.currency) + ' = ' + formatMoney(item.line_total) + ' ' + (detailOrder?.currency ?? order.currency) + ' · ' + item.pricing_tier
         ).join('\n') ?? '';
         const fields = [
           { label: 'العميل', value: order.customer_name },
