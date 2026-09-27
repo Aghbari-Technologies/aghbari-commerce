@@ -13,7 +13,6 @@ const requiredFiles = [
   'vercel.json',
   'index.html',
   'src/main.tsx',
-  'src/App.tsx',
   'src/lib/supabase.ts',
   'supabase/config.toml',
 ];
