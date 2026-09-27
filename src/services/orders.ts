@@ -1,6 +1,6 @@
 import { requireSupabase } from '../lib/supabase';
 import type { OrderDraft } from '../domain/types';
-import { MAX_ORDER_QUANTITY_PER_LINE } from '../domain/order';
+import { MAX_IDEMPOTENCY_KEY_LENGTH, MIN_IDEMPOTENCY_KEY_LENGTH, MAX_ORDER_QUANTITY_PER_LINE } from '../domain/order';
 import type { PaymentMethod } from '../domain/customerPolicy';
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -18,7 +18,7 @@ function assertUuid(value: unknown, operation: string) {
 function assertIdempotencyKey(value: unknown) {
   if (typeof value !== 'string') throw new Error('مفتاح العملية غير صالح.');
   const normalized = value.trim();
-  if (!normalized || normalized.length > MAX_IDEMPOTENCY_KEY_LENGTH) throw new Error('مفتاح العملية غير صالح.');
+  if (normalized.length < MIN_IDEMPOTENCY_KEY_LENGTH || normalized.length > MAX_IDEMPOTENCY_KEY_LENGTH) throw new Error(`مفتاح العملية يجب أن يكون بين ${MIN_IDEMPOTENCY_KEY_LENGTH} و${MAX_IDEMPOTENCY_KEY_LENGTH} حرفًا.`);
   return normalized;
 }
 

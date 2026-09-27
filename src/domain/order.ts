@@ -2,6 +2,7 @@ import type { CartLine, OrderDraft } from './types';
 
 export const MAX_ORDER_LINES = 100;
 export const MAX_ORDER_QUANTITY_PER_LINE = 10000;
+export const MIN_IDEMPOTENCY_KEY_LENGTH = 16;
 export const MAX_IDEMPOTENCY_KEY_LENGTH = 128;
 
 export class OrderValidationError extends Error {

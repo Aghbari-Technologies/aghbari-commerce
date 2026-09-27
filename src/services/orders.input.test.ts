@@ -39,6 +39,10 @@ describe('order input boundaries', () => {
     await expect(createOrder({ idempotencyKey: 'checkout-quantity', lines: [{ productId: UUID, quantity: 10_001 }] }, UUID)).rejects.toThrow('بين 1 و10000');
   });
 
+  it('rejects an idempotency key shorter than the server minimum before network use', async () => {
+    await expect(createOrder({ idempotencyKey: 'short', lines: [{ productId: UUID, quantity: 1 }] }, UUID)).rejects.toThrow('بين 16 و128');
+  });
+
   it('rejects empty, oversized, and malformed checkout inputs before network use', async () => {
     await expect(createOrder({ idempotencyKey: '   ', lines: [{ productId: UUID, quantity: 1 }] }, UUID)).rejects.toThrow();
     await expect(createOrder({ idempotencyKey: 'x'.repeat(129), lines: [{ productId: UUID, quantity: 1 }] }, UUID)).rejects.toThrow();

@@ -17,6 +17,11 @@ describe('quick-order input contract', () => {
     });
   });
 
+  it('keeps the canonical minimum idempotency key length', () => {
+    expect(() => validateQuickOrderInput({ idempotencyKey: 'x'.repeat(15), warehouseId, lines: [{ productId, quantity: 1 }] })).toThrow('16 و128');
+    expect(() => validateQuickOrderInput({ idempotencyKey: 'x'.repeat(16), warehouseId, lines: [{ productId, quantity: 1 }] })).not.toThrow();
+  });
+
   it('accepts the canonical maximum idempotency key length', () => {
     expect(() => validateQuickOrderInput({
       idempotencyKey: 'x'.repeat(128),
