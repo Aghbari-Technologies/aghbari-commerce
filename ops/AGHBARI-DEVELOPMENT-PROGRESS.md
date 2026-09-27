@@ -44,3 +44,16 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Certification: `NOT CLAIMED`
 - Production: `HOLD / NO TOUCH`
 - Next: inspect exact current-main Quality + migration + Test-the-Test results, fix first material failure once, then advance the next unproven reference-pack surface.
+
+
+## Run 2026-09-28 — Staff order detail closure
+- Run: `2026-09-28`
+- SHA: `PENDING_FINAL_MAIN_SHA`
+- Branch: `main`
+- Implemented: real Admin/Staff order-detail service; line validation and subtotal reconciliation; rich/retry-capable detail drawer; focused negative/positive contract test; bounded quality workflow.
+- Verified: source wiring re-read after commit; no production mutation.
+- Proven: exact-SHA static/source verification `PENDING`; automated runtime/build proof pending workflow visibility.
+- Blocked: Vercel hosted proof remains externally blocked; GitHub connector exposes PR-triggered workflow runs only, not the push run created by this main-branch workflow.
+- Certification: `NOT CLAIMED`
+- Production: `HOLD / NO TOUCH`
+- Next: exact final-SHA re-read, then next independent uncovered reference-pack/core gap.
