@@ -45,6 +45,11 @@ describe('purchasing input boundaries', () => {
   });
 
   it('accepts a valid receipt', () => expect(() => validateReceiveInput({ purchaseOrderId: supplier, idempotencyKey: key, lines: [{ purchaseOrderItemId: item, productId: product, quantity: 2 }] })).not.toThrow());
+  it('enforces the same 16..128 idempotency boundary for receipts', () => {
+    const base = { purchaseOrderId: supplier, lines: [{ purchaseOrderItemId: item, productId: product, quantity: 1 }] };
+    expect(() => validateReceiveInput({ ...base, idempotencyKey: 'x'.repeat(128) })).not.toThrow();
+    expect(() => validateReceiveInput({ ...base, idempotencyKey: 'x'.repeat(129) })).toThrow();
+  });
   it('rejects malformed purchase or item ids', () => {
     expect(() => validateReceiveInput({ purchaseOrderId: 'bad', idempotencyKey: key, lines: [{ purchaseOrderItemId: item, productId: product, quantity: 1 }] })).toThrow();
     expect(() => validateReceiveInput({ purchaseOrderId: supplier, idempotencyKey: key, lines: [{ purchaseOrderItemId: 'bad', productId: product, quantity: 1 }] })).toThrow();
