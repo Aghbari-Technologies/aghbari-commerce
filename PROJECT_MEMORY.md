@@ -484,3 +484,9 @@ Command "1" means:
 ## 34. EXECUTION RUN — 3e662eaff0fbb29394160fec20f1dac1a5daed83
 - Customer reorder now has an immediate duplicate-click mutex with a safe early warehouse guard and guaranteed unlock in finally.
 - This closes a double-submit integrity risk without changing server authority.
+
+
+## 36. EXECUTION RUN — 44fa5a2b73d7965702cf7d70add5cc515ca3e5e6
+- Saved-cart fallback now preserves authorized base price and currency for off-page products.
+- Quick-order, Excel, cart and offline quantity ceilings are unified at 10,000 via the central order-domain constant.
+- Quick-order server source migration/test remains prepared for 16–128 idempotency keys; live production DB remains 16–200 until approved release migration.
