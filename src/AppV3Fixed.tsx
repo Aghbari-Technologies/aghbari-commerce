@@ -32,7 +32,6 @@ const sectionFromHash = (): PortalSection => {
   const value = window.location.hash.replace(/^#/, '') as PortalSection;
   return PORTAL_SECTIONS.has(value) ? value : 'catalog';
 };
-const STAFF_ROLES = new Set<UserRole>(['owner', 'admin', 'sales', 'warehouse']);
 type PriceTier = { min_quantity: number; unit_price: number; currency: string };
 type Finance = { currency: string; creditLimit: number; outstanding: number; available: number; entries: Array<{ id: string; reference?: string; description: string; debit: number; credit: number; due_date?: string; status: string; created_at: string }> };
 type ClientUiConfig = {
