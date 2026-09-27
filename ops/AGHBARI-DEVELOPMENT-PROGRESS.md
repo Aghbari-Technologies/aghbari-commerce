@@ -1,31 +1,25 @@
 # 🔴 AGHBARI DEVELOPMENT PROGRESS — CANONICAL LIVE LEDGER
 
-## Run 2026-09-27 — Final synchronized checkpoint
+## Run 2026-09-27 — Main reconciled; purchase/receipt migration controlled in PR #128
 
 - Run: `2026-09-27`
-- SHA: `524d468837f0b613ab2eb17c659a3c7a8cd4227b`
+- SHA: `367a1938fbc60259ff99578549773d6d8893db38`
 - Branch: `main`
 - Implemented:
-  - Customer routing + boot identity guard.
-  - Customer authorized pricing/currency and resilient atomic reorder.
-  - Central quantity/idempotency boundaries across online/offline/order/template paths.
-  - Offline remote-load guard and runtime unit coverage.
-  - Application SECURITY DEFINER contract suite 034.
-  - DB-only startup for migration/concurrency/Test-the-Test workflows where direct Postgres is sufficient.
-  - Same-branch stale-run cancellation to reduce runner queue pressure.
+  - Main functional baseline retained: customer routing, authorized pricing/currency, atomic reorder, quantity ceilings, offline guards, security contract suite and prepared quick-order/order-template migrations.
+  - Accidental off-branch purchase/receipt migration/proof files removed from main and retained only on PR #128 execution branch.
 - Verified:
-  - Exact main source is `524d468837f0b613ab2eb17c659a3c7a8cd4227b`.
-  - Live read-only security contract is 15/15 true.
-  - Production database was not mutated by this execution.
+  - Production database unchanged.
+  - Live purchase/receipt drift remains 16..200; anon EXECUTE false.
+  - Main source reconciled at exact SHA.
 - Proven:
-  - Current-SHA source content: VERIFIED.
-  - Current-SHA CI: NOT_PROVEN while queued.
-  - Prior SHA CI evidence remains historical and not transferable.
-- Environment drift:
-  - Live quick-order idempotency remains 16–200 until release migration.
-  - Live order-template quantity behavior remains pre-migration until release migration.
+  - Main source/state: VERIFIED.
+  - Purchase/receipt 16..128 implementation: source VERIFIED on controlled PR branch, not proven on main.
+  - CI/runtime/browser/certification: NOT_PROVEN.
+- Blocked:
+  - Vercel remains the known unchanged free-plan build-rate-limit/protection path; no retry.
 - Certification: `NOT CLAIMED`
 - Production: `HOLD / NO TOUCH`
 
 ## Next
-Complete exact-SHA CI/runtime/browser evidence for the current main HEAD, then close the remaining controlled migrations and certification gates.
+Finish PR #128 exact-SHA migration/concurrency/Test-the-Test/application proof. Do not apply the production migration until those proofs are exact and the release gate is open.
