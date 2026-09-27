@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import OfflineRecoveryPanel from './OfflineRecoveryPanel';
+import { createCustomerAddress, deleteCustomerAddress, getCustomerAddresses, updateCustomerAddress, type CustomerAddress } from './services/customerAddresses';
 
 type CustomerAccountWorkspaceProps = {
   customerName: string;
@@ -42,6 +43,24 @@ export default function CustomerAccountWorkspace(props: CustomerAccountWorkspace
   const [tab, setTab] = useState<AccountTab>('overview');
   const [copied, setCopied] = useState('');
   const [copyError, setCopyError] = useState('');
+  const [addresses, setAddresses] = useState<CustomerAddress[]>([]);
+  const [addressesLoading, setAddressesLoading] = useState(false);
+  const [addressBusyKey, setAddressBusyKey] = useState('');
+  const [addressError, setAddressError] = useState('');
+  const [addressMessage, setAddressMessage] = useState('');
+  const [editingAddressId, setEditingAddressId] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [addressForm, setAddressForm] = useState({
+    label: '',
+    recipientName: '',
+    phone: '',
+    addressLine1: '',
+    addressLine2: '',
+    city: '',
+    district: '',
+    notes: '',
+    isDefault: false,
+  });
 
   async function copyValue(label: string, value: string | null) {
     if (!value) return;
@@ -52,6 +71,146 @@ export default function CustomerAccountWorkspace(props: CustomerAccountWorkspace
       window.setTimeout(() => setCopied(''), 1400);
     } catch {
       setCopyError('تعذر النسخ من المتصفح. يمكنك تحديد القيمة ونسخها يدويًا.');
+    }
+  }
+
+  async function refreshAddresses() {
+    if (!props.customerId || !props.online) {
+      setAddresses([]);
+      setAddressesLoading(false);
+      if (!props.online) setAddressError('الاتصال بالخادم مطلوب لقراءة عناوين التسليم وإدارتها.');
+      return;
+    }
+    setAddressesLoading(true);
+    setAddressError('');
+    try {
+      setAddresses(await getCustomerAddresses(100));
+    } catch (error) {
+      setAddressError(error instanceof Error ? error.message : 'تعذر تحميل عناوين التسليم.');
+    } finally {
+      setAddressesLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    if (tab === 'addresses') void refreshAddresses();
+  }, [tab, props.customerId, props.online]);
+
+  function resetAddressForm() {
+    setEditingAddressId(null);
+    setConfirmDeleteId(null);
+    setAddressForm({
+      label: '',
+      recipientName: '',
+      phone: '',
+      addressLine1: '',
+      addressLine2: '',
+      city: '',
+      district: '',
+      notes: '',
+      isDefault: addresses.length === 0,
+    });
+  }
+
+  function startAddressEdit(address: CustomerAddress) {
+    setEditingAddressId(address.id);
+    setConfirmDeleteId(null);
+    setAddressError('');
+    setAddressMessage('');
+    setAddressForm({
+      label: address.label,
+      recipientName: address.recipient_name,
+      phone: address.phone,
+      addressLine1: address.address_line1,
+      addressLine2: address.address_line2 ?? '',
+      city: address.city,
+      district: address.district ?? '',
+      notes: address.notes ?? '',
+      isDefault: address.is_default,
+    });
+  }
+
+  async function submitAddress(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!props.online || addressBusyKey) return;
+    setAddressBusyKey(editingAddressId ? `save:${editingAddressId}` : 'save:new');
+    setAddressError('');
+    setAddressMessage('');
+    try {
+      const input = {
+        label: addressForm.label,
+        recipientName: addressForm.recipientName,
+        phone: addressForm.phone,
+        addressLine1: addressForm.addressLine1,
+        addressLine2: addressForm.addressLine2,
+        city: addressForm.city,
+        district: addressForm.district,
+        notes: addressForm.notes,
+        isDefault: addressForm.isDefault,
+      };
+      if (editingAddressId) {
+        await updateCustomerAddress(editingAddressId, input);
+        setAddressMessage('تم تحديث عنوان التسليم.');
+      } else {
+        await createCustomerAddress(input);
+        setAddressMessage('تم حفظ عنوان التسليم.');
+      }
+      resetAddressForm();
+      await refreshAddresses();
+    } catch (error) {
+      setAddressError(error instanceof Error ? error.message : 'تعذر حفظ عنوان التسليم.');
+    } finally {
+      setAddressBusyKey('');
+    }
+  }
+
+  async function deleteAddress(address: CustomerAddress) {
+    if (!props.online || addressBusyKey) return;
+    if (confirmDeleteId !== address.id) {
+      setConfirmDeleteId(address.id);
+      setAddressError('');
+      setAddressMessage('اضغط حذف مرة أخرى لتأكيد الحذف.');
+      return;
+    }
+    setAddressBusyKey(`delete:${address.id}`);
+    setAddressError('');
+    setAddressMessage('');
+    try {
+      await deleteCustomerAddress(address.id);
+      setAddressMessage('تم حذف عنوان التسليم.');
+      setConfirmDeleteId(null);
+      if (editingAddressId === address.id) resetAddressForm();
+      await refreshAddresses();
+    } catch (error) {
+      setAddressError(error instanceof Error ? error.message : 'تعذر حذف عنوان التسليم.');
+    } finally {
+      setAddressBusyKey('');
+    }
+  }
+
+  async function makeDefaultAddress(address: CustomerAddress) {
+    if (!props.online || addressBusyKey || address.is_default) return;
+    setAddressBusyKey(`default:${address.id}`);
+    setAddressError('');
+    setAddressMessage('');
+    try {
+      await updateCustomerAddress(address.id, {
+        label: address.label,
+        recipientName: address.recipient_name,
+        phone: address.phone,
+        addressLine1: address.address_line1,
+        addressLine2: address.address_line2,
+        city: address.city,
+        district: address.district,
+        notes: address.notes,
+        isDefault: true,
+      });
+      setAddressMessage('تم تعيين العنوان كافتراضي.');
+      await refreshAddresses();
+    } catch (error) {
+      setAddressError(error instanceof Error ? error.message : 'تعذر تعيين العنوان الافتراضي.');
+    } finally {
+      setAddressBusyKey('');
     }
   }
 
@@ -173,12 +332,64 @@ export default function CustomerAccountWorkspace(props: CustomerAccountWorkspace
       )}
 
       {tab === 'addresses' && (
-        <div className="customer-account-surface">
-          <div className="surface-heading"><div><span className="eyebrow">العناوين</span><h3>عناوين التسليم</h3><p>تم حجز موضع الواجهة دون اختلاق بيانات أو عمليات حفظ غير مدعومة.</p></div></div>
-          <div className="customer-address-boundary" data-state="boundary">
-            <span aria-hidden="true">⌖</span>
-            <div><strong>لا يوجد عقد عناوين مستقل في Commerce الحالي</strong><span>المخطط التشغيلي الحالي لا يحتوي مصدر حقيقة للعناوين، لذلك لا يتم إنشاء عناوين وهمية ولا زر حفظ يوحي بتخزين غير موجود.</span><small>يمكن إغلاق هذه الفجوة لاحقًا بإضافة عقد canonical للعناوين ثم ربط القراءة والكتابة بصلاحياته واختباراته.</small></div>
+        <div className="customer-account-surface customer-addresses-surface">
+          <div className="surface-heading">
+            <div>
+              <span className="eyebrow">التسليم</span>
+              <h3>عناوين التسليم</h3>
+              <p>احفظ مواقع التسليم الخاصة بحسابك مع عنوان افتراضي واحد. الحفظ والتعديل والحذف تمر عبر عقد Commerce المحمي على الخادم.</p>
+            </div>
+            <span className="address-source-badge">{props.online ? 'مصدر الخادم' : 'غير متصل'}</span>
           </div>
+
+          {!props.online && <div className="customer-address-offline" role="status"><strong>إدارة العناوين متوقفة دون اتصال</strong><span>لا يتم عرض بيانات محلية غير موثوقة ولا تنفيذ تغييرات مؤجلة للعناوين.</span><button type="button" className="ghost" onClick={() => void refreshAddresses()}>إعادة المحاولة بعد الاتصال</button></div>}
+
+          {props.online && (
+            <div className="customer-address-layout">
+              <form className="customer-address-form" onSubmit={submit} noValidate>
+                <div className="address-form-head">
+                  <div><span className="eyebrow">{editingAddressId ? 'تعديل' : 'جديد'}</span><h4>{editingAddressId ? 'تعديل عنوان التسليم' : 'إضافة عنوان تسليم'}</h4></div>
+                  {editingAddressId && <button type="button" className="ghost" onClick={resetAddressForm} disabled={Boolean(addressBusyKey)}>إلغاء التعديل</button>}
+                </div>
+                <div className="customer-address-form-grid">
+                  <label>اسم العنوان<input value={addressForm.label} onChange={e=>setAddressForm(v=>({...v,label:e.target.value}))} maxLength={80} placeholder="الرئيسي" required /></label>
+                  <label>اسم المستلم<input value={addressForm.recipientName} onChange={e=>setAddressForm(v=>({...v,recipientName:e.target.value}))} maxLength={120} placeholder="اسم المستلم" required /></label>
+                  <label>هاتف المستلم<input value={addressForm.phone} onChange={e=>setAddressForm(v=>({...v,phone:e.target.value}))} maxLength={40} inputMode="tel" placeholder="رقم الهاتف" required /></label>
+                  <label>المدينة<input value={addressForm.city} onChange={e=>setAddressForm(v=>({...v,city:e.target.value}))} maxLength={100} placeholder="صنعاء" required /></label>
+                  <label>المنطقة / الحي<input value={addressForm.district} onChange={e=>setAddressForm(v=>({...v,district:e.target.value}))} maxLength={120} placeholder="الحي" /></label>
+                  <label className="address-form-span-2">العنوان التفصيلي<input value={addressForm.addressLine1} onChange={e=>setAddressForm(v=>({...v,addressLine1:e.target.value}))} maxLength={240} placeholder="الشارع، المبنى، العلامة المميزة" required /></label>
+                  <label className="address-form-span-2">تفاصيل إضافية<textarea value={addressForm.addressLine2} onChange={e=>setAddressForm(v=>({...v,addressLine2:e.target.value}))} maxLength={240} rows={2} placeholder="الطابق، المتجر، المدخل..." /></label>
+                  <label className="address-form-span-2">ملاحظات التسليم<textarea value={addressForm.notes} onChange={e=>setAddressForm(v=>({...v,notes:e.target.value}))} maxLength={300} rows={2} placeholder="ملاحظات اختيارية للسائق أو فريق التسليم" /></label>
+                </div>
+                <label className="address-default-toggle"><input type="checkbox" checked={addressForm.isDefault} onChange={e=>setAddressForm(v=>({...v,isDefault:e.target.checked}))} /><span><strong>اجعل هذا العنوان افتراضيًا</strong><small>سيستبدل العنوان الافتراضي الحالي لهذا الحساب بشكل ذري.</small></span></label>
+                <button className="checkout" type="submit" disabled={Boolean(addressBusyKey)}>{addressBusyKey.startsWith('save:') ? 'جارٍ الحفظ…' : editingAddressId ? 'حفظ التعديلات' : 'حفظ العنوان'}</button>
+              </form>
+
+              <div className="customer-address-list">
+                {addressesLoading ? <div className="customer-address-list-state" role="status">جارٍ تحميل عناوين التسليم…</div> :
+                  addressError ? <div className="customer-address-list-state error-state" role="alert"><strong>تعذر تحميل/تنفيذ العملية</strong><span>{addressError}</span><button type="button" className="ghost" onClick={() => void refreshAddresses()} disabled={Boolean(addressBusyKey)}>إعادة المحاولة</button></div> :
+                  !addresses.length ? <div className="customer-address-list-state"><strong>لا توجد عناوين محفوظة بعد.</strong><span>أضف أول عنوان لتجهيز حساب التسليم.</span><button type="button" onClick={() => { setAddressError(''); setAddressMessage(''); }}>البدء بإضافة عنوان</button></div> :
+                  <div className="customer-address-cards">{addresses.map(address=><article key={address.id} className={address.is_default?'customer-address-card is-default':'customer-address-card'}>
+                    <div className="customer-address-card-head"><div><span className="eyebrow">{address.label}</span><h4>{address.recipient_name}</h4></div>{address.is_default&&<span className="customer-address-default">افتراضي</span>}</div>
+                    <div className="customer-address-card-body">
+                      <div><span>الهاتف</span><strong dir="ltr">{address.phone}</strong></div>
+                      <div><span>الموقع</span><strong>{address.city}{address.district ? ` · ${address.district}` : ''}</strong></div>
+                      <div className="wide"><span>العنوان</span><strong>{address.address_line1}{address.address_line2 ? `، ${address.address_line2}` : ''}</strong></div>
+                      {address.notes&&<div className="wide"><span>ملاحظات</span><strong>{address.notes}</strong></div>}
+                    </div>
+                    <div className="customer-address-card-actions">
+                      {!address.is_default&&<button type="button" className="ghost" onClick={()=>void makeDefaultAddress(address)} disabled={Boolean(addressBusyKey)}>تعيين افتراضي</button>}
+                      <button type="button" className="ghost" onClick={()=>startAddressEdit(address)} disabled={Boolean(addressBusyKey)}>تعديل</button>
+                      <button type="button" className={confirmDeleteId===address.id?'danger-button':'ghost'} onClick={()=>void deleteAddress(address)} disabled={Boolean(addressBusyKey)}>{addressBusyKey===`delete:${address.id}` ? 'جارٍ الحذف…' : confirmDeleteId===address.id ? 'تأكيد الحذف' : 'حذف'}</button>
+                    </div>
+                  </article>)}</div>
+                }
+              </div>
+            </div>
+          )}
+
+          {addressMessage && <div className="success" role="status">{addressMessage}</div>}
+          <div className="account-read-note"><strong>حدود التكامل</strong><span>العناوين أصبحت مصدرًا محفوظًا لحساب العميل نفسه. لم يتم افتراض ربطها تلقائيًا بفاتورة أو طلب قائم؛ أي ربط تشغيلي مع دورة الشحن يجب أن يضاف عبر عقد Commerce مستقل واختباراته.</span></div>
         </div>
       )}
 
