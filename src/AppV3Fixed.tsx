@@ -21,7 +21,6 @@ import CustomerAccountWorkspace from './CustomerAccountWorkspace';
 import './customer-account-workspace.css';
 import './customer-orders.css';
 import NotificationPanel from './NotificationPanel';
-import OfflineRecoveryPanel from './OfflineRecoveryPanel';
 import OperationalTruthStrip from './OperationalTruthStrip';
 import './styles.css';
 import './customer-portal-v3.css';
