@@ -5,7 +5,7 @@ import { calculateClientPreviewTotal } from './domain/order';
 import { formatMoney } from './domain/pricing';
 import { getCatalog, getProductImageUrls, type CatalogItem } from './services/catalog';
 import { getCategories, type CategoryOption } from './services/categories';
-import { getCart, removeCartItem, setCartItem } from './services/cart';
+import { getCart, removeCartItem, setCartItem, syncOfflineCart } from './services/cart';
 import { createOrder } from './services/orders';
 import { getCustomerOrders, getCustomerOrderDetail, type CustomerOrderDetail, type CustomerOrderSummary } from './services/customerOrders';
 import { applyOrderTemplate, createOrderTemplate, deleteOrderTemplate, getOrderTemplates, type OrderTemplate } from './services/orderTemplates';
@@ -144,6 +144,18 @@ export default function App() {
     }, 60000);
     return () => { cancelled = true; window.clearInterval(refresh); void supabase.removeChannel(channel); };
   }, [signedIn, organizationId, role]);
+
+  useEffect(() => {
+    if (!signedIn || !isOnline || STAFF_ROLES.has(role)) return;
+    let cancelled = false;
+    void syncOfflineCart().then((result) => {
+      if (cancelled || result.failed === 0) return;
+      setRuntimeError(`تمت إعادة الاتصال، لكن بقيت ${result.failed} عملية تحتاج مراجعة في مركز التعارض والاسترداد.`);
+    }).catch((error) => {
+      if (!cancelled) setRuntimeError(error instanceof Error ? error.message : 'تعذر مزامنة العمليات المؤجلة بعد عودة الاتصال.');
+    });
+    return () => { cancelled = true; };
+  }, [signedIn, isOnline, role]);
 
   useEffect(() => { if (!signedIn || !isOnline || STAFF_ROLES.has(role)) return; let cancelled = false; setOrdersLoading(true); setOrdersError(null); void getCustomerOrders(30).then((items) => { if (!cancelled) setOrders(items); }).catch((error) => { if (!cancelled) setOrdersError(error instanceof Error ? error.message : 'تعذر تحميل الطلبات.'); }).finally(() => { if (!cancelled) setOrdersLoading(false); }); return () => { cancelled = true; }; }, [signedIn, isOnline, role, orderResult]);
   useEffect(() => { if (!signedIn || !customerId || !supabase || STAFF_ROLES.has(role)) return; let cancelled = false; setFinanceLoading(true); setFinanceError(null); void (async () => { try { const [{ data: account, error: accountError }, { data: entries, error: entriesError }] = await Promise.all([supabase!.from('customer_credit_accounts').select('currency,credit_limit,outstanding_balance,available_credit').eq('customer_id', customerId).maybeSingle(), supabase!.from('customer_ledger_entries').select('id,reference,description,debit,credit,due_date,status,created_at').eq('customer_id', customerId).order('created_at', { ascending: false }).limit(50)]); if (accountError || entriesError) throw accountError ?? entriesError; if (!cancelled) setFinance(account ? { currency: account.currency, creditLimit: Number(account.credit_limit), outstanding: Number(account.outstanding_balance), available: Number(account.available_credit), entries: (entries ?? []).map((e) => ({ ...e, debit: Number(e.debit), credit: Number(e.credit) })) } : null); } catch (error) { if (!cancelled) { setFinance(null); setFinanceError(error instanceof Error ? error.message : 'تعذر تحميل المركز المالي.'); } } finally { if (!cancelled) setFinanceLoading(false); } })(); return () => { cancelled = true; }; }, [signedIn, customerId, role, financeReloadKey]);
