@@ -115,3 +115,25 @@ Re-read `refs/heads/main`, inspect the newest quality/check evidence available f
 ## DO NOT REPEAT
 
 Do not recreate the 84 PNG assets or build per-image duplicate implementations. Do not transfer evidence from earlier SHAs. Do not mutate Production to bypass migration gates.
+
+## 2026-09-28 — Mobile navigation + Boundary integrity closure
+
+- Current implementation HEAD at checkpoint: `a1fbf7559cb5f38029891474674be80892a2e8e7`; always re-read `refs/heads/main` on resume.
+- Customer Portal mobile dock now exposes Catalog, Orders, Cart, Account and a compact More sheet for Templates, Notifications and Finance.
+- Mobile More sheet is responsive, accessible as a modal surface, and closes via Escape/backdrop.
+- Added `src/customer-mobile-more.css` and `src/customer-mobile-navigation.test.ts`.
+- Added `src/admin-boundary-navigation.test.ts`; all safe Boundary alternatives are now contract-checked against live Admin DOM anchors.
+- Updated bounded quality workflow to include mobile navigation and Boundary navigation tests.
+- No production mutation.
+
+### CURRENT PROOF
+- Structural UI target coverage: VERIFIED (all registered live targets resolve to Admin anchors).
+- Reference registry: VERIFIED 84/84 structurally.
+- Mobile portal navigation: IMPLEMENTED + source-contract guarded.
+- Exact current build/browser proof: NOT_PROVEN through current connected workflow visibility.
+- Production purchase/receipt/quick-order idempotency remains legacy 200 on read-only live verification.
+- Certification: NOT CLAIMED.
+- Production: HOLD / NO TOUCH.
+
+### NEXT EXECUTABLE ACTION
+Re-read exact main HEAD, inspect available exact-SHA quality/security evidence, fix one material failure if visible, then continue the next independent core/UI closure. Do not retry unchanged Vercel hosted failure.
