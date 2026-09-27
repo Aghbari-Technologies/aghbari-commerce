@@ -68,6 +68,11 @@ select is(
   false,
   'record_supplier_payment rejects anonymous execution'
 );
+select is(
+  has_function_privilege('authenticated','public.record_supplier_payment(uuid,numeric,public.payment_method,uuid,text,text)','execute'),
+  true,
+  'record_supplier_payment remains available to authenticated users'
+);
 
 select ok(
   exists (
@@ -85,6 +90,11 @@ select is(
   has_function_privilege('anon','public.set_organization_user_role(uuid,public.user_role)','execute'),
   false,
   'set_organization_user_role rejects anonymous execution'
+);
+select is(
+  has_function_privilege('authenticated','public.set_organization_user_role(uuid,public.user_role)','execute'),
+  true,
+  'set_organization_user_role remains available to authenticated users'
 );
 
 select ok(
