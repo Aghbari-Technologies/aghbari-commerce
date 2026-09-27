@@ -479,3 +479,8 @@ Command "1" means:
 ## 33. EXECUTION RUN — 9204ed2a5b72c77802bd7e35aa14a6cf0a89be64
 - Reorder preflight now accounts for quantities already present in the active cart, skipping only conflicting lines before the single atomic quick-order merge.
 - This prevents an existing cart quantity from causing the entire reorder operation to fail while preserving server-authoritative stock enforcement.
+
+
+## 34. EXECUTION RUN — 3e662eaff0fbb29394160fec20f1dac1a5daed83
+- Customer reorder now has an immediate duplicate-click mutex with a safe early warehouse guard and guaranteed unlock in finally.
+- This closes a double-submit integrity risk without changing server authority.
