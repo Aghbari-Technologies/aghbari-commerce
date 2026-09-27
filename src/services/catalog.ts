@@ -29,10 +29,10 @@ function finiteNumber(value: unknown, fallback = 0): number {
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
-export async function getCatalog(search = '', categoryId: string | null = null, limit = 24, offset = 0, warehouseId?: string) {
+export async function getCatalog(search = '', categoryId: string | null = null, limit = 24, offset = 0, warehouseId?: string, cacheScope = '') {
   const query = normalizeCatalogQuery(search, limit, offset);
   if (typeof navigator !== 'undefined' && navigator.onLine === false) {
-    return getCachedCatalogSnapshot(query.search, categoryId);
+    return getCachedCatalogSnapshot(cacheScope, query.search, categoryId);
   }
   const client = requireSupabase();
   let resolvedWarehouseId = warehouseId;
@@ -63,7 +63,7 @@ export async function getCatalog(search = '', categoryId: string | null = null, 
     available_quantity: finiteNumber(item.available_quantity),
     authorized_price: item.authorized_price == null ? null : finiteNumber(item.authorized_price, 0)
   })) as CatalogItem[];
-  cacheCatalogSnapshot(query.search, categoryId, normalized);
+  if (cacheScope.trim()) cacheCatalogSnapshot(cacheScope, query.search, categoryId, normalized);
   return normalized;
 }
 
