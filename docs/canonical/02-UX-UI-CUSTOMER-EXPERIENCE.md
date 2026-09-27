@@ -92,3 +92,8 @@ Do not create a second design system, duplicate CSS family or duplicate asset co
 - The Admin/Staff Orders workspace supports selecting visible orders, choosing only a transition common to all selected orders, previewing the exact affected orders, then committing through the atomic bulk RPC.
 - The UI retains a reusable idempotency key across a preview/commit retry so a lost response cannot silently authorize a second mutation under a new key.
 - The server remains authoritative for organization, role, current-state and inventory invariants; client preview is advisory and cannot bypass authorization.
+
+## 2026-09-27 — Operational trust surface
+- Customer Portal exposes a compact provenance strip for connection state, account pricing basis, warehouse stock source and transactional authority.
+- Online state identifies server-backed data; offline state explicitly identifies cached data as display-only and non-authoritative.
+- Trust messaging is descriptive UI only and does not become a second source of pricing, stock or transaction truth.
