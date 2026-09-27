@@ -134,15 +134,17 @@ export async function getCustomerInvoiceItems(customerId: string, invoiceId: str
     const item = value as Record<string, unknown>;
     const quantity = Number(item.quantity);
     const unitPrice = finiteNumber(item.unit_price);
-    const lineTotal = finiteNumber(item.line_total);
+    const computedLineTotal = quantity * unitPrice;
+    const lineTotal = item.line_total == null ? computedLineTotal : finiteNumber(item.line_total);
     if (
       typeof item.id !== 'string' || !UUID_PATTERN.test(item.id) ||
       typeof item.invoice_id !== 'string' || !UUID_PATTERN.test(item.invoice_id) || item.invoice_id !== invoiceId ||
       typeof item.product_id !== 'string' || !UUID_PATTERN.test(item.product_id) ||
       typeof item.description !== 'string' || item.description.trim() === '' ||
-      !Number.isSafeInteger(quantity) || quantity <= 0
+      !Number.isSafeInteger(quantity) || quantity <= 0 ||
+      !Number.isFinite(computedLineTotal)
     ) throw new Error('بيانات بند الفاتورة تحتوي قيمة غير صالحة.');
-    if (Math.abs(lineTotal - (quantity * unitPrice)) > 0.01) {
+    if (Math.abs(lineTotal - computedLineTotal) > 0.01) {
       throw new Error('إجمالي بند الفاتورة غير متسق.');
     }
     return {
