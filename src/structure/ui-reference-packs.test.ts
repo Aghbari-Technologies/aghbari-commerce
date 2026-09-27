@@ -1,3 +1,5 @@
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { UI_REFERENCE_FILES, UI_REFERENCE_PACKS, UI_REFERENCE_TOTAL } from './ui-reference-packs';
 
@@ -24,6 +26,13 @@ describe('ui reference screen-pack coverage', () => {
         expect(seen.has(reference)).toBe(false);
         seen.add(reference);
       }
+    }
+  });
+
+  it('resolves every registry member to the tracked reference asset', () => {
+    for (const reference of UI_REFERENCE_FILES) {
+      expect(reference.endsWith('.png')).toBe(true);
+      expect(existsSync(resolve(process.cwd(), 'docs/ui-reference', reference))).toBe(true);
     }
   });
 });
