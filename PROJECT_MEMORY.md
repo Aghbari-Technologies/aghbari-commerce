@@ -500,3 +500,12 @@ Command "1" means:
 ## 38. EXECUTION RUN — pending exact commit
 - Closed order-template quantity drift: new writes are capped at 10,000 and legacy oversized templates fail before cart mutation.
 - Client validation now uses the central MAX_ORDER_QUANTITY_PER_LINE ceiling.
+
+
+## 40. EXECUTION RUN — 62fc9c88acb73ac435ff0a18605f402304959b64
+- Active main HEAD is now `62fc9c88acb73ac435ff0a18605f402304959b64`.
+- Customer offline remote-load guard from the parallel UI/runtime lane is merged into main: remote reads require signed-in + identified customer + online + Supabase availability.
+- Added `src/domain/portalRuntime.test.ts` with 5 guard assertions.
+- Application security contract suite 034 is present on main.
+- Live read-only security contract verification currently passes all 15 conditions corresponding to test 034.
+- No production mutation was made; pending DB migrations remain source-only.

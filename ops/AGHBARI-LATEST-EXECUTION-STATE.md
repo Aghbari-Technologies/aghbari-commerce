@@ -2,39 +2,41 @@
 
 Project: Aghbari Commerce | الأغبري
 Branch: `main`
-Current Git HEAD: `627e4bba29b2b64f7faabf2fe43091f1b391377a`
+Current Git HEAD: `62fc9c88acb73ac435ff0a18605f402304959b64`
 Production: HOLD / NO TOUCH
 Certification: NOT CLAIMED
 
 ## Current reality
-- Offline queue regression coverage is present again on main after the 2026-09-27 restore commit.
-- Order/idempotency client boundaries continue to align with the canonical 16..128 minimum/maximum contract where already migrated in source.
-- Live Supabase purchase/receipt RPCs still validate idempotency keys at 16..200; live migration history does not yet contain the pending 128-bound migration.
-- Customer Portal currently has catalog/search/filter/sort/pagination/cart/checkout/orders/reorder/templates/finance/account/notifications/offline primitives; an additional offline remote-load guard is prepared on PR #113 but is not merged into main.
+- Customer-bound `viewer` accounts route to the B2B customer portal; unbound viewer remains on the admin/staff surface.
+- Customer catalog preserves server-authorized price and currency; off-page saved-cart/template fallbacks preserve both.
+- Customer reorder uses current authorized catalog, active warehouse context, cart-stock preflight, one atomic quick-order merge and duplicate-click mutex.
+- Quick-order, Excel, order, cart and offline queue quantity ceilings align to the central 10,000 line ceiling.
+- Quick-order source migration/test is ready to normalize server idempotency to 16–128; live production RPC remains 16–200 until deliberate release migration.
+- Order-template source/client/DB boundary is prepared to align to 10,000 without rewriting historical oversized rows; legacy oversized apply fails closed in the migration source.
+- Customer offline remote loads are guarded by signed-in + customer identity + online + Supabase availability.
+- Application SECURITY DEFINER contract suite 034 is present on main.
+- Live read-only security proof: 15/15 corresponding conditions are true across five high-impact application RPCs.
+- Vercel free-plan build-rate-limit remains a deployment blocker; no unchanged retry is being made.
+- Production remains untouched.
 
 ## Exact proof status
-- Main source state: VERIFIED at exact HEAD `627e4bba29b2b64f7faabf2fe43091f1b391377a`.
-- Live Supabase: VERIFIED ACTIVE_HEALTHY; purchase/receipt drift 200 remains OPEN.
-- Security advisor: VERIFIED with 62 authenticated SECURITY DEFINER findings plus leaked-password-protection warning; no blanket revoke applied.
-- Live security contract proof: VERIFIED 10/10 read-only assertions across adjust_inventory, record_payment, record_supplier_payment, set_organization_user_role and register_product_media (anon denied, authenticated boundary, search_path='', role/tenant guards).
-- Purchase/receipt 128 migration: IMPLEMENTED on PR #112, NOT_PROVEN by live runtime/concurrency until migration is deliberately applied/tested in the release workflow.
-- Customer offline runtime guard: IMPLEMENTED on PR #113, NOT_PROVEN by exact-SHA CI/browser runtime.
-- Hosted runtime: NOT_PROVEN for exact current HEAD; Vercel reports free-plan build-rate-limit failure; Netlify existing site is available but its deployment tool requires source upload/local repo execution.
+- Source: VERIFIED at exact HEAD `62fc9c88acb73ac435ff0a18605f402304959b64`.
+- Application quality for the previous exact source SHA `627e4bba29b2b64f7faabf2fe43091f1b391377a`: SUCCESS (typecheck, 235 tests, lint, production build, release audit). This is historical and is not transferred to `62fc9c88acb73ac435ff0a18605f402304959b64`.
+- Security audit / G1 / Order Workflow / Browser Contract results for `627e4bba29b2b64f7faabf2fe43091f1b391377a`: SUCCESS, historical only.
+- Latest `62fc9c88acb73ac435ff0a18605f402304959b64` CI: new workflow runs are queued; no PASS claimed until they complete.
+- Live security read-only contract: VERIFIED 15/15.
+- Live Supabase: ACTIVE_HEALTHY; pending quick-order/template migrations not applied.
 
 ## Open execution frontier
-UI: 84-reference coverage → unique packs → remaining visual/state/action gaps → browser proof.
-CORE: purchase/receipt 200 → 128 migration → 128 accept / 129 reject → concurrency → negative/Test-the-Test → exact-SHA evidence.
-SECURITY: classify authenticated SECURITY DEFINER functions individually while preserving required tenant/RLS/RBAC/search_path boundaries.
-QA: only affected/new exact-SHA proofs.
-DEPLOY: free exact-source runtime proof; do not retry unchanged Vercel path.
-DOCS: semantic consolidation only.
-
-## ACTIVE BATCHES
-- PR #112: `execution/purchase-receipt-idempotency-20260927` — purchase/receipt 128-bound migration + PGTAP contract test.
-- PR #113: `execution/ui-offline-runtime-20260927` — customer offline remote-load guard + explicit offline state + unit test.
+UI: unique reference packs → remaining visual/state/action gaps → exact current-SHA browser runtime.
+CORE: release pending quick-order 128 migration + template 10k migration → 128/129 and template negative proofs → concurrency/Test-the-Test.
+SECURITY: classify remaining SECURITY DEFINER advisor findings individually; preserve required tenant/RLS/RBAC/search_path boundaries.
+QA: exact current-SHA workflows only.
+DEPLOY: free exact-source runtime proof; avoid unchanged Vercel rate-limit path.
+DOCS: compact canonical updates only.
 
 ## NEXT EXECUTABLE ACTION
-Use the repository's exact-SHA workflow path to validate PR #112's migration/test when workflow execution becomes available; otherwise continue the next independent UI/security gap without touching closed work.
+Wait only on already-triggered exact-SHA workflows for `62fc9c88acb73ac435ff0a18605f402304959b64`; resolve failures immediately, then continue the next independent material UI/core/security gap.
 
 ## DO NOT REPEAT
-Do not transfer evidence across SHAs; do not apply pending migrations to production; do not retry unchanged Vercel deployment; do not rebuild existing customer/admin screens that already have real states/actions; do not create duplicate reference packs or memory systems.
+Do not transfer evidence across SHAs. Do not apply pending migrations to production. Do not retry unchanged Vercel build-rate-limit. Do not rebuild already-complete customer/admin surfaces without a new requirement or evidence invalidation.

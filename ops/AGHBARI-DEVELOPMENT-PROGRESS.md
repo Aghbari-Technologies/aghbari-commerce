@@ -1,33 +1,31 @@
 # 🔴 AGHBARI DEVELOPMENT PROGRESS — CANONICAL LIVE LEDGER
 
-## Run 2026-09-27 — Parallel core + UI closure
+## Run 2026-09-27 — Exact current main closure
 
 - Run: `2026-09-27`
-- SHA: `627e4bba29b2b64f7faabf2fe43091f1b391377a`
+- SHA: `62fc9c88acb73ac435ff0a18605f402304959b64`
 - Branch: `main`
 - Implemented:
-  - Offline queue regression suite restored on main.
-  - Canonical idempotency fixtures/boundaries retained at source.
-  - PR #112: purchase + receipt idempotency source migration/test for 16..128.
-  - PR #113: customer portal offline remote-load guard, explicit offline state, unit test.
+  - Customer-bound viewer routing fix and boot-order identity guard.
+  - Customer authorized pricing/currency preservation and resilient atomic reorder.
+  - Central quantity/idempotency boundary hardening across online/offline/order/template paths.
+  - Customer offline remote-load guard with 5 unit assertions.
+  - Application SECURITY DEFINER contract suite 034 (15 assertions) on main.
 - Verified:
-  - Main exact HEAD is `627e4bba29b2b64f7faabf2fe43091f1b391377a`.
-  - Live purchase/receipt RPCs still use 16..200; production unchanged.
-  - Live security advisor currently reports 62 authenticated SECURITY DEFINER warnings plus leaked password protection warning.
+  - Exact source is on `main` at `62fc9c88acb73ac435ff0a18605f402304959b64`.
+  - Live Supabase remains ACTIVE_HEALTHY and production was not mutated.
+  - Live read-only security contract corresponding to test 034 passes 15/15.
 - Proven:
-  - Exact repository content for main and both implementation branches.
-  - Live read-only security contract proof: 10/10 assertions true for five high-impact SECURITY DEFINER RPCs.
-  - PR #112 diff is isolated to purchase/receipt migration + test.
-  - PR #113 diff is isolated to customer offline runtime + test.
-- Not proven:
-  - PR #112 runtime migration, 128/129 acceptance boundary, concurrency proof, exact-SHA CI.
-  - PR #113 browser/visual proof.
-  - Exact current-HEAD hosted runtime proof.
+  - Source implementation: VERIFIED at exact HEAD.
+  - Previous SHA `627e4bba29b2b64f7faabf2fe43091f1b391377a` application-quality: SUCCESS, historical and not transferred.
+  - Current SHA CI: NOT_PROVEN until its queued runs complete.
+- Environment drift:
+  - Live `apply_quick_order` idempotency remains 16–200 until release migration.
+  - Live order-template quantity behavior remains pre-migration until deliberate release application.
 - Blocked:
-  - Vercel exact-source path by free-plan build-rate-limit check.
-  - Netlify deploy tool requires local/source upload execution not available through the connected deploy operation.
+  - Vercel free-plan build-rate-limit and SSO-gated hosted UI.
 - Certification: `NOT CLAIMED`
 - Production: `HOLD / NO TOUCH`
 
 ## Next
-Validate the pending exact-SHA core migration/test through the existing workflow path; independently continue open UI/security gaps without redoing closed work.
+Complete exact current-SHA CI/browser/runtime evidence; act on failures immediately and continue independent closure work without reopening closed paths.
