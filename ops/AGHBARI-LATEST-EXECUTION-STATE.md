@@ -179,3 +179,10 @@ Read exact `refs/heads/main`, inspect available current-SHA workflow evidence, f
 
 ### NEXT EXECUTABLE ACTION
 Re-read exact main HEAD and inspect fresh current-SHA workflow evidence. Fix only a material failure if surfaced, then advance the next open core/UI requirement.
+
+## 2026-09-28 — Reference-corpus correction
+
+- The 84 supplied PNGs are explicitly treated as an external visual corpus captured from another application/context.
+- 84 is an asset/provenance count only, not the number of required Aghbari screens and not a UI completion denominator.
+- The code registry remains for traceability; implementation must collapse duplicate/visually equivalent references into shared Aghbari patterns and existing canonical screens.
+- Unsupported reference behaviors remain boundaries.
