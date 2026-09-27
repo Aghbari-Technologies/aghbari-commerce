@@ -11,7 +11,7 @@ const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3
 const MIN_IDEMPOTENCY_KEY_LENGTH = 16;
 const MAX_IDEMPOTENCY_KEY_LENGTH = 128;
 const MAX_LINES = 100;
-const MAX_QUANTITY = 100_000;
+const MAX_QUANTITY = 10_000;
 
 export function validateQuickOrderInput(input: QuickOrderInput): {
   idempotencyKey: string;
