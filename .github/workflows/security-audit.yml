@@ -2,8 +2,26 @@ name: security-audit
 
 on:
   push:
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'index.html'
+      - 'supabase/**'
+      - 'scripts/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/security-audit.yml'
     branches: ['**']
   pull_request:
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'index.html'
+      - 'supabase/**'
+      - 'scripts/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/security-audit.yml'
     branches: [main]
   workflow_dispatch:
     inputs:

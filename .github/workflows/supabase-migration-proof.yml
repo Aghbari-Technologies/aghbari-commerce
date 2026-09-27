@@ -2,8 +2,18 @@ name: supabase-migration-proof
 
 on:
   pull_request:
+    paths:
+      - 'supabase/migrations/**'
+      - 'supabase/tests/**'
+      - 'supabase/config.toml'
+      - '.github/workflows/supabase-migration-proof.yml'
     branches: [main]
   push:
+    paths:
+      - 'supabase/migrations/**'
+      - 'supabase/tests/**'
+      - 'supabase/config.toml'
+      - '.github/workflows/supabase-migration-proof.yml'
     branches: ['**']
   workflow_dispatch:
     inputs:
