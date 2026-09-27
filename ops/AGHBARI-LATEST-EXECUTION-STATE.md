@@ -2,15 +2,15 @@
 
 Project: Aghbari Commerce | الأغبري
 Branch: `main`
-Current Git HEAD: `82cb790c82c0125251008ac2dd915be025613232`
+Current Git HEAD: `9204ed2a5b72c77802bd7e35aa14a6cf0a89be64`
 Production: HOLD / NO TOUCH
 Certification: NOT CLAIMED
 
 ## Current reality
-- Active implementation is at exact HEAD `82cb790c82c0125251008ac2dd915be025613232` on `main`.
-- Customer pricing preserves authorized server values and currency.
-- Customer reorder from detail and list entry points resolves authorized products and performs one atomic cart merge.
-- Quick-order lookup uses the account's active warehouse and the UI validates quantities against the 10,000 server line ceiling.
+- Active implementation is at exact HEAD `9204ed2a5b72c77802bd7e35aa14a6cf0a89be64` on `main`.
+- Customer pricing/currency is server-authorized and displayed consistently.
+- Customer reorder uses current authorized products, active warehouse, one atomic quick-order merge, and preflights against quantities already in the cart.
+- Quick-order lookup uses the active warehouse and quantity input is bounded at 10,000.
 - Source migration/test are ready to normalize quick-order idempotency to 16–128; production remains unchanged under HOLD.
 
 ## Exact proof status
@@ -29,7 +29,7 @@ DEPLOY: free exact-source hosted runtime proof; no unchanged Vercel retries.
 DOCS: semantic consolidation only when it closes an active requirement/proof gap.
 
 ## NEXT EXECUTABLE ACTION
-Inspect exact-SHA Actions for `82cb790c82c0125251008ac2dd915be025613232`; resolve failures immediately. Then close the remaining UI/reference/core/security gaps without reopening proven work.
+Inspect exact-SHA Actions and deployment status for `9204ed2a5b72c77802bd7e35aa14a6cf0a89be64`; fix any failure immediately. Continue independent UI/core/security work without reopening closed paths.
 
 ## DO NOT REPEAT
 Do not rebuild closed/proven work; do not transfer evidence between SHAs; do not retry the unchanged Vercel protection path; do not create duplicate reference packs or memory systems.
