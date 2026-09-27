@@ -128,3 +128,16 @@ Do not create a second design system, duplicate CSS family or duplicate asset co
 - Customer Portal `reorder` and `order_templates` remain live customer-owned capabilities with real persistence and server authorization.
 - Admin/Staff navigation must not expose a fake management workspace for these customer-owned records until a canonical staff permission, read contract and mutation contract are defined.
 - The Admin structure therefore classifies `/admin/reorder` and `/admin/order-templates` as explicit boundaries rather than render-only screens.
+
+## 2026-09-28 — External reference corpus rule
+
+The current `docs/ui-reference/` corpus is visual material captured from another application/context. It is not a list of Aghbari routes.
+
+UI execution must therefore:
+1. extract reusable visual patterns;
+2. map only applicable patterns to existing canonical Aghbari surfaces;
+3. merge genuinely missing UX requirements into this document;
+4. avoid reproducing unsupported functionality;
+5. avoid duplicate screen implementations for visually equivalent references.
+
+The 84-asset count is provenance/accounting only. UI completion is measured by canonical Aghbari capability coverage, nested state coverage, real actions, accessibility/responsive behavior and exact-SHA runtime/browser proof.
