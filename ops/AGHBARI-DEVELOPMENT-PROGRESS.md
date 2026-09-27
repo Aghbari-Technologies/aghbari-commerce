@@ -96,3 +96,15 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Certification: `NOT CLAIMED`
 - Production: `HOLD / NO TOUCH`
 - Next: exact-head runtime/source verification, then next independent uncovered reference-backed UI/core gap.
+
+## Run 2026-09-28 — Supplier / warehouse edit closure
+- Run: `2026-09-28`
+- SHA: `e002456ab8f40f084047c970ebd1f95381491c35` (checkpoint SHA; re-read live HEAD before next run)
+- Branch: `main`
+- Implemented: `update_supplier` / `update_warehouse` RPCs; typed service methods; real Admin edit forms; live IA; bounded security/IA tests; canonical docs.
+- Verified: changes are source-controlled; no production mutation.
+- Proven: source linkage only; exact current build/runtime/browser proof pending.
+- Blocked: hosted Vercel protection remains external; Supabase production migration remains intentionally untouched.
+- Certification: `NOT CLAIMED`
+- Production: `HOLD / NO TOUCH`
+- Next: inspect exact-current CI; fix first material failure once; continue next independent UI/core gap.
