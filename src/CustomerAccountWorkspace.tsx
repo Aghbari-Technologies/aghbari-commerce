@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import OfflineRecoveryPanel from './OfflineRecoveryPanel';
 import { createCustomerAddress, deleteCustomerAddress, getCustomerAddresses, updateCustomerAddress, type CustomerAddress } from './services/customerAddresses';
 
@@ -46,7 +46,8 @@ export default function CustomerAccountWorkspace(props: CustomerAccountWorkspace
   const [addresses, setAddresses] = useState<CustomerAddress[]>([]);
   const [addressesLoading, setAddressesLoading] = useState(false);
   const [addressBusyKey, setAddressBusyKey] = useState('');
-  const [addressError, setAddressError] = useState('');
+  const [addressLoadError, setAddressLoadError] = useState('');
+  const [addressActionError, setAddressActionError] = useState('');
   const [addressMessage, setAddressMessage] = useState('');
   const [editingAddressId, setEditingAddressId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
@@ -74,27 +75,27 @@ export default function CustomerAccountWorkspace(props: CustomerAccountWorkspace
     }
   }
 
-  async function refreshAddresses() {
+  const refreshAddresses = useCallback(async () => {
     if (!props.customerId || !props.online) {
       setAddresses([]);
       setAddressesLoading(false);
-      if (!props.online) setAddressError('الاتصال بالخادم مطلوب لقراءة عناوين التسليم وإدارتها.');
+      if (!props.online) setAddressLoadError('الاتصال بالخادم مطلوب لقراءة عناوين التسليم وإدارتها.');
       return;
     }
     setAddressesLoading(true);
-    setAddressError('');
+    setAddressLoadError('');
     try {
       setAddresses(await getCustomerAddresses(100));
     } catch (error) {
-      setAddressError(error instanceof Error ? error.message : 'تعذر تحميل عناوين التسليم.');
+      setAddressLoadError(error instanceof Error ? error.message : 'تعذر تحميل عناوين التسليم.');
     } finally {
       setAddressesLoading(false);
     }
-  }
+  }, [props.customerId, props.online]);
 
   useEffect(() => {
     if (tab === 'addresses') void refreshAddresses();
-  }, [tab, props.customerId, props.online]);
+  }, [tab, refreshAddresses]);
 
   function resetAddressForm() {
     setEditingAddressId(null);
@@ -134,7 +135,7 @@ export default function CustomerAccountWorkspace(props: CustomerAccountWorkspace
     event.preventDefault();
     if (!props.online || addressBusyKey) return;
     setAddressBusyKey(editingAddressId ? `save:${editingAddressId}` : 'save:new');
-    setAddressError('');
+    setAddressActionError('');
     setAddressMessage('');
     try {
       const input = {
@@ -158,7 +159,7 @@ export default function CustomerAccountWorkspace(props: CustomerAccountWorkspace
       resetAddressForm();
       await refreshAddresses();
     } catch (error) {
-      setAddressError(error instanceof Error ? error.message : 'تعذر حفظ عنوان التسليم.');
+      setAddressActionError(error instanceof Error ? error.message : 'تعذر حفظ عنوان التسليم.');
     } finally {
       setAddressBusyKey('');
     }
@@ -168,12 +169,12 @@ export default function CustomerAccountWorkspace(props: CustomerAccountWorkspace
     if (!props.online || addressBusyKey) return;
     if (confirmDeleteId !== address.id) {
       setConfirmDeleteId(address.id);
-      setAddressError('');
+      setAddressActionError('');
       setAddressMessage('اضغط حذف مرة أخرى لتأكيد الحذف.');
       return;
     }
     setAddressBusyKey(`delete:${address.id}`);
-    setAddressError('');
+    setAddressActionError('');
     setAddressMessage('');
     try {
       await deleteCustomerAddress(address.id);
@@ -182,7 +183,7 @@ export default function CustomerAccountWorkspace(props: CustomerAccountWorkspace
       if (editingAddressId === address.id) resetAddressForm();
       await refreshAddresses();
     } catch (error) {
-      setAddressError(error instanceof Error ? error.message : 'تعذر حذف عنوان التسليم.');
+      setAddressActionError(error instanceof Error ? error.message : 'تعذر حذف عنوان التسليم.');
     } finally {
       setAddressBusyKey('');
     }
@@ -191,7 +192,7 @@ export default function CustomerAccountWorkspace(props: CustomerAccountWorkspace
   async function makeDefaultAddress(address: CustomerAddress) {
     if (!props.online || addressBusyKey || address.is_default) return;
     setAddressBusyKey(`default:${address.id}`);
-    setAddressError('');
+    setAddressActionError('');
     setAddressMessage('');
     try {
       await updateCustomerAddress(address.id, {
@@ -208,7 +209,7 @@ export default function CustomerAccountWorkspace(props: CustomerAccountWorkspace
       setAddressMessage('تم تعيين العنوان كافتراضي.');
       await refreshAddresses();
     } catch (error) {
-      setAddressError(error instanceof Error ? error.message : 'تعذر تعيين العنوان الافتراضي.');
+      setAddressActionError(error instanceof Error ? error.message : 'تعذر تعيين العنوان الافتراضي.');
     } finally {
       setAddressBusyKey('');
     }
@@ -346,7 +347,7 @@ export default function CustomerAccountWorkspace(props: CustomerAccountWorkspace
 
           {props.online && (
             <div className="customer-address-layout">
-              <form className="customer-address-form" onSubmit={submit} noValidate>
+              <form className="customer-address-form" onSubmit={submit}>
                 <div className="address-form-head">
                   <div><span className="eyebrow">{editingAddressId ? 'تعديل' : 'جديد'}</span><h4>{editingAddressId ? 'تعديل عنوان التسليم' : 'إضافة عنوان تسليم'}</h4></div>
                   {editingAddressId && <button type="button" className="ghost" onClick={resetAddressForm} disabled={Boolean(addressBusyKey)}>إلغاء التعديل</button>}
@@ -367,8 +368,8 @@ export default function CustomerAccountWorkspace(props: CustomerAccountWorkspace
 
               <div className="customer-address-list">
                 {addressesLoading ? <div className="customer-address-list-state" role="status">جارٍ تحميل عناوين التسليم…</div> :
-                  addressError ? <div className="customer-address-list-state error-state" role="alert"><strong>تعذر تحميل/تنفيذ العملية</strong><span>{addressError}</span><button type="button" className="ghost" onClick={() => void refreshAddresses()} disabled={Boolean(addressBusyKey)}>إعادة المحاولة</button></div> :
-                  !addresses.length ? <div className="customer-address-list-state"><strong>لا توجد عناوين محفوظة بعد.</strong><span>أضف أول عنوان لتجهيز حساب التسليم.</span><button type="button" onClick={() => { setAddressError(''); setAddressMessage(''); }}>البدء بإضافة عنوان</button></div> :
+                  addressLoadError ? <div className="customer-address-list-state error-state" role="alert"><strong>تعذر تحميل عناوين التسليم</strong><span>{addressLoadError}</span><button type="button" className="ghost" onClick={() => void refreshAddresses()} disabled={Boolean(addressBusyKey)}>إعادة المحاولة</button></div> :
+                  !addresses.length ? <div className="customer-address-list-state"><strong>لا توجد عناوين محفوظة بعد.</strong><span>أضف أول عنوان لتجهيز حساب التسليم.</span><button type="button" onClick={() => { setAddressActionError(''); setAddressMessage(''); }}>البدء بإضافة عنوان</button></div> :
                   <div className="customer-address-cards">{addresses.map(address=><article key={address.id} className={address.is_default?'customer-address-card is-default':'customer-address-card'}>
                     <div className="customer-address-card-head"><div><span className="eyebrow">{address.label}</span><h4>{address.recipient_name}</h4></div>{address.is_default&&<span className="customer-address-default">افتراضي</span>}</div>
                     <div className="customer-address-card-body">
@@ -388,6 +389,7 @@ export default function CustomerAccountWorkspace(props: CustomerAccountWorkspace
             </div>
           )}
 
+          {addressActionError && <div className="error-banner" role="alert">{addressActionError}<button type="button" className="ghost" onClick={() => setAddressActionError('')}>إغلاق</button></div>}
           {addressMessage && <div className="success" role="status">{addressMessage}</div>}
           <div className="account-read-note"><strong>حدود التكامل</strong><span>العناوين أصبحت مصدرًا محفوظًا لحساب العميل نفسه. لم يتم افتراض ربطها تلقائيًا بفاتورة أو طلب قائم؛ أي ربط تشغيلي مع دورة الشحن يجب أن يضاف عبر عقد Commerce مستقل واختباراته.</span></div>
         </div>
