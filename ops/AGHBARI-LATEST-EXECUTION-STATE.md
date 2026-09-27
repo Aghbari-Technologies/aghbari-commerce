@@ -199,3 +199,13 @@ Re-read exact main HEAD and inspect fresh current-SHA workflow evidence. Fix onl
 - G1 and security have exact-SHA success on the proof branch before the latest refresh.
 - Latest quality runs are being regenerated against the corrected source; no stale failure is treated as current proof.
 - Production remains HOLD / NO TOUCH.
+
+## 2026-09-28 — Customer catalog / Admin navigation closure batch
+- Exact HEAD after this batch: `d193d86aacf7363a801d4fbf8819298f890279de`.
+- Implemented: customer catalog stock/base-price filter surface; filter-context/reset UX; catalog loading skeleton; pagination reset for active catalog filters; cache-load dependency correction for organization/user context; contextual Admin active-workspace indicator and highlighted navigation.
+- Verified structurally: active runtime remains `AppV3Fixed`; new customer filter contract is covered by `src/customer-catalog-filter.test.ts`; Admin anchors and existing screen packs were preserved.
+- Proven: source-level only for this batch. Connected workflow status read path currently exposes no status entries for the new commits, so build/browser/runtime proof is NOT_PROVEN.
+- Core live proof: read-only Supabase query on project `mrcyqezbhpncuvaehwgf` confirms `create_purchase_order` and `receive_purchase_order` still enforce 16..200 in Production. Source migration/test path remains 16..128 and Production was not mutated.
+- Certification: NOT CLAIMED.
+- Production: HOLD / NO TOUCH.
+- Next executable action: continue the next independent customer/admin UI gap while preserving exact-SHA evidence boundaries; separately keep the purchase/receipt 128 migration release-gated until exact migration + negative + concurrency/Test-the-Test proof is executable against the approved environment.
