@@ -237,3 +237,13 @@ Do not rebuild the 84 external screenshot corpus; do not duplicate shared custom
 - Production: HOLD / NO TOUCH.
 ### NEXT EXECUTABLE ACTION
 Continue from exact `refs/heads/main`; inspect only the next canonical uncovered UI/core contract, implement its missing delta with a focused test, and re-check exact current status. Do not rerun unchanged Vercel/Netlify paths and do not transfer evidence across SHA.
+
+## 2026-09-28 — FINAL LIVE RESUME POINTER FOR THIS RUN
+- Actual current main HEAD: `d65f32f1a6eb4cc1a6b95cad573cff994a57e912`.
+- UI implemented on this exact lineage: customer catalog filtering/loading/empty reset; six-section Customer workspace rail with feature visibility; Staff workspace rail with role-aware live targets/boundary; loading skeletons for customer orders/finance/customer directory and Admin orders; reduced-motion fallbacks; focused contract tests wired into bounded quality workflow.
+- Core/security state: purchase/receipt source migration remains 16..128 but live Production remains 16..200 and was not mutated; concurrency proof shell was repaired in source; live Supabase security advisor still has generic SECURITY DEFINER warnings plus external leaked-password protection warning; no blanket revoke or security weakening.
+- Proof: current exact source was re-read after concurrent UI refactors; GitHub combined status exposes the Vercel free-plan build-rate-limit failure. Exact current build/typecheck/test/browser/hosted proof is NOT_PROVEN because the connected workflow reader does not expose the push run and local GitHub clone/build is DNS-blocked.
+- Certification: `NOT CLAIMED`.
+- Production: `HOLD / NO TOUCH`.
+### NEXT EXECUTABLE ACTION
+Resume from `d65f32f1a6eb4cc1a6b95cad573cff994a57e912` only after re-reading exact main HEAD; run/fetch the newly added bounded quality test set through an executable CI/runtime path if available, then close the next canonical UI/core gap. Do not repeat unchanged Vercel/Netlify attempts and do not transfer evidence across SHA.
