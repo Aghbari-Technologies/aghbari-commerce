@@ -60,3 +60,9 @@
 - Server-fetched catalog snapshots may be cached locally only as bounded, TTL-limited, validated read-only data.
 - Offline cached stock/price values are informational and never become transaction authority.
 - On reconnect, only safe cart operations are revalidated and synchronized; conflicts/terminal failures remain visible in Recovery Center.
+
+## 2026-09-27 — Active runtime and cache isolation
+- `src/main.tsx` boots `AppV3Fixed`; active-runtime changes must be implemented there, not only in legacy `App.tsx`.
+- Offline catalog snapshots are scoped by organization, customer, warehouse and authenticated user; unscoped cache records are rejected.
+- Customer Portal now surfaces connection/data provenance and persisted presentation settings without changing transactional authority.
+- Import reconciliation reports are derived from the existing server-generated import job/correlation identity and commit result; they are reporting views, not a second source of truth.
