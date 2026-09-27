@@ -59,3 +59,23 @@
 /* Non-interactive live-preview affordances. These are previews, not controls. */
 .client-preview-action{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:0 12px;border:1px solid currentColor;border-radius:10px;opacity:.84;pointer-events:none;user-select:none;}
 .client-preview-action.primary{width:100%;margin-top:auto;background:transparent;font-weight:700;}
+
+
+.notification-loading-skeleton{display:grid;gap:10px}
+.notification-loading-skeleton article{display:grid;grid-template-columns:36px 1fr auto;gap:12px;align-items:center;padding:14px;border:1px solid var(--aghbari-border);border-radius:14px;background:#fff}
+.notification-loading-skeleton article>div{display:grid;gap:7px;min-width:0}
+.notification-loading-skeleton i,.notification-loading-skeleton small,.notification-loading-skeleton b{display:block;height:9px;border-radius:999px;background:linear-gradient(90deg,#edf3f5 20%,#f8fbfc 45%,#edf3f5 70%);background-size:220% 100%;animation:aghbari-notification-shimmer 1.4s ease-in-out infinite}
+.notification-loading-skeleton i:first-child{width:46%}
+.notification-loading-skeleton i:nth-child(2){width:82%}
+.notification-loading-skeleton small{width:28%;height:7px}
+.notification-loading-icon{width:36px;height:36px;border-radius:11px;background:#edf4f6;animation:aghbari-notification-pulse 1.4s ease-in-out infinite}
+.notification-loading-skeleton b{width:86px;height:30px}
+@keyframes aghbari-notification-shimmer{0%,100%{background-position:200% 0}50%{background-position:0 0}}
+@keyframes aghbari-notification-pulse{0%,100%{opacity:.65}50%{opacity:1}}
+@media(max-width:700px){
+ .notification-loading-skeleton article{grid-template-columns:36px 1fr}
+ .notification-loading-skeleton b{grid-column:2;width:110px}
+}
+@media(prefers-reduced-motion:reduce){
+ .notification-loading-skeleton i,.notification-loading-skeleton small,.notification-loading-skeleton b,.notification-loading-icon{animation:none}
+}
