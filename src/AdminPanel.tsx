@@ -5,7 +5,7 @@ import { adjustInventory, createCategory, setProductPrice, upsertProduct } from 
 import { buildImportReconciliationReport, commitProductImport, stageProductImport, type ImportReconciliationReport } from './services/importExcel';
 import { getCategories, type CategoryOption } from './services/categories';
 import { uploadProductImage } from './services/imagePipeline';
-import { bulkTransitionOrders, getStaffOrders, transitionOrder, type StaffOrderSummary, type BulkTransitionResult } from './services/staffOrders';
+import { bulkTransitionOrders, getStaffOrderDetail, getStaffOrders, transitionOrder, type StaffOrderDetail, type StaffOrderSummary, type BulkTransitionResult } from './services/staffOrders';
 import { supabase } from './lib/supabase';
 import PurchasingPanel from './PurchasingPanel';
 import ExportPanel from './ExportPanel';
@@ -49,7 +49,7 @@ function allowedNextStatuses(status: OrderStatus, role: UserRole): OrderStatus[]
 export default function AdminPanel({ role, userId }: { role: UserRole; userId: string | null }) {
   const [products, setProducts] = useState<StaffProduct[]>([]); const [warehouses, setWarehouses] = useState<Warehouse[]>([]); const [categories, setCategories] = useState<CategoryOption[]>([]); const [orders, setOrders] = useState<StaffOrderSummary[]>([]); const [ordersLoading, setOrdersLoading] = useState(false); const [orderQuery, setOrderQuery] = useState('');
   const [commandOpen, setCommandOpen] = useState(false); const [commandQuery, setCommandQuery] = useState(''); const [orderStatusFilter, setOrderStatusFilter] = useState<'all'|OrderStatus>('all'); const [orderPage, setOrderPage] = useState(1);
-  const [product, setProduct] = useState({ sku: '', name: '', unit: 'كرتون', categoryId: '', description: '', barcode: '' }); const [category, setCategory] = useState({ name: '', slug: '', parentId: '' }); const [selectedProduct, setSelectedProduct] = useState(''); const [tier, setTier] = useState<CustomerTier>('wholesale'); const [price, setPrice] = useState(''); const [warehouseId, setWarehouseId] = useState(''); const [delta, setDelta] = useState(''); const [reason, setReason] = useState(''); const [imageFile, setImageFile] = useState<File | null>(null); const [importFile, setImportFile] = useState<File | null>(null); const [importJobId, setImportJobId] = useState<string | null>(null); const [lastImportResult, setLastImportResult] = useState<{ imported_rows: number; products_created: number; products_updated: number; inventory_changed: number } | null>(null); const [lastImportReconciliation, setLastImportReconciliation] = useState<ImportReconciliationReport | null>(null); const [importPreview, setImportPreview] = useState<{ rows: number; invalid: number; fingerprint: string; contractVersion: string; sourceName: string; diagnostics: { rowNumber: number; field: string; message: string }[] } | null>(null); const [busy, setBusy] = useState(false); const [message, setMessage] = useState<string | null>(null); const [error, setError] = useState<string | null>(null); const [detailOrderId, setDetailOrderId] = useState<string | null>(null); const [selectedOrderIds, setSelectedOrderIds] = useState<Set<string>>(new Set()); const [bulkTargetStatus, setBulkTargetStatus] = useState<OrderStatus | ''>(''); const [bulkPreviewOpen, setBulkPreviewOpen] = useState(false); const [bulkIdempotencyKey, setBulkIdempotencyKey] = useState<string | null>(null); const [bulkBusy, setBulkBusy] = useState(false);
+  const [product, setProduct] = useState({ sku: '', name: '', unit: 'كرتون', categoryId: '', description: '', barcode: '' }); const [category, setCategory] = useState({ name: '', slug: '', parentId: '' }); const [selectedProduct, setSelectedProduct] = useState(''); const [tier, setTier] = useState<CustomerTier>('wholesale'); const [price, setPrice] = useState(''); const [warehouseId, setWarehouseId] = useState(''); const [delta, setDelta] = useState(''); const [reason, setReason] = useState(''); const [imageFile, setImageFile] = useState<File | null>(null); const [importFile, setImportFile] = useState<File | null>(null); const [importJobId, setImportJobId] = useState<string | null>(null); const [lastImportResult, setLastImportResult] = useState<{ imported_rows: number; products_created: number; products_updated: number; inventory_changed: number } | null>(null); const [lastImportReconciliation, setLastImportReconciliation] = useState<ImportReconciliationReport | null>(null); const [importPreview, setImportPreview] = useState<{ rows: number; invalid: number; fingerprint: string; contractVersion: string; sourceName: string; diagnostics: { rowNumber: number; field: string; message: string }[] } | null>(null); const [busy, setBusy] = useState(false); const [message, setMessage] = useState<string | null>(null); const [error, setError] = useState<string | null>(null); const [detailOrderId, setDetailOrderId] = useState<string | null>(null); const [detailOrder, setDetailOrder] = useState<StaffOrderDetail | null>(null); const [detailOrderLoading, setDetailOrderLoading] = useState(false); const [detailOrderError, setDetailOrderError] = useState(''); const [selectedOrderIds, setSelectedOrderIds] = useState<Set<string>>(new Set()); const [bulkTargetStatus, setBulkTargetStatus] = useState<OrderStatus | ''>(''); const [bulkPreviewOpen, setBulkPreviewOpen] = useState(false); const [bulkIdempotencyKey, setBulkIdempotencyKey] = useState<string | null>(null); const [bulkBusy, setBulkBusy] = useState(false);
 
   const reload = useCallback(async () => { if (!supabase) return; setOrdersLoading(true); try { const [{ data: productRows, error: productError }, { data: warehouseRows, error: warehouseError }, categoryRows, orderRows] = await Promise.all([supabase.from('products').select('id,sku,name,unit').eq('status', 'active').order('name').limit(200), supabase.from('warehouses').select('id,name').eq('is_active', true).order('created_at'), getCategories(), getStaffOrders(50)]); if (productError) throw productError; if (warehouseError) throw warehouseError; setProducts((productRows ?? []) as StaffProduct[]); setCategories(categoryRows); setOrders(orderRows); const nextWarehouses = (warehouseRows ?? []) as Warehouse[]; setWarehouses(nextWarehouses); setWarehouseId(current => current || nextWarehouses[0]?.id || ''); } finally { setOrdersLoading(false); } }, []);
   useEffect(() => { void reload().catch((e) => setError(e instanceof Error ? e.message : 'تعذر تحميل مركز التحكم.')); }, [reload]);
@@ -69,6 +69,13 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
     return () => window.clearTimeout(id);
   }, []);
   useEffect(() => { setOrderPage(1); }, [orderQuery, orderStatusFilter]);
+  async function openOrderDetail(orderId: string) {
+    setDetailOrderId(orderId); setDetailOrder(null); setDetailOrderError(''); setDetailOrderLoading(true);
+    try { setDetailOrder(await getStaffOrderDetail(orderId)); }
+    catch (e) { setDetailOrderError(e instanceof Error ? e.message : 'تعذر تحميل تفاصيل الطلب.'); }
+    finally { setDetailOrderLoading(false); }
+  }
+  function closeOrderDetail() { setDetailOrderId(null); setDetailOrder(null); setDetailOrderError(''); setDetailOrderLoading(false); }
   async function run(action: () => Promise<unknown>, success: string) { setBusy(true); setError(null); setMessage(null); try { await action(); setMessage(success); await reload(); } catch (e) { setError(e instanceof Error ? e.message : 'تعذر تنفيذ العملية.'); } finally { setBusy(false); } }
   async function uploadImage() { if (!selectedProduct || !imageFile) return; await run(async () => { await uploadProductImage(selectedProduct, imageFile); setImageFile(null); }, 'تم رفع الصورة ومعالجتها وتسجيلها بأمان.'); }
   async function stageImport() { if (!importFile) return; setBusy(true); setError(null); setMessage(null); setImportJobId(null); setImportPreview(null); try { const result = await stageProductImport(importFile); setImportPreview({ rows: result.rows.length, invalid: result.diagnostics.length, fingerprint: result.fingerprint, contractVersion: result.contractVersion ?? 'xlsx-v1', sourceName: importFile.name, diagnostics: result.diagnostics.slice(0, 12) }); if (result.jobId) { setImportJobId(result.jobId); setMessage('تمت المعاينة والتحقق على الخادم. يمكنك اعتماد الاستيراد الذري.'); } else setError('الملف يحتوي أخطاء ويجب إصلاحها قبل الاستيراد.'); } catch (e) { setError(e instanceof Error ? e.message : 'تعذر تجهيز ملف الاستيراد.'); } finally { setBusy(false); } }
@@ -226,7 +233,7 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
           <label className="bulk-order-row-select"><input type="checkbox" checked={selectedOrderIds.has(order.id)} onChange={() => toggleOrderSelection(order.id)} aria-label={`تحديد طلب #${order.order_number}`} /><span className="sr-only">تحديد</span></label>
           <div><strong>طلب #{order.order_number}</strong><small>العميل: {order.customer_name}</small></div>
           <div><strong>{formatMoney(order.total)} {order.currency}</strong><small>الحالة: {STATUS_LABELS[order.status]}</small></div>
-          <div className="status-actions"><button type="button" className="ghost" onClick={() => setDetailOrderId(order.id)}>التفاصيل</button>{allowedNextStatuses(order.status, role).map((next) => <button key={next} disabled={busy || bulkBusy} onClick={() => void changeOrderStatus(order.id, next)}>{STATUS_LABELS[next]}</button>)}</div>
+          <div className="status-actions"><button type="button" className="ghost" onClick={() => void openOrderDetail(order.id)}>التفاصيل</button>{allowedNextStatuses(order.status, role).map((next) => <button key={next} disabled={busy || bulkBusy} onClick={() => void changeOrderStatus(order.id, next)}>{STATUS_LABELS[next]}</button>)}</div>
         </article>)}
       </div>}{visibleOrders.length > 0 && <div className="order-queue-pagination" aria-label="صفحات الطلبات"><span>صفحة {activeOrderPage} / {orderPages} · {visibleOrders.length} نتيجة</span><div><button type="button" className="ghost" onClick={() => setOrderPage(p => Math.max(1,p-1))} disabled={activeOrderPage===1}>السابق</button><button type="button" className="ghost" onClick={() => setOrderPage(p => Math.min(orderPages,p+1))} disabled={activeOrderPage===orderPages}>التالي</button></div></div>}
       {bulkPreviewOpen && <div className="admin-command-backdrop" role="presentation" onClick={() => !bulkBusy && setBulkPreviewOpen(false)}>
@@ -238,7 +245,33 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
         </section>
       </div>}
       </div>}
-      {detailOrderId&&(()=>{const order=orders.find(item=>item.id===detailOrderId);if(!order)return null;return <RecordDetailDrawer eyebrow="Operations" title={`طلب #${order.order_number}`} summary={`${order.customer_name} · ${STATUS_LABELS[order.status]}`} fields={[{label:'العميل',value:order.customer_name},{label:'الحالة',value:STATUS_LABELS[order.status]},{label:'الإجمالي',value:`${formatMoney(order.total)} ${order.currency}`},{label:'المعرّف',value:order.id},{label:'الحركات التالية المتاحة',value:allowedNextStatuses(order.status,role).length?allowedNextStatuses(order.status,role).map(s=>STATUS_LABELS[s]).join(' · '):'لا توجد حركة متاحة لهذه الصلاحية'}]} onClose={()=>setDetailOrderId(null)}/>})()}
+      {detailOrderId && (() => {
+        const order = orders.find((item) => item.id === detailOrderId);
+        if (!order) return null;
+        const lineSummary = detailOrder?.items.map((item, index) =>
+          String(index + 1) + '. ' + item.name + ' · ' + item.sku + ' · ' + item.quantity + ' ' + item.unit + ' × ' + formatMoney(item.unit_price) + ' ' + item.currency + ' = ' + formatMoney(item.line_total) + ' ' + item.currency + ' · ' + item.pricing_tier
+        ).join('\n') ?? '';
+        const fields = [
+          { label: 'العميل', value: order.customer_name },
+          { label: 'الحالة', value: STATUS_LABELS[order.status] },
+          { label: 'الإجمالي', value: formatMoney(detailOrder?.total ?? order.total) + ' ' + (detailOrder?.currency ?? order.currency) },
+          { label: 'المعرّف', value: order.id },
+          { label: 'الحركات التالية المتاحة', value: allowedNextStatuses(order.status, role).length ? allowedNextStatuses(order.status, role).map((s) => STATUS_LABELS[s]).join(' · ') : 'لا توجد حركة متاحة لهذه الصلاحية' },
+          ...(detailOrderLoading ? [{ label: 'حالة التفصيل', value: 'جارٍ تحميل بنود الطلب والإجماليات والتحقق منها…', wide: true }] : []),
+          ...(detailOrderError ? [{ label: 'تعذر التحميل', value: detailOrderError, wide: true }] : []),
+          ...(detailOrder ? [
+            { label: 'الإجمالي الفرعي', value: formatMoney(detailOrder.subtotal) + ' ' + detailOrder.currency },
+            { label: 'طريقة الدفع', value: detailOrder.payment_method },
+            { label: 'بنود الطلب', value: lineSummary || 'لا توجد بنود مسجلة.', wide: true, content: true },
+          ] : []),
+        ];
+        return <RecordDetailDrawer eyebrow="Operations" title={'طلب #' + order.order_number} summary={order.customer_name + ' · ' + STATUS_LABELS[order.status]} fields={fields} onClose={closeOrderDetail}
+          footer={detailOrderError
+            ? <><span>فشل التحميل دون تعديل السجل.</span><button type="button" onClick={() => void openOrderDetail(order.id)} disabled={detailOrderLoading}>إعادة المحاولة</button></>
+            : <><span>{detailOrderLoading ? 'قراءة السجل التشغيلي الحالي…' : 'تم التحقق من إجمالي وبنود الطلب قبل العرض.'}</span><button type="button" onClick={closeOrderDetail}>إغلاق</button></>}
+        />;
+      })()}
+
       {error && <div className="error-banner" role="alert"><span>{error}</span><button type="button" className="ghost" disabled={ordersLoading} onClick={() => void reload()}>إعادة تحميل مركز التحكم</button></div>}{message && <div className="success" role="status">{message}</div>}
       {canCatalog && <div className="admin-workspace-section" id="admin-catalog" data-label="01 · الكتالوج والمنتجات"><CatalogManagementPanel role={role} /></div>}
 {canCatalog && <div className="admin-workspace-section" data-label="02 · التصنيفات وبنية الكتالوج"><CategoryManagementPanel role={role} /></div>}
