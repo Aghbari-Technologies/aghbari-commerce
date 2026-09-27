@@ -94,7 +94,7 @@ export default function CustomerOrdersPanel({
       <div className="customer-order-density" role="group" aria-label="كثافة قائمة الطلبات"><button type="button" className={density==='comfortable'?'active':''} aria-pressed={density==='comfortable'} onClick={()=>setDensity('comfortable')}>مريح</button><button type="button" className={density==='compact'?'active':''} aria-pressed={density==='compact'} onClick={()=>setDensity('compact')}>مضغوط</button></div>
     </div>
 
-    {detailBusy&&<div className="portal-loading" role="status">جارٍ تحميل تفاصيل الطلب…</div>}
+    {detailBusy&&<div className="order-detail-loading-skeleton" role="status" aria-label="جارٍ تحميل تفاصيل الطلب"><div><i/><i/></div><i/><i/><i/><span/></div>}
     {loading?<div className="customer-orders-loading-skeleton" role="status" aria-label="جارٍ تحميل الطلبات">{Array.from({length:3}).map((_,index)=><article key={index}><div className="customer-orders-loading-head"><i/><i/></div><i/><i/><div className="customer-orders-loading-footer"><i/><i/></div></article>)}</div>
       :!orders.length?<div className="empty-state"><strong>لا توجد طلبات سابقة بعد.</strong><span>بعد أول إرسال سيظهر سجل الطلبات والتتبع هنا.</span><button type="button" onClick={onReload}>إعادة المحاولة</button></div>
       :!filtered.length?<div className="empty-state"><strong>لا توجد طلبات مطابقة.</strong><span>غيّر البحث أو فلتر الحالة أو الترتيب ثم أعد المحاولة.</span><button type="button" onClick={clearFilters}>مسح الفلاتر</button></div>
