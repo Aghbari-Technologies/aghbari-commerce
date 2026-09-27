@@ -106,3 +106,11 @@
 - `src/customer-mobile-navigation.test.ts` guards section reachability and the More-sheet mount.
 - `src/admin-boundary-navigation.test.ts` guards every safe Boundary alternative against missing Admin anchors.
 - These are source contracts, not browser certification evidence; exact-SHA runtime/browser proof remains a separate gate.
+
+## 2026-09-28 — Current UI/core closure additions
+
+- Mobile Portal now has a compact More sheet for Templates, Notifications and Finance, preserving a five-item primary dock and full six-section reachability.
+- Boundary safe alternatives are guarded against missing Admin DOM targets by `src/admin-boundary-navigation.test.ts`.
+- Customer Portal six-section coverage is guarded by `src/customer-portal-section-coverage.test.ts`.
+- Customer order-search copy now matches its actual queryable fields.
+- Purchasing input boundary test is included in the bounded quality workflow; canonical purchase/receipt 128-bound migration remains in source and not applied to Production.
