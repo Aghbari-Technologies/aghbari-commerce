@@ -63,3 +63,8 @@ The manifest lists the security/offline/integration sources that must be fully m
 - Supplier and warehouse update RPCs are SECURITY DEFINER with search_path='', executable by authenticated users only, and explicitly denied to anon.
 - Business authorization remains owner/admin-only inside the functions; UI permissions do not substitute for server authorization.
 - Tenant scope is derived server-side and the mutation is audited; no direct client write path is introduced by the UI.
+
+
+## 2026-09-28 — Customer self profile security
+- update_customer_self_profile is authenticated-only, anonymous-denied, SECURITY DEFINER, and pinned to search_path=''. It rejects staff contexts and requires an active customer in the current tenant.
+- UI editability is not the security boundary; server-side authorization remains authoritative.
