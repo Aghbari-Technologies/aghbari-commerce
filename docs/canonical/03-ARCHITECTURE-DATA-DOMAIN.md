@@ -47,3 +47,12 @@ The consolidation manifest lists the architecture/data source set that must be f
 - Newly discovered requirements are routed to their canonical bounded context and owner before implementation.
 - UI reference assets remain documentation/reference data and must never enter runtime bundles merely to simplify visual matching.
 - Expensive or unbounded local artifacts, caches, queues and generated outputs are non-authoritative and must remain bounded/disposable.
+
+## 2026-09-27 — Atomic bulk order transition contract
+
+- Staff bulk order status changes are a server-side transactional capability, not a client-side loop.
+- `bulk_transition_orders(p_idempotency_key, p_order_ids, p_to_status)` accepts 1–100 unique order IDs, enforces organization isolation and role-specific transition authorization, and revalidates every selected order before mutation.
+- Identical idempotency keys are serialized with an advisory transaction lock and payload-bound to the canonical order-ID set plus target status.
+- Completed operations replay stored per-order results without repeating inventory, audit, history or outbox mutations.
+- Cancellation prevalidates required inventory balances and acquires inventory locks in stable warehouse/product order before applying any mutation.
+- Result records are kept in a non-client-readable RLS-protected table; authenticated clients execute only through the RPC.
