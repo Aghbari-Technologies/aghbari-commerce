@@ -177,3 +177,15 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Verified: current source registry remains 84 asset entries; actual Admin/Customer capability work remains governed by canonical Commerce requirements.
 - Proven: source-level correction only.
 - Next: continue closing canonical in-scope UI/core gaps, using references only for reusable visual patterns.
+
+## Run 2026-09-28 — Customer Catalog + Admin contextual navigation
+- Run: `2026-09-28`
+- SHA: `d193d86aacf7363a801d4fbf8819298f890279de`
+- Branch: `main`
+- Implemented: real customer catalog stock/base-price filtering, active filter/reset context, loading skeleton, filter-aware pagination reset, organization/user-aware catalog load dependencies, contextual Admin active workspace indicator and highlighted command navigation; added focused customer catalog filter contract test.
+- Verified: source re-read confirms active runtime wiring and new UX controls; read-only Supabase confirms production purchase/receipt functions are still 16..200, so no production migration was performed.
+- Proven: source-level only; exact current build/typecheck/browser/hosted proof remains NOT_PROVEN.
+- Blocked: connected GitHub workflow read path currently returns no run/status entries for these main-branch commits; Vercel hosted free-plan protection/rate path remains unchanged.
+- Certification: `NOT CLAIMED`
+- Production: `HOLD / NO TOUCH`
+- Next: implement the next independent customer/admin UI closure, then update this ledger at the next material checkpoint.
