@@ -86,3 +86,9 @@ Do not create a second design system, duplicate CSS family or duplicate asset co
 - Every reference-backed screen must have a route/surface, state, viewport, implementation status and exact-SHA visual/runtime proof, or an explicit boundary classification.
 - Reference-derived UI requirements discovered during execution must be added here when they concern user experience, navigation, interaction or accessibility.
 \n\n## 2026-09-27 — Customer finance document workspace\n\n- The Customer Portal finance section exposes the existing Commerce financial document contract as read-only UI: operational invoices, invoice line items and recorded payments.\n- Invoice lists use bounded loading, search, status filtering, sorting and pagination. Invoice details expose line-item totals, recorded payments, paid amount and remaining balance with loading, empty, error, retry and offline states.\n- The UI reads only the existing RLS-protected operational_invoices, operational_invoice_items and payments resources; it does not introduce customer-side financial mutations.\n- Customer financial document data is server-bound and is deferred while offline, consistent with the portal's offline reliability boundary.\n
+
+## 2026-09-27 — Bulk order action workspace
+
+- The Admin/Staff Orders workspace supports selecting visible orders, choosing only a transition common to all selected orders, previewing the exact affected orders, then committing through the atomic bulk RPC.
+- The UI retains a reusable idempotency key across a preview/commit retry so a lost response cannot silently authorize a second mutation under a new key.
+- The server remains authoritative for organization, role, current-state and inventory invariants; client preview is advisory and cannot bypass authorization.
