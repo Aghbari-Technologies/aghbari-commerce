@@ -9,11 +9,9 @@
 - Do not retry unchanged Vercel free-plan build-rate-limit path.
 - Preserve repository space: compact checkpoints, deduplicated UI reference packs, no duplicate logs.
 
-## Latest exact main HEAD
-- SHA: `524d468837f0b613ab2eb17c659a3c7a8cd4227b`
+## Current live branch state
 - Branch: `main`
-- Production: HOLD / NO TOUCH
-- Certification: NOT CLAIMED
+- Mutable HEAD is never cached here; read `refs/heads/main` at boot and record exact SHA only in the execution ledger/checkpoint.
 
 ## Current implemented closure
 - Customer-bound `viewer` routing is separated from staff/admin surfaces; boot waits for account identity before releasing the app surface.
@@ -66,3 +64,8 @@
 - Offline catalog snapshots are scoped by organization, customer, warehouse and authenticated user; unscoped cache records are rejected.
 - Customer Portal now surfaces connection/data provenance and persisted presentation settings without changing transactional authority.
 - Import reconciliation reports are derived from the existing server-generated import job/correlation identity and commit result; they are reporting views, not a second source of truth.
+
+
+## 2026-09-28 — Customer delivery-address contract
+- Saved delivery addresses are a canonical Customer Portal capability: CRUD plus one default address per customer, tenant/customer scoped, audited, and server-authorized through dedicated RPCs.
+- Address writes fail closed while offline; checkout/order binding is deliberately separate until an explicit shipping-address transactional contract is approved.
