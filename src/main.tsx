@@ -9,7 +9,7 @@ import './product-excellence.css';
 import './ui-closure.css';
 import './ui-execution-closure.css';
 import './ui-runtime-closure.css';
-import './customer-mobile-more.css';
+import './customer-mobile-more.css';\nimport './workspace-surface.css';
 
 const invitationToken = new URLSearchParams(window.location.search).get('invite');
 const RootApp = invitationToken ? <InvitationAcceptance token={invitationToken} /> : <App />;
