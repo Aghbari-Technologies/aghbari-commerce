@@ -2,32 +2,39 @@
 
 Project: Aghbari Commerce | الأغبري
 Branch: `main`
-Current Git HEAD: `PENDING_EXACT_COMMIT`
+Current Git HEAD: `627e4bba29b2b64f7faabf2fe43091f1b391377a`
 Production: HOLD / NO TOUCH
 Certification: NOT CLAIMED
 
 ## Current reality
-- Order-template quantities are aligned to the executable 10,000 cart/order ceiling without rewriting historical oversized rows.
-- New template writes reject values above 10,000; applying legacy oversized templates fails closed before cart mutation.
-- Customer-bound viewer routing, pricing/currency, atomic reorder, duplicate-submit protection and other quantity guards remain active.
+- Offline queue regression coverage is present again on main after the 2026-09-27 restore commit.
+- Order/idempotency client boundaries continue to align with the canonical 16..128 minimum/maximum contract where already migrated in source.
+- Live Supabase purchase/receipt RPCs still validate idempotency keys at 16..200; live migration history does not yet contain the pending 128-bound migration.
+- Customer Portal currently has catalog/search/filter/sort/pagination/cart/checkout/orders/reorder/templates/finance/account/notifications/offline primitives; an additional offline remote-load guard is prepared on PR #113 but is not merged into main.
 
 ## Exact proof status
-- Implementation: VERIFIED by exact repository content at current HEAD.
-- Purchase idempotency 128 fixture: NOT_PROVEN by CI/runtime until an exact-SHA proof completes.
-- New UI polish: NOT_PROVEN by browser/visual runtime until exact current-SHA evidence completes.
-- Current GitHub status: Vercel check `pending`; this is not certification evidence.
-- Prior exact-SHA evidence remains historical and is not transferred to the current HEAD.
+- Main source state: VERIFIED at exact HEAD `627e4bba29b2b64f7faabf2fe43091f1b391377a`.
+- Live Supabase: VERIFIED ACTIVE_HEALTHY; purchase/receipt drift 200 remains OPEN.
+- Security advisor: VERIFIED with 62 authenticated SECURITY DEFINER findings plus leaked-password-protection warning; no blanket revoke applied.
+- Live security contract proof: VERIFIED 10/10 read-only assertions across adjust_inventory, record_payment, record_supplier_payment, set_organization_user_role and register_product_media (anon denied, authenticated boundary, search_path='', role/tenant guards).
+- Purchase/receipt 128 migration: IMPLEMENTED on PR #112, NOT_PROVEN by live runtime/concurrency until migration is deliberately applied/tested in the release workflow.
+- Customer offline runtime guard: IMPLEMENTED on PR #113, NOT_PROVEN by exact-SHA CI/browser runtime.
+- Hosted runtime: NOT_PROVEN for exact current HEAD; Vercel reports free-plan build-rate-limit failure; Netlify existing site is available but its deployment tool requires source upload/local repo execution.
 
 ## Open execution frontier
-UI: 84-reference coverage → unique screen packs → remaining unclosed screens/states/actions → browser/visual proof.
-CORE: purchase/receipt idempotency 200 → 128 reconciliation → exact migration/runtime/concurrency/Test-the-Test proof → remaining material domain gaps.
-SECURITY: per-RPC SECURITY DEFINER classification while preserving required tenant/RLS/RBAC/privilege boundaries.
-QA: run only affected/new exact-SHA proofs.
-DEPLOY: free exact-source hosted runtime proof; no unchanged Vercel retries.
-DOCS: semantic consolidation only when it closes an active requirement/proof gap.
+UI: 84-reference coverage → unique packs → remaining visual/state/action gaps → browser proof.
+CORE: purchase/receipt 200 → 128 migration → 128 accept / 129 reject → concurrency → negative/Test-the-Test → exact-SHA evidence.
+SECURITY: classify authenticated SECURITY DEFINER functions individually while preserving required tenant/RLS/RBAC/search_path boundaries.
+QA: only affected/new exact-SHA proofs.
+DEPLOY: free exact-source runtime proof; do not retry unchanged Vercel path.
+DOCS: semantic consolidation only.
+
+## ACTIVE BATCHES
+- PR #112: `execution/purchase-receipt-idempotency-20260927` — purchase/receipt 128-bound migration + PGTAP contract test.
+- PR #113: `execution/ui-offline-runtime-20260927` — customer offline remote-load guard + explicit offline state + unit test.
 
 ## NEXT EXECUTABLE ACTION
-Verify exact-SHA application-quality, Test-the-Test, migration and browser evidence for the resulting commit.
+Use the repository's exact-SHA workflow path to validate PR #112's migration/test when workflow execution becomes available; otherwise continue the next independent UI/security gap without touching closed work.
 
 ## DO NOT REPEAT
-Do not rebuild closed/proven work; do not transfer evidence between SHAs; do not retry the unchanged Vercel protection path; do not create duplicate reference packs or memory systems.
+Do not transfer evidence across SHAs; do not apply pending migrations to production; do not retry unchanged Vercel deployment; do not rebuild existing customer/admin screens that already have real states/actions; do not create duplicate reference packs or memory systems.
