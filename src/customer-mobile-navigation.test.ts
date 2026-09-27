@@ -14,5 +14,7 @@ describe('customer mobile navigation coverage', () => {
     expect(source).toContain('navigate("notifications")');
     expect(source).toContain('navigate("finance")');
     expect(source).toContain('id="customer-mobile-more-menu"');
+    expect(source).toContain("event.key==='Escape'");
+    expect(source).toContain('setMobileMoreOpen(false)');
   });
 });
