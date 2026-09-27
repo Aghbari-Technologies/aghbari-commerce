@@ -5,7 +5,7 @@ import { UI_REFERENCE_FILES, UI_REFERENCE_PACKS, UI_REFERENCE_TOTAL } from './ui
 
 const referenceDir = resolve(process.cwd(), 'docs/ui-reference');
 
-describe('ui reference screen-pack coverage', () => {
+describe('ui reference corpus accounting', () => {
   it('accounts for all 84 current PNG references exactly once', () => {
     expect(UI_REFERENCE_TOTAL).toBe(84);
     expect(UI_REFERENCE_FILES).toHaveLength(84);
@@ -21,11 +21,12 @@ describe('ui reference screen-pack coverage', () => {
     expect(registered).toEqual(actual);
   });
 
-  it('keeps every reference inside a non-empty implementation pack with an explicit target', () => {
+  it('keeps every reference inside a non-empty provenance pack with an explicit surface decision', () => {
     expect(UI_REFERENCE_PACKS).toHaveLength(8);
     for (const pack of UI_REFERENCE_PACKS) {
       expect(pack.references.length).toBeGreaterThan(0);
       expect(pack.target.startsWith('#')).toBe(true);
+      expect(['in-scope-visual', 'mixed-visual', 'external-pattern']).toContain(pack.status);
       expect(pack.note.trim().length).toBeGreaterThan(10);
     }
   });
