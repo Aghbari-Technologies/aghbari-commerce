@@ -96,7 +96,6 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
       selectedOrders.every((order) => allowedNextStatuses(order.status, role).includes(candidate))
     );
   }, [selectedOrders, role]);
-  const allPageSelected = pageOrderIds.length > 0 && pageOrderIds.every((id) => selectedOrderIds.has(id));
   function togglePageSelection() {
     setSelectedOrderIds((current) => {
       const next = new Set(current);
@@ -154,6 +153,7 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
   const activeOrderPage = Math.min(orderPage, orderPages);
   const pagedOrders = visibleOrders.slice((activeOrderPage - 1) * 10, activeOrderPage * 10);
   const pageOrderIds = pagedOrders.map((order) => order.id);
+  const allPageSelected = pageOrderIds.length > 0 && pageOrderIds.every((id) => selectedOrderIds.has(id));
 
   return <section className="admin-panel" id="account">
     <AdminExecutiveDashboard role={role} />
