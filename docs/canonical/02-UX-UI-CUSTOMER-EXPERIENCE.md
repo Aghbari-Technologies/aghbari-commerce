@@ -109,3 +109,9 @@ Do not create a second design system, duplicate CSS family or duplicate asset co
 - Profile/company/settings surfaces are read-only against existing Commerce contracts; no unsupported customer mutation is fabricated inside the portal.
 - Addresses are an explicit boundary because the current transactional schema has no canonical customer-address source; the UI explains the boundary instead of creating fake persistence.
 - Account workspace keeps Offline Recovery as an actionable operational surface and provides direct navigation back to catalog, orders, finance and order templates.
+
+## 2026-09-28 — Customer delivery-address workspace
+- The account workspace now exposes a live delivery-address surface rather than a placeholder boundary.
+- Required states: loading, empty, validation/action error, success, offline/disabled, edit mode and destructive-action confirmation.
+- Customer actions are CRUD plus explicit set-default; the server maintains a single default atomically. Offline mode fails closed for address reads/mutations instead of presenting fabricated or stale transactional data.
+- Address management remains visually consistent with the existing account workspace and reuses the canonical customer UI system; it does not create a second design system.
