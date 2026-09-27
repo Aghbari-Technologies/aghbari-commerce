@@ -105,6 +105,18 @@ export const AGHBARI_ADMIN_STRUCTURE: AdminStructureGroup[] = [
     ],
   },
   {
+    id: 'finance',
+    label: 'المالية التشغيلية',
+    path: '/admin/finance',
+    icon: '◫',
+    items: [
+      live('statements', 'كشوف الحسابات', '/admin/finance/statements', 'finance.view', '#admin-finance', ['view', 'export']),
+      live('invoices', 'الفواتير', '/admin/finance/invoices', 'finance.view', '#admin-finance', ['view', 'create', 'export']),
+      live('payments', 'التحصيل والمدفوعات', '/admin/finance/payments', 'finance.view', '#admin-finance', ['view', 'create']),
+      live('expenses', 'المصروفات', '/admin/finance/expenses', 'finance.view', '#admin-finance', ['view', 'create']),
+    ],
+  },
+  {
     id: 'reports-governance',
     label: 'التقارير والحوكمة',
     path: '/admin/reports',
