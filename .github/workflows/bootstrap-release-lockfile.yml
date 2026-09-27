@@ -2,11 +2,19 @@ name: bootstrap-release-lockfile
 
 on:
   push:
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/bootstrap-release-lockfile.yml'
     branches:
       - main
       - execution/close-lockfile-20260907
       - security/rpc-surface-final6
   pull_request:
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/bootstrap-release-lockfile.yml'
     branches:
       - main
 
