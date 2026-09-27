@@ -72,3 +72,8 @@ The consolidation manifest lists the architecture/data source set that must be f
 - customer_addresses_one_default_idx enforces at most one default address per customer at database level. Address commands serialize per customer with an advisory transaction lock before changing the default flag.
 - create_customer_address, update_customer_address and delete_customer_address derive tenant/customer context from authenticated server state; callers do not provide organization/customer identifiers.
 - Address mutations are audited as customer_address.create, customer_address.update and customer_address.delete. No address table becomes an alternate order/invoice source of truth.
+
+## 2026-09-28 — Supplier / warehouse update commands
+- update_supplier and update_warehouse are canonical transactional commands; they derive organization from the authenticated profile and never accept caller-supplied organization identifiers.
+- Both commands lock the target row, validate ownership, require owner/admin role, update updated_at, and emit canonical supplier.update / warehouse.update audit events.
+- Warehouse branch reassignment is accepted only for an active branch inside the same organization.
