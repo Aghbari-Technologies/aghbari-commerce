@@ -61,12 +61,12 @@ for i in $(seq 1 8); do
   [ "$value" = "$canonical" ] || { echo "FAIL purchase result mismatch request=$i"; exit 1; }
 done
 
-purchase_count="$(" ${PSQL[@]}" -c "select count(*) from public.purchase_orders where organization_id='$ORG' and idempotency_key='$PURCHASE_KEY';")"
-purchase_items="$(" ${PSQL[@]}" -c "select count(*) from public.purchase_order_items where organization_id='$ORG' and purchase_order_id='$canonical'::uuid;")"
+purchase_count="$("${PSQL[@]}" -c "select count(*) from public.purchase_orders where organization_id='$ORG' and idempotency_key='$PURCHASE_KEY';")"
+purchase_items="$("${PSQL[@]}" -c "select count(*) from public.purchase_order_items where organization_id='$ORG' and purchase_order_id='$canonical'::uuid;")"
 [ "$purchase_count" = "1" ] || { echo "FAIL purchase rows=$purchase_count"; exit 1; }
 [ "$purchase_items" = "1" ] || { echo "FAIL purchase items=$purchase_items"; exit 1; }
 
-ITEM="$(" ${PSQL[@]}" -c "select id from public.purchase_order_items where organization_id='$ORG' and purchase_order_id='$canonical'::uuid limit 1;")"
+ITEM="$("${PSQL[@]}" -c "select id from public.purchase_order_items where organization_id='$ORG' and purchase_order_id='$canonical'::uuid limit 1;")"
 ITEM="$(printf '%s\n' "$ITEM" | awk 'NF {print $1; exit}')"
 "${PSQL[@]}" -c "update public.purchase_orders set status='approved'::public.purchase_order_status where organization_id='$ORG' and id='$canonical'::uuid;" >/dev/null
 
@@ -100,10 +100,10 @@ for i in $(seq 1 8); do
   [ "$value" = "$receipt_canonical" ] || { echo "FAIL receipt result mismatch request=$i"; exit 1; }
 done
 
-receipt_count="$(" ${PSQL[@]}" -c "select count(*) from public.purchase_receipts where organization_id='$ORG' and idempotency_key='$RECEIPT_KEY';")"
-stock="$(" ${PSQL[@]}" -c "select quantity from public.inventory_balances where organization_id='$ORG' and warehouse_id='$WAREHOUSE' and product_id='$PRODUCT';")"
-movements="$(" ${PSQL[@]}" -c "select count(*) from public.inventory_movements where organization_id='$ORG' and source_type='purchase_receipt' and source_id='$receipt_canonical'::uuid;")"
-outbox="$(" ${PSQL[@]}" -c "select count(*) from public.outbox_events where organization_id='$ORG' and event_type='purchase.received' and payload->>'receipt_id'='$receipt_canonical';")"
+receipt_count="$("${PSQL[@]}" -c "select count(*) from public.purchase_receipts where organization_id='$ORG' and idempotency_key='$RECEIPT_KEY';")"
+stock="$("${PSQL[@]}" -c "select quantity from public.inventory_balances where organization_id='$ORG' and warehouse_id='$WAREHOUSE' and product_id='$PRODUCT';")"
+movements="$("${PSQL[@]}" -c "select count(*) from public.inventory_movements where organization_id='$ORG' and source_type='purchase_receipt' and source_id='$receipt_canonical'::uuid;")"
+outbox="$("${PSQL[@]}" -c "select count(*) from public.outbox_events where organization_id='$ORG' and event_type='purchase.received' and payload->>'receipt_id'='$receipt_canonical';")"
 
 [ "$receipt_count" = "1" ] || { echo "FAIL receipt rows=$receipt_count"; exit 1; }
 [ "$stock" = "12" ] || { echo "FAIL inventory stock=$stock expected=12"; exit 1; }
