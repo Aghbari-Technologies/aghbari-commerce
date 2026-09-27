@@ -1,4 +1,4 @@
-export type CustomerStructureStatus = 'live';
+export type CustomerStructureStatus = 'live' | 'boundary';
 
 export interface CustomerStructureItem {
   id: string;
@@ -21,6 +21,9 @@ export const AGHBARI_CUSTOMER_STRUCTURE: CustomerStructureItem[] = [
   { id: 'quick-order', label: 'الطلب السريع', section: 'catalog', status: 'live', description: 'SKU أو باركود مع حدود تحقق قبل RPC.' },
   { id: 'account', label: 'حساب التاجر', section: 'account', status: 'live', description: 'السياق والاتصال والمنظمة والمستودع والتعافي.' },
   { id: 'profile', label: 'الهوية والجلسة', section: 'account', status: 'live', description: 'هوية العميل والجلسة والصلاحية التشغيلية.' },
+  { id: 'company', label: 'الشركة والحساب', section: 'account', status: 'live', description: 'سياق المنظمة والعميل والمستودع والفئة التجارية.' },
+  { id: 'addresses', label: 'العناوين', section: 'account', status: 'boundary', description: 'موضع واجهة محفوظ؛ لا يوجد عقد عناوين canonical مستقل في schema الحالي.' },
+  { id: 'account-settings', label: 'إعدادات الحساب', section: 'account', status: 'live', description: 'عرض الحالة الفعلية لإعدادات بوابة العميل وتطبيقها على runtime.' },
   { id: 'notifications', label: 'الإشعارات', section: 'notifications', status: 'live', description: 'إشعارات مرتبطة بسياق العميل.' },
   { id: 'offline', label: 'العمل دون اتصال / الشبكة الضعيفة', section: 'account', status: 'live', description: 'تعديل السلة محليًا مع مزامنة bounded؛ الخادم هو المرجع النهائي.' },
   { id: 'invitations', label: 'الدعوات', section: 'account', status: 'live', description: 'قبول دعوة العميل ضمن تدفق InvitationAcceptance.' },
