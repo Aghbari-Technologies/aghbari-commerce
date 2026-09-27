@@ -22,5 +22,5 @@ jobs:
           cache: npm
       - run: npm ci --no-audit --no-fund
       - run: npm run typecheck
-      - run: npm exec vitest run src/services/staffOrders.detail.test.ts src/structure/admin-structure.anchor.test.ts src/services/customerProfile.test.ts src/services/purchasing.update.test.ts src/domain/customerAddresses.test.ts src/structure/admin-structure.edit-contract.test.ts src/structure/ui-reference-packs.test.ts src/brand-identity.test.ts
+      - run: npm exec vitest run src/services/staffOrders.detail.test.ts src/structure/admin-structure.anchor.test.ts src/services/customerProfile.test.ts src/services/purchasing.update.test.ts src/domain/customerAddresses.test.ts src/structure/admin-structure.edit-contract.test.ts src/structure/ui-reference-packs.test.ts src/brand-identity.test.ts src/customer-mobile-navigation.test.ts
       - run: npm run build
