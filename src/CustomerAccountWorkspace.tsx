@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import OfflineRecoveryPanel from './OfflineRecoveryPanel';
 import { createCustomerAddress, deleteCustomerAddress, getCustomerAddresses, updateCustomerAddress, type CustomerAddress } from './services/customerAddresses';
+import { updateCustomerSelfProfile } from './services/customerProfile';
 
 type CustomerAccountWorkspaceProps = {
   customerName: string;
@@ -51,6 +52,11 @@ export default function CustomerAccountWorkspace(props: CustomerAccountWorkspace
   const [addressMessage, setAddressMessage] = useState('');
   const [editingAddressId, setEditingAddressId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [profileEditing, setProfileEditing] = useState(false);
+  const [profileBusy, setProfileBusy] = useState(false);
+  const [profileError, setProfileError] = useState('');
+  const [profileMessage, setProfileMessage] = useState('');
+  const [profileForm, setProfileForm] = useState({ name: props.customerName ?? '', phone: props.phone ?? '' });
   const [addressForm, setAddressForm] = useState({
     label: '',
     recipientName: '',
@@ -72,6 +78,31 @@ export default function CustomerAccountWorkspace(props: CustomerAccountWorkspace
       window.setTimeout(() => setCopied(''), 1400);
     } catch {
       setCopyError('تعذر النسخ من المتصفح. يمكنك تحديد القيمة ونسخها يدويًا.');
+    }
+  }
+
+  function startProfileEdit() {
+    setProfileEditing(true);
+    setProfileError('');
+    setProfileMessage('');
+    setProfileForm({ name: props.customerName ?? '', phone: props.phone ?? '' });
+  }
+
+  async function submitProfile(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (profileBusy || !props.online) return;
+    setProfileBusy(true);
+    setProfileError('');
+    setProfileMessage('');
+    try {
+      await updateCustomerSelfProfile({ name: profileForm.name, phone: profileForm.phone });
+      setProfileMessage('تم تحديث الملف الشخصي.');
+      setProfileEditing(false);
+      props.onRefresh();
+    } catch (error) {
+      setProfileError(error instanceof Error ? error.message : 'تعذر تحديث الملف الشخصي.');
+    } finally {
+      setProfileBusy(false);
     }
   }
 
@@ -299,14 +330,34 @@ export default function CustomerAccountWorkspace(props: CustomerAccountWorkspace
 
       {tab === 'profile' && (
         <div className="customer-account-surface">
-          <div className="surface-heading"><div><span className="eyebrow">الهوية</span><h3>الملف الشخصي</h3><p>بيانات العرض التي يملكها النظام عن حساب العميل الحالي.</p></div></div>
-          <div className="customer-profile-grid">
-            <div><span>اسم العميل</span><strong>{props.customerName || '—'}</strong></div>
-            <div><span>البريد الإلكتروني</span><strong dir="ltr">{props.email || '—'}</strong></div>
-            <div><span>رقم الهاتف</span><strong dir="ltr">{props.phone || 'غير مسجل'}</strong></div>
-            <div><span>الفئة السعرية</span><strong>{tierLabel}</strong></div>
+          <div className="surface-heading">
+            <div><span className="eyebrow">الهوية</span><h3>الملف الشخصي</h3><p>بيانات العرض التي يمكن للعميل تعديلها بنفسه دون الوصول إلى بيانات المؤسسة أو الفئة السعرية.</p></div>
+            {!profileEditing && <button type="button" className="ghost" onClick={startProfileEdit} disabled={!props.online}>تعديل الملف</button>}
           </div>
-          <div className="account-read-note"><strong>حدود التعديل</strong><span>هذه المساحة تعرض الهوية الحالية فقط. لا تُفتح حقول تعديل العميل هنا دون عقد صلاحيات وخدمة تحديث معتمدين من Commerce.</span></div>
+          {profileEditing ? (
+            <form className="customer-profile-edit-form" onSubmit={submitProfile} noValidate>
+              <div className="customer-profile-edit-grid">
+                <label>اسم العميل<input value={profileForm.name} onChange={e=>setProfileForm(v=>({...v,name:e.target.value}))} maxLength={200} required autoComplete="name" /></label>
+                <label>رقم الهاتف<input value={profileForm.phone} onChange={e=>setProfileForm(v=>({...v,phone:e.target.value}))} maxLength={40} inputMode="tel" autoComplete="tel" /></label>
+                <label>البريد الإلكتروني<div className="profile-readonly-field" dir="ltr">{props.email || '—'}</div></label>
+                <label>الفئة السعرية<div className="profile-readonly-field">{tierLabel}</div></label>
+              </div>
+              <div className="account-read-note"><strong>الحماية</strong><span>التعديل الذاتي يقتصر على الاسم والهاتف. البريد الإلكتروني والفئة السعرية وحالة الحساب ليست ضمن هذا العقد.</span></div>
+              {profileError && <div className="error-banner" role="alert">{profileError}</div>}
+              <div className="customer-profile-actions"><button type="button" className="ghost" onClick={()=>setProfileEditing(false)} disabled={profileBusy}>إلغاء</button><button type="submit" disabled={profileBusy || !props.online}>{profileBusy ? 'جارٍ الحفظ…' : 'حفظ الملف'}</button></div>
+            </form>
+          ) : (
+            <>
+              <div className="customer-profile-grid">
+                <div><span>اسم العميل</span><strong>{props.customerName || '—'}</strong></div>
+                <div><span>البريد الإلكتروني</span><strong dir="ltr">{props.email || '—'}</strong></div>
+                <div><span>رقم الهاتف</span><strong dir="ltr">{props.phone || 'غير مسجل'}</strong></div>
+                <div><span>الفئة السعرية</span><strong>{tierLabel}</strong></div>
+              </div>
+              {profileMessage && <div className="success" role="status">{profileMessage}</div>}
+              {!props.online && <div className="customer-address-offline" role="status"><strong>تعديل الملف متوقف دون اتصال</strong><span>الحفظ يتطلب الاتصال بمصدر Commerce.</span></div>}
+            </>
+          )}
         </div>
       )}
 
