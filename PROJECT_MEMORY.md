@@ -449,3 +449,10 @@ Command "1" means:
 - Added a domain-level effective catalog price contract and regression tests for tier selection, authorized-price fallback, and invalid-input safety.
 - Hardened customer order reordering so detail items are resolved from the current authorized catalog even when they are outside the currently displayed catalog page.
 - Exact-SHA proof remains mandatory; no browser/production PASS is inferred from code inspection.
+
+
+## 29. EXECUTION RUN — 39efd8a7e98d982a643bed43af977b38d5ac679d
+- Quick-order idempotency client bound is now canonicalized from 200 to 128 characters.
+- Added explicit regression tests: exactly 128 is accepted and 129 is rejected.
+- Customer portal price/reorder closure from the preceding implementation remains in effect.
+- Exact-SHA evidence rule remains active; no PASS is claimed from source edits alone.
