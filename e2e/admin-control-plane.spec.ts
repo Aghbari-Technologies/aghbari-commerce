@@ -29,6 +29,8 @@ test.describe('Admin control plane exact browser path', () => {
     await expect(page.getByRole('heading', { name: 'استيراد Excel آمن' })).toBeVisible();
 
     await expect(page.getByText('العامري', { exact: false })).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'الأسطح غير المتعاقدة' })).toBeVisible();
+    await expect(page.getByText('لا توجد بيانات تجريبية ولا عمليات وهمية').first()).toBeVisible();
     await expect(page.getByText('الأغبري', { exact: false }).first()).toBeVisible();
   });
 });
