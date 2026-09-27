@@ -116,7 +116,7 @@ export default function CustomerAccountWorkspace(props: CustomerAccountWorkspace
   function startAddressEdit(address: CustomerAddress) {
     setEditingAddressId(address.id);
     setConfirmDeleteId(null);
-    setAddressError('');
+    setAddressActionError('');
     setAddressMessage('');
     setAddressForm({
       label: address.label,
