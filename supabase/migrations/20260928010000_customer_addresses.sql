@@ -190,8 +190,71 @@ begin
 end;
 $$;
 
+create or replace function public.create_customer_address(
+  p_label text,
+  p_recipient_name text,
+  p_phone text,
+  p_address_line1 text,
+  p_address_line2 text,
+  p_city text,
+  p_district text,
+  p_notes text,
+  p_is_default boolean
+)
+returns public.customer_addresses
+language sql
+security definer
+set search_path = ''
+as $
+  select * from public.save_customer_address(
+    null,
+    public.current_customer_id(),
+    p_label,
+    p_recipient_name,
+    p_phone,
+    p_address_line1,
+    p_address_line2,
+    p_city,
+    p_district,
+    p_notes,
+    p_is_default
+  );
+$;
+
+create or replace function public.update_customer_address(
+  p_address_id uuid,
+  p_label text,
+  p_recipient_name text,
+  p_phone text,
+  p_address_line1 text,
+  p_address_line2 text,
+  p_city text,
+  p_district text,
+  p_notes text,
+  p_is_default boolean
+)
+returns public.customer_addresses
+language sql
+security definer
+set search_path = ''
+as $
+  select * from public.save_customer_address(
+    p_address_id,
+    public.current_customer_id(),
+    p_label,
+    p_recipient_name,
+    p_phone,
+    p_address_line1,
+    p_address_line2,
+    p_city,
+    p_district,
+    p_notes,
+    p_is_default
+  );
+$;
+
 create or replace function public.delete_customer_address(p_address_id uuid)
-returns void
+returns boolean
 language plpgsql
 security definer
 set search_path = ''
@@ -218,12 +281,16 @@ begin
   end if;
 
   delete from public.customer_addresses where id=target.id;
+  return true;
 end;
-$$;
+$;
 
 revoke all on function public.audit_customer_address_change() from public, anon, authenticated;
-revoke all on function public.save_customer_address(uuid,uuid,text,text,text,text,text,text,text,text,boolean) from public, anon;
-grant execute on function public.save_customer_address(uuid,uuid,text,text,text,text,text,text,text,text,boolean) to authenticated;
+revoke all on function public.save_customer_address(uuid,uuid,text,text,text,text,text,text,text,text,boolean) from public, anon, authenticated;
+revoke all on function public.create_customer_address(text,text,text,text,text,text,text,text,boolean) from public, anon;
+grant execute on function public.create_customer_address(text,text,text,text,text,text,text,text,boolean) to authenticated;
+revoke all on function public.update_customer_address(uuid,text,text,text,text,text,text,text,text,boolean) from public, anon;
+grant execute on function public.update_customer_address(uuid,text,text,text,text,text,text,text,text,boolean) to authenticated;
 revoke all on function public.delete_customer_address(uuid) from public, anon;
 grant execute on function public.delete_customer_address(uuid) to authenticated;
 
