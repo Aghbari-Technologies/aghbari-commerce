@@ -137,3 +137,25 @@ Do not recreate the 84 PNG assets or build per-image duplicate implementations. 
 
 ### NEXT EXECUTABLE ACTION
 Re-read exact main HEAD, inspect available exact-SHA quality/security evidence, fix one material failure if visible, then continue the next independent core/UI closure. Do not retry unchanged Vercel hosted failure.
+
+## 2026-09-28 — Final checkpoint of current execution wave
+
+- Exact main HEAD at checkpoint: `4579ae212347667da7997b4bbefb0f52f86de1d6`; mutable truth must still be re-read at next boot.
+- Customer mobile navigation closure: primary dock + More sheet now exposes all six portal sections, with Escape/backdrop dismissal.
+- Boundary integrity: every safe Boundary alternative is source-tested against a live Admin anchor.
+- Customer order-search UX corrected so the placeholder matches the actual summary data contract.
+- Customer Portal section coverage is source-tested across metadata/navigation/render branches.
+- Quality workflow now includes UI reference, brand identity, mobile navigation, Boundary navigation, customer section coverage and purchasing input-boundary tests.
+- 84-reference registry remains structurally exact; production remains untouched.
+- Live Supabase remains legacy 200-character idempotency for quick-order/purchase/receipt; source migration for canonical 128 is present on main but production application remains gated.
+
+### PROOF
+- Source implementation: VERIFIED.
+- 84-reference registry/accounting: VERIFIED.
+- Admin live-target anchor scan: VERIFIED source-level.
+- Exact current build/typecheck/browser/hosted proof: NOT_PROVEN through available connected action-run visibility.
+- Production certification: NOT CLAIMED.
+- Production: HOLD / NO TOUCH.
+
+### NEXT EXECUTABLE ACTION
+Read exact `refs/heads/main`, inspect available current-SHA workflow evidence, fix only the first material failure, then continue the next independent core/UI closure. Do not repeat unchanged Vercel retries.
