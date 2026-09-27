@@ -294,3 +294,57 @@ All 84 current PNG references are accounted for exactly once in the code-level r
 **Coverage invariant:** 8 packs / 84 references / 84 unique filenames. The automated contract test `src/structure/ui-reference-packs.test.ts` also verifies every registered filename resolves to an existing tracked PNG under this directory.
 
 **Important:** classification and implementation mapping are not final visual/browser proof. Final P0 closure still requires reference + route/surface + state + viewport + exact source SHA + implementation browser evidence, as defined by the canonical UX/QA documents.
+
+## 17. External visual corpus interpretation — 2026-09-28
+
+**Important correction:** the 84 PNG files are visual references captured from another application/context. They are **not** an Aghbari screen inventory and must never be interpreted as 84 product screens, 84 required routes, or 84 required features.
+
+Use them in this order:
+
+```
+REFERENCE CORPUS
+→ EXACT DUPLICATE / VISUAL EQUIVALENCE
+→ SHARED VISUAL PATTERN
+→ IN-SCOPE AGHBARI CAPABILITY
+→ EXISTING SCREEN / COMPONENT
+→ IMPLEMENT ONLY THE MISSING DELTA
+```
+
+Visual patterns that are reusable include composition, hierarchy, RTL layout, dense tables, cards, pills, navigation rails, dialogs/drawers, responsive behavior and state presentation.
+
+A reference that shows functionality outside the Aghbari Commerce canonical product contract remains **visual inspiration only**. Its behavior must not be copied into Commerce.
+
+The registry in `src/structure/ui-reference-packs.ts` exists for provenance/accounting of the supplied assets. Its 84-count is **not a UI completion metric**. Completion is determined by the canonical capability map plus route/state/action/persistence/authorization/test/runtime evidence.
+
+### 17.1 Implementation metric
+
+The primary UI completion metric is:
+
+```
+CANONICAL AGHBARI CAPABILITIES
+→ ADMIN/STAFF SURFACES
+→ CUSTOMER PORTAL SURFACES
+→ NESTED STATES
+→ REAL ACTIONS
+→ RESPONSIVE + ACCESSIBLE UX
+→ EXACT-SHA BROWSER PROOF
+```
+
+The reference corpus is a supporting visual input, not the denominator.
+
+### 17.2 Duplicate/equivalence rule
+
+Multiple supplied images may describe the same underlying visual family, state or layout from the source application. Do not create duplicate Aghbari screens because filenames differ.
+
+Keep provenance, but collapse implementation through:
+
+```
+PRIMARY VISUAL FAMILY
++
+ALIASES / EQUIVALENTS
+→ ONE SHARED IMPLEMENTATION
+```
+
+Do not claim visual equivalence automatically without evidence. When equivalence is uncertain, keep the assets grouped as references and inspect only the variants that can change implementation decisions.
+
+**The previous 8-pack registry is therefore a provenance grouping, not a claim that Aghbari has exactly 8 screen families.**
