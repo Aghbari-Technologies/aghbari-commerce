@@ -141,3 +141,10 @@ UI execution must therefore:
 5. avoid duplicate screen implementations for visually equivalent references.
 
 The 84-asset count is provenance/accounting only. UI completion is measured by canonical Aghbari capability coverage, nested state coverage, real actions, accessibility/responsive behavior and exact-SHA runtime/browser proof.
+
+## 2026-09-28 — Customer catalog filtering + contextual Staff navigation
+
+- Customer Catalog now exposes real local presentation filters for stock availability and the presence of a positive base authorized price, with active-filter context, clear-all, empty-result recovery and a responsive modal filter surface.
+- Catalog loading now renders a bounded skeleton state rather than a text-only placeholder. Filtering is presentation-only; server pricing/stock remain authoritative.
+- The Customer Portal resets catalog pagination when query, category or catalog filters change.
+- Admin/Staff navigation now surfaces the active workspace and highlights the matching operational target while preserving the existing anchor/deep-link contract and server-side authorization boundary.
