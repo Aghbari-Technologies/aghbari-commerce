@@ -28,6 +28,7 @@ import SupplierLedgerPanel from './SupplierLedgerPanel';
 import InventoryActivityPanel from './InventoryActivityPanel';
 import RecordDetailDrawer from './RecordDetailDrawer';
 import OfflineRecoveryPanel from './OfflineRecoveryPanel';
+import AdminBoundaryCenter from './AdminBoundaryCenter';
 import './admin-executive-dashboard.css';
 import { adminTargetForPath, getAdminStructureForRole } from './structure/admin-structure';
 
@@ -292,6 +293,7 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
 {canOrderWorkflow && <div className="admin-workspace-section" data-label="17 · التدقيق والتكاملات"><div id="admin-governance"><StaffOperationsPanel /></div></div>}
 {userId && <div className="admin-workspace-section" data-label="18 · التعارض والاسترداد"><div id="admin-recovery"><OfflineRecoveryPanel userId={userId} alwaysVisible /></div></div>}
 {canOrderWorkflow && <div className="admin-workspace-section" data-label="19 · المستخدمون والأدوار والصلاحيات"><div id="admin-access"><StaffAccessPanel role={role} /></div></div>}
+      <AdminBoundaryCenter role={role} />
     </details>
   </section>;
 }
