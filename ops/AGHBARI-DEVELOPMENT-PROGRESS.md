@@ -145,3 +145,15 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Certification: `NOT CLAIMED`
 - Production: `HOLD / NO TOUCH`
 - Next: exact current quality/security evidence, first material failure only, then next independent UI/core gap.
+
+## Run 2026-09-28 — Current mobile/core/UI closure checkpoint
+- Run: `2026-09-28`
+- SHA: `4579ae212347667da7997b4bbefb0f52f86de1d6`
+- Branch: `main`
+- Implemented: mobile secondary navigation; Escape handling; Boundary safe-alternative contract; six-section customer Portal coverage gate; purchasing input test integration; customer order search contract correction.
+- Verified: source wiring on current main; all Admin live targets continue to map to real anchors; 84-reference registry remains exact; production untouched.
+- Proven: source-level only.
+- Blocked: current exact-SHA workflow result visibility and hosted browser proof; Vercel free status path remains unchanged.
+- Certification: `NOT CLAIMED`
+- Production: `HOLD / NO TOUCH`
+- Next: current-SHA quality/security/G1 result, first material failure only, then next independent core/UI gap.
