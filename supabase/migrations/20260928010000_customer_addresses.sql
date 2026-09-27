@@ -205,7 +205,7 @@ returns public.customer_addresses
 language sql
 security definer
 set search_path = ''
-as $
+as $$
   select * from public.save_customer_address(
     null,
     public.current_customer_id(),
@@ -219,7 +219,7 @@ as $
     p_notes,
     p_is_default
   );
-$;
+$$;
 
 create or replace function public.update_customer_address(
   p_address_id uuid,
@@ -237,7 +237,7 @@ returns public.customer_addresses
 language sql
 security definer
 set search_path = ''
-as $
+as $$
   select * from public.save_customer_address(
     p_address_id,
     public.current_customer_id(),
@@ -251,7 +251,7 @@ as $
     p_notes,
     p_is_default
   );
-$;
+$$;
 
 create or replace function public.delete_customer_address(p_address_id uuid)
 returns boolean
@@ -283,7 +283,7 @@ begin
   delete from public.customer_addresses where id=target.id;
   return true;
 end;
-$;
+$$;
 
 revoke all on function public.audit_customer_address_change() from public, anon, authenticated;
 revoke all on function public.save_customer_address(uuid,uuid,text,text,text,text,text,text,text,text,boolean) from public, anon, authenticated;
