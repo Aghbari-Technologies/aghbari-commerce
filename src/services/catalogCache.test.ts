@@ -46,9 +46,9 @@ describe('bounded offline catalog cache', () => {
   });
 
   it('expires stale snapshots instead of treating them as authoritative', () => {
-    cacheCatalogSnapshot('سكر', null, [item('11111111-1111-4111-8111-111111111111')], new Date(1000));
+    cacheCatalogSnapshot('org-1:customer-1:warehouse-1:user-1', 'سكر', null, [item('11111111-1111-4111-8111-111111111111')], new Date(1000));
     expect(getCachedCatalogSnapshot('org-1:customer-1:warehouse-1:user-1', 'سكر', null, 1000 + 24*60*60*1000)).toHaveLength(1);
-    expect(getCachedCatalogSnapshot('سكر', null, 1000 + 24*60*60*1000 + 1)).toHaveLength(0);
+    expect(getCachedCatalogSnapshot('org-1:customer-1:warehouse-1:user-1', 'سكر', null, 1000 + 24*60*60*1000 + 1)).toHaveLength(0);
   });
 
   it('rejects malformed persisted records', () => {
