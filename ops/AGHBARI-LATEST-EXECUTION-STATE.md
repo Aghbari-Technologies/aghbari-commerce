@@ -81,3 +81,27 @@ Do not transfer evidence across SHAs. Do not mutate Production directly. Do not 
 - Not proven yet on this exact SHA: build/typecheck/runtime/browser/visual and migration application.
 - Open gaps: exact current Quality/G1/Security/Test-the-Test results; 16..128 production migration gate; 84-reference screen-pack visual proof.
 - Next executable action: inspect exact-current CI results, fix first material failure once, then continue the next independent reference/core gap.
+
+
+## 2026-09-28 — Customer Home + exact quality recovery checkpoint
+- Execution branch: `execution/ui-customer-home-20260928`
+- Exact current branch HEAD: `6c47355a2108ec6df16018c638615392ecdfc43c`
+- Implemented: Customer Portal Home as a first-class surface separate from Catalog; real Home navigation on desktop/mobile; reused existing source-backed hero/overview/quick-action primitives; focused customer IA coverage test; responsive six-item mobile dock.
+- Implemented quality corrections exposed on the exact branch: Admin pagination selection declaration order, Staff order-detail currency contract, anchor test no longer depends on missing Node types, and removal of unused OfflineRecoveryPanel import.
+- Exact-SHA proven: application-quality run `36356907360` passed typecheck, 44 test files / 286 tests, lint, production build and release audit; G1 run `36356907318` passed; security-audit run `36356907324` passed; Browser E2E / Exact Deployment run `36356907411` passed its exact-source deployment contract job (not hosted visual/runtime proof).
+- In progress at checkpoint: Test-the-Test `36356907328`; Browser E2E / Local Production Artifact `36356907301`; Browser E2E / Fresh Local Supabase `36356907285`.
+- Live read-only proof: production `create_purchase_order` and `receive_purchase_order` still expose 16..200; anon EXECUTE false; source migration remains 16..128 and is intentionally unapplied to production.
+- Hosted Vercel proof remains BLOCKED by the free-plan deployment-rate-limit path; no unchanged retry and no production mutation.
+- Visual completion: Home surface implemented, but full 84-reference screen-pack visual equivalence/proof remains OPEN because the index is only the visual authority and every P0 pack still needs exact visual/runtime evidence.
+- Certification: NOT_PROVEN / NOT CLAIMED.
+- Production: HOLD / NO TOUCH.
+
+### OPEN GAPS
+- Current exact-SHA Test-the-Test and customer/admin local browser runtime proofs.
+- Full 84-reference screen-pack mapping/equivalence and exact visual evidence.
+- Purchase/receipt 16..128 migration proof + concurrency + 129-negative runtime proof on exact candidate SHA; production application remains gated.
+- Hosted exact-source browser proof via a free deployment path; Vercel free-plan rate limit remains the current external blocker.
+### NEXT EXECUTABLE ACTION
+After current exact-SHA Test-the-Test and local browser runs finish, consume their evidence only on SHA `6c47355a2108ec6df16018c638615392ecdfc43c`; merge PR #147 only if all required checks pass, then re-read the resulting main HEAD and open the next unproven screen-pack/core gap. 
+### DO NOT REPEAT
+Do not transfer evidence from `c9c797823f6ef6245ebae7c61be5455e2e1244f4` or older SHAs; do not reapply the Vercel rate-limit retry; do not mutate production for the purchase/receipt drift.

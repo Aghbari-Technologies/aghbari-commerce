@@ -108,3 +108,16 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Certification: `NOT CLAIMED`
 - Production: `HOLD / NO TOUCH`
 - Next: inspect exact-current CI; fix first material failure once; continue next independent UI/core gap.
+
+
+## Run 2026-09-28 — Customer Home screen-pack + quality recovery
+- Run: `2026-09-28`
+- SHA: `6c47355a2108ec6df16018c638615392ecdfc43c`
+- Branch: `execution/ui-customer-home-20260928`
+- Implemented: first-class Customer Home; customer IA contract test; responsive mobile navigation; fixed exact-SHA Admin quality regressions exposed by CI.
+- Verified: active runtime remains AppV3Fixed; no fake transaction behavior added; production untouched.
+- Proven: application-quality (typecheck + 44 files/286 tests + lint + build + release audit), G1, security-audit, exact deployment contract on this SHA.
+- Blocked: hosted Vercel path by free-plan deployment limit; current local browser/Test-the-Test still running.
+- Certification: `NOT CLAIMED`
+- Production: `HOLD / NO TOUCH`
+- Next: consume current local runtime/Test-the-Test results, then merge only after exact-SHA required checks pass and resume next screen-pack gap.

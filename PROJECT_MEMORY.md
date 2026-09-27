@@ -85,3 +85,9 @@
 - Supplier and warehouse edit surfaces are now in Commerce scope and implemented through authenticated server-side update RPCs.
 - `update_supplier` and `update_warehouse` derive tenant context server-side, require owner/admin authorization, validate target ownership/active branch, and emit audit events.
 - Unsupported AI/BI/Onyx/Developer-AI edit surfaces remain explicit UI boundaries; they are not transactional Commerce features.
+
+
+## 2026-09-28 — Customer Portal Home contract
+- Customer Portal Home / الرئيسية is a first-class surface distinct from Catalog.
+- Home is derived from already-authorized customer context and existing source-backed data/actions; it does not create new transactional authority or duplicate catalog/order/finance persistence.
+- Home is the default customer landing section and is reachable in both desktop navigation and the responsive customer dock.
