@@ -144,13 +144,13 @@ export async function getCustomerInvoiceItems(customerId: string, invoiceId: str
       throw new Error('إجمالي بند الفاتورة غير متسق.');
     }
     return {
-      id: item.id,
-      invoice_id: item.invoice_id,
-      product_id: item.product_id,
-      description: item.description,
-      quantity: item.quantity,
-      unit_price: item.unit_price,
-      line_total: item.line_total
+      id: item.id as string,
+      invoice_id: item.invoice_id as string,
+      product_id: item.product_id as string,
+      description: item.description as string,
+      quantity: item.quantity as number,
+      unit_price: item.unit_price as number,
+      line_total: item.line_total as number
     };
   });
 }
@@ -179,4 +179,11 @@ export async function getCustomerInvoicePayments(customerId: string, invoiceId: 
 
 export function calculateInvoicePaid(payments: CustomerPayment[]) {
   return payments.reduce((sum, payment) => sum + payment.amount, 0);
+}
+
+export function calculateInvoiceLineTotal(quantity: number, unitPrice: number) {
+  if (!Number.isSafeInteger(quantity) || quantity <= 0 || !Number.isFinite(unitPrice) || unitPrice < 0) {
+    throw new Error('بيانات بند الفاتورة غير صالحة.');
+  }
+  return quantity * unitPrice;
 }
