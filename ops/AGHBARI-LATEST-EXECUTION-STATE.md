@@ -73,3 +73,11 @@ Do not transfer evidence across SHAs. Do not mutate Production directly. Do not 
 - `src/structure/admin-structure.ts` explicitly represents Staff reorder and order-template surfaces as boundaries, not fake live screens.
 - Customer Portal continues to own the real reorder/template workflows and persistence.
 - No new Staff permission or mutation contract was invented.
+
+## 2026-09-28 — Supplier / warehouse edit closure
+- Current live HEAD must be re-read from refs/heads/main; latest observed during this checkpoint: e002456ab8f40f084047c970ebd1f95381491c35.
+- Implemented: audited owner/admin update RPCs for suppliers and warehouses; typed client services; Admin/Staff edit forms for both surfaces; IA status changed from boundary to live; bounded SQL/UI tests.
+- Verified: no production mutation; unsupported AI/BI/Onyx/Developer-AI boundaries remain explicit and non-fake.
+- Not proven yet on this exact SHA: build/typecheck/runtime/browser/visual and migration application.
+- Open gaps: exact current Quality/G1/Security/Test-the-Test results; 16..128 production migration gate; 84-reference screen-pack visual proof.
+- Next executable action: inspect exact-current CI results, fix first material failure once, then continue the next independent reference/core gap.
