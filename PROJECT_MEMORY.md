@@ -42,3 +42,10 @@
 - Prior exact SHA `627e4bba29b2b64f7faabf2fe43091f1b391377a`: application-quality, Security, G1, Order Workflow, Browser Contract and Bootstrap had successful exact-SHA results; these are historical and not transferred to `524d468837f0b613ab2eb17c659a3c7a8cd4227b`.
 - Live security read-only proof: 15/15 current conditions true.
 - Current SHA `524d468837f0b613ab2eb17c659a3c7a8cd4227b`: CI queued/pending after the latest CI workflow changes; no current-SHA PASS claimed yet.
+
+## 2026-09-27 — Recovery / release execution contract
+- Recovery Center is an in-scope operational surface for safe offline cart operations.
+- Manual replay is permitted only for queued/retrying cart operations and preserves attempt history.
+- Conflicted or terminal offline operations remain fail-closed and require review/removal; UI never bypasses server authorization.
+- Purchase/receipt idempotency migration is source-controlled and remains unapplied to Production until exact migration, concurrency, negative and Test-the-Test evidence pass.
+- Free-plan Vercel deployment rate-limit/protection remains a known unchanged blocker; do not spend quota by repeating the same path.

@@ -2,29 +2,31 @@
 
 Project: Aghbari Commerce | الأغبري
 Branch: `main`
-Current Git HEAD: `226f4403f565981ed40ecb81293d34830335c6b4`
-Functional baseline: `52c3ce9a52600e056ecfb6a6f847326693123cfd`
+Source HEAD snapshot for this checkpoint: `c94ed49fa6d367b5bf8bcb36882078d234bea9d4`
 Production: HOLD / NO TOUCH
 Certification: NOT CLAIMED
 
 ## Current reality
-- Main functional baseline remains unchanged from `52c3ce9a52600e056ecfb6a6f847326693123cfd`.
-- Two accidental off-branch migration/proof files were reverted from main; the controlled purchase/receipt migration remains only on execution branch `execution/purchase-receipt-idempotency-128-20260927`.
-- Customer routing/pricing/reorder/quantity/offline hardening, order-template source migration and security contract suite remain on main.
-- Live production quick-order and order-template migrations remain intentionally unapplied.
+- Main now contains the customer finance document workspace, admin finance navigation, dynamic admin order deep-link routing, Recovery Center safe-replay flow, and the controlled purchase/receipt 16..128 migration source.
+- Recovery Center is available in Staff/Admin and Customer account contexts for offline cart operations.
+- Purchase/receipt Production RPCs remain on the legacy 16..200 contract until the controlled migration release gate is passed.
+- Actual Git HEAD must always be read from `refs/heads/main`; this file is a checkpoint snapshot, not an authority over Git.
 
 ## Exact proof status
-- Main source: VERIFIED at exact HEAD `226f4403f565981ed40ecb81293d34830335c6b4`.
-- Live security read-only proof: 15/15 current conditions true.
-- Purchase/receipt live drift: VERIFIED read-only — both production RPCs still use the legacy 16..200 idempotency bound; anon EXECUTE remains false.
-- No current main certification claim.
+- Source implementation: VERIFIED at checkpoint source HEAD `c94ed49fa6d367b5bf8bcb36882078d234bea9d4`.
+- Purchase/receipt migration source is present on main; Production migration is NOT_APPLIED.
+- Recovery queue logic has focused source/tests; exact current-SHA CI/browser proof remains pending until workflows complete.
+- Certification: NOT_PROVEN / NOT CLAIMED.
+- Production: HOLD / NO TOUCH.
 
 ## OPEN GAPS
-- PR #128 exact-SHA proof for controlled purchase/receipt 16..128 migration.
-- Remaining controlled quick-order/order-template production migrations and final runtime/browser evidence.
+- Exact-SHA proof for the purchase/receipt 16..128 migration: migration, concurrency, negative/Test-the-Test and affected application tests.
+- Exact current-SHA browser/runtime proof.
+- Dedicated non-production Supabase staging environment for destructive/RLS/browser certification remains a blocker.
+- 84-reference visual coverage is documented by pack rules but full pack-by-pack implementation/proof is not yet certified.
 
 ## NEXT EXECUTABLE ACTION
-Complete PR #128 exact-SHA migration/concurrency/Test-the-Test/application proof. If green, keep the migration on the controlled branch until the release gate authorizes production application.
+Read actual `main` HEAD, inspect the newest affected CI/proof results for purchase/receipt and Recovery Center, fix the first material failure only, then close the next highest-value unproven UI/core gap without touching proven work.
 
 ## DO NOT REPEAT
-Do not transfer evidence across SHAs. Do not mutate production directly. Do not retry unchanged Vercel build-rate-limit/protection. Do not reopen proven customer routing, quick-order, order-template or security-contract work.
+Do not transfer evidence across SHAs. Do not mutate Production directly. Do not retry unchanged Vercel rate-limit/protection paths. Do not recreate duplicate memory systems or re-open closed customer routing, finance workspace, admin finance navigation, deep-link, quick-order or security-contract work.
