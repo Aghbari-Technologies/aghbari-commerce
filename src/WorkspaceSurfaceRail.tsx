@@ -6,7 +6,7 @@ import './workspace-surface.css';
 type StaffRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer';
 type WorkspaceSurfaceRailProps =
   | { variant: 'staff'; role: StaffRole }
-  | { variant: 'customer'; section: CustomerPortalSection; onSelect: (section: CustomerPortalSection) => void };
+  | { variant: 'customer'; section: CustomerPortalSection; onSelect: (section: CustomerPortalSection) => void; visibleSections?: readonly CustomerPortalSection[] };
 
 const STAFF_PACKS = [
   { id: 'command', label: 'مركز القيادة', eyebrow: 'التشغيل', target: '#admin-dashboard', tone: 'live' },
@@ -59,10 +59,10 @@ export default function WorkspaceSurfaceRail(props: WorkspaceSurfaceRailProps) {
             <strong>مساحات العمل</strong>
             <small>انتقل بين مراحل رحلة الشراء دون فقدان سياق الحساب.</small>
           </div>
-          <span className="workspace-surface-count">{CUSTOMER_PORTAL_SECTIONS.length} مساحات</span>
+          <span className="workspace-surface-count">{(props.visibleSections ?? CUSTOMER_PORTAL_SECTIONS).length} مساحات</span>
         </div>
         <div className="workspace-surface-grid">
-          {CUSTOMER_PACKS.map((pack) => {
+          {CUSTOMER_PACKS.filter((pack) => (props.visibleSections ?? CUSTOMER_PORTAL_SECTIONS).includes(pack.id)).map((pack) => {
             const active = props.section === pack.id;
             return (
               <button
@@ -72,7 +72,7 @@ export default function WorkspaceSurfaceRail(props: WorkspaceSurfaceRailProps) {
                 aria-current={active ? 'page' : undefined}
                 onClick={() => props.onSelect(pack.id)}
               >
-                <span className="workspace-surface-index">{String(CUSTOMER_PACKS.findIndex((entry) => entry.id === pack.id) + 1).padStart(2, '0')}</span>
+                <span className="workspace-surface-index">{String((CUSTOMER_PACKS.filter((entry) => (props.visibleSections ?? CUSTOMER_PORTAL_SECTIONS).includes(entry.id)).findIndex((entry) => entry.id === pack.id)) + 1).padStart(2, '0')}</span>
                 <span className="workspace-surface-copy">
                   <small>{pack.eyebrow}</small>
                   <strong>{pack.label}</strong>
