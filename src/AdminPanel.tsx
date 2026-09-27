@@ -184,7 +184,7 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
           ))).slice(0, 18)}
         </div>
       </div>
-      <section className="admin-command-overview" aria-label="موجز مساحات العمل">
+      <section className="admin-command-overview" id="admin-dashboard" aria-label="موجز مساحات العمل">
         {role !== 'viewer' && <a href="#admin-orders"><span className="workspace-overview-icon" aria-hidden="true">🧾</span><div><small>المبيعات</small><strong>الطلبات والعملاء</strong><em>متابعة الدورة اليومية</em></div><b>↗</b></a>}
         {canCatalog && <a href="#admin-catalog"><span className="workspace-overview-icon" aria-hidden="true">▣</span><div><small>الكتالوج</small><strong>الأصناف والتسعير</strong><em>تحرير ونشر بيانات البيع</em></div><b>↗</b></a>}
         {canInventory && <a href="#admin-inventory"><span className="workspace-overview-icon" aria-hidden="true">⌂</span><div><small>المخزون</small><strong>المستودعات والحركات</strong><em>تنفيذ العمليات الميدانية</em></div><b>↗</b></a>}
@@ -240,17 +240,17 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
       </div>}
       {detailOrderId&&(()=>{const order=orders.find(item=>item.id===detailOrderId);if(!order)return null;return <RecordDetailDrawer eyebrow="Operations" title={`طلب #${order.order_number}`} summary={`${order.customer_name} · ${STATUS_LABELS[order.status]}`} fields={[{label:'العميل',value:order.customer_name},{label:'الحالة',value:STATUS_LABELS[order.status]},{label:'الإجمالي',value:`${formatMoney(order.total)} ${order.currency}`},{label:'المعرّف',value:order.id},{label:'الحركات التالية المتاحة',value:allowedNextStatuses(order.status,role).length?allowedNextStatuses(order.status,role).map(s=>STATUS_LABELS[s]).join(' · '):'لا توجد حركة متاحة لهذه الصلاحية'}]} onClose={()=>setDetailOrderId(null)}/>})()}
       {error && <div className="error-banner" role="alert"><span>{error}</span><button type="button" className="ghost" disabled={ordersLoading} onClick={() => void reload()}>إعادة تحميل مركز التحكم</button></div>}{message && <div className="success" role="status">{message}</div>}
-      {canCatalog && <div className="admin-workspace-section" data-label="01 · الكتالوج والمنتجات"><CatalogManagementPanel role={role} /></div>}
+      {canCatalog && <div className="admin-workspace-section" id="admin-catalog" data-label="01 · الكتالوج والمنتجات"><CatalogManagementPanel role={role} /></div>}
 {canCatalog && <div className="admin-workspace-section" data-label="02 · التصنيفات وبنية الكتالوج"><CategoryManagementPanel role={role} /></div>}
-{canCatalog && <div className="admin-workspace-section" data-label="03 · التسعير وقوائم الأسعار"><PricingMatrixPanel role={role as 'owner'|'admin'|'sales'} /></div>}
+{canCatalog && <div className="admin-workspace-section" id="admin-pricing-matrix" data-label="03 · التسعير وقوائم الأسعار"><PricingMatrixPanel role={role as 'owner'|'admin'|'sales'} /></div>}
 {canCatalog && <div className="admin-workspace-section" data-label="04 · العملاء ودورة الحساب"><div id="admin-customers"><CustomerPanel role={role} /></div></div>}
 {canInventory && <div className="admin-workspace-section" data-label="05 · المخزون والتشغيل الميداني"><div id="admin-inventory"><InventoryPanel role={role} /></div></div>}
-{canInventory && <div className="admin-workspace-section" data-label="06 · دفتر حركة المخزون"><InventoryHistoryPanel role={role as 'owner'|'admin'|'warehouse'} /></div>}
+{canInventory && <div className="admin-workspace-section" id="admin-inventory-history" data-label="06 · دفتر حركة المخزون"><InventoryHistoryPanel role={role as 'owner'|'admin'|'warehouse'} /></div>}
 {canInventory && <div className="admin-workspace-section" data-label="07 · نشاط التحويلات والجرد والتسويات"><InventoryActivityPanel role={role as 'owner'|'admin'|'warehouse'} /></div>}
-{canInventory && <div className="admin-workspace-section" data-label="08 · المستودعات والفروع"><WarehouseDirectoryPanel role={role as 'owner'|'admin'|'warehouse'} /></div>}
+{canInventory && <div className="admin-workspace-section" id="admin-warehouses" data-label="08 · المستودعات والفروع"><WarehouseDirectoryPanel role={role as 'owner'|'admin'|'warehouse'} /></div>}
 {canInventory && <div className="admin-workspace-section" data-label="09 · المشتريات ودورة التوريد"><div id="admin-purchasing"><PurchasingPanel role={role} /></div></div>}
-{canInventory && <div className="admin-workspace-section" data-label="10 · سجل الاستلام"><PurchaseReceiptHistoryPanel role={role as 'owner'|'admin'|'warehouse'} /></div>}
-{canInventory && <div className="admin-workspace-section" data-label="11 · الموردون والحساب التشغيلي"><SupplierLedgerPanel role={role as 'owner'|'admin'|'warehouse'} /></div>}
+{canInventory && <div className="admin-workspace-section" id="admin-receipts" data-label="10 · سجل الاستلام"><PurchaseReceiptHistoryPanel role={role as 'owner'|'admin'|'warehouse'} /></div>}
+{canInventory && <div className="admin-workspace-section" id="admin-suppliers" data-label="11 · الموردون والحساب التشغيلي"><SupplierLedgerPanel role={role as 'owner'|'admin'|'warehouse'} /></div>}
 {canFinance && <div className="admin-workspace-section" data-label="12 · المالية التشغيلية"><div id="admin-finance"><FinancePanel role={role} /></div></div>}
 {canFinance && <div className="admin-workspace-section" data-label="13 · سجل العمليات المالية"><FinanceOperationsHistoryPanel role={role as 'owner'|'admin'|'sales'} /></div>}
 {canInventory && <div className="admin-workspace-section" data-label="14 · التصدير ومركز البيانات"><div id="admin-export"><ExportPanel role={role}/></div></div>}
