@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { supabase } from './lib/supabase';
 import './operations.css';
+import OperationalLoadingSkeleton from './OperationalLoadingSkeleton';
 import RecordDetailDrawer from './RecordDetailDrawer';
 
 type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer';
@@ -91,7 +92,7 @@ export default function StaffAccessPanel({ role }: { role: UserRole }) {
       <button type="button" className="ghost" onClick={() => void reload()} disabled={loading}>إعادة تحميل</button>
       {!canManage && <span className="permission-hint">قراءة فقط · تغيير الدور يتطلب صلاحية المالك.</span>}
     </div>
-    {loading ? <div className="portal-loading" role="status">جارٍ تحميل دليل المستخدمين…</div>
+    {loading ? <OperationalLoadingSkeleton variant="collection" />
       : error ? <div className="empty-state"><strong>تعذر تحميل الصلاحيات.</strong><span>{error}</span><button type="button" onClick={() => void reload()}>إعادة المحاولة</button></div>
       : !visible.length ? <div className="empty-state"><strong>لا توجد حسابات مطابقة.</strong><span>النتائج محصورة في المنظمة الحالية عبر المسار المحمي.</span></div>
       : <div className="access-table" role="table" aria-label="دليل مستخدمي المنظمة"><div className="access-row access-head" role="row"><span>الحساب</span><span>النوع</span><span>الدور</span><span>الإنشاء</span><span>الإجراء</span></div>{visible.map((user) => {
