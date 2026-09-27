@@ -30,7 +30,8 @@ import RecordDetailDrawer from './RecordDetailDrawer';
 import OfflineRecoveryPanel from './OfflineRecoveryPanel';
 import AdminBoundaryCenter from './AdminBoundaryCenter';
 import './admin-executive-dashboard.css';
-import { adminTargetForPath, getAdminStructureForRole } from './structure/admin-structure';\nimport WorkspaceSurfaceRail from './WorkspaceSurfaceRail';
+import { adminTargetForPath, getAdminStructureForRole } from './structure/admin-structure';
+import WorkspaceSurfaceRail from './WorkspaceSurfaceRail';
 
 interface StaffProduct { id: string; sku: string; name: string; unit: string; }
 interface Warehouse { id: string; name: string; }
