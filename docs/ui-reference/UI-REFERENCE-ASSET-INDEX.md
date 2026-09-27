@@ -112,7 +112,7 @@ temporary image copies in test artifacts
 - priority؛
 - implementation status.
 
-عند الحاجة، أنشئ **صفًا واحدًا لكل screen pack** بدل تكرار 20–80 صفًا للمكونات نفسها.
+عند الحاجة، أنشئ **صفًا واحدًا لكل visual pack** بدل تكرار 20–80 صفًا للمكونات نفسها.
 
 ## 7. Naming
 
@@ -276,11 +276,11 @@ Once a reference is proven equivalent to an implemented pack, do not rebuild or 
 
 Read screenshots only for decisions that affect layout, hierarchy, state, interaction, responsive behavior, accessibility or scope boundary.
 
-## 17. Compact screen-pack coverage register — 2026-09-28
+## 17. Compact visual-provenance register — 2026-09-28
 
-All 84 current PNG references are accounted for exactly once in the code-level registry at `src/structure/ui-reference-packs.ts`. The registry intentionally groups equivalent/adjacent visual references into implementation packs; it does not duplicate screens.
+All 84 current PNG references are accounted for exactly once in the code-level registry at `src/structure/ui-reference-packs.ts`. The registry is a provenance/visual-pattern index only; it does not represent Aghbari screen count or implementation count.
 
-| Pack | References | Surface / route target | Commerce classification |
+| Visual provenance pack | Assets | Existing Aghbari surface / reference target | Interpretation |
 |---|---:|---|---|
 | Command Center | 5 | Admin Command Center / `#admin-dashboard` | LIVE |
 | Sales & Orders | 20 | Orders, customers and operational details / `#admin-orders` | LIVE |
