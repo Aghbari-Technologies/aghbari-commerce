@@ -52,7 +52,12 @@ pids=()
 for i in $(seq 1 8); do run_purchase "$TMPDIR/purchase-$i" >"$TMPDIR/purchase-pid-$i"; pids+=("$(cat "$TMPDIR/purchase-pid-$i")"); done
 failed=0
 for pid in "${pids[@]}"; do wait "$pid" || failed=1; done
-[ "$failed" -eq 0 ] || { echo "FAIL purchase 8-way"; cat "$TMPDIR"/purchase-*; exit 1; }
+if [ "$failed" -ne 0 ]; then
+  details="$(cat "$TMPDIR"/purchase-* 2>/dev/null | tr '\n' ' ' | cut -c1-1200)"
+  echo "FAIL purchase 8-way"
+  echo "::error title=Purchase 8-way root cause::$details"
+  exit 1
+fi
 
 canonical="$(awk 'NF {print $1; exit}' "$TMPDIR/purchase-1")"
 [ -n "$canonical" ] || { echo "FAIL missing purchase id"; exit 1; }
@@ -91,7 +96,12 @@ pids=()
 for i in $(seq 1 8); do run_receipt "$TMPDIR/receipt-$i" >"$TMPDIR/receipt-pid-$i"; pids+=("$(cat "$TMPDIR/receipt-pid-$i")"); done
 failed=0
 for pid in "${pids[@]}"; do wait "$pid" || failed=1; done
-[ "$failed" -eq 0 ] || { echo "FAIL receipt 8-way"; cat "$TMPDIR"/receipt-*; exit 1; }
+if [ "$failed" -ne 0 ]; then
+  details="$(cat "$TMPDIR"/receipt-* 2>/dev/null | tr '\n' ' ' | cut -c1-1200)"
+  echo "FAIL receipt 8-way"
+  echo "::error title=Receipt 8-way root cause::$details"
+  exit 1
+fi
 
 receipt_canonical="$(awk 'NF {print $1; exit}' "$TMPDIR/receipt-1")"
 [ -n "$receipt_canonical" ] || { echo "FAIL missing receipt id"; exit 1; }
