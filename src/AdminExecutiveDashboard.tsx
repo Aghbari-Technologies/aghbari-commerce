@@ -4,6 +4,7 @@ import { formatMoney } from './domain/pricing';
 import { supabase } from './lib/supabase';
 import { buildSevenDaySales, calculateSevenDaySales, type DashboardSaleRow } from './domain/adminDashboard';
 import { getAdminStructureForRole } from './structure/admin-structure';
+import UiReferenceCoveragePanel from './UiReferenceCoveragePanel';
 
 type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer';
 
@@ -430,6 +431,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
               })}
             </div>
           </section>
+          <UiReferenceCoveragePanel />
           <section className="control-section-grid-shell">
             <div className="control-section-grid-title">
               <div><span>الأقسام الرئيسية</span><h2>مركز الأغبري التشغيلي</h2></div>
