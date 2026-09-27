@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
+// Exact current-main proof marker.
 describe('customer mobile navigation coverage', () => {
   it('keeps all customer portal sections reachable from the compact mobile navigation', () => {
     const source = readFileSync(resolve(process.cwd(), 'src/AppV3Fixed.tsx'), 'utf8');
