@@ -61,3 +61,8 @@ The consolidation manifest lists the architecture/data source set that must be f
 - `client_ui_settings.config` remains the persisted configuration boundary for Customer Portal presentation settings.
 - `accentColor` accepts only six-digit hexadecimal colors and safely falls back to the canonical brand accent on malformed data.
 - `compactMode` controls presentation density only; it cannot change pricing, stock, order or authorization semantics.
+
+## 2026-09-27 — Active runtime cache scope
+- `AppV3Fixed` is the active browser entrypoint and owns Customer Portal runtime behavior.
+- Catalog cache identity is `organizationId:customerId:warehouseId:userId`; missing segments are omitted and an empty overall scope disables caching.
+- This scope is a presentation/cache boundary only and does not replace tenant enforcement in Supabase/RLS.
