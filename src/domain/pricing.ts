@@ -17,6 +17,25 @@ export function resolveDisplayPrice(
     .sort((a, b) => Date.parse(b.validFrom) - Date.parse(a.validFrom))[0];
 }
 
+export function effectiveCatalogPrice(
+  tiers: Array<{ min_quantity: number; unit_price: number }>,
+  basePrice: number | null | undefined,
+  quantity: number
+): number {
+  if (!Number.isSafeInteger(quantity) || quantity < 1) return 0;
+  const match = tiers
+    .filter((tier) =>
+      Number.isSafeInteger(tier.min_quantity) &&
+      tier.min_quantity > 0 &&
+      Number.isFinite(tier.unit_price) &&
+      tier.unit_price >= 0
+    )
+    .sort((a, b) => b.min_quantity - a.min_quantity)
+    .find((tier) => quantity >= tier.min_quantity);
+  if (match) return match.unit_price;
+  return typeof basePrice === 'number' && Number.isFinite(basePrice) && basePrice >= 0 ? basePrice : 0;
+}
+
 export function formatMoney(amount: number, currency = 'YER'): string {
   return new Intl.NumberFormat('ar-YE', {
     style: 'currency',

@@ -2,7 +2,7 @@ import { lazy, Suspense, useCallback, useEffect, useMemo, useState, type FormEve
 import readXlsxFile from './lib/read-excel-file-browser';
 import type { CartLine, Product } from './domain/types';
 import { calculateClientPreviewTotal } from './domain/order';
-import { formatMoney } from './domain/pricing';
+import { effectiveCatalogPrice, formatMoney } from './domain/pricing';
 import { getCatalog, getProductImageUrls, type CatalogItem } from './services/catalog';
 import { getCategories, type CategoryOption } from './services/categories';
 import { getCart, removeCartItem, setCartItem, syncOfflineCart } from './services/cart';
@@ -108,7 +108,7 @@ export default function AppV3Fixed(){
   useEffect(()=>{const handleOffline=()=>setOnline(false);const handleOnline=()=>{setOnline(true);if(!signedIn)return;setOfflineSyncing(true);setError('');void syncOfflineCart().then((result)=>{if(result.processed>0)setMessage(`تمت مزامنة ${result.processed} عملية سلة بعد عودة الاتصال.`);if(result.failed>0)setError(`تعذر مزامنة ${result.failed} عملية سلة مؤقتًا؛ ستبقى في الطابور لإعادة المحاولة الآمنة.`);return loadData();}).catch(e=>setError(e instanceof Error?e.message:'تعذر مزامنة السلة بعد عودة الاتصال.')).finally(()=>setOfflineSyncing(false));};window.addEventListener('online',handleOnline);window.addEventListener('offline',handleOffline);return()=>{window.removeEventListener('online',handleOnline);window.removeEventListener('offline',handleOffline);};},[signedIn,loadData]);
 
   const total=calculateClientPreviewTotal(cart);const cartCount=cart.reduce((s,l)=>s+l.quantity,0);const categoriesView=useMemo(()=>[{id:null,name:'الكل'},...categories],[categories]);const visibleProducts=useMemo(()=>{const next=[...products];if(catalogSort==='name')next.sort((x,y)=>x.name.localeCompare(y.name,'ar'));if(catalogSort==='stock')next.sort((x,y)=>y.availableQuantity-x.availableQuantity||x.name.localeCompare(y.name,'ar'));return next;},[catalogSort,products]);
-  function effectivePrice(p:Product,q:number){const list=tiers[p.id]??[];return [...list].sort((a,b)=>b.min_quantity-a.min_quantity).find(x=>q>=x.min_quantity)?.unit_price??((p as PricedProduct).authorizedPrice??0);}
+  function effectivePrice(p:Product,q:number){return effectiveCatalogPrice(tiers[p.id]??[],(p as PricedProduct).authorizedPrice,q);}
   function nextTier(p:Product,q:number){return (tiers[p.id]??[]).filter(x=>x.min_quantity>q).sort((a,b)=>a.min_quantity-b.min_quantity)[0];}
   function setQtyConfirmed(id:string,value:boolean){setConfirmed(c=>({...c,[id]:value}));}
   async function resolveOrderProduct(item: CustomerOrderDetail['items'][number]): Promise<PricedProduct|null> {
