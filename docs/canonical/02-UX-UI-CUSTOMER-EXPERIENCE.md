@@ -102,3 +102,10 @@ Do not create a second design system, duplicate CSS family or duplicate asset co
 - Owner/admin settings now include persisted portal appearance controls: validated accent color and compact/comfortable density.
 - The Customer Portal applies those settings through the existing `client_ui_settings` contract; invalid colors fall back to the canonical Aghbari accent.
 - Appearance is a live UI surface mapped to `/admin/settings`; no separate theme storage or business authority is introduced.
+
+
+## 2026-09-28 — Customer account workspace closure wave
+- Customer Portal account navigation is implemented as a dedicated reusable workspace with sub-surfaces for overview, profile, company/account context, addresses and account settings.
+- Profile/company/settings surfaces are read-only against existing Commerce contracts; no unsupported customer mutation is fabricated inside the portal.
+- Addresses are an explicit boundary because the current transactional schema has no canonical customer-address source; the UI explains the boundary instead of creating fake persistence.
+- Account workspace keeps Offline Recovery as an actionable operational surface and provides direct navigation back to catalog, orders, finance and order templates.
