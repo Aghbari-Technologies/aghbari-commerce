@@ -53,9 +53,9 @@ jobs:
         with:
           version: 2.117.0
 
-      - name: Start local database
+      - name: Start Postgres-only local database
         run: |
-          supabase start
+          supabase db start
           supabase db reset --local
 
       - name: Run only the purchase/receipt idempotency pgTAP test
