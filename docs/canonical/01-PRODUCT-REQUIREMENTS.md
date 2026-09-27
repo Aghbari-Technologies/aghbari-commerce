@@ -42,3 +42,8 @@ No additional product scope is created solely because a legacy screenshot contai
 - Customer Portal requires a real saved delivery-address capability: create, read, update, delete and one optional default address per customer.
 - Address records are customer-owned Commerce data, tenant-scoped and auditable. The UI may not fabricate addresses or imply persistence when offline.
 - Checkout/order binding is deliberately outside this requirement until an explicit transactional shipping-address contract exists; saving an address must not mutate an existing order or invoice implicitly.
+
+## 2026-09-28 — Supplier and warehouse administration
+- Admin/Staff UI includes real supplier and warehouse edit surfaces within Commerce scope.
+- Supplier updates cover name, contact fields and active state; warehouse updates cover name, active state and active-branch assignment.
+- Update operations are server-authorized and auditable. Unsupported historical AI/BI/Onyx/Developer-AI edit screens remain boundaries rather than being implemented as transactional features.
