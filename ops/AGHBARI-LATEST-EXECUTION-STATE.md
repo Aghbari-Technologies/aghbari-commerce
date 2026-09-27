@@ -2,16 +2,16 @@
 
 Project: Aghbari Commerce | الأغبري
 Branch: `main`
-Current Git HEAD: `cf150ea29f201ca06d7ec6320d59e70b8cb725c9`
+Current Git HEAD: `fc20773575e330b03ff83e5cb13ca0b2cb505ef9`
 Production: HOLD / NO TOUCH
 Certification: NOT CLAIMED
 
 ## Current reality
-- Active implementation is at exact HEAD `cf150ea29f201ca06d7ec6320d59e70b8cb725c9` on `main`.
-- Customer catalog preserves server-authorized base pricing and displays its returned currency consistently.
-- Customer order-detail reorder resolves authorized catalog items outside the current visible page before re-adding them.
-- Quick-order idempotency validation is capped at 16–128 characters with explicit 128/129 regression coverage.
-- No production mutation was introduced.
+- Active implementation is at exact HEAD `fc20773575e330b03ff83e5cb13ca0b2cb505ef9` on `main`.
+- Customer catalog preserves and consistently displays server-authorized price/currency.
+- Customer reorder from detail/list flows resolves authorized items outside the current catalog page and performs a single atomic cart merge.
+- Quick-order lookup uses the account's active warehouse.
+- Quick-order source migration/test now defines the canonical 16–128 idempotency contract; production remains unchanged under HOLD.
 
 ## Exact proof status
 - Implementation: VERIFIED by exact repository content at current HEAD.
@@ -29,7 +29,7 @@ DEPLOY: free exact-source hosted runtime proof; no unchanged Vercel retries.
 DOCS: semantic consolidation only when it closes an active requirement/proof gap.
 
 ## NEXT EXECUTABLE ACTION
-Close exact-SHA application-quality, Test-the-Test, security, migration, concurrency and browser evidence for `cf150ea29f201ca06d7ec6320d59e70b8cb725c9`; resolve failures immediately and continue the next independent material UI/core/security gap.
+Inspect the newest exact-SHA GitHub Actions for `fc20773575e330b03ff83e5cb13ca0b2cb505ef9`; resolve any failure immediately, then continue the next independent UI/core/security gap.
 
 ## DO NOT REPEAT
 Do not rebuild closed/proven work; do not transfer evidence between SHAs; do not retry the unchanged Vercel protection path; do not create duplicate reference packs or memory systems.
