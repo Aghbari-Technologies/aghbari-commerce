@@ -1,31 +1,117 @@
-## 2026-09-28 — Reference coverage implementation wave
+# 🔴 AGHBARI LATEST EXECUTION STATE
 
-- Added `src/structure/ui-reference-packs.ts` as the compact code-level registry for all 84 reference PNGs, grouped into 8 implementation packs.
-- Added `src/UiReferenceCoveragePanel.tsx` and `src/ui-reference-coverage.css`; Admin now exposes a real P0 reference-coverage workspace from `#admin-ui-reference`.
-- Added `src/structure/ui-reference-packs.test.ts`; it enforces 84/84 unique registry coverage and exact parity with the tracked PNG directory.
-- Added `src/brand-identity.test.ts`; runtime source is guarded against historical product identity residue.
-- Added both tests to the bounded `aghbari-quality` workflow.
-- Updated `docs/ui-reference/UI-REFERENCE-ASSET-INDEX.md` with the compact 8-pack coverage register.
-- Admin navigation now exposes direct access to the 84-reference coverage workspace.
+Project: Aghbari Commerce | الأغبري
+Branch: `main`
+Current Git HEAD: READ LIVE FROM `refs/heads/main` at every boot; this file intentionally does not cache a mutable SHA.
+Production: HOLD / NO TOUCH
+Certification: NOT CLAIMED
 
-## 2026-09-28 — Current live boundary verification
+## Current reality
+- Active browser entrypoint is `src/main.tsx -> AppV3Fixed`.
+- Main contains customer finance documents, admin finance navigation, dynamic admin order deep-link routing, actionable Recovery Center, atomic permission-aware bulk order transitions, controlled purchase/receipt 16..128 migration source, scoped offline catalog cache/reconnect sync, operational trust provenance, persisted portal appearance settings, and explicit import reconciliation reporting.
+- The purchase/receipt migration source is merged into main but remains unapplied to Production; live RPCs are still at the legacy 16..200 contract.
+- Bulk-order migration source is merged but not applied to Production.
+- 84 PNG reference blobs are 84/84 unique; visual-equivalence and full screen-pack proof remain open.
+- Customer delivery-address capability is implemented in source (domain policy, service, UI, migration, and contract test); the migration is source-controlled and must still pass migration/runtime proof before it can be treated as live persistence.
+- Production has not been mutated by these execution changes.
 
-- Read-only Supabase verification confirms `apply_quick_order`, `create_purchase_order` and `receive_purchase_order` are still live with the legacy 200-character bound; anonymous EXECUTE remains false and authenticated EXECUTE remains true.
-- No Production mutation performed.
-- Source-controlled 128-bound migration and runtime/negative tests exist in repository history; they remain release-gated until exact current-SHA proof and approved application path.
+## Exact proof status
+- Source implementation: VERIFIED in the live repository; re-read `refs/heads/main` for the exact current SHA.
+- Active runtime wiring: VERIFIED — `main.tsx` imports `AppV3Fixed`; active runtime includes cache scope, trust surface and persisted theme.
+- Live purchase/receipt drift: VERIFIED read-only; both still expose legacy 200; anon EXECUTE remains false.
+- Live bulk-transition RPC: NOT_PRESENT; repository migration is source-only.
+- Current-main checks: QUEUED/IN_PROGRESS; combined status remains failure due the known external deployment/status path. No final PASS claimed.
+- Browser/hosted exact-source proof: NOT_PROVEN.
+- Supabase staging for destructive/certification workflows: BLOCKED/unavailable.
+- Certification: NOT_PROVEN / NOT CLAIMED.
+- Production: HOLD / NO TOUCH.
 
-## CURRENT OPEN UI/CORE PROOF
+## OPEN GAPS
+- Exact-SHA migration/concurrency/negative/Test-the-Test proof for purchase/receipt and bulk-order changes.
+- Controlled production purchase/receipt migration after release gates only.
+- Exact current-main browser/runtime/visual proof.
+- Full 84-reference screen-pack equivalence and proof matrix.
+- Remaining uncovered canonical product/quality gaps.
 
-- 84-reference classification/accounting: IMPLEMENTED and structurally guarded.
-- Full visual/browser exact-SHA equivalence for all reference packs: NOT_PROVEN.
-- Customer Portal/Admin live interaction and runtime proof on the current exact SHA: NOT_PROVEN.
-- Purchase/receipt 16..128 production migration: OPEN / gated.
-- Current workflow execution visibility through the connected GitHub read path remains limited; do not infer PASS from absent run records.
+## LATEST CLOSURE BATCH — 2026-09-28
+- Real Staff/Order detail read contract added to `src/services/staffOrders.ts` with UUID, money, line-total and subtotal reconciliation checks.
+- `AdminPanel` now loads the real order detail and shows loading/error/retry plus line-level information inside the reusable detail drawer.
+- `RecordDetailDrawer` now supports rich content and an explicit retry/close footer without adding mutation authority.
+- Focused negative/positive contract test added at `src/services/staffOrders.detail.test.ts`.
+- Bounded GitHub quality workflow added: typecheck + focused detail test + build, canceling stale runs.
+
+## NEXT EXECUTABLE ACTION
+Read the live refs/heads/main, inspect the current exact application-quality / G1 Domain Proof / security-audit / Test-the-Test results, fix only the first material failure on that exact SHA, then continue the next unproven 84-reference screen-pack gap. Do not transfer evidence from prior SHAs.
+
+## DO NOT REPEAT
+Do not transfer evidence across SHAs. Do not mutate Production directly. Do not retry unchanged Vercel rate-limit/protection. Do not reopen closed finance, deep-link, recovery, bulk-order, cache-isolation, trust/theme, import-reconciliation, or the now-closed Staff order-detail implementation work.
+
+
+## 2026-09-28 — Customer delivery-address closure
+- Customer address domain policy, typed service, live account UI, RLS/privilege migration and contract test are present on main.
+- Required UI states include loading, empty, action error, success, offline/disabled, edit and destructive confirmation.
+- Address migration is NOT_PROVEN in a live environment until the exact migration workflow completes; no production mutation performed.
+
+
+## 2026-09-28 — Inventory activity deep-link anchor closure
+- Closed the live navigation defect where `#admin-inventory-activity` had no matching `AdminPanel` DOM anchor.
+- Added `src/structure/admin-structure.anchor.test.ts` to assert every live Admin structure target resolves to an actual `AdminPanel` id.
+- Extended the bounded quality workflow to include the anchor contract test.
+- Purchase/receipt live 200-character idempotency bound remains unchanged and is still a controlled migration gate; no production mutation performed.
+
+
+## 2026-09-28 — Full UI closure wave / current checkpoint
+- Current live HEAD: 2361acda811159bfa7f8e0d414c2ebc70c16fe92 (must be re-read at every resume; not cached as mutable truth).
+- Implemented: Customer Account workspace (overview/profile/company/addresses/settings); canonical customer-address source contract (domain/service/UI/migration/RLS/RPC/audit/contract test); executable Stock Count workspace; Admin inventory screen pack for transfers/count/reconciliations; real Staff order-detail surfaces; explicit Admin contract-boundary center; safe boundary links for unsupported warehouse/supplier edits.
+- Verified: Admin live-target scan currently resolves all unique DOM targets with zero missing anchors; active customer IA exposes catalog/orders/finance/templates/account/notifications and nested invoice/order/address surfaces.
+- Exact current proof: Browser E2E passed on immediately preceding exact SHA a7d41f43152e18d281a72e0720e1a49d070ad71c; this is historical because HEAD is now 2361acda811159bfa7f8e0d414c2ebc70c16fe92. Current exact Quality/G1/Security/Test-the-Test must finish on the current SHA before certification claims.
+- Known quality correction: older 741f7c1c quality failure was an unclosed JSX expression in InventoryActivityPanel; fixed at a4cd8b63 and carried forward to current main.
+- Production: HOLD / NO TOUCH. Purchase/receipt 16..128 and customer-address migrations remain source-only until exact migration/runtime proof.
+
+
+## 2026-09-28 — Staff reorder/template boundary
+- `src/structure/admin-structure.ts` explicitly represents Staff reorder and order-template surfaces as boundaries, not fake live screens.
+- Customer Portal continues to own the real reorder/template workflows and persistence.
+- No new Staff permission or mutation contract was invented.
+
+## 2026-09-28 — Supplier / warehouse edit closure
+- Current live HEAD must be re-read from refs/heads/main; latest observed during this checkpoint: e002456ab8f40f084047c970ebd1f95381491c35.
+- Implemented: audited owner/admin update RPCs for suppliers and warehouses; typed client services; Admin/Staff edit forms for both surfaces; IA status changed from boundary to live; bounded SQL/UI tests.
+- Verified: no production mutation; unsupported AI/BI/Onyx/Developer-AI boundaries remain explicit and non-fake.
+- Not proven yet on this exact SHA: build/typecheck/runtime/browser/visual and migration application.
+- Open gaps: exact current Quality/G1/Security/Test-the-Test results; 16..128 production migration gate; 84-reference screen-pack visual proof.
+- Next executable action: inspect exact-current CI results, fix first material failure once, then continue the next independent reference/core gap.
+
+## 2026-09-28 — Customer self-profile closure
+- Implemented: update_customer_self_profile RPC; customerProfile service; profile editor with offline/error/success states; canonical security/product/architecture records; input and SQL boundary tests.
+- Verified structurally: authenticated-only execution, anon denied, staff denied, tenant/customer derived server-side, tier/status not mutable.
+- Not proven on current exact HEAD until CI jobs complete: full build/runtime/browser visual execution.
+- Production remains HOLD / NO TOUCH; production migration list ends at 20260925040254.
+- Next executable action: inspect exact-current CI results and fix first material failure once; then continue next independent open UI/core gap.
+
+## 2026-09-28 — Current execution checkpoint: UI reference coverage wave
+
+- Actual main HEAD must be read live on every resume; do not cache it as mutable truth.
+- Implemented `src/structure/ui-reference-packs.ts`: 84 current PNG references grouped into 8 implementation packs with one implementation target per pack.
+- Implemented `src/UiReferenceCoveragePanel.tsx` and `src/ui-reference-coverage.css`; Admin now exposes `#admin-ui-reference` as a real compact P0 coverage workspace.
+- Implemented `src/structure/ui-reference-packs.test.ts`: exact 84/84 count, uniqueness, exact parity with tracked PNG directory, and explicit pack targets.
+- Implemented `src/brand-identity.test.ts` and corrected it to scan runtime source files only, excluding test/spec files.
+- Added the new UI coverage and brand tests to `.github/workflows/aghbari-quality.yml`.
+- Updated the canonical UI reference index with the compact 8-pack register.
+- Added direct Admin navigation to the 84-reference coverage workspace.
+
+## CURRENT PROOF STATE
+
+- 84-reference accounting / registry: VERIFIED BY SOURCE.
+- Exact current browser visual equivalence for all packs: NOT_PROVEN.
+- Exact current build/typecheck/CI result: NOT_PROVEN through the connected workflow read path.
+- Current production purchase/receipt/quick-order idempotency remains legacy 200; read-only Supabase verification confirmed the live state. Production was not mutated.
+- Source-controlled purchase/receipt 128 migration + boundary/concurrency tests exist, but production application remains release-gated.
 
 ## NEXT EXECUTABLE ACTION
 
-Read the latest exact `refs/heads/main` SHA, obtain the bounded quality result that includes the new UI-reference and brand tests, fix only the first material failure if present, then continue the next independent UI/core gap. Preserve Production HOLD / NO TOUCH.
+Re-read `refs/heads/main`, inspect the newest quality/check evidence available for the exact SHA, fix only a material failure, then continue the next independent uncovered UI/core gap. Do not repeat unchanged hosted/Vercel retries.
 
 ## DO NOT REPEAT
 
-Do not recreate the 84 reference pack assets or per-image backlog. Do not transfer browser/CI evidence from earlier SHAs. Do not retry the unchanged Vercel protection/rate-limit path. Do not mutate Production purchase/receipt functions before the required migration/concurrency/negative gates are proven.
+Do not recreate the 84 PNG assets or build per-image duplicate implementations. Do not transfer evidence from earlier SHAs. Do not mutate Production to bypass migration gates.
