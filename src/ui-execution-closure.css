@@ -122,3 +122,13 @@ button:disabled, [aria-disabled='true'] { cursor: not-allowed; }
     transition-duration: 0.01ms !important;
   }
 }
+
+
+.record-detail-field-content {
+  white-space: pre-line;
+  line-height: 1.8;
+  color: #315665;
+  font-size: 10px;
+}
+
+.record-detail-field-content::first-line { color: var(--aghbari-ink, #123b50); }
