@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createPurchaseOrder, createSupplier, approvePurchaseOrder, receivePurchaseOrder, submitPurchaseOrder } from './services/purchasing';
 import { supabase } from './lib/supabase';
 import RecordDetailDrawer from './RecordDetailDrawer';
+import OperationalLoadingSkeleton from './OperationalLoadingSkeleton';
 
 type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer';
 type Status = 'draft' | 'submitted' | 'approved' | 'partially_received' | 'received' | 'cancelled';
@@ -81,7 +82,7 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
   return <div className="cart-panel" id="purchasing">
     <div className="section-heading"><div><span className="eyebrow">المشتريات والمستودع</span><h2>دورة التوريد</h2></div><span aria-live="polite">{loading ? 'جارٍ التحديث…' : `${orders.length} أوامر شراء`}</span></div>
     <div className="ops-metrics-strip" aria-label="ملخص المشتريات"><article><small>أوامر الشراء</small><strong>{orders.length.toLocaleString('ar')}</strong><span>إجمالي السجل المحمل</span></article><article><small>مسودات</small><strong>{orders.filter(order=>order.status==='draft').length.toLocaleString('ar')}</strong><span>تحتاج إرسالًا</span></article><article><small>معتمدة</small><strong>{orders.filter(order=>order.status==='approved').length.toLocaleString('ar')}</strong><span>جاهزة للتوريد</span></article><article className={orders.some(order=>order.status==='partially_received')?'attention':''}><small>استلام جزئي</small><strong>{orders.filter(order=>order.status==='partially_received').length.toLocaleString('ar')}</strong><span>تحتاج متابعة</span></article></div>
-    <div className="admin-grid">
+    {loading ? <OperationalLoadingSkeleton variant="purchasing" /> : <div className="admin-grid">
       <form className="admin-card" onSubmit={(e) => { e.preventDefault(); void run(() => createSupplier({ name: supplierName, phone: supplierPhone, address: supplierAddress }), 'تم إنشاء المورد وتسجيل أثر العملية.').then(() => { setSupplierName(''); setSupplierPhone(''); setSupplierAddress(''); }); }}>
         <h3>مورد جديد</h3>
         <input aria-label="اسم المورد" placeholder="اسم المورد" value={supplierName} onChange={(e) => setSupplierName(e.target.value)} required />
@@ -107,9 +108,7 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
           </select>
           <button type="button" className="ghost" onClick={() => { setOrderQuery(''); setOrderStatus('all'); }} disabled={!orderQuery && orderStatus === 'all'}>مسح</button>
         </div>
-        {loading ? (
-          <div className="portal-loading" role="status">جارٍ تحميل أوامر الشراء…</div>
-        ) : orders.length === 0 ? (
+        {orders.length === 0 ? (
           <div className="empty-state"><strong>لا توجد أوامر شراء بعد.</strong><button type="button" onClick={() => void load()}>إعادة المحاولة</button></div>
         ) : visibleOrders.length === 0 ? (
           <div className="empty-state"><strong>لا توجد نتائج مطابقة.</strong><button type="button" onClick={() => { setOrderQuery(''); setOrderStatus('all'); }}>مسح الفلاتر</button></div>
@@ -145,7 +144,7 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
         {!selectedOrderId || !selectedOrderItems.length ? <div className="empty-state"><strong>{selectedOrderId?'لا توجد بنود متبقية للاستلام.':'اختر أمرًا معتمدًا.'}</strong><span>الاستلام لا ينشئ كمية من تلقاء نفسه؛ يعتمد فقط على البنود المتبقية في الأمر.</span></div> : <div className="purchase-line-stack receiving-line-stack">{receiveLines.map((line,index)=><div className="purchase-line-editor receiving-line-editor" key={line.id}><div><small>البند {index+1}</small><select aria-label={`بند الاستلام ${index+1}`} value={line.purchaseOrderItemId} onChange={e=>{const value=e.target.value;const source=selectedOrderItems.find(item=>item.id===value);setReceiveLines(current=>current.map(item=>item.id===line.id?{...item,purchaseOrderItemId:value,productId:source?.product_id??'',quantity:'1'}:item))}} required><option value="">اختر الصنف</option>{selectedOrderItems.map(item=><option key={item.id} value={item.id}>{productNameFor(item.product_id)} · متبقٍ {item.quantity_ordered-item.quantity_received}</option>)}</select></div><label>كمية الاستلام<input aria-label={`كمية الاستلام ${index+1}`} type="number" min="1" max={(() => {const item=selectedOrderItems.find(candidate=>candidate.id===line.purchaseOrderItemId);return item?item.quantity_ordered-item.quantity_received:undefined})()} step="1" value={line.quantity} onChange={e=>setReceiveLines(current=>current.map(item=>item.id===line.id?{...item,quantity:e.target.value}:item))} required /></label>{receiveLines.length>1&&<button type="button" className="ghost purchase-line-remove" onClick={()=>setReceiveLines(current=>current.filter(item=>item.id!==line.id))} disabled={busy}>حذف</button>}</div>)}</div>}
         <div className="purchase-builder-actions"><button type="button" className="ghost" onClick={()=>setReceiveLines(current=>[...current,{id:`receive-${Date.now()}-${current.length}`,purchaseOrderItemId:'',productId:'',quantity:'1'}])} disabled={busy||!selectedOrderItems.length||receiveLines.length>=100}>+ إضافة بند استلام</button><small>حتى 100 بند فريد · مطابق لحد الاستلام على الخادم، ولا تتجاوز المتبقي لكل صنف.</small><button disabled={busy||!selectedOrderId||!selectedOrderItems.length}>اعتماد الاستلام</button></div>
       </form>
-    </div>
+    </div>}
     {error && <div className="error-banner" role="alert"><span>{error}</span><button type="button" className="ghost" onClick={() => void load()} disabled={loading}>إعادة تحميل المشتريات</button></div>}{message && <div className="success" role="status">{message}</div>}
     {detailOrderId&&(()=>{const order=orders.find(item=>item.id===detailOrderId);if(!order)return null;const lines=items.filter(item=>item.purchase_order_id===order.id);return <RecordDetailDrawer eyebrow="Purchasing" title={`أمر شراء #${order.purchase_order_number}`} summary={`${supplierNameFor(order.supplier_id)} · ${statusLabels[order.status]}`} fields={[{label:'المورد',value:supplierNameFor(order.supplier_id)},{label:'المستودع',value:warehouses.find(w=>w.id===order.warehouse_id)?.name??'—'},{label:'الحالة',value:statusLabels[order.status]},{label:'الإجمالي',value:`${order.total} ${order.currency}`},{label:'عدد البنود',value:lines.length},{label:'المعرّف',value:order.id},{label:'البنود',value:<div className="record-detail-lines">{lines.length?lines.map(line=><div key={line.id}><span>{productNameFor(line.product_id)}</span><strong>{line.quantity_ordered} · استلم {line.quantity_received} · {line.unit_cost} {order.currency}</strong></div>):'لا توجد بنود مرتبطة بهذا الأمر.'}</div>,wide:true}]} onClose={()=>setDetailOrderId(null)}/>})()}
 
