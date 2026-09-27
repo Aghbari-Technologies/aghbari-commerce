@@ -105,9 +105,9 @@ Do not create a second design system, duplicate CSS family or duplicate asset co
 
 
 ## 2026-09-28 — Customer account workspace closure wave
-- Customer Portal account navigation is implemented as a dedicated reusable workspace with sub-surfaces for overview, profile, company/account context, addresses and account settings.
+- Customer Portal account navigation is implemented as a dedicated reusable workspace with sub-surfaces for overview, profile, company/account context, live addresses and account settings.
 - Profile/company/settings surfaces are read-only against existing Commerce contracts; no unsupported customer mutation is fabricated inside the portal.
-- Addresses are an explicit boundary because the current transactional schema has no canonical customer-address source; the UI explains the boundary instead of creating fake persistence.
+- Addresses are now a live in-scope Customer Portal capability backed by the canonical `customer_addresses` migration; checkout/order shipping-address binding remains outside this requirement until its explicit transactional contract exists.
 - Account workspace keeps Offline Recovery as an actionable operational surface and provides direct navigation back to catalog, orders, finance and order templates.
 
 ## 2026-09-28 — Customer delivery-address workspace
