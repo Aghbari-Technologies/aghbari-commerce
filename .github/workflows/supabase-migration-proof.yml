@@ -56,8 +56,8 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           version: 2.117.0
-      - name: Start local Supabase
-        run: supabase start
+      - name: Start Postgres-only local database
+        run: supabase db start
       - name: Apply migrations from empty database
         run: supabase db reset --local
       - name: Verify effective final order authority in Fresh DB
