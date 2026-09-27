@@ -51,6 +51,8 @@ export const AGHBARI_ADMIN_STRUCTURE: AdminStructureGroup[] = [
       live('customers', 'العملاء', '/admin/customers', 'customers.view', ' #admin-customers'.trim(), ['view', 'create', 'edit', 'approve', 'reject']),
       boundary('devices', 'أجهزة العملاء', '/admin/devices', 'devices.manage', 'الهيكلة محفوظة؛ عقد أجهزة العملاء غير موجود ضمن نطاق Commerce الحالي.'),
       live('workspace', 'مساحة عمل المدير', '/admin/workspace', 'orders.view', '#admin-orders', ['view']),
+      boundary('staff-reorder', 'إعادة الطلب', '/admin/reorder', 'orders.view', 'إعادة الطلب عقد تشغيلي قائم داخل Customer Portal بناءً على تاريخ العميل؛ لا يوجد في Commerce الحالي عقد Staff مستقل لإعادة الطلب.'),
+      boundary('staff-order-templates', 'قوالب الطلبات', '/admin/order-templates', 'orders.view', 'قوالب الطلبات الحالية customer-owned ومحمية بسياق العميل؛ لا يوجد عقد Staff canonical يسمح بعرض/تعديل قوالب العملاء أو تطبيقها نيابةً عنهم.'),
     ],
   },
   {
