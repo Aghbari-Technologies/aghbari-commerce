@@ -59,7 +59,7 @@ export default function WorkspaceSurfaceRail(props: WorkspaceSurfaceRailProps) {
             <strong>مساحات العمل</strong>
             <small>انتقل بين مراحل رحلة الشراء دون فقدان سياق الحساب.</small>
           </div>
-          <span className="workspace-surface-count">6 مساحات</span>
+          <span className="workspace-surface-count">{CUSTOMER_PORTAL_SECTIONS.length} مساحات</span>
         </div>
         <div className="workspace-surface-grid">
           {CUSTOMER_PACKS.map((pack) => {
