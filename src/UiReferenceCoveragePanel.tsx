@@ -1,15 +1,15 @@
 import { UI_REFERENCE_PACKS, UI_REFERENCE_TOTAL, type UiReferencePackStatus } from './structure/ui-reference-packs';
 
 const STATUS_LABEL: Record<UiReferencePackStatus, string> = {
-  live: 'حي',
-  mixed: 'مختلط',
-  boundary: 'حد نطاق',
+  'in-scope-visual': 'مرجع بصري ضمن النطاق',
+  'mixed-visual': 'مرجع بصري مختلط',
+  'external-pattern': 'نمط بصري خارجي',
 };
 
 export default function UiReferenceCoveragePanel() {
-  const live = UI_REFERENCE_PACKS.filter((pack) => pack.status === 'live').reduce((sum, pack) => sum + pack.references.length, 0);
-  const boundary = UI_REFERENCE_PACKS.filter((pack) => pack.status === 'boundary').reduce((sum, pack) => sum + pack.references.length, 0);
-  const mixed = UI_REFERENCE_TOTAL - live - boundary;
+  const inScopeVisual = UI_REFERENCE_PACKS.filter((pack) => pack.status === 'in-scope-visual').reduce((sum, pack) => sum + pack.references.length, 0);
+  const externalPattern = UI_REFERENCE_PACKS.filter((pack) => pack.status === 'external-pattern').reduce((sum, pack) => sum + pack.references.length, 0);
+  const mixedVisual = UI_REFERENCE_TOTAL - inScopeVisual - externalPattern;
 
   return (
     <section className="ui-reference-coverage" id="admin-ui-reference" aria-labelledby="ui-reference-title">
@@ -17,7 +17,7 @@ export default function UiReferenceCoveragePanel() {
         <div>
           <span className="eyebrow">P0 · Visual Reference Coverage</span>
           <h2 id="ui-reference-title">حزمة المراجع البصرية للأغبري</h2>
-          <p>كل مرجع حالي مربوط بحزمة تنفيذ واحدة؛ الحزم غير المتعاقدة تظهر كحدود نطاق بدل واجهات وهمية.</p>
+          <p>هذه الصور مرجع بصري من تطبيق آخر؛ الحزم توثّق provenance والأنماط القابلة لإعادة الاستخدام ولا تمثل عدد شاشات الأغبري.</p>
         </div>
         <div className="ui-reference-coverage-total">
           <strong>{UI_REFERENCE_TOTAL}</strong>
@@ -27,14 +27,14 @@ export default function UiReferenceCoveragePanel() {
 
       <div className="ui-reference-coverage-metrics" aria-label="حالة التغطية">
         <article><strong>{UI_REFERENCE_PACKS.length}</strong><span>حزم تنفيذ</span></article>
-        <article className="is-live"><strong>{live}</strong><span>مرجع حي</span></article>
-        <article className="is-mixed"><strong>{mixed}</strong><span>مرجع بحالة مختلطة</span></article>
-        <article className="is-boundary"><strong>{boundary}</strong><span>مرجع ضمن Boundary</span></article>
+        <article className="is-live"><strong>{inScopeVisual}</strong><span>مرجع ضمن نطاق الأغبري</span></article>
+        <article className="is-mixed"><strong>{mixedVisual}</strong><span>مرجع بصري مختلط</span></article>
+        <article className="is-boundary"><strong>{externalPattern}</strong><span>نمط بصري خارجي</span></article>
       </div>
 
       <div className="ui-reference-pack-grid">
         {UI_REFERENCE_PACKS.map((pack) => (
-          <details className={`ui-reference-pack is-${pack.status}`} key={pack.id} open={pack.status !== 'boundary'}>
+          <details className={`ui-reference-pack is-${pack.status}`} key={pack.id} open={pack.status !== 'external-pattern'}>
             <summary>
               <span className="ui-reference-pack-marker" aria-hidden="true" />
               <span className="ui-reference-pack-title"><strong>{pack.title}</strong><small>{pack.area}</small></span>
@@ -61,8 +61,8 @@ export default function UiReferenceCoveragePanel() {
       </div>
 
       <footer className="ui-reference-coverage-footer">
-        <span>التصنيف لا يُعامل كإثبات بصري نهائي.</span>
-        <span>الإثبات النهائي يظل مرتبطًا بالحالة والـviewport والـSHA ونتيجة المتصفح.</span>
+        <span>المراجع لا تُعامل كشاشات منفذة.</span>
+        <span>إكمال الواجهة يُقاس بقدرات الأغبري الكانونية وحالاتها وتفاعلها ودليلها؛ الصور مجرد مصدر بصري.</span>
       </footer>
     </section>
   );
