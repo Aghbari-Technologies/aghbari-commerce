@@ -10,6 +10,8 @@ describe('admin operational loading surfaces', () => {
     expect(purchasing).toContain('<OperationalLoadingSkeleton variant="purchasing"');
     expect(inventory).not.toContain('جارٍ تحميل بيانات المخزون…');
     expect(purchasing).not.toContain('جارٍ تحميل أوامر الشراء…');
+    const component = readFileSync(resolve(process.cwd(), 'src/OperationalLoadingSkeleton.tsx'), 'utf8');
+    expect(component).toContain("import './operational-loading-skeleton.css';");
   });
 
   it('keeps reduced-motion behavior in the shared skeleton stylesheet', () => {
