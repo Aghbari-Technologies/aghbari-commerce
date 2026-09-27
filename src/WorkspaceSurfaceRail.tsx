@@ -50,6 +50,11 @@ export default function WorkspaceSurfaceRail(props: WorkspaceSurfaceRailProps) {
     return allowed;
   }, [props.variant === 'staff' ? props.role : 'customer']);
 
+  const boundaryVisible = useMemo(() => {
+    if (props.variant !== 'staff') return false;
+    return getAdminStructureForRole(props.role).some((group) => group.items.some((item) => item.status !== 'live'));
+  }, [props.variant === 'staff' ? props.role : 'customer']);
+
   if (props.variant === 'customer') {
     return (
       <section className="workspace-surface-rail customer-surface-rail" aria-label="مسارات بوابة الأغبري">
@@ -99,7 +104,7 @@ export default function WorkspaceSurfaceRail(props: WorkspaceSurfaceRailProps) {
       </div>
       <div className="workspace-surface-grid">
         {STAFF_PACKS.map((pack, index) => {
-          const enabled = allowedStaffTargets.has(pack.target) || pack.tone === 'boundary';
+          const enabled = allowedStaffTargets.has(pack.target) || (pack.tone === 'boundary' && boundaryVisible);
           const active = activeStaffTarget === pack.target;
           if (!enabled) return null;
           return (
