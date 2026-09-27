@@ -213,3 +213,15 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Certification: `NOT CLAIMED`
 - Production: `HOLD / NO TOUCH`
 - Next: next exact current UI/core gap, implementation + focused test + checkpoint.
+
+## Run 2026-09-28 — Final live resume pointer
+- Run: `2026-09-28`
+- SHA: `d65f32f1a6eb4cc1a6b95cad573cff994a57e912`
+- Branch: `main`
+- Implemented: Customer/Admin loading-state closure, workspace-surface navigation, catalog filters and focused UI contract tests; core purchase/receipt concurrency proof shell repaired by parallel execution.
+- Verified: current main source re-read; exact active runtime includes all listed UI surfaces; Production untouched.
+- Proven: source-level only. Exact current CI/browser/hosted runtime remains NOT_PROVEN.
+- Blocked: Vercel free-plan build-rate-limit; local GitHub clone/build DNS block; live purchase/receipt migration release gate.
+- Certification: `NOT CLAIMED`
+- Production: `HOLD / NO TOUCH`
+- Next: re-read exact HEAD and execute the bounded quality workflow through an accessible runtime path, then continue the next exact gap.
