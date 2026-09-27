@@ -495,3 +495,8 @@ Command "1" means:
 ## 37. EXECUTION RUN — pending exact commit
 - Fixed authenticated surface routing: a profile with `customer_id` and role `viewer` is now routed to the B2B customer portal, while unbound `viewer` remains an admin/staff viewer.
 - Added `src/domain/sessionRoute.ts` plus unit tests to lock the routing contract.
+
+
+## 38. EXECUTION RUN — pending exact commit
+- Closed order-template quantity drift: new writes are capped at 10,000 and legacy oversized templates fail before cart mutation.
+- Client validation now uses the central MAX_ORDER_QUANTITY_PER_LINE ceiling.

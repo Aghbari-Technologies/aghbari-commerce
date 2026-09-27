@@ -7,9 +7,9 @@ Production: HOLD / NO TOUCH
 Certification: NOT CLAIMED
 
 ## Current reality
-- Active implementation is being advanced with an exact routing fix for customer-bound `viewer` accounts.
-- Customer-bound `viewer` profiles are routed to the customer portal; only staff roles and unbound viewer profiles use the admin surface.
-- Pricing/reorder/warehouse/quantity/offline hardening remains active.
+- Order-template quantities are aligned to the executable 10,000 cart/order ceiling without rewriting historical oversized rows.
+- New template writes reject values above 10,000; applying legacy oversized templates fails closed before cart mutation.
+- Customer-bound viewer routing, pricing/currency, atomic reorder, duplicate-submit protection and other quantity guards remain active.
 
 ## Exact proof status
 - Implementation: VERIFIED by exact repository content at current HEAD.
@@ -27,7 +27,7 @@ DEPLOY: free exact-source hosted runtime proof; no unchanged Vercel retries.
 DOCS: semantic consolidation only when it closes an active requirement/proof gap.
 
 ## NEXT EXECUTABLE ACTION
-Verify exact-SHA CI/runtime/browser evidence for the resulting commit and resolve failures immediately.
+Verify exact-SHA application-quality, Test-the-Test, migration and browser evidence for the resulting commit.
 
 ## DO NOT REPEAT
 Do not rebuild closed/proven work; do not transfer evidence between SHAs; do not retry the unchanged Vercel protection path; do not create duplicate reference packs or memory systems.

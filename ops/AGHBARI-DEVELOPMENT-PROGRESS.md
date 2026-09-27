@@ -1,20 +1,23 @@
 # 🔴 AGHBARI DEVELOPMENT PROGRESS — CANONICAL LIVE LEDGER
 
-## Run 2026-09-27 — Routing integrity closure
+## Run 2026-09-27 — Order-template closure
 
 - Run: `2026-09-27`
 - SHA: `PENDING_EXACT_COMMIT`
 - Branch: `main`
 - Implemented:
-  - Corrected authenticated surface routing for customer-bound `viewer` profiles.
-  - Added tested `resolveAuthenticatedSurface` contract.
-  - Existing customer pricing/reorder/warehouse/quantity/offline hardening retained.
+  - Customer-bound viewer routing fix.
+  - Customer pricing/reorder/warehouse/quantity/offline hardening retained.
+  - Order-template source/client/DB boundary aligned to 10,000 without rewriting historical rows.
+  - Legacy oversized template apply fails closed before cart mutation.
 - Verified:
-  - Source + memory will be committed together.
-  - No production mutation.
+  - Source + regression migration/test will be committed together.
+  - Production database remains unchanged under HOLD.
 - Proven:
-  - Routing contract source/test: source-level VERIFIED after commit.
-  - Runtime/browser/CI: NOT_PROVEN until exact-SHA evidence completes.
+  - Source-level implementation: VERIFIED after commit.
+  - CI/runtime/browser: NOT_PROVEN until exact-SHA evidence completes.
+- Environment drift:
+  - Live `apply_order_template` remains at the pre-release quantity contract until this migration is deliberately applied.
 - Certification: `NOT CLAIMED`
 - Production: `HOLD / NO TOUCH`
 
@@ -22,4 +25,4 @@
 Inspect exact-SHA CI and deployment for the resulting commit.
 
 ## Historical continuity
-Previous detailed history remains in Git history.
+Previous execution history remains in Git.

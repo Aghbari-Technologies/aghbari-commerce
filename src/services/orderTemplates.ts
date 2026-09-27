@@ -1,4 +1,5 @@
 import { requireSupabase } from '../lib/supabase';
+import { MAX_ORDER_QUANTITY_PER_LINE } from '../domain/order';
 
 export type TemplateLine = { productId: string; sku: string; name: string; unit: string; quantity: number };
 export type OrderTemplate = { id: string; name: string; branchLabel: string; lines: TemplateLine[]; updatedAt: string };
@@ -9,7 +10,7 @@ function validateLines(lines: TemplateLine[]) {
   if (!Array.isArray(lines) || lines.length < 1 || lines.length > 100) throw new Error('يجب أن تحتوي المسحة على 1 إلى 100 صنف.');
   const seen = new Set<string>();
   for (const line of lines) {
-    if (!UUID.test(line.productId) || !line.sku || !line.name || !line.unit || !Number.isSafeInteger(line.quantity) || line.quantity < 1 || line.quantity > 1_000_000) throw new Error('بيانات أصناف المسحة غير صالحة.');
+    if (!UUID.test(line.productId) || !line.sku || !line.name || !line.unit || !Number.isSafeInteger(line.quantity) || line.quantity < 1 || line.quantity > MAX_ORDER_QUANTITY_PER_LINE) throw new Error('بيانات أصناف المسحة غير صالحة أو تتجاوز الحد التشغيلي.');
     if (seen.has(line.productId)) throw new Error('لا يمكن تكرار الصنف داخل المسحة.');
     seen.add(line.productId);
   }
