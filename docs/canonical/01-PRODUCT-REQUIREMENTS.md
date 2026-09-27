@@ -27,7 +27,7 @@ The remaining work is closure of the existing Commerce capability map, not expan
 
 Reference-backed UI is an acceptance input for in-scope capabilities. A capability is not accepted when the implementation merely reproduces a screenshot; it must also satisfy the existing completion contract: real interaction, domain/service behavior, persistence, authorization, audit, tests and applicable runtime evidence.
 
-The current `docs/ui-reference/` pack contains 84 PNG reference screens. They are treated as P0 visual sources by default. Where a screenshot contains a capability that lacks a canonical Commerce business/data contract, the visual pattern may be reused but the unsupported transaction must remain an explicit boundary.
+The current `docs/ui-reference/` corpus contains 84 PNG assets captured from another application/context. They are visual reference material, not an Aghbari screen inventory or P0 completion denominator. A screenshot may influence an in-scope Aghbari experience only after reconciliation with the canonical Commerce business/data contract; unsupported behavior remains an explicit boundary.
 
 No additional product scope is created solely because a legacy screenshot contains AI/BI/Onyx/Developer tooling or Promotions.
 
