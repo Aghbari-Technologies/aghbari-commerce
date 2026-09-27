@@ -51,3 +51,10 @@ Do not transfer evidence across SHAs. Do not mutate Production directly. Do not 
 - Customer address domain policy, typed service, live account UI, RLS/privilege migration and contract test are present on main.
 - Required UI states include loading, empty, action error, success, offline/disabled, edit and destructive confirmation.
 - Address migration is NOT_PROVEN in a live environment until the exact migration workflow completes; no production mutation performed.
+
+
+## 2026-09-28 — Inventory activity deep-link anchor closure
+- Closed the live navigation defect where `#admin-inventory-activity` had no matching `AdminPanel` DOM anchor.
+- Added `src/structure/admin-structure.anchor.test.ts` to assert every live Admin structure target resolves to an actual `AdminPanel` id.
+- Extended the bounded quality workflow to include the anchor contract test.
+- Purchase/receipt live 200-character idempotency bound remains unchanged and is still a controlled migration gate; no production mutation performed.
