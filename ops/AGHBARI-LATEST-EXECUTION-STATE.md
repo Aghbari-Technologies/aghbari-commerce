@@ -209,3 +209,18 @@ Re-read exact main HEAD and inspect fresh current-SHA workflow evidence. Fix onl
 - Certification: NOT CLAIMED.
 - Production: HOLD / NO TOUCH.
 - Next executable action: continue the next independent customer/admin UI gap while preserving exact-SHA evidence boundaries; separately keep the purchase/receipt 128 migration release-gated until exact migration + negative + concurrency/Test-the-Test proof is executable against the approved environment.
+
+## 2026-09-28 — Current exact execution checkpoint
+- Current main HEAD: `c9a16d1b9d0e3a856e19b4cd746003c344b6c458`.
+- This checkpoint includes: customer catalog filters + loading/empty recovery; active catalog filter context; customer/Admin Workspace Surface Rail; feature-aware Customer rail visibility; Staff role-aware rail; workspace rail contract test; malformed Admin import-boundary fix.
+- Exact source verification: current `AppV3Fixed`, `AdminPanel`, `WorkspaceSurfaceRail`, and `workspace-surface.css` were re-read. Customer Portal canonical sections remain six; the current source contract test suite includes the workspace rail.
+- Current connected GitHub status for this exact SHA shows only Vercel failure (build-rate-limit target); workflow-run read path returns no quality run entries, so build/typecheck/test/browser proof remains NOT_PROVEN.
+- Live Supabase read-only state: purchase/receipt/apply_quick_order remain 16..200 in production; migration `20260927041500` is not applied. Production was not mutated.
+- Security advisor currently reports 62 authenticated-callable SECURITY DEFINER warnings plus one external Auth warning for leaked-password protection. No blanket revoke was applied; this is not treated as a defect without function-by-function contract analysis.
+- Netlify current deploy `6aaf1c861e08e126409753e0` is READY but has no commit_ref/branch, so it is not exact-current proof. Exact current deploy could not be triggered from the connected source-only environment.
+- Certification: NOT CLAIMED.
+- Production: HOLD / NO TOUCH.
+### NEXT EXECUTABLE ACTION
+Inspect the current exact main source for the next uncovered canonical UI/domain surface, implement only its missing interactive/state contract, add or extend one focused test, then update this checkpoint on the resulting exact HEAD. Do not retry unchanged Vercel/Netlify hosted paths.
+### DO NOT REPEAT
+Do not rebuild the 84 external screenshot corpus; do not duplicate shared customer/staff rails; do not transfer old evidence; do not mutate Production to apply the purchase/receipt migration directly.
