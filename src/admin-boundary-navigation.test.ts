@@ -7,7 +7,7 @@ const boundarySource = readFileSync(resolve(process.cwd(), 'src/AdminBoundaryCen
 
 describe('admin boundary navigation contracts', () => {
   it('keeps every declared safe alternative bound to a live Admin anchor', () => {
-    const targets = [...boundarySource.matchAll(/target:s*'(#[^']+)'/g)].map((match) => match[1]);
+    const targets = [...boundarySource.matchAll(/target:\s*'(#[^']+)'/g)].map((match) => match[1]);
     expect(targets.length).toBeGreaterThan(0);
     for (const target of [...new Set(targets)]) {
       expect(adminSource).toContain(`id="${target.slice(1)}"`);
