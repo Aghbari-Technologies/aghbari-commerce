@@ -40,14 +40,14 @@ describe('bounded offline catalog cache', () => {
   });
 
   it('round-trips a validated catalog snapshot while preserving the requested key', () => {
-    cacheCatalogSnapshot('سكر', null, [item('11111111-1111-4111-8111-111111111111')], new Date(1000));
-    expect(getCachedCatalogSnapshot('سكر', null, 2000)).toHaveLength(1);
-    expect(getCachedCatalogSnapshot('زيت', null, 2000)).toHaveLength(0);
+    cacheCatalogSnapshot('org-1:customer-1:warehouse-1:user-1', 'سكر', null, [item('11111111-1111-4111-8111-111111111111')], new Date(1000));
+    expect(getCachedCatalogSnapshot('org-1:customer-1:warehouse-1:user-1', 'سكر', null, 2000)).toHaveLength(1);
+    expect(getCachedCatalogSnapshot('org-1:customer-1:warehouse-1:user-1', 'زيت', null, 2000)).toHaveLength(0);
   });
 
   it('expires stale snapshots instead of treating them as authoritative', () => {
     cacheCatalogSnapshot('سكر', null, [item('11111111-1111-4111-8111-111111111111')], new Date(1000));
-    expect(getCachedCatalogSnapshot('سكر', null, 1000 + 24*60*60*1000)).toHaveLength(1);
+    expect(getCachedCatalogSnapshot('org-1:customer-1:warehouse-1:user-1', 'سكر', null, 1000 + 24*60*60*1000)).toHaveLength(1);
     expect(getCachedCatalogSnapshot('سكر', null, 1000 + 24*60*60*1000 + 1)).toHaveLength(0);
   });
 
@@ -56,13 +56,13 @@ describe('bounded offline catalog cache', () => {
       key: 'bad', search: '', categoryId: null, fetchedAt: new Date().toISOString(),
       items: [{ id: 'bad', sku: '', barcode: null, name: '', unit: '', category_id: null, description: null, status: 'active', available_quantity: 1, image_path: null, authorized_price: 1, currency: 'YER' }]
     }]));
-    expect(getCachedCatalogSnapshot('', null)).toHaveLength(0);
+    expect(getCachedCatalogSnapshot('org-1:customer-1:warehouse-1:user-1', '', null)).toHaveLength(0);
   });
 
   it('bounds cache entry count and never exceeds the storage budget', () => {
     for (let i=0;i<MAX_CATALOG_CACHE_ENTRIES+3;i++) {
       const id = '00000000-0000-4000-8000-'+String(i).padStart(12,'0');
-      cacheCatalogSnapshot('q'+i, null, [item(id)]);
+      cacheCatalogSnapshot('org-1:customer-1:warehouse-1:user-1', 'q'+i, null, [item(id)]);
     }
     const raw = storage.get('aghbari.catalog.cache.v1') ?? '';
     expect(JSON.parse(raw)).toHaveLength(MAX_CATALOG_CACHE_ENTRIES);
@@ -71,7 +71,7 @@ describe('bounded offline catalog cache', () => {
 
   it('does not fail catalog caching when the storage budget is too small for an oversized item set', () => {
     const huge = item('99999999-9999-4999-8999-999999999999', 'x'.repeat(MAX_CATALOG_CACHE_BYTES));
-    expect(() => cacheCatalogSnapshot('huge', null, [huge])).not.toThrow();
-    expect(getCachedCatalogSnapshot('huge', null)).toHaveLength(0);
+    expect(() => cacheCatalogSnapshot('org-1:customer-1:warehouse-1:user-1', 'huge', null, [huge])).not.toThrow();
+    expect(getCachedCatalogSnapshot('org-1:customer-1:warehouse-1:user-1', 'huge', null)).toHaveLength(0);
   });
 });
