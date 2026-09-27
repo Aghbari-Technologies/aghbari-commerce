@@ -159,3 +159,23 @@ Re-read exact main HEAD, inspect available exact-SHA quality/security evidence, 
 
 ### NEXT EXECUTABLE ACTION
 Read exact `refs/heads/main`, inspect available current-SHA workflow evidence, fix only the first material failure, then continue the next independent core/UI closure. Do not repeat unchanged Vercel retries.
+
+## 2026-09-28 — Final verification checkpoint for this execution wave
+
+- Exact main HEAD: `b6bd9a8a9c8f56967d2313fe751d89697560486b`.
+- Compound source verification: 84 unique UI-reference entries; 27 Admin DOM anchors; 13 Boundary safe-alternative targets and all resolve to real Admin anchors.
+- Customer Portal mobile navigation: all six logical sections reachable (catalog/orders/finance/templates/account/notifications); More sheet and Escape dismissal implemented.
+- Customer Portal section coverage, mobile navigation, Boundary navigation, UI-reference parity, brand identity and purchasing migration source are all represented in the bounded quality test set.
+- Purchase/receipt canonical source migration `20260927041500_normalize_purchase_receipt_idempotency_bound.sql` is present on main with 16..128 bound, no 200 bound, reviewed empty search_path, same-key advisory serialization and anon revoke.
+- Read-only Production verification still shows migration `20260927041500` not applied; live quick-order/purchase/receipt remain at 200. Production was not mutated.
+
+### PROOF STATE
+- Source contracts: VERIFIED.
+- Exact current workflow/browser/hosted runtime: NOT_PROVEN in this connected session.
+- Vercel: unchanged external free-plan failure; no paid retry.
+- Netlify: existing ready deployment is older and has no commit_ref, therefore not treated as exact-current proof.
+- Certification: NOT CLAIMED.
+- Production: HOLD / NO TOUCH.
+
+### NEXT EXECUTABLE ACTION
+Re-read exact main HEAD and inspect fresh current-SHA workflow evidence. Fix only a material failure if surfaced, then advance the next open core/UI requirement.
