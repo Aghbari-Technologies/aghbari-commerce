@@ -17,6 +17,22 @@ describe('quick-order input contract', () => {
     });
   });
 
+  it('accepts the canonical maximum idempotency key length', () => {
+    expect(() => validateQuickOrderInput({
+      idempotencyKey: 'x'.repeat(128),
+      warehouseId,
+      lines: [{ productId, quantity: 1 }]
+    })).not.toThrow();
+  });
+
+  it('rejects an idempotency key beyond the canonical maximum', () => {
+    expect(() => validateQuickOrderInput({
+      idempotencyKey: 'x'.repeat(129),
+      warehouseId,
+      lines: [{ productId, quantity: 1 }]
+    })).toThrow();
+  });
+
   it.each([
     { name: 'short idempotency key', input: { idempotencyKey: 'short', warehouseId, lines: [{ productId, quantity: 1 }] } },
     { name: 'invalid warehouse id', input: { idempotencyKey: '1234567890abcdef', warehouseId: 'not-a-uuid', lines: [{ productId, quantity: 1 }] } },

@@ -9,7 +9,7 @@ export type QuickOrderInput = {
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const MIN_IDEMPOTENCY_KEY_LENGTH = 16;
-const MAX_IDEMPOTENCY_KEY_LENGTH = 200;
+const MAX_IDEMPOTENCY_KEY_LENGTH = 128;
 const MAX_LINES = 100;
 const MAX_QUANTITY = 100_000;
 
@@ -22,7 +22,7 @@ export function validateQuickOrderInput(input: QuickOrderInput): {
   if (typeof input.idempotencyKey !== 'string') throw new Error('معرف العملية مطلوب.');
   const idempotencyKey = input.idempotencyKey.trim();
   if (idempotencyKey.length < MIN_IDEMPOTENCY_KEY_LENGTH || idempotencyKey.length > MAX_IDEMPOTENCY_KEY_LENGTH) {
-    throw new Error('معرف العملية يجب أن يكون بين 16 و200 حرف.');
+    throw new Error('معرف العملية يجب أن يكون بين 16 و128 حرف.');
   }
   if (typeof input.warehouseId !== 'string' || !UUID_PATTERN.test(input.warehouseId.trim())) throw new Error('المستودع غير صالح.');
   const warehouseId = input.warehouseId.trim();
