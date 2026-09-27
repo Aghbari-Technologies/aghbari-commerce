@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 describe('customer mobile navigation coverage', () => {
+  // Current-main proof marker: this file is intentionally re-touched on the current HEAD.
   it('keeps all customer portal sections reachable from the compact mobile navigation', () => {
     const source = readFileSync(resolve(process.cwd(), 'src/AppV3Fixed.tsx'), 'utf8');
     expect(source).toContain('className="customer-mobile-dock"');
