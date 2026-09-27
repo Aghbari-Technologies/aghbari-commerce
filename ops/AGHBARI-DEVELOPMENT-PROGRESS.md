@@ -48,7 +48,7 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 
 ## Run 2026-09-28 — Staff order detail closure
 - Run: `2026-09-28`
-- SHA: `PENDING_FINAL_MAIN_SHA`
+- SHA: `48c35475dd0d7f8bba928be751665b0e1f558f3f`
 - Branch: `main`
 - Implemented: real Admin/Staff order-detail service; line validation and subtotal reconciliation; rich/retry-capable detail drawer; focused negative/positive contract test; bounded quality workflow.
 - Verified: source wiring re-read after commit; no production mutation.
