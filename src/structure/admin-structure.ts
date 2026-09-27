@@ -205,6 +205,9 @@ export function adminTargetForPath(pathname: string) {
   const exactTarget = AGHBARI_ADMIN_PATH_TARGETS[normalized];
   if (exactTarget) return exactTarget;
 
+  // Registered non-live paths remain visibly bounded instead of silently falling back to the dashboard.
+  if (AGHBARI_ADMIN_BOUNDARY_ITEMS.some((item) => item.path === normalized)) return '#admin-boundaries';
+
   // Resolve registered dynamic admin detail routes into their existing workspaces.
   if (/^\/admin\/order\/[^/]+$/.test(normalized)) return '#admin-orders';
 
