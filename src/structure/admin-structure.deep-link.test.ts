@@ -17,6 +17,7 @@ describe('admin deep-link routing contract', () => {
     expect(adminTargetForPath('/admin/orders/')).toBe('#admin-orders');
     expect(adminTargetForPath('/admin/catalog/')).toBe('#admin-catalog');
     expect(adminTargetForPath('/admin/')).toBe('#admin-dashboard');
+    expect(adminTargetForPath('/admin/appearance')).toBe('#admin-settings');
   });
 
   it('keeps unregistered admin routes fail-safe rather than inventing a workspace', () => {

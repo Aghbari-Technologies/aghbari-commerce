@@ -69,6 +69,15 @@ export default function App() {
   }, [loadIdentity]);
   useEffect(() => { const on = () => setIsOnline(true); const off = () => setIsOnline(false); window.addEventListener('online', on); window.addEventListener('offline', off); return () => { window.removeEventListener('online', on); window.removeEventListener('offline', off); }; }, []);
   useEffect(() => {
+    const root = document.documentElement;
+    root.style.setProperty('--aghbari-accent', normalizePortalAccentColor(uiConfig.accentColor));
+    root.dataset.aghbariDensity = uiConfig.compactMode ? 'compact' : 'comfortable';
+    return () => {
+      root.style.removeProperty('--aghbari-accent');
+      delete root.dataset.aghbariDensity;
+    };
+  }, [uiConfig.accentColor, uiConfig.compactMode]);
+  useEffect(() => {
     if (STAFF_ROLES.has(role)) return;
     const allowed = new Set(['catalog','orders','finance','templates','account','notifications']);
     const readHash = () => { const value = window.location.hash.replace(/^#/, ''); if (allowed.has(value)) setSection(value as typeof section); };

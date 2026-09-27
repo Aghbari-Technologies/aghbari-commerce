@@ -122,3 +122,13 @@
 .catalog-pagination>div{display:flex;gap:6px}.catalog-pagination .ghost{min-width:76px;min-height:36px;padding:6px 10px;border:1px solid #d5e5ea;border-radius:9px;background:#fff;color:#365866;font-weight:850}.catalog-pagination .ghost:hover:not(:disabled){border-color:#a9cbd4;background:#f4fbfc}
 .quick-row-remove{border:1px solid #e1e8eb!important;background:#fff!important;color:#6a7b84!important;min-height:40px!important}.quick-row-remove:hover:not(:disabled){border-color:#c8d9de!important;background:#f7fafb!important}
 @media(max-width:760px){.catalog-pagination{align-items:flex-start;flex-direction:column}.catalog-pagination>div{width:100%}.catalog-pagination .ghost{flex:1}.quick-row-remove{grid-column:1/-1!important;width:100%}}
+
+.customer-app{--portal-accent:var(--aghbari-accent,#0e91a4)}
+.customer-app .cart-action{border-color:var(--portal-accent);background:var(--portal-accent)}
+.customer-app .nav-pill.active{background:var(--portal-accent);border-color:var(--portal-accent)}
+.customer-app .toolbar-actions button,.customer-app .upload-button,.customer-app .section-title button,.customer-app .template-card button,.customer-app .order-footer button{background:var(--portal-accent)}
+html[data-aghbari-density="compact"] .customer-app .customer-main{padding-top:18px}
+html[data-aghbari-density="compact"] .customer-app .customer-nav{padding-block:12px 8px}
+html[data-aghbari-density="compact"] .customer-app .catalog-toolbar{gap:10px}
+html[data-aghbari-density="compact"] .customer-app .product-grid{gap:10px}
+html[data-aghbari-density="compact"] .customer-app .product-card{padding:12px}

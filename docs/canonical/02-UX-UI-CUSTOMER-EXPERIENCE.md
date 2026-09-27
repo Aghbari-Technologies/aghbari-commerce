@@ -97,3 +97,8 @@ Do not create a second design system, duplicate CSS family or duplicate asset co
 - Customer Portal exposes a compact provenance strip for connection state, account pricing basis, warehouse stock source and transactional authority.
 - Online state identifies server-backed data; offline state explicitly identifies cached data as display-only and non-authoritative.
 - Trust messaging is descriptive UI only and does not become a second source of pricing, stock or transaction truth.
+
+## 2026-09-27 — Persisted portal theme
+- Owner/admin settings now include persisted portal appearance controls: validated accent color and compact/comfortable density.
+- The Customer Portal applies those settings through the existing `client_ui_settings` contract; invalid colors fall back to the canonical Aghbari accent.
+- Appearance is a live UI surface mapped to `/admin/settings`; no separate theme storage or business authority is introduced.

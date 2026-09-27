@@ -148,7 +148,7 @@ export const AGHBARI_ADMIN_STRUCTURE: AdminStructureGroup[] = [
     icon: '⚙',
     items: [
       live('customer-settings', 'إعدادات العميل', '/admin/settings', 'settings.manage', '#admin-settings', ['view', 'edit']),
-      boundary('appearance', 'المظهر', '/admin/appearance', 'appearance.manage', 'المظهر المميز جزء من CSS/واجهة Commerce الحالية وليس إعدادات theme persisted مستقلة.'),
+      live('appearance', 'المظهر والهوية', '/admin/appearance', 'appearance.manage', '#admin-settings', ['view', 'edit'], 'إعدادات المظهر والهوية محفوظة ضمن إعدادات واجهة العميل وتُطبق على البوابة.'),
       boundary('onyx', 'Onyx Pro', '/admin/onyx', 'onyx.view', 'تكامل خارجي boundary؛ لا يصبح مصدر الحقيقة التشغيلي.'),
       boundary('restore', 'استعادة النظام', '/admin/restore', 'settings.manage', 'نقاط الاستعادة المتقدمة ليست عقدًا قائمًا في schema الحالي.'),
     ],
