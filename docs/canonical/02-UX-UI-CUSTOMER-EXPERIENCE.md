@@ -148,3 +148,9 @@ The 84-asset count is provenance/accounting only. UI completion is measured by c
 - Catalog loading now renders a bounded skeleton state rather than a text-only placeholder. Filtering is presentation-only; server pricing/stock remain authoritative.
 - The Customer Portal resets catalog pagination when query, category or catalog filters change.
 - Admin/Staff navigation now surfaces the active workspace and highlights the matching operational target while preserving the existing anchor/deep-link contract and server-side authorization boundary.
+
+## 2026-09-28 — Shared workspace-surface contract
+- Admin/Staff and Customer Portal use a shared responsive workspace-surface rail for navigation context.
+- Customer visibility is derived from the same live presentation configuration already used by the portal; hidden Finance/Templates surfaces are not rendered when their feature is disabled.
+- Staff rail derives live targets from the canonical role-filtered Admin structure; the Boundary surface is shown only when the current role has declared non-live capabilities.
+- The rail is presentation/navigation only. It does not grant permissions or create transactional authority.
