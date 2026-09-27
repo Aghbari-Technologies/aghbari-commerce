@@ -67,3 +67,9 @@ Do not transfer evidence across SHAs. Do not mutate Production directly. Do not 
 - Exact current proof: Browser E2E passed on immediately preceding exact SHA a7d41f43152e18d281a72e0720e1a49d070ad71c; this is historical because HEAD is now 2361acda811159bfa7f8e0d414c2ebc70c16fe92. Current exact Quality/G1/Security/Test-the-Test must finish on the current SHA before certification claims.
 - Known quality correction: older 741f7c1c quality failure was an unclosed JSX expression in InventoryActivityPanel; fixed at a4cd8b63 and carried forward to current main.
 - Production: HOLD / NO TOUCH. Purchase/receipt 16..128 and customer-address migrations remain source-only until exact migration/runtime proof.
+
+
+## 2026-09-28 — Staff reorder/template boundary
+- `src/structure/admin-structure.ts` explicitly represents Staff reorder and order-template surfaces as boundaries, not fake live screens.
+- Customer Portal continues to own the real reorder/template workflows and persistence.
+- No new Staff permission or mutation contract was invented.
