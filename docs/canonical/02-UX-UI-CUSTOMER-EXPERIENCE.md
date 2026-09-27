@@ -49,11 +49,11 @@ docs/CANONICAL-DOCUMENT-SYSTEM.md identifies the legacy UI document that must be
 - Dynamic customer-control settings expose only real controls; order limits, template limits and payment-method configuration are validated before persistence.
 
 
-## 2026-09-27 — Reference-driven visual closure
+## 2026-09-27 — Reference-driven visual patterns
 
-`docs/ui-reference/` is now a mandatory visual reference source for UI execution. The current pack contains 84 PNG screenshots.
+`docs/ui-reference/` is a visual inspiration/provenance corpus captured from another application/context. It is not an Aghbari screen inventory.
 
-For every reference-backed surface, preserve the reference's visual intent across:
+When a reference is relevant to an existing canonical Aghbari capability, preserve applicable visual intent across:
 - page composition and information hierarchy;
 - Arabic/RTL alignment and reading order;
 - top navigation/header hierarchy;
