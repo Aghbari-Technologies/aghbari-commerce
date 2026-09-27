@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { calculateInvoicePaid, getCustomerInvoicePayments, getCustomerInvoices, type CustomerInvoiceSummary, type CustomerPayment } from './services/customerFinance';
 import { formatMoney } from './domain/pricing';
 import './customer-finance.css';
@@ -34,7 +34,7 @@ export default function CustomerFinancePanel({ customerId, online }: { customerI
   const [detailLoading, setDetailLoading] = useState(false);
   const [detailError, setDetailError] = useState('');
 
-  async function load() {
+  const load = useCallback(async () => {
     if (!customerId || !online) return;
     setLoading(true);
     setError('');
@@ -46,10 +46,10 @@ export default function CustomerFinancePanel({ customerId, online }: { customerI
     } finally {
       setLoading(false);
     }
-  }
+  }, [customerId, online]);
 
   useEffect(() => { setPage(1); }, [query, status, sort]);
-  useEffect(() => { void load(); }, [customerId, online]);
+  useEffect(() => { void load(); }, [load]);
 
   useEffect(() => {
     if (!selected) return;
