@@ -21,8 +21,8 @@ env:
   VITE_BUILD_SHA: ${{ inputs.exact_sha || github.event.pull_request.head.sha || github.sha }}
 
 concurrency:
-  group: aghbari-browser-local-${{ github.event.pull_request.head.sha || inputs.exact_sha || github.sha }}
-  cancel-in-progress: false
+  group: aghbari-browser-local-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   local-browser-e2e:

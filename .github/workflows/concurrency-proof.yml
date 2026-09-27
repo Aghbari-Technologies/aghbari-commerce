@@ -19,8 +19,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: aghbari-concurrency-${{ github.event.pull_request.head.sha || inputs.exact_sha || github.sha }}
-  cancel-in-progress: false
+  group: aghbari-concurrency-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   concurrency-proof:

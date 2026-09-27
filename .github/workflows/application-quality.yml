@@ -16,7 +16,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: aghbari-quality-${{ github.workflow }}-${{ github.ref }}-${{ github.event.pull_request.head.sha || github.sha || inputs.exact_sha }}
+  group: aghbari-quality-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
