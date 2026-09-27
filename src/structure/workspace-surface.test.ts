@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { getAdminStructureForRole } from './admin-structure';
 import { CUSTOMER_PORTAL_SECTIONS } from './customer-structure';
+import { CUSTOMER_PACKS, STAFF_PACKS } from '../WorkspaceSurfaceRail';
 
 const STAFF_TARGETS = [
   '#admin-dashboard',
@@ -16,6 +17,7 @@ const STAFF_TARGETS = [
 describe('shared workspace surface registry', () => {
   it('keeps the eight visual staff surfaces unique', () => {
     expect(new Set(STAFF_TARGETS).size).toBe(STAFF_TARGETS.length);
+    expect(STAFF_PACKS.map((pack) => pack.target)).toEqual([...STAFF_TARGETS]);
   });
 
   it('maps live role-visible staff surfaces to real registered anchors', () => {
@@ -32,5 +34,6 @@ describe('shared workspace surface registry', () => {
   it('keeps customer navigation aligned with the six canonical portal sections', () => {
     expect(CUSTOMER_PORTAL_SECTIONS).toEqual(['catalog', 'orders', 'finance', 'templates', 'account', 'notifications']);
     expect(new Set(CUSTOMER_PORTAL_SECTIONS).size).toBe(6);
+    expect(CUSTOMER_PACKS.map((pack) => pack.id)).toEqual([...CUSTOMER_PORTAL_SECTIONS]);
   });
 });
