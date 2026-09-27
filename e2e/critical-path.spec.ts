@@ -73,6 +73,8 @@ test('authenticated customer completes real search → catalog → cart → orde
   const failures = captureBrowserFailures(page);
   await login(page, email, password);
   await expect(page.locator('.customer-shell')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'مركز التحكم' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'الكتالوج', exact: true })).toBeVisible();
 
   const firstCard = page.locator('.product-card').first();
   await expect(firstCard).toBeVisible();
