@@ -46,10 +46,11 @@ function finiteNumber(value: unknown, allowZero = true) {
 function assertInvoice(value: unknown): CustomerInvoiceSummary {
   if (!value || typeof value !== 'object') throw new Error('استجابة الفاتورة غير صالحة.');
   const item = value as Record<string, unknown>;
+  const invoiceNumber = Number(item.invoice_number);
   if (
     typeof item.id !== 'string' || !UUID_PATTERN.test(item.id) ||
     typeof item.order_id !== 'string' || !UUID_PATTERN.test(item.order_id) ||
-    typeof item.invoice_number !== 'number' || !Number.isSafeInteger(item.invoice_number) || item.invoice_number <= 0 ||
+    !Number.isSafeInteger(invoiceNumber) || invoiceNumber <= 0 ||
     typeof item.status !== 'string' || !INVOICE_STATUSES.has(item.status) ||
     typeof item.currency !== 'string' || !/^[A-Z]{3}$/.test(item.currency) ||
     typeof item.created_at !== 'string' || Number.isNaN(Date.parse(item.created_at)) ||
@@ -62,7 +63,7 @@ function assertInvoice(value: unknown): CustomerInvoiceSummary {
   return {
     id: item.id as string,
     order_id: item.order_id as string,
-    invoice_number: item.invoice_number as number,
+    invoice_number: invoiceNumber,
     status: item.status as CustomerInvoiceSummary['status'],
     currency: item.currency as string,
     subtotal,
@@ -79,15 +80,15 @@ function assertPayment(value: unknown): CustomerPayment {
   if (
     typeof item.id !== 'string' || !UUID_PATTERN.test(item.id) ||
     typeof item.invoice_id !== 'string' || !UUID_PATTERN.test(item.invoice_id) ||
-    typeof item.amount !== 'number' || !Number.isFinite(item.amount) || item.amount <= 0 ||
     typeof item.method !== 'string' || item.method.trim() === '' ||
     (item.reference !== null && item.reference !== undefined && typeof item.reference !== 'string') ||
     typeof item.paid_at !== 'string' || Number.isNaN(Date.parse(item.paid_at))
   ) throw new Error('استجابة الدفعة تحتوي بيانات غير صالحة.');
+  const amount = finiteNumber(item.amount, false);
   return {
     id: item.id as string,
     invoice_id: item.invoice_id as string,
-    amount: item.amount as number,
+    amount,
     method: item.method as string,
     reference: (item.reference as string | null | undefined) ?? null,
     paid_at: item.paid_at as string
@@ -131,16 +132,17 @@ export async function getCustomerInvoiceItems(customerId: string, invoiceId: str
   return (data ?? []).map((value) => {
     if (!value || typeof value !== 'object') throw new Error('بيانات بند الفاتورة غير صالحة.');
     const item = value as Record<string, unknown>;
+    const quantity = Number(item.quantity);
+    const unitPrice = finiteNumber(item.unit_price);
+    const lineTotal = finiteNumber(item.line_total);
     if (
       typeof item.id !== 'string' || !UUID_PATTERN.test(item.id) ||
       typeof item.invoice_id !== 'string' || !UUID_PATTERN.test(item.invoice_id) || item.invoice_id !== invoiceId ||
       typeof item.product_id !== 'string' || !UUID_PATTERN.test(item.product_id) ||
       typeof item.description !== 'string' || item.description.trim() === '' ||
-      typeof item.quantity !== 'number' || !Number.isSafeInteger(item.quantity) || item.quantity <= 0 ||
-      typeof item.unit_price !== 'number' || !Number.isFinite(item.unit_price) || item.unit_price < 0 ||
-      typeof item.line_total !== 'number' || !Number.isFinite(item.line_total) || item.line_total < 0
+      !Number.isSafeInteger(quantity) || quantity <= 0
     ) throw new Error('بيانات بند الفاتورة تحتوي قيمة غير صالحة.');
-    if (Math.abs(item.line_total - (item.quantity * item.unit_price)) > 0.01) {
+    if (Math.abs(lineTotal - (quantity * unitPrice)) > 0.01) {
       throw new Error('إجمالي بند الفاتورة غير متسق.');
     }
     return {
@@ -148,9 +150,9 @@ export async function getCustomerInvoiceItems(customerId: string, invoiceId: str
       invoice_id: item.invoice_id as string,
       product_id: item.product_id as string,
       description: item.description as string,
-      quantity: item.quantity as number,
-      unit_price: item.unit_price as number,
-      line_total: item.line_total as number
+      quantity,
+      unit_price: unitPrice,
+      line_total: lineTotal
     };
   });
 }
