@@ -120,6 +120,9 @@ jobs:
           END $$;
           SELECT 'Fresh DB effective create_order authority: PASS' AS evidence;
           SQL
+      - name: Run purchase/receipt behavioral 128/129 boundary proof
+        run: bash scripts/purchase-receipt-idempotency-bound-proof.sh
+
       - name: Run database pgTAP proofs
         run: supabase test db --local
       - name: Verify local migration inventory
