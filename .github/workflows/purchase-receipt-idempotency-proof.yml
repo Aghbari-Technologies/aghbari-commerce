@@ -1,0 +1,71 @@
+name: Purchase Receipt Idempotency Proof
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches:
+      - main
+      - 'execution/**'
+  workflow_dispatch:
+    inputs:
+      exact_sha:
+        description: 'Exact Git SHA to verify'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: aghbari-purchase-receipt-idempotency-${{ inputs.exact_sha || github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  purchase-receipt-idempotency:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      TARGET_SHA: ${{ inputs.exact_sha || github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - name: Validate exact SHA
+        shell: bash
+        run: echo "$TARGET_SHA" | grep -Eq '^[0-9a-f]{40}$'
+
+      - name: Checkout exact target SHA
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 1
+
+      - name: Verify exact checkout
+        shell: bash
+        run: |
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$TARGET_SHA" || {
+            echo "EXACT HEAD MISMATCH: expected=$TARGET_SHA actual=$actual"
+            exit 1
+          }
+          echo "EXACT PURCHASE/RECEIPT PROOF HEAD: $actual"
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: 2.117.0
+
+      - name: Start Postgres-only local database
+        run: |
+          supabase db start
+          supabase db reset --local
+
+      - name: Run only the purchase/receipt idempotency pgTAP test
+        run: supabase test db supabase/tests/033-purchase-receipt-idempotency-bound.test.sql --local
+
+      - name: Verify local migration history contains the new contract
+        run: |
+          supabase migration list
+          test -f supabase/migrations/20260927004500_normalize_purchase_receipt_idempotency_bound.sql
+
+      - name: Stop Supabase
+        if: always()
+        run: supabase stop
