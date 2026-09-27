@@ -15,7 +15,7 @@ CREATE OR REPLACE FUNCTION public.record_payment(
   p_method public.payment_method,
   p_cash_account_id uuid DEFAULT NULL,
   p_reference text DEFAULT NULL,
-  p_idempotency_key text
+  p_idempotency_key text DEFAULT NULL
 )
 RETURNS public.payments
 LANGUAGE plpgsql
