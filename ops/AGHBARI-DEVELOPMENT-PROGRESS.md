@@ -57,3 +57,16 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Certification: `NOT CLAIMED`
 - Production: `HOLD / NO TOUCH`
 - Next: exact final-SHA re-read, then next independent uncovered reference-pack/core gap.
+
+
+## Run 2026-09-28 — Admin anchor closure
+- Run: `2026-09-28`
+- SHA: `1ed7ae611043864211e072d15819faac0c5d1b63`
+- Branch: `main`
+- Implemented: bound `#admin-inventory-activity` to the real inventory-activity workspace; added a source contract test for every live Admin target; updated bounded CI to run the test.
+- Verified: target scan reduced unmatched live targets to zero at the implementation checkpoint.
+- Proven: exact-SHA static verification pending final documentation checkpoint; hosted/browser proof remains NOT_PROVEN.
+- Blocked: Vercel protection/status path remains external; production purchase/receipt migration remains gated by migration/concurrency/negative proof.
+- Certification: `NOT CLAIMED`
+- Production: `HOLD / NO TOUCH`
+- Next: exact final-SHA verification, then next highest-value independent core/UI gap.
