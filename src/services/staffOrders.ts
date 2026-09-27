@@ -81,3 +81,111 @@ export async function bulkTransitionOrders(orderIds: string[], toStatus: OrderSt
     return row as BulkTransitionResult;
   });
 }
+
+
+export interface StaffOrderDetailItem {
+  id: string;
+  product_id: string;
+  sku: string;
+  name: string;
+  unit: string;
+  quantity: number;
+  unit_price: number;
+  line_total: number;
+  pricing_tier: string;
+}
+
+export interface StaffOrderDetail extends StaffOrderSummary {
+  subtotal: number;
+  payment_method: string;
+  items: StaffOrderDetailItem[];
+}
+
+function detailAmount(value: unknown): number {
+  const parsed = typeof value === 'number' ? value : Number(value);
+  if (!Number.isFinite(parsed) || parsed < 0) throw new Error('القيمة المالية في تفاصيل الطلب غير صالحة.');
+  return parsed;
+}
+
+export function assertStaffOrderDetailItem(value: unknown): StaffOrderDetailItem {
+  if (!value || typeof value !== 'object') throw new Error('بند الطلب غير صالح.');
+  const item = value as Record<string, unknown>;
+  const quantity = Number(item.quantity);
+  const unitPrice = detailAmount(item.unit_price);
+  const lineTotal = item.line_total == null ? quantity * unitPrice : detailAmount(item.line_total);
+  if (
+    typeof item.id !== 'string' || !UUID_PATTERN.test(item.id) ||
+    typeof item.product_id !== 'string' || !UUID_PATTERN.test(item.product_id) ||
+    typeof item.sku !== 'string' || !item.sku.trim() ||
+    typeof item.name !== 'string' || !item.name.trim() ||
+    typeof item.unit !== 'string' || !item.unit.trim() ||
+    !Number.isSafeInteger(quantity) || quantity <= 0 ||
+    typeof item.pricing_tier !== 'string' || !item.pricing_tier.trim() ||
+    Math.abs(lineTotal - quantity * unitPrice) > 0.01
+  ) throw new Error('بيانات بند الطلب غير صالحة.');
+  return {
+    id: item.id as string,
+    product_id: item.product_id as string,
+    sku: item.sku as string,
+    name: item.name as string,
+    unit: item.unit as string,
+    quantity,
+    unit_price: unitPrice,
+    line_total: lineTotal,
+    pricing_tier: item.pricing_tier as string
+  };
+}
+
+export async function getStaffOrderDetail(orderId: string): Promise<StaffOrderDetail> {
+  if (typeof orderId !== 'string' || !UUID_PATTERN.test(orderId)) throw new Error('معرّف الطلب غير صالح.');
+  const client = requireSupabase();
+  const [{ data: order, error: orderError }, { data: itemRows, error: itemError }] = await Promise.all([
+    client.from('orders')
+      .select('id,order_number,customer_id,warehouse_id,status,total,subtotal,currency,payment_method,created_at,updated_at,customers(name)')
+      .eq('id', orderId).single(),
+    client.from('order_items')
+      .select('id,product_id,quantity,unit_price,pricing_tier,line_total,products(sku,name,unit)')
+      .eq('order_id', orderId).order('created_at', { ascending: true })
+  ]);
+  if (orderError) throw orderError;
+  if (itemError) throw itemError;
+  if (!order) throw new Error('الطلب غير موجود أو غير متاح لهذه الصلاحية.');
+
+  const row = order as typeof order & { customers?: { name?: string } | null };
+  const items = (itemRows ?? []).map((value) => {
+    const item = value as typeof value & { products?: { sku?: string; name?: string; unit?: string } | null };
+    return assertStaffOrderDetailItem({
+      id: item.id,
+      product_id: item.product_id,
+      quantity: Number(item.quantity),
+      unit_price: Number(item.unit_price),
+      pricing_tier: item.pricing_tier,
+      line_total: item.line_total == null ? null : Number(item.line_total),
+      sku: item.products?.sku,
+      name: item.products?.name,
+      unit: item.products?.unit
+    });
+  });
+
+  const detail: StaffOrderDetail = {
+    ...assertStaffOrderSummary({
+      id: row.id,
+      order_number: Number(row.order_number),
+      customer_id: row.customer_id,
+      customer_name: row.customers?.name ?? 'عميل غير معروف',
+      warehouse_id: row.warehouse_id,
+      status: row.status,
+      total: detailAmount(row.total),
+      currency: row.currency,
+      created_at: row.created_at,
+      updated_at: row.updated_at
+    }),
+    subtotal: detailAmount(row.subtotal),
+    payment_method: typeof row.payment_method === 'string' ? row.payment_method : '—',
+    items
+  };
+  if (detail.total < detail.subtotal) throw new Error('إجمالي الطلب غير متسق.');
+  const computedLinesTotal = items.reduce((sum, item) => sum + item.line_total, 0);
+  if (Math.abs(computedLinesTotal - detail.subtotal) > 0.01) throw new Error('مجموع بنود الطلب غير متسق.');
+  return detail;
+}
