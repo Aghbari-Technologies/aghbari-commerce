@@ -1,3 +1,4 @@
+import OperationalLoadingSkeleton from './OperationalLoadingSkeleton';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getCategories, type CategoryOption } from './services/categories';
 import { upsertProduct } from './services/admin';
@@ -164,7 +165,7 @@ export default function CatalogManagementPanel({ role }: { role: UserRole }) {
       {selectedIds.length > 50 && <span role="alert">الاختيار يتجاوز الحد. قلل العدد قبل الاعتماد.</span>}
       {bulkMessage && <span role="status">{bulkMessage}</span>}
     </div>}
-    {loading ? <div className="portal-loading" role="status">جارٍ تحميل الكتالوج…</div>
+    {loading ? <OperationalLoadingSkeleton variant="collection" />
       : error ? <div className="empty-state"><strong>تعذر تحميل كتالوج المنتجات.</strong><span>{error}</span><button type="button" onClick={()=>void reload()}>إعادة المحاولة</button></div>
       : !filtered.length ? <div className="empty-state"><strong>لا توجد منتجات مطابقة.</strong><span>{products.length?'غيّر الفلاتر أو عبارة البحث.':'ابدأ بإضافة أول منتج من بطاقة المنتج الجديدة أعلاه.'}</span>{(query||categoryId||status!=='all')&&<button type="button" onClick={()=>{setQuery('');setCategoryId('');setStatus('all');}}>مسح الفلاتر</button>}</div>
       : <div className="catalog-table" role="table" aria-label="جدول المنتجات">
