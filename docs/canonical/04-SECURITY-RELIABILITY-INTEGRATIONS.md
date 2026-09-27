@@ -52,3 +52,9 @@ The manifest lists the security/offline/integration sources that must be fully m
 - Any local catalog snapshot must be scoped to the authenticated organization, customer, warehouse and user context.
 - An offline cache miss must fail closed to an empty catalog rather than falling back to another account's snapshot.
 - Cached catalog data remains display-only; online server responses remain authoritative for pricing, stock and transactions.
+
+## 2026-09-28 — Customer address security
+- customer_addresses has RLS enabled and its SELECT policy requires both current_organization_id() and current_customer_id() to match the row.
+- Direct authenticated INSERT/UPDATE/DELETE table privileges remain revoked; mutations use authenticated-only RPCs that derive tenant/customer context and validate active-customer ownership.
+- Address RPCs are SECURITY DEFINER only because they must write the existing audit log without broadening direct table mutation rights. They pin search_path='', validate authenticated customer context, and are explicitly denied to anon.
+- The single-default invariant is backed by a partial unique index plus per-customer transaction locking, and the SQL contract test includes negative privilege/execution assertions.
