@@ -136,3 +136,8 @@
 - `WorkspaceSurfaceRail` is the shared navigation surface for Staff and Customer contexts.
 - Customer rail visibility follows the existing feature-visibility config; Staff rail visibility follows canonical role-filtered live targets, with explicit Boundary-only navigation where applicable.
 - Navigation remains presentation-only; server-side permission and transaction contracts remain authoritative.
+
+## 2026-09-28 — Loading-state UX contract
+- Customer Portal and core Admin list surfaces should use bounded responsive skeleton loading states rather than text-only placeholders where layout is already known.
+- Loading animation must degrade cleanly under `prefers-reduced-motion: reduce`.
+- Loading UI is presentation-only and must never imply transaction success or business state.
