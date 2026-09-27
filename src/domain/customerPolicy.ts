@@ -1,6 +1,9 @@
 export type PaymentMethod = 'credit' | 'cash' | 'transfer';
 
+export const DEFAULT_PORTAL_ACCENT_COLOR = '#0e91a4';
+
 export type ClientUiConfig = {
+  accentColor: string; compactMode: boolean;
   showSearch: boolean; showCategories: boolean; showExcel: boolean; showCredit: boolean; showTemplates: boolean;
   showInventory: boolean; showRetailPrice: boolean; showQuickOrder: boolean; requireQuantityConfirmation: boolean;
   showTieredPricing: boolean; showSavingsCalculator: boolean; showImageSearch: boolean; showVoiceSearch: boolean;
@@ -9,11 +12,19 @@ export type ClientUiConfig = {
 };
 
 export const DEFAULT_CUSTOMER_PORTAL_CONFIG: ClientUiConfig = {
+  accentColor: DEFAULT_PORTAL_ACCENT_COLOR, compactMode: false,
   showSearch:true, showCategories:true, showExcel:true, showCredit:true, showTemplates:true, showInventory:true,
   showRetailPrice:false, showQuickOrder:true, requireQuantityConfirmation:true, showTieredPricing:true,
   showSavingsCalculator:true, showImageSearch:false, showVoiceSearch:false, showPaymentMethods:true,
   paymentOnCredit:true, paymentCash:true, paymentTransfer:true, minOrderValue:0, maxOrderValue:0, maxTemplates:50,
 };
+
+
+export function normalizePortalAccentColor(value: unknown): string {
+  return typeof value === 'string' && /^#[0-9a-fA-F]{6}$/.test(value.trim())
+    ? value.trim().toLowerCase()
+    : DEFAULT_PORTAL_ACCENT_COLOR;
+}
 
 export function isPaymentMethodEnabled(config: ClientUiConfig, method: PaymentMethod): boolean {
   if (method === 'credit') return config.paymentOnCredit;
