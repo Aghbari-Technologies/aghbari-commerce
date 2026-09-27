@@ -135,7 +135,8 @@ export default function AppV3Fixed(){
       let unavailable = 0;
       for (const [index, product] of resolved.entries()) {
         const item = items[index];
-        if (!product || product.status !== 'active' || product.availableQuantity < item.quantity) { unavailable += 1; continue; }
+        const currentCartQuantity = cart.find((line) => line.product.id === product?.id)?.quantity ?? 0;
+        if (!product || product.status !== 'active' || product.availableQuantity < currentCartQuantity + item.quantity) { unavailable += 1; continue; }
         readyLines.push({ productId: product.id, quantity: item.quantity });
       }
       if (!readyLines.length) {
