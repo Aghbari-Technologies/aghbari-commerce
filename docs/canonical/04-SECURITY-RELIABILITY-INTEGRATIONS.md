@@ -47,3 +47,8 @@ The manifest lists the security/offline/integration sources that must be fully m
 - Missing requirements discovered from UI references must be classified against actual callers, roles, tenant scope and data sensitivity before any implementation.
 - Reference-driven error/loading/offline states must preserve the same authorization and server-authoritative truth model as the happy path.
 - Bounded resource rules apply to offline queues, retries, caches, browser persistence and visual test artifacts.
+
+## 2026-09-27 — Offline catalog cache isolation
+- Any local catalog snapshot must be scoped to the authenticated organization, customer, warehouse and user context.
+- An offline cache miss must fail closed to an empty catalog rather than falling back to another account's snapshot.
+- Cached catalog data remains display-only; online server responses remain authoritative for pricing, stock and transactions.
