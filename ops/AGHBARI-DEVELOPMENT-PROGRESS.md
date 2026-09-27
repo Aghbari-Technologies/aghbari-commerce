@@ -133,3 +133,15 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Certification: `NOT CLAIMED`
 - Production: `HOLD / NO TOUCH`
 - Next: exact-head quality evidence, then next independent UI/core gap.
+
+## Run 2026-09-28 — Mobile Portal navigation + Boundary anchor closure
+- Run: `2026-09-28`
+- SHA: `a1fbf7559cb5f38029891474674be80892a2e8e7`
+- Branch: `main`
+- Implemented: mobile secondary navigation sheet for Templates/Notifications/Finance; Escape/backdrop handling; Boundary safe-alternative anchor contract; quality-workflow integration.
+- Verified: source wiring on current main; live Admin targets remain fully anchored; no production mutation.
+- Proven: source-level contracts only.
+- Blocked: exact current browser/hosted CI proof remains unavailable through connected read path; Vercel external rate-limit/protection remains unchanged.
+- Certification: `NOT CLAIMED`
+- Production: `HOLD / NO TOUCH`
+- Next: exact current quality/security evidence, first material failure only, then next independent UI/core gap.
