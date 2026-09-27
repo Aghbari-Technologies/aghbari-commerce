@@ -11,6 +11,7 @@ const files = [
   'InventoryHistoryPanel.tsx',
   'FinanceOperationsHistoryPanel.tsx',
   'PricingMatrixPanel.tsx',
+  'StaffAccessPanel.tsx',
 ] as const;
 
 describe('admin collection loading coverage', () => {
