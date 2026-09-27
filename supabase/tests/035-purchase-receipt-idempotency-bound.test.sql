@@ -1,6 +1,6 @@
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(10);
+select plan(14);
 
 select ok(exists (
   select 1
@@ -46,6 +46,30 @@ select ok(not exists (
     and p.proname='receive_purchase_order'
     and pg_get_functiondef(p.oid) ~* 'length\\(key\\)\\s*<\\s*16\\s+or\\s+length\\(key\\)\\s*>\\s*200'
 ), 'receive_purchase_order no longer contains the legacy 200-character maximum');
+
+select ok(exists (
+  select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace
+  where n.nspname='public' and p.proname='create_purchase_order'
+    and pg_get_functiondef(p.oid) ~* 'pg_advisory_xact_lock\\s*\\(hashtextextended\\('
+), 'create_purchase_order serializes idempotency keys with a transaction advisory lock');
+
+select ok(exists (
+  select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace
+  where n.nspname='public' and p.proname='receive_purchase_order'
+    and pg_get_functiondef(p.oid) ~* 'pg_advisory_xact_lock\\s*\\(hashtextextended\\('
+), 'receive_purchase_order serializes idempotency keys with a transaction advisory lock');
+
+select ok(exists (
+  select 1 from pg_indexes
+  where schemaname='public' and tablename='purchase_orders'
+    and indexdef ilike '%organization_id%idempotency_key%'
+), 'purchase_orders retains an organization-scoped idempotency index/constraint');
+
+select ok(exists (
+  select 1 from pg_indexes
+  where schemaname='public' and tablename='purchase_receipts'
+    and indexdef ilike '%organization_id%idempotency_key%'
+), 'purchase_receipts retains an organization-scoped idempotency index/constraint');
 
 select ok(has_function_privilege(
   'authenticated','public.create_purchase_order(uuid,uuid,text,jsonb,text,text)','execute'
