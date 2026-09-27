@@ -91,3 +91,9 @@
 - Customer Portal Home / الرئيسية is a first-class surface distinct from Catalog.
 - Home is derived from already-authorized customer context and existing source-backed data/actions; it does not create new transactional authority or duplicate catalog/order/finance persistence.
 - Home is the default customer landing section and is reachable in both desktop navigation and the responsive customer dock.
+
+
+## 2026-09-28 — Fresh migration chain integrity
+- Fresh-database proof exposed two source migration integrity defects: a PostgreSQL parameter-default ordering defect in `record_payment`, and missing semicolon delimiters between PL/pgSQL function definitions in the order-template quantity migration.
+- Both are now repaired in source control; runtime missing-payment-key behavior remains fail-closed.
+- Treat fresh migration execution as a required release gate; no production migration is implied by source repair.

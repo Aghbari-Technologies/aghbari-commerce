@@ -121,3 +121,16 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Certification: `NOT CLAIMED`
 - Production: `HOLD / NO TOUCH`
 - Next: consume current local runtime/Test-the-Test results, then merge only after exact-SHA required checks pass and resume next screen-pack gap.
+
+
+## Run 2026-09-28 — Migration-chain repair checkpoint
+- Run: `2026-09-28`
+- SHA before checkpoint: `fd22d1b55d97d9ca386fd8f491de1c0cb2f02985`
+- Branch: `execution/ui-customer-home-20260928`
+- Implemented: fixed fresh-db `record_payment` function signature; updated affected payment tests; fixed order-template migration function statement delimiters.
+- Verified: Order Workflow, G1 Domain Proof, Security Audit, and Exact Deployment contract passed on `fd22d1b55d97d9ca386fd8f491de1c0cb2f02985`.
+- Proven: source fixes are committed; final migration/concurrency/runtime/browser proof is still pending on the next exact SHA.
+- Blocked: Vercel free-plan rate-limit; no production mutation.
+- Certification: `NOT CLAIMED`
+- Production: `HOLD / NO TOUCH`
+- Next: exact-SHA fresh migration + concurrency + Test-the-Test + browser runtime.

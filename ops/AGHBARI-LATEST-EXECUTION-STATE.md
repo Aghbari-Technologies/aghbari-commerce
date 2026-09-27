@@ -105,3 +105,26 @@ Do not transfer evidence across SHAs. Do not mutate Production directly. Do not 
 After current exact-SHA Test-the-Test and local browser runs finish, consume their evidence only on SHA `6c47355a2108ec6df16018c638615392ecdfc43c`; merge PR #147 only if all required checks pass, then re-read the resulting main HEAD and open the next unproven screen-pack/core gap. 
 ### DO NOT REPEAT
 Do not transfer evidence from `c9c797823f6ef6245ebae7c61be5455e2e1244f4` or older SHAs; do not reapply the Vercel rate-limit retry; do not mutate production for the purchase/receipt drift.
+
+
+## 2026-09-28 — Exact current checkpoint: Home + migration chain repairs
+- Execution branch: `execution/ui-customer-home-20260928`
+- Exact current HEAD before this checkpoint: `fd22d1b55d97d9ca386fd8f491de1c0cb2f02985`
+- Implemented on this branch: Customer Home first-class surface, customer IA contract, responsive Home navigation, Admin quality corrections, finance payment idempotency migration repair, and order-template migration statement repair.
+- Root causes fixed:
+  - `20260925110000_harden_finance_payment_idempotency.sql`: `record_payment` had a required parameter after parameters with defaults; `p_idempotency_key` now has a SQL default while runtime validation still rejects missing/invalid keys.
+  - `20260927010000_normalize_order_template_quantity_bound.sql`: missing statement terminators after `save_order_template` and `apply_order_template` function definitions; both fixed.
+- Exact proof currently attached to `fd22d1b55d97d9ca386fd8f491de1c0cb2f02985`: Order Workflow PASS; G1 Domain Proof PASS; Security Audit PASS; Exact Deployment contract PASS. Runtime/browser/migration/concurrency/Test-the-Test remain not yet final at this checkpoint.
+- Vercel combined status remains externally blocked by the free-plan build-rate-limit path; no unchanged retry and no production mutation.
+- Production purchase/receipt `16..200` drift remains read-only and intentionally unapplied; the prepared source migration remains the release candidate.
+
+### OPEN GAPS
+- Current exact-SHA migration proof, concurrency proof, Test-the-Test and local browser runtime proof.
+- Full 84-reference screen-pack visual equivalence and browser evidence.
+- Controlled production purchase/receipt `200→128` migration after exact migration/concurrency/negative evidence.
+- Free exact-source hosted browser proof; existing Netlify site is free but its current ready deploy has no commit_ref/source identity, so it is not used as exact-source proof.
+
+### NEXT EXECUTABLE ACTION
+Read the exact new HEAD created by this checkpoint, consume only its own fresh checks, fix the first material runtime/DB/browser failure once, then continue the next uncovered customer/admin screen-pack or core gap.
+### DO NOT REPEAT
+Do not transfer any proof from `fd22d1b55d97d9ca386fd8f491de1c0cb2f02985` or older SHAs to the next checkpoint SHA. Do not mutate production. Do not retry the blocked Vercel build path unchanged.
