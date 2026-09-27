@@ -48,8 +48,8 @@ type ClientUiConfig = {
 const DEFAULT_UI_CONFIG: ClientUiConfig = { accentColor:'#0e91a4', compactMode:false, showSearch:true, showCategories:true, showExcel:true, showCredit:true, showTemplates:true, showInventory:true, showRetailPrice:false, showQuickOrder:true, requireQuantityConfirmation:true, showTieredPricing:true, showSavingsCalculator:true, showImageSearch:false, showVoiceSearch:false, showPaymentMethods:true, paymentOnCredit:true, paymentCash:true, paymentTransfer:true, minOrderValue:0, maxOrderValue:0, maxTemplates:50 };
 const PAYMENT_OPTIONS = [{key:'credit' as const,label:'آجل / ائتمان',field:'paymentOnCredit' as const},{key:'cash' as const,label:'نقدي',field:'paymentCash' as const},{key:'transfer' as const,label:'حوالة',field:'paymentTransfer' as const}];
 type PricedProduct = Product & { authorizedPrice?: number; priceCurrency?: string };
-type CatalogStockFilter = 'all' | 'available' | 'out';
-type CatalogPriceFilter = 'all' | 'priced' | 'missing';
+export type CatalogStockFilter = 'all' | 'available' | 'out';
+export type CatalogPriceFilter = 'all' | 'priced' | 'missing';
 
 export function filterCatalogProducts(
   products: readonly PricedProduct[],
