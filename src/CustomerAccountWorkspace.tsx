@@ -347,7 +347,7 @@ export default function CustomerAccountWorkspace(props: CustomerAccountWorkspace
 
           {props.online && (
             <div className="customer-address-layout">
-              <form className="customer-address-form" onSubmit={submit}>
+              <form className="customer-address-form" onSubmit={submitAddress}>
                 <div className="address-form-head">
                   <div><span className="eyebrow">{editingAddressId ? 'تعديل' : 'جديد'}</span><h4>{editingAddressId ? 'تعديل عنوان التسليم' : 'إضافة عنوان تسليم'}</h4></div>
                   {editingAddressId && <button type="button" className="ghost" onClick={resetAddressForm} disabled={Boolean(addressBusyKey)}>إلغاء التعديل</button>}
