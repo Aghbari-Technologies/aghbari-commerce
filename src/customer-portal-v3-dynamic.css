@@ -22,3 +22,22 @@
 
 .search-capability-disabled{display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:0 12px;border:1px dashed currentColor;border-radius:10px;opacity:.65;font-size:.82rem;}
 .search-panel button[aria-pressed="true"]{box-shadow:0 0 0 2px currentColor inset;}
+
+.customer-shell{--portal-accent:var(--aghbari-accent,#102a43)}
+.customer-shell .header-actions button:not(.ghost),
+.customer-shell .portal-nav button.active,
+.customer-shell .category-row button.active,
+.customer-shell .add-button,
+.customer-shell .checkout,
+.customer-shell .quick-editor button,
+.customer-shell .template-save button{background:var(--portal-accent)}
+.customer-shell .portal-nav button.active{border-color:var(--portal-accent)}
+.customer-shell .hero-card{background:linear-gradient(135deg,var(--portal-accent),#243b53)}
+.customer-shell .search-panel input:focus,
+.customer-shell .quick-editor input:focus,
+.customer-shell .template-save input:focus{border-color:var(--portal-accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--portal-accent) 15%,transparent)}
+html[data-aghbari-density="compact"] .customer-shell .portal-body{gap:18px;padding-top:20px;padding-bottom:20px}
+html[data-aghbari-density="compact"] .customer-shell .portal-header{padding-top:13px;padding-bottom:13px}
+html[data-aghbari-density="compact"] .customer-shell .hero-card{padding:22px}
+html[data-aghbari-density="compact"] .customer-shell .product-card{padding:10px}
+html[data-aghbari-density="compact"] .customer-shell .catalog-display-toolbar{padding-block:8px}
