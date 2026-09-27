@@ -11,31 +11,41 @@ function tierLabel(tier: string) {
   return tier;
 }
 
+export function getOperationalTruth(isOnline: boolean, customerTier: string, warehouseLabel: string) {
+  return {
+    connection: isOnline ? 'متصل بالمصدر الخادمي' : 'وضع اتصال محدود',
+    pricingSource: `قائمة الحساب المصرح بها · ${tierLabel(customerTier)}`,
+    stockSource: isOnline ? `رصيد المستودع · ${warehouseLabel}` : 'نسخة محلية للعرض فقط',
+    authority: 'الخادم هو صاحب القرار النهائي'
+  };
+}
+
 export default function OperationalTruthStrip({
   isOnline,
   customerTier,
   warehouseLabel,
 }: OperationalTruthStripProps) {
+  const truth = getOperationalTruth(isOnline, customerTier, warehouseLabel);
   return (
     <section className="operational-truth-strip" aria-label="مصادر البيانات وحالة الثقة">
       <div className="truth-status">
         <span className={isOnline ? 'truth-dot online' : 'truth-dot offline'} aria-hidden="true" />
         <div>
-          <strong>{isOnline ? 'متصل بالمصدر الخادمي' : 'وضع اتصال محدود'}</strong>
+          <strong>{truth.connection}</strong>
           <small>{isOnline ? 'الأسعار والمخزون تُقرأ من Commerce مباشرة.' : 'البيانات المعروضة من cache محلي محدود وليست مصدر الحقيقة.'}</small>
         </div>
       </div>
       <div className="truth-item">
         <span>السعر</span>
-        <strong>قائمة الحساب المصرح بها · {tierLabel(customerTier)}</strong>
+        <strong>{truth.pricingSource}</strong>
       </div>
       <div className="truth-item">
         <span>المخزون</span>
-        <strong>{isOnline ? `رصيد المستودع · ${warehouseLabel}` : 'نسخة محلية للعرض فقط'}</strong>
+        <strong>{truth.stockSource}</strong>
       </div>
       <div className="truth-item">
         <span>المعاملات</span>
-        <strong>الخادم هو صاحب القرار النهائي</strong>
+        <strong>{truth.authority}</strong>
       </div>
     </section>
   );
