@@ -16,6 +16,7 @@
   - Live security advisor currently reports 62 authenticated SECURITY DEFINER warnings plus leaked password protection warning.
 - Proven:
   - Exact repository content for main and both implementation branches.
+  - Live read-only security contract proof: 10/10 assertions true for five high-impact SECURITY DEFINER RPCs.
   - PR #112 diff is isolated to purchase/receipt migration + test.
   - PR #113 diff is isolated to customer offline runtime + test.
 - Not proven:
