@@ -224,3 +224,16 @@ Re-read exact main HEAD and inspect fresh current-SHA workflow evidence. Fix onl
 Inspect the current exact main source for the next uncovered canonical UI/domain surface, implement only its missing interactive/state contract, add or extend one focused test, then update this checkpoint on the resulting exact HEAD. Do not retry unchanged Vercel/Netlify hosted paths.
 ### DO NOT REPEAT
 Do not rebuild the 84 external screenshot corpus; do not duplicate shared customer/staff rails; do not transfer old evidence; do not mutate Production to apply the purchase/receipt migration directly.
+
+## 2026-09-28 — Customer/Admin loading-state closure + current HEAD checkpoint
+- Current main HEAD verified from live main content: `4d736b5eb660cafe9713c1b968629e0d4e01599f`.
+- Implemented on the current main lineage: responsive loading skeletons for Customer Portal orders and finance, Admin orders and Customer Directory; reduced-motion fallbacks; focused source-contract tests; quality workflow inclusion.
+- Existing catalog skeleton/filter closure and shared WorkspaceSurfaceRail remain present on this HEAD.
+- Build-boundary correction is present in Admin import path; current Admin source no longer contains the malformed literal newline separator.
+- Exact connected status for the current head exposes Vercel failure only (free-plan build-rate-limit target); push-triggered quality workflow runs are not exposed by the connected workflow reader, so exact build/typecheck/test/browser proof remains NOT_PROVEN.
+- Container-level direct GitHub clone/build was attempted once and failed because the environment cannot resolve github.com; no repeated network retry.
+- Live Supabase production remains unchanged: purchase/receipt/apply_quick_order idempotency bound is still 16..200, while the controlled source migration remains 16..128 and unapplied. No production mutation.
+- Certification: NOT CLAIMED.
+- Production: HOLD / NO TOUCH.
+### NEXT EXECUTABLE ACTION
+Continue from exact `refs/heads/main`; inspect only the next canonical uncovered UI/core contract, implement its missing delta with a focused test, and re-check exact current status. Do not rerun unchanged Vercel/Netlify paths and do not transfer evidence across SHA.
