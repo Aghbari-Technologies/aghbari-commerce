@@ -2,7 +2,7 @@
 
 Project: Aghbari Commerce | الأغبري
 Branch: `main`
-Current Git HEAD: `e6fcd516699f544668694744f10bd191c1364d12`
+Current Git HEAD: READ LIVE FROM `refs/heads/main` at every boot; this file intentionally does not cache a mutable SHA.
 Production: HOLD / NO TOUCH
 Certification: NOT CLAIMED
 
@@ -15,7 +15,7 @@ Certification: NOT CLAIMED
 - Production has not been mutated by these execution changes.
 
 ## Exact proof status
-- Source implementation: VERIFIED at exact main HEAD `e6fcd516699f544668694744f10bd191c1364d12`.
+- Source implementation: VERIFIED in the implementation commits recorded by the current progress ledger; re-read live `refs/heads/main` for the exact current SHA..
 - Active runtime wiring: VERIFIED — `main.tsx` imports `AppV3Fixed`; active runtime includes cache scope, trust surface and persisted theme.
 - Live purchase/receipt drift: VERIFIED read-only; both still expose legacy 200; anon EXECUTE remains false.
 - Live bulk-transition RPC: NOT_PRESENT; repository migration is source-only.
@@ -33,7 +33,7 @@ Certification: NOT CLAIMED
 - Remaining uncovered canonical product/quality gaps.
 
 ## NEXT EXECUTABLE ACTION
-Inspect the newest exact-main check runs and logs; fix the first material failure once. In parallel, continue the next independent unproven reference-pack/core gap without touching closed implementation.
+Read the live `refs/heads/main`, inspect its newest check runs/logs, fix the first material failure once. In parallel, continue the next independent unproven reference-pack/core gap without touching closed implementation.
 
 ## DO NOT REPEAT
 Do not transfer evidence across SHAs. Do not mutate Production directly. Do not retry unchanged Vercel rate-limit/protection. Do not reopen closed finance, deep-link, recovery, bulk-order, cache-isolation, trust/theme, or import-reconciliation implementation work.
