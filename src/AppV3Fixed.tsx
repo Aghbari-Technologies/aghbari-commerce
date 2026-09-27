@@ -127,8 +127,8 @@ export default function AppV3Fixed(){
   }
   async function reorderOrderItems(items: CustomerOrderDetail['items']) {
     if (busy || reorderLock.current) return;
-    reorderLock.current = true;
     if (!warehouseId) { setError('لا يوجد مستودع تشغيلي متاح لإعادة الطلب.'); return; }
+    reorderLock.current = true;
     setBusy(true); setError(''); setMessage('');
     try {
       const resolved = await Promise.all(items.map((item) => resolveOrderProduct(item)));
