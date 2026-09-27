@@ -15,6 +15,7 @@ import AdminPanel from './AdminPanel';
 import ClientControlPanel from './ClientControlPanel';
 import NotificationPanel from './NotificationPanel';
 import OfflineRecoveryPanel from './OfflineRecoveryPanel';
+import OperationalTruthStrip from './OperationalTruthStrip';
 import CustomerOrdersPanel from './CustomerOrdersPanel';
 import RecordDetailDrawer from './RecordDetailDrawer';
 import './styles.css';
@@ -268,6 +269,7 @@ export default function App() {
   return <div className="customer-app" dir="rtl">
     <header className="customer-topbar"><div className="customer-brand"><span className="brand-mark">أ</span><div><strong>بوابة الأغبري التجارية</strong><small>منصة الجملة والطلبات الذكية</small></div></div>{uiConfig.showSearch ? <label className="global-search"><span aria-hidden="true">⌕</span><input ref={searchInputRef} value={query} onChange={(e) => setQuery(e.target.value)} placeholder="ابحث عن المنتج، SKU أو الباركود..." aria-label="بحث المنتج"/><kbd>Ctrl K</kbd></label> : <div/>}<div className="customer-actions"><button onClick={() => setSection('orders')} className="icon-action">طلباتي</button><button onClick={() => setCartOpen(true)} className="cart-action">السلة <b>{cartCount}</b></button><button onClick={() => void handleSignOut()} className="signout">خروج</button></div></header>
     {!isOnline && <div className="offline-banner">أنت دون اتصال. يمكن تعديل السلة محليًا، أما إرسال الطلب فيحتاج اتصالًا.</div>}
+    <OperationalTruthStrip isOnline={isOnline} customerTier={customerTier} warehouseLabel={warehouseLabel} />
     <main className="customer-main">
       <section className="customer-welcome"><div><span className="eyebrow">مرحبًا، {customerName}</span><h1>احتياج متجرك<br/><em>جاهز للطلب.</em></h1><p>أسعار الجملة والمخزون والخصومات المصرح بها لحسابك في مكان واحد.</p><div className="welcome-actions">{uiConfig.showQuickOrder && <button onClick={() => setQuickOrderOpen(true)}>⚡ طلب سريع</button>}{uiConfig.showTemplates && <button className="secondary" onClick={() => setSection('templates')}>↻ إعادة طلب محفوظ</button>}</div></div>{uiConfig.showCredit && <div className="credit-mini"><span>المتاح الائتماني</span><strong>{finance ? formatMoney(finance.available) : '—'}</strong><small>{finance ? `من حد ${formatMoney(finance.creditLimit)} ${currencyLabel(finance.currency)}` : 'المعلومات المالية ستظهر بعد مزامنة المركز المالي'}</small></div>}</section>
       {orderResult && <div className="success" role="status" aria-live="polite">{orderResult}<button type="button" className="ghost" onClick={() => setOrderResult(null)}>إخفاء</button></div>}{customerNotice && <div className="success" role="status" aria-live="polite">{customerNotice}<button type="button" className="ghost" onClick={() => setCustomerNotice(null)}>إخفاء</button></div>}{runtimeError && <div className="error-banner" role="alert">{runtimeError}</div>}
