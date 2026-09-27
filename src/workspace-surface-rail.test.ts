@@ -10,7 +10,7 @@ describe('workspace surface rail contracts', () => {
     expect(CUSTOMER_PACKS.map((pack) => pack.id)).toEqual([
       'catalog', 'orders', 'finance', 'templates', 'account', 'notifications',
     ]);
-    expect(source).toContain('variant="customer"');
+    expect(source).toContain("variant: 'customer'");
     expect(source).toContain('visibleSections');
     expect(source).toContain('aria-current={active ? \'page\' : undefined}');
   });
