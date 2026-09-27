@@ -247,3 +247,16 @@ Continue from exact `refs/heads/main`; inspect only the next canonical uncovered
 - Production: `HOLD / NO TOUCH`.
 ### NEXT EXECUTABLE ACTION
 Resume from `d65f32f1a6eb4cc1a6b95cad573cff994a57e912` only after re-reading exact main HEAD; run/fetch the newly added bounded quality test set through an executable CI/runtime path if available, then close the next canonical UI/core gap. Do not repeat unchanged Vercel/Netlify attempts and do not transfer evidence across SHA.
+
+
+## 2026-09-28 — Exact current UI nested-state checkpoint
+- Actual current main HEAD at checkpoint: `8744c59a94b4367539143179aa096b954933548a`.
+- Implemented: Customer Portal structural loading states for notifications, delivery addresses, order details and invoice details; responsive/reduced-motion styling; focused tests; bounded Aghbari Quality inclusion; removed the duplicate workspace-surface test.
+- Verified: active Customer/Admin workspace composition remains intact; 84-image corpus remains provenance-only; no transactional authority or production data path was changed.
+- Proven: Browser E2E has passed on nearby exact-SHA UI corrections; current exact quality proof is pending the latest push result because concurrent commits continue to regenerate/cancel runs.
+- Core: purchase/receipt migration remains source-controlled at 16..128 while live Production remains 16..200; concurrency proof shell is repaired; Production untouched.
+- Security: no blanket privilege changes; existing security-audit path remains the source of truth for current security posture.
+- Certification: NOT CLAIMED.
+- Production: HOLD / NO TOUCH.
+### NEXT EXECUTABLE ACTION
+Read exact current main HEAD, fetch its Aghbari Quality + application-quality + Test-the-Test + G1 results, fix only the first material failure, then continue the next uncovered canonical customer/admin state. Do not repeat unchanged hosted deployment attempts.
