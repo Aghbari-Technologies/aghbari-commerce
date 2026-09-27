@@ -474,3 +474,8 @@ Command "1" means:
 - Quick-order quantity validation in the active customer UI now uses `MAX_ORDER_QUANTITY_PER_LINE=10000` and exposes the same bound in the input control.
 - Unsupported boundary actions remain excluded from executable UI.
 - Production Supabase remains unchanged under HOLD; live `apply_quick_order` still reports the legacy 16..200 server bound until the new migration is deliberately applied during a release window.
+
+
+## 33. EXECUTION RUN — 9204ed2a5b72c77802bd7e35aa14a6cf0a89be64
+- Reorder preflight now accounts for quantities already present in the active cart, skipping only conflicting lines before the single atomic quick-order merge.
+- This prevents an existing cart quantity from causing the entire reorder operation to fail while preserving server-authoritative stock enforcement.
