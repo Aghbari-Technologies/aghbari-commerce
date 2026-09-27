@@ -80,3 +80,8 @@
 ## 2026-09-28 — Staff reorder/template scope boundary
 - Reorder and order templates are implemented for Customer Portal ownership. Do not fabricate a Staff management surface: current template storage/RPCs derive customer context and are not a Staff-authority contract.
 - A future Staff contract must define permission, tenant/customer visibility, read model, mutation semantics and audit before the boundary is converted to a live surface.
+
+## 2026-09-28 — Supplier / warehouse administration contract
+- Supplier and warehouse edit surfaces are now in Commerce scope and implemented through authenticated server-side update RPCs.
+- `update_supplier` and `update_warehouse` derive tenant context server-side, require owner/admin authorization, validate target ownership/active branch, and emit audit events.
+- Unsupported AI/BI/Onyx/Developer-AI edit surfaces remain explicit UI boundaries; they are not transactional Commerce features.
