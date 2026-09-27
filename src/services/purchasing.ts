@@ -128,3 +128,48 @@ export async function receivePurchaseOrder(input: { purchaseOrderId: string; ide
   if (error) throw error;
   return data?.[0] ?? null;
 }
+
+export async function updateSupplier(input: {
+  supplierId: string;
+  name: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+  isActive?: boolean;
+}) {
+  const id = requireUuid(input.supplierId, 'المورد');
+  const name = input.name.trim();
+  if (!name || name.length > 200) throw new Error('اسم المورد مطلوب وبحد أقصى 200 حرف.');
+  if (input.email !== undefined && input.email.length > 320) throw new Error('البريد الإلكتروني طويل جدًا.');
+  const { data, error } = await requireSupabase().rpc('update_supplier', {
+    p_supplier_id: id,
+    p_name: name,
+    p_phone: input.phone?.trim() || null,
+    p_email: input.email?.trim() || null,
+    p_address: input.address?.trim() || null,
+    p_is_active: input.isActive !== false,
+  });
+  if (error) throw error;
+  return data;
+}
+
+export async function updateWarehouse(input: {
+  warehouseId: string;
+  name: string;
+  branchId: string;
+  isActive?: boolean;
+}) {
+  const id = requireUuid(input.warehouseId, 'المستودع');
+  const branchId = requireUuid(input.branchId, 'الفرع');
+  const name = input.name.trim();
+  if (!name || name.length > 200) throw new Error('اسم المستودع مطلوب وبحد أقصى 200 حرف.');
+  const { data, error } = await requireSupabase().rpc('update_warehouse', {
+    p_warehouse_id: id,
+    p_name: name,
+    p_branch_id: branchId,
+    p_is_active: input.isActive !== false,
+  });
+  if (error) throw error;
+  return data;
+}
+
