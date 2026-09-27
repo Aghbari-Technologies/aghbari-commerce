@@ -393,7 +393,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
               <div className="tool-pill-grid">
                 {canCustomers && <a href="#admin-catalog">إدارة المنتجات</a>}
                 {canCustomers && <a href="#admin-pricing-matrix">مصفوفة الأسعار</a>}
-                {canCustomers && <a href="#admin-customers">أجهزة العملاء</a>}
+                {canCustomers && <a href="#admin-customers">إدارة العملاء</a>}
                 {canInventory && <a href="#admin-inventory-history">دفتر المخزون</a>}
                 {canInventory && <a href="#admin-purchasing">المشتريات</a>}
                 {canFinance && <a href="#admin-finance">الحسابات والمالية</a>}
