@@ -156,3 +156,61 @@ test('tenant isolation: Tenant B cannot read Tenant A order through the real UI 
   await contextB.close();
   await contextA.close();
 });
+
+test('customer can create, edit, default and delete saved delivery addresses', async ({ page }) => {
+  const email = process.env.E2E_EMAIL;
+  const password = process.env.E2E_PASSWORD;
+  if (!email || !password) throw new Error('E2E_EMAIL and E2E_PASSWORD are required; address runtime proof must never silently skip.');
+
+  const failures = captureBrowserFailures(page);
+  await login(page, email, password);
+  await page.getByRole('button', { name: 'حسابي', exact: true }).click();
+  await page.getByRole('tab', { name: 'العناوين', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'عناوين التسليم', exact: true })).toBeVisible();
+
+  const unique = Date.now();
+  const firstLabel = `E2E رئيسي ${unique}`;
+  const secondLabel = `E2E فرعي ${unique}`;
+  const addressForm = page.locator('form.customer-address-form');
+
+  await addressForm.getByLabel('اسم العنوان').fill(firstLabel);
+  await addressForm.getByLabel('اسم المستلم').fill('عميل اختبار');
+  await addressForm.getByLabel('هاتف المستلم').fill('777000001');
+  await addressForm.getByLabel('المدينة').fill('صنعاء');
+  await addressForm.getByLabel('العنوان التفصيلي').fill('شارع الاختبار، مبنى 1');
+  await addressForm.getByRole('checkbox', { name: 'اجعل هذا العنوان افتراضيًا' }).check();
+  await addressForm.getByRole('button', { name: 'حفظ العنوان', exact: true }).click();
+
+  const firstCard = page.locator('.customer-address-card', { hasText: firstLabel });
+  await expect(firstCard).toBeVisible();
+  await expect(firstCard.getByText('افتراضي', { exact: true })).toBeVisible();
+
+  await firstCard.getByRole('button', { name: 'تعديل', exact: true }).click();
+  await addressForm.getByLabel('المدينة').fill('صنعاء الجديدة');
+  await addressForm.getByRole('button', { name: 'حفظ التعديلات', exact: true }).click();
+  await expect(firstCard).toContainText('صنعاء الجديدة');
+
+  await addressForm.getByLabel('اسم العنوان').fill(secondLabel);
+  await addressForm.getByLabel('اسم المستلم').fill('عميل اختبار 2');
+  await addressForm.getByLabel('هاتف المستلم').fill('777000002');
+  await addressForm.getByLabel('المدينة').fill('تعز');
+  await addressForm.getByLabel('العنوان التفصيلي').fill('شارع الاختبار، مبنى 2');
+  await addressForm.getByRole('button', { name: 'حفظ العنوان', exact: true }).click();
+
+  const secondCard = page.locator('.customer-address-card', { hasText: secondLabel });
+  await expect(secondCard).toBeVisible();
+  await expect(secondCard.getByText('افتراضي', { exact: true })).toHaveCount(0);
+  await secondCard.getByRole('button', { name: 'تعيين افتراضي', exact: true }).click();
+  await expect(secondCard.getByText('افتراضي', { exact: true })).toBeVisible();
+  await expect(firstCard.getByText('افتراضي', { exact: true })).toHaveCount(0);
+
+  await secondCard.getByRole('button', { name: 'حذف', exact: true }).click();
+  await expect(page.getByText('اضغط حذف مرة أخرى لتأكيد الحذف.', { exact: true })).toBeVisible();
+  await secondCard.getByRole('button', { name: 'تأكيد الحذف', exact: true }).click();
+  await expect(page.locator('.customer-address-card', { hasText: secondLabel })).toHaveCount(0);
+
+  await firstCard.getByRole('button', { name: 'حذف', exact: true }).click();
+  await firstCard.getByRole('button', { name: 'تأكيد الحذف', exact: true }).click();
+  await expect(page.locator('.customer-address-card', { hasText: firstLabel })).toHaveCount(0);
+  await assertCleanBrowser(failures);
+});
