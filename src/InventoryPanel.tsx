@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { supabase } from './lib/supabase';
+import OperationalLoadingSkeleton from './OperationalLoadingSkeleton';
 import { completeStockCount, getLowStock, getOpenStockCount, getStockCountLines, setStockCountLine, setStockThreshold, startStockCount, transferInventory, type LowStockRow, type StockCountLine, type StockCountSession } from './services/inventory';
 
 type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer';
@@ -101,7 +102,7 @@ export default function InventoryPanel({ role }: { role: UserRole }) {
   return <div className="cart-panel" id="inventory">
     <div className="section-heading"><div><span className="eyebrow">المخزون</span><h2>النقل والجرد والتنبيهات التشغيلية</h2></div><span aria-live="polite">{loading ? 'جارٍ التحديث…' : `${lowStock.length} أصناف منخفضة`}</span></div>
     <div className="ops-metrics-strip" aria-label="ملخص المخزون"><article><small>الأصناف</small><strong>{products.length.toLocaleString('ar')}</strong><span>كتالوج التشغيل</span></article><article><small>المستودعات</small><strong>{warehouses.length.toLocaleString('ar')}</strong><span>مواقع مفعّلة</span></article><article className={lowStock.length?'attention':''}><small>تحتاج إجراء</small><strong>{lowStock.length.toLocaleString('ar')}</strong><span>تحت حد إعادة الطلب</span></article><article><small>الجرد</small><strong>{stockCount?'مفتوح':'—'}</strong><span>{stockCount?'جلسة حالية':'لا توجد جلسة حالية'}</span></article></div>
-    {loading ? <div className="portal-loading" role="status">جارٍ تحميل بيانات المخزون…</div> : <div className="admin-grid">
+    {loading ? <OperationalLoadingSkeleton variant="inventory" /> : <div className="admin-grid">
       <div className="admin-card barcode-first-card">
         <div className="section-heading"><div><span className="eyebrow">Barcode-first</span><h3>التعرّف السريع على الصنف</h3></div><span>لماسحات الباركود</span></div>
         <form onSubmit={(e) => { e.preventDefault(); void resolveBarcode(); }}>
