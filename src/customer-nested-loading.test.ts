@@ -21,8 +21,16 @@ describe('customer nested loading surfaces', () => {
     expect(source).not.toContain('<div className="portal-loading" role="status">جارٍ تحميل بنود ومدفوعات الفاتورة…</div>');
   });
 
-  it('keeps both skeleton surfaces in their responsive style contracts', () => {
+  it('uses structural order-detail loading rather than a text-only placeholder', () => {
+    const source = read('src/CustomerOrdersPanel.tsx');
+    expect(source).toContain('order-detail-loading-skeleton');
+    expect(source).toContain('aria-label="جارٍ تحميل تفاصيل الطلب"');
+    expect(source).not.toContain('<div className="portal-loading" role="status">جارٍ تحميل تفاصيل الطلب…</div>');
+  });
+
+  it('keeps all nested customer skeleton surfaces in their responsive style contracts', () => {
     expect(read('src/customer-account-workspace.css')).toContain('.customer-address-loading-skeleton');
     expect(read('src/customer-portal-v3.css')).toContain('.invoice-detail-loading-skeleton');
+    expect(read('src/customer-orders.css')).toContain('.order-detail-loading-skeleton');
   });
 });
