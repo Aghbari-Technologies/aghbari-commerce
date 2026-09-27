@@ -5,7 +5,7 @@ import { adjustInventory, createCategory, setProductPrice, upsertProduct } from 
 import { commitProductImport, stageProductImport } from './services/importExcel';
 import { getCategories, type CategoryOption } from './services/categories';
 import { uploadProductImage } from './services/imagePipeline';
-import { getStaffOrders, transitionOrder, type StaffOrderSummary } from './services/staffOrders';
+import { bulkTransitionOrders, getStaffOrders, transitionOrder, type StaffOrderSummary, type BulkTransitionResult } from './services/staffOrders';
 import { supabase } from './lib/supabase';
 import PurchasingPanel from './PurchasingPanel';
 import ExportPanel from './ExportPanel';
@@ -49,7 +49,7 @@ function allowedNextStatuses(status: OrderStatus, role: UserRole): OrderStatus[]
 export default function AdminPanel({ role, userId }: { role: UserRole; userId: string | null }) {
   const [products, setProducts] = useState<StaffProduct[]>([]); const [warehouses, setWarehouses] = useState<Warehouse[]>([]); const [categories, setCategories] = useState<CategoryOption[]>([]); const [orders, setOrders] = useState<StaffOrderSummary[]>([]); const [ordersLoading, setOrdersLoading] = useState(false); const [orderQuery, setOrderQuery] = useState('');
   const [commandOpen, setCommandOpen] = useState(false); const [commandQuery, setCommandQuery] = useState(''); const [orderStatusFilter, setOrderStatusFilter] = useState<'all'|OrderStatus>('all'); const [orderPage, setOrderPage] = useState(1);
-  const [product, setProduct] = useState({ sku: '', name: '', unit: 'كرتون', categoryId: '', description: '', barcode: '' }); const [category, setCategory] = useState({ name: '', slug: '', parentId: '' }); const [selectedProduct, setSelectedProduct] = useState(''); const [tier, setTier] = useState<CustomerTier>('wholesale'); const [price, setPrice] = useState(''); const [warehouseId, setWarehouseId] = useState(''); const [delta, setDelta] = useState(''); const [reason, setReason] = useState(''); const [imageFile, setImageFile] = useState<File | null>(null); const [importFile, setImportFile] = useState<File | null>(null); const [importJobId, setImportJobId] = useState<string | null>(null); const [lastImportResult, setLastImportResult] = useState<{ imported_rows: number; products_created: number; products_updated: number; inventory_changed: number } | null>(null); const [importPreview, setImportPreview] = useState<{ rows: number; invalid: number; fingerprint: string; contractVersion: string; sourceName: string; diagnostics: { rowNumber: number; field: string; message: string }[] } | null>(null); const [busy, setBusy] = useState(false); const [message, setMessage] = useState<string | null>(null); const [error, setError] = useState<string | null>(null); const [detailOrderId, setDetailOrderId] = useState<string | null>(null);
+  const [product, setProduct] = useState({ sku: '', name: '', unit: 'كرتون', categoryId: '', description: '', barcode: '' }); const [category, setCategory] = useState({ name: '', slug: '', parentId: '' }); const [selectedProduct, setSelectedProduct] = useState(''); const [tier, setTier] = useState<CustomerTier>('wholesale'); const [price, setPrice] = useState(''); const [warehouseId, setWarehouseId] = useState(''); const [delta, setDelta] = useState(''); const [reason, setReason] = useState(''); const [imageFile, setImageFile] = useState<File | null>(null); const [importFile, setImportFile] = useState<File | null>(null); const [importJobId, setImportJobId] = useState<string | null>(null); const [lastImportResult, setLastImportResult] = useState<{ imported_rows: number; products_created: number; products_updated: number; inventory_changed: number } | null>(null); const [importPreview, setImportPreview] = useState<{ rows: number; invalid: number; fingerprint: string; contractVersion: string; sourceName: string; diagnostics: { rowNumber: number; field: string; message: string }[] } | null>(null); const [busy, setBusy] = useState(false); const [message, setMessage] = useState<string | null>(null); const [error, setError] = useState<string | null>(null); const [detailOrderId, setDetailOrderId] = useState<string | null>(null); const [selectedOrderIds, setSelectedOrderIds] = useState<Set<string>>(new Set()); const [bulkTargetStatus, setBulkTargetStatus] = useState<OrderStatus | ''>(''); const [bulkPreviewOpen, setBulkPreviewOpen] = useState(false); const [bulkIdempotencyKey, setBulkIdempotencyKey] = useState<string | null>(null); const [bulkBusy, setBulkBusy] = useState(false);
 
   const reload = useCallback(async () => { if (!supabase) return; setOrdersLoading(true); try { const [{ data: productRows, error: productError }, { data: warehouseRows, error: warehouseError }, categoryRows, orderRows] = await Promise.all([supabase.from('products').select('id,sku,name,unit').eq('status', 'active').order('name').limit(200), supabase.from('warehouses').select('id,name').eq('is_active', true).order('created_at'), getCategories(), getStaffOrders(50)]); if (productError) throw productError; if (warehouseError) throw warehouseError; setProducts((productRows ?? []) as StaffProduct[]); setCategories(categoryRows); setOrders(orderRows); const nextWarehouses = (warehouseRows ?? []) as Warehouse[]; setWarehouses(nextWarehouses); setWarehouseId(current => current || nextWarehouses[0]?.id || ''); } finally { setOrdersLoading(false); } }, []);
   useEffect(() => { void reload().catch((e) => setError(e instanceof Error ? e.message : 'تعذر تحميل مركز التحكم.')); }, [reload]);
@@ -74,6 +74,60 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
   async function stageImport() { if (!importFile) return; setBusy(true); setError(null); setMessage(null); setImportJobId(null); setImportPreview(null); try { const result = await stageProductImport(importFile); setImportPreview({ rows: result.rows.length, invalid: result.diagnostics.length, fingerprint: result.fingerprint, contractVersion: result.contractVersion ?? 'xlsx-v1', sourceName: importFile.name, diagnostics: result.diagnostics.slice(0, 12) }); if (result.jobId) { setImportJobId(result.jobId); setMessage('تمت المعاينة والتحقق على الخادم. يمكنك اعتماد الاستيراد الذري.'); } else setError('الملف يحتوي أخطاء ويجب إصلاحها قبل الاستيراد.'); } catch (e) { setError(e instanceof Error ? e.message : 'تعذر تجهيز ملف الاستيراد.'); } finally { setBusy(false); } }
   async function commitImport() { if (!importJobId || !warehouseId) return; await run(async () => { const result = await commitProductImport(importJobId, warehouseId); setLastImportResult(result); setImportJobId(null); setImportFile(null); setImportPreview(null); return result; }, 'تم اعتماد الاستيراد بالكامل وتسجيل أثر المخزون والتدقيق.'); }
   async function changeOrderStatus(orderId: string, status: OrderStatus) { await run(async () => transitionOrder(orderId, status), `تم تحديث حالة الطلب إلى: ${STATUS_LABELS[status]}.`); }
+  function toggleOrderSelection(orderId: string) {
+    setSelectedOrderIds((current) => {
+      const next = new Set(current);
+      if (next.has(orderId)) next.delete(orderId); else next.add(orderId);
+      return next;
+    });
+  }
+  const selectedOrders = useMemo(() => orders.filter((order) => selectedOrderIds.has(order.id)), [orders, selectedOrderIds]);
+  const bulkAllowedTargets = useMemo(() => {
+    if (!selectedOrders.length) return [] as OrderStatus[];
+    return (Object.keys(STATUS_LABELS) as OrderStatus[]).filter((candidate) =>
+      selectedOrders.every((order) => allowedNextStatuses(order.status, role).includes(candidate))
+    );
+  }, [selectedOrders, role]);
+  const pageOrderIds = pagedOrders.map((order) => order.id);
+  const allPageSelected = pageOrderIds.length > 0 && pageOrderIds.every((id) => selectedOrderIds.has(id));
+  function togglePageSelection() {
+    setSelectedOrderIds((current) => {
+      const next = new Set(current);
+      if (allPageSelected) pageOrderIds.forEach((id) => next.delete(id));
+      else pageOrderIds.forEach((id) => next.add(id));
+      return next;
+    });
+  }
+  function openBulkPreview() {
+    const target = bulkAllowedTargets[0] ?? '';
+    if (!selectedOrders.length || !target) {
+      setError('اختر طلبات لها انتقال مشترك مسموح به قبل المعاينة.');
+      return;
+    }
+    setBulkTargetStatus(target);
+    setBulkIdempotencyKey(crypto.randomUUID());
+    setBulkPreviewOpen(true);
+    setError(null);
+  }
+  async function executeBulkTransition() {
+    if (!bulkTargetStatus || !selectedOrders.length || !bulkIdempotencyKey) return;
+    setBulkBusy(true);
+    setError(null);
+    setMessage(null);
+    try {
+      const result = await bulkTransitionOrders(selectedOrders.map((order) => order.id), bulkTargetStatus, bulkIdempotencyKey);
+      const applied = result as BulkTransitionResult[];
+      setMessage(`تم تحديث ${applied.length} طلبات ذريًا إلى: ${STATUS_LABELS[bulkTargetStatus]}.`);
+      setSelectedOrderIds(new Set());
+      setBulkPreviewOpen(false);
+      setBulkIdempotencyKey(null);
+      await reload();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'تعذر تنفيذ العملية الجماعية. لم يتم اعتماد العملية جزئيًا.');
+    } finally {
+      setBulkBusy(false);
+    }
+  }
   const canCatalog = role === 'owner' || role === 'admin' || role === 'sales';
   const canCategory = role === 'owner' || role === 'admin';
   const canInventory = role === 'owner' || role === 'admin' || role === 'warehouse';
@@ -157,7 +211,33 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
         {canCatalog && <><form className="admin-card" id="admin-import" onSubmit={(e) => { e.preventDefault(); void stageImport(); }}><h3>استيراد Excel آمن</h3><input aria-label="ملف المنتجات" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onChange={(e) => { setImportFile(e.target.files?.[0] ?? null); setImportJobId(null); setImportPreview(null); }} required />{importPreview && <div className="import-reconciliation" aria-live="polite"><details><summary>معاينة خريطة الأعمدة والمصدر</summary><div className="import-mapping-grid"><span>SKU</span><b>sku</b><span>Name</span><b>name</b><span>Unit</span><b>unit</b><span>Category</span><b>category</b><span>Quantity</span><b>quantity</b><span>Retail Price</span><b>prices.retail</b><span>Wholesale Price</span><b>prices.wholesale</b><span>Distributor Price</span><b>prices.distributor</b></div><small>Correlation / Job ID: <code dir="ltr">{importJobId ?? 'تم الاعتماد'}</code></small></details><small>المصدر: {importPreview.sourceName} · العقد: {importPreview.contractVersion} · الصفوف: {importPreview.rows} · الأخطاء: {importPreview.invalid} · بصمة المصدر: <code dir="ltr">{importPreview.fingerprint.slice(0, 16)}…</code></small>{importPreview.diagnostics.length > 0 && <details><summary>تفاصيل أول الأخطاء</summary><ul>{importPreview.diagnostics.map((item, index) => <li key={index}>صف {item.rowNumber} · {item.field}: {item.message}</li>)}</ul></details>}</div>}{!importJobId ? <button disabled={busy || !importFile}>رفع ومعاينة</button> : <button disabled={busy || !warehouseId} onClick={(e) => { e.preventDefault(); void commitImport(); }}>اعتماد الاستيراد الذري</button>}</form>{lastImportResult && <div className="import-reconciliation" role="status"><strong>آخر عملية اعتماد</strong><div><span>صفوف: {lastImportResult.imported_rows}</span><span>منشأة: {lastImportResult.products_created}</span><span>محدثة: {lastImportResult.products_updated}</span><span>حركات مخزون: {lastImportResult.inventory_changed}</span></div></div>}</>}
         {canInventory && <form className="admin-card" id="admin-inventory-adjust" onSubmit={(e) => { e.preventDefault(); if (!selectedProduct || !warehouseId || !delta) return; void run(() => adjustInventory(warehouseId, selectedProduct, Number(delta), reason.trim()), 'تم تعديل المخزون وتسجيل الحركة.'); }}><h3>تعديل المخزون</h3><select aria-label="المستودع" value={warehouseId} onChange={(e) => setWarehouseId(e.target.value)} required><option value="">اختر المستودع</option>{warehouses.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}</select><select aria-label="المنتج" value={selectedProduct} onChange={(e) => setSelectedProduct(e.target.value)} required><option value="">اختر المنتج</option>{products.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select><input aria-label="التغيير" type="number" step="1" placeholder="+ أو - الكمية" value={delta} onChange={(e) => setDelta(e.target.value)} required /><input aria-label="سبب التعديل" placeholder="سبب التعديل" value={reason} onChange={(e) => setReason(e.target.value)} required /><button disabled={busy}>تسجيل الحركة</button></form>}
       </div>
-      {canOrderWorkflow && <div className="cart-panel" id="admin-orders"><div className="section-heading"><div><span className="eyebrow">التشغيل</span><h2>إدارة الطلبات</h2></div><span>{visibleOrders.length}/{orders.length} طلبات</span></div><div className="admin-card admin-order-filter"><label htmlFor="admin-order-search">بحث الطلبات</label><div className="order-queue-toolbar"><input id="admin-order-search" value={orderQuery} onChange={(e) => setOrderQuery(e.target.value)} placeholder="رقم الطلب أو اسم العميل أو الحالة" /><select aria-label="فلترة حالة الطلب" value={orderStatusFilter} onChange={(e) => setOrderStatusFilter(e.target.value as 'all'|OrderStatus)}><option value="all">كل الحالات</option>{(Object.keys(STATUS_LABELS) as OrderStatus[]).map((key) => <option key={key} value={key}>{STATUS_LABELS[key]}</option>)}</select><button type="button" className="ghost" onClick={() => { setOrderQuery(''); setOrderStatusFilter('all'); setOrderPage(1); }} disabled={!orderQuery && orderStatusFilter === 'all'}>مسح</button></div></div>{ordersLoading ? <div className="cart-empty">جارٍ تحميل الطلبات…</div> : !orders.length ? <div className="cart-empty">لا توجد طلبات تشغيلية بعد.</div> : !visibleOrders.length ? <div className="cart-empty">لا توجد نتائج مطابقة للبحث.</div> : <div className="cart-lines">{pagedOrders.map((order) => <article className="cart-line" key={order.id}><div><strong>طلب #{order.order_number}</strong><small>العميل: {order.customer_name}</small></div><div><strong>{formatMoney(order.total)} {order.currency}</strong><small>الحالة: {STATUS_LABELS[order.status]}</small></div><div className="status-actions"><button type="button" className="ghost" onClick={() => setDetailOrderId(order.id)}>التفاصيل</button>{allowedNextStatuses(order.status, role).map((next) => <button key={next} disabled={busy} onClick={() => void changeOrderStatus(order.id, next)}>{STATUS_LABELS[next]}</button>)}</div></article>)}</div>}{visibleOrders.length > 0 && <div className="order-queue-pagination" aria-label="صفحات الطلبات"><span>صفحة {activeOrderPage} / {orderPages} · {visibleOrders.length} نتيجة</span><div><button type="button" className="ghost" onClick={() => setOrderPage(p => Math.max(1,p-1))} disabled={activeOrderPage===1}>السابق</button><button type="button" className="ghost" onClick={() => setOrderPage(p => Math.min(orderPages,p+1))} disabled={activeOrderPage===orderPages}>التالي</button></div></div>}</div>}
+      {canOrderWorkflow && <div className="cart-panel" id="admin-orders"><div className="section-heading"><div><span className="eyebrow">التشغيل</span><h2>إدارة الطلبات</h2></div><span>{visibleOrders.length}/{orders.length} طلبات</span></div><div className="admin-card admin-order-filter"><label htmlFor="admin-order-search">بحث الطلبات</label><div className="order-queue-toolbar"><input id="admin-order-search" value={orderQuery} onChange={(e) => setOrderQuery(e.target.value)} placeholder="رقم الطلب أو اسم العميل أو الحالة" /><select aria-label="فلترة حالة الطلب" value={orderStatusFilter} onChange={(e) => setOrderStatusFilter(e.target.value as 'all'|OrderStatus)}><option value="all">كل الحالات</option>{(Object.keys(STATUS_LABELS) as OrderStatus[]).map((key) => <option key={key} value={key}>{STATUS_LABELS[key]}</option>)}</select><button type="button" className="ghost" onClick={() => { setOrderQuery(''); setOrderStatusFilter('all'); setOrderPage(1); }} disabled={!orderQuery && orderStatusFilter === 'all'}>مسح</button></div></div>{ordersLoading ? <div className="cart-empty">جارٍ تحميل الطلبات…</div> : !orders.length ? <div className="cart-empty">لا توجد طلبات تشغيلية بعد.</div> : !visibleOrders.length ? <div className="cart-empty">لا توجد نتائج مطابقة للبحث.</div> : <div className="cart-lines">
+        <div className="bulk-order-toolbar" aria-label="العمليات الجماعية">
+          <label className="bulk-order-select"><input type="checkbox" checked={allPageSelected} onChange={togglePageSelection} aria-label={allPageSelected ? 'إلغاء تحديد طلبات الصفحة' : 'تحديد طلبات الصفحة'} /><span>تحديد الصفحة</span></label>
+          <span className="bulk-order-count">{selectedOrders.length} محددة</span>
+          <select aria-label="الانتقال الجماعي" value={bulkTargetStatus} onChange={(e) => setBulkTargetStatus(e.target.value as OrderStatus | '')} disabled={!selectedOrders.length || !bulkAllowedTargets.length || bulkBusy}>
+            <option value="">اختر انتقالًا مشتركًا</option>
+            {bulkAllowedTargets.map((next) => <option key={next} value={next}>{STATUS_LABELS[next]}</option>)}
+          </select>
+          <button type="button" onClick={openBulkPreview} disabled={!selectedOrders.length || !bulkTargetStatus || !bulkAllowedTargets.includes(bulkTargetStatus) || bulkBusy}>معاينة العملية</button>
+          {selectedOrders.length > 0 && <button type="button" className="ghost" onClick={() => { setSelectedOrderIds(new Set()); setBulkTargetStatus(''); setBulkPreviewOpen(false); setBulkIdempotencyKey(null); }} disabled={bulkBusy}>إلغاء التحديد</button>}
+        </div>
+        {pagedOrders.map((order) => <article className="cart-line" key={order.id}>
+          <label className="bulk-order-row-select"><input type="checkbox" checked={selectedOrderIds.has(order.id)} onChange={() => toggleOrderSelection(order.id)} aria-label={`تحديد طلب #${order.order_number}`} /><span className="sr-only">تحديد</span></label>
+          <div><strong>طلب #{order.order_number}</strong><small>العميل: {order.customer_name}</small></div>
+          <div><strong>{formatMoney(order.total)} {order.currency}</strong><small>الحالة: {STATUS_LABELS[order.status]}</small></div>
+          <div className="status-actions"><button type="button" className="ghost" onClick={() => setDetailOrderId(order.id)}>التفاصيل</button>{allowedNextStatuses(order.status, role).map((next) => <button key={next} disabled={busy || bulkBusy} onClick={() => void changeOrderStatus(order.id, next)}>{STATUS_LABELS[next]}</button>)}</div>
+        </article>)}
+      </div>}{visibleOrders.length > 0 && <div className="order-queue-pagination" aria-label="صفحات الطلبات"><span>صفحة {activeOrderPage} / {orderPages} · {visibleOrders.length} نتيجة</span><div><button type="button" className="ghost" onClick={() => setOrderPage(p => Math.max(1,p-1))} disabled={activeOrderPage===1}>السابق</button><button type="button" className="ghost" onClick={() => setOrderPage(p => Math.min(orderPages,p+1))} disabled={activeOrderPage===orderPages}>التالي</button></div></div>}
+      {bulkPreviewOpen && <div className="admin-command-backdrop" role="presentation" onClick={() => !bulkBusy && setBulkPreviewOpen(false)}>
+        <section className="admin-command-dialog bulk-order-preview" role="dialog" aria-modal="true" aria-labelledby="bulk-order-preview-title" onClick={(event) => event.stopPropagation()}>
+          <div className="section-heading"><div><span className="eyebrow">قبل الاعتماد</span><h2 id="bulk-order-preview-title">معاينة العملية الجماعية</h2></div><button type="button" className="ghost" onClick={() => setBulkPreviewOpen(false)} disabled={bulkBusy}>إغلاق</button></div>
+          <p>سيتم تطبيق انتقال <strong>{bulkTargetStatus ? STATUS_LABELS[bulkTargetStatus] : '—'}</strong> على {selectedOrders.length} طلبات داخل نفس المؤسسة. يتحقق الخادم مجددًا من الصلاحية والحالة والمخزون قبل أي تعديل، وتُطبق العملية في معاملة واحدة.</p>
+          <div className="bulk-order-preview-list">{selectedOrders.map((order) => <div key={order.id}><strong>#{order.order_number}</strong><span>{STATUS_LABELS[order.status]} → {bulkTargetStatus ? STATUS_LABELS[bulkTargetStatus] : '—'}</span></div>)}</div>
+          <div className="status-actions"><button type="button" onClick={() => void executeBulkTransition()} disabled={bulkBusy || !bulkTargetStatus || !bulkAllowedTargets.includes(bulkTargetStatus)}>{bulkBusy ? 'جارٍ الاعتماد…' : 'اعتماد العملية الذرية'}</button><button type="button" className="ghost" onClick={() => setBulkPreviewOpen(false)} disabled={bulkBusy}>إلغاء</button></div>
+        </section>
+      </div>}
+      </div>}
       {detailOrderId&&(()=>{const order=orders.find(item=>item.id===detailOrderId);if(!order)return null;return <RecordDetailDrawer eyebrow="Operations" title={`طلب #${order.order_number}`} summary={`${order.customer_name} · ${STATUS_LABELS[order.status]}`} fields={[{label:'العميل',value:order.customer_name},{label:'الحالة',value:STATUS_LABELS[order.status]},{label:'الإجمالي',value:`${formatMoney(order.total)} ${order.currency}`},{label:'المعرّف',value:order.id},{label:'الحركات التالية المتاحة',value:allowedNextStatuses(order.status,role).length?allowedNextStatuses(order.status,role).map(s=>STATUS_LABELS[s]).join(' · '):'لا توجد حركة متاحة لهذه الصلاحية'}]} onClose={()=>setDetailOrderId(null)}/>})()}
       {error && <div className="error-banner" role="alert"><span>{error}</span><button type="button" className="ghost" disabled={ordersLoading} onClick={() => void reload()}>إعادة تحميل مركز التحكم</button></div>}{message && <div className="success" role="status">{message}</div>}
       {canCatalog && <div className="admin-workspace-section" data-label="01 · الكتالوج والمنتجات"><CatalogManagementPanel role={role} /></div>}
