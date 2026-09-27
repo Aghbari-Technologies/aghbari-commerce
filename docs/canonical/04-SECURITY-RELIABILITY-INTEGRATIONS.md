@@ -58,3 +58,8 @@ The manifest lists the security/offline/integration sources that must be fully m
 - Direct authenticated INSERT/UPDATE/DELETE table privileges remain revoked; mutations use authenticated-only RPCs that derive tenant/customer context and validate active-customer ownership.
 - Address RPCs are SECURITY DEFINER only because they must write the existing audit log without broadening direct table mutation rights. They pin search_path='', validate authenticated customer context, and are explicitly denied to anon.
 - The single-default invariant is backed by a partial unique index plus per-customer transaction locking, and the SQL contract test includes negative privilege/execution assertions.
+
+## 2026-09-28 — Supplier / warehouse update security
+- Supplier and warehouse update RPCs are SECURITY DEFINER with search_path='', executable by authenticated users only, and explicitly denied to anon.
+- Business authorization remains owner/admin-only inside the functions; UI permissions do not substitute for server authorization.
+- Tenant scope is derived server-side and the mutation is audited; no direct client write path is introduced by the UI.
