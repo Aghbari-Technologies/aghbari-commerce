@@ -86,7 +86,7 @@ export default function CustomerOrdersPanel({
     </div>
 
     <div className="customer-orders-toolbar" role="search">
-      <label><span>بحث</span><input aria-label="بحث الطلبات" value={query} onChange={e=>setQuery(e.target.value)} placeholder="رقم الطلب أو العميل أو الحالة" disabled={loading}/></label>
+      <label><span>بحث</span><input aria-label="بحث الطلبات" value={query} onChange={e=>setQuery(e.target.value)} placeholder="رقم الطلب أو الحالة" disabled={loading}/></label>
       <label><span>الحالة</span><select aria-label="فلترة حالة الطلب" value={status} onChange={e=>setStatus(e.target.value)} disabled={loading}><option value="all">كل الحالات</option>{statuses.map(item=><option key={item} value={item}>{STATUS_LABELS[item]??item}</option>)}</select></label>
       <label><span>الترتيب</span><select aria-label="ترتيب الطلبات" value={sort} onChange={e=>setSort(e.target.value as SortMode)} disabled={loading}><option value="newest">الأحدث أولًا</option><option value="oldest">الأقدم أولًا</option><option value="highest">الأعلى قيمة</option><option value="lowest">الأقل قيمة</option></select></label>
       <button type="button" className="ghost" onClick={clearFilters} disabled={loading||(!query&&status==='all'&&sort==='newest')}>مسح</button>
