@@ -41,3 +41,43 @@ export async function transitionOrder(orderId: string, toStatus: OrderStatus): P
   if (error) throw error;
   return assertStaffOrderSummary(data as unknown);
 }
+
+export const MAX_BULK_ORDER_TRANSITIONS = 100;
+
+export function validateBulkOrderTransitionInput(orderIds: string[], toStatus: OrderStatus): string[] {
+  if (!Array.isArray(orderIds) || orderIds.length < 1 || orderIds.length > MAX_BULK_ORDER_TRANSITIONS) {
+    throw new Error(`يجب تحديد 1 إلى ${MAX_BULK_ORDER_TRANSITIONS} طلبات للعملية الجماعية.`);
+  }
+  if (!ORDER_STATUSES.has(toStatus)) throw new Error('حالة انتقال الطلب الجماعي غير صالحة.');
+  const normalized = orderIds.map((id) => {
+    if (typeof id !== 'string' || !UUID_PATTERN.test(id.trim())) throw new Error('معرّف طلب غير صالح ضمن العملية الجماعية.');
+    return id.trim();
+  });
+  if (new Set(normalized).size !== normalized.length) throw new Error('لا يمكن تكرار الطلب داخل العملية الجماعية.');
+  return normalized;
+}
+
+export interface BulkTransitionResult {
+  order_id: string;
+  from_status: OrderStatus;
+  to_status: OrderStatus;
+}
+
+export async function bulkTransitionOrders(orderIds: string[], toStatus: OrderStatus, idempotencyKey = crypto.randomUUID()): Promise<BulkTransitionResult[]> {
+  const ids = validateBulkOrderTransitionInput(orderIds, toStatus);
+  const key = idempotencyKey.trim();
+  if (key.length < 16 || key.length > 128) throw new Error('مفتاح العملية الجماعية يجب أن يكون بين 16 و128 حرف.');
+  const { data, error } = await requireSupabase().rpc('bulk_transition_orders', {
+    p_idempotency_key: key,
+    p_order_ids: ids,
+    p_to_status: toStatus,
+  });
+  if (error) throw error;
+  if (!Array.isArray(data)) throw new Error('استجابة العملية الجماعية غير صالحة.');
+  return data.map((row) => {
+    if (!row || typeof row !== 'object' || !UUID_PATTERN.test(String((row as Record<string, unknown>).order_id)) || !ORDER_STATUSES.has(String((row as Record<string, unknown>).from_status)) || !ORDER_STATUSES.has(String((row as Record<string, unknown>).to_status))) {
+      throw new Error('نتيجة العملية الجماعية تحتوي بيانات غير صالحة.');
+    }
+    return row as BulkTransitionResult;
+  });
+}
