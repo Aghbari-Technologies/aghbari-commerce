@@ -80,10 +80,10 @@ Do not create a second design system, duplicate CSS family or duplicate asset co
 
 ## 2026-09-27 — Full reference pack closure
 
-- All 84 current docs/ui-reference/ PNGs are P0 visual inputs until explicitly classified otherwise.
-- Full UI construction means reference coverage across Admin/Staff and Customer Portal, including nested views, actions, validation, permissions and all applicable states; it is not limited to the first visible route.
+- The 84 supplied PNGs are provenance assets only; they are not automatically P0 implementation targets.
+- Full UI construction means canonical Aghbari capability coverage across Admin/Staff and Customer Portal, including nested views, actions, validation, permissions and all applicable states; visual references only guide reusable presentation patterns.
 - Use a shared visual system first, then close screens in dependency batches. Do not create duplicate CSS/component families to match isolated screenshots.
-- Every reference-backed screen must have a route/surface, state, viewport, implementation status and exact-SHA visual/runtime proof, or an explicit boundary classification.
+- Any reference-derived pattern that is used must map to an existing/in-scope Aghbari route or an explicit boundary classification; duplicate/equivalent source-app images must not produce duplicate Aghbari screens.
 - Reference-derived UI requirements discovered during execution must be added here when they concern user experience, navigation, interaction or accessibility.
 \n\n## 2026-09-27 — Customer finance document workspace\n\n- The Customer Portal finance section exposes the existing Commerce financial document contract as read-only UI: operational invoices, invoice line items and recorded payments.\n- Invoice lists use bounded loading, search, status filtering, sorting and pagination. Invoice details expose line-item totals, recorded payments, paid amount and remaining balance with loading, empty, error, retry and offline states.\n- The UI reads only the existing RLS-protected operational_invoices, operational_invoice_items and payments resources; it does not introduce customer-side financial mutations.\n- Customer financial document data is server-bound and is deferred while offline, consistent with the portal's offline reliability boundary.\n
 
