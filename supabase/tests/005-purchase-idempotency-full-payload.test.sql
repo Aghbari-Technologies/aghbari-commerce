@@ -26,18 +26,18 @@ select is(
     '12121212-1212-4121-8121-121212121216'::uuid,
     '12121212-1212-4121-8121-121212121214'::uuid,
     'full-payload-idempotency-01',
-    jsonb_build_array(jsonb_build_object('product_id','12121212-1212-4121-8121-121212121215','quantity',2,'unit_cost',100)),
+    jsonb_build_array(jsonb_build_object('product_id','12121212-1212-4121-8121-121212121215','quantity',2,'unit_cost',64)),
     'YER', 'first payload'
   )),
-  200::numeric,
-  'Initial purchase command succeeds'
+  128::numeric,
+  'Initial purchase command succeeds at the canonical client bound'
 );
 select throws_ok(
-  $$select * from public.create_purchase_order('12121212-1212-4121-8121-121212121216'::uuid,'12121212-1212-4121-8121-121212121214'::uuid,'full-payload-idempotency-01',jsonb_build_array(jsonb_build_object('product_id','12121212-1212-4121-8121-121212121215','quantity',2,'unit_cost',100)),'USD','first payload')$$,
+  $$select * from public.create_purchase_order('12121212-1212-4121-8121-121212121216'::uuid,'12121212-1212-4121-8121-121212121214'::uuid,'full-payload-idempotency-01',jsonb_build_array(jsonb_build_object('product_id','12121212-1212-4121-8121-121212121215','quantity',2,'unit_cost',64)),'USD','first payload')$$,
   '40001','idempotency key payload conflict','Changing currency under an existing key is rejected'
 );
 select throws_ok(
-  $$select * from public.create_purchase_order('12121212-1212-4121-8121-121212121216'::uuid,'12121212-1212-4121-8121-121212121214'::uuid,'full-payload-idempotency-01',jsonb_build_array(jsonb_build_object('product_id','12121212-1212-4121-8121-121212121215','quantity',2,'unit_cost',100)),'YER','changed payload')$$,
+  $$select * from public.create_purchase_order('12121212-1212-4121-8121-121212121216'::uuid,'12121212-1212-4121-8121-121212121214'::uuid,'full-payload-idempotency-01',jsonb_build_array(jsonb_build_object('product_id','12121212-1212-4121-8121-121212121215','quantity',2,'unit_cost',64)),'YER','changed payload')$$,
   '40001','idempotency key payload conflict','Changing notes under an existing key is rejected'
 );
 
