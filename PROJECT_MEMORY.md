@@ -456,3 +456,9 @@ Command "1" means:
 - Added explicit regression tests: exactly 128 is accepted and 129 is rejected.
 - Customer portal price/reorder closure from the preceding implementation remains in effect.
 - Exact-SHA evidence rule remains active; no PASS is claimed from source edits alone.
+
+
+## 30. EXECUTION RUN — cf150ea29f201ca06d7ec6320d59e70b8cb725c9
+- Customer catalog display now honors the server-returned authorized price currency for base catalog pricing and product detail.
+- Previous customer pricing/reorder hardening and quick-order 128-character idempotency normalization remain active.
+- Exact-SHA evidence remains mandatory; this execution state is not certified from source inspection alone.
