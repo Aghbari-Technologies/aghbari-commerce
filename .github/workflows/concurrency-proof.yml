@@ -69,6 +69,8 @@ jobs:
         run: bash scripts/concurrency-proof.sh
       - name: Run expanded nine-surface concurrency matrix
         run: bash scripts/concurrency-matrix-proof.sh
+      - name: Run purchase/receipt 8-way concurrency proof
+        run: bash scripts/concurrency-purchase-receipt-8way-proof.sh
       - name: Run 8-way reporting race hammer
         run: bash scripts/concurrency-reporting-8way-proof.sh
       - name: Run 8-way order race and replay hammer
