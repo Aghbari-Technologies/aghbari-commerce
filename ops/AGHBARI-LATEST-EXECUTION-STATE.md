@@ -2,22 +2,23 @@
 
 Project: Aghbari Commerce | الأغبري
 Branch: `main`
-Current Git HEAD: `91d1db0b2dea42dad5b7609f24086ed3a8f572d8`
+Current Git HEAD: `a1a001f7ceafb72ebeacb0b1c942dfebe2345a90`
 Production: HOLD / NO TOUCH
 Certification: NOT CLAIMED
 
 ## Current reality
-- Real implementation continued on the actual current HEAD; no historical evidence was transferred.
-- Purchase idempotency test fixture was reconciled from the stale 200-value client fixture to the required 128-value bound (`quantity=2 × unit_cost=64`).
-- Cross-surface UI closure received a dedicated, loaded stylesheet for focus states, touch targets, sticky operational navigation, responsive workspace links, table behavior and reduced-motion support.
-- No fake business behavior or production mutation was introduced.
+- Active implementation continued on the exact current HEAD; no historical evidence was transferred.
+- Customer catalog now preserves server-authorized base pricing and uses it when no matching quantity tier applies.
+- Customer order-detail reorder resolves authorized catalog items outside the current visible page before re-adding them to the cart.
+- A dedicated pricing contract test now locks tier selection, base-price fallback and invalid-input handling.
+- No production mutation was introduced.
 
 ## Exact proof status
 - Implementation: VERIFIED by exact repository content at current HEAD.
-- Purchase idempotency 128 fixture: NOT_PROVEN by CI/runtime yet.
-- New UI polish: NOT_PROVEN by browser/visual runtime yet.
+- Purchase idempotency 128 fixture: NOT_PROVEN by CI/runtime until an exact-SHA proof completes.
+- New UI polish: NOT_PROVEN by browser/visual runtime until exact current-SHA evidence completes.
 - Current GitHub status: Vercel check `pending`; this is not certification evidence.
-- Prior exact-SHA evidence remains historical and is not transferred to `91d1db0...`.
+- Prior exact-SHA evidence remains historical and is not transferred to the current HEAD.
 
 ## Open execution frontier
 UI: 84-reference coverage → unique screen packs → remaining unclosed screens/states/actions → browser/visual proof.
@@ -28,7 +29,7 @@ DEPLOY: free exact-source hosted runtime proof; no unchanged Vercel retries.
 DOCS: semantic consolidation only when it closes an active requirement/proof gap.
 
 ## NEXT EXECUTABLE ACTION
-Run the affected purchase-idempotency/Test-the-Test and application-quality proofs against exact HEAD `91d1db0b2dea42dad5b7609f24086ed3a8f572d8`; then use the result to open the next highest-value independent UI/core/security gap. Do not claim PASS until the exact current SHA has evidence.
+Run the affected exact-SHA application-quality and Test-the-Test proofs for `a1a001f7ceafb72ebeacb0b1c942dfebe2345a90`; continue independently with the next material UI/core/security gap and use their results to close verified work only.
 
 ## DO NOT REPEAT
 Do not rebuild closed/proven work; do not transfer evidence between SHAs; do not retry the unchanged Vercel protection path; do not create duplicate reference packs or memory systems.
