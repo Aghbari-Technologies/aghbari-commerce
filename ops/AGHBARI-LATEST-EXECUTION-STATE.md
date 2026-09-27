@@ -33,11 +33,18 @@ Certification: NOT CLAIMED
 - Full 84-reference screen-pack equivalence and proof matrix.
 - Remaining uncovered canonical product/quality gaps.
 
+## LATEST CLOSURE BATCH — 2026-09-28
+- Real Staff/Order detail read contract added to `src/services/staffOrders.ts` with UUID, money, line-total and subtotal reconciliation checks.
+- `AdminPanel` now loads the real order detail and shows loading/error/retry plus line-level information inside the reusable detail drawer.
+- `RecordDetailDrawer` now supports rich content and an explicit retry/close footer without adding mutation authority.
+- Focused negative/positive contract test added at `src/services/staffOrders.detail.test.ts`.
+- Bounded GitHub quality workflow added: typecheck + focused detail test + build, canceling stale runs.
+
 ## NEXT EXECUTABLE ACTION
-Read the live `refs/heads/main`, inspect newest check runs/logs, fix the first material failure once; then continue the next independent uncovered reference-pack/core gap. Keep address migration source-only until exact migration/runtime proof.
+Read the final exact `main` HEAD, verify the order-detail batch at that exact SHA, then advance the next independent uncovered reference-pack/core gap. Keep purchase/receipt and address migrations source-only until their exact migration/runtime proof exists.
 
 ## DO NOT REPEAT
-Do not transfer evidence across SHAs. Do not mutate Production directly. Do not retry unchanged Vercel rate-limit/protection. Do not reopen closed finance, deep-link, recovery, bulk-order, cache-isolation, trust/theme, or import-reconciliation implementation work.
+Do not transfer evidence across SHAs. Do not mutate Production directly. Do not retry unchanged Vercel rate-limit/protection. Do not reopen closed finance, deep-link, recovery, bulk-order, cache-isolation, trust/theme, import-reconciliation, or the now-closed Staff order-detail implementation work.
 
 
 ## 2026-09-28 — Customer delivery-address closure
