@@ -5,7 +5,6 @@ import type { PaymentMethod } from '../domain/customerPolicy';
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const ORDER_STATUSES = new Set(['draft', 'pending', 'confirmed', 'preparing', 'ready', 'completed', 'cancelled']);
-const MAX_IDEMPOTENCY_KEY_LENGTH = 128;
 const MAX_ORDER_LINES = 100;
 
 function assertUuid(value: unknown, operation: string) {
