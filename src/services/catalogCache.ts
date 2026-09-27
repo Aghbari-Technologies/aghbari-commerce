@@ -8,6 +8,7 @@ export const CATALOG_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
 interface CacheEntry {
   key: string;
+  scope: string;
   search: string;
   categoryId: string | null;
   fetchedAt: string;
@@ -38,7 +39,7 @@ function readEntries(): CacheEntry[] {
     return parsed.filter((value): value is CacheEntry => {
       if (!value || typeof value !== 'object') return false;
       const entry = value as Partial<CacheEntry>;
-      if (typeof entry.key !== 'string' || typeof entry.search !== 'string' || (entry.categoryId !== null && typeof entry.categoryId !== 'string')) return false;
+      if (typeof entry.key !== 'string' || typeof entry.scope !== 'string' || entry.scope.trim() === '' || typeof entry.search !== 'string' || (entry.categoryId !== null && typeof entry.categoryId !== 'string')) return false;
       if (typeof entry.fetchedAt !== 'string' || Number.isNaN(Date.parse(entry.fetchedAt))) return false;
       return Array.isArray(entry.items) && entry.items.length <= MAX_CATALOG_CACHE_ITEMS && entry.items.every(validItem);
     });
@@ -68,16 +69,17 @@ function writeEntries(entries: CacheEntry[]) {
   }
 }
 
-function cacheKey(search: string, categoryId: string | null) {
-  return JSON.stringify([search.trim(), categoryId]);
+function cacheKey(scope: string, search: string, categoryId: string | null) {
+  return JSON.stringify([scope.trim(), search.trim(), categoryId]);
 }
 
-export function cacheCatalogSnapshot(search: string, categoryId: string | null, items: CatalogItem[], fetchedAt = new Date()) {
-  if (typeof localStorage === 'undefined') return;
+export function cacheCatalogSnapshot(scope: string, search: string, categoryId: string | null, items: CatalogItem[], fetchedAt = new Date()) {
+  if (typeof localStorage === 'undefined' || !scope.trim()) return;
   const safeItems = items.filter(validItem).slice(0, MAX_CATALOG_CACHE_ITEMS);
   if (!safeItems.length) return;
   const entry: CacheEntry = {
-    key: cacheKey(search, categoryId),
+    key: cacheKey(scope, search, categoryId),
+    scope: scope.trim(),
     search: search.trim(),
     categoryId,
     fetchedAt: fetchedAt.toISOString(),
