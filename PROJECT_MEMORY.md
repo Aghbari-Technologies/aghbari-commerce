@@ -441,3 +441,11 @@ Command "1" means:
 - A session interruption must never require chat-history reconstruction; Git + canonical memory + live state are the durable resume source.
 - The 84 reference files are deduplicated into the smallest correct implementation set while preserving provenance.
 - Success is measured by fewer open gaps and more verified closure, not by files read, searches run, commits made or reports generated.
+
+
+## 28. EXECUTION RUN — a1a001f7ceafb72ebeacb0b1c942dfebe2345a90
+- Active implementation HEAD: `a1a001f7ceafb72ebeacb0b1c942dfebe2345a90` on `main`.
+- Fixed active customer portal pricing flow so server-returned `authorized_price` is preserved and used when no eligible quantity tier matches.
+- Added a domain-level effective catalog price contract and regression tests for tier selection, authorized-price fallback, and invalid-input safety.
+- Hardened customer order reordering so detail items are resolved from the current authorized catalog even when they are outside the currently displayed catalog page.
+- Exact-SHA proof remains mandatory; no browser/production PASS is inferred from code inspection.
