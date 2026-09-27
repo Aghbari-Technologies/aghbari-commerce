@@ -3,26 +3,25 @@
 ## Run 2026-09-27 — Parallel closure batch (latest)
 
 - Run: `2026-09-27`
-- SHA: `a1a001f7ceafb72ebeacb0b1c942dfebe2345a90`
+- SHA: `39efd8a7e98d982a643bed43af977b38d5ac679d`
 - Branch: `main`
 - Implemented:
-  - Preserved server-authorized catalog base pricing in the active customer portal and added a tested domain pricing contract for quantity-tier selection and safe fallback.
-  - Hardened customer order reordering to resolve authorized catalog items not present on the current catalog page.
-  - Kept existing UI/runtime closure work loaded and intact.
+  - Preserved server-authorized customer catalog base pricing and hardened customer reorder resolution across catalog pages.
+  - Canonicalized quick-order idempotency client validation to 16–128 characters.
+  - Added regression coverage for exactly 128 accepted and 129 rejected.
 - Verified:
-  - Exact current tree/commit was updated on `main`.
-  - Exact current GitHub Actions runs were automatically queued for this SHA.
+  - Exact source changes committed to `main`.
   - No production mutation.
 - Proven:
-  - Pricing fallback/reorder implementation: VERIFIED by exact committed source; runtime/browser behavior remains NOT_PROVEN.
-  - Current CI/browser evidence: pending/queued; no PASS claimed until exact-SHA evidence completes.
+  - Source-level implementation and regression-test presence: VERIFIED at exact SHA.
+  - Runtime/browser/CI outcomes: NOT_PROVEN until the exact SHA evidence completes.
 - Blocked:
-  - Vercel hosted protection/runtime path remains a separate deployment gate; unchanged path was not retried.
+  - Hosted deployment protection remains a separate gate; no unchanged Vercel bypass retry.
 - Certification: `NOT CLAIMED`
 - Production: `HOLD / NO TOUCH`
 
 ## Next executable action
-Close the queued exact-SHA proofs, then continue immediately with the next independent UI/core/security closure without reopening proven work.
+Inspect exact-SHA quality, Test-the-Test, security, migration, concurrency and browser evidence; resolve any failures immediately and continue the next independent closure lane.
 
 ## Historical continuity
-Previous detailed execution history remains available in Git history. This ledger stays compact to preserve repository/context space.
+Previous execution detail remains in Git history. This ledger is intentionally compact.
