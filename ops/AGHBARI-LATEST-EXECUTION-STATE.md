@@ -2,16 +2,15 @@
 
 Project: Aghbari Commerce | الأغبري
 Branch: `main`
-Current Git HEAD: `9204ed2a5b72c77802bd7e35aa14a6cf0a89be64`
+Current Git HEAD: `3e662eaff0fbb29394160fec20f1dac1a5daed83`
 Production: HOLD / NO TOUCH
 Certification: NOT CLAIMED
 
 ## Current reality
-- Active implementation is at exact HEAD `9204ed2a5b72c77802bd7e35aa14a6cf0a89be64` on `main`.
-- Customer pricing/currency is server-authorized and displayed consistently.
-- Customer reorder uses current authorized products, active warehouse, one atomic quick-order merge, and preflights against quantities already in the cart.
-- Quick-order lookup uses the active warehouse and quantity input is bounded at 10,000.
-- Source migration/test are ready to normalize quick-order idempotency to 16–128; production remains unchanged under HOLD.
+- Active implementation is at exact HEAD `3e662eaff0fbb29394160fec20f1dac1a5daed83` on `main`.
+- Customer pricing/currency, atomic reorder, active-warehouse binding, cart-stock preflight, and quick-order quantity guard are in the active code.
+- Reorder has an immediate mutex against duplicate clicks and a guaranteed unlock path.
+- Source migration/test is ready to align quick-order server idempotency to 16–128; production remains unchanged under HOLD.
 
 ## Exact proof status
 - Implementation: VERIFIED by exact repository content at current HEAD.
@@ -29,7 +28,7 @@ DEPLOY: free exact-source hosted runtime proof; no unchanged Vercel retries.
 DOCS: semantic consolidation only when it closes an active requirement/proof gap.
 
 ## NEXT EXECUTABLE ACTION
-Inspect exact-SHA Actions and deployment status for `9204ed2a5b72c77802bd7e35aa14a6cf0a89be64`; fix any failure immediately. Continue independent UI/core/security work without reopening closed paths.
+Inspect exact-SHA GitHub Actions for `3e662eaff0fbb29394160fec20f1dac1a5daed83` and resolve any failures. Confirm the newest Vercel deployment for this SHA; keep Production HOLD / NO TOUCH.
 
 ## DO NOT REPEAT
 Do not rebuild closed/proven work; do not transfer evidence between SHAs; do not retry the unchanged Vercel protection path; do not create duplicate reference packs or memory systems.
