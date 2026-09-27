@@ -25,6 +25,8 @@ const SAFE_ALTERNATIVES: Record<string, { label: string; target: string }> = {
   errors: { label: 'الأحداث والطوابير', target: '#admin-governance' },
   health: { label: 'الحوكمة والتشغيل', target: '#admin-governance' },
   invites: { label: 'دورة العميل', target: '#admin-customers' },
+  'warehouse-edit': { label: 'دليل المستودعات', target: '#admin-warehouses' },
+  'supplier-edit': { label: 'دورة المشتريات', target: '#admin-suppliers' },
   onyx: { label: 'البنية والحدود', target: '#admin-governance' },
   restore: { label: 'مركز التعارض والاسترداد', target: '#admin-recovery' },
   'dev-ai': { label: 'الحوكمة', target: '#admin-governance' },
