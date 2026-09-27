@@ -173,7 +173,7 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
         {canInventory&&<a href="#admin-export">التصدير</a>}
         {canCategory&&<a href="#admin-settings">إعدادات العميل</a>}
         {canOrderWorkflow&&<a href="#admin-notifications">الإشعارات</a>}
-        {canOrderWorkflow&&<a href="#admin-governance">التدقيق والتكاملات</a><a href="#admin-ui-reference">مراجع الواجهة (84)</a>}
+        {canOrderWorkflow&&<><a href="#admin-governance">التدقيق والتكاملات</a><a href="#admin-ui-reference">المراجع البصرية</a></>}
         {userId&&<a href="#admin-recovery">التعارض والاسترداد</a>}
         {canOrderWorkflow&&<a href="#admin-access">الأدوار والصلاحيات</a>}
       </nav>
