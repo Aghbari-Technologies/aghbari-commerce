@@ -16,6 +16,7 @@ Certification: NOT CLAIMED
 - Main source state: VERIFIED at exact HEAD `627e4bba29b2b64f7faabf2fe43091f1b391377a`.
 - Live Supabase: VERIFIED ACTIVE_HEALTHY; purchase/receipt drift 200 remains OPEN.
 - Security advisor: VERIFIED with 62 authenticated SECURITY DEFINER findings plus leaked-password-protection warning; no blanket revoke applied.
+- Live security contract proof: VERIFIED 10/10 read-only assertions across adjust_inventory, record_payment, record_supplier_payment, set_organization_user_role and register_product_media (anon denied, authenticated boundary, search_path='', role/tenant guards).
 - Purchase/receipt 128 migration: IMPLEMENTED on PR #112, NOT_PROVEN by live runtime/concurrency until migration is deliberately applied/tested in the release workflow.
 - Customer offline runtime guard: IMPLEMENTED on PR #113, NOT_PROVEN by exact-SHA CI/browser runtime.
 - Hosted runtime: NOT_PROVEN for exact current HEAD; Vercel reports free-plan build-rate-limit failure; Netlify existing site is available but its deployment tool requires source upload/local repo execution.
