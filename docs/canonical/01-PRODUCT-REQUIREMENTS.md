@@ -47,3 +47,10 @@ No additional product scope is created solely because a legacy screenshot contai
 - Admin/Staff UI includes real supplier and warehouse edit surfaces within Commerce scope.
 - Supplier updates cover name, contact fields and active state; warehouse updates cover name, active state and active-branch assignment.
 - Update operations are server-authorized and auditable. Unsupported historical AI/BI/Onyx/Developer-AI edit screens remain boundaries rather than being implemented as transactional features.
+
+
+## 2026-09-28 — Customer Portal Home surface
+- The Customer Portal exposes **Home / الرئيسية** as an explicit first-class surface, separate from the catalog.
+- Home is a derived operational overview only: it summarizes authorized account context, order history, cart state, connection state and existing navigation actions.
+- Home does not introduce new transactional authority or duplicate catalog, order, finance or account persistence.
+- The catalog remains the authoritative customer shopping surface; Home links into it using the existing customer contract.

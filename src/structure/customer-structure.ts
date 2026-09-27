@@ -3,12 +3,13 @@ export type CustomerStructureStatus = 'live' | 'boundary';
 export interface CustomerStructureItem {
   id: string;
   label: string;
-  section: 'catalog' | 'orders' | 'finance' | 'templates' | 'account' | 'notifications';
+  section: 'home' | 'catalog' | 'orders' | 'finance' | 'templates' | 'account' | 'notifications';
   status: CustomerStructureStatus;
   description: string;
 }
 
 export const AGHBARI_CUSTOMER_STRUCTURE: CustomerStructureItem[] = [
+  { id: 'home', label: 'الرئيسية', section: 'home', status: 'live', description: 'ملخص تشغيل العميل، الرصيد المتاح، حالة الاتصال والاختصارات إلى الكتالوج والطلبات والحساب.' },
   { id: 'store', label: 'المتجر / الكتالوج', section: 'catalog', status: 'live', description: 'اكتشاف الأصناف، البحث، التصنيف، الأسعار، المخزون والطلب السريع.' },
   { id: 'categories', label: 'التصنيفات', section: 'catalog', status: 'live', description: 'تصفية الكتالوج حسب التصنيف.' },
   { id: 'search', label: 'البحث', section: 'catalog', status: 'live', description: 'بحث بالاسم أو SKU أو باركود.' },

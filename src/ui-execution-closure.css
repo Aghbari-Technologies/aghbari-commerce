@@ -132,3 +132,14 @@ button:disabled, [aria-disabled='true'] { cursor: not-allowed; }
 }
 
 .record-detail-field-content::first-line { color: var(--aghbari-ink, #123b50); }
+
+
+/* Customer Home closure — keep Home + Catalog + Orders + Cart + Account + Finance usable on narrow screens. */
+@media (max-width: 720px) {
+  .customer-mobile-dock {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+  .customer-mobile-dock button { min-width: 0; padding-inline: 4px; }
+  .customer-mobile-dock small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+}

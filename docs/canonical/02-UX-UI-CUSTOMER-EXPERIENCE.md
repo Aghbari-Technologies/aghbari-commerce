@@ -128,3 +128,10 @@ Do not create a second design system, duplicate CSS family or duplicate asset co
 - Customer Portal `reorder` and `order_templates` remain live customer-owned capabilities with real persistence and server authorization.
 - Admin/Staff navigation must not expose a fake management workspace for these customer-owned records until a canonical staff permission, read contract and mutation contract are defined.
 - The Admin structure therefore classifies `/admin/reorder` and `/admin/order-templates` as explicit boundaries rather than render-only screens.
+
+
+## 2026-09-28 — Customer Home workspace
+- The Customer Portal Home surface is a dedicated operational landing screen rather than an alias for the catalog route.
+- Home reuses the existing visual primitives and source-backed customer data: available credit, order history, current cart, connection/trust state and quick actions.
+- Home provides direct navigation into Catalog, Orders, Finance, Templates, Account and the cart without creating fake KPIs or client-side business authority.
+- The mobile navigation keeps Home and Catalog distinct while preserving direct access to the cart and account; narrow layouts use an adaptive six-item dock where the finance capability is enabled.

@@ -274,3 +274,9 @@ EXACT HASH DUPLICATE → VISUAL EQUIVALENCE → SCREEN PACK → UNIQUE IMPLEMENT
 Once a reference is proven equivalent to an implemented pack, do not rebuild or restyle the same target. Verify the alias against the existing result and move forward.
 
 Read screenshots only for decisions that affect layout, hierarchy, state, interaction, responsive behavior, accessibility or scope boundary.
+
+
+## 2026-09-28 — Customer Home coverage rule
+- **Customer Home / الرئيسية** is an explicit screen-pack target separate from the Catalog.
+- Existing reference-backed hero, KPI/summary-card and quick-action primitives are reused; no duplicate image assets are created.
+- Home is a derived operational overview and must close through real navigation/state behavior; reference images remain provenance inputs and are never copied into `src/` or the production bundle.
