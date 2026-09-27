@@ -2,33 +2,32 @@
 
 Project: Aghbari Commerce | الأغبري
 Branch: `main`
-Source HEAD snapshot for this checkpoint: `60cea00bafd1ff82dd982f30aeaa35e97fea45f4`
+Source HEAD snapshot for this checkpoint: `76ed7241feb14e586fd8d5acd02a3da618a00e0c`
 Production: HOLD / NO TOUCH
 Certification: NOT CLAIMED
 
 ## Current reality
-- Main now includes the customer finance document workspace, admin finance navigation, dynamic admin order deep-link routing, actionable offline Recovery Center, controlled purchase/receipt idempotency migration source, and atomic permission-aware bulk order transitions.
-- Purchase/receipt production RPCs are still legacy 16..200 until the controlled migration release gate is passed.
-- Recovery Center and bulk actions remain server-bound; UI cannot bypass authorization or transaction invariants.
-- Actual Git HEAD is authoritative; this file is a checkpoint snapshot and must not override the live ref.
+- Main contains customer finance documents, admin finance navigation, dynamic admin order deep-link routing, actionable Recovery Center, controlled purchase/receipt 16..128 migration source, atomic permission-aware bulk order transitions, bounded offline catalog cache and reconnect synchronization.
+- Purchase/receipt migration source is merged but Production RPCs remain legacy 16..200 until release proof/gate.
+- Bulk order RPC is merged but its production migration remains proof-gated.
+- Actual Git HEAD is authoritative; this file is a checkpoint snapshot.
 
 ## Exact proof status
-- Source implementation: VERIFIED at checkpoint source HEAD `60cea00bafd1ff82dd982f30aeaa35e97fea45f4`.
-- Purchase/receipt migration source: present in main; Production NOT_APPLIED.
-- Bulk order migration/source/tests: present in main; exact current-SHA migration/concurrency/security/browser proof is still pending.
-- Recovery Center source/tests: present in main; exact current-SHA browser/runtime proof is pending.
+- Source implementation: VERIFIED at checkpoint source HEAD `76ed7241feb14e586fd8d5acd02a3da618a00e0c`.
+- Recovery/low-bandwidth source and focused tests: VERIFIED source-level; current runtime/browser proof pending.
+- Purchase/receipt and bulk-order exact-SHA migration/concurrency/Test-the-Test proof: NOT_PROVEN pending workflows.
 - Certification: NOT_PROVEN / NOT CLAIMED.
 - Production: HOLD / NO TOUCH.
 
 ## OPEN GAPS
-- Exact-SHA proof for purchase/receipt 16..128 migration.
-- Exact-SHA proof for bulk order transaction/concurrency/negative paths.
-- Exact current-main browser/runtime proof.
-- Dedicated non-production Supabase staging environment remains unavailable for full certification.
-- 84-reference screen-pack implementation/proof remains incomplete; current index contains coverage rules but not a certified pack-by-pack proof set.
+- Exact proof for purchase/receipt 16..128 migration and safe controlled application.
+- Exact proof for atomic bulk order transitions including adversarial/partial-failure paths.
+- Exact current-main browser/runtime visual proof.
+- Dedicated non-production Supabase staging remains unavailable for full certification.
+- 84-reference pack-by-pack implementation/proof remains incomplete.
 
 ## NEXT EXECUTABLE ACTION
-Read the actual `main` HEAD, inspect the newest affected migration/concurrency/Test-the-Test/security/browser runs, fix the first material failure once, then advance the next independent UI/core gap without touching proven work.
+Read actual `main` HEAD and inspect the newest affected proof runs for purchase/receipt, bulk orders and low-bandwidth; fix only the first material failure, then advance the next independent UI/reference gap.
 
 ## DO NOT REPEAT
-Do not transfer evidence across SHAs. Do not mutate Production directly. Do not retry unchanged Vercel rate-limit/protection. Do not recreate duplicate memory systems or reopen closed customer finance, admin finance navigation, dynamic order deep-link, recovery-center or prior security-contract work.
+Do not transfer evidence across SHAs. Do not mutate Production directly. Do not retry unchanged Vercel rate-limit/protection. Do not reopen closed finance, deep-link, recovery, quick-order or security-contract work.

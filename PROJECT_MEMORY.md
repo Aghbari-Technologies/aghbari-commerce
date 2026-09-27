@@ -55,3 +55,8 @@
 - A bulk request is limited to 1–100 unique orders, validates organization and role/state authorization for every selected order, and uses one idempotency key bound to the canonical selected-order set plus target status.
 - Cancellation batches prevalidate inventory balances and lock impacted balances in stable order before mutation; results are stored for safe idempotent replay.
 - The UI must provide selection, common-transition validation and a precise preview before committing the server mutation; server authorization remains authoritative.
+
+## 2026-09-27 — Low-bandwidth contract
+- Server-fetched catalog snapshots may be cached locally only as bounded, TTL-limited, validated read-only data.
+- Offline cached stock/price values are informational and never become transaction authority.
+- On reconnect, only safe cart operations are revalidated and synchronized; conflicts/terminal failures remain visible in Recovery Center.

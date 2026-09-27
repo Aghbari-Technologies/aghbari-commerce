@@ -1,27 +1,28 @@
 # 🔴 AGHBARI DEVELOPMENT PROGRESS — CANONICAL LIVE LEDGER
 
-## Run 2026-09-27 — Parallel UI + recovery + transactional bulk closure
+## Run 2026-09-27 — Parallel transactional + UI + offline closure
 - Run: `2026-09-27`
-- Source HEAD snapshot: `60cea00bafd1ff82dd982f30aeaa35e97fea45f4`
+- Source HEAD snapshot: `76ed7241feb14e586fd8d5acd02a3da618a00e0c`
 - Branch: `main`
 - Implemented:
-  - Customer finance document workspace and admin finance navigation.
+  - Customer finance document workspace + admin finance navigation.
   - Dynamic admin order deep-link routing with focused tests.
-  - Actionable offline Recovery Center with safe manual replay and fail-closed conflict/terminal handling.
+  - Actionable Recovery Center with safe manual replay and fail-closed conflict/terminal states.
   - Purchase/receipt idempotency source migration 16..200 → 16..128 with pgTAP/client boundary tests.
-  - Atomic permission-aware bulk order transition RPC with idempotency/result storage, audit/history/outbox, previewed Admin UI and focused tests.
+  - Atomic permission-aware bulk order transition RPC with idempotency/result storage, audit/history/outbox, preview UI and focused tests.
+  - Bounded validated offline catalog cache, offline cached-read path and reconnect synchronization for safe cart operations.
 - Verified:
   - Production remains untouched.
-  - Live purchase/receipt drift remains legacy 16..200; anon EXECUTE remains false.
-  - Main source contains the current implementation deltas.
+  - Live purchase/receipt drift remains legacy 16..200; anon EXECUTE false.
+  - Main source contains current implementation deltas.
 - Proven:
   - Source-level implementation: VERIFIED.
-  - Exact current-SHA CI/migration/concurrency/Test-the-Test/browser/runtime: NOT_PROVEN until affected workflows complete.
+  - Exact current-SHA migration/concurrency/Test-the-Test/browser/runtime: NOT_PROVEN until workflows complete.
 - Blocked:
-  - Vercel free-plan deployment rate-limit/protection path unchanged.
-  - Dedicated staging Supabase remains unavailable.
+  - Vercel free-plan rate-limit/protection unchanged.
+  - Dedicated Supabase staging unavailable.
 - Certification: `NOT CLAIMED`
 - Production: `HOLD / NO TOUCH`
 
 ## Next
-Verify exact current-main proof for purchase/receipt and bulk actions; fix the first material failure once, then continue the next independent UI/core gap.
+Inspect exact current-main proof results, fix the first real failure once, then continue the next independent UI/reference/core gap.
