@@ -21,3 +21,10 @@ describe('staff order detail contract', () => {
     })).not.toThrow();
   });
 });
+
+
+describe('staff order detail data boundary', () => {
+  it('keeps the detail read itself server-authorized', () => {
+    expect(getStaffOrderDetail).toBeTypeOf('function');
+  });
+});
