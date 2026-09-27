@@ -56,3 +56,8 @@ The consolidation manifest lists the architecture/data source set that must be f
 - Completed operations replay stored per-order results without repeating inventory, audit, history or outbox mutations.
 - Cancellation prevalidates required inventory balances and acquires inventory locks in stable warehouse/product order before applying any mutation.
 - Result records are kept in a non-client-readable RLS-protected table; authenticated clients execute only through the RPC.
+
+## 2026-09-27 — Portal appearance contract
+- `client_ui_settings.config` remains the persisted configuration boundary for Customer Portal presentation settings.
+- `accentColor` accepts only six-digit hexadecimal colors and safely falls back to the canonical brand accent on malformed data.
+- `compactMode` controls presentation density only; it cannot change pricing, stock, order or authorization semantics.
