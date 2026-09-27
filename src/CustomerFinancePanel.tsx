@@ -82,11 +82,15 @@ export default function CustomerFinancePanel({ customerId, online }: { customerI
   const pages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const activePage = Math.min(page, pages);
   const visible = filtered.slice((activePage - 1) * PAGE_SIZE, activePage * PAGE_SIZE);
-  const totals = useMemo(() => ({
-    count: invoices.length,
-    open: invoices.filter((invoice) => invoice.status === 'issued' || invoice.status === 'partially_paid').length,
-    total: invoices.reduce((sum, invoice) => sum + invoice.total, 0)
-  }), [invoices]);
+  const totals = useMemo(() => {
+    const byCurrency = new Map<string, number>();
+    invoices.forEach((invoice) => byCurrency.set(invoice.currency, (byCurrency.get(invoice.currency) ?? 0) + invoice.total));
+    return {
+      count: invoices.length,
+      open: invoices.filter((invoice) => invoice.status === 'issued' || invoice.status === 'partially_paid').length,
+      totals: Array.from(byCurrency.entries())
+    };
+  }, [invoices]);
 
   async function openInvoice(invoice: CustomerInvoiceSummary) {
     if (!customerId) return;
@@ -145,7 +149,7 @@ export default function CustomerFinancePanel({ customerId, online }: { customerI
       <div className="customer-finance-summary" aria-label="ملخص المستندات المالية">
         <article><small>إجمالي الفواتير</small><strong>{totals.count.toLocaleString('ar')}</strong><span>المستندات المتاحة للحساب</span></article>
         <article><small>المفتوحة</small><strong>{totals.open.toLocaleString('ar')}</strong><span>تحتاج متابعة أو سداد</span></article>
-        <article><small>القيمة الإجمالية</small><strong>{money(totals.total, invoices[0]?.currency ?? 'YER')}</strong><span>للفواتير المحملة</span></article>
+        <article><small>القيمة الإجمالية</small><strong>{totals.totals.length ? totals.totals.map(([currency, total]) => money(total, currency)).join(' · ') : '—'}</strong><span>{totals.totals.length > 1 ? 'مجمعة حسب العملة' : 'للفواتير المحملة'}</span></article>
       </div>
 
       <div className="customer-finance-toolbar" role="search">
