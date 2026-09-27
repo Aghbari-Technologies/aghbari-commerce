@@ -462,3 +462,9 @@ Command "1" means:
 - Customer catalog display now honors the server-returned authorized price currency for base catalog pricing and product detail.
 - Previous customer pricing/reorder hardening and quick-order 128-character idempotency normalization remain active.
 - Exact-SHA evidence remains mandatory; this execution state is not certified from source inspection alone.
+
+
+## 31. EXECUTION RUN — fc20773575e330b03ff83e5cb13ca0b2cb505ef9
+- Customer reorder from both order-detail and order-list entry points now resolves current authorized products and submits a single atomic quick-order cart merge.
+- Quick-order lookup is explicitly bound to the authenticated account's active warehouse.
+- Supabase source migration `20260927003000_normalize_quick_order_idempotency_bound.sql` and test `032-quick-order-idempotency-bound.test.sql` align the server source contract with the client 16..128 bound without mutating production under HOLD.
