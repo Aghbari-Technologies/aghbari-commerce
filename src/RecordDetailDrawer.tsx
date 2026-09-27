@@ -1,11 +1,11 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 
-export interface RecordDetailField { label: string; value: ReactNode; wide?: boolean; }
-interface RecordDetailDrawerProps { eyebrow: string; title: string; summary?: ReactNode; fields: RecordDetailField[]; onClose: () => void; }
+export interface RecordDetailField { label: string; value: ReactNode; wide?: boolean; content?: boolean; }
+interface RecordDetailDrawerProps { eyebrow: string; title: string; summary?: ReactNode; fields: RecordDetailField[]; onClose: () => void; footer?: ReactNode; }
 
 function copyableText(value: ReactNode) { return typeof value === 'string' || typeof value === 'number' ? String(value) : null; }
 
-export default function RecordDetailDrawer({ eyebrow, title, summary, fields, onClose }: RecordDetailDrawerProps) {
+export default function RecordDetailDrawer({ eyebrow, title, summary, fields, onClose, footer }: RecordDetailDrawerProps) {
   const closeRef = useRef<HTMLButtonElement>(null);
   const drawerRef = useRef<HTMLElement>(null);
   const onCloseRef = useRef(onClose);
@@ -58,11 +58,11 @@ export default function RecordDetailDrawer({ eyebrow, title, summary, fields, on
                 <span>{field.label}</span>
                 {scalar !== null && <button type="button" className="record-detail-copy" onClick={() => void copyField(field.label, field.value)} aria-label={copiedLabel === field.label ? 'تم النسخ' : 'نسخ ' + field.label} aria-live="polite">{copiedLabel === field.label ? 'تم النسخ' : 'نسخ'}</button>}
               </div>
-              <strong>{field.value}</strong>
+              {field.content ? <div className="record-detail-field-content">{field.value}</div> : <strong>{field.value}</strong>}
             </div>;
           })}
         </div>
-        <div className="record-detail-footer"><span>قراءة من السجل التشغيلي الحالي</span><button type="button" onClick={onClose}>إغلاق</button></div>
+        <div className="record-detail-footer">{footer ?? <><span>قراءة من السجل التشغيلي الحالي</span><button type="button" onClick={onClose}>إغلاق</button></>}</div>
       </aside>
     </div>
   );
