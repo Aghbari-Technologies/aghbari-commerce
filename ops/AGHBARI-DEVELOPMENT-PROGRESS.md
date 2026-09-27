@@ -169,3 +169,11 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Certification: `NOT CLAIMED`
 - Production: `HOLD / NO TOUCH`
 - Next: current-SHA workflow evidence, then next independent core/UI requirement.
+
+## Run 2026-09-28 — External reference corpus correction
+- Run: `2026-09-28`
+- Branch: `main`
+- Implemented: corrected reference semantics in canonical docs, registry status labels and coverage UI so the 84 assets are not presented as 84 screens.
+- Verified: current source registry remains 84 asset entries; actual Admin/Customer capability work remains governed by canonical Commerce requirements.
+- Proven: source-level correction only.
+- Next: continue closing canonical in-scope UI/core gaps, using references only for reusable visual patterns.
