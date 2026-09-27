@@ -2,15 +2,15 @@
 
 Project: Aghbari Commerce | الأغبري
 Branch: `main`
-Current Git HEAD: `39efd8a7e98d982a643bed43af977b38d5ac679d`
+Current Git HEAD: `cf150ea29f201ca06d7ec6320d59e70b8cb725c9`
 Production: HOLD / NO TOUCH
 Certification: NOT CLAIMED
 
 ## Current reality
-- Active implementation is at exact HEAD `39efd8a7e98d982a643bed43af977b38d5ac679d` on `main`.
-- Customer catalog preserves server-authorized base pricing when no eligible tier matches.
+- Active implementation is at exact HEAD `cf150ea29f201ca06d7ec6320d59e70b8cb725c9` on `main`.
+- Customer catalog preserves server-authorized base pricing and displays its returned currency consistently.
 - Customer order-detail reorder resolves authorized catalog items outside the current visible page before re-adding them.
-- Quick-order idempotency input is capped at the canonical 128-character client bound and covered by 128/129 regression tests.
+- Quick-order idempotency validation is capped at 16–128 characters with explicit 128/129 regression coverage.
 - No production mutation was introduced.
 
 ## Exact proof status
@@ -29,7 +29,7 @@ DEPLOY: free exact-source hosted runtime proof; no unchanged Vercel retries.
 DOCS: semantic consolidation only when it closes an active requirement/proof gap.
 
 ## NEXT EXECUTABLE ACTION
-Close and inspect exact-SHA CI/Test-the-Test/security/migration/concurrency/browser proof for `39efd8a7e98d982a643bed43af977b38d5ac679d`; act on failures immediately, then continue the next independent material UI/core/security gap.
+Close exact-SHA application-quality, Test-the-Test, security, migration, concurrency and browser evidence for `cf150ea29f201ca06d7ec6320d59e70b8cb725c9`; resolve failures immediately and continue the next independent material UI/core/security gap.
 
 ## DO NOT REPEAT
 Do not rebuild closed/proven work; do not transfer evidence between SHAs; do not retry the unchanged Vercel protection path; do not create duplicate reference packs or memory systems.
