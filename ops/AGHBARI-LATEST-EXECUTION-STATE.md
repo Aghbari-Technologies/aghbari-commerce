@@ -81,3 +81,10 @@ Do not transfer evidence across SHAs. Do not mutate Production directly. Do not 
 - Not proven yet on this exact SHA: build/typecheck/runtime/browser/visual and migration application.
 - Open gaps: exact current Quality/G1/Security/Test-the-Test results; 16..128 production migration gate; 84-reference screen-pack visual proof.
 - Next executable action: inspect exact-current CI results, fix first material failure once, then continue the next independent reference/core gap.
+
+## 2026-09-28 — Customer self-profile closure
+- Implemented: update_customer_self_profile RPC; customerProfile service; profile editor with offline/error/success states; canonical security/product/architecture records; input and SQL boundary tests.
+- Verified structurally: authenticated-only execution, anon denied, staff denied, tenant/customer derived server-side, tier/status not mutable.
+- Not proven on current exact HEAD until CI jobs complete: full build/runtime/browser visual execution.
+- Production remains HOLD / NO TOUCH; production migration list ends at 20260925040254.
+- Next executable action: inspect exact-current CI results and fix first material failure once; then continue next independent open UI/core gap.
