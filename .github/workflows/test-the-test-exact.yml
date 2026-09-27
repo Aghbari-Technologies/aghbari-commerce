@@ -43,9 +43,9 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           version: 2.117.0
-      - name: Start local Supabase and reset from zero
+      - name: Start Postgres-only local database and reset from zero
         run: |
-          supabase start
+          supabase db start
           supabase db reset --local
       - name: Baseline sensitive suite must PASS
         run: supabase test db --local
