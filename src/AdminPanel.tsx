@@ -280,7 +280,7 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
 {canCatalog && <div className="admin-workspace-section" data-label="04 · العملاء ودورة الحساب"><div id="admin-customers"><CustomerPanel role={role} /></div></div>}
 {canInventory && <div className="admin-workspace-section" data-label="05 · المخزون والتشغيل الميداني"><div id="admin-inventory"><InventoryPanel role={role} /></div></div>}
 {canInventory && <div className="admin-workspace-section" id="admin-inventory-history" data-label="06 · دفتر حركة المخزون"><InventoryHistoryPanel role={role as 'owner'|'admin'|'warehouse'} /></div>}
-{canInventory && <div className="admin-workspace-section" data-label="07 · نشاط التحويلات والجرد والتسويات"><InventoryActivityPanel role={role as 'owner'|'admin'|'warehouse'} /></div>}
+{canInventory && <div className="admin-workspace-section" id="admin-inventory-activity" data-label="07 · نشاط التحويلات والجرد والتسويات"><InventoryActivityPanel role={role as 'owner'|'admin'|'warehouse'} /></div>}
 {canInventory && <div className="admin-workspace-section" id="admin-warehouses" data-label="08 · المستودعات والفروع"><WarehouseDirectoryPanel role={role as 'owner'|'admin'|'warehouse'} /></div>}
 {canInventory && <div className="admin-workspace-section" data-label="09 · المشتريات ودورة التوريد"><div id="admin-purchasing"><PurchasingPanel role={role} /></div></div>}
 {canInventory && <div className="admin-workspace-section" id="admin-receipts" data-label="10 · سجل الاستلام"><PurchaseReceiptHistoryPanel role={role as 'owner'|'admin'|'warehouse'} /></div>}
