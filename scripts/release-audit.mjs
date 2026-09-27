@@ -107,7 +107,7 @@ const sourceFiles = walk(sourceRoot).filter((file) => /\.(?:ts|tsx|js|mjs|css|ht
 for (const file of sourceFiles) {
   const text = readFileSync(file, 'utf8');
   const rel = relative(root, file).replaceAll('\\', '/');
-  if (legacyBrandPattern.test(text)) fail(`Legacy branding found in executable source: ${rel}`);
+  if (legacyBrandPattern.test(text) && !/(?:\.test\.|\.spec\.|tests?\/)/i.test(rel)) fail(`Legacy branding found in executable source: ${rel}`);
   for (const pattern of suspiciousPatterns) {
     if (pattern.test(text) && !/(?:\.test\.|tests?\/)/i.test(rel)) {
       fail(`Suspicious completion/mock marker ${pattern} found in executable source: ${rel}`);
