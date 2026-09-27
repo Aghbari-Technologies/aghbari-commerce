@@ -47,3 +47,8 @@ No additional product scope is created solely because a legacy screenshot contai
 - Admin/Staff UI includes real supplier and warehouse edit surfaces within Commerce scope.
 - Supplier updates cover name, contact fields and active state; warehouse updates cover name, active state and active-branch assignment.
 - Update operations are server-authorized and auditable. Unsupported historical AI/BI/Onyx/Developer-AI edit screens remain boundaries rather than being implemented as transactional features.
+
+
+## 2026-09-28 — Customer self profile
+- Customer Portal profile supports self-service editing of display name and phone only.
+- Email, customer tier and account active state remain outside customer self-service and are rendered as protected/read-only data.
