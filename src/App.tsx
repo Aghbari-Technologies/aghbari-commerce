@@ -85,10 +85,28 @@ export default function App() {
   useEffect(() => { if (!signedIn) return; const onKeyDown = (event: KeyboardEvent) => { if (event.key !== 'Escape') return; if (selectedProduct) { setSelectedProduct(null); return; } if (quickOrderOpen) { setQuickOrderOpen(false); return; } if (cartOpen) setCartOpen(false); }; window.addEventListener('keydown', onKeyDown); return () => window.removeEventListener('keydown', onKeyDown); }, [signedIn, selectedProduct, quickOrderOpen, cartOpen]);
 
   useEffect(() => {
-    if (!signedIn || !supabase || !isOnline || STAFF_ROLES.has(role)) return; let cancelled = false;
+    if (!signedIn || !supabase || STAFF_ROLES.has(role)) return; let cancelled = false;
     async function loadRuntime() {
       setCatalogLoading(true); setRuntimeError(null);
       try {
+        if (!isOnline) {
+          const cachedItems = await getCatalog(catalogSearch, categoryId, 25, (catalogPage - 1) * 24);
+          if (cancelled) return;
+          if (!cachedItems.length) {
+            setProducts([]);
+            setCatalogHasNext(false);
+            setServerPrices({});
+            setRuntimeError('لا توجد بيانات كتالوج محفوظة على هذا الجهاز للعمل دون اتصال.');
+            return;
+          }
+          const mapped = cachedItems.map((item) => mapCatalogItem(item, 'أصناف'));
+          setProducts(mapped.slice(0, 24));
+          setCatalogHasNext(cachedItems.length > 24);
+          setServerPrices(Object.fromEntries(cachedItems.slice(0, 24).map((item) => [item.id, item.authorized_price ?? 0])));
+          setCategoryOptions([]);
+          setRuntimeError('أنت دون اتصال؛ يعرض التطبيق نسخة الكتالوج المحفوظة، بينما السعر والمخزون المعروضان قديمان وليسا مصدر الحقيقة.');
+          return;
+        }
         const [{ data: warehouse, error: warehouseError }, items, savedCart, categories] = await Promise.all([
           supabase!.from('warehouses').select('id,name').eq('is_active', true).order('created_at').limit(1).maybeSingle(), getCatalog(catalogSearch, categoryId, 25, (catalogPage - 1) * 24), getCart(), getCategories()
         ]);
