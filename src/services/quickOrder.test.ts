@@ -25,6 +25,22 @@ describe('quick-order input contract', () => {
     })).not.toThrow();
   });
 
+  it('accepts the canonical maximum quantity', () => {
+    expect(() => validateQuickOrderInput({
+      idempotencyKey: '1234567890abcdef',
+      warehouseId,
+      lines: [{ productId, quantity: 10_000 }]
+    })).not.toThrow();
+  });
+
+  it('rejects a quantity above the canonical maximum', () => {
+    expect(() => validateQuickOrderInput({
+      idempotencyKey: '1234567890abcdef',
+      warehouseId,
+      lines: [{ productId, quantity: 10_001 }]
+    })).toThrow();
+  });
+
   it('rejects an idempotency key beyond the canonical maximum', () => {
     expect(() => validateQuickOrderInput({
       idempotencyKey: 'x'.repeat(129),
@@ -40,7 +56,7 @@ describe('quick-order input contract', () => {
     { name: 'invalid product id', input: { idempotencyKey: '1234567890abcdef', warehouseId, lines: [{ productId: 'bad', quantity: 1 }] } },
     { name: 'zero quantity', input: { idempotencyKey: '1234567890abcdef', warehouseId, lines: [{ productId, quantity: 0 }] } },
     { name: 'fractional quantity', input: { idempotencyKey: '1234567890abcdef', warehouseId, lines: [{ productId, quantity: 1.5 }] } },
-    { name: 'excessive quantity', input: { idempotencyKey: '1234567890abcdef', warehouseId, lines: [{ productId, quantity: 100001 }] } },
+    
     { name: 'duplicate product', input: { idempotencyKey: '1234567890abcdef', warehouseId, lines: [{ productId, quantity: 1 }, { productId, quantity: 2 }] } }
   ])('rejects $name', ({ input }) => {
     expect(() => validateQuickOrderInput(input)).toThrow();
