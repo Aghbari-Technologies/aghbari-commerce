@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(13);
+select plan(14);
 
 create temp table payment_fixture as
 select
@@ -132,6 +132,19 @@ select throws_ok(
   '22023',
   'invalid payment amount',
   'NaN payment amount is rejected before mutation'
+);
+
+select throws_ok(
+  $select public.record_payment(
+    (select invoice_id from payment_fixture),
+    10,
+    'cash'::public.payment_method,
+    (select cash_account_id from payment_fixture),
+    'RCPT-003'
+  )$,
+  '22023',
+  'payment idempotency key required',
+  'missing payment idempotency key is rejected'
 );
 
 select is((select count(*) from public.payments where organization_id=(select org_id from payment_fixture)),1::bigint,'rejected payloads leave payment count unchanged');
