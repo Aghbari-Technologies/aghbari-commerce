@@ -127,21 +127,33 @@ export default function AppV3Fixed(){
   }
   async function reorderOrderItems(items: CustomerOrderDetail['items']) {
     if (busy) return;
+    if (!warehouseId) { setError('لا يوجد مستودع تشغيلي متاح لإعادة الطلب.'); return; }
     setBusy(true); setError(''); setMessage('');
-    let added = 0; let unavailable = 0;
     try {
       const resolved = await Promise.all(items.map((item) => resolveOrderProduct(item)));
+      const readyLines: Array<{ productId: string; quantity: number }> = [];
+      let unavailable = 0;
       for (const [index, product] of resolved.entries()) {
         const item = items[index];
-        if (!product || product.status !== 'active' || product.availableQuantity < 1) { unavailable += 1; continue; }
-        const quantity = Math.min(item.quantity, product.availableQuantity);
-        if (quantity < 1 || !(await add(product, quantity))) { unavailable += 1; continue; }
-        added += 1;
+        if (!product || product.status !== 'active' || product.availableQuantity < item.quantity) { unavailable += 1; continue; }
+        readyLines.push({ productId: product.id, quantity: item.quantity });
       }
+      if (!readyLines.length) {
+        setError('لا يمكن إعادة الطلب حاليًا؛ لا توجد أصناف متاحة بالكميات المطلوبة.');
+        return;
+      }
+      await applyQuickOrder({
+        idempotencyKey: crypto.randomUUID(),
+        warehouseId,
+        lines: readyLines
+      });
+      await loadData();
       setSelectedOrder(null);
       setCartOpen(true);
       navigate('catalog');
-      setMessage(unavailable > 0 ? `تمت إعادة إضافة ${added} صنفًا؛ تعذر إضافة ${unavailable} صنف بسبب التوفر أو الصلاحية الحالية.` : `تمت إعادة إضافة ${added} صنفًا إلى السلة.`);
+      setMessage(unavailable > 0
+        ? `تمت إعادة إضافة ${readyLines.length} صنفًا دفعةً واحدة؛ تعذر إضافة ${unavailable} صنف بسبب التوفر أو الصلاحية الحالية.`
+        : `تمت إعادة إضافة ${readyLines.length} صنفًا دفعةً واحدة إلى السلة.`);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'تعذر إعادة الطلب.');
     } finally {
