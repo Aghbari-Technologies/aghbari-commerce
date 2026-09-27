@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { calculateInvoicePaid, getCustomerInvoicePayments, getCustomerInvoices, type CustomerInvoiceSummary, type CustomerPayment } from './services/customerFinance';
+import { calculateInvoicePaid, getCustomerInvoiceItems, getCustomerInvoicePayments, getCustomerInvoices, type CustomerInvoiceItem, type CustomerInvoiceSummary, type CustomerPayment } from './services/customerFinance';
 import { formatMoney } from './domain/pricing';
 import './customer-finance.css';
 
@@ -31,6 +31,7 @@ export default function CustomerFinancePanel({ customerId, online }: { customerI
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<CustomerInvoiceSummary | null>(null);
   const [payments, setPayments] = useState<CustomerPayment[]>([]);
+  const [items, setItems] = useState<CustomerInvoiceItem[]>([]);
   const [detailLoading, setDetailLoading] = useState(false);
   const [detailError, setDetailError] = useState('');
 
@@ -91,10 +92,16 @@ export default function CustomerFinancePanel({ customerId, online }: { customerI
     if (!customerId) return;
     setSelected(invoice);
     setPayments([]);
+    setItems([]);
     setDetailError('');
     setDetailLoading(true);
     try {
-      setPayments(await getCustomerInvoicePayments(customerId, invoice.id));
+      const [nextPayments, nextItems] = await Promise.all([
+        getCustomerInvoicePayments(customerId, invoice.id),
+        getCustomerInvoiceItems(customerId, invoice.id)
+      ]);
+      setPayments(nextPayments);
+      setItems(nextItems);
     } catch (e) {
       setDetailError(e instanceof Error ? e.message : 'تعذر تحميل دفعات الفاتورة.');
     } finally {
@@ -193,20 +200,40 @@ export default function CustomerFinancePanel({ customerId, online }: { customerI
               <div><small>المتبقي</small><strong>{money(Math.max(0, selected.total - calculateInvoicePaid(payments)), selected.currency)}</strong></div>
             </div>
             {detailLoading ? (
-              <div className="portal-loading" role="status">جارٍ تحميل دفعات الفاتورة…</div>
+              <div className="portal-loading" role="status">جارٍ تحميل بنود ومدفوعات الفاتورة…</div>
             ) : detailError ? (
               <div className="error-banner" role="alert"><span>{detailError}</span><button className="ghost" type="button" onClick={() => void openInvoice(selected)}>إعادة المحاولة</button></div>
-            ) : !payments.length ? (
-              <div className="empty-state"><strong>لا توجد دفعات مسجلة</strong><span>لم تُسجل مدفوعات على هذه الفاتورة حتى الآن.</span></div>
             ) : (
-              <div className="invoice-payment-list">
-                {payments.map((payment) => (
-                  <article key={payment.id}>
-                    <div><strong>{money(payment.amount, selected.currency)}</strong><small>{PAYMENT_LABELS[payment.method] ?? payment.method}</small></div>
-                    <div><span>{payment.reference ?? 'دون مرجع'}</span><small>{new Date(payment.paid_at).toLocaleString('ar-YE')}</small></div>
-                  </article>
-                ))}
-              </div>
+              <>
+                {items.length ? (
+                  <div className="invoice-items-list">
+                    <div className="invoice-items-head"><span>البند</span><span>الكمية</span><span>السعر</span><span>الإجمالي</span></div>
+                    {items.map((item) => (
+                      <article key={item.id}>
+                        <div><strong>{item.description}</strong><small dir="ltr">{item.product_id}</small></div>
+                        <span>{item.quantity.toLocaleString('ar-YE')}</span>
+                        <span>{money(item.unit_price, selected.currency)}</span>
+                        <strong>{money(item.line_total, selected.currency)}</strong>
+                      </article>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="empty-state"><strong>لا توجد بنود فاتورة مسجلة</strong><span>لا توجد بنود متاحة للعرض في هذا المستند.</span></div>
+                )}
+                {payments.length ? (
+                  <div className="invoice-payment-list">
+                    <div className="invoice-payment-heading"><strong>المدفوعات المسجلة</strong><span>{payments.length.toLocaleString('ar-YE')}</span></div>
+                    {payments.map((payment) => (
+                      <article key={payment.id}>
+                        <div><strong>{money(payment.amount, selected.currency)}</strong><small>{PAYMENT_LABELS[payment.method] ?? payment.method}</small></div>
+                        <div><span>{payment.reference ?? 'دون مرجع'}</span><small>{new Date(payment.paid_at).toLocaleString('ar-YE')}</small></div>
+                      </article>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="empty-state"><strong>لا توجد دفعات مسجلة</strong><span>لم تُسجل مدفوعات على هذه الفاتورة حتى الآن.</span></div>
+                )}
+              </>
             )}
             <div className="order-detail-actions"><button className="ghost" type="button" onClick={() => setSelected(null)}>إغلاق</button></div>
           </section>
