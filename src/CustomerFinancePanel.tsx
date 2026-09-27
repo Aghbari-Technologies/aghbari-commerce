@@ -204,7 +204,7 @@ export default function CustomerFinancePanel({ customerId, online }: { customerI
               <div><small>المتبقي</small><strong>{money(Math.max(0, selected.total - calculateInvoicePaid(payments)), selected.currency)}</strong></div>
             </div>
             {detailLoading ? (
-              <div className="portal-loading" role="status">جارٍ تحميل بنود ومدفوعات الفاتورة…</div>
+              <div className="invoice-detail-loading-skeleton" role="status" aria-label="جارٍ تحميل بنود ومدفوعات الفاتورة"><div><i/><i/><i/></div><div className="invoice-detail-loading-table">{Array.from({length:4}).map((_,index)=><article key={index}><i/><i/><i/><i/></article>)}</div></div>
             ) : detailError ? (
               <div className="error-banner" role="alert"><span>{detailError}</span><button className="ghost" type="button" onClick={() => void openInvoice(selected)}>إعادة المحاولة</button></div>
             ) : (
