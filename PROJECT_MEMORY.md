@@ -490,3 +490,8 @@ Command "1" means:
 - Saved-cart fallback now preserves authorized base price and currency for off-page products.
 - Quick-order, Excel, cart and offline quantity ceilings are unified at 10,000 via the central order-domain constant.
 - Quick-order server source migration/test remains prepared for 16–128 idempotency keys; live production DB remains 16–200 until approved release migration.
+
+
+## 37. EXECUTION RUN — pending exact commit
+- Fixed authenticated surface routing: a profile with `customer_id` and role `viewer` is now routed to the B2B customer portal, while unbound `viewer` remains an admin/staff viewer.
+- Added `src/domain/sessionRoute.ts` plus unit tests to lock the routing contract.

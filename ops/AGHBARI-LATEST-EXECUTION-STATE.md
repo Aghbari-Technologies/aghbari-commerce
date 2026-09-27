@@ -2,15 +2,14 @@
 
 Project: Aghbari Commerce | الأغبري
 Branch: `main`
-Current Git HEAD: `44fa5a2b73d7965702cf7d70add5cc515ca3e5e6`
+Current Git HEAD: `PENDING_EXACT_COMMIT`
 Production: HOLD / NO TOUCH
 Certification: NOT CLAIMED
 
 ## Current reality
-- Active implementation is at exact HEAD `44fa5a2b73d7965702cf7d70add5cc515ca3e5e6` on `main`.
-- Customer pricing/currency, atomic reorder, active-warehouse binding, cart-stock preflight, duplicate-click mutex, saved-cart price/currency preservation, quick-order quantity/warehouse guards, Excel quantity guard and offline queue ceiling are implemented.
-- Source migration/test for quick-order idempotency 16–128 exists but has not been applied to production under HOLD.
-- Admin quick tools no longer label unsupported customer-device functionality.
+- Active implementation is being advanced with an exact routing fix for customer-bound `viewer` accounts.
+- Customer-bound `viewer` profiles are routed to the customer portal; only staff roles and unbound viewer profiles use the admin surface.
+- Pricing/reorder/warehouse/quantity/offline hardening remains active.
 
 ## Exact proof status
 - Implementation: VERIFIED by exact repository content at current HEAD.
@@ -28,7 +27,7 @@ DEPLOY: free exact-source hosted runtime proof; no unchanged Vercel retries.
 DOCS: semantic consolidation only when it closes an active requirement/proof gap.
 
 ## NEXT EXECUTABLE ACTION
-Inspect exact-SHA CI and the latest Vercel deployment for `44fa5a2b73d7965702cf7d70add5cc515ca3e5e6`; resolve any failure immediately. Keep Production HOLD / NO TOUCH until exact runtime/browser evidence is available.
+Verify exact-SHA CI/runtime/browser evidence for the resulting commit and resolve failures immediately.
 
 ## DO NOT REPEAT
 Do not rebuild closed/proven work; do not transfer evidence between SHAs; do not retry the unchanged Vercel protection path; do not create duplicate reference packs or memory systems.
