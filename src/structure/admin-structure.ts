@@ -200,7 +200,6 @@ export function adminTargetForPath(pathname: string) {
 
   // Resolve registered dynamic admin detail routes into their existing workspaces.
   if (/^\\/admin\\/order\\/[^/]+$/.test(normalized)) return '#admin-orders';
-  if (/^\\/admin\\/customers\\/[^/]+$/.test(normalized)) return '#admin-customers';
 
   return '#admin-dashboard';
 }
