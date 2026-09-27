@@ -50,16 +50,16 @@ function assertInvoice(value: unknown): CustomerInvoiceSummary {
   const total = finiteNumber(item.total);
   if (total < subtotal) throw new Error('إجمالي الفاتورة غير متسق.');
   return {
-    id: item.id,
-    order_id: item.order_id,
-    invoice_number: item.invoice_number,
+    id: item.id as string,
+    order_id: item.order_id as string,
+    invoice_number: item.invoice_number as number,
     status: item.status as CustomerInvoiceSummary['status'],
-    currency: item.currency,
+    currency: item.currency as string,
     subtotal,
     total,
     due_at: (item.due_at as string | null | undefined) ?? null,
-    created_at: item.created_at,
-    updated_at: item.updated_at
+    created_at: item.created_at as string,
+    updated_at: item.updated_at as string
   };
 }
 
@@ -75,12 +75,12 @@ function assertPayment(value: unknown): CustomerPayment {
     typeof item.paid_at !== 'string' || Number.isNaN(Date.parse(item.paid_at))
   ) throw new Error('استجابة الدفعة تحتوي بيانات غير صالحة.');
   return {
-    id: item.id,
-    invoice_id: item.invoice_id,
-    amount: item.amount,
-    method: item.method,
+    id: item.id as string,
+    invoice_id: item.invoice_id as string,
+    amount: item.amount as number,
+    method: item.method as string,
     reference: (item.reference as string | null | undefined) ?? null,
-    paid_at: item.paid_at
+    paid_at: item.paid_at as string
   };
 }
 
