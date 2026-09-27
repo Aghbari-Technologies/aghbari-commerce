@@ -468,3 +468,9 @@ Command "1" means:
 - Customer reorder from both order-detail and order-list entry points now resolves current authorized products and submits a single atomic quick-order cart merge.
 - Quick-order lookup is explicitly bound to the authenticated account's active warehouse.
 - Supabase source migration `20260927003000_normalize_quick_order_idempotency_bound.sql` and test `032-quick-order-idempotency-bound.test.sql` align the server source contract with the client 16..128 bound without mutating production under HOLD.
+
+
+## 32. EXECUTION RUN — 82cb790c82c0125251008ac2dd915be025613232
+- Quick-order quantity validation in the active customer UI now uses `MAX_ORDER_QUANTITY_PER_LINE=10000` and exposes the same bound in the input control.
+- Unsupported boundary actions remain excluded from executable UI.
+- Production Supabase remains unchanged under HOLD; live `apply_quick_order` still reports the legacy 16..200 server bound until the new migration is deliberately applied during a release window.
