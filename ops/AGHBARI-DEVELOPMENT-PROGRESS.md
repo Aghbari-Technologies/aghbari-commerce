@@ -70,3 +70,16 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Certification: `NOT CLAIMED`
 - Production: `HOLD / NO TOUCH`
 - Next: exact final-SHA verification, then next highest-value independent core/UI gap.
+
+
+## Run 2026-09-28 — Full UI closure wave checkpoint
+- Run: 2026-09-28
+- SHA: 2361acda811159bfa7f8e0d414c2ebc70c16fe92
+- Branch: main
+- Implemented: customer account workspace + delivery addresses; executable stock count; inventory screen-pack IA; staff order detail; contract-boundary center; safe boundary navigation; Admin IA/DOM target closure.
+- Verified: current structure-to-DOM target scan returned zero missing anchors; current main remained production-untouched.
+- Proven: Browser E2E PASS exists only on prior exact SHA a7d41f43152e18d281a72e0720e1a49d070ad71c; current SHA certification proof pending.
+- Blocked: exact live Supabase mutation proof is unavailable from this session tool gate; free hosted Vercel protection path remains unresolved; no paid path used.
+- Certification: NOT CLAIMED
+- Production: HOLD / NO TOUCH
+- Next: exact-current quality/security/test results, first material failure only, then next uncovered reference screen pack.
