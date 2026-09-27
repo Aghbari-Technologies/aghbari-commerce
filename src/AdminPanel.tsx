@@ -49,7 +49,7 @@ function allowedNextStatuses(status: OrderStatus, role: UserRole): OrderStatus[]
 
 export default function AdminPanel({ role, userId }: { role: UserRole; userId: string | null }) {
   const [products, setProducts] = useState<StaffProduct[]>([]); const [warehouses, setWarehouses] = useState<Warehouse[]>([]); const [categories, setCategories] = useState<CategoryOption[]>([]); const [orders, setOrders] = useState<StaffOrderSummary[]>([]); const [ordersLoading, setOrdersLoading] = useState(false); const [orderQuery, setOrderQuery] = useState('');
-  const [commandOpen, setCommandOpen] = useState(false); const [commandQuery, setCommandQuery] = useState(''); const [orderStatusFilter, setOrderStatusFilter] = useState<'all'|OrderStatus>('all'); const [orderPage, setOrderPage] = useState(1);
+  const [commandOpen, setCommandOpen] = useState(false); const [commandQuery, setCommandQuery] = useState(''); const [activeAdminTarget, setActiveAdminTarget] = useState('#admin-dashboard'); const [orderStatusFilter, setOrderStatusFilter] = useState<'all'|OrderStatus>('all'); const [orderPage, setOrderPage] = useState(1);
   const [product, setProduct] = useState({ sku: '', name: '', unit: 'كرتون', categoryId: '', description: '', barcode: '' }); const [category, setCategory] = useState({ name: '', slug: '', parentId: '' }); const [selectedProduct, setSelectedProduct] = useState(''); const [tier, setTier] = useState<CustomerTier>('wholesale'); const [price, setPrice] = useState(''); const [warehouseId, setWarehouseId] = useState(''); const [delta, setDelta] = useState(''); const [reason, setReason] = useState(''); const [imageFile, setImageFile] = useState<File | null>(null); const [importFile, setImportFile] = useState<File | null>(null); const [importJobId, setImportJobId] = useState<string | null>(null); const [lastImportResult, setLastImportResult] = useState<{ imported_rows: number; products_created: number; products_updated: number; inventory_changed: number } | null>(null); const [lastImportReconciliation, setLastImportReconciliation] = useState<ImportReconciliationReport | null>(null); const [importPreview, setImportPreview] = useState<{ rows: number; invalid: number; fingerprint: string; contractVersion: string; sourceName: string; diagnostics: { rowNumber: number; field: string; message: string }[] } | null>(null); const [busy, setBusy] = useState(false); const [message, setMessage] = useState<string | null>(null); const [error, setError] = useState<string | null>(null); const [detailOrderId, setDetailOrderId] = useState<string | null>(null); const [detailOrder, setDetailOrder] = useState<StaffOrderDetail | null>(null); const [detailOrderLoading, setDetailOrderLoading] = useState(false); const [detailOrderError, setDetailOrderError] = useState(''); const [selectedOrderIds, setSelectedOrderIds] = useState<Set<string>>(new Set()); const [bulkTargetStatus, setBulkTargetStatus] = useState<OrderStatus | ''>(''); const [bulkPreviewOpen, setBulkPreviewOpen] = useState(false); const [bulkIdempotencyKey, setBulkIdempotencyKey] = useState<string | null>(null); const [bulkBusy, setBulkBusy] = useState(false);
 
   const reload = useCallback(async () => { if (!supabase) return; setOrdersLoading(true); try { const [{ data: productRows, error: productError }, { data: warehouseRows, error: warehouseError }, categoryRows, orderRows] = await Promise.all([supabase.from('products').select('id,sku,name,unit').eq('status', 'active').order('name').limit(200), supabase.from('warehouses').select('id,name').eq('is_active', true).order('created_at'), getCategories(), getStaffOrders(50)]); if (productError) throw productError; if (warehouseError) throw warehouseError; setProducts((productRows ?? []) as StaffProduct[]); setCategories(categoryRows); setOrders(orderRows); const nextWarehouses = (warehouseRows ?? []) as Warehouse[]; setWarehouses(nextWarehouses); setWarehouseId(current => current || nextWarehouses[0]?.id || ''); } finally { setOrdersLoading(false); } }, []);
@@ -64,10 +64,17 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
   }, []);
 
   useEffect(() => {
-    const target = adminTargetForPath(window.location.pathname);
-    if (!target) return;
-    const id = window.setTimeout(() => document.querySelector(target)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 40);
-    return () => window.clearTimeout(id);
+    const initialTarget = window.location.hash.startsWith('#admin-')
+      ? window.location.hash
+      : adminTargetForPath(window.location.pathname);
+    if (initialTarget) setActiveAdminTarget(initialTarget);
+    const id = window.setTimeout(() => initialTarget && document.querySelector(initialTarget)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 40);
+    const onHashChange = () => {
+      const target = window.location.hash.startsWith('#admin-') ? window.location.hash : '#admin-dashboard';
+      setActiveAdminTarget(target);
+    };
+    window.addEventListener('hashchange', onHashChange);
+    return () => { window.clearTimeout(id); window.removeEventListener('hashchange', onHashChange); };
   }, []);
   useEffect(() => { setOrderPage(1); }, [orderQuery, orderStatusFilter]);
   async function openOrderDetail(orderId: string) {
@@ -157,25 +164,30 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
 
   return <section className="admin-panel" id="account">
     <AdminExecutiveDashboard role={role} />
-      <nav className="admin-command-nav" aria-label="تنقل مركز التشغيل">
-        <a href="#account">المركز</a>
-        {canOrderWorkflow&&<a href="#admin-orders">الطلبات وسير العمل</a>}
-        {canCatalog&&<a href="#admin-customers">العملاء</a>}
-        {canCatalog&&<a href="#admin-catalog">الكتالوج والمنتجات</a>}
-        {canCategory&&<a href="#admin-categories">دليل التصنيفات</a>}{canCategory&&<a href="#admin-category-create">إضافة تصنيف</a>}
-        {canCatalog&&<a href="#admin-pricing">التسعير</a>}{canCatalog&&<a href="#admin-pricing-matrix">مصفوفة الأسعار</a>}
-        {canCatalog&&<a href="#admin-product-image">صور المنتجات</a>}
-        {canCatalog&&<a href="#admin-import">الاستيراد الآمن</a>}
-        {canInventory&&<a href="#admin-inventory">المخزون</a>}
-        {canInventory&&<a href="#admin-inventory-adjust">تعديل المخزون</a>}{canInventory&&<a href="#admin-inventory-history">دفتر حركة المخزون</a>}{canInventory&&<a href="#admin-inventory-activity">نشاط المخزون</a>}{canInventory&&<a href="#admin-warehouses">المستودعات والفروع</a>}
-        {canInventory&&<a href="#admin-purchasing">المشتريات والموردون</a>}{canInventory&&<a href="#admin-suppliers">دليل الموردين والحساب</a>}{canInventory&&<a href="#admin-receipts">سجل الاستلام</a>}
-        {canFinance&&<a href="#admin-finance">المالية</a>}{canFinance&&<a href="#admin-finance-history">السجل المالي</a>}
-        {canInventory&&<a href="#admin-export">التصدير</a>}
-        {canCategory&&<a href="#admin-settings">إعدادات العميل</a>}
-        {canOrderWorkflow&&<a href="#admin-notifications">الإشعارات</a>}
-        {canOrderWorkflow&&<a href="#admin-governance">التدقيق والتكاملات</a>}
-        {userId&&<a href="#admin-recovery">التعارض والاسترداد</a>}
-        {canOrderWorkflow&&<a href="#admin-access">الأدوار والصلاحيات</a>}
+        <div className="admin-current-workspace" aria-live="polite">
+        <span className="eyebrow">المساحة النشطة</span>
+        <strong>{activeAdminTarget === '#admin-dashboard' ? 'مركز القيادة' : (getAdminStructureForRole(role).flatMap((group) => group.items).find((item) => item.target === activeAdminTarget)?.label ?? 'مساحة تشغيل')}</strong>
+        <small>التنقل يغيّر مساحة العرض فقط؛ الصلاحيات والتنفيذ يظلان على الخادم.</small>
+      </div>
+    <nav className="admin-command-nav" aria-label="تنقل مركز التشغيل">
+        <a className={activeAdminTarget === '#account' || activeAdminTarget === '#admin-dashboard' ? 'active' : ''} href="#admin-dashboard">المركز</a>
+        {canOrderWorkflow&&<a className={activeAdminTarget === '#admin-orders' ? 'active' : ''} href="#admin-orders">الطلبات وسير العمل</a>}
+        {canCatalog&&<a className={activeAdminTarget === '#admin-customers' ? 'active' : ''} href="#admin-customers">العملاء</a>}
+        {canCatalog&&<a className={activeAdminTarget === '#admin-catalog' ? 'active' : ''} href="#admin-catalog">الكتالوج والمنتجات</a>}
+        {canCategory&&<a className={activeAdminTarget === '#admin-categories' ? 'active' : ''} href="#admin-categories">دليل التصنيفات</a>}{canCategory&&<a className={activeAdminTarget === '#admin-category-create' ? 'active' : ''} href="#admin-category-create">إضافة تصنيف</a>}
+        {canCatalog&&<a className={activeAdminTarget === '#admin-pricing' ? 'active' : ''} href="#admin-pricing">التسعير</a>}{canCatalog&&<a className={activeAdminTarget === '#admin-pricing-matrix' ? 'active' : ''} href="#admin-pricing-matrix">مصفوفة الأسعار</a>}
+        {canCatalog&&<a className={activeAdminTarget === '#admin-product-image' ? 'active' : ''} href="#admin-product-image">صور المنتجات</a>}
+        {canCatalog&&<a className={activeAdminTarget === '#admin-import' ? 'active' : ''} href="#admin-import">الاستيراد الآمن</a>}
+        {canInventory&&<a className={activeAdminTarget === '#admin-inventory' ? 'active' : ''} href="#admin-inventory">المخزون</a>}
+        {canInventory&&<a className={activeAdminTarget === '#admin-inventory-adjust' ? 'active' : ''} href="#admin-inventory-adjust">تعديل المخزون</a>}{canInventory&&<a className={activeAdminTarget === '#admin-inventory-history' ? 'active' : ''} href="#admin-inventory-history">دفتر حركة المخزون</a>}{canInventory&&<a className={activeAdminTarget === '#admin-inventory-activity' ? 'active' : ''} href="#admin-inventory-activity">نشاط المخزون</a>}{canInventory&&<a className={activeAdminTarget === '#admin-warehouses' ? 'active' : ''} href="#admin-warehouses">المستودعات والفروع</a>}
+        {canInventory&&<a className={activeAdminTarget === '#admin-purchasing' ? 'active' : ''} href="#admin-purchasing">المشتريات والموردون</a>}{canInventory&&<a className={activeAdminTarget === '#admin-suppliers' ? 'active' : ''} href="#admin-suppliers">دليل الموردين والحساب</a>}{canInventory&&<a className={activeAdminTarget === '#admin-receipts' ? 'active' : ''} href="#admin-receipts">سجل الاستلام</a>}
+        {canFinance&&<a className={activeAdminTarget === '#admin-finance' ? 'active' : ''} href="#admin-finance">المالية</a>}{canFinance&&<a className={activeAdminTarget === '#admin-finance-history' ? 'active' : ''} href="#admin-finance-history">السجل المالي</a>}
+        {canInventory&&<a className={activeAdminTarget === '#admin-export' ? 'active' : ''} href="#admin-export">التصدير</a>}
+        {canCategory&&<a className={activeAdminTarget === '#admin-settings' ? 'active' : ''} href="#admin-settings">إعدادات العميل</a>}
+        {canOrderWorkflow&&<a className={activeAdminTarget === '#admin-notifications' ? 'active' : ''} href="#admin-notifications">الإشعارات</a>}
+        {canOrderWorkflow&&<a className={activeAdminTarget === '#admin-governance' ? 'active' : ''} href="#admin-governance">التدقيق والتكاملات</a>}
+        {userId&&<a className={activeAdminTarget === '#admin-recovery' ? 'active' : ''} href="#admin-recovery">التعارض والاسترداد</a>}
+        {canOrderWorkflow&&<a className={activeAdminTarget === '#admin-access' ? 'active' : ''} href="#admin-access">الأدوار والصلاحيات</a>}
       </nav>
       <button type="button" className="admin-command-trigger" aria-haspopup="dialog" aria-expanded={commandOpen} onClick={() => { setCommandOpen(true); setCommandQuery(''); }}>⌘ مركز الأوامر <kbd>Ctrl K</kbd></button>
       <div className="admin-workspace-strip" aria-label="مساحات العمل السريعة">
