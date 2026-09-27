@@ -128,3 +128,7 @@
 - Never infer Aghbari product scope, routes or transactions from a screenshot alone.
 - Duplicate or equivalent screenshots must map to one shared implementation where applicable.
 - Aghbari completion is measured by the canonical Commerce capability map, not the number 84.
+
+## 2026-09-28 — Customer catalog + Admin workspace UX closure
+- Customer catalog filtering is implemented as presentation-only stock/base-price filters with explicit active state, clear-all, empty recovery and loading skeletons; no business authority is duplicated in the client.
+- Admin/Staff command navigation now exposes the active workspace context and active target state while preserving current DOM anchors and deep-link behavior.
