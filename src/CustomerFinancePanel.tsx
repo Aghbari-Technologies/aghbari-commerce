@@ -195,7 +195,7 @@ export default function CustomerFinancePanel({ customerId, online }: { customerI
           <section className="modal customer-invoice-modal" role="dialog" aria-modal="true" aria-labelledby="customer-invoice-title" onClick={(event) => event.stopPropagation()}>
             <div className="modal-head">
               <div><span className="eyebrow">المستند المالي</span><h2 id="customer-invoice-title">فاتورة #{selected.invoice_number}</h2><small>طلب #{selected.order_id}</small></div>
-              <button type="button" aria-label="إغلاق الفاتورة" onClick={() => setSelected(null)}>×</button>
+              <button type="button" autoFocus aria-label="إغلاق الفاتورة" onClick={() => setSelected(null)}>×</button>
             </div>
             <div className="invoice-detail-summary">
               <div><small>الحالة</small><strong>{STATUS_LABELS[selected.status]}</strong></div>
