@@ -97,7 +97,7 @@ select ok(
     join pg_namespace n on n.oid=p.pronamespace
     where n.nspname='public'
       and p.proname='bulk_transition_orders'
-      and pg_get_functiondef(p.oid) like '%status=\'completed\'%'
+      and pg_get_functiondef(p.oid) like '%status=''completed''%'
       and pg_get_functiondef(p.oid) like '%bulk_order_transition_results%'
   ),
   'completed idempotent requests replay stored batch results without reapplying mutations'
