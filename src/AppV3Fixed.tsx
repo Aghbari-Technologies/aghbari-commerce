@@ -15,6 +15,7 @@ import { createOrderTemplate, deleteOrderTemplate, getOrderTemplates, applyOrder
 import { supabase } from './lib/supabase';
 const AdminPanel = lazy(() => import('./AdminPanel'));
 import CustomerOrdersPanel from './CustomerOrdersPanel';
+import CustomerFinancePanel from './CustomerFinancePanel';
 import './customer-orders.css';
 import NotificationPanel from './NotificationPanel';
 import OfflineRecoveryPanel from './OfflineRecoveryPanel';
@@ -266,6 +267,7 @@ export default function AppV3Fixed(){
           ) : (
             <div className="empty-state">لا توجد بيانات مركز مالي متاحة.</div>
           )}
+          <CustomerFinancePanel customerId={customerId} online={online} />
         </section>
       )}
       {error&&<div className="error-banner" role="alert">{error}</div>}{message&&<div className="success" role="status">{message}</div>}
