@@ -418,7 +418,7 @@ export default function CustomerAccountWorkspace(props: CustomerAccountWorkspace
               </form>
 
               <div className="customer-address-list">
-                {addressesLoading ? <div className="customer-address-list-state" role="status">جارٍ تحميل عناوين التسليم…</div> :
+                {addressesLoading ? <div className="customer-address-loading-skeleton" role="status" aria-label="جارٍ تحميل عناوين التسليم">{Array.from({length:3}).map((_,index)=><article key={index}><div><i/><i/></div><span/><span/></article>)}</div> :
                   addressLoadError ? <div className="customer-address-list-state error-state" role="alert"><strong>تعذر تحميل عناوين التسليم</strong><span>{addressLoadError}</span><button type="button" className="ghost" onClick={() => void refreshAddresses()} disabled={Boolean(addressBusyKey)}>إعادة المحاولة</button></div> :
                   !addresses.length ? <div className="customer-address-list-state"><strong>لا توجد عناوين محفوظة بعد.</strong><span>أضف أول عنوان لتجهيز حساب التسليم.</span><button type="button" onClick={() => { setAddressActionError(''); setAddressMessage(''); }}>البدء بإضافة عنوان</button></div> :
                   <div className="customer-address-cards">{addresses.map(address=><article key={address.id} className={address.is_default?'customer-address-card is-default':'customer-address-card'}>
