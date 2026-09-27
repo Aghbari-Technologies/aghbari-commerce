@@ -2,26 +2,29 @@
 
 Project: Aghbari Commerce | الأغبري
 Branch: `main`
-Current Git HEAD: `524d468837f0b613ab2eb17c659a3c7a8cd4227b`
+Current Git HEAD: `226f4403f565981ed40ecb81293d34830335c6b4`
+Functional baseline: `52c3ce9a52600e056ecfb6a6f847326693123cfd`
 Production: HOLD / NO TOUCH
 Certification: NOT CLAIMED
 
 ## Current reality
-- Customer portal routing, pricing/currency, atomic reorder, warehouse binding, cart-stock preflight, duplicate-submit lock and offline remote-load guard are implemented on main.
-- Quick-order/Excel/order/cart/offline quantity ceiling is 10,000.
-- Quick-order source migration/test and order-template source migration/test are prepared but not applied to production.
-- SECURITY DEFINER application contract suite 034 is present and the corresponding 15-condition live read-only check is 15/15 true.
-- CI proof workflows were optimized to collapse stale same-branch runs and DB-only checks now use Postgres-only startup where API/Storage services are unnecessary.
-- Vercel remains a hosted gate, not a source-of-truth proof path.
+- Main functional baseline remains unchanged from `52c3ce9a52600e056ecfb6a6f847326693123cfd`.
+- Two accidental off-branch migration/proof files were reverted from main; the controlled purchase/receipt migration remains only on execution branch `execution/purchase-receipt-idempotency-128-20260927`.
+- Customer routing/pricing/reorder/quantity/offline hardening, order-template source migration and security contract suite remain on main.
+- Live production quick-order and order-template migrations remain intentionally unapplied.
 
 ## Exact proof status
-- Current source: VERIFIED at exact HEAD `524d468837f0b613ab2eb17c659a3c7a8cd4227b`.
-- Current CI: queued/pending; no PASS claimed until this exact SHA completes its relevant workflows.
-- Live security contract: VERIFIED 15/15 read-only conditions.
-- Production: HOLD / NO TOUCH.
+- Main source: VERIFIED at exact HEAD `226f4403f565981ed40ecb81293d34830335c6b4`.
+- Live security read-only proof: 15/15 current conditions true.
+- Purchase/receipt live drift: VERIFIED read-only — both production RPCs still use the legacy 16..200 idempotency bound; anon EXECUTE remains false.
+- No current main certification claim.
+
+## OPEN GAPS
+- PR #128 exact-SHA proof for controlled purchase/receipt 16..128 migration.
+- Remaining controlled quick-order/order-template production migrations and final runtime/browser evidence.
 
 ## NEXT EXECUTABLE ACTION
-Inspect exact-SHA CI for `524d468837f0b613ab2eb17c659a3c7a8cd4227b`; resolve any real failure immediately. Then close remaining pending migrations/runtime/browser evidence without reopening proven paths.
+Complete PR #128 exact-SHA migration/concurrency/Test-the-Test/application proof. If green, keep the migration on the controlled branch until the release gate authorizes production application.
 
 ## DO NOT REPEAT
-Do not transfer evidence across SHAs. Do not apply pending migrations to production. Do not retry unchanged Vercel build-rate-limit. Do not duplicate UI reference packs.
+Do not transfer evidence across SHAs. Do not mutate production directly. Do not retry unchanged Vercel build-rate-limit/protection. Do not reopen proven customer routing, quick-order, order-template or security-contract work.
