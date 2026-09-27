@@ -49,8 +49,17 @@ export default function OfflineRecoveryPanel({
 
   useEffect(() => {
     reload();
-    const timer = window.setInterval(reload, 4000);
-    return () => window.clearInterval(timer);
+    const timer = window.setInterval(() => {
+      if (document.visibilityState === 'visible') reload();
+    }, 4000);
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') reload();
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
   }, [reload]);
 
   useEffect(() => {
