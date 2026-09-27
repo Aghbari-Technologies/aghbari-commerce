@@ -1,6 +1,7 @@
 import { requireSupabase } from '../lib/supabase';
 import { normalizeCatalogQuery } from '../domain/catalog';
 import { retryRead } from '../lib/retry';
+import { cacheCatalogSnapshot, getCachedCatalogSnapshot } from './catalogCache';
 
 export interface CatalogItem {
   id: string;
@@ -30,6 +31,9 @@ function finiteNumber(value: unknown, fallback = 0): number {
 
 export async function getCatalog(search = '', categoryId: string | null = null, limit = 24, offset = 0, warehouseId?: string) {
   const query = normalizeCatalogQuery(search, limit, offset);
+  if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+    return getCachedCatalogSnapshot(query.search, categoryId);
+  }
   const client = requireSupabase();
   let resolvedWarehouseId = warehouseId;
   if (!resolvedWarehouseId) {
@@ -54,11 +58,13 @@ export async function getCatalog(search = '', categoryId: string | null = null, 
     if (result.error) throw result.error;
     return result;
   });
-  return (data ?? []).map((item: CatalogItem) => ({
+  const normalized = (data ?? []).map((item: CatalogItem) => ({
     ...(item as Omit<CatalogItem, 'available_quantity' | 'authorized_price'>),
     available_quantity: finiteNumber(item.available_quantity),
     authorized_price: item.authorized_price == null ? null : finiteNumber(item.authorized_price, 0)
   })) as CatalogItem[];
+  cacheCatalogSnapshot(query.search, categoryId, normalized);
+  return normalized;
 }
 
 export async function getProductImageUrls(paths: Array<string | null>) {
