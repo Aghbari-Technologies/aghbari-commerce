@@ -27,6 +27,7 @@ import WarehouseDirectoryPanel from './WarehouseDirectoryPanel';
 import SupplierLedgerPanel from './SupplierLedgerPanel';
 import InventoryActivityPanel from './InventoryActivityPanel';
 import RecordDetailDrawer from './RecordDetailDrawer';
+import OfflineRecoveryPanel from './OfflineRecoveryPanel';
 import './admin-executive-dashboard.css';
 import { adminTargetForPath, getAdminStructureForRole } from './structure/admin-structure';
 
@@ -45,7 +46,7 @@ function allowedNextStatuses(status: OrderStatus, role: UserRole): OrderStatus[]
   return [];
 }
 
-export default function AdminPanel({ role }: { role: UserRole }) {
+export default function AdminPanel({ role, userId }: { role: UserRole; userId: string | null }) {
   const [products, setProducts] = useState<StaffProduct[]>([]); const [warehouses, setWarehouses] = useState<Warehouse[]>([]); const [categories, setCategories] = useState<CategoryOption[]>([]); const [orders, setOrders] = useState<StaffOrderSummary[]>([]); const [ordersLoading, setOrdersLoading] = useState(false); const [orderQuery, setOrderQuery] = useState('');
   const [commandOpen, setCommandOpen] = useState(false); const [commandQuery, setCommandQuery] = useState(''); const [orderStatusFilter, setOrderStatusFilter] = useState<'all'|OrderStatus>('all'); const [orderPage, setOrderPage] = useState(1);
   const [product, setProduct] = useState({ sku: '', name: '', unit: 'كرتون', categoryId: '', description: '', barcode: '' }); const [category, setCategory] = useState({ name: '', slug: '', parentId: '' }); const [selectedProduct, setSelectedProduct] = useState(''); const [tier, setTier] = useState<CustomerTier>('wholesale'); const [price, setPrice] = useState(''); const [warehouseId, setWarehouseId] = useState(''); const [delta, setDelta] = useState(''); const [reason, setReason] = useState(''); const [imageFile, setImageFile] = useState<File | null>(null); const [importFile, setImportFile] = useState<File | null>(null); const [importJobId, setImportJobId] = useState<string | null>(null); const [lastImportResult, setLastImportResult] = useState<{ imported_rows: number; products_created: number; products_updated: number; inventory_changed: number } | null>(null); const [importPreview, setImportPreview] = useState<{ rows: number; invalid: number; fingerprint: string; contractVersion: string; sourceName: string; diagnostics: { rowNumber: number; field: string; message: string }[] } | null>(null); const [busy, setBusy] = useState(false); const [message, setMessage] = useState<string | null>(null); const [error, setError] = useState<string | null>(null); const [detailOrderId, setDetailOrderId] = useState<string | null>(null);
@@ -111,6 +112,7 @@ export default function AdminPanel({ role }: { role: UserRole }) {
         {canCategory&&<a href="#admin-settings">إعدادات العميل</a>}
         {canOrderWorkflow&&<a href="#admin-notifications">الإشعارات</a>}
         {canOrderWorkflow&&<a href="#admin-governance">التدقيق والتكاملات</a>}
+        {userId&&<a href="#admin-recovery">التعارض والاسترداد</a>}
         {canOrderWorkflow&&<a href="#admin-access">الأدوار والصلاحيات</a>}
       </nav>
       <button type="button" className="admin-command-trigger" aria-haspopup="dialog" aria-expanded={commandOpen} onClick={() => { setCommandOpen(true); setCommandQuery(''); }}>⌘ مركز الأوامر <kbd>Ctrl K</kbd></button>
@@ -175,7 +177,8 @@ export default function AdminPanel({ role }: { role: UserRole }) {
 {canCategory && <div className="admin-workspace-section" data-label="15 · تخصيص بوابة العميل"><div id="admin-settings"><ClientControlPanel role={role}/></div></div>}
 {canOrderWorkflow && <div className="admin-workspace-section" data-label="16 · الإشعارات التشغيلية"><div id="admin-notifications"><NotificationPanel audience="staff" /></div></div>}
 {canOrderWorkflow && <div className="admin-workspace-section" data-label="17 · التدقيق والتكاملات"><div id="admin-governance"><StaffOperationsPanel /></div></div>}
-{canOrderWorkflow && <div className="admin-workspace-section" data-label="18 · المستخدمون والأدوار والصلاحيات"><div id="admin-access"><StaffAccessPanel role={role} /></div></div>}
+{userId && <div className="admin-workspace-section" data-label="18 · التعارض والاسترداد"><div id="admin-recovery"><OfflineRecoveryPanel userId={userId} alwaysVisible /></div></div>}
+{canOrderWorkflow && <div className="admin-workspace-section" data-label="19 · المستخدمون والأدوار والصلاحيات"><div id="admin-access"><StaffAccessPanel role={role} /></div></div>}
     </details>
   </section>;
 }

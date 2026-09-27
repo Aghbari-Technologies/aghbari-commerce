@@ -11,7 +11,8 @@ import {
   OFFLINE_CART_REMOVE_ITEM,
   OFFLINE_CART_SET_ITEM,
   pendingOfflineOperations,
-  classifyOfflineFailure
+  classifyOfflineFailure,
+  retryOfflineOperationNow
 } from './offlineQueue';
 
 const storage = new Map<string, string>();
@@ -238,4 +239,28 @@ describe('offline operation queue', () => {
     expect(pendingOfflineOperations(' ')).toHaveLength(0);
     expect(pendingOfflineOperations('not-a-user')).toHaveLength(0);
   });
+
+  it('forces a safe queued/retrying operation back into immediate replay without resetting attempt history', async () => {
+    const operation = enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: 1 });
+    markOfflineOperationAttempt(operation.operationId, 1_000);
+    retryOfflineOperationNow(operation.operationId, USER_A);
+    expect(pendingOfflineOperations(USER_A)[0]).toMatchObject({ operationId: operation.operationId, attempts: 1, state: 'queued', terminal: false });
+    expect(pendingOfflineOperations(USER_A)[0].nextAttemptAt).toBeUndefined();
+
+    const seen: string[] = [];
+    const result = await drainOfflineOperations(async (item) => { seen.push(item.operationId); }, USER_A, 2_000);
+    expect(result).toEqual({ processed: 1, failed: 0 });
+    expect(seen).toEqual([operation.operationId]);
+    expect(pendingOfflineOperations(USER_A)).toHaveLength(0);
+  });
+
+  it('never unlocks conflicted or terminal operations for blind replay', async () => {
+    const conflict = enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: 1 });
+    const terminal = enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_B, quantity: 1 });
+    await drainOfflineOperations(async (item) => { throw item.operationId === conflict.operationId ? { status: 409 } : { status: 403 }; }, USER_A, Date.now());
+
+    expect(() => retryOfflineOperationNow(conflict.operationId, USER_A)).toThrow('تحتاج مراجعة');
+    expect(() => retryOfflineOperationNow(terminal.operationId, USER_A)).toThrow('تحتاج مراجعة');
+  });
+
 });
