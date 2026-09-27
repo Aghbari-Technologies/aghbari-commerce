@@ -95,7 +95,7 @@ export default function CustomerOrdersPanel({
     </div>
 
     {detailBusy&&<div className="portal-loading" role="status">جارٍ تحميل تفاصيل الطلب…</div>}
-    {loading?<div className="portal-loading" role="status">جارٍ تحميل الطلبات…</div>
+    {loading?<div className="customer-orders-loading-skeleton" role="status" aria-label="جارٍ تحميل الطلبات">{Array.from({length:3}).map((_,index)=><article key={index}><div className="customer-orders-loading-head"><i/><i/></div><i/><i/><div className="customer-orders-loading-footer"><i/><i/></div></article>)}</div>
       :!orders.length?<div className="empty-state"><strong>لا توجد طلبات سابقة بعد.</strong><span>بعد أول إرسال سيظهر سجل الطلبات والتتبع هنا.</span><button type="button" onClick={onReload}>إعادة المحاولة</button></div>
       :!filtered.length?<div className="empty-state"><strong>لا توجد طلبات مطابقة.</strong><span>غيّر البحث أو فلتر الحالة أو الترتيب ثم أعد المحاولة.</span><button type="button" onClick={clearFilters}>مسح الفلاتر</button></div>
       :<><div className={`orders-list ${density==='compact'?'is-compact':''}`}>{visible.map(order=>{
