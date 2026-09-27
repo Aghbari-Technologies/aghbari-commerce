@@ -121,3 +121,10 @@
 - Compound source verification on current main: 84 unique reference entries; 27 Admin anchors; 13 Boundary safe alternatives all resolve to live anchors.
 - Production migration state remains intentionally old: migration `20260927041500` is present in source but not in live migration history; no production mutation was performed.
 - Never interpret source-level verification as browser certification or production migration proof.
+
+## 2026-09-28 — External visual corpus interpretation
+
+- The supplied UI screenshots are from another application/context. They provide visual language and UX patterns only.
+- Never infer Aghbari product scope, routes or transactions from a screenshot alone.
+- Duplicate or equivalent screenshots must map to one shared implementation where applicable.
+- Aghbari completion is measured by the canonical Commerce capability map, not the number 84.
