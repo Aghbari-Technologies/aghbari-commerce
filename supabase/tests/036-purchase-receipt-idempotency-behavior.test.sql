@@ -45,7 +45,7 @@ declare
   v_warehouse uuid := 'c1000000-0000-4000-8000-000000000005';
   v_product uuid := 'c1000000-0000-4000-8000-000000000006';
   v_po uuid;
-  v_item uuid;
+  v_item bigint;
   v_receipt uuid;
   v_error text;
 begin
@@ -101,7 +101,7 @@ begin
   where id=v_po and organization_id=v_org;
 
   set local role authenticated;
-  select * into v_receipt
+  select receipt_id into v_receipt
   from public.receive_purchase_order(
     v_po,
     repeat('r',128),
