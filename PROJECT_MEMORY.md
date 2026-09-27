@@ -114,3 +114,10 @@
 - Customer Portal six-section coverage is guarded by `src/customer-portal-section-coverage.test.ts`.
 - Customer order-search copy now matches its actual queryable fields.
 - Purchasing input boundary test is included in the bounded quality workflow; canonical purchase/receipt 128-bound migration remains in source and not applied to Production.
+
+## 2026-09-28 — Execution wave closure additions
+
+- Current exact source state includes 84-reference UI registry + coverage workspace, full mobile portal section navigation, Boundary safe-target contract, six-section portal coverage contract, customer order-search copy correction, and purchasing migration source guard.
+- Compound source verification on current main: 84 unique reference entries; 27 Admin anchors; 13 Boundary safe alternatives all resolve to live anchors.
+- Production migration state remains intentionally old: migration `20260927041500` is present in source but not in live migration history; no production mutation was performed.
+- Never interpret source-level verification as browser certification or production migration proof.
