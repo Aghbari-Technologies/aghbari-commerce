@@ -2,15 +2,15 @@
 
 Project: Aghbari Commerce | الأغبري
 Branch: `main`
-Current Git HEAD: `a1a001f7ceafb72ebeacb0b1c942dfebe2345a90`
+Current Git HEAD: `39efd8a7e98d982a643bed43af977b38d5ac679d`
 Production: HOLD / NO TOUCH
 Certification: NOT CLAIMED
 
 ## Current reality
-- Active implementation continued on the exact current HEAD; no historical evidence was transferred.
-- Customer catalog now preserves server-authorized base pricing and uses it when no matching quantity tier applies.
-- Customer order-detail reorder resolves authorized catalog items outside the current visible page before re-adding them to the cart.
-- A dedicated pricing contract test now locks tier selection, base-price fallback and invalid-input handling.
+- Active implementation is at exact HEAD `39efd8a7e98d982a643bed43af977b38d5ac679d` on `main`.
+- Customer catalog preserves server-authorized base pricing when no eligible tier matches.
+- Customer order-detail reorder resolves authorized catalog items outside the current visible page before re-adding them.
+- Quick-order idempotency input is capped at the canonical 128-character client bound and covered by 128/129 regression tests.
 - No production mutation was introduced.
 
 ## Exact proof status
@@ -29,7 +29,7 @@ DEPLOY: free exact-source hosted runtime proof; no unchanged Vercel retries.
 DOCS: semantic consolidation only when it closes an active requirement/proof gap.
 
 ## NEXT EXECUTABLE ACTION
-Run the affected exact-SHA application-quality and Test-the-Test proofs for `a1a001f7ceafb72ebeacb0b1c942dfebe2345a90`; continue independently with the next material UI/core/security gap and use their results to close verified work only.
+Close and inspect exact-SHA CI/Test-the-Test/security/migration/concurrency/browser proof for `39efd8a7e98d982a643bed43af977b38d5ac679d`; act on failures immediately, then continue the next independent material UI/core/security gap.
 
 ## DO NOT REPEAT
 Do not rebuild closed/proven work; do not transfer evidence between SHAs; do not retry the unchanged Vercel protection path; do not create duplicate reference packs or memory systems.
