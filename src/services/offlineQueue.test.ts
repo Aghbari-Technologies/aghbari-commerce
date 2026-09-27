@@ -55,6 +55,11 @@ describe('offline operation queue', () => {
   });
 
 
+  it('enforces the canonical cart quantity ceiling at enqueue time', () => {
+    expect(() => enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: MAX_ORDER_QUANTITY_PER_LINE })).not.toThrow();
+    expect(() => enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_B, quantity: MAX_ORDER_QUANTITY_PER_LINE + 1 })).toThrow('بيانات العملية غير المتصلة غير صالحة');
+  });
+
   it('rejects empty and unsafe operation types', () => {
     expect(() => enqueueOfflineOperation(USER_A, '   ', {})).toThrow('نوع العملية مطلوب');
     expect(() => enqueueOfflineOperation(USER_A, 'order:submit', {})).toThrow('لا يُسمح بتأجيلها');
