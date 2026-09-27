@@ -1,5 +1,3 @@
-import type { ReactNode } from 'react';
-
 function Block({ className = '' }: { className?: string }) {
   return <i className={'operational-skeleton-block ' + className} aria-hidden="true" />;
 }
