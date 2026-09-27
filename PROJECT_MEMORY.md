@@ -49,3 +49,9 @@
 - Conflicted or terminal offline operations remain fail-closed and require review/removal; UI never bypasses server authorization.
 - Purchase/receipt idempotency migration is source-controlled and remains unapplied to Production until exact migration, concurrency, negative and Test-the-Test evidence pass.
 - Free-plan Vercel deployment rate-limit/protection remains a known unchanged blocker; do not spend quota by repeating the same path.
+
+## 2026-09-27 — Bulk order operations contract
+- Bulk order status transitions are a server-side transactional capability, not a client-side mutation loop.
+- A bulk request is limited to 1–100 unique orders, validates organization and role/state authorization for every selected order, and uses one idempotency key bound to the canonical selected-order set plus target status.
+- Cancellation batches prevalidate inventory balances and lock impacted balances in stable order before mutation; results are stored for safe idempotent replay.
+- The UI must provide selection, common-transition validation and a precise preview before committing the server mutation; server authorization remains authoritative.
