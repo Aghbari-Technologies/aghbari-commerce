@@ -254,10 +254,10 @@ describe('offline operation queue', () => {
     expect(pendingOfflineOperations(USER_A)).toHaveLength(0);
   });
 
-  it('never unlocks conflicted or terminal operations for blind replay', () => {
+  it('never unlocks conflicted or terminal operations for blind replay', async () => {
     const conflict = enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_A, quantity: 1 });
     const terminal = enqueueOfflineOperation(USER_A, OFFLINE_CART_SET_ITEM, { productId: PRODUCT_B, quantity: 1 });
-    void drainOfflineOperations(async (item) => { throw item.operationId === conflict.operationId ? { status: 409 } : { status: 403 }; }, USER_A, Date.now());
+    await drainOfflineOperations(async (item) => { throw item.operationId === conflict.operationId ? { status: 409 } : { status: 403 }; }, USER_A, Date.now());
 
     expect(() => retryOfflineOperationNow(conflict.operationId, USER_A)).toThrow('تحتاج مراجعة');
     expect(() => retryOfflineOperationNow(terminal.operationId, USER_A)).toThrow('تحتاج مراجعة');
