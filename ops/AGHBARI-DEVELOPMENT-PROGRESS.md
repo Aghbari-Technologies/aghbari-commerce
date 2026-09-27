@@ -225,3 +225,16 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Certification: `NOT CLAIMED`
 - Production: `HOLD / NO TOUCH`
 - Next: re-read exact HEAD and execute the bounded quality workflow through an accessible runtime path, then continue the next exact gap.
+
+
+## Run 2026-09-28 — Customer nested loading closure
+- Run: `2026-09-28`
+- SHA: `8744c59a94b4367539143179aa096b954933548a`
+- Branch: `main`
+- Implemented: structural loading UI for Notifications, Customer Addresses, Customer Order Details and Invoice Details; responsive/reduced-motion styling; focused tests; bounded quality workflow inclusion; removed duplicate workspace contract test.
+- Verified: active runtime source remains wired; Production untouched; reference corpus remains provenance-only.
+- Proven: exact current CI result pending; nearby Browser E2E and security checks have passed on exact SHAs, but no evidence transfer is claimed.
+- Blocked: exact hosted runtime/deployment proof; purchase/receipt 200→128 production migration release gate.
+- Certification: `NOT CLAIMED`
+- Production: `HOLD / NO TOUCH`
+- Next: exact-head quality/test-the-test/G1 evidence, first material failure only, then next canonical UI/core gap.
