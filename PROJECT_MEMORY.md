@@ -75,3 +75,8 @@
 - Admin/Staff order details use the real `orders` + `order_items` + `products` read contract through `getStaffOrderDetail`; the UI must not substitute fabricated line data.
 - The detail service validates UUIDs, monetary fields and line totals and rejects a subtotal that does not equal the sum of returned line totals within the repository tolerance.
 - The reusable operational detail drawer supports rich content and an explicit retry footer without adding mutation authority.
+
+
+## 2026-09-28 — Staff reorder/template scope boundary
+- Reorder and order templates are implemented for Customer Portal ownership. Do not fabricate a Staff management surface: current template storage/RPCs derive customer context and are not a Staff-authority contract.
+- A future Staff contract must define permission, tenant/customer visibility, read model, mutation semantics and audit before the boundary is converted to a live surface.
