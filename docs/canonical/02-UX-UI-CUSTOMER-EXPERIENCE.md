@@ -115,3 +115,10 @@ Do not create a second design system, duplicate CSS family or duplicate asset co
 - Required states: loading, empty, validation/action error, success, offline/disabled, edit mode and destructive-action confirmation.
 - Customer actions are CRUD plus explicit set-default; the server maintains a single default atomically. Offline mode fails closed for address reads/mutations instead of presenting fabricated or stale transactional data.
 - Address management remains visually consistent with the existing account workspace and reuses the canonical customer UI system; it does not create a second design system.
+
+
+## 2026-09-28 — Staff order detail workspace closure
+- Admin/Staff order rows now open the real operational order-detail contract instead of a summary-only drawer.
+- Detail loading is explicit; successful detail reads expose customer, state, totals, payment method and every authorized order line with quantity, unit price, line total and pricing tier.
+- Client parsing rejects malformed order IDs, invalid line identifiers and inconsistent line totals; the service also verifies subtotal against the sum of line totals before rendering.
+- Detail read failure preserves the record unchanged and exposes an explicit retry action. The drawer remains keyboard-accessible and reusable across operational record surfaces.
