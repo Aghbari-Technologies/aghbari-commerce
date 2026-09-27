@@ -1,9 +1,12 @@
 export type CustomerStructureStatus = 'live' | 'boundary';
 
+export const CUSTOMER_PORTAL_SECTIONS = ['catalog', 'orders', 'finance', 'templates', 'account', 'notifications'] as const;
+export type CustomerPortalSection = typeof CUSTOMER_PORTAL_SECTIONS[number];
+
 export interface CustomerStructureItem {
   id: string;
   label: string;
-  section: 'catalog' | 'orders' | 'finance' | 'templates' | 'account' | 'notifications';
+  section: CustomerPortalSection;
   status: CustomerStructureStatus;
   description: string;
 }
