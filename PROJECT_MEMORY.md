@@ -85,3 +85,7 @@
 - Supplier and warehouse edit surfaces are now in Commerce scope and implemented through authenticated server-side update RPCs.
 - `update_supplier` and `update_warehouse` derive tenant context server-side, require owner/admin authorization, validate target ownership/active branch, and emit audit events.
 - Unsupported AI/BI/Onyx/Developer-AI edit surfaces remain explicit UI boundaries; they are not transactional Commerce features.
+
+## 2026-09-28 — Customer self profile
+- Customer Portal self-service profile now permits only display name and phone updates through update_customer_self_profile.
+- Email, pricing tier, active state and tenant ownership remain protected/read-only. The command rejects staff contexts and is audited.
