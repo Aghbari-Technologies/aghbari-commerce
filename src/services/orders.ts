@@ -1,5 +1,6 @@
 import { requireSupabase } from '../lib/supabase';
 import type { OrderDraft } from '../domain/types';
+import { MAX_ORDER_QUANTITY_PER_LINE } from '../domain/order';
 import type { PaymentMethod } from '../domain/customerPolicy';
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -31,7 +32,7 @@ function assertOrderLines(lines: unknown) {
     if (seen.has(productId)) throw new Error('لا يمكن تكرار المنتج داخل الطلب.');
     seen.add(productId);
     const quantity = candidate.quantity;
-    if (typeof quantity !== 'number' || !Number.isSafeInteger(quantity) || quantity < 1) throw new Error('كمية الطلب يجب أن تكون عددًا صحيحًا موجبًا.');
+    if (typeof quantity !== 'number' || !Number.isSafeInteger(quantity) || quantity < 1 || quantity > MAX_ORDER_QUANTITY_PER_LINE) throw new Error(`كمية الطلب يجب أن تكون عددًا صحيحًا بين 1 و${MAX_ORDER_QUANTITY_PER_LINE}.`);
     return { productId, quantity };
   });
 }

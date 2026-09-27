@@ -35,6 +35,10 @@ describe('order input boundaries', () => {
     await expect(createOrder({ idempotencyKey: 'checkout-4', lines: [{ productId: UUID, quantity: 1 }] }, 123 as unknown as string)).rejects.toThrow('معرّف المستودع غير صالح');
   });
 
+  it('rejects order quantities above the server operational ceiling before network use', async () => {
+    await expect(createOrder({ idempotencyKey: 'checkout-quantity', lines: [{ productId: UUID, quantity: 10_001 }] }, UUID)).rejects.toThrow('بين 1 و10000');
+  });
+
   it('rejects empty, oversized, and malformed checkout inputs before network use', async () => {
     await expect(createOrder({ idempotencyKey: '   ', lines: [{ productId: UUID, quantity: 1 }] }, UUID)).rejects.toThrow();
     await expect(createOrder({ idempotencyKey: 'x'.repeat(129), lines: [{ productId: UUID, quantity: 1 }] }, UUID)).rejects.toThrow();
