@@ -96,16 +96,6 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
       selectedOrders.every((order) => allowedNextStatuses(order.status, role).includes(candidate))
     );
   }, [selectedOrders, role]);
-  const pageOrderIds = pagedOrders.map((order) => order.id);
-  const allPageSelected = pageOrderIds.length > 0 && pageOrderIds.every((id) => selectedOrderIds.has(id));
-  function togglePageSelection() {
-    setSelectedOrderIds((current) => {
-      const next = new Set(current);
-      if (allPageSelected) pageOrderIds.forEach((id) => next.delete(id));
-      else pageOrderIds.forEach((id) => next.add(id));
-      return next;
-    });
-  }
   function openBulkPreview() {
     const target = bulkAllowedTargets[0] ?? '';
     if (!selectedOrders.length || !target) {
@@ -154,6 +144,16 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
   const orderPages = Math.max(1, Math.ceil(visibleOrders.length / 10));
   const activeOrderPage = Math.min(orderPage, orderPages);
   const pagedOrders = visibleOrders.slice((activeOrderPage - 1) * 10, activeOrderPage * 10);
+  const pageOrderIds = pagedOrders.map((order) => order.id);
+  const allPageSelected = pageOrderIds.length > 0 && pageOrderIds.every((id) => selectedOrderIds.has(id));
+  function togglePageSelection() {
+    setSelectedOrderIds((current) => {
+      const next = new Set(current);
+      if (allPageSelected) pageOrderIds.forEach((id) => next.delete(id));
+      else pageOrderIds.forEach((id) => next.add(id));
+      return next;
+    });
+  }
 
   return <section className="admin-panel" id="account">
     <AdminExecutiveDashboard role={role} />
