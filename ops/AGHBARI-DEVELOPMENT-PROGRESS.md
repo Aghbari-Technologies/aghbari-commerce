@@ -157,3 +157,15 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Certification: `NOT CLAIMED`
 - Production: `HOLD / NO TOUCH`
 - Next: current-SHA quality/security/G1 result, first material failure only, then next independent core/UI gap.
+
+## Run 2026-09-28 — Compound UI/core verification checkpoint
+- Run: `2026-09-28`
+- SHA: `b6bd9a8a9c8f56967d2313fe751d89697560486b`
+- Branch: `main`
+- Implemented: reference registry/coverage workspace; mobile Portal More navigation + Escape; Boundary safe-target contract; six-section Portal contract; customer order-search alignment; purchase/receipt migration source guard.
+- Verified: 84 unique reference entries; 27 Admin DOM anchors; 13 Boundary targets all anchored; six Portal sections reachable; migration source has 128 max and no simple 200 max; Production untouched.
+- Proven: source-level only.
+- Blocked: exact current CI/browser/hosted proof; Vercel external free-plan path.
+- Certification: `NOT CLAIMED`
+- Production: `HOLD / NO TOUCH`
+- Next: current-SHA workflow evidence, then next independent core/UI requirement.
