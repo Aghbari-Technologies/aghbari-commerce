@@ -125,8 +125,7 @@ begin
 
   return v_template;
 end;
-$function$
-
+$function$;
 
 CREATE OR REPLACE FUNCTION public.apply_order_template(p_template_id uuid, p_warehouse_id uuid, p_idempotency_key text)
  RETURNS TABLE(cart_id uuid, applied_lines integer)
