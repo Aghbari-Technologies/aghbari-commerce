@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { calculateInvoicePaid, getCustomerInvoiceItems, getCustomerInvoicePayments, getCustomerInvoices, getCustomerStatement, type CustomerInvoiceItem, type CustomerInvoiceSummary, type CustomerPayment, type CustomerPaymentHistoryItem, type CustomerStatementLine, type CustomerStatementTotal } from './services/customerFinance';
 import { formatMoney } from './domain/pricing';
 import './customer-finance.css';
@@ -21,7 +21,7 @@ function money(value: number, currency: string) {
   return formatMoney(value) + ' ' + (currency === 'YER' ? 'ر.ي' : currency);
 }
 
-export default function CustomerFinancePanel({ customerId, online }: { customerId: string | null; online: boolean }) {
+export default function CustomerFinancePanel({ customerId, online, openFirstInvoiceRequest = 0 }: { customerId: string | null; online: boolean; openFirstInvoiceRequest?: number }) {
   const [invoices, setInvoices] = useState<CustomerInvoiceSummary[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -100,6 +100,13 @@ export default function CustomerFinancePanel({ customerId, online }: { customerI
   useEffect(() => {
     if (view === 'payments') void loadPayments();
   }, [view, loadPayments]);
+
+  const handledInvoiceRequest = useRef(0);
+  useEffect(() => {
+    if (!openFirstInvoiceRequest || handledInvoiceRequest.current === openFirstInvoiceRequest || !invoices.length || !online) return;
+    handledInvoiceRequest.current = openFirstInvoiceRequest;
+    void openInvoice(invoices[0]);
+  }, [openFirstInvoiceRequest, invoices, online]);
 
   useEffect(() => {
     if (!selected) return;
