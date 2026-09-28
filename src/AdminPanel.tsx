@@ -30,7 +30,7 @@ import RecordDetailDrawer from './RecordDetailDrawer';
 import OfflineRecoveryPanel from './OfflineRecoveryPanel';
 import AdminBoundaryCenter from './AdminBoundaryCenter';
 import './admin-executive-dashboard.css';
-import { adminTargetForPath, getAdminStructureForRole } from './structure/admin-structure';
+import { adminOrderIdForPath, adminTargetForPath, getAdminStructureForRole } from './structure/admin-structure';
 import WorkspaceSurfaceRail from './WorkspaceSurfaceRail';
 
 interface StaffProduct { id: string; sku: string; name: string; unit: string; }
@@ -65,10 +65,13 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
   }, []);
 
   useEffect(() => {
+    const pathname = window.location.pathname;
     const initialTarget = window.location.hash.startsWith('#admin-')
       ? window.location.hash
-      : adminTargetForPath(window.location.pathname);
+      : adminTargetForPath(pathname);
+    const orderId = adminOrderIdForPath(pathname);
     if (initialTarget) setActiveAdminTarget(initialTarget);
+    if (orderId) void openOrderDetail(orderId);
     const id = window.setTimeout(() => initialTarget && document.querySelector(initialTarget)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 40);
     const onHashChange = () => {
       const target = window.location.hash.startsWith('#admin-') ? window.location.hash : '#admin-dashboard';
@@ -76,14 +79,14 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
     };
     window.addEventListener('hashchange', onHashChange);
     return () => { window.clearTimeout(id); window.removeEventListener('hashchange', onHashChange); };
-  }, []);
+  }, [openOrderDetail]);
   useEffect(() => { setOrderPage(1); }, [orderQuery, orderStatusFilter, orderSort]);
-  async function openOrderDetail(orderId: string) {
+  const openOrderDetail = useCallback(async (orderId: string) => {
     setDetailOrderId(orderId); setDetailOrder(null); setDetailOrderError(''); setDetailOrderLoading(true);
     try { setDetailOrder(await getStaffOrderDetail(orderId)); }
     catch (e) { setDetailOrderError(e instanceof Error ? e.message : 'تعذر تحميل تفاصيل الطلب.'); }
     finally { setDetailOrderLoading(false); }
-  }
+  }, []);
   function closeOrderDetail() { setDetailOrderId(null); setDetailOrder(null); setDetailOrderError(''); setDetailOrderLoading(false); }
   async function run(action: () => Promise<unknown>, success: string) { setBusy(true); setError(null); setMessage(null); try { await action(); setMessage(success); await reload(); } catch (e) { setError(e instanceof Error ? e.message : 'تعذر تنفيذ العملية.'); } finally { setBusy(false); } }
   async function uploadImage() { if (!selectedProduct || !imageFile) return; await run(async () => { await uploadProductImage(selectedProduct, imageFile); setImageFile(null); }, 'تم رفع الصورة ومعالجتها وتسجيلها بأمان.'); }
