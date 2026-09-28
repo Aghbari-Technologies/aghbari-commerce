@@ -260,3 +260,15 @@ Resume from `d65f32f1a6eb4cc1a6b95cad573cff994a57e912` only after re-reading exa
 - Production: HOLD / NO TOUCH.
 ### NEXT EXECUTABLE ACTION
 Read exact current main HEAD, fetch its Aghbari Quality + application-quality + Test-the-Test + G1 results, fix only the first material failure, then continue the next uncovered canonical customer/admin state. Do not repeat unchanged hosted deployment attempts.
+
+## 2026-09-28 — UI + idempotency closure checkpoint
+- Actual current main HEAD: `27d0f5b9469051ea17f0357ae8bc2175a5d06446`.
+- Implemented: shared Admin/Customer Workspace Surface; feature-aware customer navigation; structural loading surfaces for customer notifications/addresses/order details/invoice details; structural Admin finance/access/order-detail loading; responsive/reduced-motion styling; focused UI tests; purchase/receipt idempotency negative payload-conflict coverage (10-assertion runtime proof).
+- Verified: no production migration applied; no business transaction behavior fabricated; 84-reference corpus remains provenance grouped into canonical screen packs; Admin boundary/contract-gap routes remain explicit.
+- Proven: exact current HEAD final CI/Browse evidence is not yet established; earlier Browser E2E/Security results are historical and are not transferred.
+- Open: exact current quality/application-quality/Test-the-Test/G1 proof; purchase/receipt 8-way concurrency proof; exact current hosted runtime.
+- Blocker: Netlify current site is ready but existing deployment is not exact current source; Vercel remains quota/protection constrained.
+- Certification: NOT CLAIMED.
+- Production: HOLD / NO TOUCH.
+### NEXT EXECUTABLE ACTION
+On exact current HEAD `27d0f5b9469051ea17f0357ae8bc2175a5d06446`, inspect the first non-cancelled quality/application-quality/Test-the-Test/G1 result; fix only a material failure, then continue the next uncovered canonical UI state. For purchase/receipt, use the diagnostic concurrency run to identify the exact failing worker before touching SQL. 
