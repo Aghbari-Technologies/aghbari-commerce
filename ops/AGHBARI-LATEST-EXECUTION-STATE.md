@@ -105,3 +105,16 @@ On the next current HEAD, execute the exact-SHA Vitest/typecheck matrix covering
 
 ## NEXT EXECUTABLE ACTION
 On the next current HEAD, run the focused UI contract suite (Admin anchor/deep-link + 84-reference accounting + Customer Portal section/offline contracts) and typecheck. Separately prepare the purchase/receipt 128-bound release proof without applying it: verify the source migration against live definitions, execute concurrency/129-negative proof in a safe non-production environment, then retain Production HOLD until exact-SHA evidence is complete.
+
+
+## 2026-09-29 — Customer navigation + UI reference guard checkpoint
+- Exact current execution HEAD before this write-back: `2f78f4a4c38d45454b1a9a9d338ff2f03442f4d7`.
+- Implemented: centralized customer portal navigation contract in `src/customer-portal-navigation.ts`; hidden Finance/Templates sections are normalized on direct hash/deep navigation; customer notification offline boundary is explicit; Admin order deep-links open real details with list-window fallback; Admin workspace anchors are single-owner.
+- UI corpus guard: `84` reference assets remain uniquely accounted across `8` screen packs; external-pattern packs remain explicit boundaries and are not duplicated into fake Commerce screens.
+- Verified statically from current branch: customer subviews `addresses`, `account-settings`, `invoice-detail`, `invoice-history`, `statements`, `payment-history`, `order-history` are implemented under their live parent workspaces; no duplicate screens were created.
+- Proof boundary: source/static proof only; no exact-SHA local Vitest/typecheck/build/browser runtime execution available. GitHub Actions produced no workflow run for this connector-created SHA; the only current commit status is Vercel failure `build-rate-limit`.
+- Live Core blocker unchanged: Supabase `aghbari-commerce` still runs purchase/receipt idempotency at `16..200`; source migration `20260927041500` for `16..128` is not in live migration history. Production migration remains untouched.
+- Certification: `NOT CLAIMED`. Production: `HOLD / NO TOUCH`.
+
+## NEXT EXECUTABLE ACTION
+On next current HEAD, execute exact-SHA quality and browser workflows through an environment that actually triggers GitHub Actions; then run the affected UI suite. In parallel, prepare the non-production purchase/receipt 128-bound concurrency + 129-negative proof. Fix only first material failure.
