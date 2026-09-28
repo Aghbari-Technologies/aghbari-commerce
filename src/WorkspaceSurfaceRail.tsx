@@ -145,7 +145,7 @@ export default function WorkspaceSurfaceRail(props: WorkspaceSurfaceRailProps) {
       </div>
       <div className="workspace-surface-grid">
         {STAFF_PACKS.map((pack, index) => {
-          const packTargets = 'targets' in pack ? pack.targets : [pack.target];
+          const packTargets: readonly string[] = 'targets' in pack ? pack.targets : [pack.target];
           const enabled = packTargets.some((target) => allowedStaffTargets.has(target)) || (pack.tone === 'boundary' && boundaryVisible);
           const active = packTargets.includes(activeStaffTarget);
           if (!enabled) return null;
