@@ -415,8 +415,8 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
             </header>
             <div className="control-structure-groups">
               {structure.map((group) => {
-                const boundaryItems = group.items.filter((item) => item.status !== 'live').slice(0, 8);
-                const liveItems = group.items.filter((item) => item.status === 'live').slice(0, 8);
+                const boundaryItems = group.items.filter((item) => item.status !== 'live');
+                const liveItems = group.items.filter((item) => item.status === 'live');
                 if (!boundaryItems.length && !liveItems.length) return null;
                 return (
                   <article className="control-structure-group" key={group.id}>
@@ -438,7 +438,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
 
             {canOrders && (
               <SectionCard icon="🛒" title="المبيعات والعملاء" description="الطلبات والعملاء ومسارات العمل اليومية">
-                <Tile icon="👥" title="أجهزة العملاء" target="#admin-customers" tone="brand" />
+                <Tile icon="👥" title="إدارة العملاء" target="#admin-customers" tone="brand" />
                 <Tile icon="🧾" title="الطلبات" target="#admin-orders" />
                 <Tile icon="↪" title="مساحة عمل المدير" target="#admin-orders" />
                 <Tile icon="🔔" title="الإشعارات" target="#admin-notifications" />
@@ -503,7 +503,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
             <div>
               {canOrders && <Tile icon="🧾" title="الطلبات" target="#admin-orders" />}
               {canCustomers && <Tile icon="♙" title="العملاء" target="#admin-customers" />}
-              {canCustomers && <Tile icon="▣" title="أجهزة العملاء" target="#admin-customers" />}
+              {canCustomers && <Tile icon="♙" title="العملاء" target="#admin-customers" />}
               {canOrders && <Tile icon="▥" title="مساحة عمل المدير" target="#admin-orders" />}
             </div>
           </section>
