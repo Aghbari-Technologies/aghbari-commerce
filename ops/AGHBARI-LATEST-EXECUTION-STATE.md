@@ -136,3 +136,16 @@ Run the exact-SHA GitHub quality/browser workflows in an execution environment t
 - Do not rebuild the already-live Customer Account/Finance/Orders subviews that are correctly nested under their parent workspaces.
 - Do not treat the existing Netlify 19-Sep production deploy as proof for this SHA; it has no commit_ref and is historical.
 - Do not transfer proof from any earlier SHA.
+
+
+## 2026-09-29 — FINAL CURRENT HEAD CHECKPOINT
+- Actual current HEAD after progress write-back: `98c0a88e9cb5665bed01476a5f476de73f581f1e`.
+- This is the exact resume point for the next session.
+- Implemented UI closure in this lineage: Admin anchor ownership + order deep-links; Customer Portal centralized navigation/visibility guard; customer notification offline boundary; 84-reference accounting guard; Customer Home responsive CSS retained.
+- Proven: source/static plus live Supabase inspection. Runtime/browser/build on this SHA remains NOT_PROVEN.
+- Blocked: GitHub Actions did not emit a run for connector-created commits; current Vercel status is the known free-plan build-rate-limit failure.
+- Core blocker unchanged: live purchase/receipt idempotency is 16..200; the source 16..128 migration is not applied to production.
+- Production: HOLD / NO TOUCH.
+
+## NEXT EXECUTABLE ACTION
+Use exact HEAD `98c0a88e9cb5665bed01476a5f476de73f581f1e`: run the focused quality/browser workflows and consume only evidence generated for this SHA. Then perform non-production 128-bound receipt/purchase concurrency + 129-negative/Test-the-Test proof. Do not apply production migration before the full evidence bundle.
