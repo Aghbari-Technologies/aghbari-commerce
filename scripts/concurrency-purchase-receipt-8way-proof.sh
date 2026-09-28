@@ -11,8 +11,10 @@ BRANCH='f9000000-0000-4000-8000-000000000004'
 WAREHOUSE='f9000000-0000-4000-8000-000000000005'
 SUPPLIER='f9000000-0000-4000-8000-000000000006'
 PRODUCT='f9000000-0000-4000-8000-000000000007'
-PURCHASE_KEY='purchase-8way-20260928'
-RECEIPT_KEY='receipt-8way-20260928'
+PURCHASE_KEY="$(printf 'p%.0s' {1..128})"
+RECEIPT_KEY="$(printf 'r%.0s' {1..128})"
+[ "${#PURCHASE_KEY}" -eq 128 ] || { echo "FAIL purchase key length=${#PURCHASE_KEY}"; exit 1; }
+[ "${#RECEIPT_KEY}" -eq 128 ] || { echo "FAIL receipt key length=${#RECEIPT_KEY}"; exit 1; }
 TMPDIR="$(mktemp -d)"
 trap 'rm -rf "$TMPDIR"' EXIT
 
