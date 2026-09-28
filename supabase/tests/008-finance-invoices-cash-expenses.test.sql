@@ -34,8 +34,18 @@ select is((select status from public.operational_invoices where order_id='676767
 select * from public.record_payment((select id from public.operational_invoices where order_id='67676767-6767-4676-8676-676767676772'),150,'cash'::public.payment_method,'67676767-6767-4676-8676-676767676773','RCPT-2','finance-payment-02');
 select is((select status from public.operational_invoices where order_id='67676767-6767-4676-8676-676767676772'),'paid'::public.invoice_status,'Final payment marks invoice paid');
 select throws_ok(
-  $select public.record_payment((select id from public.operational_invoices where order_id='67676767-6767-4676-8676-676767676772'),1,'cash'::public.payment_method,'67676767-6767-4676-8676-676767676773','OVER','finance-payment-over')$,
+  $
+  select public.record_payment(
+    (select id from public.operational_invoices where order_id='67676767-6767-4676-8676-676767676772'),
+    1,
+    'cash'::public.payment_method,
+    '67676767-6767-4676-8676-676767676773',
+    'OVER',
+    'finance-payment-over'
+  )
+  $,
   '22003','payment exceeds invoice balance','Overpayment is rejected'
+);,'payment exceeds invoice balance','Overpayment is rejected'
 );
 select is((select current_balance from public.get_cash_account_balances() where id='67676767-6767-4676-8676-676767676773'),200::numeric,'Cash account reflects posted collections');
 
