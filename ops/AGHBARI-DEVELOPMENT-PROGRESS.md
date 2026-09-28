@@ -385,3 +385,16 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Certification: `NOT CLAIMED`
 - Production: `HOLD / NO TOUCH`
 - NEXT: re-read exact HEAD after checkpoint; finish Test-the-Test; then continue next canonical open gap only if one remains.
+
+
+## Run 2026-09-29 — Canonical UI closure hardening
+- Run: `2026-09-29`
+- SHA: `3e32506bd0c5cef502c53e3ed9d94ce71c7fb209`
+- Branch: `main`
+- Implemented: removed stale customer template terminology across live customer/admin surfaces; added canonical UI coverage guard for 84 references, six customer sections, role-filtered Admin targets, explicit boundaries and invitation acceptance.
+- Verified: affected source files re-read on the exact current lineage; no stale production `المسحات` copy remains in the changed customer UI surfaces. Vercel remains `pending` and is not treated as runtime proof.
+- Proven: implementation/source-structure proof only on this SHA; exact test execution, browser visual/runtime and hosted exact-source proof remain unproven.
+- Blocked: local execution/network unavailable; Vercel authorization/protection path unchanged; existing Netlify deploy is older and lacks exact commit_ref.
+- Certification: `NOT CLAIMED`
+- Production: `HOLD / NO TOUCH`
+- Next: execute the exact-SHA proof matrix for `b1ac2e231ae060f506bb0dd3b03ba6ab81077243` and current write-back lineage, fix only the first material failure, then continue the next open UI/core gap.
