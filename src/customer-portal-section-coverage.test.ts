@@ -17,6 +17,14 @@ describe('customer portal section coverage', () => {
     expect(source).toContain("new Set<PortalSection>(['home', 'catalog', 'orders', 'finance', 'templates', 'account', 'notifications'])");
   });
 
+  it('does not allow hidden Finance/Templates sections to be opened by direct URL navigation', () => {
+    expect(source).toContain('normalizeCustomerPortalSection(next,config)');
+    expect(source).toContain('setSection(normalizeCustomerPortalSection(sectionFromHash(),config))');
+    expect(source).toContain("window.history.replaceState(null,'','#'+normalized)");
+    expect(source).toContain("هذا القسم غير متاح في إعدادات بوابة حسابك الحالية.");
+    expect(source).toContain('showCredit, showTemplates');
+  });
+
   it('keeps the seven-section PortalSection union aligned with the canonical set', () => {
     expect(source).toContain("type PortalSection = 'home' | 'catalog' | 'orders' | 'finance' | 'templates' | 'account' | 'notifications'");
   });
