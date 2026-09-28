@@ -152,3 +152,10 @@
 - Exact parent implementation checkpoint: f674de0011701a66783feb288bc0bd24908b56a5. The documentation checkpoint that follows may advance HEAD; exact proof never transfers from the parent.
 - Current build/browser/runtime proof remains subject to the exact resulting SHA and active workflow runs.
 - Production remains HOLD / NO TOUCH; no Supabase production mutation was performed.
+
+## 2026-09-28 — UI-first full-product closure rule
+- Active execution priority is reference-backed UI/product surface closure, especially Admin/Staff and Customer Portal, until the remaining UI gaps are materially reduced.
+- A screen is not closed by route existence, generic presentation, or navigation alone; it requires relevant states, interactions, responsive/accessibility behavior, real contracts/actions, and the required proof.
+- The 84 external PNGs remain visual/provenance input rather than an 84-screen denominator, but every in-scope visual family must be implemented or explicitly bounded, and every asset must remain accounted for.
+- Requirements discovered from references or canonical documents must be placed under the correct canonical owner; create a new logical UI/product section when no existing parent is correct rather than hiding the capability in an unrelated section.
+- During a 120-minute execution window, UI is the primary execution lane. Only critical security fixes or direct dependencies that unblock UI/core are allowed to displace it; blocked external deployment paths do not pause UI work.
