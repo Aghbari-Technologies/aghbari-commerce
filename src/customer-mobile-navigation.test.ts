@@ -16,3 +16,15 @@ describe('customer mobile navigation coverage', () => {
     expect(source).toContain('id="customer-mobile-more-menu"');
   });
 });
+
+
+describe('customer template terminology', () => {
+  it('uses the canonical القوالب terminology and rejects the stale المسحات label', () => {
+    const source = readFileSync(resolve(process.cwd(), 'src/AppV3Fixed.tsx'), 'utf8');
+    const rail = readFileSync(resolve(process.cwd(), 'src/WorkspaceSurfaceRail.tsx'), 'utf8');
+    expect(source).toContain('القوالب');
+    expect(rail).toContain("eyebrow: 'القوالب'");
+    expect(source).not.toContain('<strong>المسحات</strong>');
+    expect(rail).not.toContain("eyebrow: 'المسحات'");
+  });
+});
