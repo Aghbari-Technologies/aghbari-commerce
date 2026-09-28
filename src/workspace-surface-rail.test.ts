@@ -16,12 +16,14 @@ describe('workspace surface rail contracts', () => {
   });
 
   it('keeps every staff workspace bound to a real admin target or explicit boundary', () => {
-    expect(STAFF_PACKS).toHaveLength(8);
+    expect(STAFF_PACKS).toHaveLength(9);
     for (const pack of STAFF_PACKS) {
       expect(pack.target.startsWith('#')).toBe(true);
       expect(['live', 'mixed', 'boundary']).toContain(pack.tone);
     }
     expect(STAFF_PACKS.find((pack) => pack.id === 'boundaries')?.target).toBe('#admin-boundaries');
+    expect(STAFF_PACKS.find((pack) => pack.id === 'inventory')).toMatchObject({ target: '#admin-inventory-activity', targets: ['#admin-inventory-activity', '#admin-inventory-history', '#admin-warehouses'] });
+    expect(STAFF_PACKS.find((pack) => pack.id === 'purchasing')).toMatchObject({ target: '#admin-purchasing', targets: ['#admin-purchasing', '#admin-suppliers', '#admin-receipts'] });
     expect(source).toContain("pack.tone === 'boundary' && boundaryVisible");
   });
 
