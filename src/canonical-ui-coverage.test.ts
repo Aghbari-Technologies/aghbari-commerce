@@ -4,6 +4,8 @@ import { describe, expect, it } from 'vitest';
 import { AGHBARI_CUSTOMER_STRUCTURE, CUSTOMER_PORTAL_SECTIONS } from './structure/customer-structure';
 import { getAdminStructureForRole } from './structure/admin-structure';
 import { UI_REFERENCE_FILES, UI_REFERENCE_PACKS, UI_REFERENCE_TOTAL } from './structure/ui-reference-packs';
+import { STAFF_PACKS } from './WorkspaceSurfaceRail';
+import { AGHBARI_ADMIN_LIVE_ITEMS } from './structure/admin-structure';
 
 const adminSource = readFileSync(resolve(process.cwd(), 'src/AdminPanel.tsx'), 'utf8');
 const customerSources = [
@@ -48,6 +50,16 @@ describe('canonical UI coverage', () => {
     expect(adminRuntimeSource).toContain('id="admin-purchasing"');
     expect(adminRuntimeSource).toContain("data-label="13 · سجل العمليات المالية"");
     expect(railSource).toContain("target: '#admin-purchasing'");
+  });
+
+  it('keeps every live Admin target reachable from at least one Staff workspace pack', () => {
+    const packTargets = new Set(
+      STAFF_PACKS.flatMap((pack) => ('targets' in pack ? pack.targets : [pack.target])),
+    );
+    const liveTargets = new Set(
+      AGHBARI_ADMIN_LIVE_ITEMS.map((item) => item.target?.trim()).filter(Boolean),
+    );
+    for (const target of liveTargets) expect(packTargets.has(target)).toBe(true);
   });
 
   it('keeps every declared live admin workspace target represented in the active Admin runtime source', () => {
