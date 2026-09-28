@@ -5,7 +5,7 @@ async function login(page: Page, email: string, password: string) {
   const loginForm = page.locator('form').filter({ has: page.locator('input[type="password"]') }).first();
   await loginForm.locator('input[type="email"]').fill(email);
   await loginForm.locator('input[type="password"]').fill(password);
-  await loginForm.getByRole('button', { name: 'دخول آمن' }).click();
+  await loginForm.getByRole('button', { name: 'دخول إلى بوابة الأغبري' }).click();
 
   const portal = page.getByRole('button', { name: 'الكتالوج', exact: true });
   const error = page.locator('.error-banner');
@@ -56,10 +56,10 @@ test('invalid login is rejected and does not expose the customer portal', async 
   await loginForm.locator('input[type="email"]').fill(email!);
   await loginForm.locator('input[type="password"]').fill('definitely-wrong-password-20260918');
   const authResponsePromise = page.waitForResponse((response) => response.url().includes('/auth/v1/token') && response.request().method() === 'POST');
-  await loginForm.getByRole('button', { name: 'دخول آمن' }).click();
+  await loginForm.getByRole('button', { name: 'دخول إلى بوابة الأغبري' }).click();
   const authResponse = await authResponsePromise;
   expect([400, 401]).toContain(authResponse.status());
-  await expect(page.getByRole('button', { name: 'دخول آمن' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'دخول إلى بوابة الأغبري' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'الكتالوج', exact: true })).toHaveCount(0);
   await expect(page.locator('.error-banner')).toBeVisible();
   await assertCleanBrowser(failures, /^(?:400|401)\s+POST\s+.*\/auth\/v1\/token/);
