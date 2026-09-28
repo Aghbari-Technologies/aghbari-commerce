@@ -23,7 +23,7 @@ const CUSTOMER_PACKS = [
   { id: 'catalog', label: 'اكتشاف وشراء', eyebrow: 'الكتالوج', description: 'البحث، التصنيف، السعر، المخزون والطلب السريع.' },
   { id: 'orders', label: 'الطلبات والتتبع', eyebrow: 'المتابعة', description: 'السجل، التفاصيل، الحالة وإعادة الطلب.' },
   { id: 'finance', label: 'المركز المالي', eyebrow: 'الثقة المالية', description: 'الكشف والفواتير والمدفوعات المتاحة.' },
-  { id: 'templates', label: 'الطلبات المتكررة', eyebrow: 'المسحات', description: 'حفظ السلة وإعادة التطبيق بسرعة.' },
+  { id: 'templates', label: 'الطلبات المتكررة', eyebrow: 'القوالب', description: 'حفظ السلة وإعادة التطبيق بسرعة.' },
   { id: 'account', label: 'الحساب والشركة', eyebrow: 'السياق', description: 'الملف، الشركة، العناوين والإعدادات.' },
   { id: 'notifications', label: 'الإشعارات', eyebrow: 'التشغيل', description: 'تنبيهات مرتبطة بالحساب والطلبات.' },
 ] as const;
