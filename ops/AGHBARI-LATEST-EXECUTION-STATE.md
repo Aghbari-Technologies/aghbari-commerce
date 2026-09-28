@@ -91,3 +91,12 @@ Re-read exact `refs/heads/main`; execute/fetch the bounded quality proof if an a
 
 ## NEXT EXECUTABLE ACTION
 Resume from the actual main HEAD and execute the highest-value open UI surface first: implement the next missing Admin/Staff or Customer Portal screen/subview from the canonical capability map + UI reference packs, including real states/actions and responsive behavior; immediately run the focused affected proof, then move to the next UI gap. Only a critical security defect or direct dependency that blocks the current UI may preempt this lane.
+
+## 2026-09-28 — Mandatory boot/handoff continuity hardening
+- Actual latest main HEAD at this write: `5b71425720e56f38347fd2f8b820fb255cdf05e0`.
+- The startup protocol now explicitly requires the complete boot chain: AGHBARI-EXECUTION-START.md → PROJECT_MEMORY.md → LATEST-EXECUTION-STATE → DEVELOPMENT-PROGRESS → CANONICAL-DOCUMENT-SYSTEM → UI-REFERENCE-ASSET-INDEX → UX canonical → relevant specialist canonical document.
+- End-of-session write-back is mandatory: update LATEST-EXECUTION-STATE and DEVELOPMENT-PROGRESS, update PROJECT_MEMORY only for durable changes, update UI reference/canonical owners when coverage or requirements change, and set an exact NEXT EXECUTABLE ACTION plus DO-NOT-REPEAT.
+- A prior report/SHA can never override the actual Git HEAD. Historical gaps must not be resumed when already closed or superseded by current HEAD.
+
+## NEXT EXECUTABLE ACTION
+Start the next execution from the actual current main HEAD, read the mandatory boot chain, then execute the next open UI surface/subview with real states/actions; after each closure batch write the exact current SHA and resume pointer before moving forward.
