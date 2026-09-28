@@ -62,3 +62,5 @@ Re-read exact `refs/heads/main`; execute/fetch the bounded quality proof if an a
 - Customer Portal terminology refined to make the saved-order-template surface explicit.
 - Exact current build/security/G1/Test-the-Test/browser proof must be read from the resulting HEAD; no historical evidence is transferred.
 - Production: HOLD / NO TOUCH.
+
+- Verification trigger: the final source includes the authentication regression guard; exact current workflow results must be read from this final SHA.
