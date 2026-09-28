@@ -6,9 +6,9 @@ import { CUSTOMER_PACKS, STAFF_PACKS } from './WorkspaceSurfaceRail';
 const source = readFileSync(resolve(process.cwd(), 'src/WorkspaceSurfaceRail.tsx'), 'utf8');
 
 describe('workspace surface rail contracts', () => {
-  it('keeps the six customer workspaces aligned with the canonical portal sections', () => {
+  it('keeps customer workspaces aligned with the canonical portal sections', () => {
     expect(CUSTOMER_PACKS.map((pack) => pack.id)).toEqual([
-      'catalog', 'orders', 'finance', 'templates', 'account', 'notifications',
+      'home', 'catalog', 'orders', 'finance', 'templates', 'account', 'notifications',
     ]);
     expect(source).toContain("variant: 'customer'");
     expect(source).toContain('visibleSections');

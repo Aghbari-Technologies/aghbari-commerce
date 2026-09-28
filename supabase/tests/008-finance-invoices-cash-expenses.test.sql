@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(6);
+select plan(8);
 
 insert into auth.users (id,email)
 values ('aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa','finance-admin@test.local');
@@ -29,12 +29,21 @@ set local request.jwt.claim.sub='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
 
 select is((select total from public.create_invoice_from_order('67676767-6767-4676-8676-676767676772')),200::numeric,'Completed order can be invoiced');
 select is((select count(*) from public.operational_invoices where order_id='67676767-6767-4676-8676-676767676772'),1::bigint,'Invoice creation is idempotent per order');
-select * from public.record_payment((select id from public.operational_invoices where order_id='67676767-6767-4676-8676-676767676772'),50,'cash','67676767-6767-4676-8676-676767676773','RCPT-1');
+select * from public.record_payment((select id from public.operational_invoices where order_id='67676767-6767-4676-8676-676767676772'),50,'cash'::public.payment_method,'67676767-6767-4676-8676-676767676773','RCPT-1','finance-payment-01');
 select is((select status from public.operational_invoices where order_id='67676767-6767-4676-8676-676767676772'),'partially_paid'::public.invoice_status,'Partial payment updates invoice status');
-select * from public.record_payment((select id from public.operational_invoices where order_id='67676767-6767-4676-8676-676767676772'),150,'cash','67676767-6767-4676-8676-676767676773','RCPT-2');
+select * from public.record_payment((select id from public.operational_invoices where order_id='67676767-6767-4676-8676-676767676772'),150,'cash'::public.payment_method,'67676767-6767-4676-8676-676767676773','RCPT-2','finance-payment-02');
 select is((select status from public.operational_invoices where order_id='67676767-6767-4676-8676-676767676772'),'paid'::public.invoice_status,'Final payment marks invoice paid');
 select throws_ok(
-  $$select public.record_payment((select id from public.operational_invoices where order_id='67676767-6767-4676-8676-676767676772'),1,'cash','67676767-6767-4676-8676-676767676773','OVER')$$,
+  $$
+  select public.record_payment(
+    (select id from public.operational_invoices where order_id='67676767-6767-4676-8676-676767676772'),
+    1,
+    'cash'::public.payment_method,
+    '67676767-6767-4676-8676-676767676773',
+    'OVER',
+    'finance-payment-over'
+  )
+  $$,
   '22003','payment exceeds invoice balance','Overpayment is rejected'
 );
 select is((select current_balance from public.get_cash_account_balances() where id='67676767-6767-4676-8676-676767676773'),200::numeric,'Cash account reflects posted collections');

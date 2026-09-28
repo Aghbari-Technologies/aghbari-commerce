@@ -56,7 +56,7 @@ select ok(
 );
 
 select ok(
-  (select prosecdef and proconfig @> array['search_path=']
+  (select prosecdef and proconfig @> array['search_path=""']
    from pg_proc p join pg_namespace n on n.oid=p.pronamespace
    where n.nspname='public' and p.proname='audit_customer_address_change'
    limit 1),
@@ -64,7 +64,7 @@ select ok(
 );
 
 select ok(
-  (select prosecdef and proconfig @> array['search_path=']
+  (select prosecdef and proconfig @> array['search_path=""']
    from pg_proc p join pg_namespace n on n.oid=p.pronamespace
    where n.nspname='public' and p.proname='save_customer_address'
    limit 1),

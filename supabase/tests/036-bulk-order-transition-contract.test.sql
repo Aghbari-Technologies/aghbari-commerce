@@ -8,8 +8,7 @@ select ok(
     from pg_proc p
     join pg_namespace n on n.oid=p.pronamespace
     where n.nspname='public'
-      and p.proname='bulk_transition_orders'
-      and pg_get_function_identity_arguments(p.oid)='p_idempotency_key text, p_order_ids uuid[], p_to_status public.order_status'
+      and p.oid='public.bulk_transition_orders(text,uuid[],public.order_status)'::regprocedure
   ),
   'bulk transition RPC keeps the canonical signature'
 );
@@ -21,7 +20,7 @@ select ok(
     where n.nspname='public'
       and p.proname='bulk_transition_orders'
       and p.prosecdef
-      and p.proconfig @> array['search_path=']
+      and p.proconfig @> array['search_path=""']
   ),
   'bulk transition uses SECURITY DEFINER with empty search_path'
 );

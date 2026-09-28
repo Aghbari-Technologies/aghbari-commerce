@@ -22,7 +22,7 @@ select ok(
       and 'search_path=""' = any(coalesce(p.proconfig,'{}'))
       and pg_get_functiondef(p.oid) ilike '%current_organization_id()%'
       and pg_get_functiondef(p.oid) ilike '%current_role()%'
-      and pg_get_functiondef(p.oid) ilike '%organization_id=v_org%'
+      and pg_get_functiondef(p.oid) ilike '%organization_id = v_org%'
   ),
   'adjust_inventory keeps search_path, role and tenant guards'
 );
@@ -35,7 +35,7 @@ select ok(
       and 'search_path=""' = any(coalesce(p.proconfig,'{}'))
       and pg_get_functiondef(p.oid) ilike '%auth.uid() IS NULL%'
       and pg_get_functiondef(p.oid) ilike '%v_role NOT IN (%'
-      and pg_get_functiondef(p.oid) ilike '%organization_id=v_org%'
+      and pg_get_functiondef(p.oid) ilike '%organization_id = v_org%'
       and pg_get_functiondef(p.oid) ilike '%idempotency_key required%'
   ),
   'record_payment keeps authentication, tenant and idempotency guards'
@@ -59,7 +59,7 @@ select ok(
     where n.nspname='public' and p.proname='record_supplier_payment'
       and 'search_path=""' = any(coalesce(p.proconfig,'{}'))
       and pg_get_functiondef(p.oid) ilike '%v_role not in (''owner'',''admin'')%'
-      and pg_get_functiondef(p.oid) ilike '%organization_id=v_org%'
+      and pg_get_functiondef(p.oid) ilike '%organization_id = v_org%'
   ),
   'record_supplier_payment keeps explicit role and tenant guards'
 );

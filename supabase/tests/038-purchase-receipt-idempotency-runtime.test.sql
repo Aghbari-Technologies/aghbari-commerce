@@ -1,6 +1,6 @@
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(10);
+select plan(8);
 
 insert into auth.users(id,instance_id,aud,role,email,encrypted_password,created_at,updated_at)
 values (
@@ -67,10 +67,8 @@ begin
   insert into _purchase_receipt_runtime_proof(purchase_id,purchase_item_id,purchase_128_ok)
   values(v_purchase_id,v_item_id,true);
 
-  update public.purchase_orders
-  set status='approved'::public.purchase_order_status
-  where id=v_purchase_id
-    and organization_id='d3800000-0000-4000-8000-000000000010'::uuid;
+  perform public.submit_purchase_order(v_purchase_id);
+  perform public.approve_purchase_order(v_purchase_id);
 
   begin
     perform *

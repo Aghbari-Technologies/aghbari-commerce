@@ -1,5 +1,9 @@
 import { test, expect, type Page } from '@playwright/test';
 
+function visibleCatalogButton(page: Page) {
+  return page.locator('button:visible').filter({ hasText: /^الكتالوج$/ }).first();
+}
+
 async function login(page: Page, email: string, password: string) {
   await page.goto('/');
   const loginForm = page.locator('form').filter({ has: page.locator('input[type="password"]') }).first();
@@ -7,7 +11,7 @@ async function login(page: Page, email: string, password: string) {
   await loginForm.locator('input[type="password"]').fill(password);
   await loginForm.getByRole('button', { name: 'دخول آمن' }).click();
 
-  const portal = page.getByRole('button', { name: 'الكتالوج', exact: true });
+  const portal = visibleCatalogButton(page);
   const error = page.locator('.error-banner');
   await Promise.race([
     portal.waitFor({ state: 'visible', timeout: 5000 }),
@@ -20,8 +24,9 @@ async function login(page: Page, email: string, password: string) {
   }
 
   await expect(portal).toBeVisible();
-  await expect(page.getByRole('button', { name: /السلة/ })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'الإشعارات', exact: true })).toBeVisible();
+  await expect(page.locator('#customer-home')).toBeVisible();
+  await expect(page.getByRole('banner').getByRole('button', { name: /^السلة/ })).toBeVisible();
+  await expect(page.locator('.portal-nav').getByRole('button', { name: 'الإشعارات', exact: true })).toBeVisible();
 }
 
 function captureBrowserFailures(page: Page) {
@@ -74,8 +79,9 @@ test('authenticated customer completes real search → catalog → cart → orde
   await login(page, email, password);
   await expect(page.locator('.customer-shell')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'مركز التحكم' })).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'الكتالوج', exact: true })).toBeVisible();
-
+  const catalogNav = visibleCatalogButton(page);
+  await expect(catalogNav).toBeVisible();
+  await catalogNav.click();
   const firstCard = page.locator('.product-card').first();
   await expect(firstCard).toBeVisible();
   const productName = (await firstCard.getByRole('heading').first().innerText()).trim();
@@ -89,7 +95,7 @@ test('authenticated customer completes real search → catalog → cart → orde
   const addButton = page.getByRole('button', { name: 'إضافة للسلة', exact: true }).first();
   await expect(addButton).toBeEnabled();
   await addButton.click();
-  await expect(page.getByRole('button', { name: /السلة/ })).toContainText('1');
+  await expect(page.getByRole('banner').getByRole('button', { name: 'السلة', exact: true })).toContainText('1');
 
   const quantityConfirmation = page.getByRole('button', { name: 'اعتماد الكمية', exact: true }).first();
   await expect(quantityConfirmation).toBeEnabled();
@@ -131,6 +137,7 @@ test('tenant isolation: Tenant B cannot read Tenant A order through the real UI 
   const pageA = await contextA.newPage();
   const failuresA = captureBrowserFailures(pageA);
   await login(pageA, emailA, passwordA);
+  await visibleCatalogButton(pageA).click();
   const addButton = pageA.getByRole('button', { name: 'إضافة للسلة', exact: true }).first();
   await expect(addButton).toBeEnabled();
   await addButton.click();
