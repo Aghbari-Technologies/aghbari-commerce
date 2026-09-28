@@ -1,6 +1,6 @@
 export type CustomerStructureStatus = 'live' | 'boundary';
 
-export const CUSTOMER_PORTAL_SECTIONS = ['catalog', 'orders', 'finance', 'templates', 'account', 'notifications'] as const;
+export const CUSTOMER_PORTAL_SECTIONS = ['home', 'catalog', 'orders', 'finance', 'templates', 'account', 'notifications'] as const;
 export type CustomerPortalSection = typeof CUSTOMER_PORTAL_SECTIONS[number];
 
 export interface CustomerStructureItem {
@@ -12,6 +12,7 @@ export interface CustomerStructureItem {
 }
 
 export const AGHBARI_CUSTOMER_STRUCTURE: CustomerStructureItem[] = [
+  { id: 'home', label: 'الرئيسية', section: 'home', status: 'live', description: 'ملخص الحساب، حالة التشغيل والاختصارات إلى الإجراء التالي.' },
   { id: 'store', label: 'المتجر / الكتالوج', section: 'catalog', status: 'live', description: 'اكتشاف الأصناف، البحث، التصنيف، الأسعار، المخزون والطلب السريع.' },
   { id: 'categories', label: 'التصنيفات', section: 'catalog', status: 'live', description: 'تصفية الكتالوج حسب التصنيف.' },
   { id: 'search', label: 'البحث', section: 'catalog', status: 'live', description: 'بحث بالاسم أو SKU أو باركود.' },
