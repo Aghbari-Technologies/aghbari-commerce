@@ -348,3 +348,44 @@ ALIASES / EQUIVALENTS
 Do not claim visual equivalence automatically without evidence. When equivalence is uncertain, keep the assets grouped as references and inspect only the variants that can change implementation decisions.
 
 **The previous 8-pack registry is therefore a provenance grouping, not a claim that Aghbari has exactly 8 screen families.**
+
+## 17.3 UI-FIRST CLOSURE GATE — 2026-09-28
+
+The reference registry is not itself completion. During the active UI closure wave, every visual pack must resolve to one of:
+
+IMPLEMENTED
+→ actual Commerce screen/subview/state with real actions
+
+BOUNDARY
+→ explicit canonical reason the referenced behavior is outside Commerce
+
+OPEN
+→ exact implementation gap with target surface and next executable action
+
+A pack cannot be marked complete because:
+- a route exists;
+- a registry row exists;
+- a generic card/table was added;
+- a screenshot merely resembles the reference;
+- build/CI passes.
+
+For every in-scope pack, the closure record must identify:
+
+PRIMARY REFERENCE
+→ ALIASES / EQUIVALENTS
+→ AGHBARI SURFACE
+→ PARENT SECTION
+→ SUBVIEW / STATE
+→ VIEWPORT
+→ REAL ACTIONS
+→ CONTRACT / SERVICE
+→ IMPLEMENTATION
+→ TEST
+→ BROWSER / RUNTIME PROOF
+→ EXACT SHA
+
+When execution discovers a capability that has no logical parent, create a new logical section/route under the canonical UI/product structure rather than attaching it to an unrelated page.
+
+When a visual reference reveals a new requirement not represented in the existing canonical contract, route that requirement into the correct canonical owner and implement it in the same closure wave when it is in scope.
+
+The 84-image corpus remains provenance input, but 100% accounting is mandatory and 100% of in-scope visual families must have an implementation or an explicit documented boundary.
