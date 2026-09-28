@@ -212,3 +212,9 @@
 ## 2026-09-29 — Customer notification offline contract
 - Customer notifications are server-backed and fail closed while offline: cached notification rows are cleared/not presented as authoritative, mutation controls are unavailable, and the connection state remains explicit.
 - Staff notification behavior is unchanged; the offline boundary is only applied to the customer audience.
+
+
+## 2026-09-29 — Customer portal navigation contract
+- Customer Portal direct hash navigation must respect the effective `client_ui_settings` visibility for Finance and Templates.
+- Hidden sections are redirected to the first visible section and must not become reachable merely because a user knows the hash value.
+- Navigation enforcement is a presentation/config boundary; server authorization remains the final authority.
