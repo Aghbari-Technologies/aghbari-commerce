@@ -18,3 +18,12 @@ describe('customer directory closure', () => {
     expect(source).toContain('selectedCustomer.updated_at');
   });
 });
+
+
+describe('customer management denial-message contract', () => {
+  it('keeps canonical role-denial messages on the latest customer mutation migration', () => {
+    const source = readFileSync(resolve(process.cwd(), 'supabase/migrations/20260925115000_customer_mutation_audit_contract.sql'), 'utf8');
+    expect(source).toContain("customer tier management access required");
+    expect(source).toContain("customer state management access required");
+  });
+});
