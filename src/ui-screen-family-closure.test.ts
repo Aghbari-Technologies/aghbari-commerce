@@ -115,3 +115,14 @@ describe('purchasing, inventory and receiving collection closure', () => {
     expect(sourceText).toContain("sort==='oldest'");
   });
 });
+
+
+describe('finance invoice collection closure', () => {
+  it('keeps invoice state sorting and collection skeleton wired', () => {
+    const sourceText = readRepoSource('FinancePanel.tsx');
+    expect(sourceText).toContain('invoiceSort');
+    expect(sourceText).toContain('ترتيب سجل الفواتير');
+    expect(sourceText).toContain("invoiceSort==='highest'");
+    expect(sourceText).toContain('<OperationalLoadingSkeleton variant="collection" />');
+  });
+});
