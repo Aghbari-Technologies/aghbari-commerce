@@ -58,3 +58,38 @@ Run the exact-current-SHA Quality/Application Quality/Test-the-Test matrix for t
 - Do not reopen closed Customer Account/Profile/Addresses, Checkout, Templates, Catalog sorting/filtering, Staff subviews, Admin collection/low-stock/category/notification surfaces without a regression or requirement trigger.
 - Do not retry the unchanged Vercel bypass-secret redirect path.
 - Do not transfer evidence from 1869563 or older SHAs to the new pricing/finance lineage.
+
+
+## 2026-09-29 — Admin workspace anchor closure
+- Source implementation SHA: `cd2682a0b9889b0c4fc3b6153e35a87beaa68a98`.
+- Implemented: dedicated `#admin-finance-history` mapping for `/admin/finance/history`; corrected the Dashboard data-center shortcut to `#admin-import`; removed duplicate wrapper-owned anchors across dashboard, catalog, pricing, inventory history/activity, warehouses, receiving, suppliers, export, governance, notifications, access and settings while preserving each child workspace owner.
+- Verified: the canonical Admin target set resolves to **21/21 unique DOM anchors** on the implementation lineage; no target is missing or duplicated.
+- Proven: source/static contract proof only. Exact-SHA local test/build/browser/runtime proof is not established in this environment.
+- Blocked: local repository execution remains unavailable; PR #157 Vercel status is the existing plan/build-rate-limit blocker and was not retried unchanged. No production mutation.
+- Production: `HOLD / NO TOUCH`.
+
+## NEXT EXECUTABLE ACTION
+On the next current HEAD, execute the targeted exact-SHA test matrix for the Admin workspace-anchor closure and the affected UI contracts; fix only the first material failure. Then continue directly to the next independent open UI/Core gap without reopening the already-closed Admin/customer surfaces.
+
+## DO NOT REPEAT
+- Do not reintroduce wrapper IDs when a child workspace owns the canonical target.
+- Do not duplicate the same visual/screen family because multiple references point to one reusable workspace.
+- Do not transfer prior proof from `cd2682a0b9889b0c4fc3b6153e35a87beaa68a98` to a later SHA.
+
+
+## 2026-09-29 — Admin deep-link + anchor integrity closure
+- Exact implementation HEAD before documentation write-back: `3fe76bc7ecc1aadfc8ae402c3411ae0aa64fd0b0`.
+- Implemented: reusable `adminOrderIdForPath()`; `/admin/order/:id` now resolves to the Orders workspace and automatically opens the concrete order detail drawer; dynamic-path resolution is shared with the Admin target resolver.
+- Verified: **21/21** canonical Admin targets have exactly one runtime DOM anchor across the live Admin workspace sources; the dedicated finance-history target is owned by `FinanceOperationsHistoryPanel`; no duplicate DOM anchor remains after wrapper cleanup.
+- Test guard: focused Vitest contract now covers finance-history routing, order deep-link extraction/opening, data-center shortcut, and single-owner anchor drift.
+- Proven: source/static contract only on the exact implementation lineage; local test/build/browser/runtime execution is still not established in this environment.
+- Blocked: Vercel continues to report the existing free-plan build-rate-limit failure; no unchanged retry. Production remains untouched.
+- Production: `HOLD / NO TOUCH`.
+
+## NEXT EXECUTABLE ACTION
+On the next current HEAD, execute the exact-SHA Vitest/typecheck matrix covering Admin navigation/deep-link and the affected UI contracts. Fix only the first material failure, then continue the next independent open UI/Core gap.
+
+## DO NOT REPEAT
+- Do not re-add parent wrapper IDs for child-owned Admin targets.
+- Do not treat source/static proof as browser/runtime proof.
+- Do not transfer proof from `3fe76bc7ecc1aadfc8ae402c3411ae0aa64fd0b0` to a later SHA.

@@ -195,3 +195,15 @@
 ## 2026-09-29 — Customer Finance + Pricing closure
 - Customer Finance now has read-only **كشف الحساب** and **سجل الدفعات** subviews backed by existing invoice/payment records and RLS-scoped Commerce truth.
 - Customer Catalog now exposes a dedicated **الأسعار** view over existing authorized product prices and quantity tiers; no new pricing authority was added.
+
+
+## 2026-09-29 — Admin workspace anchor ownership contract
+- Every canonical Admin live target must have exactly one DOM anchor owner at runtime.
+- When a child workspace component already owns its canonical target ID, the parent `admin-workspace-section` must not repeat that ID.
+- Finance history is a dedicated live workspace target: `/admin/finance/history` → `#admin-finance-history`.
+- This is a presentation/navigation contract only; it does not add transaction authority.
+
+
+## 2026-09-29 — Admin deep-link contract
+- Parameterized Admin order paths `/admin/order/:id` resolve to the existing Orders workspace and open the concrete record detail; this reuses existing server-backed order-detail authority and adds no transaction authority.
+- Canonical Admin workspace targets must remain single-owner DOM anchors; child-owned anchors must not be duplicated by parent wrappers.

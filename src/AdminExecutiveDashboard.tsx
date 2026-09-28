@@ -524,7 +524,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
             <section className="rail-group">
               <header><span>▤</span><h2>إدارة البيانات</h2></header>
               <div>
-                <Tile icon="▣" title="مركز البيانات الموحد" target="#admin-catalog" />
+                <Tile icon="▣" title="مركز البيانات الموحد" target="#admin-import" />
                 <Tile icon="▤" title="سجل الاستيراد" target="#admin-import" />
                 <Tile icon="⇅" title="مركز التصدير" target="#admin-export" />
                 <Tile icon="🖼" title="تحسين الصور" target="#admin-product-image" />

@@ -458,3 +458,27 @@ Proven: prior financial checkpoint 1869563 had Aghbari Quality/application-quali
 Blocked: Vercel protected exact runtime fails at bypass-secret redirect; Netlify exact-source deploy requires repo-local CLI source access.
 Certification: NOT CLAIMED | Production: HOLD / NO TOUCH
 Next: current exact-SHA Quality + Test-the-Test; then browser/runtime if executable; then next independent UI/core gap.
+
+
+## Run 2026-09-29 — Admin workspace anchor closure
+- Run: `2026-09-29`
+- Source SHA: `cd2682a0b9889b0c4fc3b6153e35a87beaa68a98`
+- Branch: `execution/ui-full-closure-20260929`
+- PR: `#157`
+- Implemented: finance-history target correction; data-center shortcut correction; duplicate Admin workspace ID removal; focused anchor/Test-the-Test contract.
+- Verified: 21/21 canonical Admin targets have exactly one DOM owner.
+- Proven: exact-source/static verification only; runtime/browser/build proof pending.
+- Blocked: Vercel plan/build-rate-limit check remains the only current external check failure; local execution unavailable.
+- Certification: `NOT CLAIMED`
+- Production: `HOLD / NO TOUCH`
+- Next: run exact-SHA targeted UI tests; fix first material failure; continue next independent UI/Core gap.
+
+
+## Run 2026-09-29 — Admin deep-link + anchor integrity closure
+- Run: `2026-09-29` | SHA: `3fe76bc7ecc1aadfc8ae402c3411ae0aa64fd0b0` | Branch: `execution/ui-full-closure-20260929` | PR: `#157`
+- Implemented: order deep-link opens concrete detail; reusable path resolver; single-owner Admin anchors; focused Test-the-Test guard.
+- Verified: 21/21 runtime Admin targets have one DOM owner.
+- Proven: static/source contract only; exact-SHA execution + browser/runtime pending.
+- Blocked: Vercel free-plan build-rate-limit; local execution unavailable.
+- Certification: `NOT CLAIMED` | Production: `HOLD / NO TOUCH`
+- Next: exact-SHA Vitest/typecheck; first material failure only; then next independent UI/Core gap.
