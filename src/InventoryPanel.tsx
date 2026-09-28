@@ -94,7 +94,6 @@ export default function InventoryPanel({ role }: { role: UserRole }) {
     finally { setBusy(false); }
   }
 
-  if (!canUse) return null;
   const makeKey = (prefix: string) => `agh-${prefix}-${crypto.randomUUID()}`;
   const productName = new Map(products.map((p) => [p.id, `${p.name} · ${p.sku}`]));
   const countCompleted = stockLines.filter((line) => line.counted_quantity !== null).length;
@@ -103,6 +102,8 @@ export default function InventoryPanel({ role }: { role: UserRole }) {
   const lowStockPages=Math.max(1,Math.ceil(lowStockRows.length/10));
   const lowStockActivePage=Math.min(lowStockPage,lowStockPages);
   const visibleLowStock=lowStockRows.slice((lowStockActivePage-1)*10,lowStockActivePage*10);
+
+  if (!canUse) return null;
 
   return <div className="cart-panel" id="inventory">
     <div className="section-heading"><div><span className="eyebrow">المخزون</span><h2>النقل والجرد والتنبيهات التشغيلية</h2></div><span aria-live="polite">{loading ? 'جارٍ التحديث…' : `${lowStock.length} أصناف منخفضة`}</span></div>
