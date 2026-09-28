@@ -288,3 +288,15 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Certification: NOT CLAIMED
 - Production: HOLD / NO TOUCH
 - Next: re-read exact HEAD, inspect the current workflow run set for that exact SHA, fix only any material failure, then continue the next canonical UI/core gap without reopening closed work.
+
+
+## Run 2026-09-28 — Product-grade UI activation
+- Run: `2026-09-28`
+- Branch: `main`
+- Implemented: activated `src/ui-final-product.css` for the live `AppV3Fixed` runtime; expanded typography, spacing, surfaces, controls, tables, navigation and responsive presentation across Customer Portal and Admin/Staff.
+- Verified: exact SHA proof pipeline ran on `2bb8703d1f6904768692d3e0f2885f272a72b64c`; Aghbari Quality, G1, security-audit and Browser Contract completed successfully.
+- Proven: exact current-SHA source/build/test contract is supported by the completed Aghbari Quality workflow; Browser Contract proves exact checkout/required E2E specs, not hosted visual certification.
+- Blocked: hosted exact runtime visual E2E is still not proven; Test-the-Test is still running; Vercel free-plan deployment path remains blocked.
+- Certification: `NOT CLAIMED`
+- Production: `HOLD / NO TOUCH`
+- Next: continue the next independent canonical UI/domain gap after the current Test-the-Test result; do not reopen closed UI contracts.
