@@ -512,3 +512,10 @@ Next: current exact-SHA Quality + Test-the-Test; then browser/runtime if executa
 - Blocked: Vercel free-plan build-rate-limit; GitHub Actions emitted no run for connector-created SHA; live purchase/receipt idempotency remains 200.
 - Certification: NOT CLAIMED | Production: HOLD / NO TOUCH
 - Next: exact-SHA quality/browser execution + non-production 128-bound concurrency/negative proof.
+
+
+## Run 2026-09-29 — final checkpoint before resume
+- Prior source HEAD recorded: `01cf0728297301c8f9969514b38de5bc0b86b9cf`.
+- Documentation commits since that source state: latest execution/progress write-back is this continuation chain.
+- Current status remains: UI closure work implemented; runtime/browser proof NOT_PROVEN; Production HOLD / NO TOUCH.
+- Next: exact-SHA quality/browser evidence, then non-production purchase/receipt 128-bound concurrency + negative proof.
