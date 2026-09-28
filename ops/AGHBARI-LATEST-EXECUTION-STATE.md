@@ -1,114 +1,15 @@
-# 🔴 AGHBARI LATEST EXECUTION STATE
+[object Object]
 
-Project: Aghbari Commerce | الأغبري
-Repository: `Aghbari-Technologies/aghbari-commerce`
-Branch: `main`
-Current Git HEAD: `b1ac2e231ae060f506bb0dd3b03ba6ab81077243` (verified from the latest sequential write).
-Production: `HOLD / NO TOUCH`
-Certification: `NOT CLAIMED`
-
-## Current reality
-- Exact current main HEAD: `a91bf39a7772eb82a122e44f87e02ca6e55c13a9`.
-- Active browser entrypoint remains `src/main.tsx -> AppV3Fixed`.
-- Customer Portal canonical sections remain six.
-- Customer Templates is now an explicit full collection surface with search, sort, pagination, detail and delete confirmation.
-- Customer Checkout is now an explicit review step over the existing real order-submit contract, with offline/quantity/min-max guards and automatic modal close after success.
-- Customer Catalog now supports authorized-price ascending/descending sorting.
-- Staff WorkspaceSurfaceRail exposes complete live subviews and explicit boundary links without truncation.
-- Admin Command Center renders complete canonical group contents without the previous group truncation and its navigation semantics are cleaned.
-- Admin Orders, Customer Directory, Finance History, Inventory Activity, Supplier Ledger, Staff Access.
-
-## Latest execution batch — 2026-09-28
-- Implemented: full Staff workspace subview exposure and boundary routing.
-- Implemented: Customer Templates collection/detail/delete workflow.
-- Implemented: explicit Customer Checkout review step over the existing real submit function, plus success close.
-- Implemented: Admin collection sorting/filter controls across orders, customers, finance, inventory, suppliers, purchasing, receiving, access and warehouses.
-- Implemented: Customer authorized-price sorting.
-- Implemented: Command Center semantic cleanup and duplicate navigation removal.
-- Implemented: full low-stock work queue with search, warehouse filter and pagination.
-- Implemented: category detail drawer and notification detail surface.
-- Tests: focused UI closure contracts extended; Aghbari Quality includes the new UI contracts.
-
-## Verification
-- Current exact-SHA proof lanes on this HEAD are active/pending; no premature Certification is claimed.
-- Recent exact-SHA Browser E2E completed successfully on preceding implementation checkpoints; current HEAD proof must remain tied to this exact SHA.
-- Production: HOLD / NO TOUCH.
-
-## Open gaps
-1. Finish exact-SHA Quality/Test-the-Test/G1 matrix and fix only the first material failure.
-2. Continue full Admin/Staff and Customer Portal UI closure for remaining canonical capabilities.
-3. Complete P0 visual/browser evidence for applicable reference screen packs.
-4. Purchase/receipt 16..128 migration with exact migration + negative + concurrency + Test-the-Test evidence.
-5. Full exact runtime/browser certification path without repeating unchanged hosted blockers.
-
-## 2026-09-28 — Comprehensive UI closure checkpoint
-- Exact code source SHA: `c5c5889345df6809bc401b09e4a73afe24b48ac2`.
-- Full Admin/Staff + Customer UI work executed in this cycle: complete staff workspace subviews; uncapped command-center groups; customer templates and checkout review; catalog price sorting; order/customer/finance/inventory/purchasing/receiving/access/warehouse collection controls; low-stock queue search/filter/pagination; category and notification details; inventory movement details; governance controls.
-- Active runtime remains `src/main.tsx -> AppV3Fixed`.
-- No unsupported Commerce transaction authority added; boundaries remain explicit.
-- Production remains `HOLD / NO TOUCH`.
-
-## Verification — exact code SHA
-- Aghbari Quality: SUCCESS.
-- Application Quality: SUCCESS.
-- Typecheck: SUCCESS.
-- Unit/integration: 69 test files / 373 tests PASS.
-- Lint: SUCCESS.
-- Production build: SUCCESS.
-- Release audit: SUCCESS.
-- G1 Domain Proof: SUCCESS.
-- Security audit: SUCCESS.
-- Browser Exact-Source Contract: SUCCESS.
-- Browser full E2E runtime: SKIPPED because no exact hosted deployment was available.
-- Test-the-Test / Exact SHA: IN PROGRESS on `c5c5889345df6809bc401b09e4a73afe24b48ac2`; Postgres startup/sensitivity mutations are not yet complete.
-
-## Security state
-- No blanket revoke or test-driven security weakening.
-- Existing SECURITY DEFINER warnings remain function-by-function review items.
-- Production remains untouched.
+## 2026-09-29 — Final customer-surface terminology sweep
+- Source HEAD before write-back: `c6c0c9729991aa73ed7228d9e48cd916210e3a1b`.
+- Implemented: final stale template wording removed from Customer Account and AppV3; regression guard extended.
+- Verified: affected live customer/admin surfaces are clean of stale `المسحات` / legacy product-identity text; 84 references remain exactly accounted and unique; six customer sections remain represented; invitation acceptance remains real and live.
+- Not proven: exact current-SHA unit/integration execution, Test-the-Test completion, concurrent DB runtime proof, browser visual/runtime proof, hosted exact-source proof, certification.
+- Production boundary: Supabase production remains unchanged; live migration history still predates the source purchase/receipt 128-bound migration. Vercel remains pending and is not proof; existing Netlify deploy remains non-exact-source.
 
 ## NEXT EXECUTABLE ACTION
-Re-read exact `refs/heads/main` after this documentation checkpoint. Run/inspect the exact-SHA proof matrix for the resulting HEAD. Complete Test-the-Test first; if it passes, continue only the next genuinely open canonical UI/core gap. If it fails, fix the first material root cause once.
+Execute the exact-current-SHA Quality/Test-the-Test matrix for the final UI changes; fix only the first material failure. Then continue the next independent core/UI gap. Do not apply the purchase/receipt 128 migration to production until migration + concurrency + negative + Test-the-Test + exact-SHA evidence exists.
 
 ## DO NOT REPEAT
-- Never transfer evidence across SHA.
-- Do not restore any removed UI truncation caps.
-- Do not duplicate the 84-reference corpus or treat it as 84 screens.
-- Do not fabricate unsupported Commerce capabilities.
-- Do not mutate Production to bypass migration gates.
+- Do not reopen the closed customer template terminology, account/address/profile, checkout, catalog sorting, Staff subview, Admin collection, low-stock, category or notification surfaces without a trigger.
 - Do not retry unchanged hosted blockers.
-- Do not reopen closed UI surfaces without a regression/dependency/security/requirement trigger.
-
-
-## 2026-09-29 — UI terminology + canonical coverage guard
-- Exact current main HEAD: `b1ac2e231ae060f506bb0dd3b03ba6ab81077243`.
-- Implemented: removed remaining stale customer template terminology from the portal, shared workspace rail, customer structure and client settings; corrected stale template error/success copy.
-- Implemented: `src/canonical-ui-coverage.test.ts` covering the 84-reference corpus, canonical six Customer Portal sections, role-filtered live Admin targets, explicit Admin boundaries, dynamic customer capability rendering and live invitation acceptance.
-- Verified: source re-read on exact HEAD; affected UI sources contain no stale production `المسحات` / legacy product-identity terms; canonical coverage guard is source-controlled. Vercel status remains `pending`, not runtime proof.
-- Not proven: exact-SHA unit/test execution, browser visual/runtime proof, hosted exact-source proof on this HEAD, Test-the-Test completion.
-- Blocked: local repository execution is unavailable in this session; Vercel connector currently returns authorization failure and the existing Netlify deploy is older and has no commit_ref, so neither is exact-source proof for this HEAD.
-- Production: `HOLD / NO TOUCH`.
-
-## NEXT EXECUTABLE ACTION
-Execute the exact-SHA test/proof matrix for `b1ac2e231ae060f506bb0dd3b03ba6ab81077243`; fix only the first material failure. Then continue the next genuinely open Admin/Staff or Customer UI/core gap. Purchase/receipt 16..128 remains source-controlled and production-unapplied until migration + concurrency + negative + Test-the-Test proof is complete.
-
-## DO NOT REPEAT
-- Do not reopen completed customer templates/checkout/catalog sorting, Staff subview exposure, Admin collection controls, or low-stock/category/notification detail surfaces without a regression trigger.
-- Do not retry the unchanged Vercel authorization/protection path.
-
-
-## 2026-09-29 — Canonical coverage + live production boundary checkpoint
-- Source HEAD before write-back: `b8ffd19c1026702f94b357998d97c8c0c0fcf172`.
-- Implemented: canonical UI coverage guard for all 84 unique references; six Customer Portal sections; role-filtered Admin live targets; explicit Admin boundaries; live invitation acceptance; canonical `القوالب` terminology across affected customer/admin UI surfaces.
-- Verified: 84/84 reference entries unique; six customer sections; all declared live Admin target anchors resolve after normalization; invitation acceptance uses the real `customer-invitations` accept flow; changed UI sources contain no stale production `المسحات` wording.
-- Production verification: Supabase project `aghbari-commerce` is ACTIVE_HEALTHY on PostgreSQL 17.6.1; live migration history currently ends at `20260925040254`, so source migration `20260927041500_normalize_purchase_receipt_idempotency_bound.sql` remains unapplied. Production was not mutated.
-- Not proven: exact current-SHA test execution, Test-the-Test completion, concurrent database runtime proof, browser visual/runtime proof, hosted exact-source proof, final certification.
-- External blockers: Vercel connector returns 403 for the project; existing Netlify deploy is ready but manual/older and lacks an exact source commit reference; local repo execution is unavailable in this session.
-
-## NEXT EXECUTABLE ACTION
-At the exact current main lineage, execute the Quality/Test-the-Test matrix for the UI coverage changes; fix the first material failure once. Then close the next independent canonical Admin/Staff or Customer UI/core gap. After that, run the required affected proof only. Keep purchase/receipt migration production-applied state unchanged until concurrency + negative + Test-the-Test + exact-SHA evidence are complete.
-
-## DO NOT REPEAT
-- Do not reopen completed Customer Templates/Checkout/Catalog sorting, Staff subview exposure, Admin collection controls, or detail surfaces without a regression trigger.
-- Do not retry unchanged Vercel/Netlify hosted paths merely to seek PASS.
-- Do not treat source/static checks as browser/runtime certification.
