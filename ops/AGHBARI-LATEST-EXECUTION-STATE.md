@@ -77,3 +77,18 @@ At the first executable CI/runtime lane, run the exact current-main Quality/Test
 - Do not create duplicate screens for the 84 visual references; keep provenance-to-screen-family mapping.
 - Do not transfer evidence from `7866c474...` or any prior SHA to a newer HEAD.
 - Do not mutate Production for the purchase/receipt idempotency migration until migration lineage + concurrency + negative + Test-the-Test + exact-SHA evidence exist.
+
+
+## 2026-09-29 — Customer invoice-detail drill-down closure
+- Code/test lineage: `bd3572849f618c39b9671221d56e95ee16953305`.
+- Current source HEAD at state checkpoint: `8dfb18d727488015cd7807c71650e0234ac1204d`.
+- Implemented: canonical Customer `invoice-detail` rail action now requests the real first loaded invoice and opens the existing read-only detail modal; no new financial authority.
+- Verified: request is bounded by online state and loaded invoice presence; existing invoice/items/payments service path remains authoritative.
+- Proven: source/static verification only.
+- Not proven: exact current-SHA automated tests, Test-the-Test, browser visual/runtime, hosted exact-source certification.
+- Production: `HOLD / NO TOUCH`.
+- Blockers: local clone/DNS unavailable; unchanged Vercel free-plan deployment-rate-limit/protection blocker.
+## NEXT EXECUTABLE ACTION
+Run the exact current-main Quality/Test-the-Test matrix for the changed Customer Finance + capability-rail files when the CI/runtime lane is executable; fix only the first material failure, then continue the next independent UI/core gap.
+## DO NOT REPEAT
+Do not replace the real invoice drill-down with mock data or reopen closed finance/account/catalog surfaces without a regression or direct requirement change. Do not transfer evidence across SHAs.
