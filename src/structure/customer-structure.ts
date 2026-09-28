@@ -16,7 +16,7 @@ export const AGHBARI_CUSTOMER_STRUCTURE: CustomerStructureItem[] = [
   { id: 'categories', label: 'التصنيفات', section: 'catalog', status: 'live', description: 'تصفية الكتالوج حسب التصنيف.' },
   { id: 'search', label: 'البحث', section: 'catalog', status: 'live', description: 'بحث بالاسم أو SKU أو باركود.' },
   { id: 'product-detail', label: 'تفاصيل الصنف', section: 'catalog', status: 'live', description: 'تفاصيل الصنف والسعر والمخزون والإضافة للسلة.' },
-  { id: 'cart', label: 'السلة', section: 'catalog', status: 'live', description: 'تعديل الكميات، اعتماد الكمية، الحفظ كمسحة والدفع.' },
+  { id: 'cart', label: 'السلة', section: 'catalog', status: 'live', description: 'تعديل الكميات، اعتماد الكمية، الحفظ كقالب والدفع.' },
   { id: 'checkout', label: 'إتمام الطلب', section: 'orders', status: 'live', description: 'التحقق ثم الإرسال عبر أمر idempotent.' },
   { id: 'order-history', label: 'سجل الطلبات', section: 'orders', status: 'live', description: 'بحث، فلترة، صفحات، تفاصيل، تتبع وإعادة الطلب.' },
   { id: 'order-detail', label: 'تفاصيل/تتبع الطلب', section: 'orders', status: 'live', description: 'خط زمني وتفاصيل الأصناف والإعادة.' },
