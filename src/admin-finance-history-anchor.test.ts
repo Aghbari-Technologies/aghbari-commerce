@@ -28,6 +28,7 @@ const runtimeSources = [
   read('NotificationPanel.tsx'),
   read('StaffOperationsPanel.tsx'),
   read('StaffAccessPanel.tsx'),
+  read('OfflineRecoveryPanel.tsx'),
 ];
 
 describe('admin finance history workspace contract', () => {
@@ -54,6 +55,22 @@ describe('admin finance history workspace contract', () => {
   it('keeps the dashboard data-center shortcut on the real data workspace', () => {
     expect(dashboardSource).toContain('target="#admin-import"');
     expect(dashboardSource).not.toContain('title="مركز البيانات الموحد" target="#admin-catalog"');
+  });
+
+  it('guards every hardcoded Admin navigation hash against a real runtime anchor', () => {
+    const source = [adminPanelSource, dashboardSource].join('\n');
+    const targets = [...source.matchAll(/href=["'](#admin-[^"']+)["']/g)].map((match) => match[1]);
+    for (const target of new Set(targets)) {
+      const id = target.slice(1);
+      const count = runtimeSources.reduce(
+        (total, runtimeSource) =>
+          total +
+          Math.max(0, runtimeSource.split('id="' + id + '"').length - 1) +
+          Math.max(0, runtimeSource.split("id='" + id + "'").length - 1),
+        0,
+      );
+      expect(count, 'hardcoded Admin hash must resolve: ' + target).toBeGreaterThan(0);
+    }
   });
 
   it('guards every live Admin workspace target against anchor drift', () => {
