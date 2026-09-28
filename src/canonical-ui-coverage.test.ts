@@ -46,10 +46,12 @@ describe('canonical UI coverage', () => {
     for (const target of liveTargets) expect(adminSource).toContain(target);
   });
 
-  it('keeps every declared customer live capability backed by visible product-source copy', () => {
-    for (const item of AGHBARI_CUSTOMER_STRUCTURE.filter((entry) => entry.status === 'live')) {
-      expect(customerSources).toContain(item.label);
-    }
+  it('keeps the canonical customer capability list dynamically rendered by the shared customer surface', () => {
+    const railSource = readFileSync(resolve(process.cwd(), 'src/WorkspaceSurfaceRail.tsx'), 'utf8');
+    expect(railSource).toContain('AGHBARI_CUSTOMER_STRUCTURE');
+    expect(railSource).toContain('getCustomerSurfaceItems');
+    expect(railSource).toContain('<strong>{item.label}</strong>');
+    expect(customerSources).toContain('WorkspaceSurfaceRail');
   });
 
   it('keeps non-live admin capabilities explicitly routed to the boundary workspace', () => {
