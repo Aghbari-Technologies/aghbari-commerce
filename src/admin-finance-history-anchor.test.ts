@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
-import { AGHBARI_ADMIN_LIVE_ITEMS, AGHBARI_ADMIN_PATH_TARGETS } from './structure/admin-structure';
+import { AGHBARI_ADMIN_LIVE_ITEMS, AGHBARI_ADMIN_PATH_TARGETS, adminOrderIdForPath } from './structure/admin-structure';
 
 const root = dirname(fileURLToPath(import.meta.url));
 const read = (name: string) => readFileSync(resolve(root, name), 'utf8');
@@ -39,6 +39,16 @@ describe('admin finance history workspace contract', () => {
     expect(financeHistorySource).toContain("id='admin-finance-history'");
     expect(adminPanelSource).toContain('href="#admin-finance-history"');
     expect(adminPanelSource).toContain('FinanceOperationsHistoryPanel');
+  });
+
+  it('resolves an Admin order deep link to the concrete record id', () => {
+    expect(adminOrderIdForPath('/admin/order/order-123')).toBe('order-123');
+    expect(adminOrderIdForPath('/admin/orders')).toBeNull();
+  });
+
+  it('opens the concrete order when the Admin panel receives a deep-link path', () => {
+    expect(adminPanelSource).toContain('const orderId = adminOrderIdForPath(pathname);');
+    expect(adminPanelSource).toContain('if (orderId) void openOrderDetail(orderId);');
   });
 
   it('keeps the dashboard data-center shortcut on the real data workspace', () => {
