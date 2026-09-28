@@ -10,7 +10,7 @@ const read = (file: string) => readFileSync(resolve(process.cwd(), file), 'utf8'
 describe('admin boundary workspace links', () => {
   it('keeps every safe alternative on a real AdminPanel DOM anchor', () => {
     const adminSource = read(resolve(process.cwd(), 'src/AdminPanel.tsx'), 'utf8');
-    const boundarySource = readFile(resolve(process.cwd(), 'src/AdminBoundaryCenter.tsx'), 'utf8');
+    const boundarySource = read('src/AdminBoundaryCenter.tsx');
     const liveDom = adminSource + '\n' + boundarySource;
     for (const alternative of Object.values(SAFE_ALTERNATIVES)) {
       const id = alternative.target.startsWith('#') ? alternative.target.slice(1) : '';
