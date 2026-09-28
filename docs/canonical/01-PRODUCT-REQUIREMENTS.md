@@ -72,3 +72,13 @@ The number of reference assets is not a completion denominator. Product closure 
 - Customer Portal Finance includes a real **كشف الحساب** subview for authorized customer financial records.
 - The statement aggregates operational invoices and their recorded payments through the existing RLS-scoped tables; it reports invoiced, paid and outstanding totals per currency and opens the existing invoice detail view.
 - This is a read-only finance presentation over existing Commerce truth and adds no payment authority or mutation path.
+
+
+## 2026-09-29 — Customer payment history
+- Customer Portal Finance includes a real **سجل الدفعات** subview over authorized payment records linked to customer-owned operational invoices.
+- The view is read-only, searchable/filterable/sortable/paginated and opens the existing invoice detail surface; no customer payment mutation authority is added.
+
+
+## 2026-09-29 — Customer pricing surface
+- Customer Portal Catalog includes a dedicated **الأسعار** subview showing the current authorized product price plus quantity-tier prices for the signed-in customer.
+- Pricing presentation reuses the existing authorized pricing/tier data and does not create a client-side pricing authority or synthetic price.
