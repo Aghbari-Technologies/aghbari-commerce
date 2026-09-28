@@ -93,6 +93,7 @@ describe('customer template terminology', () => {
     expect(settings).not.toContain('<h3>المسحات</h3>');
     expect(source).not.toContain('تعذر حفظ المسحة');
     expect(source).not.toContain('تعذر تطبيق المسحة');
+    expect(source).not.toContain('تعذر حذف المسحة');
     expect(source).not.toContain('تم تطبيق المسحة على السلة');
   });
 });
