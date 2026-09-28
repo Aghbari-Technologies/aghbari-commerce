@@ -131,7 +131,7 @@ describe('finance invoice collection closure', () => {
 describe('admin command center semantic hygiene', () => {
   it('does not duplicate customer navigation or advertise unsupported smart-sync labels', () => {
     const sourceText = readRepoSource('AdminExecutiveDashboard.tsx');
-    expect((sourceText.match(/title="العملاء" target="#admin-customers"/g) ?? []).length).toBe(2);
+    expect((sourceText.match(/title="العملاء" target="#admin-customers"/g) ?? []).length).toBe(1);
     expect(sourceText).not.toContain('مزامنة المخزون"');
     expect(sourceText).not.toContain('محرك التسعير الذكي');
     expect(sourceText).toContain('title="مركز البيانات الموحد" target="#admin-import"');
