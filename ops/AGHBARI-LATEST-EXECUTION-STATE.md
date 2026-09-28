@@ -82,3 +82,12 @@ Re-read exact `refs/heads/main`; execute/fetch the bounded quality proof if an a
 - Verification on this exact SHA: Aghbari Quality `success` including typecheck, focused Vitest suite and production build; G1 `success`; security-audit `success`; Browser E2E / Exact Deployment `success`.
 - Test-the-Test is still running and remains the active exact-SHA security sensitivity gate.
 - Production: `HOLD / NO TOUCH`.
+
+## 2026-09-28 — UI-first execution control update
+- Startup protocol strengthened to make reference-backed UI closure the primary execution lane for the active 120-minute window.
+- Every in-scope visual family now requires a real implementation or an explicit canonical boundary; route-only/navigation-only completion is invalid.
+- Requirements discovered from references/canonical docs must be attached to the correct product/UX/domain/security owner, with a new logical section created when no correct parent exists.
+- Current external 84-reference corpus remains provenance/accounting input; it is not an 84-screen denominator.
+
+## NEXT EXECUTABLE ACTION
+Resume from the actual main HEAD and execute the highest-value open UI surface first: implement the next missing Admin/Staff or Customer Portal screen/subview from the canonical capability map + UI reference packs, including real states/actions and responsive behavior; immediately run the focused affected proof, then move to the next UI gap. Only a critical security defect or direct dependency that blocks the current UI may preempt this lane.
