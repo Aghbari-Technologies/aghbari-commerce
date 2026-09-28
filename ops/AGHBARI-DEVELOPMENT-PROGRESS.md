@@ -250,3 +250,15 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Certification: NOT CLAIMED
 - Production: HOLD / NO TOUCH
 - Next: exact-head quality/Test-the-Test/G1 results → first material failure only → next canonical gap.
+
+## Run 2026-09-28 — Exact current checkpoint
+- Run: 2026-09-28
+- SHA: `58fe59eb6f71c6d2879dd7bd2d25910dd0fc5370`
+- Branch: `main`
+- Implemented: workspace composition, customer/admin structural loading states, reference-pack and boundary contracts, hidden-section URL guard, bounded purchase/receipt 8-way proof repair, purchase/receipt payload-conflict negatives.
+- Verified: current exact SHA is under CI proof; prior SHA evidence intentionally not transferred.
+- Proven: current exact full proof pending.
+- Blocked/Open: full browser visual runtime proof, exact hosted runtime, production 200→128 migration.
+- Certification: NOT CLAIMED.
+- Production: HOLD / NO TOUCH
+- Next: exact current Aghbari Quality result → first material failure only → Test-the-Test/Concurrency/Browser/G1/Security exact-SHA matrix.
