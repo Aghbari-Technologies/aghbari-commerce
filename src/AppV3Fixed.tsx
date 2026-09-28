@@ -136,6 +136,10 @@ export default function AppV3Fixed(){
    return()=>{root.style.removeProperty('--aghbari-accent');delete root.dataset.aghbariDensity;};
  },[config.accentColor,config.compactMode]);
  useEffect(()=>{
+   const visible=getVisibleCustomerPortalSections(config);
+   if(!visible.includes(section) && visible.length) navigate(visible[0]);
+ },[config.showCredit,config.showTemplates,section]);
+ useEffect(()=>{
    const syncSectionFromUrl=()=>setSection(sectionFromHash());
    window.addEventListener('hashchange',syncSectionFromUrl);
    window.addEventListener('popstate',syncSectionFromUrl);
