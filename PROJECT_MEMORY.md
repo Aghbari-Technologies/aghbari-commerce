@@ -195,3 +195,9 @@
 ## 2026-09-29 — Customer Finance + Pricing closure
 - Customer Finance now has read-only **كشف الحساب** and **سجل الدفعات** subviews backed by existing invoice/payment records and RLS-scoped Commerce truth.
 - Customer Catalog now exposes a dedicated **الأسعار** view over existing authorized product prices and quantity tiers; no new pricing authority was added.
+
+
+## 2026-09-29 — Customer capability rail actionability
+- The Customer workspace rail now renders canonical live capabilities as real buttons rather than descriptive-only labels.
+- `openCustomerCapability()` routes those controls into existing catalog/order/finance/account/notification surfaces and reuses the current cart-confirmation gate.
+- This is UI navigation only; server authorization, transactional truth and existing service/RPC contracts remain authoritative.
