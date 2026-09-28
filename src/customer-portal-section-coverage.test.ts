@@ -131,3 +131,17 @@ describe('customer payment history coverage', () => {
     expect(serviceSource).toContain(".in('invoice_id', invoiceIds)");
   });
 });
+
+
+describe('customer pricing coverage', () => {
+  it('keeps Pricing as a live Catalog subview backed by the existing authorized pricing contract', () => {
+    const structure = readFileSync(resolve(process.cwd(), 'src/structure/customer-structure.ts'), 'utf8');
+    const appSource = readFileSync(resolve(process.cwd(), 'src/AppV3Fixed.tsx'), 'utf8');
+    expect(structure).toContain("id: 'pricing'");
+    expect(appSource).toContain('customer-pricing-dialog');
+    expect(appSource).toContain('filteredPricingProducts');
+    expect(appSource).toContain('tiers[p.id]');
+    expect(appSource).toContain('effectivePrice(p,1)');
+    expect(appSource).toContain('online');
+  });
+});
