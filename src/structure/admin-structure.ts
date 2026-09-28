@@ -70,6 +70,7 @@ export const AGHBARI_ADMIN_STRUCTURE: AdminStructureGroup[] = [
       live('reconciliations', 'تسويات المخزون', '/admin/inventory/reconciliations', 'stock.view', '#admin-inventory-activity', ['view']),
       live('warehouses', 'المستودعات والفروع', '/admin/inventory/warehouses', 'stock.view', '#admin-warehouses', ['view']),
       live('warehouse-edit', 'تعديل المستودعات والفروع', '/admin/inventory/warehouses/edit', 'stock.manage', '#admin-warehouses', ['view','edit']),
+      live('purchasing', 'المشتريات', '/admin/purchasing', 'purchasing.view', '#admin-purchasing', ['view', 'create']),
       live('suppliers', 'الموردون', '/admin/purchasing/suppliers', 'purchasing.view', '#admin-suppliers', ['view', 'create']),
       live('supplier-edit', 'تعديل الموردين', '/admin/purchasing/suppliers/edit', 'purchasing.manage', '#admin-suppliers', ['view','edit']),
       live('receiving', 'الاستلام', '/admin/purchasing/receiving', 'purchasing.view', '#admin-receipts', ['view']),
@@ -121,6 +122,7 @@ export const AGHBARI_ADMIN_STRUCTURE: AdminStructureGroup[] = [
       live('invoices', 'الفواتير', '/admin/finance/invoices', 'finance.view', '#admin-finance', ['view', 'create', 'export']),
       live('payments', 'التحصيل والمدفوعات', '/admin/finance/payments', 'finance.view', '#admin-finance', ['view', 'create']),
       live('expenses', 'المصروفات', '/admin/finance/expenses', 'finance.view', '#admin-finance', ['view', 'create']),
+      live('finance-history', 'سجل العمليات المالية', '/admin/finance/history', 'finance.view', '#admin-finance', ['view', 'export']),
     ],
   },
   {
