@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { normalizeCustomerPortalSection } from './customer-portal-navigation';
 
 const source = readFileSync(resolve(process.cwd(), 'src/AppV3Fixed.tsx'), 'utf8');
 const sections = ['home', 'catalog', 'orders', 'finance', 'templates', 'account', 'notifications'] as const;
@@ -19,10 +20,13 @@ describe('customer portal section coverage', () => {
 
   it('does not allow hidden Finance/Templates sections to be opened by direct URL navigation', () => {
     expect(source).toContain('normalizeCustomerPortalSection(next,config)');
-    expect(source).toContain('setSection(normalizeCustomerPortalSection(sectionFromHash(),config))');
+    expect(source).toContain('setSection(normalizeCustomerPortalSection(sectionFromHash(window.location.hash),config))');
     expect(source).toContain("window.history.replaceState(null,'','#'+normalized)");
     expect(source).toContain("هذا القسم غير متاح في إعدادات بوابة حسابك الحالية.");
     expect(source).toContain('[config.showCredit,config.showTemplates]');
+    expect(normalizeCustomerPortalSection('finance', { showCredit: false, showTemplates: true })).toBe('home');
+    expect(normalizeCustomerPortalSection('templates', { showCredit: true, showTemplates: false })).toBe('home');
+    expect(normalizeCustomerPortalSection('orders', { showCredit: false, showTemplates: false })).toBe('orders');
   });
 
   it('keeps the seven-section PortalSection union aligned with the canonical set', () => {
