@@ -93,3 +93,15 @@ On the next current HEAD, execute the exact-SHA Vitest/typecheck matrix covering
 - Do not re-add parent wrapper IDs for child-owned Admin targets.
 - Do not treat source/static proof as browser/runtime proof.
 - Do not transfer proof from `3fe76bc7ecc1aadfc8ae402c3411ae0aa64fd0b0` to a later SHA.
+
+
+## 2026-09-29 — UI closure + live Core blocker checkpoint
+- Exact current execution HEAD: `e9e0f26c09c5eb05ab8e859139cc93bb665588c0`.
+- Implemented since prior checkpoint: Admin single-owner workspace anchors; `/admin/order/:id` deep-link with concrete detail fallback for records outside the summary window/error state; 84-reference accounting guard; customer notification offline fail-closed state; absorbed latest main Customer Home responsive CSS without changing transaction authority.
+- Static/source verification: 21/21 canonical Admin targets have exactly one runtime DOM owner; hardcoded Admin hash targets are guarded by focused tests; 84/84 reference filenames are uniquely accounted across 8 packs; runtime UI source contains no legacy `العامري/Alamri/Amiri` identity.
+- Live Supabase verification: project `aghbari-commerce` ref `mrcyqezbhpncuvaehwgf`; `create_purchase_order` and `receive_purchase_order` currently enforce 16..200 in live definitions. Migration `20260927041500_normalize_purchase_receipt_idempotency_bound` exists in source but is absent from live migration history. Both live functions are SECURITY DEFINER with empty search_path and authenticated execution; migration source preserves the reviewed role/tenant/serialization boundary.
+- Proof boundary: no exact-SHA local Vitest/typecheck/build/browser runtime proof because repository clone/execution is unavailable; GitHub PR #157 also has the existing Vercel free-plan build-rate-limit failure. No production mutation.
+- Certification: `NOT CLAIMED`. Production: `HOLD / NO TOUCH`.
+
+## NEXT EXECUTABLE ACTION
+On the next current HEAD, run the focused UI contract suite (Admin anchor/deep-link + 84-reference accounting + Customer Portal section/offline contracts) and typecheck. Separately prepare the purchase/receipt 128-bound release proof without applying it: verify the source migration against live definitions, execute concurrency/129-negative proof in a safe non-production environment, then retain Production HOLD until exact-SHA evidence is complete.
