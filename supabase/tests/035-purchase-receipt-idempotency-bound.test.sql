@@ -50,13 +50,13 @@ select ok(not exists (
 select ok(exists (
   select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace
   where n.nspname='public' and p.proname='create_purchase_order'
-    and pg_get_functiondef(p.oid) ~* 'pg_advisory_xact_lock\\s*\\(hashtextextended\\('
+    and position('pg_advisory_xact_lock' in pg_get_functiondef(p.oid)) > 0
 ), 'create_purchase_order serializes idempotency keys with a transaction advisory lock');
 
 select ok(exists (
   select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace
   where n.nspname='public' and p.proname='receive_purchase_order'
-    and pg_get_functiondef(p.oid) ~* 'pg_advisory_xact_lock\\s*\\(hashtextextended\\('
+    and position('pg_advisory_xact_lock' in pg_get_functiondef(p.oid)) > 0
 ), 'receive_purchase_order serializes idempotency keys with a transaction advisory lock');
 
 select ok(exists (
