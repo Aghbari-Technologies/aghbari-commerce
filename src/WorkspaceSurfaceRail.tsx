@@ -12,8 +12,8 @@ const STAFF_PACKS = [
   { id: 'command', label: 'مركز القيادة', eyebrow: 'التشغيل', target: '#admin-dashboard', tone: 'live' },
   { id: 'sales', label: 'المبيعات والطلبات', eyebrow: 'الطلبات والعملاء', target: '#admin-orders', tone: 'live' },
   { id: 'data', label: 'البيانات والاستيراد', eyebrow: 'الاستيراد والتصدير', target: '#admin-import', tone: 'live' },
-  { id: 'inventory', label: 'المخزون', eyebrow: 'الحركة والجرد', target: '#admin-inventory-activity', tone: 'live' },
-  { id: 'purchasing', label: 'المشتريات والتوريد', eyebrow: 'التوريد والاستلام', target: '#admin-purchasing', tone: 'live' },
+  { id: 'inventory', label: 'المخزون', eyebrow: 'الحركة والجرد', target: '#admin-inventory-activity', targets: ['#admin-inventory-activity', '#admin-inventory-history', '#admin-warehouses'], tone: 'live' },
+  { id: 'purchasing', label: 'المشتريات والتوريد', eyebrow: 'التوريد والاستلام', target: '#admin-purchasing', targets: ['#admin-purchasing', '#admin-suppliers', '#admin-receipts'], tone: 'live' },
   { id: 'catalog', label: 'الكتالوج والتسعير', eyebrow: 'الأصناف', target: '#admin-catalog', tone: 'live' },
   { id: 'finance', label: 'المالية التشغيلية', eyebrow: 'الحسابات', target: '#admin-finance', tone: 'live' },
   { id: 'governance', label: 'الحوكمة والتدقيق', eyebrow: 'الثقة', target: '#admin-governance', tone: 'mixed' },
@@ -42,10 +42,11 @@ export function getCustomerSurfaceItems(section: CustomerPortalSection, visibleS
   return AGHBARI_CUSTOMER_STRUCTURE.filter((item) => item.section === section && visibleSections.includes(item.section));
 }
 
-export function getStaffSurfaceItems(role: StaffRole, target: string) {
+export function getStaffSurfaceItems(role: StaffRole, target: string | readonly string[]) {
+  const targets = new Set(typeof target === 'string' ? [target] : target);
   return getAdminStructureForRole(role)
     .flatMap((group) => group.items)
-    .filter((item) => item.status === 'live' && item.target === target);
+    .filter((item) => item.status === 'live' && item.target && targets.has(item.target.trim()));
 }
 
 export function getStaffBoundaryItems(role: StaffRole) {
@@ -141,10 +142,11 @@ export default function WorkspaceSurfaceRail(props: WorkspaceSurfaceRailProps) {
       </div>
       <div className="workspace-surface-grid">
         {STAFF_PACKS.map((pack, index) => {
-          const enabled = allowedStaffTargets.has(pack.target) || (pack.tone === 'boundary' && boundaryVisible);
-          const active = activeStaffTarget === pack.target;
+          const packTargets = 'targets' in pack ? pack.targets : [pack.target];
+          const enabled = packTargets.some((target) => allowedStaffTargets.has(target)) || (pack.tone === 'boundary' && boundaryVisible);
+          const active = packTargets.includes(activeStaffTarget);
           if (!enabled) return null;
-          const packItems = pack.tone === 'boundary' ? [] : getStaffSurfaceItems(props.role, pack.target);
+          const packItems = pack.tone === 'boundary' ? [] : getStaffSurfaceItems(props.role, packTargets);
           const boundaryItems = pack.tone === 'boundary' ? getStaffBoundaryItems(props.role) : [];
           const className = 'workspace-surface-item' + (active ? ' active' : '') + ' tone-' + pack.tone;
           return (
