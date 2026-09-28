@@ -7,7 +7,7 @@ const read = (file: string) => readFileSync(resolve(process.cwd(), file), 'utf8'
 describe('admin operational loading surfaces', () => {
   it('uses the shared structural skeleton for finance data', () => {
     const source = read('src/FinancePanel.tsx');
-    expect(source).toContain("OperationalLoadingSkeleton variant="collection"");
+    expect(source).toContain('OperationalLoadingSkeleton variant="collection"');
     expect(source).not.toContain('جارٍ تحميل البيانات المالية…');
   });
 
