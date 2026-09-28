@@ -12,7 +12,7 @@ const STAFF_PACKS = [
   { id: 'command', label: 'مركز القيادة', eyebrow: 'التشغيل', target: '#admin-dashboard', tone: 'live' },
   { id: 'sales', label: 'المبيعات والطلبات', eyebrow: 'الطلبات والعملاء', target: '#admin-orders', tone: 'live' },
   { id: 'data', label: 'البيانات والاستيراد', eyebrow: 'الاستيراد والتصدير', target: '#admin-import', tone: 'live' },
-  { id: 'inventory', label: 'المخزون', eyebrow: 'الحركة والجرد', target: '#admin-inventory', tone: 'live' },
+  { id: 'inventory', label: 'المخزون', eyebrow: 'الحركة والجرد', target: '#admin-inventory-activity', tone: 'live' },
   { id: 'catalog', label: 'الكتالوج والتسعير', eyebrow: 'الأصناف', target: '#admin-catalog', tone: 'live' },
   { id: 'finance', label: 'المالية التشغيلية', eyebrow: 'الحسابات', target: '#admin-finance', tone: 'live' },
   { id: 'governance', label: 'الحوكمة والتدقيق', eyebrow: 'الثقة', target: '#admin-governance', tone: 'mixed' },
