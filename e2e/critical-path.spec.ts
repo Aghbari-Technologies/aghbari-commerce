@@ -79,8 +79,9 @@ test('authenticated customer completes real search → catalog → cart → orde
   await login(page, email, password);
   await expect(page.locator('.customer-shell')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'مركز التحكم' })).toHaveCount(0);
-  await expect(visibleCatalogButton(page)).toBeVisible();
-
+  const catalogNav = visibleCatalogButton(page);
+  await expect(catalogNav).toBeVisible();
+  await catalogNav.click();
   const firstCard = page.locator('.product-card').first();
   await expect(firstCard).toBeVisible();
   const productName = (await firstCard.getByRole('heading').first().innerText()).trim();
@@ -136,6 +137,7 @@ test('tenant isolation: Tenant B cannot read Tenant A order through the real UI 
   const pageA = await contextA.newPage();
   const failuresA = captureBrowserFailures(pageA);
   await login(pageA, emailA, passwordA);
+  await visibleCatalogButton(pageA).click();
   const addButton = pageA.getByRole('button', { name: 'إضافة للسلة', exact: true }).first();
   await expect(addButton).toBeEnabled();
   await addButton.click();
