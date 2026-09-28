@@ -14,8 +14,9 @@ describe('customer portal section coverage', () => {
       expect(source).toContain('navigate("' + section + '")');
       expect(source).toContain("section==='" + section + "'");
     }
-    expect(source).toContain("const PORTAL_SECTIONS = new Set<PortalSection>");
-    expect(source).toContain("new Set<PortalSection>(['home', 'catalog', 'orders', 'finance', 'templates', 'account', 'notifications'])");
+    const navigationSource = readFileSync(resolve(process.cwd(), 'src/customer-portal-navigation.ts'), 'utf8');
+    expect(navigationSource).toContain("export const PORTAL_SECTIONS = new Set<PortalSection>([");
+    expect(navigationSource).toContain("'home',\n  'catalog',\n  'orders',\n  'finance',\n  'templates',\n  'account',\n  'notifications'");
   });
 
   it('does not allow hidden Finance/Templates sections to be opened by direct URL navigation', () => {
