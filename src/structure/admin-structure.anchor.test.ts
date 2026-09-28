@@ -15,8 +15,10 @@ describe('admin live navigation anchors', () => {
   });
 
   it('routes every declared boundary path to the explicit boundary workspace', () => {
-    const source = readFileSync(new URL('../AdminPanel.tsx', import.meta.url), 'utf8');
-    expect(source).toContain('id="admin-boundaries"');
+    const adminSource = readFileSync(new URL('../AdminPanel.tsx', import.meta.url), 'utf8');
+    const boundarySource = readFileSync(new URL('../AdminBoundaryCenter.tsx', import.meta.url), 'utf8');
+    expect(adminSource).toContain('<AdminBoundaryCenter role={role} />');
+    expect(boundarySource).toContain('id="admin-boundaries"');
     for (const item of AGHBARI_ADMIN_BOUNDARY_ITEMS) {
       expect(adminTargetForPath(item.path)).toBe('#admin-boundaries');
     }
