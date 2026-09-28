@@ -279,7 +279,7 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
             { label: 'بنود الطلب', value: lineSummary || 'لا توجد بنود مسجلة.', wide: true, content: true },
           ] : []),
         ];
-        return <RecordDetailDrawer eyebrow="Operations" title={'طلب #' + order.order_number} summary={order.customer_name + ' · ' + STATUS_LABELS[order.status]} fields={fields} onClose={closeOrderDetail}
+        return <RecordDetailDrawer eyebrow="Operations" title={'طلب #' + order.order_number} summary={order.customer_name + ' · ' + STATUS_LABELS[order.status]} fields={fields} onClose={closeOrderDetail} loading={detailOrderLoading} loadingLabel="جارٍ تحميل تفاصيل الطلب"
           footer={detailOrderError
             ? <><span>فشل التحميل دون تعديل السجل.</span><button type="button" onClick={() => void openOrderDetail(order.id)} disabled={detailOrderLoading}>إعادة المحاولة</button></>
             : <><span>{detailOrderLoading ? 'قراءة السجل التشغيلي الحالي…' : 'تم التحقق من إجمالي وبنود الطلب قبل العرض.'}</span><button type="button" onClick={closeOrderDetail}>إغلاق</button></>}
