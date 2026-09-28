@@ -74,3 +74,21 @@ describe('staff access collection closure', () => {
     expect(source).toContain('ترتيب الحسابات');
   });
 });
+
+
+describe('catalog and pricing surface closure', () => {
+  it('keeps category details as progressive disclosure instead of hiding hierarchy', () => {
+    const source = source('CategoryManagementPanel.tsx');
+    expect(source).toContain('category-detail-button');
+    expect(source).toContain('<RecordDetailDrawer');
+    expect(source).toContain('selectedCategory');
+  });
+
+  it('keeps pricing validity and sorting filters wired to the real price collection', () => {
+    const source = source('PricingMatrixPanel.tsx');
+    expect(source).toContain('فلترة صلاحية السعر');
+    expect(source).toContain('ترتيب الأسعار');
+    expect(source).toContain('validityMatch');
+    expect(source).toContain("sort==='highest'");
+  });
+});
