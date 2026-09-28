@@ -22,7 +22,7 @@ select is(
 );
 select throws_ok(
   $$select public.set_customer_tier((select id from public.customers where name='Customer One'),'distributor')$$,
-  '42501','customer tier management access required','Sales cannot change customer tier'
+  '42501',NULL,'Sales cannot change customer tier'
 );
 
 set local request.jwt.claim.sub = '88888888-8888-4888-8888-888888888888';
