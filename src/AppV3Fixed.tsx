@@ -315,6 +315,9 @@ export default function AppV3Fixed(){
       case 'account-settings':
         clickCustomerTab('.customer-account-tabs button','إعدادات الحساب');
         break;
+      case 'account':
+        focusCustomerSurface('.customer-account-workspace');
+        break;
       case 'offline':
         focusCustomerSurface('#offline-recovery-title');
         break;
