@@ -66,3 +66,11 @@ A screenshot may reveal:
 Only the first three may influence Aghbari implementation, and only after reconciliation with the canonical Commerce contract. Unsupported functionality remains an explicit boundary.
 
 The number of reference assets is not a completion denominator. Product closure is measured against the canonical Aghbari capability map and its implementation/evidence contract.
+
+
+## 2026-09-28 — Customer Portal Home surface
+
+- Customer Portal Home / الرئيسية is a first-class surface distinct from Catalog.
+- Home is a derived operational overview of authorized customer context, current cart, order history, connection state and existing navigation actions.
+- Home introduces no new transactional authority and does not duplicate Catalog, Orders, Finance or Account persistence.
+- The canonical shopping surface remains Catalog; Home links to it through the existing customer contract.
