@@ -418,7 +418,7 @@ export default function AppV3Fixed(){
         </section></div>})()}
       </section>}
       {section==='account'&&<CustomerAccountWorkspace customerName={customerName} email={email} phone={customerPhone} customerId={customerId} organizationName={organizationName} organizationId={organizationId} customerTier={customerTier} warehouseName={warehouseName} warehouseId={warehouseId} sessionUserId={sessionUserId} online={online} offlineSyncing={offlineSyncing} busy={busy} accentColor={config.accentColor} compactMode={config.compactMode} onRefresh={()=>void refreshAccount()} onLogout={()=>void logout()} onNavigate={navigate} />}
-      {section==='notifications'&&<NotificationPanel audience="customer"/>}
+      {section==='notifications'&&<NotificationPanel audience="customer" online={online}/>} 
       {section==='finance' && config.showCredit && (
         <section className="content-card">
           <div className="section-title">
