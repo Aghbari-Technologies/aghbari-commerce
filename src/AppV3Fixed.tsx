@@ -16,6 +16,7 @@ import { createOrderTemplate, deleteOrderTemplate, getOrderTemplates, applyOrder
 import { filterAndSortTemplates, paginateTemplates, type TemplateViewSort } from './customer-template-view';
 import { supabase } from './lib/supabase';
 const AdminPanel = lazy(() => import('./AdminPanel'));
+import CustomerHomeWorkspace from './CustomerHomeWorkspace';
 import CustomerOrdersPanel from './CustomerOrdersPanel';
 import CustomerFinancePanel from './CustomerFinancePanel';
 import CustomerAccountWorkspace from './CustomerAccountWorkspace';
@@ -31,20 +32,20 @@ import './customer-portal-v3-dynamic.css';
 import './customer-account-catalog.css';
 
 type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer' | 'customer';
-type PortalSection = 'catalog' | 'orders' | 'finance' | 'templates' | 'account' | 'notifications';
-const PORTAL_SECTION_META: Record<PortalSection,{label:string;eyebrow:string;hint:string}> = { catalog:{label:'الكتالوج',eyebrow:'التسوق',hint:'اكتشف الأصناف والأسعار والمخزون ثم أضف الكميات مباشرة.'}, orders:{label:'طلباتي',eyebrow:'المتابعة',hint:'راجع الطلبات الحالية والسجل والتتبع وإعادة الطلب.'}, finance:{label:'المركز المالي',eyebrow:'الثقة المالية',hint:'راجع الرصيد والائتمان والحركات المالية المتاحة لحسابك.'}, templates:{label:'القوالب والطلبات المحفوظة',eyebrow:'طلبات متكررة',hint:'أعد تطبيق طلباتك المحفوظة بضغطة واحدة.'}, account:{label:'حسابي',eyebrow:'سياق الحساب',hint:'الهوية والاتصال والمستودع وحالات الاسترداد.'}, notifications:{label:'الإشعارات',eyebrow:'التشغيل',hint:'تابع التنبيهات المرتبطة بالحساب والطلبات.'} };
+type PortalSection = 'home' | 'catalog' | 'orders' | 'finance' | 'templates' | 'account' | 'notifications';
+const PORTAL_SECTION_META: Record<PortalSection,{label:string;eyebrow:string;hint:string}> = { home:{label:'الرئيسية',eyebrow:'مساحة التاجر',hint:'ملخص الحساب والوضع التشغيلي والاختصارات إلى الإجراء التالي.'}, catalog:{label:'الكتالوج',eyebrow:'التسوق',hint:'اكتشف الأصناف والأسعار والمخزون ثم أضف الكميات مباشرة.'}, orders:{label:'طلباتي',eyebrow:'المتابعة',hint:'راجع الطلبات الحالية والسجل والتتبع وإعادة الطلب.'}, finance:{label:'المركز المالي',eyebrow:'الثقة المالية',hint:'راجع الرصيد والائتمان والحركات المالية المتاحة لحسابك.'}, templates:{label:'القوالب والطلبات المحفوظة',eyebrow:'طلبات متكررة',hint:'أعد تطبيق طلباتك المحفوظة بضغطة واحدة.'}, account:{label:'حسابي',eyebrow:'سياق الحساب',hint:'الهوية والاتصال والمستودع وحالات الاسترداد.'}, notifications:{label:'الإشعارات',eyebrow:'التشغيل',hint:'تابع التنبيهات المرتبطة بالحساب والطلبات.'} };
 function getVisibleCustomerPortalSections(config: { showCredit: boolean; showTemplates: boolean }): PortalSection[] {
-  const sections: PortalSection[] = ['catalog', 'orders'];
+  const sections: PortalSection[] = ['home', 'catalog', 'orders'];
   if (config.showCredit) sections.push('finance');
   if (config.showTemplates) sections.push('templates');
   sections.push('account', 'notifications');
   return sections;
 }
-const PORTAL_SECTIONS = new Set<PortalSection>(['catalog', 'orders', 'finance', 'templates', 'account', 'notifications']);
+const PORTAL_SECTIONS = new Set<PortalSection>(['home', 'catalog', 'orders', 'finance', 'templates', 'account', 'notifications']);
 const sectionFromHash = (): PortalSection => {
-  if (typeof window === 'undefined') return 'catalog';
+  if (typeof window === 'undefined') return 'home';
   const value = window.location.hash.replace(/^#/, '') as PortalSection;
-  return PORTAL_SECTIONS.has(value) ? value : 'catalog';
+  return PORTAL_SECTIONS.has(value) ? value : 'home';
 };
 type PriceTier = { min_quantity: number; unit_price: number; currency: string };
 type Finance = { currency: string; creditLimit: number; outstanding: number; available: number; entries: Array<{ id: string; reference?: string; description: string; debit: number; credit: number; due_date?: string; status: string; created_at: string }> };
@@ -311,8 +312,27 @@ export default function AppV3Fixed(){
   return <div className="customer-shell"><header className="portal-header"><div><span className="eyebrow">B2B ENTERPRISE</span><h1>بوابة الأغبري</h1><small>مرحبًا، {customerName}</small></div><div className="header-actions"><span className={`connection ${online?'':'connection-offline'}`} role="status">{online?(offlineSyncing?'↻ مزامنة…':'● متصل'):'○ غير متصل'}</span><button onClick={()=>setCartOpen(true)}>السلة <b>{cartCount}</b></button><button className="ghost" onClick={()=>void logout()}>خروج</button></div></header>
     <OperationalTruthStrip isOnline={online} customerTier={customerTier} warehouseLabel={warehouseName||'المستودع التشغيلي'} />
     <WorkspaceSurfaceRail variant="customer" section={section} onSelect={navigate} visibleSections={getVisibleCustomerPortalSections(config)} />
-    <div className="portal-body"><aside className="portal-nav"><button aria-current={section==='catalog'?'page':undefined} className={section==='catalog'?'active':''} onClick={()=>navigate('catalog')}>الكتالوج</button><button aria-current={section==='orders'?'page':undefined} className={section==='orders'?'active':''} onClick={()=>navigate('orders')}>طلباتي</button><button aria-current={section==='account'?'page':undefined} className={section==='account'?'active':''} onClick={()=>navigate('account')}>حسابي</button><button aria-current={section==='notifications'?'page':undefined} className={section==='notifications'?'active':''} onClick={()=>navigate('notifications')}>الإشعارات</button>{config.showTemplates&&<button aria-current={section==='templates'?'page':undefined} className={section==='templates'?'active':''} onClick={()=>navigate('templates')}>القوالب</button>}{config.showCredit&&<button aria-current={section==='finance'?'page':undefined} className={section==='finance'?'active':''} onClick={()=>navigate('finance')}>المركز المالي</button>}</aside><main className="portal-main">
+    <div className="portal-body"><aside className="portal-nav"><button aria-current={section==='home'?'page':undefined} className={section==='home'?'active':''} onClick={()=>navigate('home')}>الرئيسية</button><button aria-current={section==='catalog'?'page':undefined} className={section==='catalog'?'active':''} onClick={()=>navigate('catalog')}>الكتالوج</button><button aria-current={section==='orders'?'page':undefined} className={section==='orders'?'active':''} onClick={()=>navigate('orders')}>طلباتي</button><button aria-current={section==='account'?'page':undefined} className={section==='account'?'active':''} onClick={()=>navigate('account')}>حسابي</button><button aria-current={section==='notifications'?'page':undefined} className={section==='notifications'?'active':''} onClick={()=>navigate('notifications')}>الإشعارات</button>{config.showTemplates&&<button aria-current={section==='templates'?'page':undefined} className={section==='templates'?'active':''} onClick={()=>navigate('templates')}>القوالب</button>}{config.showCredit&&<button aria-current={section==='finance'?'page':undefined} className={section==='finance'?'active':''} onClick={()=>navigate('finance')}>المركز المالي</button>}</aside><main className="portal-main">
       <section className="customer-section-context" aria-label="سياق القسم الحالي"><div><span className="eyebrow">{PORTAL_SECTION_META[section].eyebrow}</span><strong>{PORTAL_SECTION_META[section].label}</strong><small>{PORTAL_SECTION_META[section].hint}</small></div><div className="customer-context-actions"><button type="button" className="ghost" onClick={()=>setCartOpen(true)}>السلة <b>{cartCount}</b></button>{section!=='catalog'&&<button type="button" className="ghost" onClick={()=>navigate('catalog')}>الكتالوج</button>}</div></section>
+      {section==='home'&&<CustomerHomeWorkspace
+        customerName={customerName}
+        organizationName={organizationName}
+        warehouseName={warehouseName}
+        productsOnPage={products.length}
+        ordersCount={orders.length}
+        latestOrderNumber={orders[0]?.order_number}
+        cartCount={cartCount}
+        cartLines={cart.length}
+        availableCreditText={finance ? money(finance.available, finance.currency) : '—'}
+        financeReady={Boolean(finance)}
+        templatesCount={templates.length}
+        showCredit={config.showCredit}
+        showTemplates={config.showTemplates}
+        isOnline={online}
+        offlineSyncing={offlineSyncing}
+        onNavigate={navigate}
+        onOpenCart={()=>setCartOpen(true)}
+      />}
       {section==='catalog'&&<><section className="hero-card"><div><span className="eyebrow">تجارة جملة أسرع</span><h2>احتياج متجرك، في طلب واحد.</h2><p>ابحث بالاسم أو SKU أو الباركود، راجع شرائح السعر، ثم اعتمد الكميات وأرسل الطلب.</p></div><div className="hero-stat"><strong>{products.length}</strong><span>صنف في الصفحة</span></div></section>
       <section className="customer-overview-strip" aria-label="ملخص حساب التاجر">
         <article className="customer-overview-card customer-overview-primary">
@@ -441,6 +461,7 @@ export default function AppV3Fixed(){
       {error&&<div className="error-banner" role="alert">{error}</div>}{message&&<div className="success" role="status">{message}</div>}
     </main></div>
     <nav className="customer-mobile-dock" aria-label="تنقل سريع للمشتري">
+      <button type="button" className={section==="home"?"active":""} onClick={()=>{setMobileMoreOpen(false);navigate("home")}}><span aria-hidden="true">⌂</span><small>الرئيسية</small></button>
       <button type="button" className={section==="catalog"?"active":""} onClick={()=>{setMobileMoreOpen(false);navigate("catalog")}}><span aria-hidden="true">▣</span><small>الكتالوج</small></button>
       <button type="button" className={section==="orders"?"active":""} onClick={()=>{setMobileMoreOpen(false);navigate("orders")}}><span aria-hidden="true">🧾</span><small>طلباتي</small></button>
       <button type="button" className="dock-cart" onClick={()=>{setMobileMoreOpen(false);setCartOpen(true)}}><span aria-hidden="true">🛒</span><small>السلة</small>{cartCount>0&&<b>{cartCount}</b>}</button>
