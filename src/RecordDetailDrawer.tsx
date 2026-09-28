@@ -1,11 +1,11 @@
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 
 export interface RecordDetailField { label: string; value: ReactNode; wide?: boolean; content?: boolean; }
-interface RecordDetailDrawerProps { eyebrow: string; title: string; summary?: ReactNode; fields: RecordDetailField[]; onClose: () => void; footer?: ReactNode; }
+interface RecordDetailDrawerProps { eyebrow: string; title: string; summary?: ReactNode; fields: RecordDetailField[]; onClose: () => void; footer?: ReactNode; loading?: boolean; loadingLabel?: string; }
 
 function copyableText(value: ReactNode) { return typeof value === 'string' || typeof value === 'number' ? String(value) : null; }
 
-export default function RecordDetailDrawer({ eyebrow, title, summary, fields, onClose, footer }: RecordDetailDrawerProps) {
+export default function RecordDetailDrawer({ eyebrow, title, summary, fields, onClose, footer, loading = false, loadingLabel = 'جارٍ تحميل التفاصيل' }: RecordDetailDrawerProps) {
   const closeRef = useRef<HTMLButtonElement>(null);
   const drawerRef = useRef<HTMLElement>(null);
   const onCloseRef = useRef(onClose);
@@ -50,8 +50,17 @@ export default function RecordDetailDrawer({ eyebrow, title, summary, fields, on
           <div><span className="eyebrow">{eyebrow}</span><h3 id={titleId}>{title}</h3>{summary && <div className="record-detail-summary">{summary}</div>}</div>
           <button ref={closeRef} type="button" className="ghost" aria-label="إغلاق التفاصيل" onClick={onClose}>×</button>
         </div>
-        <div className="record-detail-fields">
-          {fields.map(field => {
+        <div className="record-detail-fields" aria-busy={loading}>
+          {loading ? (
+            <div className="record-detail-loading-surface" role="status" aria-label={loadingLabel}>
+              {Array.from({ length: 6 }).map((_, index) => (
+                <div className={index === 4 ? 'record-detail-loading-field wide' : 'record-detail-loading-field'} key={index}>
+                  <i />
+                  <span />
+                </div>
+              ))}
+            </div>
+          ) : fields.map(field => {
             const scalar = copyableText(field.value);
             return <div className={field.wide ? 'record-detail-field wide' : 'record-detail-field'} key={field.label}>
               <div className="record-detail-field-label">
