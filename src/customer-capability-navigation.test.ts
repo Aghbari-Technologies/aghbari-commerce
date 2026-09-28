@@ -16,6 +16,8 @@ describe('customer capability navigation closure', () => {
 
   it('connects the customer workspace rail to the live capability dispatcher', () => {
     expect(app).toContain('onOpenCapability={openCustomerCapability}');
+    expect(app).toContain('openFirstInvoiceRequest={customerInvoiceOpenRequest}');
+    expect(app).toContain('setCustomerInvoiceOpenRequest((request) => request + 1)');
     expect(app).toContain('function openCustomerCapability(item:CustomerStructureItem)');
     for (const id of ['search','categories','product-detail','cart','checkout','order-detail','quick-order','pricing','profile','company','addresses','account-settings','invoice-history','invoice-detail','statements','payment-history','offline','invitations']) {
       expect(app).toContain("case '" + id + "':");
