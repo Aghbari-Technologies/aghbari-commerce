@@ -2,12 +2,15 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
-import { AGHBARI_ADMIN_PATH_TARGETS } from './structure/admin-structure';
+import { AGHBARI_ADMIN_LIVE_ITEMS, AGHBARI_ADMIN_PATH_TARGETS } from './structure/admin-structure';
 
-const adminPanelSource = readFileSync(
-  resolve(dirname(fileURLToPath(import.meta.url)), 'AdminPanel.tsx'),
-  'utf8',
-);
+const root = dirname(fileURLToPath(import.meta.url));
+const read = (name: string) => readFileSync(resolve(root, name), 'utf8');
+
+const adminPanelSource = read('AdminPanel.tsx');
+const dashboardSource = read('AdminExecutiveDashboard.tsx');
+const boundarySource = read('AdminBoundaryCenter.tsx');
+const runtimeSources = [adminPanelSource, dashboardSource, boundarySource];
 
 describe('admin finance history workspace contract', () => {
   it('routes the dedicated finance history path to its dedicated anchor', () => {
@@ -21,6 +24,14 @@ describe('admin finance history workspace contract', () => {
   });
 
   it('keeps the dashboard data-center shortcut on the real data workspace', () => {
-    expect(adminPanelSource).toContain('id="admin-import"');
+    expect(dashboardSource).toContain('target="#admin-import"');
+  });
+
+  it('guards every live Admin workspace target against anchor drift', () => {
+    for (const item of AGHBARI_ADMIN_LIVE_ITEMS) {
+      if (!item.target) continue;
+      const id = item.target.slice(1);
+      expect(runtimeSources.some((source) => source.includes('id="' + id + '"') || source.includes("id='" + id + "'"))).toBe(true);
+    }
   });
 });
