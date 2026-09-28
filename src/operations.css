@@ -79,3 +79,14 @@
 @media(prefers-reduced-motion:reduce){
  .notification-loading-skeleton i,.notification-loading-skeleton small,.notification-loading-skeleton b,.notification-loading-icon{animation:none}
 }
+
+.record-detail-loading-surface{display:grid;gap:10px;width:100%}
+.record-detail-loading-field{display:grid;gap:7px;padding:11px 12px;border:1px solid #e2ecef;border-radius:11px;background:#fbfdfe}
+.record-detail-loading-field.wide{min-height:74px}
+.record-detail-loading-field i,.record-detail-loading-field span{display:block;border-radius:999px;background:linear-gradient(90deg,#edf3f5 20%,#f9fbfc 50%,#edf3f5 80%);background-size:220% 100%;animation:aghbari-record-detail-shimmer 1.25s ease-in-out infinite}
+.record-detail-loading-field i{width:28%;height:8px}
+.record-detail-loading-field span{width:72%;height:12px}
+.record-detail-loading-field.wide span{width:92%;height:42px;border-radius:9px}
+@keyframes aghbari-record-detail-shimmer{0%,100%{background-position:200% 0}50%{background-position:0 0}}
+@media(max-width:560px){.record-detail-loading-field{padding:10px}.record-detail-loading-field.wide{min-height:64px}}
+@media(prefers-reduced-motion:reduce){.record-detail-loading-field i,.record-detail-loading-field span{animation:none;background:#edf3f5}}
