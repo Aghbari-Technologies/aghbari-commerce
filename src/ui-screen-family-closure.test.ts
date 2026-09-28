@@ -137,3 +137,21 @@ describe('admin command center semantic hygiene', () => {
     expect(sourceText).toContain('title="مركز البيانات الموحد" target="#admin-import"');
   });
 });
+
+
+describe('inventory and warehouse full collection controls', () => {
+  it('does not truncate low-stock results and provides search/filter/pagination', () => {
+    const sourceText = readRepoSource('InventoryPanel.tsx');
+    expect(sourceText).not.toContain('lowStock.slice(0,20)');
+    expect(sourceText).toContain('بحث الأصناف منخفضة المخزون');
+    expect(sourceText).toContain('تصفية المستودع للأصناف المنخفضة');
+    expect(sourceText).toContain('lowStockActivePage');
+  });
+
+  it('keeps warehouse sorting wired to the real created_at/name fields', () => {
+    const sourceText = readRepoSource('WarehouseDirectoryPanel.tsx');
+    expect(sourceText).toContain('ترتيب المستودعات');
+    expect(sourceText).toContain("sort==='name'");
+    expect(sourceText).toContain('created_at');
+  });
+});
