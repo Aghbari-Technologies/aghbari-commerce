@@ -17,6 +17,7 @@ const runtimeSources = [
   boundarySource,
   financeHistorySource,
   read('CatalogManagementPanel.tsx'),
+  read('CategoryManagementPanel.tsx'),
   read('PricingMatrixPanel.tsx'),
   read('InventoryHistoryPanel.tsx'),
   read('InventoryActivityPanel.tsx'),
