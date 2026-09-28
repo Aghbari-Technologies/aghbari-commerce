@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { getAdminStructureForRole } from './structure/admin-structure';
-import { AGHBARI_CUSTOMER_STRUCTURE, CUSTOMER_PORTAL_SECTIONS, type CustomerPortalSection } from './structure/customer-structure';
+import { AGHBARI_CUSTOMER_STRUCTURE, CUSTOMER_PORTAL_SECTIONS, type CustomerPortalSection, type CustomerStructureItem } from './structure/customer-structure';
 import './workspace-surface.css';
 
 type StaffRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer';
 type WorkspaceSurfaceRailProps =
   | { variant: 'staff'; role: StaffRole }
-  | { variant: 'customer'; section: CustomerPortalSection; onSelect: (section: CustomerPortalSection) => void; visibleSections?: readonly CustomerPortalSection[] };
+  | { variant: 'customer'; section: CustomerPortalSection; onSelect: (section: CustomerPortalSection) => void; visibleSections?: readonly CustomerPortalSection[]; onOpenCapability?: (item: CustomerStructureItem) => void };
 
 const STAFF_PACKS = [
   { id: 'command', label: 'مركز القيادة', eyebrow: 'التشغيل', target: '#admin-dashboard', targets: ['#admin-dashboard'], tone: 'live' },
@@ -128,10 +128,17 @@ export default function WorkspaceSurfaceRail(props: WorkspaceSurfaceRailProps) {
           </div>
           <div className="workspace-surface-capability-list">
             {surfaceItems.map((item) => (
-              <span key={item.id} className={item.status === 'live' ? 'workspace-surface-capability is-live' : 'workspace-surface-capability'}>
+              <button
+                key={item.id}
+                type="button"
+                className={item.status === 'live' ? 'workspace-surface-capability is-live' : 'workspace-surface-capability'}
+                onClick={() => props.onOpenCapability?.(item)}
+                aria-label={item.label + ' — ' + item.description}
+                title="فتح هذه الوظيفة داخل مساحة الأغبري"
+              >
                 <b aria-hidden="true">{item.status === 'live' ? '✓' : '•'}</b>
                 <span><strong>{item.label}</strong><small>{item.description}</small></span>
-              </span>
+              </button>
             ))}
           </div>
         </div>
