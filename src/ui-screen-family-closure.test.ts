@@ -27,8 +27,8 @@ describe('UI screen-family closure contract', () => {
     }
   });
 
-  it('does not silently lose the six customer section model', () => {
-    expect(CUSTOMER_PORTAL_SECTIONS).toEqual(['catalog', 'orders', 'finance', 'templates', 'account', 'notifications']);
+  it('does not silently lose the seven customer section model', () => {
+    expect(CUSTOMER_PORTAL_SECTIONS).toEqual(['home', 'catalog', 'orders', 'finance', 'templates', 'account', 'notifications']);
   });
 });
 
