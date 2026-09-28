@@ -13,3 +13,14 @@ Execute the exact-current-SHA Quality/Test-the-Test matrix for the final UI chan
 ## DO NOT REPEAT
 - Do not reopen the closed customer template terminology, account/address/profile, checkout, catalog sorting, Staff subview, Admin collection, low-stock, category or notification surfaces without a trigger.
 - Do not retry unchanged hosted blockers.
+
+
+## 2026-09-29 — Staff surface expansion + CI root-cause closure
+- Exact current main HEAD at checkpoint start: `de6d8ee87262c267db4d502806aeeb211206f57f`.
+- Implemented: fixed Customer Orders active timeline state; added canonical purchasing capability and finance-history capability to Admin structure; added Staff purchasing workspace; expanded Staff inventory/purchasing packs to expose related live targets without duplicating screens; repaired canonical UI coverage assertions after exact-SHA CI failures.
+- Verified: typecheck passed on the affected lineage; `src/customer-portal-section-coverage.test.ts` and `src/services/purchasing.input.test.ts` passed on exact SHA `519de760...`; Browser Exact Deployment and Security passed on exact preceding checkpoints; current de6 workflows are active.
+- Not proven on de6: final Quality/Test-the-Test completion, browser visual runtime, hosted exact-source certification.
+- Production: `HOLD / NO TOUCH`.
+
+## NEXT EXECUTABLE ACTION
+Read the exact de6 workflow matrix. Fix only the first material failure. If it passes, continue the next independent canonical UI/core gap.
