@@ -193,3 +193,13 @@ Requirements discovered from references or canonical specifications are not park
 ## 2026-09-29 — Customer statement UX
 - Finance exposes **كشف الحساب** as a first-class subview alongside invoice history without expanding the six-section Portal IA.
 - The statement supports real loading/error/empty/filter/sort/pagination states and opens existing invoice detail/payment data; no synthetic balances are used.
+
+
+## 2026-09-29 — Customer payment history UX
+- Finance exposes **سجل الدفعات** beside invoice history and كشف الحساب, reusing the existing six-section Portal IA and real RLS-backed financial records.
+- The view includes loading/error/empty/filter/sort/pagination states and direct invoice drill-down.
+
+
+## 2026-09-29 — Customer pricing UX
+- Catalog exposes **الأسعار** as a first-class dialog/subview over the existing customer-authorized price contract.
+- It provides search, quantity-tier visibility, authorized/unavailable states, offline disclosure, loading/empty recovery, keyboard-accessible controls and responsive horizontal table behavior without adding transaction authority.
