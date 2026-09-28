@@ -166,3 +166,14 @@ describe('inventory movement progressive disclosure', () => {
     expect(sourceText).toContain('selectedMovement.source_type');
   });
 });
+
+
+describe('governance collection closure', () => {
+  it('keeps audit/outbox sorting tied to created_at and retains a real loading surface', () => {
+    const sourceText = readRepoSource('StaffOperationsPanel.tsx');
+    expect(sourceText).toContain('ترتيب سجل الحوكمة');
+    expect(sourceText).toContain("sort === 'oldest'");
+    expect(sourceText).toContain('created_at');
+    expect(sourceText).toContain('<OperationalLoadingSkeleton variant="collection" />');
+  });
+});

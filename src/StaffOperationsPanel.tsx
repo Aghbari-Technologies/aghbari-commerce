@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { supabase } from './lib/supabase';
 import { filterAudit, filterOutbox, outboxLifecycle, redactAuditMetadata, redactSensitiveText, type AuditRow, type OutboxRow } from './domain/operations';
 import RecordDetailDrawer from './RecordDetailDrawer';
+import OperationalLoadingSkeleton from './OperationalLoadingSkeleton';
 
 type Tab = 'audit' | 'outbox';
 
@@ -25,6 +26,7 @@ export default function StaffOperationsPanel() {
   const [query, setQuery] = useState('');
   const [result, setResult] = useState<'all' | AuditRow['result']>('all');
   const [status, setStatus] = useState<'all' | OutboxRow['status']>('all');
+  const [sort, setSort] = useState<'newest' | 'oldest'>('newest');
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -64,11 +66,17 @@ export default function StaffOperationsPanel() {
   }, [tab]);
 
   useEffect(() => { void reload(); }, [reload]);
-  useEffect(() => { setPage(1); }, [tab, query, result, status]);
+  useEffect(() => { setPage(1); }, [tab, query, result, sort, status]);
 
   const auditVisible = useMemo(() => filterAudit(auditRows, query, result), [auditRows, query, result]);
   const outboxVisible = useMemo(() => filterOutbox(outboxRows, query, status), [outboxRows, query, status]);
-  const activeRows = tab === 'audit' ? auditVisible : outboxVisible;
+  const activeRows = useMemo(() => {
+    const rows = [...(tab === 'audit' ? auditVisible : outboxVisible)];
+    return rows.sort((a, b) => {
+      const delta = new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      return sort === 'oldest' ? -delta : delta;
+    });
+  }, [auditVisible, outboxVisible, sort, tab]);
   const pages = Math.max(1, Math.ceil(activeRows.length / 10));
   const activePage = Math.min(page, pages);
   const pagedRows = activeRows.slice((activePage - 1) * 10, activePage * 10);
@@ -105,6 +113,7 @@ export default function StaffOperationsPanel() {
 
         <div className="operations-toolbar">
           <input aria-label={tab === 'audit' ? 'بحث سجل التدقيق' : 'بحث صندوق التكاملات'} placeholder={tab === 'audit' ? 'بحث بالإجراء أو الهدف أو النتيجة…' : 'بحث بالحدث أو التجميع أو الخطأ…'} value={query} onChange={event => setQuery(event.target.value)} />
+          <select aria-label="ترتيب سجل الحوكمة" value={sort} onChange={event => setSort(event.target.value as typeof sort)} disabled={loading}><option value="newest">الأحدث</option><option value="oldest">الأقدم</option></select>
           {tab === 'audit' ? (
             <select aria-label="نتيجة التدقيق" value={result} onChange={event => setResult(event.target.value as 'all' | AuditRow['result'])}>
               <option value="all">كل النتائج</option>
@@ -124,7 +133,7 @@ export default function StaffOperationsPanel() {
         </div>
 
         {loading ? (
-          <div className="portal-loading" role="status">جارٍ تحميل بيانات التشغيل…</div>
+          <OperationalLoadingSkeleton variant="collection" />
         ) : error ? (
           <div className="empty-state">
             <strong>تعذر تحميل البيانات.</strong>
