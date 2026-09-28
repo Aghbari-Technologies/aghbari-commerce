@@ -19,7 +19,7 @@ describe('customer capability navigation closure', () => {
     expect(app).toContain('openFirstInvoiceRequest={customerInvoiceOpenRequest}');
     expect(app).toContain('setCustomerInvoiceOpenRequest((request) => request + 1)');
     expect(app).toContain('function openCustomerCapability(item:CustomerStructureItem)');
-    for (const id of ['search','categories','product-detail','cart','checkout','order-detail','quick-order','pricing','profile','company','addresses','account-settings','invoice-history','invoice-detail','statements','payment-history','offline','invitations']) {
+    for (const id of ['home','store','search','categories','product-detail','cart','checkout','order-history','order-detail','templates','quick-order','pricing','account','profile','company','addresses','account-settings','notifications','offline','invitations','finance','invoice-history','invoice-detail','statements','payment-history']) {
       expect(app).toContain("case '" + id + "':");
     }
   });
