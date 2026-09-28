@@ -133,6 +133,17 @@ describe('customer payment history coverage', () => {
 });
 
 
+describe('customer notification offline state', () => {
+  it('keeps customer notifications explicitly fail-closed when offline', () => {
+    const notificationSource = readFileSync(resolve(process.cwd(), 'src/NotificationPanel.tsx'), 'utf8');
+    expect(source).toContain('<NotificationPanel audience="customer" online={online}/>');
+    expect(notificationSource).toContain("audience === 'customer' && !online");
+    expect(notificationSource).toContain('الإشعارات متوقفة دون اتصال');
+    expect(notificationSource).toContain('لا يتم عرض بيانات إشعارات قديمة');
+  });
+});
+
+
 describe('customer pricing coverage', () => {
   it('keeps Pricing as a live Catalog subview backed by the existing authorized pricing contract', () => {
     const structure = readFileSync(resolve(process.cwd(), 'src/structure/customer-structure.ts'), 'utf8');
