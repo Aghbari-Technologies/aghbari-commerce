@@ -30,31 +30,10 @@ import './styles.css';
 import './customer-portal-v3.css';
 import './customer-portal-v3-dynamic.css';
 import './customer-account-catalog.css';
+import { PORTAL_SECTIONS, getVisibleCustomerPortalSections, normalizeCustomerPortalSection, sectionFromHash, type PortalSection } from './customer-portal-navigation';
 
 type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer' | 'customer';
-type PortalSection = 'home' | 'catalog' | 'orders' | 'finance' | 'templates' | 'account' | 'notifications';
 const PORTAL_SECTION_META: Record<PortalSection,{label:string;eyebrow:string;hint:string}> = { home:{label:'الرئيسية',eyebrow:'مساحة التاجر',hint:'ملخص الحساب والوضع التشغيلي والاختصارات إلى الإجراء التالي.'}, catalog:{label:'الكتالوج',eyebrow:'التسوق',hint:'اكتشف الأصناف والأسعار والمخزون ثم أضف الكميات مباشرة.'}, orders:{label:'طلباتي',eyebrow:'المتابعة',hint:'راجع الطلبات الحالية والسجل والتتبع وإعادة الطلب.'}, finance:{label:'المركز المالي',eyebrow:'الثقة المالية',hint:'راجع الرصيد والائتمان والحركات المالية المتاحة لحسابك.'}, templates:{label:'القوالب والطلبات المحفوظة',eyebrow:'طلبات متكررة',hint:'أعد تطبيق طلباتك المحفوظة بضغطة واحدة.'}, account:{label:'حسابي',eyebrow:'سياق الحساب',hint:'الهوية والاتصال والمستودع وحالات الاسترداد.'}, notifications:{label:'الإشعارات',eyebrow:'التشغيل',hint:'تابع التنبيهات المرتبطة بالحساب والطلبات.'} };
-function getVisibleCustomerPortalSections(config: { showCredit: boolean; showTemplates: boolean }): PortalSection[] {
-  const sections: PortalSection[] = ['home', 'catalog', 'orders'];
-  if (config.showCredit) sections.push('finance');
-  if (config.showTemplates) sections.push('templates');
-  sections.push('account', 'notifications');
-  return sections;
-}
-
-export function normalizeCustomerPortalSection(
-  next: PortalSection,
-  config: { showCredit: boolean; showTemplates: boolean },
-): PortalSection {
-  const visible = getVisibleCustomerPortalSections(config);
-  return visible.includes(next) ? next : visible[0] ?? 'home';
-}
-const PORTAL_SECTIONS = new Set<PortalSection>(['home', 'catalog', 'orders', 'finance', 'templates', 'account', 'notifications']);
-const sectionFromHash = (): PortalSection => {
-  if (typeof window === 'undefined') return 'home';
-  const value = window.location.hash.replace(/^#/, '') as PortalSection;
-  return PORTAL_SECTIONS.has(value) ? value : 'home';
-};
 type PriceTier = { min_quantity: number; unit_price: number; currency: string };
 type Finance = { currency: string; creditLimit: number; outstanding: number; available: number; entries: Array<{ id: string; reference?: string; description: string; debit: number; credit: number; due_date?: string; status: string; created_at: string }> };
 type ClientUiConfig = {
@@ -166,7 +145,7 @@ export default function AppV3Fixed(){
    }
  },[config.showCredit,config.showTemplates,section]);
  useEffect(()=>{
-   const syncSectionFromUrl=()=>setSection(normalizeCustomerPortalSection(sectionFromHash(),config));
+   const syncSectionFromUrl=()=>setSection(normalizeCustomerPortalSection(sectionFromHash(window.location.hash),config));
    window.addEventListener('hashchange',syncSectionFromUrl);
    window.addEventListener('popstate',syncSectionFromUrl);
    syncSectionFromUrl();
