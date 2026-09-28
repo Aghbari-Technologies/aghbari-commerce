@@ -92,3 +92,18 @@ At the first executable CI/runtime lane, run the exact current-main Quality/Test
 Run the exact current-main Quality/Test-the-Test matrix for the changed Customer Finance + capability-rail files when the CI/runtime lane is executable; fix only the first material failure, then continue the next independent UI/core gap.
 ## DO NOT REPEAT
 Do not replace the real invoice drill-down with mock data or reopen closed finance/account/catalog surfaces without a regression or direct requirement change. Do not transfer evidence across SHAs.
+
+
+## 2026-09-29 — Customer capability map exactness
+- Implementation lineage: `43507d6f6df4611d3cc92109082146e527c9a8f2`.
+- Current source HEAD at state checkpoint: `65ab1b494ade1c65127efae0c7dcba2889e4fc48`.
+- Implemented: explicit dispatch for the previously fallback-only `account` capability; focused contract now enumerates the full 25-item canonical customer map.
+- Verified: source mapping covers all canonical customer IDs; UI reference corpus remains 84 unique PNG references across 8 screen packs.
+- Proven: source/static only.
+- Not proven: exact current-SHA test execution, Test-the-Test, browser visual/runtime, hosted exact-source certification.
+- Production: `HOLD / NO TOUCH`.
+- Blockers: local clone/DNS unavailable; unchanged Vercel deployment-rate-limit/protection failure.
+## NEXT EXECUTABLE ACTION
+Run exact current-main Quality/Test-the-Test for `customer-capability-navigation.test.ts` and affected customer Finance/UI files; fix only the first material failure, then continue the next independent UI/core gap.
+## DO NOT REPEAT
+Do not reopen closed customer finance/account/catalog/checkout surfaces unless a regression or direct requirement change occurs; do not transfer evidence across SHAs; do not retry the unchanged Vercel blocker.
