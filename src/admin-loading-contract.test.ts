@@ -13,7 +13,7 @@ describe('admin operational loading surfaces', () => {
 
   it('uses the shared structural skeleton for staff access data', () => {
     const source = read('src/StaffAccessPanel.tsx');
-    expect(source).toContain("OperationalLoadingSkeleton variant="collection"");
+    expect(source).toContain('OperationalLoadingSkeleton variant="collection"');
     expect(source).not.toContain('جارٍ تحميل دليل المستخدمين…');
   });
 });
