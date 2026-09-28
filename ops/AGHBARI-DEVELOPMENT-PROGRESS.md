@@ -309,3 +309,16 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Proven: exact current build/typecheck/focused tests/browser-contract are successful. Hosted visual runtime remains unproven; Test-the-Test is still active.
 - Certification: `NOT CLAIMED`
 - Production: `HOLD / NO TOUCH`
+
+## 2026-09-28 — UI-first execution control
+- Run: UI-first protocol hardening
+- Date: 2026-09-28
+- SHA: latest main after this write
+- Branch: main
+- Implemented: startup execution lock; 120-minute UI-first lane; measurable screen closure; Customer/Admin completeness rules; new-parent rule; reference-pack closure gate.
+- Verified: startup command, UI reference index, durable memory, and latest execution state updated.
+- Proven: repository document updates only; no new runtime/browser certification claimed.
+- Blocked: hosted deployment blockers remain unchanged and do not pause UI execution.
+- Certification: NOT CLAIMED
+- Production: HOLD / NO TOUCH
+- Next: execute the next open Admin/Staff or Customer Portal surface from the actual main HEAD, then focused proof and continue.
