@@ -69,3 +69,12 @@ describe('customer catalog price sorting closure', () => {
     expect(sourceText).toContain("Number(x.authorizedPrice??0)-Number(y.authorizedPrice??0)");
   });
 });
+
+
+describe('customer cart empty state', () => {
+  it('keeps an explicit empty basket state with a catalog recovery action', () => {
+    expect(source).toContain('سلتك فارغة حاليًا.');
+    expect(source).toContain('العودة إلى الكتالوج');
+    expect(source).toContain('cart-empty-primary');
+  });
+});
