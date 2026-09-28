@@ -9,7 +9,7 @@ A route is not complete merely because it renders. Close route, nested views, di
 Command Center; Orders; Customers; Catalog & Products; Pricing; Inventory; Purchasing; Promotions; Imports & Exports; Integrations; Notifications; Audit & Security; Settings. Use contextual actions, command/search patterns and safe bulk operations to reduce navigation depth.
 
 ## Customer journey
-Discover → Search/Filter → Product Detail → Quantity → Cart → Checkout/Order → Order Status/History → Templates/Quick Order → Account.
+Home/Account Context → Discover → Search/Filter → Product Detail → Quantity → Cart → Checkout/Order → Order Status/History → Templates/Quick Order → Account.
 
 ## Quality bar
 Arabic/RTL-first, responsive Desktop/Tablet/Mobile, accessible, visually coherent, high-information-density without clutter, clear hierarchy, no dead controls, no fake data, no placeholder-as-feature.
@@ -203,3 +203,10 @@ Requirements discovered from references or canonical specifications are not park
 ## 2026-09-29 — Customer pricing UX
 - Catalog exposes **الأسعار** as a first-class dialog/subview over the existing customer-authorized price contract.
 - It provides search, quantity-tier visibility, authorized/unavailable states, offline disclosure, loading/empty recovery, keyboard-accessible controls and responsive horizontal table behavior without adding transaction authority.
+
+
+## 2026-09-29 — Customer Home experience
+- The customer landing experience is a dedicated Home workspace, not an accidental side effect of the Catalog route.
+- Home is RTL-first and responsive across desktop/tablet/mobile, with a compact summary of current account context, operational state and quick actions into existing capabilities.
+- Home uses the shared overview cards, quick-action, hero and trust primitives already used elsewhere in the portal; no second visual system is introduced.
+- Home must expose real online/offline state and must never present cached financial or transactional data as authoritative.
