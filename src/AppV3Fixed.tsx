@@ -120,6 +120,7 @@ export function catalogCacheScope(
 export default function AppV3Fixed(){
   const [sessionUserId,setSessionUserId]=useState<string|null>(null); const [email,setEmail]=useState(''); const [showPassword,setShowPassword]=useState(false); const [resetMode,setResetMode]=useState(false); const [resetBusy,setResetBusy]=useState(false); const [resetSent,setResetSent]=useState(false); const [customerPhone,setCustomerPhone]=useState(''); const [password,setPassword]=useState(''); const [signedIn,setSignedIn]=useState(false); const [ready,setReady]=useState(false); const [role,setRole]=useState<UserRole>('viewer'); const [customerId,setCustomerId]=useState<string|null>(null); const [organizationId,setOrganizationId]=useState<string|null>(null); const [organizationName,setOrganizationName]=useState(''); const [warehouseId,setWarehouseId]=useState<string|null>(null); const [warehouseName,setWarehouseName]=useState(''); const [customerName,setCustomerName]=useState('تاجر الأغبري'); const [customerTier,setCustomerTier]=useState('wholesale');
   const [config,setConfig]=useState<ClientUiConfig>(DEFAULT_UI_CONFIG); const [catalogView,setCatalogView]=useState<'grid'|'compact'>('grid'); const [catalogSort,setCatalogSort]=useState<'relevance'|'name'|'stock'|'price-high'|'price-low'>('relevance'); const [catalogStockFilter,setCatalogStockFilter]=useState<CatalogStockFilter>('all'); const [catalogPriceFilter,setCatalogPriceFilter]=useState<CatalogPriceFilter>('all'); const [catalogQuantityDrafts,setCatalogQuantityDrafts]=useState<Record<string,string>>({}); const [catalogFilterOpen,setCatalogFilterOpen]=useState(false); const [pricingOpen,setPricingOpen]=useState(false); const [pricingQuery,setPricingQuery]=useState(''); const [pricingPage,setPricingPage]=useState(0); const [query,setQuery]=useState(''); const [catalogPage,setCatalogPage]=useState(0); const [catalogHasMore,setCatalogHasMore]=useState(false); const [categoryId,setCategoryId]=useState<string|null>(null); const [categories,setCategories]=useState<CategoryOption[]>([]); const [products,setProducts]=useState<PricedProduct[]>([]); const [tiers,setTiers]=useState<Record<string,PriceTier[]>>({}); const [cart,setCart]=useState<CartLine[]>([]); const [cartOpen,setCartOpen]=useState(false); const [checkoutOpen,setCheckoutOpen]=useState(false); const [quickOpen,setQuickOpen]=useState(false); const [excelOpen,setExcelOpen]=useState(false); const [excelRows,setExcelRows]=useState<QuickExcelLine[]>([]); const [excelBusy,setExcelBusy]=useState(false); const [mobileMoreOpen,setMobileMoreOpen]=useState(false); const [section,setSection]=useState<PortalSection>(sectionFromHash()); const [selectedOrder,setSelectedOrder]=useState<CustomerOrderDetail|null>(null); const [orderDetailBusy,setOrderDetailBusy]=useState(false);
+  const [customerInvoiceOpenRequest, setCustomerInvoiceOpenRequest] = useState(0);
  const [orders,setOrders]=useState<CustomerOrderSummary[]>([]); const [selectedProduct,setSelectedProduct]=useState<PricedProduct|null>(null);
  const [finance,setFinance]=useState<Finance|null>(null); const [financePage,setFinancePage]=useState(1); const FINANCE_PAGE_SIZE=10; const financePages=Math.max(1,Math.ceil((finance?.entries.length??0)/FINANCE_PAGE_SIZE)); const activeFinancePage=Math.min(financePage,financePages); const visibleFinanceEntries=finance?.entries.slice((activeFinancePage-1)*FINANCE_PAGE_SIZE,activeFinancePage*FINANCE_PAGE_SIZE)??[]; const [templates,setTemplates]=useState<OrderTemplate[]>([]); const [templateName,setTemplateName]=useState('');
  const [templateQuery,setTemplateQuery]=useState(''); const [templateSort,setTemplateSort]=useState<TemplateViewSort>('updated'); const [templatePage,setTemplatePage]=useState(1); const [selectedTemplate,setSelectedTemplate]=useState<OrderTemplate|null>(null); const [deleteTemplateId,setDeleteTemplateId]=useState<string|null>(null);
@@ -328,7 +329,7 @@ export default function AppV3Fixed(){
         break;
       case 'invoice-detail':
         clickCustomerTab('.history-tabs button','الفواتير والمدفوعات');
-        focusCustomerSurface('.customer-invoice-grid');
+        setCustomerInvoiceOpenRequest((request) => request + 1);
         break;
       case 'statements':
         clickCustomerTab('.history-tabs button','كشف الحساب');
@@ -555,7 +556,7 @@ export default function AppV3Fixed(){
           ) : (
             <div className="empty-state">لا توجد بيانات مركز مالي متاحة.</div>
           )}
-          <CustomerFinancePanel customerId={customerId} online={online} />
+          <CustomerFinancePanel customerId={customerId} online={online} openFirstInvoiceRequest={customerInvoiceOpenRequest} />
         </section>
       )}
       {error&&<div className="error-banner" role="alert">{error}</div>}{message&&<div className="success" role="status">{message}</div>}
