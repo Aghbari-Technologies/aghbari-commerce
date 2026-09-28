@@ -201,7 +201,7 @@ export const AGHBARI_ADMIN_PATH_TARGETS = Object.fromEntries(
 ) as Record<string, string>;
 
 export function adminOrderIdForPath(pathname: string) {
-  const normalized = pathname.replace(/\/\\+$/, '') || '/';
+  const normalized = pathname.replace(/\/+$/, '') || '/';
   const match = normalized.match(/^\/admin\/order\/([^/]+)$/);
   return match?.[1] ?? null;
 }
