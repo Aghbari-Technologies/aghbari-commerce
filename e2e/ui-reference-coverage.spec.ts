@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
+import { AGHBARI_ADMIN_LIVE_ITEMS } from '../src/structure/admin-structure';
 
 async function login(page: Page, email: string, password: string) {
   await page.goto('/');
@@ -65,31 +66,19 @@ test.describe('UI reference-family browser coverage', () => {
     await login(page, email!, password!);
     await expect(page.getByRole('heading', { name: 'مركز التحكم' }).first()).toBeVisible();
 
-    const anchors = [
-      ['admin-dashboard', 'مركز القيادة'],
-      ['admin-orders', 'إدارة الطلبات'],
-      ['admin-customers', 'دورة العميل'],
-      ['admin-catalog', 'إدارة الكتالوج'],
-      ['admin-pricing-matrix', 'مصفوفة الأسعار'],
-      ['admin-inventory', 'المخزون'],
-      ['admin-warehouses', 'دليل المستودعات والفروع'],
-      ['admin-purchasing', 'المشتريات'],
-      ['admin-receipts', 'سجل الاستلام'],
-      ['admin-suppliers', 'دليل الموردين والحساب'],
-      ['admin-finance', 'المالية التشغيلية'],
-      ['admin-export', 'مركز التصدير'],
-      ['admin-settings', 'التحكم الديناميكي بتطبيق العميل'],
-      ['admin-notifications', 'إشعارات مركز التشغيل'],
-      ['admin-governance', 'التدقيق والتكاملات'],
-      ['admin-access', 'الأدوار والصلاحيات'],
-    ] as const;
+    const liveTargets = [...new Set(
+      AGHBARI_ADMIN_LIVE_ITEMS
+        .map((item) => item.target)
+        .filter((target): target is string => Boolean(target))
+        .map((target) => target.replace(/^#/, '')),
+    )];
 
-    for (const [id] of anchors) {
-      const target = page.locator('#' + id);
-      await expect(target).toBeVisible();
+    for (const id of liveTargets) {
+      const target = page.locator('#' + id).first();
+      await expect(target, `Missing live Admin anchor #${id}`).toBeVisible();
       await target.scrollIntoViewIfNeeded();
-      await page.screenshot({ path: `test-results/ui-admin-${id}.png`, fullPage: false });
     }
+    await page.screenshot({ path: 'test-results/ui-admin-control-plane-full.png', fullPage: true });
 
     await expect(page.getByText('العامري', { exact: false })).toHaveCount(0);
     await page.screenshot({ path: 'test-results/ui-admin-control-plane-full.png', fullPage: true });
