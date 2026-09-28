@@ -48,7 +48,7 @@ describe('canonical UI coverage', () => {
     expect(adminStructureSource).toContain("live('purchasing', 'المشتريات'");
     expect(adminStructureSource).toContain("live('finance-history', 'سجل العمليات المالية'");
     expect(adminRuntimeSource).toContain('id="admin-purchasing"');
-    expect(adminRuntimeSource).toContain("data-label="13 · سجل العمليات المالية"");
+    expect(adminRuntimeSource).toContain('data-label="13 · سجل العمليات المالية"');
     expect(railSource).toContain("target: '#admin-purchasing'");
   });
 
