@@ -75,3 +75,21 @@ On the next current HEAD, execute the targeted exact-SHA test matrix for the Adm
 - Do not reintroduce wrapper IDs when a child workspace owns the canonical target.
 - Do not duplicate the same visual/screen family because multiple references point to one reusable workspace.
 - Do not transfer prior proof from `cd2682a0b9889b0c4fc3b6153e35a87beaa68a98` to a later SHA.
+
+
+## 2026-09-29 — Admin deep-link + anchor integrity closure
+- Exact implementation HEAD before documentation write-back: `3fe76bc7ecc1aadfc8ae402c3411ae0aa64fd0b0`.
+- Implemented: reusable `adminOrderIdForPath()`; `/admin/order/:id` now resolves to the Orders workspace and automatically opens the concrete order detail drawer; dynamic-path resolution is shared with the Admin target resolver.
+- Verified: **21/21** canonical Admin targets have exactly one runtime DOM anchor across the live Admin workspace sources; the dedicated finance-history target is owned by `FinanceOperationsHistoryPanel`; no duplicate DOM anchor remains after wrapper cleanup.
+- Test guard: focused Vitest contract now covers finance-history routing, order deep-link extraction/opening, data-center shortcut, and single-owner anchor drift.
+- Proven: source/static contract only on the exact implementation lineage; local test/build/browser/runtime execution is still not established in this environment.
+- Blocked: Vercel continues to report the existing free-plan build-rate-limit failure; no unchanged retry. Production remains untouched.
+- Production: `HOLD / NO TOUCH`.
+
+## NEXT EXECUTABLE ACTION
+On the next current HEAD, execute the exact-SHA Vitest/typecheck matrix covering Admin navigation/deep-link and the affected UI contracts. Fix only the first material failure, then continue the next independent open UI/Core gap.
+
+## DO NOT REPEAT
+- Do not re-add parent wrapper IDs for child-owned Admin targets.
+- Do not treat source/static proof as browser/runtime proof.
+- Do not transfer proof from `3fe76bc7ecc1aadfc8ae402c3411ae0aa64fd0b0` to a later SHA.
