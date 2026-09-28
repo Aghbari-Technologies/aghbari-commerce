@@ -1,0 +1,45 @@
+name: Aghbari Quality
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: aghbari-quality-${{ github.workflow }}-${{ github.ref }}-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      TARGET_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - name: Validate exact SHA
+        shell: bash
+        run: echo "$TARGET_SHA" | grep -Eq '^[0-9a-f]{40}$'
+      - name: Checkout exact target SHA
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 1
+      - name: Verify exact target HEAD
+        shell: bash
+        run: |
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$TARGET_SHA" || {
+            echo "EXACT HEAD MISMATCH: expected=$TARGET_SHA actual=$actual"
+            exit 1
+          }
+          echo "EXACT AGHBARI QUALITY HEAD: $actual"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run typecheck
+      - run: npm exec vitest run src/services/staffOrders.detail.test.ts src/structure/admin-structure.anchor.test.ts src/services/customerProfile.test.ts src/services/purchasing.update.test.ts src/services/purchasing.input.test.ts src/customer-portal-section-coverage.test.ts src/purchasing-migration-source.test.ts src/record-payment-migration.test.ts src/domain/customerAddresses.test.ts src/structure/admin-structure.edit-contract.test.ts src/structure/ui-reference-packs.test.ts src/brand-identity.test.ts src/customer-mobile-navigation.test.ts src/admin-boundary-navigation.test.ts src/workspace-surface-rail.test.ts src/workspace-surface-capability.test.ts
+          src/auth-screen.test.ts src/notification-loading.test.ts src/customer-nested-loading.test.ts src/admin-loading-contract.test.ts src/record-detail-loading.test.ts src/ui-reference-packs-contract.test.ts src/admin-boundary-links.test.ts src/app-bootstrap-loading.test.ts src/customer-visible-section-safety.test.ts src/customer-loading-states.test.ts src/admin-loading-states.test.ts src/admin-operational-loading.test.ts src/admin-collection-loading.test.ts
+      - run: npm run build

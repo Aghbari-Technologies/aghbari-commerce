@@ -1,0 +1,25 @@
+@keyframes aghbari-shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.operational-loading-skeleton{display:grid;gap:12px;margin-top:12px}
+.operational-skeleton-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.operational-skeleton-metric,.operational-skeleton-card{min-width:0;border:1px solid #dfe9ec;border-radius:15px;background:#fff}
+.operational-skeleton-metric{padding:11px;display:grid;gap:8px}
+.operational-skeleton-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.operational-skeleton-card{padding:13px;display:grid;gap:10px;min-height:190px}
+.operational-skeleton-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.operational-skeleton-block{display:block;border-radius:8px;background:linear-gradient(90deg,#eef4f6 25%,#f9fbfc 50%,#eef4f6 75%);background-size:200% 100%;animation:aghbari-shimmer 1.2s linear infinite}
+.operational-skeleton-block.w-16{width:16%}.operational-skeleton-block.w-20{width:20%}.operational-skeleton-block.w-28{width:28%}.operational-skeleton-block.w-34{width:34%}.operational-skeleton-block.w-42{width:42%}.operational-skeleton-block.w-48{width:48%}.operational-skeleton-block.w-52{width:52%}.operational-skeleton-block.w-58{width:58%}.operational-skeleton-block.w-62{width:62%}.operational-skeleton-block.w-76{width:76%}.operational-skeleton-block.w-80{width:80%}.operational-skeleton-block.w-100{width:100%}
+.operational-skeleton-block.h-12{height:12px}.operational-skeleton-block.h-14{height:14px}.operational-skeleton-block.h-24{height:24px}.operational-skeleton-block.h-28{height:28px}.operational-skeleton-block.h-32{height:32px}.operational-skeleton-block.h-36{height:36px}.operational-skeleton-block.h-42{height:42px}
+.operational-skeleton-rows{display:grid;gap:7px}.operational-skeleton-rows>div{display:grid;grid-template-columns:.7fr 2fr 1fr .5fr;gap:7px;align-items:center;padding:7px 0;border-top:1px solid #edf2f4}
+.operational-loading-skeleton-text{color:#81929b;font-size:9px}
+@media(max-width:900px){.operational-skeleton-metrics{grid-template-columns:1fr 1fr}.operational-skeleton-grid{grid-template-columns:1fr}}
+@media(max-width:560px){.operational-skeleton-metrics{grid-template-columns:1fr}.operational-skeleton-card{min-height:150px}.operational-skeleton-rows>div{grid-template-columns:1fr 1.6fr .8fr}.operational-skeleton-rows>div i:last-child{display:none}}
+@media(prefers-reduced-motion:reduce){.operational-skeleton-block{animation:none;background:#eef4f6}}
+.operational-skeleton-collection{display:grid;gap:10px;padding:11px;border:1px solid #dfe9ec;border-radius:14px;background:#fff}
+.operational-skeleton-collection-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-bottom:9px;border-bottom:1px solid #edf2f4}
+.operational-skeleton-collection-rows{display:grid;gap:4px}
+.operational-skeleton-collection-rows>div{display:grid;grid-template-columns:.7fr 2fr 1fr .5fr;gap:7px;align-items:center;padding:8px;border-top:1px solid #edf2f4}
+@media(max-width:560px){.operational-skeleton-collection-rows>div{grid-template-columns:1fr 1.5fr .8fr}.operational-skeleton-collection-rows>div i:last-child{display:none}}
+
+.operational-loading-skeleton-app{min-height:70vh;align-content:start;padding:18px;border:1px solid #dfe9ec;border-radius:18px;background:#fff}.operational-skeleton-app-bar{display:grid;grid-template-columns:1.4fr .5fr .5fr;gap:10px;align-items:center}.operational-skeleton-app-hero{display:grid;grid-template-columns:1fr .8fr .5fr 1fr;gap:10px;align-items:end;padding:18px 0;border-bottom:1px solid #edf2f4}.operational-skeleton-app-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.operational-skeleton-app-grid article{display:grid;gap:9px;min-height:105px;padding:14px;border:1px solid #e2ebee;border-radius:14px;background:#fbfdfe}.operational-skeleton-app-hero .operational-skeleton-block,.operational-skeleton-app-bar .operational-skeleton-block{height:12px}.operational-skeleton-app-hero .operational-skeleton-block.h-24{height:24px}.operational-skeleton-app-hero .operational-skeleton-block.h-42{height:42px;border-radius:12px}
+@media(max-width:900px){.operational-skeleton-app-hero{grid-template-columns:1fr 1fr}.operational-skeleton-app-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.operational-loading-skeleton-app{padding:12px}.operational-skeleton-app-hero{grid-template-columns:1fr}.operational-skeleton-app-grid{grid-template-columns:1fr}.operational-skeleton-app-bar{grid-template-columns:1fr .6fr .5fr}}

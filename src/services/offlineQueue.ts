@@ -1,0 +1,220 @@
+import { MAX_ORDER_QUANTITY_PER_LINE } from '../domain/order';
+export const OFFLINE_CART_SET_ITEM = 'cart:set_item';
+export const OFFLINE_CART_REMOVE_ITEM = 'cart:remove_item';
+export const OFFLINE_SAFE_OPERATION_TYPES = new Set([OFFLINE_CART_SET_ITEM, OFFLINE_CART_REMOVE_ITEM]);
+export type OfflineOperationState = 'queued' | 'retrying' | 'conflicted' | 'terminal';
+
+export interface OfflineOperation<T = unknown> {
+  operationId: string;
+  type: string;
+  payload: T;
+  createdAt: string;
+  attempts: number;
+  userId: string;
+  nextAttemptAt?: string;
+  state?: OfflineOperationState;
+  terminal?: boolean;
+  lastFailure?: OfflineOperationState;
+  lastFailureCode?: number | null;
+}
+
+const STORAGE_KEY = 'aghbari.offline.operations.v1';
+export const MAX_OFFLINE_OPERATIONS = 100;
+export const MAX_OFFLINE_ATTEMPTS = 8;
+export const MAX_OFFLINE_PAYLOAD_BYTES = 16 * 1024;
+const INITIAL_RETRY_DELAY_MS = 2_000;
+const MAX_RETRY_DELAY_MS = 15 * 60_000;
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+function payloadBytes(payload: unknown): number {
+  try {
+    return new TextEncoder().encode(JSON.stringify(payload)).byteLength;
+  } catch {
+    throw new Error('بيانات العملية غير المتصلة غير قابلة للحفظ.');
+  }
+}
+
+function isSafePayload(type: string, payload: unknown): boolean {
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) return false;
+  const value = payload as Record<string, unknown>;
+  if (typeof value.productId !== 'string' || !UUID_PATTERN.test(value.productId.trim())) return false;
+  if (type === OFFLINE_CART_SET_ITEM) {
+    return Number.isSafeInteger(value.quantity) && (value.quantity as number) > 0 && (value.quantity as number) <= MAX_ORDER_QUANTITY_PER_LINE;
+  }
+  return type === OFFLINE_CART_REMOVE_ITEM;
+}
+
+function read<T>(): OfflineOperation<T>[] {
+  try {
+    const parsed: unknown = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]');
+    if (!Array.isArray(parsed)) return [];
+    const valid: OfflineOperation<T>[] = [];
+    for (const item of parsed) {
+      try {
+        if (!(
+          item && typeof item === 'object' &&
+          typeof (item as OfflineOperation).operationId === 'string' &&
+          UUID_PATTERN.test((item as OfflineOperation).operationId) &&
+          typeof (item as OfflineOperation).type === 'string' &&
+          OFFLINE_SAFE_OPERATION_TYPES.has((item as OfflineOperation).type) &&
+          typeof (item as OfflineOperation).createdAt === 'string' &&
+          Number.isFinite(Date.parse((item as OfflineOperation).createdAt)) &&
+          Number.isInteger((item as OfflineOperation).attempts) &&
+          (item as OfflineOperation).attempts >= 0 &&
+          (item as OfflineOperation).attempts <= MAX_OFFLINE_ATTEMPTS &&
+          typeof (item as OfflineOperation).userId === 'string' &&
+          UUID_PATTERN.test((item as OfflineOperation).userId) &&
+          ((item as OfflineOperation).nextAttemptAt === undefined || Number.isFinite(Date.parse((item as OfflineOperation).nextAttemptAt!))) &&
+          ((item as OfflineOperation).state === undefined || ['queued','retrying','conflicted','terminal'].includes((item as OfflineOperation).state as string)) &&
+          ((item as OfflineOperation).terminal === undefined || typeof (item as OfflineOperation).terminal === 'boolean') &&
+          ((item as OfflineOperation).lastFailure === undefined || ['retrying','conflicted','terminal'].includes((item as OfflineOperation).lastFailure as string)) &&
+          ((item as OfflineOperation).lastFailureCode === undefined || (item as OfflineOperation).lastFailureCode === null || (typeof (item as OfflineOperation).lastFailureCode === 'number' && Number.isInteger((item as OfflineOperation).lastFailureCode))) &&
+          isSafePayload((item as OfflineOperation).type, (item as OfflineOperation).payload) &&
+          payloadBytes((item as OfflineOperation).payload) <= MAX_OFFLINE_PAYLOAD_BYTES
+        )) continue;
+        valid.push(item as OfflineOperation<T>);
+      } catch {
+        // A single corrupted record must not discard otherwise recoverable operations.
+      }
+    }
+    return valid;
+  } catch {
+    return [];
+  }
+}
+
+function persist(queue: OfflineOperation<unknown>[]): void {
+  if (queue.length > MAX_OFFLINE_OPERATIONS) {
+    throw new Error(`لا يمكن الاحتفاظ بأكثر من ${MAX_OFFLINE_OPERATIONS} عملية غير متصلة.`);
+  }
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(queue));
+  } catch {
+    throw new Error('تعذر حفظ العملية غير المتصلة محليًا. قد تكون مساحة التخزين ممتلئة.');
+  }
+}
+
+export function enqueueOfflineOperation<T>(userId: string, type: string, payload: T): OfflineOperation<T> {
+  if (!UUID_PATTERN.test(userId.trim())) throw new Error('هوية المستخدم مطلوبة للعملية غير المتصلة.');
+  const normalizedType = type.trim();
+  if (!normalizedType) throw new Error('نوع العملية مطلوب.');
+  if (!OFFLINE_SAFE_OPERATION_TYPES.has(normalizedType)) {
+    throw new Error('هذه العملية لا يُسمح بتأجيلها دون اتصال.');
+  }
+  payloadBytes(payload);
+  if (payloadBytes(payload) > MAX_OFFLINE_PAYLOAD_BYTES) {
+    throw new Error(`حجم بيانات العملية يتجاوز ${MAX_OFFLINE_PAYLOAD_BYTES} بايت.`);
+  }
+  if (!isSafePayload(normalizedType, payload)) {
+    throw new Error('بيانات العملية غير المتصلة غير صالحة.');
+  }
+  const operation: OfflineOperation<T> = { operationId: crypto.randomUUID(), userId: userId.trim(), type: normalizedType, payload, createdAt: new Date().toISOString(), attempts: 0, state: 'queued' };
+  const queue = read<unknown>();
+  persist([...queue, operation as OfflineOperation<unknown>]);
+  return operation;
+}
+
+export function pendingOfflineOperations<T = unknown>(userId?: string): OfflineOperation<T>[] {
+  const queue = read<T>();
+  if (userId === undefined) return queue;
+  const normalized = userId.trim();
+  if (!UUID_PATTERN.test(normalized)) return [];
+  return queue.filter((item) => item.userId === normalized);
+}
+
+export function removeOfflineOperation(operationId: string): void {
+  if (!UUID_PATTERN.test(operationId)) return;
+  persist(read<unknown>().filter((item) => item.operationId !== operationId));
+}
+
+function errorStatus(error: unknown): number | null {
+  const value = error && typeof error === 'object' ? (error as { status?: unknown }).status : undefined;
+  return typeof value === 'number' && Number.isInteger(value) ? value : null;
+}
+
+export function classifyOfflineFailure(error: unknown): OfflineOperationState {
+  const status = errorStatus(error);
+  if (status === 409 || status === 412) return 'conflicted';
+  if (status === 401 || status === 403 || (status !== null && status >= 400 && status < 500 && status !== 408 && status !== 429)) return 'terminal';
+  return 'retrying';
+}
+
+export function markOfflineOperationAttempt(operationId: string, now = Date.now(), state: OfflineOperationState = 'retrying', failureCode: number | null = null): void {
+  const queue = read<unknown>();
+  const existing = queue.find((item) => item.operationId === operationId);
+  if (!existing) return;
+  if (existing.attempts >= MAX_OFFLINE_ATTEMPTS || existing.terminal || existing.state === 'conflicted' || existing.state === 'terminal') {
+    throw new Error(`تجاوزت العملية الحد الأقصى لإعادة المحاولة (${MAX_OFFLINE_ATTEMPTS}).`);
+  }
+  const attempts = existing.attempts + 1;
+  const terminal = attempts >= MAX_OFFLINE_ATTEMPTS || state === 'terminal';
+  const persistedState: OfflineOperationState = terminal ? 'terminal' : state;
+  const delay = Math.min(MAX_RETRY_DELAY_MS, INITIAL_RETRY_DELAY_MS * 2 ** (attempts - 1));
+  persist(queue.map((item) => item.operationId === operationId
+    ? { ...item, attempts, state: persistedState, terminal, nextAttemptAt: new Date(now + delay).toISOString(), lastFailure: state, lastFailureCode: failureCode }
+    : item));
+}
+
+export function retryOfflineOperationNow(operationId: string, userId?: string): void {
+  if (!UUID_PATTERN.test(operationId)) throw new Error('معرّف العملية غير صالح.');
+  if (userId !== undefined && !UUID_PATTERN.test(userId.trim())) throw new Error('هوية المستخدم غير صالحة.');
+
+  const queue = read<unknown>();
+  const operation = queue.find((item) => item.operationId === operationId);
+  if (!operation) throw new Error('العملية غير موجودة في الطابور.');
+
+  if (userId !== undefined && operation.userId !== userId.trim()) {
+    throw new Error('لا يمكن إعادة محاولة عملية تخص مستخدمًا آخر.');
+  }
+
+  if (operation.state === 'conflicted' || operation.state === 'terminal' || operation.terminal) {
+    throw new Error('هذه العملية متعارضة أو نهائية وتحتاج مراجعة قبل إعادة الإرسال.');
+  }
+
+  persist(queue.map((item) => item.operationId === operationId
+    ? { ...item, state: 'queued' as OfflineOperationState, terminal: false, nextAttemptAt: undefined }
+    : item));
+}
+
+export async function drainOfflineOperations(
+  processor: (operation: OfflineOperation) => Promise<void>,
+  userId?: string,
+  now = Date.now(),
+): Promise<{ processed: number; failed: number }> {
+  if (typeof navigator !== 'undefined' && navigator.onLine === false) return { processed: 0, failed: 0 };
+  const operations = pendingOfflineOperations(userId);
+  let processed = 0;
+  let failed = 0;
+  for (const operation of operations) {
+    if (operation.terminal || operation.state === 'conflicted' || operation.state === 'terminal') continue;
+    if (operation.nextAttemptAt && Date.parse(operation.nextAttemptAt) > now) continue;
+    try {
+      await processor(operation);
+      removeOfflineOperation(operation.operationId);
+      processed += 1;
+    } catch (error) {
+      const failureState = classifyOfflineFailure(error);
+      if (failureState === 'conflicted') {
+        persist(read<unknown>().map((item) => item.operationId === operation.operationId ? { ...item, state: 'conflicted' as OfflineOperationState, terminal: true, lastFailure: 'conflicted' as OfflineOperationState, lastFailureCode: errorStatus(error) } : item));
+      } else if (failureState === 'terminal') {
+        markOfflineOperationAttempt(operation.operationId, now, 'terminal', errorStatus(error));
+      } else if (operation.attempts < MAX_OFFLINE_ATTEMPTS) {
+        markOfflineOperationAttempt(operation.operationId, now, 'retrying');
+      } else {
+        persist(read<unknown>().map((item) => item.operationId === operation.operationId ? { ...item, state: 'terminal' as OfflineOperationState, terminal: true, lastFailure: 'terminal' as OfflineOperationState, lastFailureCode: errorStatus(error) } : item));
+      }
+      failed += 1;
+    }
+  }
+  return { processed, failed };
+}
+
+export function clearOfflineQueue(userId?: string): void {
+  if (userId === undefined) {
+    localStorage.removeItem(STORAGE_KEY);
+    return;
+  }
+  const normalized = userId.trim();
+  if (!UUID_PATTERN.test(normalized)) return;
+  persist(read<unknown>().filter((item) => item.userId !== normalized));
+}

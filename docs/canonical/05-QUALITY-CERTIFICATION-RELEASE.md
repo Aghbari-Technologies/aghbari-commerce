@@ -1,0 +1,47 @@
+# 🔴 AGHBARI — CANONICAL QUALITY, CERTIFICATION & RELEASE
+
+**Authority:** Verification ladder, test strategy, exact-SHA evidence, release gates and production protection.
+
+## Evidence ladder
+Specified → Implemented → Static/Unit → Integration → E2E → Security → Runtime → Release/Candidate → Production.
+
+## Exact-SHA law
+Every PASS must bind exact SHA, environment, command/workflow, result and evidence. Never transfer evidence between SHAs or between local/CI/artifact/candidate/deployment/production.
+
+## Test-the-test
+The test suite itself must be capable of detecting the failure it claims to cover. Weak tests are defects.
+
+## Verification surfaces
+Domain/unit; service/contract; PostgreSQL/pgTAP; RLS/negative security; concurrency/idempotency; Playwright/browser; visual review; build/artifact; deployment/runtime; rollback/recovery.
+
+## Release gates
+Requirements/architecture; DB/migrations; domain transactions; security; UI/browser; integration; performance/resources; runtime; deployment; final exact-head audit.
+
+## Re-test discipline
+Do not waste execution on unchanged proven fronts unless SHA, dependencies, environment, evidence validity or regression risk changed.
+
+## Canonical source merge register
+The manifest lists the quality/certification/release documents that must be fully merged here before retirement.
+
+
+## 2026-09-25 — Exact current-head evidence boundary
+- Current implementation line must be revalidated after every source change; evidence from earlier SHAs is never transferred.
+- The latest source line includes Admin deep-link anchor fixes, real voice-search interaction, customer-control validation, stable operational reload dependencies, context-derived warehouse labels, and the security-definer exposure classification test.
+- Current exact-head GitHub workflows are queued; no CI/build/browser/certification PASS is claimed until those runs finish against the exact latest SHA.
+- Hosted Vercel evidence is still blocked by deployment mismatch/rate-limit/protection constraints; the existing free Netlify project remains the available fallback, but no exact-current-SHA deployment is claimed without source upload/build completion.
+
+
+## 2026-09-27 — Reference visual proof and resource-efficient release
+
+- The current reference pack under `docs/ui-reference/` contains 84 PNG screens and is the visual source for applicable P0 UI closure.
+- Visual closure evidence must bind reference, route, viewport, state, exact source SHA and implementation result.
+- Use visual comparison to detect hierarchy/spacing/state regressions, but do not treat a screenshot match as proof of backend correctness.
+- Do not generate duplicate visual reports, build artifacts or deployment attempts solely for repetition; retain only evidence with distinct proof value.
+
+## 2026-09-27 — Reference coverage is a release gate
+
+- P0 visual closure requires coverage of all 84 current PNG references through the canonical asset index.
+- Visual proof must bind reference/pack, route, state, viewport, implementation screenshot and exact source SHA.
+- A visual match does not substitute for functional, security, persistence, browser or runtime proof.
+- New requirements discovered during visual or runtime review must be routed to the correct canonical document before the corresponding feature can be considered fully closed.
+- Do not spend build/deployment resources on redundant evidence; each artifact must answer a distinct verification question.

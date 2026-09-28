@@ -1,0 +1,191 @@
+import type { OrderStatus } from '../domain/types';
+import { requireSupabase } from '../lib/supabase';
+
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const ORDER_STATUSES: ReadonlySet<string> = new Set(['draft', 'pending', 'confirmed', 'preparing', 'ready', 'completed', 'cancelled']);
+
+export interface StaffOrderSummary {
+  id: string; order_number: number; customer_id: string; customer_name: string; warehouse_id: string;
+  status: OrderStatus; total: number; currency: string; created_at: string; updated_at: string;
+}
+
+export function assertStaffOrderSummary(value: unknown): StaffOrderSummary {
+  if (!value || typeof value !== 'object') throw new Error('استجابة الطلب التشغيلي غير صالحة. لم يتم إثبات نجاح العملية.');
+  const item = value as Record<string, unknown>;
+  const uuidFields: Array<[unknown, string]> = [[item.id, 'معرّف الطلب'], [item.customer_id, 'معرّف العميل'], [item.warehouse_id, 'معرّف المستودع']];
+  for (const [valueToCheck, label] of uuidFields) if (typeof valueToCheck !== 'string' || !UUID_PATTERN.test(valueToCheck)) throw new Error(`${label} غير صالح. لم يتم إثبات نجاح العملية.`);
+  if (typeof item.order_number !== 'number' || !Number.isSafeInteger(item.order_number) || item.order_number <= 0) throw new Error('رقم الطلب التشغيلي غير صالح. لم يتم إثبات نجاح العملية.');
+  if (typeof item.status !== 'string' || !ORDER_STATUSES.has(item.status)) throw new Error('حالة الطلب التشغيلي غير صالحة. لم يتم إثبات نجاح العملية.');
+  if (typeof item.total !== 'number' || !Number.isFinite(item.total) || item.total < 0) throw new Error('إجمالي الطلب التشغيلي غير صالح. لم يتم إثبات نجاح العملية.');
+  if (typeof item.currency !== 'string' || !/^[A-Z]{3}$/.test(item.currency)) throw new Error('عملة الطلب التشغيلي غير صالحة. لم يتم إثبات نجاح العملية.');
+  if (typeof item.customer_name !== 'string' || !item.customer_name.trim()) throw new Error('اسم العميل في الطلب غير صالح. لم يتم إثبات نجاح العملية.');
+  if (typeof item.created_at !== 'string' || !item.created_at.trim() || Number.isNaN(Date.parse(item.created_at))) throw new Error('تاريخ إنشاء الطلب غير صالح. لم يتم إثبات نجاح العملية.');
+  if (typeof item.updated_at !== 'string' || !item.updated_at.trim() || Number.isNaN(Date.parse(item.updated_at))) throw new Error('تاريخ تحديث الطلب غير صالح. لم يتم إثبات نجاح العملية.');
+  return item as unknown as StaffOrderSummary;
+}
+
+export async function getStaffOrders(limit = 50): Promise<StaffOrderSummary[]> {
+  const safeLimit = Math.min(Math.max(Math.trunc(limit), 1), 100);
+  const { data, error } = await requireSupabase().from('orders').select('id,order_number,customer_id,warehouse_id,status,total,currency,created_at,updated_at,customers(name)').order('created_at', { ascending: false }).limit(safeLimit);
+  if (error) throw error;
+  return (data ?? []).map((row) => {
+    const item = row as typeof row & { customers?: { name?: string } | null };
+    return assertStaffOrderSummary({ id: item.id, order_number: Number(item.order_number), customer_id: item.customer_id, customer_name: item.customers?.name ?? 'عميل غير معروف', warehouse_id: item.warehouse_id, status: item.status, total: typeof item.total === 'number' ? item.total : Number(item.total), currency: item.currency, created_at: item.created_at, updated_at: item.updated_at });
+  });
+}
+
+export async function transitionOrder(orderId: string, toStatus: OrderStatus): Promise<StaffOrderSummary> {
+  if (typeof orderId !== 'string' || !UUID_PATTERN.test(orderId)) throw new Error('معرّف الطلب غير صالح.');
+  if (typeof toStatus !== 'string' || !ORDER_STATUSES.has(toStatus)) throw new Error('حالة انتقال الطلب غير صالحة.');
+  const { data, error } = await requireSupabase().rpc('transition_order', { p_order_id: orderId, p_to_status: toStatus });
+  if (error) throw error;
+  return assertStaffOrderSummary(data as unknown);
+}
+
+export const MAX_BULK_ORDER_TRANSITIONS = 100;
+
+export function validateBulkOrderTransitionInput(orderIds: string[], toStatus: OrderStatus): string[] {
+  if (!Array.isArray(orderIds) || orderIds.length < 1 || orderIds.length > MAX_BULK_ORDER_TRANSITIONS) {
+    throw new Error(`يجب تحديد 1 إلى ${MAX_BULK_ORDER_TRANSITIONS} طلبات للعملية الجماعية.`);
+  }
+  if (!ORDER_STATUSES.has(toStatus)) throw new Error('حالة انتقال الطلب الجماعي غير صالحة.');
+  const normalized = orderIds.map((id) => {
+    if (typeof id !== 'string' || !UUID_PATTERN.test(id.trim())) throw new Error('معرّف طلب غير صالح ضمن العملية الجماعية.');
+    return id.trim();
+  });
+  if (new Set(normalized).size !== normalized.length) throw new Error('لا يمكن تكرار الطلب داخل العملية الجماعية.');
+  return normalized;
+}
+
+export interface BulkTransitionResult {
+  order_id: string;
+  from_status: OrderStatus;
+  to_status: OrderStatus;
+}
+
+export async function bulkTransitionOrders(orderIds: string[], toStatus: OrderStatus, idempotencyKey: string = crypto.randomUUID()): Promise<BulkTransitionResult[]> {
+  const ids = validateBulkOrderTransitionInput(orderIds, toStatus);
+  const key = idempotencyKey.trim();
+  if (key.length < 16 || key.length > 128) throw new Error('مفتاح العملية الجماعية يجب أن يكون بين 16 و128 حرف.');
+  const { data, error } = await requireSupabase().rpc('bulk_transition_orders', {
+    p_idempotency_key: key,
+    p_order_ids: ids,
+    p_to_status: toStatus,
+  });
+  if (error) throw error;
+  if (!Array.isArray(data)) throw new Error('استجابة العملية الجماعية غير صالحة.');
+  return data.map((row) => {
+    if (!row || typeof row !== 'object' || !UUID_PATTERN.test(String((row as Record<string, unknown>).order_id)) || !ORDER_STATUSES.has(String((row as Record<string, unknown>).from_status)) || !ORDER_STATUSES.has(String((row as Record<string, unknown>).to_status))) {
+      throw new Error('نتيجة العملية الجماعية تحتوي بيانات غير صالحة.');
+    }
+    return row as BulkTransitionResult;
+  });
+}
+
+
+export interface StaffOrderDetailItem {
+  id: string;
+  product_id: string;
+  sku: string;
+  name: string;
+  unit: string;
+  quantity: number;
+  unit_price: number;
+  line_total: number;
+  pricing_tier: string;
+}
+
+export interface StaffOrderDetail extends StaffOrderSummary {
+  subtotal: number;
+  payment_method: string;
+  items: StaffOrderDetailItem[];
+}
+
+function detailAmount(value: unknown): number {
+  const parsed = typeof value === 'number' ? value : Number(value);
+  if (!Number.isFinite(parsed) || parsed < 0) throw new Error('القيمة المالية في تفاصيل الطلب غير صالحة.');
+  return parsed;
+}
+
+export function assertStaffOrderDetailItem(value: unknown): StaffOrderDetailItem {
+  if (!value || typeof value !== 'object') throw new Error('بند الطلب غير صالح.');
+  const item = value as Record<string, unknown>;
+  const quantity = Number(item.quantity);
+  const unitPrice = detailAmount(item.unit_price);
+  const lineTotal = item.line_total == null ? quantity * unitPrice : detailAmount(item.line_total);
+  if (
+    typeof item.id !== 'string' || !UUID_PATTERN.test(item.id) ||
+    typeof item.product_id !== 'string' || !UUID_PATTERN.test(item.product_id) ||
+    typeof item.sku !== 'string' || !item.sku.trim() ||
+    typeof item.name !== 'string' || !item.name.trim() ||
+    typeof item.unit !== 'string' || !item.unit.trim() ||
+    !Number.isSafeInteger(quantity) || quantity <= 0 ||
+    typeof item.pricing_tier !== 'string' || !item.pricing_tier.trim() ||
+    Math.abs(lineTotal - quantity * unitPrice) > 0.01
+  ) throw new Error('بيانات بند الطلب غير صالحة.');
+  return {
+    id: item.id as string,
+    product_id: item.product_id as string,
+    sku: item.sku as string,
+    name: item.name as string,
+    unit: item.unit as string,
+    quantity,
+    unit_price: unitPrice,
+    line_total: lineTotal,
+    pricing_tier: item.pricing_tier as string
+  };
+}
+
+export async function getStaffOrderDetail(orderId: string): Promise<StaffOrderDetail> {
+  if (typeof orderId !== 'string' || !UUID_PATTERN.test(orderId)) throw new Error('معرّف الطلب غير صالح.');
+  const client = requireSupabase();
+  const [{ data: order, error: orderError }, { data: itemRows, error: itemError }] = await Promise.all([
+    client.from('orders')
+      .select('id,order_number,customer_id,warehouse_id,status,total,subtotal,currency,payment_method,created_at,updated_at,customers(name)')
+      .eq('id', orderId).single(),
+    client.from('order_items')
+      .select('id,product_id,quantity,unit_price,pricing_tier,line_total,products(sku,name,unit)')
+      .eq('order_id', orderId).order('created_at', { ascending: true })
+  ]);
+  if (orderError) throw orderError;
+  if (itemError) throw itemError;
+  if (!order) throw new Error('الطلب غير موجود أو غير متاح لهذه الصلاحية.');
+
+  const row = order as typeof order & { customers?: { name?: string } | null };
+  const items = (itemRows ?? []).map((value) => {
+    const item = value as typeof value & { products?: { sku?: string; name?: string; unit?: string } | null };
+    return assertStaffOrderDetailItem({
+      id: item.id,
+      product_id: item.product_id,
+      quantity: Number(item.quantity),
+      unit_price: Number(item.unit_price),
+      pricing_tier: item.pricing_tier,
+      line_total: item.line_total == null ? null : Number(item.line_total),
+      sku: item.products?.sku,
+      name: item.products?.name,
+      unit: item.products?.unit
+    });
+  });
+
+  const detail: StaffOrderDetail = {
+    ...assertStaffOrderSummary({
+      id: row.id,
+      order_number: Number(row.order_number),
+      customer_id: row.customer_id,
+      customer_name: row.customers?.name ?? 'عميل غير معروف',
+      warehouse_id: row.warehouse_id,
+      status: row.status,
+      total: detailAmount(row.total),
+      currency: row.currency,
+      created_at: row.created_at,
+      updated_at: row.updated_at
+    }),
+    subtotal: detailAmount(row.subtotal),
+    payment_method: typeof row.payment_method === 'string' ? row.payment_method : '—',
+    items
+  };
+  if (detail.total < detail.subtotal) throw new Error('إجمالي الطلب غير متسق.');
+  const computedLinesTotal = items.reduce((sum, item) => sum + item.line_total, 0);
+  if (Math.abs(computedLinesTotal - detail.subtotal) > 0.01) throw new Error('مجموع بنود الطلب غير متسق.');
+  return detail;
+}

@@ -1,0 +1,41 @@
+# بوابة الأغبري للمواد الغذائية
+
+Operational B2B commerce platform for **بوابة الأغبري للمواد الغذائية**.
+
+## Product boundary
+
+**الأغبري is the operational system of record.** It owns operational commerce workflows and reliable canonical data: catalog, pricing, customers, suppliers, orders, inventory, branches/warehouses, imports/exports, auditability, and operational integration boundaries.
+
+**Report-Advisor is the analytics and decision layer.** Analytics, BI, advanced reporting, forecasting, decision intelligence, analytical alerts, and recommendations belong there and must not be duplicated inside الأغبري.
+
+## Engineering standard
+
+This repository follows an Owner-Level / Evidence-First completion protocol:
+
+`READ → RESCAN → DISCOVER → CLASSIFY → DESIGN → IMPLEMENT → TEST → TEST THE TEST → BYPASS SEARCH → REPAIR → REGRESSION → VERIFY → EXACT-HEAD CHECK → EVIDENCE → UPDATE INDEX → REPEAT`
+
+No feature is considered production-ready merely because it exists in code. Completion progresses through:
+
+`BUILT → INTEGRATED → VERIFIED → RUNTIME PROVEN → PRODUCTION CERTIFIED`
+
+The architecture is a living artifact: when evidence exposes a better boundary, security weakness, unnecessary duplication, or reliability risk, the architecture and protocol are revised before implementation continues.
+
+## Current phase
+
+**PHASE 1 — Executable operational implementation + reliability hardening.**
+
+The repository now contains the executable Arabic RTL commerce application, operational domain services, Supabase migrations/RPCs, PWA/offline primitives, import pipeline, catalog export, order/cart hardening, purchasing/receiving, audit/outbox foundations, and security hardening. The remaining work is evidence-driven runtime, integration, deployment, and release certification; no production certification is claimed yet.
+
+## Enterprise B2B v3
+
+The customer-facing experience is now being driven toward the Enterprise B2B specification: premium Arabic RTL customer portal, fast catalog/search, tiered customer pricing, interactive cart, Excel quick orders, reorder flow, reusable order templates, customer credit/ledger surface, shipment status timeline, and server-persisted dynamic client UI controls.
+
+The complete binding specification is maintained at `docs/ENTERPRISE_B2B_V3_SPEC_AR.md`.
+
+## Source-of-truth documents
+
+- `docs/MASTER-EXECUTION-INDEX.md` — canonical progress ledger
+- `docs/OWNER-LEVEL-PROTOCOL.md` — execution, evidence, and certification protocol
+- `docs/ARCHITECTURE-BOUNDARIES.md` — operational/analytical and integration boundaries
+- `docs/RELEASE-GATES-V1.md` — release gates and final certification rule
+- `docs/ENTERPRISE_B2B_V3_SPEC_AR.md` — Enterprise B2B customer/admin requirements and architecture

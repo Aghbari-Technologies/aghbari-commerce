@@ -1,0 +1,251 @@
+/* Enterprise B2B Customer Portal — v3 visual hardening
+   Scoped to .customer-app so the admin workspace remains isolated. */
+
+.customer-app {
+  --b2b-bg: #f5f9fb;
+  --b2b-surface: #ffffff;
+  --b2b-ink: #0b3042;
+  --b2b-muted: #718691;
+  --b2b-line: #dce9ee;
+  --b2b-brand: #0d91a5;
+  --b2b-brand-dark: #08384c;
+  background: var(--b2b-bg);
+  color: var(--b2b-ink);
+  font-family: inherit;
+}
+
+.customer-app .customer-topbar {
+  grid-template-columns: minmax(220px, 300px) minmax(320px, 760px) auto;
+  min-height: 68px;
+  padding: 10px clamp(14px, 3vw, 36px);
+}
+
+.customer-app .global-search {
+  min-height: 46px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 5px 18px rgba(11, 48, 66, .045);
+}
+
+.customer-app .global-search:focus-within {
+  border-color: #8fd2dc;
+  box-shadow: 0 0 0 4px rgba(13, 145, 165, .09);
+}
+
+.customer-app .customer-main {
+  width: min(1480px, calc(100% - 32px));
+  padding-top: 24px;
+}
+
+.customer-app .customer-welcome {
+  min-height: 255px;
+  grid-template-columns: minmax(0, 1fr) minmax(270px, 360px);
+  padding: clamp(24px, 4vw, 42px);
+  border-radius: 28px;
+}
+
+.customer-app .customer-welcome h1 {
+  font-size: clamp(34px, 4.5vw, 58px);
+  max-width: 850px;
+}
+
+.customer-app .credit-mini {
+  border-radius: 22px;
+  box-shadow: 0 12px 35px rgba(0,0,0,.07);
+}
+
+.customer-app .customer-nav {
+  position: sticky;
+  top: 68px;
+  z-index: 20;
+  margin-inline: -2px;
+  padding: 13px 2px;
+  background: rgba(245,249,251,.93);
+  backdrop-filter: blur(14px);
+}
+
+.customer-app .nav-pill {
+  min-height: 42px;
+  transition: .16s ease;
+}
+
+.customer-app .nav-pill:hover {
+  transform: translateY(-1px);
+  border-color: #b9dce3;
+}
+
+.customer-app .catalog-toolbar {
+  align-items: center;
+  padding-top: 4px;
+}
+
+.customer-app .product-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: stretch;
+}
+
+.customer-app .b2b-product-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.customer-app .b2b-product-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.customer-app .price-row {
+  margin-top: auto;
+  padding-top: 14px;
+}
+
+.customer-app .tier-hint {
+  border: 1px solid #e7ddff;
+}
+
+.customer-app .product-visual {
+  border: 1px solid #edf3f5;
+}
+
+.customer-app .upload-button,
+.customer-app .toolbar-actions button,
+.customer-app .section-title button,
+.customer-app .template-card button {
+  min-height: 40px;
+}
+
+.customer-app .content-card {
+  scroll-margin-top: 140px;
+}
+
+.customer-app .finance-grid > div {
+  min-height: 100px;
+}
+
+.customer-app .ledger-row[role="row"] {
+  transition: background .15s ease;
+}
+
+.customer-app .ledger-row[role="row"]:hover {
+  background: #f7fbfc;
+}
+
+.customer-app .drawer-backdrop {
+  justify-content: flex-start;
+}
+
+.customer-app .drawer {
+  width: min(470px, 100%);
+  height: min(100vh, 920px);
+  max-height: calc(100vh - 20px);
+  border-radius: 24px 0 0 24px;
+  box-shadow: -24px 0 70px rgba(3, 30, 44, .18);
+}
+
+.customer-app :focus-visible {
+  outline: 3px solid rgba(13,145,165,.32);
+  outline-offset: 2px;
+}
+
+.customer-app .empty-state {
+  min-height: 180px;
+  display: grid;
+  place-items: center;
+}
+
+@media (min-width: 1500px) {
+  .customer-app .product-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+}
+
+@media (max-width: 1100px) {
+  .customer-app .customer-topbar {
+    grid-template-columns: 1fr auto;
+  }
+  .customer-app .global-search { grid-column: 1 / -1; grid-row: 2; }
+  .customer-app .customer-welcome { grid-template-columns: 1fr; }
+  .customer-app .credit-mini { max-width: 420px; width: 100%; }
+  .customer-app .product-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 760px) {
+  .customer-app .customer-topbar {
+    position: sticky;
+    top: 0;
+    gap: 9px;
+    padding: 9px 12px;
+  }
+  .customer-app .customer-brand small { display: none; }
+  .customer-app .customer-brand strong { font-size: 15px; }
+  .customer-app .customer-actions .icon-action { display: none; }
+  .customer-app .customer-main {
+    width: min(100% - 20px, 680px);
+    padding-top: 14px;
+    padding-bottom: 92px;
+  }
+  .customer-app .customer-welcome {
+    min-height: auto;
+    padding: 22px 20px;
+    border-radius: 22px;
+  }
+  .customer-app .customer-welcome h1 {
+    font-size: clamp(31px, 10vw, 45px);
+    letter-spacing: -1.2px;
+  }
+  .customer-app .customer-welcome p { font-size: 13px; }
+  .customer-app .customer-nav {
+    top: 62px;
+    margin-inline: -10px;
+    padding: 10px;
+  }
+  .customer-app .catalog-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .customer-app .toolbar-actions { width: 100%; }
+  .customer-app .toolbar-actions > * { flex: 1; justify-content: center; }
+  .customer-app .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .customer-app .product-visual { margin: 8px; }
+  .customer-app .product-visual > span:first-child { font-size: 45px; }
+  .customer-app .b2b-product-info { padding: 0 11px 12px; }
+  .customer-app .b2b-product-info h3 { font-size: 14px; }
+  .customer-app .b2b-product-info p { min-height: 0; font-size: 11px; }
+  .customer-app .price-row strong { font-size: 17px; }
+  .customer-app .price-row button { padding: 8px 9px; }
+  .customer-app .finance-grid { grid-template-columns: 1fr; }
+  .customer-app .template-grid { grid-template-columns: 1fr; }
+  .customer-app .timeline { gap: 2px; }
+  .customer-app .timeline-step { font-size: 8px; }
+  .customer-app .order-footer { align-items: flex-start; flex-direction: column; }
+  .customer-app .drawer {
+    width: 100%;
+    height: 92vh;
+    max-height: 92vh;
+    border-radius: 22px 22px 0 0;
+    align-self: flex-end;
+  }
+  .customer-app .drawer-backdrop { align-items: flex-end; }
+}
+
+@media (max-width: 430px) {
+  .customer-app .product-grid { grid-template-columns: 1fr 1fr; }
+  .customer-app .customer-actions .cart-action { padding-inline: 9px; }
+  .customer-app .customer-welcome .welcome-actions button { width: 100%; }
+  .customer-app .customer-welcome .welcome-actions { width: 100%; }
+  .customer-app .unit-row { overflow-x: auto; }
+}
+
+@media print {
+  .customer-app .customer-topbar,
+  .customer-app .customer-nav,
+  .customer-app .toolbar-actions,
+  .customer-app .welcome-actions,
+  .customer-app button,
+  .customer-app input,
+  .customer-app .upload-button { display: none !important; }
+  .customer-app .customer-main { width: 100%; padding: 0; }
+  .customer-app .customer-welcome,
+  .customer-app .content-card,
+  .customer-app .b2b-product-card { box-shadow: none; break-inside: avoid; }
+}

@@ -1,0 +1,24 @@
+-- product_prices_staff_read is defined canonically by 0028_staff_product_price_read.sql.
+-- Do not recreate that policy here: PostgreSQL rejects duplicate policy names on a clean migration.
+create index if not exists audit_events_actor_idx on public.audit_events(actor_id);
+create index if not exists cart_items_organization_idx on public.cart_items(organization_id);
+create index if not exists cart_items_product_idx on public.cart_items(product_id);
+create index if not exists carts_customer_idx on public.carts(customer_id);
+create index if not exists categories_parent_idx_fk on public.categories(parent_id);
+create index if not exists export_jobs_created_by_idx on public.export_jobs(created_by);
+create index if not exists import_jobs_created_by_idx on public.import_jobs(created_by);
+create index if not exists inventory_balances_product_idx on public.inventory_balances(product_id);
+create index if not exists inventory_movements_actor_idx on public.inventory_movements(actor_id);
+create index if not exists inventory_movements_product_idx on public.inventory_movements(product_id);
+create index if not exists inventory_movements_warehouse_idx on public.inventory_movements(warehouse_id);
+create index if not exists order_items_product_idx_fk on public.order_items(product_id);
+create index if not exists order_status_history_actor_idx on public.order_status_history(actor_id);
+create index if not exists order_status_history_order_idx_fk on public.order_status_history(order_id);
+create index if not exists orders_created_by_idx on public.orders(created_by);
+create index if not exists orders_customer_idx_fk on public.orders(customer_id);
+create index if not exists orders_warehouse_idx_fk on public.orders(warehouse_id);
+create index if not exists product_media_product_idx_fk on public.product_media(product_id);
+create index if not exists product_prices_price_list_idx on public.product_prices(price_list_id);
+create index if not exists product_prices_product_idx on public.product_prices(product_id);
+create index if not exists products_category_idx_fk on public.products(category_id);
+create index if not exists warehouses_branch_idx_fk on public.warehouses(branch_id);

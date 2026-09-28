@@ -1,0 +1,1 @@
+.price-row-head,.price-row-head+ .history-row{grid-template-columns:minmax(220px,1.5fr) minmax(170px,1fr) 110px 130px 90px}.history-row>div{min-width:0}.history-row>div strong,.history-row>div small{display:block}.history-row>div small{margin-top:3px;color:#8797a0;font-size:9px}
