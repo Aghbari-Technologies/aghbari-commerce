@@ -43,3 +43,18 @@ describe('customer template collection view', () => {
     expect(paginateTemplates(templates as any, 1, 1).items[0].id).toBe('1');
   });
 });
+
+
+describe('customer checkout experience', () => {
+  it('keeps checkout as an explicit review step over the existing real submit path', () => {
+    expect(source).toContain('checkoutOpen');
+    expect(source).toContain('متابعة إلى إتمام الطلب');
+    expect(source).toContain('اعتماد وإنشاء الطلب');
+    expect(source).toContain('onClick={()=>void submit()}');
+  });
+
+  it('keeps checkout blocked by the existing offline and quantity-confirmation contracts', () => {
+    expect(source).toContain('اعتمد جميع الكميات من السلة قبل إرسال الطلب.');
+    expect(source).toContain('لا يمكن إنشاء معاملة خارج الاتصال.');
+  });
+});
