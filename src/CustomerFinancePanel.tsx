@@ -275,7 +275,7 @@ export default function CustomerFinancePanel({ customerId, online }: { customerI
           <label><span>الحالة</span><select aria-label="فلترة حالة الفاتورة" value={status} onChange={(event) => setStatus(event.target.value as typeof status)} disabled={loading || statementLoading}><option value="all">كل الحالات</option>{Object.entries(STATUS_LABELS).map(([key, label]) => <option key={key} value={key}>{label}</option>)}</select></label>
         )}
         <label><span>الترتيب</span><select aria-label={view === "payments" ? "ترتيب الدفعات" : "ترتيب الفواتير"} value={sort} onChange={(event) => setSort(event.target.value as typeof sort)} disabled={loading || statementLoading || paymentLoading}><option value="newest">الأحدث أولًا</option><option value="oldest">الأقدم أولًا</option><option value="highest">الأعلى قيمة</option><option value="lowest">الأقل قيمة</option></select></label>
-        <button className="ghost" type="button" onClick={clearFilters} disabled={loading || (!query && status === 'all' && sort === 'newest')}>مسح</button>
+        <button className="ghost" type="button" onClick={clearFilters} disabled={loading || statementLoading || paymentLoading || (!query && status === 'all' && paymentMethod === 'all' && sort === 'newest')}>مسح</button>
       </div>
 
       {view === 'payments' ? (
