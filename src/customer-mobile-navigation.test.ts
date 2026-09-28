@@ -3,9 +3,10 @@ import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 describe('customer mobile navigation coverage', () => {
-  it('keeps all customer portal sections reachable from the compact mobile navigation', () => {
+  it('keeps all customer portal sections plus Home reachable from the compact mobile navigation', () => {
     const source = readFileSync(resolve(process.cwd(), 'src/AppV3Fixed.tsx'), 'utf8');
     expect(source).toContain('className="customer-mobile-dock"');
+    expect(source).toContain('navigate("home")');
     expect(source).toContain('navigate("catalog")');
     expect(source).toContain('navigate("orders")');
     expect(source).toContain('setCartOpen(true)');
