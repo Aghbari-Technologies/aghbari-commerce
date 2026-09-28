@@ -47,9 +47,12 @@ describe('canonical UI coverage', () => {
     const railSource = readFileSync(resolve(process.cwd(), 'src/WorkspaceSurfaceRail.tsx'), 'utf8');
     expect(adminStructureSource).toContain("live('purchasing', 'المشتريات'");
     expect(adminStructureSource).toContain("live('finance-history', 'سجل العمليات المالية'");
+    expect(adminStructureSource).toContain("'/admin/finance/history', 'finance.view', '#admin-finance-history'");
     expect(adminRuntimeSource).toContain('id="admin-purchasing"');
+    expect(adminRuntimeSource).toContain('id="admin-finance-history"');
     expect(adminRuntimeSource).toContain('data-label="13 · سجل العمليات المالية"');
     expect(railSource).toContain("target: '#admin-purchasing'");
+    expect(railSource).toContain("targets: ['#admin-finance', '#admin-finance-history']");
   });
 
   it('keeps every live Admin target reachable from at least one Staff workspace pack', () => {
