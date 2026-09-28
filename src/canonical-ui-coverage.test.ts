@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { AGHBARI_CUSTOMER_STRUCTURE, CUSTOMER_PORTAL_SECTIONS } from './structure/customer-structure';
@@ -15,6 +15,15 @@ const customerSources = [
 ].map((path) => readFileSync(resolve(process.cwd(), path), 'utf8')).join('\n');
 
 describe('canonical UI coverage', () => {
+  it('keeps the indexed 84 references backed by the actual repository PNG assets', () => {
+    const filesOnDisk = new Set(
+      readdirSync(resolve(process.cwd(), 'docs/ui-reference')).filter((file) => /\\.png$/i.test(file)),
+    );
+    expect(UI_REFERENCE_TOTAL).toBe(84);
+    for (const file of UI_REFERENCE_FILES) expect(filesOnDisk.has(file)).toBe(true);
+    expect(filesOnDisk).toEqual(new Set(UI_REFERENCE_FILES));
+  });
+
   it('keeps the complete reference corpus accounted once without turning it into an 84-screen requirement', () => {
     const uniqueFiles = new Set(UI_REFERENCE_FILES);
     const packCounts = UI_REFERENCE_PACKS.map((pack) => pack.references.length);
