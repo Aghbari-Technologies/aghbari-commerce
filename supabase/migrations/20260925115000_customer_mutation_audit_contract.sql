@@ -10,7 +10,7 @@ DECLARE
   r public.user_role:=public.current_role();
   c public.customers%rowtype;
 BEGIN
-  IF o IS NULL OR r NOT IN('owner','admin') THEN RAISE EXCEPTION USING errcode='42501'; END IF;
+  IF o IS NULL OR r NOT IN('owner','admin') THEN RAISE EXCEPTION USING errcode='42501',message='customer tier management access required'; END IF;
   SELECT * INTO c FROM public.customers WHERE id=p_customer_id AND organization_id=o FOR UPDATE;
   IF NOT FOUND THEN RAISE EXCEPTION USING errcode='P0002'; END IF;
   UPDATE public.customers SET tier=p_tier,updated_at=now() WHERE id=c.id RETURNING * INTO c;
@@ -33,7 +33,7 @@ DECLARE
   r public.user_role:=public.current_role();
   c public.customers%rowtype;
 BEGIN
-  IF o IS NULL OR r NOT IN('owner','admin') THEN RAISE EXCEPTION USING errcode='42501'; END IF;
+  IF o IS NULL OR r NOT IN('owner','admin') THEN RAISE EXCEPTION USING errcode='42501',message='customer state management access required'; END IF;
   IF p_is_active IS NULL THEN RAISE EXCEPTION USING errcode='22023'; END IF;
   SELECT * INTO c FROM public.customers WHERE id=p_customer_id AND organization_id=o FOR UPDATE;
   IF NOT FOUND THEN RAISE EXCEPTION USING errcode='P0002'; END IF;
