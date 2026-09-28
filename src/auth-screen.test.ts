@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { friendlyAuthError } from './services/auth';
 
 describe('Aghbari authentication contract', () => {
@@ -14,5 +16,20 @@ describe('Aghbari authentication contract', () => {
 
   it('keeps unexpected provider errors visible without replacing them with fake success', () => {
     expect(friendlyAuthError(new Error('provider unavailable'))).toBe('provider unavailable');
+  });
+
+  it('guards the active login surface against regression to a minimal placeholder screen', () => {
+    const source = readFileSync(resolve(process.cwd(), 'src/AppV3Fixed.tsx'), 'utf8');
+    for (const token of [
+      'className="auth-experience"',
+      'id="auth-title"',
+      'className="auth-password-toggle"',
+      'className="auth-submit"',
+      'نسيت كلمة المرور؟',
+      'requestPasswordReset',
+      'resetPassword(email,window.location.origin)',
+    ]) {
+      expect(source).toContain(token);
+    }
   });
 });
