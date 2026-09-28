@@ -393,7 +393,7 @@ begin
     organization_id,aggregate_type,aggregate_id,event_type,payload
   )
   values(
-    o,'purchase_order',po.id,'purchase.received',
+    o,'purchase_receipt',rec.id,'purchase.received',
     jsonb_build_object('purchase_order_id',po.id,'receipt_id',rec.id,'receipt_number',rec.receipt_number)
   );
 
