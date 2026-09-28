@@ -190,3 +190,8 @@
 
 ## 2026-09-29 — Customer finance history
 - Customer Finance now includes a read-only payment-history subview backed by authorized invoice-scoped payment records; payment history stays inside the Finance section and introduces no new transaction authority.
+
+
+## 2026-09-29 — Customer Finance + Pricing closure
+- Customer Finance now has read-only **كشف الحساب** and **سجل الدفعات** subviews backed by existing invoice/payment records and RLS-scoped Commerce truth.
+- Customer Catalog now exposes a dedicated **الأسعار** view over existing authorized product prices and quantity tiers; no new pricing authority was added.
