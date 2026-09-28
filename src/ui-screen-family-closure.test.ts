@@ -177,3 +177,16 @@ describe('governance collection closure', () => {
     expect(sourceText).toContain('<OperationalLoadingSkeleton variant="collection" />');
   });
 });
+
+
+describe('supplier and history sort type safety', () => {
+  it('keeps supplier history sorting free of explicit any', () => {
+    const sourceText = readRepoSource('SupplierLedgerPanel.tsx');
+    expect(sourceText).not.toContain('sort((a:any,b:any)');
+    expect(sourceText).toContain('type SupplierHistoryRow = Supplier | Bill | Ledger');
+  });
+  it('keeps financial and inventory history rows typed', () => {
+    expect(readRepoSource('FinanceOperationsHistoryPanel.tsx')).not.toContain('(x:any)');
+    expect(readRepoSource('InventoryActivityPanel.tsx')).not.toContain('(row:any)');
+  });
+});
