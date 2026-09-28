@@ -472,3 +472,13 @@ Next: current exact-SHA Quality + Test-the-Test; then browser/runtime if executa
 - Certification: `NOT CLAIMED`
 - Production: `HOLD / NO TOUCH`
 - Next: run exact-SHA targeted UI tests; fix first material failure; continue next independent UI/Core gap.
+
+
+## Run 2026-09-29 — Admin deep-link + anchor integrity closure
+- Run: `2026-09-29` | SHA: `3fe76bc7ecc1aadfc8ae402c3411ae0aa64fd0b0` | Branch: `execution/ui-full-closure-20260929` | PR: `#157`
+- Implemented: order deep-link opens concrete detail; reusable path resolver; single-owner Admin anchors; focused Test-the-Test guard.
+- Verified: 21/21 runtime Admin targets have one DOM owner.
+- Proven: static/source contract only; exact-SHA execution + browser/runtime pending.
+- Blocked: Vercel free-plan build-rate-limit; local execution unavailable.
+- Certification: `NOT CLAIMED` | Production: `HOLD / NO TOUCH`
+- Next: exact-SHA Vitest/typecheck; first material failure only; then next independent UI/Core gap.
