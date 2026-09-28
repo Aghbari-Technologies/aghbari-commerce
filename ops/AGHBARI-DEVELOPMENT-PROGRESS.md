@@ -472,3 +472,15 @@ Next: current exact-SHA Quality + Test-the-Test; then browser/runtime if executa
 - Certification: NOT CLAIMED
 - Production: HOLD / NO TOUCH
 - Next: run the exact current-main Quality/Test-the-Test matrix when an executable CI/runtime lane is available; fix only the first material failure, then continue the next independent canonical UI/core gap.
+
+
+## Run 2026-09-29 — Customer invoice-detail drill-down closure
+- Run: 2026-09-29
+- Implementation lineage: `bd3572849f618c39b9671221d56e95ee16953305`
+- Branch: `main`
+- Implemented: Customer Finance capability `invoice-detail` now raises a bounded request into CustomerFinancePanel and opens the first real loaded invoice detail modal; no synthetic document is created.
+- Verified: AppV3Fixed → CustomerFinancePanel prop wiring present; invoice modal remains backed by existing invoice/item/payment service reads and read-only RLS scope.
+- Proven: source/static wiring only; no local execution/browser/runtime certification.
+- Blocked: local clone/DNS unavailable; hosted Vercel exact-source proof remains the known free-plan rate-limit blocker.
+- Certification: NOT CLAIMED | Production: HOLD / NO TOUCH
+- Next: exact current-SHA Quality/Test-the-Test when executable; then continue next independent UI/core gap.
