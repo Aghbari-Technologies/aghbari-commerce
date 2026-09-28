@@ -91,3 +91,5 @@
 @keyframes aghbari-record-detail-shimmer{0%,100%{background-position:200% 0}50%{background-position:0 0}}
 @media(max-width:560px){.record-detail-loading-field{padding:10px}.record-detail-loading-field.wide{min-height:64px}}
 @media(prefers-reduced-motion:reduce){.record-detail-loading-field i,.record-detail-loading-field span{animation:none;background:#edf3f5}}
+
+.history-row-button{width:100%;font:inherit;text-align:inherit;color:inherit;cursor:pointer}.history-row-button:hover,.history-row-button:focus-visible{background:#f6fbfc;outline:none}.history-row-button:focus-visible{box-shadow:inset 0 0 0 2px rgba(14,145,164,.18)}
