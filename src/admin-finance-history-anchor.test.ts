@@ -53,6 +53,13 @@ describe('admin finance history workspace contract', () => {
     expect(adminPanelSource).toContain('if (orderId) void openOrderDetail(orderId);');
   });
 
+  it('keeps deep-linked detail visible when the order is outside the summary list or fails to load', () => {
+    expect(adminPanelSource).toContain('const order = listedOrder ?? detailOrder;');
+    expect(adminPanelSource).toContain('if (!order && !detailOrderLoading && !detailOrderError) return null;');
+    expect(adminPanelSource).toContain("title = order ? 'طلب #' + order.order_number : 'تفاصيل الطلب';");
+    expect(adminPanelSource).toContain('onClick={() => void openOrderDetail(detailOrderId)}');
+  });
+
   it('keeps the dashboard data-center shortcut on the real data workspace', () => {
     expect(dashboardSource).toContain('target="#admin-import"');
     expect(dashboardSource).not.toContain('title="مركز البيانات الموحد" target="#admin-catalog"');
