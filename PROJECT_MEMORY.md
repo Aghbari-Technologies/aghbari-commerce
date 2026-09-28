@@ -159,3 +159,8 @@
 - The 84 external PNGs remain visual/provenance input rather than an 84-screen denominator, but every in-scope visual family must be implemented or explicitly bounded, and every asset must remain accounted for.
 - Requirements discovered from references or canonical documents must be placed under the correct canonical owner; create a new logical UI/product section when no existing parent is correct rather than hiding the capability in an unrelated section.
 - During a 120-minute execution window, UI is the primary execution lane. Only critical security fixes or direct dependencies that unblock UI/core are allowed to displace it; blocked external deployment paths do not pause UI work.
+## 2026-09-28 — Canonical boot and handoff chain
+- Every execution session must explicitly bind the boot chain: AGHBARI-EXECUTION-START.md, PROJECT_MEMORY.md, ops/AGHBARI-LATEST-EXECUTION-STATE.md, ops/AGHBARI-DEVELOPMENT-PROGRESS.md, docs/CANONICAL-DOCUMENT-SYSTEM.md, docs/ui-reference/UI-REFERENCE-ASSET-INDEX.md, docs/canonical/02-UX-UI-CUSTOMER-EXPERIENCE.md, then the relevant specialist canonical owner.
+- The latest execution state and development progress are mandatory write-back artifacts, not optional reports. Each session must leave an exact next executable action and do-not-repeat boundary for the next programmer/session.
+- Actual Git HEAD always overrides historical SHAs recorded in memory or logs. Logged SHAs are checkpoints/evidence references, never authority to resume an older state.
+- A session is not operationally closed when implementation is done but handoff state is missing; close-out requires state/progress write-back and an exact resumable next action.
