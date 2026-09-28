@@ -1,7 +1,11 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { SAFE_ALTERNATIVES } from './AdminBoundaryCenter';
+
+const read = (file: string) => readFileSync(resolve(process.cwd(), file), 'utf8');
 
 describe('admin boundary workspace links', () => {
   it('keeps every safe alternative on a real AdminPanel DOM anchor', () => {
