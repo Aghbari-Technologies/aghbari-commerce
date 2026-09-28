@@ -184,6 +184,9 @@ BEGIN
 END;
 $$;
 
+-- Retire the pre-idempotency five-argument overload so calls cannot resolve ambiguously.
+DROP FUNCTION IF EXISTS public.record_payment(uuid, numeric, public.payment_method, uuid, text);
+
 REVOKE ALL ON FUNCTION public.record_payment(
   uuid, numeric, public.payment_method, uuid, text, text
 ) FROM PUBLIC, anon;
