@@ -97,3 +97,23 @@ describe('customer template terminology', () => {
     expect(source).not.toContain('تم تطبيق المسحة على السلة');
   });
 });
+
+
+describe('customer statement coverage', () => {
+  it('keeps the statement capability explicit and customer-finance backed by real financial data', () => {
+    const structure = readFileSync(resolve(process.cwd(), 'src/structure/customer-structure.ts'), 'utf8');
+    const financeSource = readFileSync(resolve(process.cwd(), 'src/CustomerFinancePanel.tsx'), 'utf8');
+    const serviceSource = readFileSync(resolve(process.cwd(), 'src/services/customerFinance.ts'), 'utf8');
+    expect(structure).toContain("id: 'statements'");
+    expect(financeSource).toContain("view === 'statement'");
+    expect(financeSource).toContain('getCustomerStatement');
+    expect(financeSource).toContain('customer-statement-table');
+    expect(serviceSource).toContain(".from('payments')");
+    expect(serviceSource).toContain(".in('invoice_id', invoiceIds)");
+  });
+
+  it('preserves the six-section PortalSection contract while exposing statements within Finance', () => {
+    expect(source).toContain("type PortalSection = 'catalog' | 'orders' | 'finance' | 'templates' | 'account' | 'notifications'");
+    expect(source).toContain("section==='finance'");
+  });
+});

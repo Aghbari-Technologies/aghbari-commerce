@@ -33,4 +33,5 @@ export const AGHBARI_CUSTOMER_STRUCTURE: CustomerStructureItem[] = [
   { id: 'finance', label: 'المركز المالي', section: 'finance', status: 'live', description: 'الحد الائتماني، الرصيد، الحركات والتصدير.' },
   { id: 'invoice-history', label: 'الفواتير التشغيلية', section: 'finance', status: 'live', description: 'قائمة الفواتير المصرح بها للحساب مع البحث والفرز والصفحات والحالات.' },
   { id: 'invoice-detail', label: 'تفاصيل الفاتورة والمدفوعات', section: 'finance', status: 'live', description: 'تفاصيل البنود والمدفوعات والرصيد المتبقي للفاتورة للقراءة فقط.' },
+  { id: 'statements', label: 'كشف الحساب', section: 'finance', status: 'live', description: 'كشف حساب مجمع للفواتير والدفعات والرصيد المتبقي للحساب، محسوب من المستندات المالية المصرح بها.' },
 ];

@@ -188,3 +188,8 @@ Requirements discovered from references or canonical specifications are not park
 - Quantity entry is bounded by the existing central per-line ceiling and current authorized available quantity; invalid, fractional, unavailable or over-cap values fail closed in the UI.
 - Persistence continues through the existing real cart service path; this is a presentation/workflow improvement only and introduces no new transaction authority.
 - Keyboard Enter/blur commit the same quantity path, while loading/error/offline behavior remains governed by the existing cart and portal contracts.
+
+
+## 2026-09-29 — Customer statement UX
+- Finance exposes **كشف الحساب** as a first-class subview alongside invoice history without expanding the six-section Portal IA.
+- The statement supports real loading/error/empty/filter/sort/pagination states and opens existing invoice detail/payment data; no synthetic balances are used.

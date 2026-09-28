@@ -66,3 +66,9 @@ A screenshot may reveal:
 Only the first three may influence Aghbari implementation, and only after reconciliation with the canonical Commerce contract. Unsupported functionality remains an explicit boundary.
 
 The number of reference assets is not a completion denominator. Product closure is measured against the canonical Aghbari capability map and its implementation/evidence contract.
+
+
+## 2026-09-29 — Customer statement view
+- Customer Portal Finance includes a real **كشف الحساب** subview for authorized customer financial records.
+- The statement aggregates operational invoices and their recorded payments through the existing RLS-scoped tables; it reports invoiced, paid and outstanding totals per currency and opens the existing invoice detail view.
+- This is a read-only finance presentation over existing Commerce truth and adds no payment authority or mutation path.

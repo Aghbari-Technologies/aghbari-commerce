@@ -183,3 +183,7 @@
 ## 2026-09-29 — Direct B2B quantity workflow
 - Customer catalog/detail/cart now support direct integer quantity entry using the existing cart persistence path.
 - The quantity UI fails closed at the existing 10,000 central line ceiling and current authorized available quantity; no new backend authority was added.
+
+
+## 2026-09-29 — Customer statement view
+- Customer Finance includes a real read-only statement subview aggregating authorized invoices and recorded payments per currency, reusing existing Finance services and RLS-backed tables.

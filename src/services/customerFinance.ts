@@ -25,6 +25,24 @@ export interface CustomerPayment {
   paid_at: string;
 }
 
+export interface CustomerStatementLine {
+  invoice: CustomerInvoiceSummary;
+  paid: number;
+  outstanding: number;
+}
+
+export interface CustomerStatementTotal {
+  currency: string;
+  invoiced: number;
+  paid: number;
+  outstanding: number;
+}
+
+export interface CustomerStatement {
+  lines: CustomerStatementLine[];
+  totals: CustomerStatementTotal[];
+}
+
 export interface CustomerInvoiceItem {
   id: string;
   invoice_id: string;
@@ -190,4 +208,65 @@ export function calculateInvoiceLineTotal(quantity: number, unitPrice: number) {
     throw new Error('بيانات بند الفاتورة غير صالحة.');
   }
   return quantity * unitPrice;
+}
+
+export function buildCustomerStatementLines(
+  invoices: CustomerInvoiceSummary[],
+  payments: CustomerPayment[],
+): CustomerStatementLine[] {
+  const invoiceIds = new Set(invoices.map((invoice) => invoice.id));
+  const paidByInvoice = new Map<string, number>();
+  for (const payment of payments) {
+    if (!invoiceIds.has(payment.invoice_id)) continue;
+    paidByInvoice.set(payment.invoice_id, (paidByInvoice.get(payment.invoice_id) ?? 0) + payment.amount);
+  }
+  return invoices.map((invoice) => {
+    const paid = paidByInvoice.get(invoice.id) ?? 0;
+    return { invoice, paid, outstanding: Math.max(0, invoice.total - paid) };
+  });
+}
+
+export async function getCustomerStatement(customerId: string, limit = 100): Promise<CustomerStatement> {
+  if (!UUID_PATTERN.test(customerId)) throw new Error('معرّف العميل غير صالح.');
+  const safeLimit = Math.min(Math.max(Math.trunc(limit), 1), 100);
+  const invoices = await getCustomerInvoices(customerId, safeLimit);
+  if (!invoices.length) return { lines: [], totals: [] };
+
+  const invoiceIds = invoices.map((invoice) => invoice.id);
+  const client = requireSupabase();
+  const payments: CustomerPayment[] = [];
+  const pageSize = 500;
+  for (let offset = 0; ; offset += pageSize) {
+    const { data, error } = await client
+      .from('payments')
+      .select('id,invoice_id,amount,method,reference,paid_at')
+      .in('invoice_id', invoiceIds)
+      .order('paid_at', { ascending: false })
+      .order('id', { ascending: false })
+      .range(offset, offset + pageSize - 1);
+    if (error) throw error;
+    const page = (data ?? []).map(assertPayment);
+    payments.push(...page);
+    if (page.length < pageSize) break;
+  }
+
+  const lines = buildCustomerStatementLines(invoices, payments);
+  const totalsByCurrency = new Map<string, CustomerStatementTotal>();
+  for (const line of lines) {
+    const current = totalsByCurrency.get(line.invoice.currency) ?? {
+      currency: line.invoice.currency,
+      invoiced: 0,
+      paid: 0,
+      outstanding: 0,
+    };
+    current.invoiced += line.invoice.total;
+    current.paid += line.paid;
+    current.outstanding += line.outstanding;
+    totalsByCurrency.set(line.invoice.currency, current);
+  }
+
+  return {
+    lines,
+    totals: Array.from(totalsByCurrency.values()).sort((a, b) => a.currency.localeCompare(b.currency)),
+  };
 }

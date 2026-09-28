@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { calculateInvoicePaid, getCustomerInvoiceItems, getCustomerInvoicePayments, getCustomerInvoices, type CustomerInvoiceItem, type CustomerInvoiceSummary, type CustomerPayment } from './services/customerFinance';
+import { calculateInvoicePaid, getCustomerInvoiceItems, getCustomerInvoicePayments, getCustomerInvoices, getCustomerStatement, type CustomerInvoiceItem, type CustomerInvoiceSummary, type CustomerPayment, type CustomerStatementLine, type CustomerStatementTotal } from './services/customerFinance';
 import { formatMoney } from './domain/pricing';
 import './customer-finance.css';
 
@@ -34,6 +34,11 @@ export default function CustomerFinancePanel({ customerId, online }: { customerI
   const [items, setItems] = useState<CustomerInvoiceItem[]>([]);
   const [detailLoading, setDetailLoading] = useState(false);
   const [detailError, setDetailError] = useState('');
+  const [view, setView] = useState<'invoices' | 'statement'>('invoices');
+  const [statementLines, setStatementLines] = useState<CustomerStatementLine[]>([]);
+  const [statementTotals, setStatementTotals] = useState<CustomerStatementTotal[]>([]);
+  const [statementLoading, setStatementLoading] = useState(false);
+  const [statementError, setStatementError] = useState('');
 
   const load = useCallback(async () => {
     if (!customerId || !online) return;
@@ -51,6 +56,27 @@ export default function CustomerFinancePanel({ customerId, online }: { customerI
 
   useEffect(() => { setPage(1); }, [query, status, sort]);
   useEffect(() => { void load(); }, [load]);
+
+  const loadStatement = useCallback(async () => {
+    if (!customerId || !online) return;
+    setStatementLoading(true);
+    setStatementError('');
+    try {
+      const statement = await getCustomerStatement(customerId, 100);
+      setStatementLines(statement.lines);
+      setStatementTotals(statement.totals);
+    } catch (e) {
+      setStatementLines([]);
+      setStatementTotals([]);
+      setStatementError(e instanceof Error ? e.message : 'تعذر تحميل كشف الحساب.');
+    } finally {
+      setStatementLoading(false);
+    }
+  }, [customerId, online]);
+
+  useEffect(() => {
+    if (view === 'statement') void loadStatement();
+  }, [view, loadStatement]);
 
   useEffect(() => {
     if (!selected) return;
@@ -79,8 +105,25 @@ export default function CustomerFinancePanel({ customerId, online }: { customerI
       });
   }, [invoices, query, status, sort]);
 
+  const filteredStatement = useMemo(() => {
+    const needle = query.trim().toLocaleLowerCase();
+    return [...statementLines]
+      .filter((line) =>
+        (status === 'all' || line.invoice.status === status) &&
+        (!needle || String(line.invoice.invoice_number).includes(needle) || line.invoice.order_id.toLocaleLowerCase().includes(needle))
+      )
+      .sort((a, b) => {
+        if (sort === 'highest') return b.invoice.total - a.invoice.total;
+        if (sort === 'lowest') return a.invoice.total - b.invoice.total;
+        const delta = new Date(b.invoice.created_at).getTime() - new Date(a.invoice.created_at).getTime();
+        return sort === 'oldest' ? -delta : delta;
+      });
+  }, [statementLines, query, status, sort]);
+
   const pages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const statementPages = Math.max(1, Math.ceil(filteredStatement.length / PAGE_SIZE));
   const activePage = Math.min(page, pages);
+  const activeStatementPage = Math.min(page, statementPages);
   const visible = filtered.slice((activePage - 1) * PAGE_SIZE, activePage * PAGE_SIZE);
   const totals = useMemo(() => {
     const byCurrency = new Map<string, number>();
@@ -146,7 +189,22 @@ export default function CustomerFinancePanel({ customerId, online }: { customerI
         </button>
       </div>
 
-      <div className="customer-finance-summary" aria-label="ملخص المستندات المالية">
+      <div className="history-tabs" role="tablist" aria-label="العرض المالي">
+        <button type="button" role="tab" aria-selected={view === 'invoices'} className={view === 'invoices' ? 'active' : ''} onClick={() => setView('invoices')}>الفواتير والمدفوعات</button>
+        <button type="button" role="tab" aria-selected={view === 'statement'} className={view === 'statement' ? 'active' : ''} onClick={() => setView('statement')}>كشف الحساب</button>
+      </div>
+
+      <div className="customer-finance-summary" aria-label={view === 'invoices' ? 'ملخص المستندات المالية' : 'ملخص كشف الحساب'}>
+        {view === 'invoices' ? <>
+          <article><small>إجمالي الفواتير</small><strong>{totals.count.toLocaleString('ar')}</strong><span>المستندات المتاحة للحساب</span></article>
+          <article><small>المفتوحة</small><strong>{totals.open.toLocaleString('ar')}</strong><span>تحتاج متابعة أو سداد</span></article>
+          <article><small>القيمة الإجمالية</small><strong>{totals.totals.length ? totals.totals.map(([currency, total]) => money(total, currency)).join(' · ') : '—'}</strong><span>{totals.totals.length > 1 ? 'مجمعة حسب العملة' : 'للفواتير المحملة'}</span></article>
+        </> : <>
+          <article><small>إجمالي الفواتير</small><strong>{statementTotals.map((item) => money(item.invoiced, item.currency)).join(' · ') || '—'}</strong><span>القيمة الإجمالية للمستندات</span></article>
+          <article><small>إجمالي المدفوع</small><strong>{statementTotals.map((item) => money(item.paid, item.currency)).join(' · ') || '—'}</strong><span>الدفعات المسجلة للحساب</span></article>
+          <article><small>الرصيد المتبقي</small><strong>{statementTotals.map((item) => money(item.outstanding, item.currency)).join(' · ') || '—'}</strong><span>المبلغ المفتوح حسب العملة</span></article>
+        </>}
+      </div>
         <article><small>إجمالي الفواتير</small><strong>{totals.count.toLocaleString('ar')}</strong><span>المستندات المتاحة للحساب</span></article>
         <article><small>المفتوحة</small><strong>{totals.open.toLocaleString('ar')}</strong><span>تحتاج متابعة أو سداد</span></article>
         <article><small>القيمة الإجمالية</small><strong>{totals.totals.length ? totals.totals.map(([currency, total]) => money(total, currency)).join(' · ') : '—'}</strong><span>{totals.totals.length > 1 ? 'مجمعة حسب العملة' : 'للفواتير المحملة'}</span></article>
@@ -159,6 +217,41 @@ export default function CustomerFinancePanel({ customerId, online }: { customerI
         <button className="ghost" type="button" onClick={clearFilters} disabled={loading || (!query && status === 'all' && sort === 'newest')}>مسح</button>
       </div>
 
+      {view === 'statement' ? (
+        statementLoading ? (
+          <div className="customer-statement-loading" role="status" aria-label="جارٍ تحميل كشف الحساب">{Array.from({length:5}).map((_,index)=><article key={index}><i/><i/><i/><i/></article>)}</div>
+        ) : statementError ? (
+          <div className="error-banner" role="alert"><span>{statementError}</span><button className="ghost" type="button" onClick={() => void loadStatement()}>إعادة المحاولة</button></div>
+        ) : !statementLines.length ? (
+          <div className="empty-state"><strong>لا يوجد كشف حساب متاح بعد</strong><span>سيظهر هنا سجل الفواتير والدفعات عند توفر مستندات مالية للحساب.</span></div>
+        ) : !filteredStatement.length ? (
+          <div className="empty-state"><strong>لا توجد نتائج مطابقة</strong><span>غيّر البحث أو فلتر الحالة ثم أعد المحاولة.</span><button type="button" onClick={clearFilters}>مسح الفلاتر</button></div>
+        ) : (
+          <>
+            <div className="customer-statement-table" role="table" aria-label="كشف حساب العميل">
+              <div className="customer-statement-row statement-head" role="row"><span>الفاتورة</span><span>التاريخ</span><span>الإجمالي</span><span>المدفوع</span><span>المتبقي</span><span>الحالة</span><span>الاستحقاق</span><span>تفاصيل</span></div>
+              {filteredStatement.slice((activeStatementPage - 1) * PAGE_SIZE, activeStatementPage * PAGE_SIZE).map((line) => (
+                <button type="button" className="customer-statement-row" role="row" key={line.invoice.id} onClick={() => void openInvoice(line.invoice)}>
+                  <span>#{line.invoice.invoice_number}</span>
+                  <span>{new Date(line.invoice.created_at).toLocaleDateString('ar-YE')}</span>
+                  <strong>{money(line.invoice.total, line.invoice.currency)}</strong>
+                  <strong>{money(line.paid, line.invoice.currency)}</strong>
+                  <strong>{money(line.outstanding, line.invoice.currency)}</strong>
+                  <span className={'finance-status finance-status-' + line.invoice.status}>{STATUS_LABELS[line.invoice.status]}</span>
+                  <span>{line.invoice.due_at ? new Date(line.invoice.due_at).toLocaleDateString('ar-YE') : '—'}</span>
+                  <span>فتح التفاصيل</span>
+                </button>
+              ))}
+            </div>
+            <div className="directory-pagination" aria-label="صفحات كشف الحساب">
+              <span>صفحة {activeStatementPage} / {statementPages} · عرض {((activeStatementPage - 1) * PAGE_SIZE) + 1}–{Math.min(activeStatementPage * PAGE_SIZE, filteredStatement.length)} من {filteredStatement.length}</span>
+              <div><button className="ghost" type="button" onClick={() => setPage((value) => Math.max(1, value - 1))} disabled={activeStatementPage === 1}>السابق</button><button className="ghost" type="button" onClick={() => setPage((value) => Math.min(statementPages, value + 1))} disabled={activeStatementPage === statementPages}>التالي</button></div>
+            </div>
+          </>
+        )
+      ) : null}
+
+      {view === 'invoices' ? (
       {loading ? (
         <div className="customer-finance-loading-skeleton" role="status" aria-label="جارٍ تحميل الفواتير">{Array.from({length:4}).map((_,index)=><article key={index}><div><i/><i/></div><i/><i/><i/><span/></article>)}</div>
       ) : error ? (
@@ -189,6 +282,8 @@ export default function CustomerFinancePanel({ customerId, online }: { customerI
           </div>
         </>
       )}
+
+      ) : null}
 
       {selected && (
         <div className="modal-backdrop" onClick={() => setSelected(null)}>
