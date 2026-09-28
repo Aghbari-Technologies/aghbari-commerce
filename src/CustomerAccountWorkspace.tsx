@@ -323,7 +323,7 @@ export default function CustomerAccountWorkspace(props: CustomerAccountWorkspace
             <button type="button" onClick={() => props.onNavigate('catalog')}>العودة للكتالوج <span>↗</span></button>
             <button type="button" className="ghost" onClick={() => props.onNavigate('orders')}>طلباتي <span>↗</span></button>
             <button type="button" className="ghost" onClick={() => props.onNavigate('finance')}>المركز المالي <span>↗</span></button>
-            <button type="button" className="ghost" onClick={() => props.onNavigate('templates')}>المسحات الجاهزة <span>↗</span></button>
+            <button type="button" className="ghost" onClick={() => props.onNavigate('templates')}>القوالب الجاهزة <span>↗</span></button>
           </div>
         </div>
       )}
