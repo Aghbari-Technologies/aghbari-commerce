@@ -31,7 +31,8 @@ export function normalizeCustomerPortalSection(
   return visible.includes(next) ? next : visible[0] ?? 'home';
 }
 
-export function sectionFromHash(hash: string): PortalSection {
-  const value = hash.replace(/^#/, '') as PortalSection;
+export function sectionFromHash(hash?: string): PortalSection {
+  const source = hash ?? (typeof window === 'undefined' ? '' : window.location.hash);
+  const value = source.replace(/^#/, '') as PortalSection;
   return PORTAL_SECTIONS.has(value) ? value : 'home';
 }
