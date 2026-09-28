@@ -8,54 +8,56 @@ Production: `HOLD / NO TOUCH`
 Certification: `NOT CLAIMED`
 
 ## Current reality
-- Actual main HEAD verified before write-back: `6a01d5ec9484fcd8faeee18ab9c56c636f4bf2e6`.
-- Active browser entrypoint remains `src/main.tsx -> AppV3Fixed`.
-- Customer Portal canonical sections remain six: catalog, orders, finance, templates, account, notifications.
-- Staff `WorkspaceSurfaceRail` now exposes every live capability belonging to each enabled workspace pack; subviews are no longer truncated to the first five.
-- Non-live staff capabilities remain explicitly reachable from the boundary workspace instead of being hidden or fabricated.
-- Existing Commerce authority, route/deep-link behavior and server-side authorization are unchanged.
-- Production remains untouched; external hosted blockers remain unchanged.
+- Exact current main HEAD: `bc71199ed2edc188fd54ca9299ca80d36e2881f1`.
+- Active runtime remains `src/main.tsx -> AppV3Fixed`.
+- Customer Portal remains six canonical sections; Customer Templates is now a full collection workspace with search, sort, pagination, detail and destructive confirmation.
+- Staff workspace rail exposes full live subviews and explicit boundary links without truncation.
+- Admin Command Center structure is no longer truncated; Customer Directory, Admin Orders, Finance History, Inventory Activity, Supplier Ledger and Staff Access now expose richer collection controls.
+- Notification surface now has a real detail drawer while preserving existing server-side read authorization.
+- Category Directory exposes progressive detail; Pricing Matrix exposes validity and value/time sorting using the existing price contract.
+- No unsupported transaction authority was added; Production remains untouched.
 
 ## Latest execution batch — 2026-09-28
-- Implemented: staff workspace subview exposure in `src/WorkspaceSurfaceRail.tsx`; each live pack now renders all matching live capabilities as compact links using existing paths/targets.
-- Implemented: explicit boundary capability links for non-live staff items; no unsupported mutation or permission was added.
-- Implemented: responsive subview styling in `src/workspace-surface.css`.
-- Added: exact closure tests in `src/workspace-surface-capability.test.ts` for full live-pack parity and complete boundary exposure.
-
+- Customer Templates: full collection UX + detail/delete confirmation.
+- Staff workspace: complete live/boundary subview exposure.
+- Admin Command Center: full canonical group rendering without the former 8-item cap.
+- Customer Directory: account sort + richer detail metadata.
+- Admin Orders / Finance History / Inventory Activity / Supplier Ledger / Staff Access: real sort/filter controls.
+- Notifications: real detail drawer and safe markup/componentization.
+- Categories: detail drawer for hierarchy nodes.
+- Pricing: validity filter and deterministic sorting.
+- Focused closure tests added/extended; affected Quality workflow includes the new contracts.
 
 ## Verification
-- Exact source HEAD after implementation/write-back remains tied to this batch and must be re-read after the documentation commit.
-- Source contract/test coverage is present for the new staff subview exposure.
-- Current automated workflow runs for the implementation sequence are still in progress; therefore current build/typecheck/Vitest/browser runtime proof is `NOT_PROVEN` until an exact-SHA run completes.
-- Production remains untouched.
-
+- Browser E2E / Exact Deployment for `bc71199ed2edc188fd54ca9299ca80d36e2881f1`: SUCCESS.
+- Security audit for `bc71199ed2edc188fd54ca9299ca80d36e2881f1`: SUCCESS.
+- Bootstrap lockfile for `bc71199ed2edc188fd54ca9299ca80d36e2881f1`: SUCCESS.
+- Aghbari Quality / application-quality / G1 / Test-the-Test for `bc71199ed2edc188fd54ca9299ca80d36e2881f1`: still executing or pending at last read; no premature PASS claimed.
+- Exact-source hosted visual certification remains unproven; Production remains HOLD / NO TOUCH.
 
 ## Open gaps
-1. Execute exact-SHA bounded Quality/Test-the-Test/Concurrency/G1/Security proof through an accessible runtime path.
-2. Full exact-current browser visual/runtime proof.
-3. Full 84-reference screen-pack equivalence proof, while preserving external-corpus semantics.
-4. Purchase/receipt 16..128 migration: exact migration + negative + concurrency + Test-the-Test proof, then controlled release application only after gates.
-5. Remaining canonical Commerce UI/domain gaps discovered by targeted execution.
+1. Finish exact-SHA Quality/Test-the-Test/G1 matrix and fix only the first material failure.
+2. Continue full Admin/Staff and Customer Portal UI closure for remaining canonical capabilities.
+3. Complete P0 visual/browser evidence for applicable reference screen packs.
+4. Purchase/receipt 16..128 migration with exact migration + negative + concurrency + Test-the-Test evidence.
+5. Full exact runtime/browser certification path without repeating unchanged hosted blockers.
 
 ## Security state
 - No blanket revoke or test-driven security weakening.
-- Existing SECURITY DEFINER warnings require function-by-function contract classification; do not treat generic advisor warnings as automatically defective.
+- Existing SECURITY DEFINER warnings remain function-by-function review items.
 - Production remains untouched.
 
 ## NEXT EXECUTABLE ACTION
-Re-read exact `refs/heads/main` after the write-back commit; inspect the exact-SHA Aghbari Quality / Test-the-Test / G1 / Security / Browser results. Fix only the first material failure. If the proof lane is blocked, continue the next independent canonical UI/domain gap with a focused implementation + focused test.
-
+Re-read exact `refs/heads/main`; inspect the completed Quality/G1/Test-the-Test result for `bc71199ed2edc188fd54ca9299ca80d36e2881f1`. If any job fails, fix only its root cause. Otherwise immediately execute the next uncovered canonical UI surface/subview and add its focused contract test.
 
 ## DO NOT REPEAT
-- Do not transfer evidence between SHAs.
-- Do not truncate staff workspace subviews back to a partial list.
-- Do not rebuild or duplicate the 84 external screenshot corpus.
-- Do not fabricate unsupported Commerce transactions.
+- Never transfer evidence across SHA.
+- Do not restore UI truncation caps.
+- Do not duplicate the 84-reference corpus.
+- Do not fabricate Commerce capabilities outside canonical contracts.
 - Do not mutate Production to bypass migration gates.
-- Do not retry unchanged hosted blockers.
-- Do not reopen closed Customer/Admin workspace, loading-state, catalog-filter, boundary-anchor or order-detail work without a regression/dependency/security/requirement trigger.
-
-
+- Do not retry unchanged Vercel/hosted blockers.
+- Do not reopen closed UI/security contracts without a material trigger.
 ## 2026-09-28 — Authentication and full live-surface UI batch
 - Implementation parent SHA: f674de0011701a66783feb288bc0bd24908b56a5.
 - Implemented on the active Aghbari runtime: full branded sign-in/recovery surface, password visibility control, real password-reset request, friendly Arabic auth failures, loading/success/error states, responsive/reduced-motion auth styling.

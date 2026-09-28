@@ -350,3 +350,15 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Production: `HOLD / NO TOUCH`
 - NEXT EXECUTABLE ACTION: re-read exact main HEAD after write-back, inspect exact-SHA CI/proof matrix, then fix only the first material failure or continue the next independent UI/core gap.
 - DO NOT REPEAT: do not restore truncated staff subview lists; do not transfer evidence across SHA.
+
+
+## Run 2026-09-28 — Full UI closure continuation
+- SHA: `bc71199ed2edc188fd54ca9299ca80d36e2881f1`
+- Branch: `main`
+- Implemented: customer template collection/detail/delete workflow; full Staff workspace subviews; uncapped Admin command-center structure; customer directory sorting/detail metadata; order/finance/inventory/supplier/access collection sorting/filtering; notification detail drawer; category detail drawer; pricing validity/sort controls.
+- Tests: focused UI closure contracts added/extended and included in Aghbari Quality.
+- Verified: Browser E2E SUCCESS; Security audit SUCCESS; Bootstrap SUCCESS on this exact SHA. Quality/G1/Test-the-Test still active when recorded.
+- Proven: exact-source implementation plus successful completed workflow lanes above; final Quality/Test-the-Test matrix remains pending.
+- Blocked: hosted visual certification remains external/unproven; Production remains HOLD / NO TOUCH.
+- NEXT: inspect final exact-SHA proof matrix, repair only first material failure, then continue next canonical UI gap.
+- DO NOT REPEAT: do not reintroduce truncation caps or fabricate unsupported capabilities.
