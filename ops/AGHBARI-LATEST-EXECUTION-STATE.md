@@ -58,3 +58,20 @@ Run the exact-current-SHA Quality/Application Quality/Test-the-Test matrix for t
 - Do not reopen closed Customer Account/Profile/Addresses, Checkout, Templates, Catalog sorting/filtering, Staff subviews, Admin collection/low-stock/category/notification surfaces without a regression or requirement trigger.
 - Do not retry the unchanged Vercel bypass-secret redirect path.
 - Do not transfer evidence from 1869563 or older SHAs to the new pricing/finance lineage.
+
+
+## 2026-09-29 — Admin workspace anchor closure
+- Source implementation SHA: `cd2682a0b9889b0c4fc3b6153e35a87beaa68a98`.
+- Implemented: dedicated `#admin-finance-history` mapping for `/admin/finance/history`; corrected the Dashboard data-center shortcut to `#admin-import`; removed duplicate wrapper-owned anchors across dashboard, catalog, pricing, inventory history/activity, warehouses, receiving, suppliers, export, governance, notifications, access and settings while preserving each child workspace owner.
+- Verified: the canonical Admin target set resolves to **21/21 unique DOM anchors** on the implementation lineage; no target is missing or duplicated.
+- Proven: source/static contract proof only. Exact-SHA local test/build/browser/runtime proof is not established in this environment.
+- Blocked: local repository execution remains unavailable; PR #157 Vercel status is the existing plan/build-rate-limit blocker and was not retried unchanged. No production mutation.
+- Production: `HOLD / NO TOUCH`.
+
+## NEXT EXECUTABLE ACTION
+On the next current HEAD, execute the targeted exact-SHA test matrix for the Admin workspace-anchor closure and the affected UI contracts; fix only the first material failure. Then continue directly to the next independent open UI/Core gap without reopening the already-closed Admin/customer surfaces.
+
+## DO NOT REPEAT
+- Do not reintroduce wrapper IDs when a child workspace owns the canonical target.
+- Do not duplicate the same visual/screen family because multiple references point to one reusable workspace.
+- Do not transfer prior proof from `cd2682a0b9889b0c4fc3b6153e35a87beaa68a98` to a later SHA.
