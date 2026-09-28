@@ -398,3 +398,17 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Certification: `NOT CLAIMED`
 - Production: `HOLD / NO TOUCH`
 - Next: execute the exact-SHA proof matrix for `b1ac2e231ae060f506bb0dd3b03ba6ab81077243` and current write-back lineage, fix only the first material failure, then continue the next open UI/core gap.
+
+
+## Run 2026-09-29 — UI coverage + production-boundary verification
+- Run: `2026-09-29`
+- Source HEAD before write-back: `b8ffd19c1026702f94b357998d97c8c0c0fcf172`
+- Branch: `main`
+- Implemented: canonical UI coverage guard; customer template terminology correction; live invitation acceptance coverage; normalized Admin target assertions.
+- Verified: 84 UI references are unique and accounted for; six Customer Portal sections are represented; all declared live Admin targets resolve to active Admin sources; live invitation acceptance is backed by the real edge-function flow; affected customer surfaces are free of stale template wording.
+- Proven: source/static contract verification on the current lineage. Supabase live migration list confirms the purchase/receipt 20260927041500 migration is not applied in production; no production mutation performed.
+- Not proven: exact-SHA test execution, concurrent database runtime proof, browser visual/runtime proof and hosted exact-source proof for this lineage.
+- Blocked: local execution unavailable in this session; Vercel project access returns 403; existing Netlify deploy is older/manual and lacks exact source ref.
+- Certification: `NOT CLAIMED`
+- Production: `HOLD / NO TOUCH`
+- Next: execute current exact-SHA Quality/Test-the-Test matrix; fix first material failure once, then continue next open UI/core gap. Do not re-run unchanged hosted blockers.
