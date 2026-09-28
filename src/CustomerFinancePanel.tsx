@@ -281,9 +281,6 @@ export default function CustomerFinancePanel({ customerId, online }: { customerI
             <div><button className="ghost" type="button" onClick={() => setPage((value) => Math.max(1, value - 1))} disabled={activePage === 1}>السابق</button><button className="ghost" type="button" onClick={() => setPage((value) => Math.min(pages, value + 1))} disabled={activePage === pages}>التالي</button></div>
           </div>
         </>
-      )}
-
-
       ) : null}
 
       {selected && (
