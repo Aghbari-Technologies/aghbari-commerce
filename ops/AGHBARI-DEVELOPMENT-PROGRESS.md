@@ -322,3 +322,16 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Certification: NOT CLAIMED
 - Production: HOLD / NO TOUCH
 - Next: execute the next open Admin/Staff or Customer Portal surface from the actual main HEAD, then focused proof and continue.
+
+## 2026-09-28 — Mandatory boot/handoff continuity hardening
+- Run: startup continuity protocol hardening
+- Date: 2026-09-28
+- SHA: `42f00d79174eb67c162b665c9d1179708afb9b20`
+- Branch: main
+- Implemented: mandatory boot chain; exact-H​​EAD resume rule; end-of-session write-back contract; exact next-action handoff; historical-gap protection.
+- Verified: AGHBARI-EXECUTION-START, LATEST-EXECUTION-STATE, UI reference, canonical UX and memory linkage are present.
+- Proven: repository-level protocol/write-back changes only; no new runtime certification claimed.
+- Blocked: external deployment blockers remain unchanged and must not interrupt executable UI work.
+- Certification: NOT CLAIMED
+- Production: HOLD / NO TOUCH
+- Next: from current main HEAD, execute the next open UI surface/subview; after each batch update state/progress before continuing.
