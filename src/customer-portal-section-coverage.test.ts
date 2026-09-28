@@ -22,7 +22,7 @@ describe('customer portal section coverage', () => {
     expect(source).toContain('setSection(normalizeCustomerPortalSection(sectionFromHash(),config))');
     expect(source).toContain("window.history.replaceState(null,'','#'+normalized)");
     expect(source).toContain("هذا القسم غير متاح في إعدادات بوابة حسابك الحالية.");
-    expect(source).toContain('showCredit, showTemplates');
+    expect(source).toContain('[config.showCredit,config.showTemplates]');
   });
 
   it('keeps the seven-section PortalSection union aligned with the canonical set', () => {
