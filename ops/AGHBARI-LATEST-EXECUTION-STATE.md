@@ -95,3 +95,20 @@ Execute the exact-SHA test/proof matrix for `b1ac2e231ae060f506bb0dd3b03ba6ab810
 ## DO NOT REPEAT
 - Do not reopen completed customer templates/checkout/catalog sorting, Staff subview exposure, Admin collection controls, or low-stock/category/notification detail surfaces without a regression trigger.
 - Do not retry the unchanged Vercel authorization/protection path.
+
+
+## 2026-09-29 — Canonical coverage + live production boundary checkpoint
+- Source HEAD before write-back: `b8ffd19c1026702f94b357998d97c8c0c0fcf172`.
+- Implemented: canonical UI coverage guard for all 84 unique references; six Customer Portal sections; role-filtered Admin live targets; explicit Admin boundaries; live invitation acceptance; canonical `القوالب` terminology across affected customer/admin UI surfaces.
+- Verified: 84/84 reference entries unique; six customer sections; all declared live Admin target anchors resolve after normalization; invitation acceptance uses the real `customer-invitations` accept flow; changed UI sources contain no stale production `المسحات` wording.
+- Production verification: Supabase project `aghbari-commerce` is ACTIVE_HEALTHY on PostgreSQL 17.6.1; live migration history currently ends at `20260925040254`, so source migration `20260927041500_normalize_purchase_receipt_idempotency_bound.sql` remains unapplied. Production was not mutated.
+- Not proven: exact current-SHA test execution, Test-the-Test completion, concurrent database runtime proof, browser visual/runtime proof, hosted exact-source proof, final certification.
+- External blockers: Vercel connector returns 403 for the project; existing Netlify deploy is ready but manual/older and lacks an exact source commit reference; local repo execution is unavailable in this session.
+
+## NEXT EXECUTABLE ACTION
+At the exact current main lineage, execute the Quality/Test-the-Test matrix for the UI coverage changes; fix the first material failure once. Then close the next independent canonical Admin/Staff or Customer UI/core gap. After that, run the required affected proof only. Keep purchase/receipt migration production-applied state unchanged until concurrency + negative + Test-the-Test + exact-SHA evidence are complete.
+
+## DO NOT REPEAT
+- Do not reopen completed Customer Templates/Checkout/Catalog sorting, Staff subview exposure, Admin collection controls, or detail surfaces without a regression trigger.
+- Do not retry unchanged Vercel/Netlify hosted paths merely to seek PASS.
+- Do not treat source/static checks as browser/runtime certification.
