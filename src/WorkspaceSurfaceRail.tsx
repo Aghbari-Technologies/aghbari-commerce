@@ -9,14 +9,17 @@ type WorkspaceSurfaceRailProps =
   | { variant: 'customer'; section: CustomerPortalSection; onSelect: (section: CustomerPortalSection) => void; visibleSections?: readonly CustomerPortalSection[] };
 
 const STAFF_PACKS = [
-  { id: 'command', label: 'مركز القيادة', eyebrow: 'التشغيل', target: '#admin-dashboard', tone: 'live' },
-  { id: 'sales', label: 'المبيعات والطلبات', eyebrow: 'الطلبات والعملاء', target: '#admin-orders', tone: 'live' },
-  { id: 'data', label: 'البيانات والاستيراد', eyebrow: 'الاستيراد والتصدير', target: '#admin-import', tone: 'live' },
+  { id: 'command', label: 'مركز القيادة', eyebrow: 'التشغيل', target: '#admin-dashboard', targets: ['#admin-dashboard'], tone: 'live' },
+  { id: 'sales', label: 'المبيعات والطلبات', eyebrow: 'الطلبات والعملاء', target: '#admin-orders', targets: ['#admin-orders', '#admin-customers'], tone: 'live' },
+  { id: 'data', label: 'البيانات والاستيراد', eyebrow: 'الاستيراد والتصدير', target: '#admin-import', targets: ['#admin-import', '#admin-export'], tone: 'live' },
   { id: 'inventory', label: 'المخزون', eyebrow: 'الحركة والجرد', target: '#admin-inventory-activity', targets: ['#admin-inventory-activity', '#admin-inventory-history', '#admin-warehouses'], tone: 'live' },
   { id: 'purchasing', label: 'المشتريات والتوريد', eyebrow: 'التوريد والاستلام', target: '#admin-purchasing', targets: ['#admin-purchasing', '#admin-suppliers', '#admin-receipts'], tone: 'live' },
-  { id: 'catalog', label: 'الكتالوج والتسعير', eyebrow: 'الأصناف', target: '#admin-catalog', tone: 'live' },
-  { id: 'finance', label: 'المالية التشغيلية', eyebrow: 'الحسابات', target: '#admin-finance', tone: 'live' },
-  { id: 'governance', label: 'الحوكمة والتدقيق', eyebrow: 'الثقة', target: '#admin-governance', tone: 'mixed' },
+  { id: 'catalog', label: 'الكتالوج والتسعير', eyebrow: 'الأصناف', target: '#admin-catalog', targets: ['#admin-catalog', '#admin-pricing-matrix', '#admin-product-image'], tone: 'live' },
+  { id: 'finance', label: 'المالية التشغيلية', eyebrow: 'الحسابات', target: '#admin-finance', targets: ['#admin-finance'], tone: 'live' },
+  { id: 'access', label: 'المستخدمون والصلاحيات', eyebrow: 'الحوكمة', target: '#admin-access', targets: ['#admin-access'], tone: 'live' },
+  { id: 'settings', label: 'الإعدادات والهوية', eyebrow: 'التهيئة', target: '#admin-settings', targets: ['#admin-settings'], tone: 'live' },
+  { id: 'governance', label: 'الحوكمة والتدقيق', eyebrow: 'الثقة', target: '#admin-governance', targets: ['#admin-governance', '#admin-notifications'], tone: 'mixed' },
+
   { id: 'boundaries', label: 'الحدود والتكاملات', eyebrow: 'خارج Commerce', target: '#admin-boundaries', tone: 'boundary' },
 ] as const;
 
