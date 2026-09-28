@@ -61,3 +61,16 @@ describe('collection control parity', () => {
     expect(supplier).toContain("sort==='highest'");
   });
 });
+
+
+describe('staff access collection closure', () => {
+  it('keeps account-type, role and sort filters wired to the live access directory', () => {
+    const source = source('StaffAccessPanel.tsx');
+    expect(source).toContain('accountType');
+    expect(source).toContain('roleFilter');
+    expect(source).toContain('sort');
+    expect(source).toContain('فلترة نوع الحساب');
+    expect(source).toContain('فلترة دور الحساب');
+    expect(source).toContain('ترتيب الحسابات');
+  });
+});
