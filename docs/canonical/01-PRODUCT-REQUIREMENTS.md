@@ -6,7 +6,7 @@
 Build a serious Arabic-first B2B operational commerce product for wholesale/distribution merchants. Commerce is the transactional system of record.
 
 ## Capability map
-Catalog; products; SKU/barcodes/units/categories/media; pricing and customer/tier rules; customers; suppliers; carts; checkout; orders and lifecycle; purchasing/receiving; warehouses; inventory; transfers; stock count/reconciliation; operational finance (invoices/payments/expenses/cash); imports/exports; invitations; roles/permissions; notifications; audit/governance; PWA/weak-network; integrations/outbox; Admin/Staff operations; Customer Portal.
+Catalog; products; SKU/barcodes/units/categories/media; pricing and customer/tier rules; customers; suppliers; carts; checkout; orders and lifecycle; purchasing/receiving; warehouses; inventory; transfers; stock count/reconciliation; operational finance (invoices/payments/expenses/cash); imports/exports; invitations; roles/permissions; notifications; audit/governance; PWA/weak-network; integrations/outbox; Admin/Staff operations; Customer Portal including Home/merchant workspace.
 
 ## Completion contract
 A capability is complete only when the UI, states, real interactions, domain/service behavior, persistence, authorization, audit, tests and applicable runtime evidence are complete.
@@ -82,3 +82,10 @@ The number of reference assets is not a completion denominator. Product closure 
 ## 2026-09-29 — Customer pricing surface
 - Customer Portal Catalog includes a dedicated **الأسعار** subview showing the current authorized product price plus quantity-tier prices for the signed-in customer.
 - Pricing presentation reuses the existing authorized pricing/tier data and does not create a client-side pricing authority or synthetic price.
+
+
+## 2026-09-29 — Customer Home workspace
+- Customer Portal has a first-class **الرئيسية / Home** workspace as the landing surface after authentication.
+- Home is a read/read-through presentation layer over existing Commerce truth: customer identity, organization, warehouse, loaded catalog count, order count/latest order, cart state, authorized credit summary when available, template count, and connection/sync state.
+- Home provides navigation shortcuts to existing customer capabilities and opening the real cart; it adds no new transactional authority or synthetic business data.
+- Home remains fail-closed for financial/transactional meaning when offline and explicitly describes offline data as non-authoritative.
