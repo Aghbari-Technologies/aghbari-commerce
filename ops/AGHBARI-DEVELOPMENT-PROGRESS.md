@@ -300,3 +300,6 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Certification: `NOT CLAIMED`
 - Production: `HOLD / NO TOUCH`
 - Next: continue the next independent canonical UI/domain gap after the current Test-the-Test result; do not reopen closed UI contracts.
+
+
+| 2026-09-28 UI terminology closure | 0ff9b07c34ec2a5a149a58de6359747f2ecf1025 | exec/20260928-commerce-ui-core-closure | Corrected Customer Portal template terminology; added regression guard | Source committed | Browser/runtime not proven | None | Certification unchanged | Production HOLD | Run focused test/typecheck, then next executable Commerce gap |
