@@ -10,7 +10,8 @@ const read = (name: string) => readFileSync(resolve(root, name), 'utf8');
 const adminPanelSource = read('AdminPanel.tsx');
 const dashboardSource = read('AdminExecutiveDashboard.tsx');
 const boundarySource = read('AdminBoundaryCenter.tsx');
-const runtimeSources = [adminPanelSource, dashboardSource, boundarySource];
+const financeHistorySource = read('FinanceOperationsHistoryPanel.tsx');
+const runtimeSources = [adminPanelSource, dashboardSource, boundarySource, financeHistorySource];
 
 describe('admin finance history workspace contract', () => {
   it('routes the dedicated finance history path to its dedicated anchor', () => {
@@ -18,13 +19,14 @@ describe('admin finance history workspace contract', () => {
   });
 
   it('keeps the dedicated finance history anchor executable in the live Admin panel', () => {
-    expect(adminPanelSource).toContain('id="admin-finance-history"');
+    expect(financeHistorySource).toContain("id='admin-finance-history'");
     expect(adminPanelSource).toContain('href="#admin-finance-history"');
     expect(adminPanelSource).toContain('FinanceOperationsHistoryPanel');
   });
 
   it('keeps the dashboard data-center shortcut on the real data workspace', () => {
     expect(dashboardSource).toContain('target="#admin-import"');
+    expect(dashboardSource).not.toContain('title="مركز البيانات الموحد" target="#admin-catalog"');
   });
 
   it('guards every live Admin workspace target against anchor drift', () => {
