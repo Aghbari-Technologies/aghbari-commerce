@@ -23,7 +23,11 @@ const buildMetadataPlugin = (): Plugin => ({
   },
 });
 
+const processEnv = ((globalThis as typeof globalThis & { process?: { env?: BuildEnv } }).process?.env ?? {}) as BuildEnv;
+const githubPages = processEnv.GITHUB_PAGES === 'true';
+
 export default defineConfig({
+  base: githubPages ? '/aghbari-commerce/' : '/',
   plugins: [react(), buildMetadataPlugin()],
   resolve: {
     alias: {
