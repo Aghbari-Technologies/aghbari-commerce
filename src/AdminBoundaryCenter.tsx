@@ -2,7 +2,7 @@ import { getAdminStructureForRole, type AdminStructureItem } from './structure/a
 
 type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer';
 
-const SAFE_ALTERNATIVES: Record<string, { label: string; target: string }> = {
+export const SAFE_ALTERNATIVES: Record<string, { label: string; target: string }> = {
   devices: { label: 'دورة العملاء الحالية', target: '#admin-customers' },
   'inventory-sync': { label: 'المخزون التشغيلي', target: '#admin-inventory' },
   promotions: { label: 'الكتالوج والتسعير', target: '#admin-catalog' },
