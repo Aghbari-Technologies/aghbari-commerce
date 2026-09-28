@@ -202,7 +202,7 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
             <a key={item.id} href={item.target} title={item.note ?? item.label}>
               <span>{item.label}</span><i aria-hidden="true">↗</i>
             </a>
-          ))).slice(0, 18)}
+          )))}
         </div>
       </div>
       <section className="admin-command-overview" id="admin-dashboard" aria-label="موجز مساحات العمل">
