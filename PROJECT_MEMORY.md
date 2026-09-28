@@ -202,3 +202,8 @@
 - When a child workspace component already owns its canonical target ID, the parent `admin-workspace-section` must not repeat that ID.
 - Finance history is a dedicated live workspace target: `/admin/finance/history` → `#admin-finance-history`.
 - This is a presentation/navigation contract only; it does not add transaction authority.
+
+
+## 2026-09-29 — Admin deep-link contract
+- Parameterized Admin order paths `/admin/order/:id` resolve to the existing Orders workspace and open the concrete record detail; this reuses existing server-backed order-detail authority and adds no transaction authority.
+- Canonical Admin workspace targets must remain single-owner DOM anchors; child-owned anchors must not be duplicated by parent wrappers.
