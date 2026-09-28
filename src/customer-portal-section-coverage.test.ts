@@ -117,3 +117,17 @@ describe('customer statement coverage', () => {
     expect(source).toContain("section==='finance'");
   });
 });
+
+
+describe('customer payment history coverage', () => {
+  it('keeps payment history inside Finance and backed by invoice-scoped payment records', () => {
+    const structure = readFileSync(resolve(process.cwd(), 'src/structure/customer-structure.ts'), 'utf8');
+    const financeSource = readFileSync(resolve(process.cwd(), 'src/CustomerFinancePanel.tsx'), 'utf8');
+    const serviceSource = readFileSync(resolve(process.cwd(), 'src/services/customerFinance.ts'), 'utf8');
+    expect(structure).toContain("id: 'payment-history'");
+    expect(financeSource).toContain("view === 'payments'");
+    expect(financeSource).toContain('customer-payment-table');
+    expect(serviceSource).toContain('buildCustomerPaymentHistory');
+    expect(serviceSource).toContain(".in('invoice_id', invoiceIds)");
+  });
+});

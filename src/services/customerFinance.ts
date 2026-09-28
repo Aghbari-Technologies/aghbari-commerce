@@ -38,9 +38,15 @@ export interface CustomerStatementTotal {
   outstanding: number;
 }
 
+export interface CustomerPaymentHistoryItem {
+  payment: CustomerPayment;
+  invoice: CustomerInvoiceSummary;
+}
+
 export interface CustomerStatement {
   lines: CustomerStatementLine[];
   totals: CustomerStatementTotal[];
+  payments: CustomerPaymentHistoryItem[];
 }
 
 export interface CustomerInvoiceItem {
@@ -210,6 +216,16 @@ export function calculateInvoiceLineTotal(quantity: number, unitPrice: number) {
   return quantity * unitPrice;
 }
 
+export function buildCustomerPaymentHistory(
+  invoices: CustomerInvoiceSummary[],
+  payments: CustomerPayment[],
+): CustomerPaymentHistoryItem[] {
+  const invoicesById = new Map(invoices.map((invoice) => [invoice.id, invoice]));
+  return payments
+    .filter((payment) => invoicesById.has(payment.invoice_id))
+    .map((payment) => ({ payment, invoice: invoicesById.get(payment.invoice_id)! }));
+}
+
 export function buildCustomerStatementLines(
   invoices: CustomerInvoiceSummary[],
   payments: CustomerPayment[],
@@ -230,7 +246,7 @@ export async function getCustomerStatement(customerId: string, limit = 100): Pro
   if (!UUID_PATTERN.test(customerId)) throw new Error('معرّف العميل غير صالح.');
   const safeLimit = Math.min(Math.max(Math.trunc(limit), 1), 100);
   const invoices = await getCustomerInvoices(customerId, safeLimit);
-  if (!invoices.length) return { lines: [], totals: [] };
+  if (!invoices.length) return { lines: [], totals: [], payments: [] };
 
   const invoiceIds = invoices.map((invoice) => invoice.id);
   const client = requireSupabase();
@@ -250,6 +266,7 @@ export async function getCustomerStatement(customerId: string, limit = 100): Pro
     if (page.length < pageSize) break;
   }
 
+  const paymentHistory = buildCustomerPaymentHistory(invoices, payments);
   const lines = buildCustomerStatementLines(invoices, payments);
   const totalsByCurrency = new Map<string, CustomerStatementTotal>();
   for (const line of lines) {
@@ -268,5 +285,6 @@ export async function getCustomerStatement(customerId: string, limit = 100): Pro
   return {
     lines,
     totals: Array.from(totalsByCurrency.values()).sort((a, b) => a.currency.localeCompare(b.currency)),
+    payments: paymentHistory,
   };
 }

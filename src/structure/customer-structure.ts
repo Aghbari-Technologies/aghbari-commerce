@@ -34,4 +34,5 @@ export const AGHBARI_CUSTOMER_STRUCTURE: CustomerStructureItem[] = [
   { id: 'invoice-history', label: 'الفواتير التشغيلية', section: 'finance', status: 'live', description: 'قائمة الفواتير المصرح بها للحساب مع البحث والفرز والصفحات والحالات.' },
   { id: 'invoice-detail', label: 'تفاصيل الفاتورة والمدفوعات', section: 'finance', status: 'live', description: 'تفاصيل البنود والمدفوعات والرصيد المتبقي للفاتورة للقراءة فقط.' },
   { id: 'statements', label: 'كشف الحساب', section: 'finance', status: 'live', description: 'كشف حساب مجمع للفواتير والدفعات والرصيد المتبقي للحساب، محسوب من المستندات المالية المصرح بها.' },
+  { id: 'payment-history', label: 'سجل الدفعات', section: 'finance', status: 'live', description: 'سجل الدفعات المصرح بها للحساب مع الفاتورة والمرجع والتاريخ وطريقة الدفع.' },
 ];
