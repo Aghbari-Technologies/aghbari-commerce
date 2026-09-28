@@ -39,6 +39,17 @@ describe('canonical UI coverage', () => {
     expect(AGHBARI_CUSTOMER_STRUCTURE.every((item) => item.status === 'live' || item.status === 'boundary')).toBe(true);
   });
 
+  it('keeps purchasing and finance history registered as first-class live capabilities', () => {
+    const adminStructureSource = readFileSync(resolve(process.cwd(), 'src/structure/admin-structure.ts'), 'utf8');
+    const adminRuntimeSource = readFileSync(resolve(process.cwd(), 'src/AdminPanel.tsx'), 'utf8');
+    const railSource = readFileSync(resolve(process.cwd(), 'src/WorkspaceSurfaceRail.tsx'), 'utf8');
+    expect(adminStructureSource).toContain("live('purchasing', 'المشتريات'");
+    expect(adminStructureSource).toContain("live('finance-history', 'سجل العمليات المالية'");
+    expect(adminRuntimeSource).toContain('id="admin-purchasing"');
+    expect(adminRuntimeSource).toContain("data-label="13 · سجل العمليات المالية"");
+    expect(railSource).toContain("target: '#admin-purchasing'");
+  });
+
   it('keeps every declared live admin workspace target represented in the active Admin runtime source', () => {
     const roles = ['owner', 'admin', 'sales', 'warehouse', 'viewer'] as const;
     const liveTargets = new Set<string>();
