@@ -11,7 +11,24 @@ const adminPanelSource = read('AdminPanel.tsx');
 const dashboardSource = read('AdminExecutiveDashboard.tsx');
 const boundarySource = read('AdminBoundaryCenter.tsx');
 const financeHistorySource = read('FinanceOperationsHistoryPanel.tsx');
-const runtimeSources = [adminPanelSource, dashboardSource, boundarySource, financeHistorySource];
+const runtimeSources = [
+  adminPanelSource,
+  dashboardSource,
+  boundarySource,
+  financeHistorySource,
+  read('CatalogManagementPanel.tsx'),
+  read('PricingMatrixPanel.tsx'),
+  read('InventoryHistoryPanel.tsx'),
+  read('InventoryActivityPanel.tsx'),
+  read('WarehouseDirectoryPanel.tsx'),
+  read('SupplierLedgerPanel.tsx'),
+  read('PurchaseReceiptHistoryPanel.tsx'),
+  read('ExportPanel.tsx'),
+  read('ClientControlPanel.tsx'),
+  read('NotificationPanel.tsx'),
+  read('StaffOperationsPanel.tsx'),
+  read('StaffAccessPanel.tsx'),
+];
 
 describe('admin finance history workspace contract', () => {
   it('routes the dedicated finance history path to its dedicated anchor', () => {
@@ -33,7 +50,14 @@ describe('admin finance history workspace contract', () => {
     for (const item of AGHBARI_ADMIN_LIVE_ITEMS) {
       if (!item.target) continue;
       const id = item.target.slice(1);
-      expect(runtimeSources.some((source) => source.includes('id="' + id + '"') || source.includes("id='" + id + "'"))).toBe(true);
+      const count = runtimeSources.reduce(
+        (total, source) =>
+          total +
+          Math.max(0, source.split('id="' + id + '"').length - 1) +
+          Math.max(0, source.split("id='" + id + "'").length - 1),
+        0,
+      );
+      expect(count, 'expected exactly one DOM owner for #' + id).toBe(1);
     }
   });
 });
