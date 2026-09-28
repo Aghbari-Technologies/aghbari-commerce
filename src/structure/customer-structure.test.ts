@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import appSource from '../AppV3Fixed.tsx?raw';
 import { AGHBARI_CUSTOMER_STRUCTURE, CUSTOMER_PORTAL_SECTIONS } from './customer-structure';
 
 describe('customer portal information architecture', () => {
@@ -13,6 +14,14 @@ describe('customer portal information architecture', () => {
     }
     expect(AGHBARI_CUSTOMER_STRUCTURE.find((item) => item.id === 'home')?.section).toBe('home');
     expect(CUSTOMER_PORTAL_SECTIONS[0]).toBe('home');
+  });
+
+  it('keeps the active runtime wired to the first-class Home surface', () => {
+    expect(appSource).toContain("import CustomerHomeWorkspace from './CustomerHomeWorkspace';");
+    expect(appSource).toContain("type PortalSection = 'home' |");
+    expect(appSource).toContain("section==='home'&&<CustomerHomeWorkspace");
+    expect(appSource).toContain('onClick={()=>navigate("home")}');
+    expect(appSource).toContain('navigate("home")');
   });
 
   it('does not introduce duplicate customer surface identifiers', () => {
