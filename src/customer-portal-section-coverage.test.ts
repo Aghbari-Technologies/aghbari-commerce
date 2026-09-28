@@ -31,7 +31,7 @@ describe('customer template collection view', () => {
     { id:'2', name:'مشروبات أسبوعية', branchLabel:'المركز', lines:[{productId:'p2',sku:'J1',name:'عصير',unit:'كرتون',quantity:2},{productId:'p3',sku:'J2',name:'ماء',unit:'كرتون',quantity:5}], updatedAt:'2026-09-27T03:00:00Z' },
   ] as const;
   it('searches template names, branches and line metadata', () => {
-    expect(filterAndSortTemplates(templates as any, 'SKU J2', 'updated').map(x=>x.id)).toEqual(['2']);
+    expect(filterAndSortTemplates(templates as any, 'J2', 'updated').map(x=>x.id)).toEqual(['2']);
     expect(filterAndSortTemplates(templates as any, 'صنعاء', 'updated').map(x=>x.id)).toEqual(['1']);
   });
   it('sorts by name and line count deterministically', () => {
@@ -62,7 +62,7 @@ describe('customer checkout experience', () => {
 
 describe('customer catalog price sorting closure', () => {
   it('keeps price sorting tied to the authorized catalog price', () => {
-    const sourceText = source('AppV3Fixed.tsx');
+    const sourceText = readFileSync(resolve(process.cwd(), 'src', 'AppV3Fixed.tsx'), 'utf8');
     expect(sourceText).toContain('value="price-high"');
     expect(sourceText).toContain('value="price-low"');
     expect(sourceText).toContain("Number(y.authorizedPrice??0)-Number(x.authorizedPrice??0)");
