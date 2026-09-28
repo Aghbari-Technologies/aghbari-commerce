@@ -270,28 +270,36 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
       </div>}
       </div>}
       {detailOrderId && (() => {
-        const order = orders.find((item) => item.id === detailOrderId);
-        if (!order) return null;
+        const listedOrder = orders.find((item) => item.id === detailOrderId);
+        const order = listedOrder ?? detailOrder;
+        if (!order && !detailOrderLoading && !detailOrderError) return null;
         const lineSummary = detailOrder?.items.map((item, index) =>
           String(index + 1) + '. ' + item.name + ' · ' + item.sku + ' · ' + item.quantity + ' ' + item.unit + ' × ' + formatMoney(item.unit_price) + ' ' + detailOrder?.currency + ' = ' + formatMoney(item.line_total) + ' ' + detailOrder?.currency + ' · ' + item.pricing_tier
         ).join('\n') ?? '';
-        const fields = [
-          { label: 'العميل', value: order.customer_name },
-          { label: 'الحالة', value: STATUS_LABELS[order.status] },
-          { label: 'الإجمالي', value: formatMoney(detailOrder?.total ?? order.total) + ' ' + (detailOrder?.currency ?? order.currency) },
-          { label: 'المعرّف', value: order.id },
-          { label: 'الحركات التالية المتاحة', value: allowedNextStatuses(order.status, role).length ? allowedNextStatuses(order.status, role).map((s) => STATUS_LABELS[s]).join(' · ') : 'لا توجد حركة متاحة لهذه الصلاحية' },
-          ...(detailOrderLoading ? [{ label: 'حالة التفصيل', value: 'جارٍ تحميل بنود الطلب والإجماليات والتحقق منها…', wide: true }] : []),
-          ...(detailOrderError ? [{ label: 'تعذر التحميل', value: detailOrderError, wide: true }] : []),
-          ...(detailOrder ? [
-            { label: 'الإجمالي الفرعي', value: formatMoney(detailOrder.subtotal) + ' ' + detailOrder.currency },
-            { label: 'طريقة الدفع', value: detailOrder.payment_method },
-            { label: 'بنود الطلب', value: lineSummary || 'لا توجد بنود مسجلة.', wide: true, content: true },
-          ] : []),
-        ];
-        return <RecordDetailDrawer eyebrow="Operations" title={'طلب #' + order.order_number} summary={order.customer_name + ' · ' + STATUS_LABELS[order.status]} fields={fields} onClose={closeOrderDetail} loading={detailOrderLoading} loadingLabel="جارٍ تحميل تفاصيل الطلب"
+        const fields = order
+          ? [
+              { label: 'العميل', value: order.customer_name },
+              { label: 'الحالة', value: STATUS_LABELS[order.status] },
+              { label: 'الإجمالي', value: formatMoney(detailOrder?.total ?? order.total) + ' ' + (detailOrder?.currency ?? order.currency) },
+              { label: 'المعرّف', value: order.id },
+              { label: 'الحركات التالية المتاحة', value: allowedNextStatuses(order.status, role).length ? allowedNextStatuses(order.status, role).map((s) => STATUS_LABELS[s]).join(' · ') : 'لا توجد حركة متاحة لهذه الصلاحية' },
+              ...(detailOrderLoading ? [{ label: 'حالة التفصيل', value: 'جارٍ تحميل بنود الطلب والإجماليات والتحقق منها…', wide: true }] : []),
+              ...(detailOrderError ? [{ label: 'تعذر التحميل', value: detailOrderError, wide: true }] : []),
+              ...(detailOrder ? [
+                { label: 'الإجمالي الفرعي', value: formatMoney(detailOrder.subtotal) + ' ' + detailOrder.currency },
+                { label: 'طريقة الدفع', value: detailOrder.payment_method },
+                { label: 'بنود الطلب', value: lineSummary || 'لا توجد بنود مسجلة.', wide: true, content: true },
+              ] : []),
+            ]
+          : [
+              { label: 'معرّف الطلب', value: detailOrderId },
+              { label: 'حالة التفصيل', value: detailOrderLoading ? 'جارٍ تحميل الطلب من المصدر الفعلي…' : detailOrderError || 'تعذر تحديد الطلب من القائمة الحالية.', wide: true },
+            ];
+        const title = order ? 'طلب #' + order.order_number : 'تفاصيل الطلب';
+        const summary = order ? order.customer_name + ' · ' + STATUS_LABELS[order.status] : detailOrderId;
+        return <RecordDetailDrawer eyebrow="Operations" title={title} summary={summary} fields={fields} onClose={closeOrderDetail} loading={detailOrderLoading} loadingLabel="جارٍ تحميل تفاصيل الطلب"
           footer={detailOrderError
-            ? <><span>فشل التحميل دون تعديل السجل.</span><button type="button" onClick={() => void openOrderDetail(order.id)} disabled={detailOrderLoading}>إعادة المحاولة</button></>
+            ? <><span>فشل التحميل دون تعديل السجل.</span><button type="button" onClick={() => void openOrderDetail(detailOrderId)} disabled={detailOrderLoading}>إعادة المحاولة</button></>
             : <><span>{detailOrderLoading ? 'قراءة السجل التشغيلي الحالي…' : 'تم التحقق من إجمالي وبنود الطلب قبل العرض.'}</span><button type="button" onClick={closeOrderDetail}>إغلاق</button></>}
         />;
       })()}
