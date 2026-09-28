@@ -275,6 +275,238 @@ STOP RETRY → CHANGE ROOT CAUSE OR SWITCH TO ANOTHER EXECUTABLE FRONT.
 
 **اتخذ القرار التقني المناسب ونفّذه مباشرة.**
 
+
+# 🔴 5-A. UI-FIRST EXECUTION LOCK — الواجهة الآن هي الجبهة الرئيسية
+
+هذه هي القاعدة التشغيلية الحاكمة للجلسة الحالية:
+
+**الهدف الأول: تحويل Aghbari Commerce من واجهات جزئية/شكلية إلى منتج UI مكتمل فعليًا.**
+
+طالما يوجد سطح UI من Commerce غير مكتمل، لا يجوز استهلاك وقت الجلسة الاختياري في:
+- تحسينات هندسية تجميلية غير مرتبطة بالفجوة؛
+- إعادة فحص شيء مغلق؛
+- كتابة تقارير طويلة؛
+- إعادة اكتشاف المشروع؛
+- توسيع documentation دون requirement جديد؛
+- إعادة محاولة blocker خارجي بلا تغير في سببه.
+
+## قاعدة المسار الرئيسي
+
+```text
+UI OPEN GAP
+→ UI IMPLEMENTATION
+→ REAL INTERACTION
+→ REAL STATE
+→ RESPONSIVE / ACCESSIBILITY
+→ IMMEDIATE PROOF
+→ NEXT UI GAP
+```
+
+ولا تنتقل من شاشة إلى التالية لمجرد أن الـroute يفتح.
+
+## شرط اكتمال الشاشة
+
+أي شاشة/سطح Commerce لا يعتبر مكتملًا إلا إذا كان له، بحسب انطباقه:
+
+```text
+REAL LAYOUT
++ REAL CONTENT CONTRACT
++ REAL CONTROLS
++ REAL FORMS
++ REAL SEARCH / FILTER / SORT / PAGINATION
++ REAL DRAWER / MODAL / CONFIRMATION
++ REAL LOADING / EMPTY / ERROR / SUCCESS / DISABLED
++ REAL PERMISSION BEHAVIOR
++ REAL ACTION / PERSISTENCE
++ RTL
++ DESKTOP / TABLET / MOBILE
++ ACCESSIBILITY
++ BROWSER / RUNTIME PROOF
+```
+
+Route exists أو looks good أو build passes ليست Definition of Done.
+
+## ممنوع الشاشة الهيكلية
+
+ممنوع إنهاء سطح من خلال:
+- عنوان + بطاقات تجميلية فقط؛
+- أزرار بلا تنفيذ؛
+- جدول وهمي أو بيانات ثابتة متنكرة كبيانات حقيقية؛
+- صفحة فارغة تنتظر استكمال لاحق؛
+- Coming soon لميزة موثقة ومطلوبة داخل Commerce؛
+- إخفاء subviews أو states لأن تنفيذها أصعب.
+
+إذا كان العقد الخلفي غير متوفر لميزة in-scope:
+
+```text
+IDENTIFY CONTRACT GAP
+→ IMPLEMENT CONTRACT IF IN SCOPE
+OR
+→ EXPLICIT BOUNDARY WITH REASON
+```
+
+ولا تستخدم fake behavior.
+
+## Customer Portal = سطح منتج كامل
+
+لا تعامل Customer Portal كنسخة ثانوية أو شاشة متجر بسيطة.
+
+أغلقه كاملًا، بما في ذلك:
+
+```text
+Catalog
+Categories
+Search
+Filters
+Product Detail
+Cart
+Checkout
+Orders
+Order Detail / Tracking
+Reorder
+Templates / Saved Orders
+Finance
+Invoices
+Payments
+Notifications
+Profile
+Company
+Addresses
+Account Settings
+Invitations
+Offline / Weak Network
+```
+
+وكل nested view/state/action المرتبط بها.
+
+## Admin / Staff = مساحات تشغيل حقيقية
+
+أغلق فعليًا جميع الأسطح الموثقة والمصرح بها، وليس مجرد روابط تنقل:
+
+```text
+Dashboard / Command Center
+Orders / Order Detail
+Customers / Customer Detail
+Catalog / Products / Categories
+Pricing
+Purchasing / Suppliers / Receiving
+Inventory / Warehouses / Transfers / Stock Count / History / Reconciliation
+Statements / Invoices / Payments / Expenses
+Import / Export
+Invitations
+Roles / Permissions
+Notifications
+Audit / Outbox / Governance
+Settings / Appearance
+Approved Integrations
+```
+
+العناصر غير المدعومة بعقد Commerce لا تُختلق؛ تُصنّف كـBoundary واضح.
+
+## قاعدة الفرع الصحيح
+
+كل requirement أو capability موثق يجب أن يُبنى تحت القسم/المساحة التي تنتمي إليها وظيفيًا.
+
+```text
+EXISTING CORRECT PARENT
+→ ADD UNDER THAT PARENT
+
+NO CORRECT PARENT
+→ CREATE A NEW LOGICAL SECTION / ROUTE
+
+UNSUPPORTED / OUT-OF-SCOPE
+→ EXPLICIT BOUNDARY
+```
+
+ممنوع دفن capability صحيحة داخل قسم غير منطقي فقط لتقليل عدد الـroutes.
+
+## المراجع الـ84 — حصر كامل بلا تضخيم
+
+لا تُنفذ 84 صورة كـ84 شاشة، لكن لا يجوز فقد أي مرجع.
+
+```text
+84 ASSETS
+→ ALL ACCOUNTED FOR
+→ DUPLICATES/EQUIVALENTS GROUPED
+→ EACH UNIQUE VISUAL FAMILY MAPPED
+→ EACH IN-SCOPE FAMILY IMPLEMENTED
+→ EACH OUT-OF-SCOPE FAMILY EXPLICITLY BOUNDED
+```
+
+وكل visual family in-scope يجب أن يصل إلى implementation حقيقي، لا مجرد registry entry.
+
+## لا تعتبر الصورة المرجعية مجرد إلهام عند وجود capability مطابقة
+
+إذا كشفت الصورة pattern أو state أو workflow أو responsive behavior أو navigation pattern أو field/action/interaction أو requirement تشغيليًا، فاستخرج ما ينطبق إلى العقد الصحيح ثم:
+
+```text
+REFERENCE
+→ REQUIREMENT / UX CONTRACT
+→ IMPLEMENTATION
+→ TEST
+→ PROOF
+```
+
+## وضع التنفيذ لمدة 120 دقيقة
+
+عند تشغيل هذه الرسالة، تعامل مع أول 120 دقيقة كـexecution window مكثف:
+
+```text
+0–5 min:
+VERIFY HEAD + POINTER + TARGET FILES
+
+5–90 min:
+PRIMARY UI CLOSURE
+Admin/Staff + Customer + nested states + reference-backed gaps
+
+90–110 min:
+REAL ACTIONS + RESPONSIVE + ACCESSIBILITY + AFFECTED CORE CONTRACTS
+
+110–120 min:
+FOCUSED TEST + BROWSER/BUILD PROOF + WRITE-BACK + NEXT POINTER
+```
+
+لا تستخدم الـ120 دقيقة لتوسيع الاستكشاف.
+
+إذا ظهرت فجوة UI كبيرة أثناء التنفيذ: ابنها الآن، لا تسجلها فقط.
+
+إذا كانت جبهة أخرى blocked خارجيًا: لا تدعها توقف UI.
+
+إذا كانت Security defect حرجة أو core dependency تمنع UI حقيقيًا: نفذ dependency اللازمة، ثم ارجع فورًا إلى UI.
+
+## مقياس الجلسة
+
+في كل closure batch سجّل أرقامًا قابلة للقياس، وليس وصفًا إنشائيًا:
+
+```text
+UI OPEN BEFORE
+UI CLOSED THIS BATCH
+UI OPEN AFTER
+CUSTOMER SURFACES CLOSED
+ADMIN/STAFF SURFACES CLOSED
+REFERENCE PACKS CLOSED
+NESTED STATES CLOSED
+REAL ACTIONS CLOSED
+BLOCKED + ROOT CAUSE
+```
+
+إذا لم ينخفض عدد فجوات UI أو لم يزد نطاق الواجهات المكتملة دون سبب موثق، فالجلسة لم تحقق تقدم UI كافيًا.
+
+## ممنوع إنهاء الجلسة بنتيجة شكلية
+
+لا تنهِ الجلسة بعبارات مثل تحسين الواجهة أو تجهيز التصميم أو إضافة components بينما لا تزال أسطح Commerce الرئيسية ناقصة.
+
+النتيجة المطلوبة:
+
+```text
+MORE REAL SCREENS
++ MORE REAL STATES
++ MORE REAL ACTIONS
++ MORE CUSTOMER COVERAGE
++ MORE ADMIN COVERAGE
++ LESS OPEN UI GAPS
+```
+
 # 6. REFERENCE-FIRST UI — تنفيذ كامل للمراجع وليس معاينة شكلية
 
 المصدر البصري الإلزامي:
@@ -1140,17 +1372,26 @@ Production يبقى:
 
 حتى يصبح exact-source evidence مكتملًا.
 
-# 25. FINAL ORDER — الإغلاق الكامل لا التوقف المبكر
+# 25. FINAL ORDER — UI-FIRST + FULL PRODUCT CLOSURE
 
 EXECUTE NOW.
 
 ~~~text
 ACTUAL CURRENT HEAD
-→ CANONICAL MEMORY
-→ CURRENT STATE
-→ OPEN-GAP FRONTIER
-→ PARALLEL UI + CORE + SECURITY + QA + RELEASE
-→ REFERENCE-DRIVEN UI CLOSURE
+→ CURRENT RESUME POINTER
+→ UI-FIRST OPEN GAP
+→ REFERENCE + CANONICAL CAPABILITY MAP
+→ REAL SCREEN / SUBVIEW
+→ REAL STATES / ACTIONS
+→ CUSTOMER + ADMIN COVERAGE
+→ AFFECTED CORE / SECURITY DEPENDENCY
+→ FOCUSED TEST + BROWSER / RUNTIME PROOF
+→ EXACT-SHA PROOF
+→ REQUIREMENT WRITE-BACK
+→ COMPACT STATE WRITE-BACK
+→ NEXT UI GAP
+→ NEXT CORE/SECURITY GAP
+→ CONTINUE
 → REAL ACTIONS / PERSISTENCE
 → TEST + TEST-THE-TEST
 → SECURITY / BROWSER / RUNTIME
@@ -1163,19 +1404,26 @@ ACTUAL CURRENT HEAD
 
 ## ممنوعات الإغلاق المبكر
 - لا تعتبر route مكتملًا لمجرد أنه يفتح.
-- لا تعتبر screenshot مطابقًا إذا كانت الوظيفة وهمية.
+- لا تعتبر navigation أو component أو card إنجاز شاشة.
+- لا تعتبر screenshot مطابقًا إذا كانت الوظيفة وهمية أو الحالات الأساسية ناقصة.
 - لا تعتبر build أو CI بديلًا عن runtime/browser proof.
 - لا تنقل evidence من SHA سابق.
 - لا تعيد العمل المغلق دون سبب موثق.
-- لا توقف UI حتى يكتمل backend إذا كان هناك UI work مستقل وآمن.
-- لا توقف CORE/SECURITY لأن UI أو deployment متوقف.
+- لا توقف UI بسبب backend غير متعلق بالسطح الحالي.
+- لا تستخدم blocker خارجي مبررًا لترك باقي الـUI معلقًا.
 - لا تنتظر المستخدم إلا في خطوة بشرية حقيقية بعد استنفاد البدائل المجانية العملية.
 - لا تنفق موارد مدفوعة لمجرد إعادة محاولة blocker لم يتغير سببه.
+- لا تنهِ الجلسة مع وجود UI gap واضح قابل للتنفيذ بينما توجد نتائج توثيقية فقط.
 
 ## Definition of Done
 ~~~text
 FULL REFERENCE COVERAGE
-+ FULL UI / STATES / ACTIONS
++ FULL UNIQUE SCREEN / SUBVIEW COVERAGE
++ FULL ADMIN/STAFF UI
++ FULL CUSTOMER PORTAL
++ FULL NESTED STATES / ACTIONS
++ REAL DATA / PERSISTENCE
++ RESPONSIVE / ACCESSIBILITY
 + FULL CORE CLOSURE
 + SECURITY / RLS / RBAC
 + TEST-THE-TEST
