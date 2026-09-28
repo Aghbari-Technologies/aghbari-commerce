@@ -112,8 +112,8 @@ describe('customer statement coverage', () => {
     expect(serviceSource).toContain(".in('invoice_id', invoiceIds)");
   });
 
-  it('preserves the six-section PortalSection contract while exposing statements within Finance', () => {
-    expect(source).toContain("type PortalSection = 'catalog' | 'orders' | 'finance' | 'templates' | 'account' | 'notifications'");
+  it('preserves the seven-section PortalSection contract while exposing statements within Finance', () => {
+    expect(source).toContain("type PortalSection = 'home' | 'catalog' | 'orders' | 'finance' | 'templates' | 'account' | 'notifications'");
     expect(source).toContain("section==='finance'");
   });
 });
