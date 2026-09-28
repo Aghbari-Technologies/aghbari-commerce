@@ -1,0 +1,97 @@
+import { test, expect, type Page } from '@playwright/test';
+
+async function login(page: Page, email: string, password: string) {
+  await page.goto('/');
+  const form = page.locator('form').filter({ has: page.locator('input[type="password"]') }).first();
+  await form.locator('input[type="email"]').fill(email);
+  await form.locator('input[type="password"]').fill(password);
+  await form.getByRole('button', { name: 'دخول آمن' }).click();
+}
+
+test.describe('UI reference-family browser coverage', () => {
+  test('customer portal: all six canonical surfaces render with their primary state controls', async ({ page }) => {
+    const email = process.env.E2E_EMAIL;
+    const password = process.env.E2E_PASSWORD;
+    expect(email).toBeTruthy();
+    expect(password).toBeTruthy();
+
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await login(page, email!, password!);
+    await expect(page.locator('.customer-shell')).toBeVisible();
+
+    const sections = [
+      ['catalog', 'الكتالوج'],
+      ['orders', 'طلباتي'],
+      ['finance', 'المركز المالي'],
+      ['templates', 'القوالب والطلبات المحفوظة'],
+      ['account', 'حسابي'],
+      ['notifications', 'الإشعارات'],
+    ] as const;
+
+    for (const [section, label] of sections) {
+      await page.getByRole('button', { name: label, exact: true }).first().click();
+      await expect(page).toHaveURL(new RegExp('#' + section + '$'));
+      await page.screenshot({ path: `test-results/ui-customer-${section}-desktop.png`, fullPage: true });
+    }
+  });
+
+  test('customer portal: mobile shell keeps navigation, filters and primary actions usable', async ({ page }) => {
+    const email = process.env.E2E_EMAIL;
+    const password = process.env.E2E_PASSWORD;
+    expect(email).toBeTruthy();
+    expect(password).toBeTruthy();
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await login(page, email!, password!);
+    await expect(page.locator('.customer-shell')).toBeVisible();
+    await expect(page.locator('.customer-mobile-dock')).toBeVisible();
+
+    await page.getByRole('button', { name: 'المزيد', exact: true }).click();
+    await expect(page.getByRole('dialog', { name: 'المزيد من بوابة الأغبري' })).toBeVisible();
+    await page.screenshot({ path: 'test-results/ui-customer-mobile-navigation.png', fullPage: true });
+
+    await page.getByRole('button', { name: 'المركز المالي', exact: true }).click();
+    await expect(page.locator('.customer-finance-panel').first()).toBeVisible();
+    await page.screenshot({ path: 'test-results/ui-customer-finance-mobile.png', fullPage: true });
+  });
+
+  test('admin control plane: live workspace families expose their actual anchors', async ({ page }) => {
+    const email = process.env.E2E_ADMIN_EMAIL;
+    const password = process.env.E2E_ADMIN_PASSWORD;
+    expect(email).toBeTruthy();
+    expect(password).toBeTruthy();
+
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await login(page, email!, password!);
+    await expect(page.getByRole('heading', { name: 'مركز التحكم' }).first()).toBeVisible();
+
+    const anchors = [
+      ['admin-dashboard', 'مركز القيادة'],
+      ['admin-orders', 'إدارة الطلبات'],
+      ['admin-customers', 'دورة العميل'],
+      ['admin-catalog', 'إدارة الكتالوج'],
+      ['admin-pricing-matrix', 'مصفوفة الأسعار'],
+      ['admin-inventory', 'المخزون'],
+      ['admin-warehouses', 'دليل المستودعات والفروع'],
+      ['admin-purchasing', 'المشتريات'],
+      ['admin-receipts', 'سجل الاستلام'],
+      ['admin-suppliers', 'دليل الموردين والحساب'],
+      ['admin-finance', 'المالية التشغيلية'],
+      ['admin-export', 'مركز التصدير'],
+      ['admin-settings', 'التحكم الديناميكي بتطبيق العميل'],
+      ['admin-notifications', 'إشعارات مركز التشغيل'],
+      ['admin-governance', 'التدقيق والتكاملات'],
+      ['admin-access', 'الأدوار والصلاحيات'],
+    ] as const;
+
+    for (const [id] of anchors) {
+      const target = page.locator('#' + id);
+      await expect(target).toBeVisible();
+      await target.scrollIntoViewIfNeeded();
+      await page.screenshot({ path: `test-results/ui-admin-${id}.png`, fullPage: false });
+    }
+
+    await expect(page.getByText('العامري', { exact: false })).toHaveCount(0);
+    await page.screenshot({ path: 'test-results/ui-admin-control-plane-full.png', fullPage: true });
+  });
+});
