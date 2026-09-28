@@ -92,3 +92,26 @@ describe('catalog and pricing surface closure', () => {
     expect(sourceText).toContain("sort==='highest'");
   });
 });
+
+
+describe('purchasing, inventory and receiving collection closure', () => {
+  it('keeps purchase order sorting tied to server-loaded creation timestamps', () => {
+    const sourceText = readRepoSource('PurchasingPanel.tsx');
+    expect(sourceText).toContain('created_at');
+    expect(sourceText).toContain('ترتيب أوامر الشراء');
+    expect(sourceText).toContain("orderSort==='highest'");
+  });
+
+  it('keeps inventory history sorting tied to recorded movement timestamps', () => {
+    const sourceText = readRepoSource('InventoryHistoryPanel.tsx');
+    expect(sourceText).toContain('ترتيب حركات المخزون');
+    expect(sourceText).toContain("sort==='oldest'");
+  });
+
+  it('keeps receipt history sorting tied to received_at', () => {
+    const sourceText = readRepoSource('PurchaseReceiptHistoryPanel.tsx');
+    expect(sourceText).toContain('ترتيب سجل الاستلام');
+    expect(sourceText).toContain('received_at');
+    expect(sourceText).toContain("sort==='oldest'");
+  });
+});

@@ -9,7 +9,7 @@ type Status = 'draft' | 'submitted' | 'approved' | 'partially_received' | 'recei
 interface Product { id: string; sku: string; name: string; unit: string; }
 interface Warehouse { id: string; name: string; }
 interface Supplier { id: string; name: string; phone: string | null; }
-interface PurchaseOrder { id: string; purchase_order_number: number; supplier_id: string; warehouse_id: string; status: Status; total: number; currency: string; }
+interface PurchaseOrder { id: string; purchase_order_number: number; supplier_id: string; warehouse_id: string; status: Status; total: number; currency: string; created_at: string; }
 interface PurchaseItem { id: string; purchase_order_id: string; product_id: string; quantity_ordered: number; quantity_received: number; unit_cost: number; }
 
 const statusLabels: Record<Status, string> = {
@@ -32,7 +32,7 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
   const [purchaseLines, setPurchaseLines] = useState<Array<{id:string;productId:string;quantity:string;unitCost:string}>>([{ id: 'line-1', productId: '', quantity: '1', unitCost: '0' }]);
   const [selectedOrderId, setSelectedOrderId] = useState('');
   const [receiveLines, setReceiveLines] = useState<Array<{id:string;purchaseOrderItemId:string;productId:string;quantity:string}>>([{id:'receive-1',purchaseOrderItemId:'',productId:'',quantity:'1'}]);
-  const [busy, setBusy] = useState(false); const [loading, setLoading] = useState(true); const [orderQuery,setOrderQuery]=useState(''); const [orderStatus,setOrderStatus]=useState<'all'|Status>('all'); const [orderPage,setOrderPage]=useState(1);
+  const [busy, setBusy] = useState(false); const [loading, setLoading] = useState(true); const [orderQuery,setOrderQuery]=useState(''); const [orderStatus,setOrderStatus]=useState<'all'|Status>('all'); const [orderSort,setOrderSort]=useState<'newest'|'oldest'|'highest'|'lowest'>('newest'); const [orderPage,setOrderPage]=useState(1);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [detailOrderId, setDetailOrderId] = useState<string | null>(null);
@@ -44,7 +44,7 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
       supabase.from('products').select('id,sku,name,unit').eq('status', 'active').order('name').limit(500),
       supabase.from('warehouses').select('id,name').eq('is_active', true).order('created_at'),
       supabase.from('suppliers').select('id,name,phone').eq('is_active', true).order('name').limit(200),
-      supabase.from('purchase_orders').select('id,purchase_order_number,supplier_id,warehouse_id,status,total,currency').order('created_at', { ascending: false }).limit(100),
+      supabase.from('purchase_orders').select('id,purchase_order_number,supplier_id,warehouse_id,status,total,currency,created_at').order('created_at', { ascending: false }).limit(100),
       supabase.from('purchase_order_items').select('id,purchase_order_id,product_id,quantity_ordered,quantity_received,unit_cost').order('created_at')
     ]);
     if (productError) throw productError;
@@ -62,7 +62,7 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
   }, [canManage]);
 
   useEffect(() => { void load().catch((e) => { setLoading(false); setError(e instanceof Error ? e.message : 'تعذر تحميل المشتريات.'); }); }, [load]);
-  useEffect(()=>{setOrderPage(1);},[orderQuery,orderStatus]);
+  useEffect(()=>{setOrderPage(1);},[orderQuery,orderSort,orderStatus]);
 
   async function run(action: () => Promise<unknown>, success: string) {
     setBusy(true); setError(null); setMessage(null);
@@ -75,7 +75,7 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
   const supplierNameFor = (id: string) => suppliers.find((supplier) => supplier.id === id)?.name ?? 'مورد';
   const productNameFor = (id: string) => products.find((product) => product.id === id)?.name ?? id;
   useEffect(()=>{ if (!selectedOrderItems.length) { setReceiveLines([{id:'receive-1',purchaseOrderItemId:'',productId:'',quantity:'1'}]); return; } setReceiveLines(current=>{ const valid=current.filter(line=>selectedOrderItems.some(item=>item.id===line.purchaseOrderItemId)); if(valid.length) return valid; const first=selectedOrderItems[0]; return [{id:'receive-1',purchaseOrderItemId:first.id,productId:first.product_id,quantity:'1'}]; }); },[selectedOrderItems.map(item=>item.id).join('|')]);
-  const visibleOrders=useMemo(()=>{const needle=orderQuery.trim().toLocaleLowerCase();return orders.filter(o=>(orderStatus==='all'||o.status===orderStatus)&&(!needle||String(o.purchase_order_number).includes(needle)||(suppliers.find(s=>s.id===o.supplier_id)?.name??'').toLocaleLowerCase().includes(needle)||statusLabels[o.status].includes(needle)));},[orderQuery,orderStatus,orders,suppliers]); const orderPages=Math.max(1,Math.ceil(visibleOrders.length/8)); const activeOrderPage=Math.min(orderPage,orderPages); const pagedOrders=visibleOrders.slice((activeOrderPage-1)*8,activeOrderPage*8);
+  const visibleOrders=useMemo(()=>{const needle=orderQuery.trim().toLocaleLowerCase();return orders.filter(o=>(orderStatus==='all'||o.status===orderStatus)&&(!needle||String(o.purchase_order_number).includes(needle)||(suppliers.find(s=>s.id===o.supplier_id)?.name??'').toLocaleLowerCase().includes(needle)||statusLabels[o.status].includes(needle))).sort((a,b)=>{if(orderSort==='highest')return Number(b.total)-Number(a.total);if(orderSort==='lowest')return Number(a.total)-Number(b.total);const delta=new Date(b.created_at).getTime()-new Date(a.created_at).getTime();return orderSort==='oldest'?-delta:delta;});},[orderQuery,orderSort,orderStatus,orders,suppliers]); const orderPages=Math.max(1,Math.ceil(visibleOrders.length/8)); const activeOrderPage=Math.min(orderPage,orderPages); const pagedOrders=visibleOrders.slice((activeOrderPage-1)*8,activeOrderPage*8);
 
   if (!canManage) return null;
 
@@ -106,7 +106,10 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
             <option value="all">كل الحالات</option>
             {(Object.keys(statusLabels) as Status[]).map((key) => <option key={key} value={key}>{statusLabels[key]}</option>)}
           </select>
-          <button type="button" className="ghost" onClick={() => { setOrderQuery(''); setOrderStatus('all'); }} disabled={!orderQuery && orderStatus === 'all'}>مسح</button>
+          <select aria-label="ترتيب أوامر الشراء" value={orderSort} onChange={(e) => setOrderSort(e.target.value as typeof orderSort)} disabled={loading}>
+            <option value="newest">الأحدث</option><option value="oldest">الأقدم</option><option value="highest">الأعلى قيمة</option><option value="lowest">الأقل قيمة</option>
+          </select>
+          <button type="button" className="ghost" onClick={() => { setOrderQuery(''); setOrderStatus('all'); setOrderSort('newest'); }} disabled={!orderQuery && orderStatus === 'all' && orderSort === 'newest'}>مسح</button>
         </div>
         {orders.length === 0 ? (
           <div className="empty-state"><strong>لا توجد أوامر شراء بعد.</strong><button type="button" onClick={() => void load()}>إعادة المحاولة</button></div>
