@@ -30,6 +30,7 @@ describe('workspace surface rail contracts', () => {
     expect(STAFF_PACKS.find((pack) => pack.id === 'governance')).toMatchObject({ targets: ['#admin-governance', '#admin-notifications'] });
     expect(STAFF_PACKS.find((pack) => pack.id === 'access')).toMatchObject({ target: '#admin-access', targets: ['#admin-access'] });
     expect(STAFF_PACKS.find((pack) => pack.id === 'settings')).toMatchObject({ target: '#admin-settings', targets: ['#admin-settings'] });
+    expect(STAFF_PACKS.find((pack) => pack.id === 'finance')).toMatchObject({ target: '#admin-finance', targets: ['#admin-finance', '#admin-finance-history'] });
     expect(source).toContain("pack.tone === 'boundary' && boundaryVisible");
   });
 
