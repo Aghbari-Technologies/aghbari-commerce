@@ -3,7 +3,7 @@
 Project: Aghbari Commerce | الأغبري
 Repository: `Aghbari-Technologies/aghbari-commerce`
 Branch: `main`
-Current Git HEAD: `64e4b7161defc64d102d3dbeed57614e993c9f40` (verified live immediately after the latest execution batch)
+Current Git HEAD: READ LIVE FROM refs/heads/main after each execution batch; mutable truth is never cached here.
 Production: `HOLD / NO TOUCH`
 Certification: `NOT CLAIMED`
 
@@ -52,3 +52,13 @@ Re-read exact `refs/heads/main`; execute/fetch the bounded quality proof if an a
 - Do not mutate Production to bypass migration gates.
 - Do not retry unchanged hosted blockers.
 - Do not reopen closed Customer/Admin workspace, loading-state, catalog-filter, boundary-anchor or order-detail work without a regression/dependency/security/requirement trigger.
+
+
+## 2026-09-28 — Authentication and full live-surface UI batch
+- Implementation parent SHA: f674de0011701a66783feb288bc0bd24908b56a5.
+- Implemented on the active Aghbari runtime: full branded sign-in/recovery surface, password visibility control, real password-reset request, friendly Arabic auth failures, loading/success/error states, responsive/reduced-motion auth styling.
+- Added focused authentication contract test and bounded Quality inclusion.
+- Admin live workspace strip now exposes the complete role-authorized live-target set instead of the earlier 18-link cap.
+- Customer Portal terminology refined to make the saved-order-template surface explicit.
+- Exact current build/security/G1/Test-the-Test/browser proof must be read from the resulting HEAD; no historical evidence is transferred.
+- Production: HOLD / NO TOUCH.

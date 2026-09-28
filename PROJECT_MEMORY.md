@@ -141,3 +141,14 @@
 - Customer Portal and core Admin list surfaces should use bounded responsive skeleton loading states rather than text-only placeholders where layout is already known.
 - Loading animation must degrade cleanly under `prefers-reduced-motion: reduce`.
 - Loading UI is presentation-only and must never imply transaction success or business state.
+
+
+## 2026-09-28 — Authentication + complete live-surface navigation closure
+- Replaced the minimal login form in the active AppV3Fixed runtime with a full Aghbari B2B authentication experience: brand panel, account-context messaging, email/password fields, password visibility control, loading feedback, safe Arabic auth errors, password-reset request flow, success/error states, responsive layout and reduced-motion behavior.
+- Added friendlyAuthError and a real resetPassword service path using the existing Supabase Auth contract; no fake recovery or local-only success state was introduced.
+- Added src/auth-screen.test.ts and included it in the bounded Aghbari Quality workflow.
+- Admin live-workspace navigation no longer truncates the role-authorized live surface list; all role-authorized live targets returned by the canonical Admin structure are exposed in the workspace strip.
+- Customer Portal remains six canonical sections with the existing nested live capability map. Terminology was corrected from the earlier ambiguous المسحات wording to القوالب.
+- Exact parent implementation checkpoint: f674de0011701a66783feb288bc0bd24908b56a5. The documentation checkpoint that follows may advance HEAD; exact proof never transfers from the parent.
+- Current build/browser/runtime proof remains subject to the exact resulting SHA and active workflow runs.
+- Production remains HOLD / NO TOUCH; no Supabase production mutation was performed.

@@ -262,3 +262,29 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Certification: NOT CLAIMED.
 - Production: HOLD / NO TOUCH
 - Next: exact current Aghbari Quality result → first material failure only → Test-the-Test/Concurrency/Browser/G1/Security exact-SHA matrix.
+
+
+## Run 2026-09-28 — Authentication + complete live-surface navigation closure
+- Run: 2026-09-28
+- Implementation parent SHA: f674de0011701a66783feb288bc0bd24908b56a5
+- Branch: main
+- Implemented:
+  - Full Aghbari B2B login surface in active AppV3Fixed runtime instead of the previous minimal form.
+  - Real Supabase password-reset request path with return-to-login flow.
+  - Password visibility control, loading spinner, safe Arabic authentication errors, success/error feedback, responsive and reduced-motion styling.
+  - Focused src/auth-screen.test.ts and bounded Quality workflow integration.
+  - Admin role-authorized live workspace navigation now exposes the complete live-target set rather than the earlier 18-link cap.
+  - Customer Portal saved-order-template labels clarified to القوالب.
+- Verified:
+  - refs/heads/main advanced through the batch and remains on main.
+  - No Production mutation.
+  - Existing canonical Customer/Admin surfaces were preserved; unsupported boundaries remain explicit.
+- Proven:
+  - Source-level implementation and repository linkage on the exact implementation line.
+  - Exact current CI/browser/runtime proof remains dependent on the final resulting SHA and current workflow completion.
+- Blocked:
+  - Vercel free-plan build-rate-limit remains the unchanged hosted blocker; no paid retry.
+  - Production purchase/receipt idempotency migration remains source-controlled and unapplied.
+- Certification: NOT CLAIMED
+- Production: HOLD / NO TOUCH
+- Next: re-read exact HEAD, inspect the current workflow run set for that exact SHA, fix only any material failure, then continue the next canonical UI/core gap without reopening closed work.
