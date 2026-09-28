@@ -73,6 +73,7 @@ html{scroll-behavior:smooth}
 .admin-panel #admin-inventory,
 .admin-panel #admin-purchasing,
 .admin-panel #admin-finance,
+.admin-panel #admin-finance-history,
 .admin-panel #admin-governance,
 .admin-panel #admin-access{
   margin-top:24px;
