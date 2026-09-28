@@ -22,6 +22,7 @@ export const AGHBARI_CUSTOMER_STRUCTURE: CustomerStructureItem[] = [
   { id: 'order-detail', label: 'تفاصيل/تتبع الطلب', section: 'orders', status: 'live', description: 'خط زمني وتفاصيل الأصناف والإعادة.' },
   { id: 'templates', label: 'القوالب والطلبات المحفوظة', section: 'templates', status: 'live', description: 'حفظ وإعادة تطبيق الطلبات الدورية.' },
   { id: 'quick-order', label: 'الطلب السريع', section: 'catalog', status: 'live', description: 'SKU أو باركود مع حدود تحقق قبل RPC.' },
+  { id: 'pricing', label: 'الأسعار', section: 'catalog', status: 'live', description: 'قائمة الأسعار المصرّح بها للحساب مع شرائح الكمية والبحث والفرز، مبنية على بيانات التسعير الحالية للعميل.' },
   { id: 'account', label: 'حساب التاجر', section: 'account', status: 'live', description: 'السياق والاتصال والمنظمة والمستودع والتعافي.' },
   { id: 'profile', label: 'الهوية والجلسة', section: 'account', status: 'live', description: 'هوية العميل والجلسة والصلاحية التشغيلية.' },
   { id: 'company', label: 'الشركة والحساب', section: 'account', status: 'live', description: 'سياق المنظمة والعميل والمستودع والفئة التجارية.' },
