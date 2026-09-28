@@ -4,7 +4,19 @@ function Block({ className = '' }: { className?: string }) {
   return <i className={'operational-skeleton-block ' + className} aria-hidden="true" />;
 }
 
-export default function OperationalLoadingSkeleton({ variant }: { variant: 'inventory' | 'purchasing' | 'collection' }) {
+export default function OperationalLoadingSkeleton({ variant }: { variant: 'inventory' | 'purchasing' | 'collection' | 'app' }) {
+  if (variant === 'app') {
+    return (
+      <div className="operational-loading-skeleton operational-loading-skeleton-app" role="status" aria-label="جارٍ تجهيز واجهة الأغبري">
+        <div className="operational-skeleton-app-bar"><Block className="w-34 h-14" /><Block className="w-20 h-12" /><Block className="w-16 h-12" /></div>
+        <div className="operational-skeleton-app-hero"><Block className="w-62 h-24" /><Block className="w-80" /><Block className="w-48" /><Block className="w-100 h-42" /></div>
+        <div className="operational-skeleton-app-grid">
+          {Array.from({ length: 6 }).map((_, index) => <article key={index}><Block className="w-28 h-12" /><Block className="w-72 h-18" /><Block className="w-48" /></article>)}
+        </div>
+        <span className="operational-loading-skeleton-text">يتم تجهيز مساحة الأغبري…</span>
+      </div>
+    );
+  }
   if (variant === 'collection') {
     return (
       <div className="operational-loading-skeleton operational-loading-skeleton-collection" role="status" aria-label="جارٍ تحميل السجلات">
