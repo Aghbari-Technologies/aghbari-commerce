@@ -122,7 +122,7 @@ export const AGHBARI_ADMIN_STRUCTURE: AdminStructureGroup[] = [
       live('invoices', 'الفواتير', '/admin/finance/invoices', 'finance.view', '#admin-finance', ['view', 'create', 'export']),
       live('payments', 'التحصيل والمدفوعات', '/admin/finance/payments', 'finance.view', '#admin-finance', ['view', 'create']),
       live('expenses', 'المصروفات', '/admin/finance/expenses', 'finance.view', '#admin-finance', ['view', 'create']),
-      live('finance-history', 'سجل العمليات المالية', '/admin/finance/history', 'finance.view', '#admin-finance', ['view', 'export']),
+      live('finance-history', 'سجل العمليات المالية', '/admin/finance/history', 'finance.view', '#admin-finance-history', ['view', 'export']),
     ],
   },
   {
