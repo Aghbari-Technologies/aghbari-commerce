@@ -39,7 +39,7 @@ describe('canonical UI coverage', () => {
     for (const role of roles) {
       for (const group of getAdminStructureForRole(role)) {
         for (const item of group.items) {
-          if (item.status === 'live' && item.target) liveTargets.add(item.target);
+          if (item.status === 'live' && item.target) liveTargets.add(item.target.trim());
         }
       }
     }
