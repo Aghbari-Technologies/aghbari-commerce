@@ -127,11 +127,21 @@ export default function WorkspaceSurfaceRail(props: WorkspaceSurfaceRailProps) {
           const enabled = allowedStaffTargets.has(pack.target) || (pack.tone === 'boundary' && boundaryVisible);
           const active = activeStaffTarget === pack.target;
           if (!enabled) return null;
+          const packItems = getAdminStructureForRole(props.role)
+            .flatMap((group) => group.items)
+            .filter((item) => item.target === pack.target && item.status === 'live');
+          const className = 'workspace-surface-item' + (active ? ' active' : '') + \` tone-\${pack.tone}\`;
           return (
-            <a key={pack.id} href={pack.target} className={active ? `workspace-surface-item active tone-${pack.tone}` : `workspace-surface-item tone-${pack.tone}`} aria-current={active ? 'page' : undefined}>
+            <a key={pack.id} href={pack.target} className={className} aria-current={active ? 'page' : undefined}>
               <span className="workspace-surface-index">{String(index + 1).padStart(2, '0')}</span>
               <span className="workspace-surface-copy"><small>{pack.eyebrow}</small><strong>{pack.label}</strong><em>{pack.tone === 'boundary' ? 'قدرات خارج عقد Commerce الحالي' : 'فتح مساحة التشغيل الفعلية'}</em></span>
               <b aria-hidden="true">{active ? '●' : '↗'}</b>
+              {packItems.length > 0 && (
+                <span className="workspace-surface-subitems" aria-label={\`قدرات \${pack.label}\`}>
+                  {packItems.slice(0, 5).map((item) => <small key={item.id}>✓ {item.label}</small>)}
+                  {packItems.length > 5 && <small>+{packItems.length - 5} أخرى</small>}
+                </span>
+              )}
             </a>
           );
         })}
