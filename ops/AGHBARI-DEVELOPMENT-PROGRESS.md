@@ -492,3 +492,13 @@ Next: current exact-SHA Quality + Test-the-Test; then browser/runtime if executa
 - Blocked: purchase/receipt 200→128 migration remains unapplied pending exact migration + concurrency + negative + Test-the-Test evidence; Vercel free-plan build-rate-limit remains unchanged and was not retried.
 - Certification: `NOT CLAIMED` | Production: `HOLD / NO TOUCH`
 - Next: focused UI suite/typecheck when execution environment is available; prepare non-production 128-bound proof and then continue next independent UI/Core gap.
+
+
+## Run 2026-09-29 — Customer navigation + UI corpus guard
+- Run: 2026-09-29 | SHA: `2f78f4a4c38d45454b1a9a9d338ff2f03442f4d7` | Branch: `execution/ui-full-closure-20260929` | PR: #157
+- Implemented: centralized customer navigation, hidden-section direct URL guard, notification offline state, Admin deep-link/detail fallback, 84-reference accounting guard.
+- Verified: customer live subviews remain mapped under parent workspaces; no duplicate reference-derived screens created.
+- Proven: static/source verification only; exact-SHA runtime/browser CI unavailable on connector-created SHA.
+- Blocked: Vercel free-plan build-rate-limit; purchase/receipt live idempotency remains 200 pending approved proof/migration.
+- Certification: NOT CLAIMED | Production: HOLD / NO TOUCH
+- Next: exact-SHA quality/browser proof; non-production 128-bound concurrency + negative test.
