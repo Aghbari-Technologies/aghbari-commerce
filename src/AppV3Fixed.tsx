@@ -319,7 +319,7 @@ export default function AppV3Fixed(){
         <div className="portal-quick-grid">
           <button type="button" className="portal-quick-item primary" onClick={()=>setCartOpen(true)}><span aria-hidden="true">🛒</span><div><strong>مراجعة السلة</strong><small>{cartCount?cartCount.toLocaleString('ar')+' وحدة في السلة':'السلة فارغة'}</small></div><b>↗</b></button>
           <button type="button" className="portal-quick-item" onClick={()=>navigate('orders')}><span aria-hidden="true">🧾</span><div><strong>آخر الطلبات</strong><small>{orders.length?orders.length.toLocaleString('ar')+' طلب في السجل':'لم تُرسل طلبات بعد'}</small></div><b>↗</b></button>
-          {config.showTemplates&&<button type="button" className="portal-quick-item" onClick={()=>navigate('templates')}><span aria-hidden="true">▤</span><div><strong>القوالب المحفوظة</strong><small>{templates.length} مسحة محفوظة</small></div><b>↗</b></button>}
+          {config.showTemplates&&<button type="button" className="portal-quick-item" onClick={()=>navigate('templates')}><span aria-hidden="true">▤</span><div><strong>القوالب المحفوظة</strong><small>{templates.length} قالب محفوظ</small></div><b>↗</b></button>}
           {config.showCredit&&<button type="button" className="portal-quick-item" onClick={()=>navigate('finance')}><span aria-hidden="true">◫</span><div><strong>المركز المالي</strong><small>{finance?money(finance.available,finance.currency):'بيانات الحساب'}</small></div><b>↗</b></button>}
         </div>
       </section>
@@ -432,7 +432,7 @@ export default function AppV3Fixed(){
       <section className="customer-mobile-more-menu" id="customer-mobile-more-menu" role="dialog" aria-modal="true" aria-labelledby="customer-mobile-more-title" onClick={event=>event.stopPropagation()}>
         <div className="customer-mobile-more-head"><div><span className="eyebrow">تنقل إضافي</span><strong id="customer-mobile-more-title">المزيد من بوابة الأغبري</strong></div><button type="button" className="ghost" aria-label="إغلاق القائمة" onClick={()=>setMobileMoreOpen(false)}>×</button></div>
         <div className="customer-mobile-more-grid">
-          {config.showTemplates&&<button type="button" className={section==="templates"?"active":""} onClick={()=>{setMobileMoreOpen(false);navigate("templates")}}><span>▤</span><strong>المسحات</strong><small>طلباتك المحفوظة وإعادة استخدامها</small></button>}
+          {config.showTemplates&&<button type="button" className={section==="templates"?"active":""} onClick={()=>{setMobileMoreOpen(false);navigate("templates")}}><span>▤</span><strong>القوالب</strong><small>طلباتك المحفوظة وإعادة استخدامها</small></button>}
           <button type="button" className={section==="notifications"?"active":""} onClick={()=>{setMobileMoreOpen(false);navigate("notifications")}}><span>🔔</span><strong>الإشعارات</strong><small>تنبيهات الحساب والطلبات</small></button>
           {config.showCredit&&<button type="button" className={section==="finance"?"active":""} onClick={()=>{setMobileMoreOpen(false);navigate("finance")}}><span>◫</span><strong>المركز المالي</strong><small>الفواتير والمدفوعات والكشف</small></button>}
         </div>
