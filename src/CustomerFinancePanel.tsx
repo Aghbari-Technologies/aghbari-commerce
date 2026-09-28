@@ -195,19 +195,19 @@ export default function CustomerFinancePanel({ customerId, online }: { customerI
       </div>
 
       <div className="customer-finance-summary" aria-label={view === 'invoices' ? 'ملخص المستندات المالية' : 'ملخص كشف الحساب'}>
-        {view === 'invoices' ? <>
-          <article><small>إجمالي الفواتير</small><strong>{totals.count.toLocaleString('ar')}</strong><span>المستندات المتاحة للحساب</span></article>
-          <article><small>المفتوحة</small><strong>{totals.open.toLocaleString('ar')}</strong><span>تحتاج متابعة أو سداد</span></article>
-          <article><small>القيمة الإجمالية</small><strong>{totals.totals.length ? totals.totals.map(([currency, total]) => money(total, currency)).join(' · ') : '—'}</strong><span>{totals.totals.length > 1 ? 'مجمعة حسب العملة' : 'للفواتير المحملة'}</span></article>
-        </> : <>
-          <article><small>إجمالي الفواتير</small><strong>{statementTotals.map((item) => money(item.invoiced, item.currency)).join(' · ') || '—'}</strong><span>القيمة الإجمالية للمستندات</span></article>
-          <article><small>إجمالي المدفوع</small><strong>{statementTotals.map((item) => money(item.paid, item.currency)).join(' · ') || '—'}</strong><span>الدفعات المسجلة للحساب</span></article>
-          <article><small>الرصيد المتبقي</small><strong>{statementTotals.map((item) => money(item.outstanding, item.currency)).join(' · ') || '—'}</strong><span>المبلغ المفتوح حسب العملة</span></article>
-        </>}
-      </div>
-        <article><small>إجمالي الفواتير</small><strong>{totals.count.toLocaleString('ar')}</strong><span>المستندات المتاحة للحساب</span></article>
-        <article><small>المفتوحة</small><strong>{totals.open.toLocaleString('ar')}</strong><span>تحتاج متابعة أو سداد</span></article>
-        <article><small>القيمة الإجمالية</small><strong>{totals.totals.length ? totals.totals.map(([currency, total]) => money(total, currency)).join(' · ') : '—'}</strong><span>{totals.totals.length > 1 ? 'مجمعة حسب العملة' : 'للفواتير المحملة'}</span></article>
+        {view === 'invoices' ? (
+          <>
+            <article><small>إجمالي الفواتير</small><strong>{totals.count.toLocaleString('ar')}</strong><span>المستندات المتاحة للحساب</span></article>
+            <article><small>المفتوحة</small><strong>{totals.open.toLocaleString('ar')}</strong><span>تحتاج متابعة أو سداد</span></article>
+            <article><small>القيمة الإجمالية</small><strong>{totals.totals.length ? totals.totals.map(([currency, total]) => money(total, currency)).join(' · ') : '—'}</strong><span>{totals.totals.length > 1 ? 'مجمعة حسب العملة' : 'للفواتير المحملة'}</span></article>
+          </>
+        ) : (
+          <>
+            <article><small>إجمالي الفواتير</small><strong>{statementTotals.map((item) => money(item.invoiced, item.currency)).join(' · ') || '—'}</strong><span>القيمة الإجمالية للمستندات</span></article>
+            <article><small>إجمالي المدفوع</small><strong>{statementTotals.map((item) => money(item.paid, item.currency)).join(' · ') || '—'}</strong><span>الدفعات المسجلة للحساب</span></article>
+            <article><small>الرصيد المتبقي</small><strong>{statementTotals.map((item) => money(item.outstanding, item.currency)).join(' · ') || '—'}</strong><span>المبلغ المفتوح حسب العملة</span></article>
+          </>
+        )}
       </div>
 
       <div className="customer-finance-toolbar" role="search">
@@ -244,7 +244,7 @@ export default function CustomerFinancePanel({ customerId, online }: { customerI
               ))}
             </div>
             <div className="directory-pagination" aria-label="صفحات كشف الحساب">
-              <span>صفحة {activeStatementPage} / {statementPages} · عرض {((activeStatementPage - 1) * PAGE_SIZE) + 1}–{Math.min(activeStatementPage * PAGE_SIZE, filteredStatement.length)} من {filteredStatement.length}</span>
+              <span>صفحة {activeStatementPage} / {statementPages} · عرض {filteredStatement.length ? ((activeStatementPage - 1) * PAGE_SIZE) + 1 : 0}–{Math.min(activeStatementPage * PAGE_SIZE, filteredStatement.length)} من {filteredStatement.length}</span>
               <div><button className="ghost" type="button" onClick={() => setPage((value) => Math.max(1, value - 1))} disabled={activeStatementPage === 1}>السابق</button><button className="ghost" type="button" onClick={() => setPage((value) => Math.min(statementPages, value + 1))} disabled={activeStatementPage === statementPages}>التالي</button></div>
             </div>
           </>
@@ -282,6 +282,7 @@ export default function CustomerFinancePanel({ customerId, online }: { customerI
           </div>
         </>
       )}
+
 
       ) : null}
 
