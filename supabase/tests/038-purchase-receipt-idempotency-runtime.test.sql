@@ -124,7 +124,7 @@ end $$;
 
 select ok((select purchase_128_ok from _purchase_receipt_runtime_proof),
   'runtime purchase idempotency: 128-character key accepted');
-do $
+do $$
 begin
   begin
     perform * from public.create_purchase_order(
@@ -141,7 +141,7 @@ begin
   exception when sqlstate '40001' then
     null;
   end;
-end $;
+end $$;
 
 select is(
   (select count(*)::int from public.purchase_orders
@@ -151,7 +151,7 @@ select is(
   'same-key purchase payload conflict does not create a second purchase'
 );
 
-do $
+do $$
 declare
   existing_receipt uuid;
   existing_item uuid;
@@ -181,7 +181,7 @@ begin
   exception when sqlstate '40001' then
     null;
   end;
-end $;
+end $$;
 
 select is(
   (select count(*)::int from public.purchase_receipts
