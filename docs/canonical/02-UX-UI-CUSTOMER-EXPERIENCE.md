@@ -210,3 +210,9 @@ Requirements discovered from references or canonical specifications are not park
 - Home is RTL-first and responsive across desktop/tablet/mobile, with a compact summary of current account context, operational state and quick actions into existing capabilities.
 - Home uses the shared overview cards, quick-action, hero and trust primitives already used elsewhere in the portal; no second visual system is introduced.
 - Home must expose real online/offline state and must never present cached financial or transactional data as authoritative.
+
+
+## 2026-09-29 — Customer capability actionability
+- Every live capability declared in `src/structure/customer-structure.ts` must be directly actionable from the active Customer Portal workspace rail.
+- A capability action must resolve to an existing live screen, tab, dialog, focus target or explicit safe boundary using the current Commerce contracts; it must not introduce fake data, new transaction authority or a second navigation model.
+- Cross-section capability actions continue through the existing cart-confirmation gate and server-backed state. Nested finance/account/callout surfaces remain inside their canonical parent sections to avoid duplicate screens.
