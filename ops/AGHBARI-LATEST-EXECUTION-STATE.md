@@ -3,7 +3,7 @@
 Project: Aghbari Commerce | الأغبري
 Repository: `Aghbari-Technologies/aghbari-commerce`
 Branch: `main`
-Current Git HEAD: READ LIVE FROM refs/heads/main after each execution batch; mutable truth is never cached here.
+Current Git HEAD: `b1ac2e231ae060f506bb0dd3b03ba6ab81077243` (verified from the latest sequential write).
 Production: `HOLD / NO TOUCH`
 Certification: `NOT CLAIMED`
 
@@ -16,7 +16,9 @@ Certification: `NOT CLAIMED`
 - Customer Catalog now supports authorized-price ascending/descending sorting.
 - Staff WorkspaceSurfaceRail exposes complete live subviews and explicit boundary links without truncation.
 - Admin Command Center renders complete canonical group contents without the previous group truncation and its navigation semantics are cleaned.
-- Admin Orders, Customer Directory, Finance History, Inventory Activity, Supplier Ledger, Staff Access, P## Latest execution batch — 2026-09-28
+- Admin Orders, Customer Directory, Finance History, Inventory Activity, Supplier Ledger, Staff Access.
+
+## Latest execution batch — 2026-09-28
 - Implemented: full Staff workspace subview exposure and boundary routing.
 - Implemented: Customer Templates collection/detail/delete workflow.
 - Implemented: explicit Customer Checkout review step over the existing real submit function, plus success close.
@@ -76,3 +78,20 @@ Re-read exact `refs/heads/main` after this documentation checkpoint. Run/inspect
 - Do not mutate Production to bypass migration gates.
 - Do not retry unchanged hosted blockers.
 - Do not reopen closed UI surfaces without a regression/dependency/security/requirement trigger.
+
+
+## 2026-09-29 — UI terminology + canonical coverage guard
+- Exact current main HEAD: `b1ac2e231ae060f506bb0dd3b03ba6ab81077243`.
+- Implemented: removed remaining stale customer template terminology from the portal, shared workspace rail, customer structure and client settings; corrected stale template error/success copy.
+- Implemented: `src/canonical-ui-coverage.test.ts` covering the 84-reference corpus, canonical six Customer Portal sections, role-filtered live Admin targets, explicit Admin boundaries, dynamic customer capability rendering and live invitation acceptance.
+- Verified: source re-read on exact HEAD; affected UI sources contain no stale production `المسحات` / legacy product-identity terms; canonical coverage guard is source-controlled. Vercel status remains `pending`, not runtime proof.
+- Not proven: exact-SHA unit/test execution, browser visual/runtime proof, hosted exact-source proof on this HEAD, Test-the-Test completion.
+- Blocked: local repository execution is unavailable in this session; Vercel connector currently returns authorization failure and the existing Netlify deploy is older and has no commit_ref, so neither is exact-source proof for this HEAD.
+- Production: `HOLD / NO TOUCH`.
+
+## NEXT EXECUTABLE ACTION
+Execute the exact-SHA test/proof matrix for `b1ac2e231ae060f506bb0dd3b03ba6ab81077243`; fix only the first material failure. Then continue the next genuinely open Admin/Staff or Customer UI/core gap. Purchase/receipt 16..128 remains source-controlled and production-unapplied until migration + concurrency + negative + Test-the-Test proof is complete.
+
+## DO NOT REPEAT
+- Do not reopen completed customer templates/checkout/catalog sorting, Staff subview exposure, Admin collection controls, or low-stock/category/notification detail surfaces without a regression trigger.
+- Do not retry the unchanged Vercel authorization/protection path.
