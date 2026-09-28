@@ -448,3 +448,13 @@ Proven: source-level only; exact-SHA CI/browser/runtime proof pending.
 Blocked: local clone/DNS unavailable; hosted deployment blocker unchanged.
 Certification: NOT CLAIMED | Production: HOLD / NO TOUCH
 Next: exact-current-SHA quality/test-the-test, fix first material failure once, then next independent UI/core gap.
+
+
+## Run 2026-09-29 — Customer Finance + Pricing closure
+Run: 2026-09-29 | Code checkpoint: 7a27ca8be18743537467262b671315df895b1d63 | Branch: main
+Implemented: Customer Finance كشف الحساب + سجل الدفعات over real invoice/payment records; dedicated Customer Catalog الأسعار dialog over existing authorized pricing/tier data; focused contracts; canonical requirement/UI write-back.
+Verified: underlying Finance data remains RLS-scoped/read-only; pricing uses existing authorized price/tier functions; no fake transaction or new authority.
+Proven: prior financial checkpoint 1869563 had Aghbari Quality/application-quality/Security/G1/bootstrap PASS; pricing lineage exact-SHA proof pending.
+Blocked: Vercel protected exact runtime fails at bypass-secret redirect; Netlify exact-source deploy requires repo-local CLI source access.
+Certification: NOT CLAIMED | Production: HOLD / NO TOUCH
+Next: current exact-SHA Quality + Test-the-Test; then browser/runtime if executable; then next independent UI/core gap.
