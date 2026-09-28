@@ -425,3 +425,16 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Certification: `NOT CLAIMED`
 - Production: `HOLD / NO TOUCH`
 - Next: execute the exact current-SHA quality/test-the-test matrix from main; on failure fix the first material root cause once, then continue the next independent core/UI gap.
+
+
+## Run 2026-09-29 — Staff surface expansion + CI root-cause closure
+- Run: `2026-09-29`
+- SHA: `de6d8ee87262c267db4d502806aeeb211206f57f`
+- Branch: `main`
+- Implemented: Customer order timeline state fix; canonical purchasing + finance-history registration; Staff purchasing pack; multi-target Staff inventory/purchasing navigation; CI test repairs.
+- Verified: affected exact-SHA targeted tests passed before the final de6 write; fresh de6 workflows active.
+- Proven: implementation/source and targeted exact-SHA test results only; final de6 certification proof pending.
+- Blocked: no local repo network execution; hosted Vercel remains protected/pending; production untouched.
+- Certification: `NOT CLAIMED`
+- Production: `HOLD / NO TOUCH`
+- Next: inspect de6 exact-SHA workflows, fix first material failure once, then continue the next independent gap.
