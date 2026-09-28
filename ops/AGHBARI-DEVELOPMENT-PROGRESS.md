@@ -482,3 +482,13 @@ Next: current exact-SHA Quality + Test-the-Test; then browser/runtime if executa
 - Blocked: Vercel free-plan build-rate-limit; local execution unavailable.
 - Certification: `NOT CLAIMED` | Production: `HOLD / NO TOUCH`
 - Next: exact-SHA Vitest/typecheck; first material failure only; then next independent UI/Core gap.
+
+
+## Run 2026-09-29 — UI + live Core checkpoint
+- Run: `2026-09-29` | SHA: `e9e0f26c09c5eb05ab8e859139cc93bb665588c0` | Branch: `execution/ui-full-closure-20260929` | PR: #157
+- Implemented: Admin anchor/deep-link closure; 84-reference accounting guard; Customer notification offline fail-closed UX; latest main Customer Home responsive CSS absorbed.
+- Verified: 21/21 Admin runtime targets unique; 84/84 references unique across 8 packs; legacy product-name scan clean on runtime UI; live Supabase confirmed purchase/receipt idempotency still 16..200.
+- Proven: static/source + live SQL inspection only; local suite/browser/runtime exact-SHA proof not available.
+- Blocked: purchase/receipt 200→128 migration remains unapplied pending exact migration + concurrency + negative + Test-the-Test evidence; Vercel free-plan build-rate-limit remains unchanged and was not retried.
+- Certification: `NOT CLAIMED` | Production: `HOLD / NO TOUCH`
+- Next: focused UI suite/typecheck when execution environment is available; prepare non-production 128-bound proof and then continue next independent UI/Core gap.
