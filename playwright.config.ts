@@ -21,7 +21,7 @@ export default defineConfig({
   use: {
     baseURL,
     trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
+    screenshot: 'on',
     video: 'on-first-retry',
     ...(extraHTTPHeaders ? { extraHTTPHeaders } : {}),
     ...devices['Desktop Chrome']
