@@ -484,3 +484,14 @@ Next: current exact-SHA Quality + Test-the-Test; then browser/runtime if executa
 - Blocked: local clone/DNS unavailable; hosted Vercel exact-source proof remains the known free-plan rate-limit blocker.
 - Certification: NOT CLAIMED | Production: HOLD / NO TOUCH
 - Next: exact current-SHA Quality/Test-the-Test when executable; then continue next independent UI/core gap.
+
+
+## Run 2026-09-29 — Customer capability map exactness
+- Run: 2026-09-29
+- Implementation lineage: `43507d6f6df4611d3cc92109082146e527c9a8f2`
+- Branch: `main`
+- Implemented: added an explicit `account` capability route in AppV3Fixed so all 25 canonical CustomerStructure items have deliberate handling; strengthened the focused navigation contract.
+- Verified: capability set remains 25 live items; each has explicit dispatch or the documented invitation safe-boundary behavior; 84 visual references remain uniquely accounted.
+- Proven: source/static verification only. No browser/runtime PASS claimed.
+- Certification: NOT CLAIMED | Production: HOLD / NO TOUCH
+- Next: exact current-SHA Quality/Test-the-Test as soon as executable; then next independent UI/core gap.
