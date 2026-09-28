@@ -438,3 +438,13 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Certification: `NOT CLAIMED`
 - Production: `HOLD / NO TOUCH`
 - Next: inspect de6 exact-SHA workflows, fix first material failure once, then continue the next independent gap.
+
+
+## Run 2026-09-29 — Direct B2B quantity closure
+Run: 2026-09-29 | SHA: pending commit | Branch: main
+Implemented: direct quantity entry in customer catalog/product-detail/cart; bounded quantity validator; focused regression test; canonical UX + memory write-back.
+Verified: wired to existing real cart services; no fake transaction path; limits enforced before persistence.
+Proven: source-level only; exact-SHA CI/browser/runtime proof pending.
+Blocked: local clone/DNS unavailable; hosted deployment blocker unchanged.
+Certification: NOT CLAIMED | Production: HOLD / NO TOUCH
+Next: exact-current-SHA quality/test-the-test, fix first material failure once, then next independent UI/core gap.

@@ -24,3 +24,19 @@ Execute the exact-current-SHA Quality/Test-the-Test matrix for the final UI chan
 
 ## NEXT EXECUTABLE ACTION
 Read the exact de6 workflow matrix. Fix only the first material failure. If it passes, continue the next independent canonical UI/core gap.
+
+
+## 2026-09-29 — Direct B2B quantity closure batch
+- SHA: pending commit (this batch).
+- Implemented: direct quantity entry on Customer catalog cards, Product Detail and cart drawer; shared validation helper; focused regression contract; UX canonical requirement write-back.
+- Verified: controls are wired to the existing real cart persistence path and bounded by authorized stock plus the 10,000 line ceiling.
+- Proven: source-level implementation/test contract only; local execution is unavailable because repository clone/DNS access is unavailable from this runtime. Browser/runtime/hosted exact-source proof is not claimed.
+- Production: HOLD / NO TOUCH.
+
+## NEXT EXECUTABLE ACTION
+Run the exact current-SHA quality/test-the-test workflow for the quantity closure batch; fix the first material failure once. Then close the next independent Customer/Admin screen-family gap without reopening closed surfaces.
+
+## DO NOT REPEAT
+- Do not remove direct quantity entry or replace it with placeholder controls.
+- Do not reopen customer account/address/profile, checkout, catalog sorting, Staff subviews, notification or terminology closures without a regression/requirement trigger.
+- Do not retry unchanged hosted deployment blockers.

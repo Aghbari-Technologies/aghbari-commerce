@@ -180,3 +180,11 @@ The Customer Portal and Admin/Staff surfaces are first-class product areas. Miss
 The 84 supplied PNGs are a visual reference corpus. Every asset remains accounted for through the UI reference index, while duplicate/equivalent references share one implementation target. An in-scope visual family cannot be closed through a registry row, route existence, generic cards, or a visually similar placeholder.
 
 Requirements discovered from references or canonical specifications are not parked as notes: they are routed to the owning canonical contract and implemented in the same closure wave whenever they are in scope. Unsupported behavior is an explicit boundary, not a fake transaction.
+
+
+## 2026-09-29 — Direct B2B quantity entry
+
+- Customer catalog cards, product detail and the cart drawer expose direct integer quantity entry in addition to +/- controls for fast wholesale workflows.
+- Quantity entry is bounded by the existing central per-line ceiling and current authorized available quantity; invalid, fractional, unavailable or over-cap values fail closed in the UI.
+- Persistence continues through the existing real cart service path; this is a presentation/workflow improvement only and introduces no new transaction authority.
+- Keyboard Enter/blur commit the same quantity path, while loading/error/offline behavior remains governed by the existing cart and portal contracts.

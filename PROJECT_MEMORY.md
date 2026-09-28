@@ -178,3 +178,8 @@
 - Customer checkout is a dedicated review step over the existing order-submit contract; it does not create new transaction authority.
 - Collection surfaces use real search/filter/sort/pagination/progressive disclosure controls over existing server-backed data.
 - 84 visual references remain provenance/pattern input, not an 84-screen denominator; reusable visual patterns are implemented once through shared surfaces/components.
+
+
+## 2026-09-29 — Direct B2B quantity workflow
+- Customer catalog/detail/cart now support direct integer quantity entry using the existing cart persistence path.
+- The quantity UI fails closed at the existing 10,000 central line ceiling and current authorized available quantity; no new backend authority was added.
