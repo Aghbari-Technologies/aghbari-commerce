@@ -6,7 +6,7 @@ async function login(page: Page, email: string, password: string) {
   const form = page.locator('form').filter({ has: page.locator('input[type="password"]') }).first();
   await form.locator('input[type="email"]').fill(email);
   await form.locator('input[type="password"]').fill(password);
-  await form.getByRole('button', { name: 'دخول آمن' }).click();
+  await form.getByRole('button', { name: 'دخول إلى بوابة الأغبري' }).click();
 }
 
 test.describe('UI reference-family browser coverage', () => {
