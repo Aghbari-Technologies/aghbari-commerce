@@ -141,3 +141,28 @@ button:disabled, [aria-disabled='true'] { cursor: not-allowed; }
 
 /* Admin contextual navigation closure — 2026-09-28 */
 .admin-current-workspace{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0 7px;padding:9px 11px;border:1px solid #dbe8ec;border-radius:14px;background:#f7fbfc;color:#718792}.admin-current-workspace .eyebrow{margin:0}.admin-current-workspace strong{color:#173d51;font-size:11px}.admin-current-workspace small{font-size:7px;color:#8a9ba2}.admin-command-nav>a.active{background:#eaf8fa!important;color:#0a7283!important;border-color:#a7d5dc!important;font-weight:900;box-shadow:inset 0 -2px 0 #0d91a5}.admin-command-nav>a{transition:background-color .14s ease,color .14s ease,border-color .14s ease}@media(max-width:640px){.admin-current-workspace{align-items:flex-start;flex-direction:column;gap:3px}.admin-current-workspace small{font-size:7px}}
+
+
+/* Customer Home screen-pack closure — shared primitives, responsive context, no asset duplication. */
+.customer-home-workspace{display:grid;gap:12px}
+.customer-home-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(170px,240px);gap:16px;align-items:stretch}
+.customer-home-hero h2{margin:6px 0 8px}
+.customer-home-hero p{max-width:760px;margin:0;color:#647b85;line-height:1.8}
+.customer-home-context{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.customer-home-context span{display:inline-flex;flex-direction:column;gap:3px;min-width:150px;padding:9px 10px;border:1px solid #dfeaec;border-radius:12px;background:#f8fcfd}
+.customer-home-context small{color:#80939c;font-size:8px}
+.customer-home-context strong{color:#244f61;font-size:10px}
+.customer-home-actions{margin-top:0}
+.customer-home-trust{margin-top:0}
+.customer-home-trust p{margin:0;color:#607782;line-height:1.8}
+@media(max-width:760px){
+  .customer-mobile-dock{display:grid;grid-template-columns:repeat(6,minmax(0,1fr))}
+  .customer-mobile-dock button{min-width:0;padding-inline:4px}
+  .customer-mobile-dock small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .customer-home-hero{grid-template-columns:1fr}
+  .customer-home-hero .hero-stat{min-height:100px}
+}
+@media(max-width:480px){
+  .customer-home-context{display:grid;grid-template-columns:1fr 1fr}
+  .customer-home-context span{min-width:0}
+}
