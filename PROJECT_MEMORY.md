@@ -207,3 +207,8 @@
 ## 2026-09-29 — Admin deep-link contract
 - Parameterized Admin order paths `/admin/order/:id` resolve to the existing Orders workspace and open the concrete record detail; this reuses existing server-backed order-detail authority and adds no transaction authority.
 - Canonical Admin workspace targets must remain single-owner DOM anchors; child-owned anchors must not be duplicated by parent wrappers.
+
+
+## 2026-09-29 — Customer notification offline contract
+- Customer notifications are server-backed and fail closed while offline: cached notification rows are cleared/not presented as authoritative, mutation controls are unavailable, and the connection state remains explicit.
+- Staff notification behavior is unchanged; the offline boundary is only applied to the customer audience.
