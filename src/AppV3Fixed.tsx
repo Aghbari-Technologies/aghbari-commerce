@@ -33,7 +33,11 @@ type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer' | 'customer
 type PortalSection = 'catalog' | 'orders' | 'finance' | 'templates' | 'account' | 'notifications';
 const PORTAL_SECTION_META: Record<PortalSection,{label:string;eyebrow:string;hint:string}> = { catalog:{label:'الكتالوج',eyebrow:'التسوق',hint:'اكتشف الأصناف والأسعار والمخزون ثم أضف الكميات مباشرة.'}, orders:{label:'طلباتي',eyebrow:'المتابعة',hint:'راجع الطلبات الحالية والسجل والتتبع وإعادة الطلب.'}, finance:{label:'المركز المالي',eyebrow:'الثقة المالية',hint:'راجع الرصيد والائتمان والحركات المالية المتاحة لحسابك.'}, templates:{label:'المسحات الجاهزة',eyebrow:'طلبات متكررة',hint:'أعد تطبيق طلباتك المحفوظة بضغطة واحدة.'}, account:{label:'حسابي',eyebrow:'سياق الحساب',hint:'الهوية والاتصال والمستودع وحالات الاسترداد.'}, notifications:{label:'الإشعارات',eyebrow:'التشغيل',hint:'تابع التنبيهات المرتبطة بالحساب والطلبات.'} };
 function getVisibleCustomerPortalSections(config: { showCredit: boolean; showTemplates: boolean }): PortalSection[] {
-  return ['catalog', 'orders', ...(config.showCredit ? ['finance'] : []), ...(config.showTemplates ? ['templates'] : []), 'account', 'notifications'];
+  const sections: PortalSection[] = ['catalog', 'orders'];
+  if (config.showCredit) sections.push('finance');
+  if (config.showTemplates) sections.push('templates');
+  sections.push('account', 'notifications');
+  return sections;
 }
 const PORTAL_SECTIONS = new Set<PortalSection>(['catalog', 'orders', 'finance', 'templates', 'account', 'notifications']);
 const sectionFromHash = (): PortalSection => {
