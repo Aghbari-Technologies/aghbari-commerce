@@ -31,3 +31,12 @@ describe('UI screen-family closure contract', () => {
     expect(CUSTOMER_PORTAL_SECTIONS).toEqual(['catalog', 'orders', 'finance', 'templates', 'account', 'notifications']);
   });
 });
+
+describe('admin dashboard full structure', () => {
+  it('does not truncate canonical structure groups before rendering', () => {
+    const dashboard = source('AdminExecutiveDashboard.tsx');
+    expect(dashboard).not.toContain(".slice(0, 8)");
+    expect(dashboard).toContain('const boundaryItems = group.items.filter((item) => item.status !== \'live\');');
+    expect(dashboard).toContain('const liveItems = group.items.filter((item) => item.status === \'live\');');
+  });
+});
