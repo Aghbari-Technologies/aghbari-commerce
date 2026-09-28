@@ -252,7 +252,7 @@ export default function CustomerFinancePanel({ customerId, online }: { customerI
       ) : null}
 
       {view === 'invoices' ? (
-      {loading ? (
+        loading ? (
         <div className="customer-finance-loading-skeleton" role="status" aria-label="جارٍ تحميل الفواتير">{Array.from({length:4}).map((_,index)=><article key={index}><div><i/><i/></div><i/><i/><i/><span/></article>)}</div>
       ) : error ? (
         <div className="error-banner" role="alert"><span>{error}</span><button className="ghost" type="button" onClick={() => void load()}>إعادة المحاولة</button></div>
