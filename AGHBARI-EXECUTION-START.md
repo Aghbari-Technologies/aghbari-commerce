@@ -8,6 +8,127 @@
 
 # 0. EXECUTE NOW
 
+# 🔴 0-A. MANDATORY BOOT + SESSION CONTINUITY CONTRACT
+
+هذه الملفات جزء من أمر التشغيل نفسه وليست مراجع اختيارية.
+**لا يجوز بدء التنفيذ قبل ربطها وقراءتها بالترتيب التالي:**
+
+```text
+1. AGHBARI-EXECUTION-START.md
+   ↓
+2. PROJECT_MEMORY.md
+   ↓
+3. ops/AGHBARI-LATEST-EXECUTION-STATE.md
+   ↓
+4. ops/AGHBARI-DEVELOPMENT-PROGRESS.md
+   ↓
+5. docs/CANONICAL-DOCUMENT-SYSTEM.md
+   ↓
+6. docs/ui-reference/UI-REFERENCE-ASSET-INDEX.md
+   ↓
+7. docs/canonical/02-UX-UI-CUSTOMER-EXPERIENCE.md
+   ↓
+8. RELEVANT SPECIALIST CANONICAL DOCUMENT(S) FOR THE CLAIMED GAP
+```
+
+### قاعدة الربط
+
+- **AGHBARI-EXECUTION-START.md** = بروتوكول الإقلاع وقواعد التنفيذ.
+- **PROJECT_MEMORY.md** = القرارات والمتطلبات والحدود الدائمة فقط.
+- **AGHBARI-LATEST-EXECUTION-STATE.md** = الحالة الحية + Resume Pointer + Open Gaps + Blockers + Do-Not-Repeat.
+- **AGHBARI-DEVELOPMENT-PROGRESS.md** = سجل التنفيذ المضغوط لكل Run.
+- **docs/CANONICAL-DOCUMENT-SYSTEM.md** = مالك كل نوع من المتطلبات ومسار الربط canonical.
+- **UI-REFERENCE-ASSET-INDEX.md** = provenance/coverage للمراجع الـ84 وقاعدة screen packs.
+- **02-UX-UI-CUSTOMER-EXPERIENCE.md** = العقد الحاكم للـUX/UI.
+- **specialist canonical docs** = العقد المتخصص الخاص بالفجوة التي ستُنفذ.
+
+**لا يجوز استبدال هذه السلسلة بذاكرة المحادثة أو تقرير سابق أو SHA محفوظ.**
+
+### قاعدة الاستئناف الإلزامي
+
+بعد الإقلاع:
+
+```text
+ACTUAL MAIN HEAD
+→ CURRENT LIVE STATE
+→ LAST WRITTEN RESUME POINTER
+→ EXACT OPEN GAP
+→ TARGET FILES
+→ IMPLEMENT
+```
+
+إذا اختلف HEAD الحقيقي عن SHA المذكور في أي تقرير سابق:
+**الحقيقة هي HEAD الحقيقي، والتقرير القديم يصبح تاريخيًا.**
+
+إذا لم يوجد Resume Pointer صالح:
+استخرج أقرب نقطة استئناف من **LATEST-EXECUTION-STATE + DEVELOPMENT-PROGRESS + actual Git diff/history** بشكل موجّه، ثم ابدأ التنفيذ فورًا.
+
+**ممنوع العودة إلى Gap أقدم** لمجرد أنه موجود في تقرير تاريخي إذا كان قد أُغلق أو تجاوزه HEAD الحالي.
+
+### END-OF-SESSION WRITE-BACK — إلزامي قبل إنهاء أي جلسة
+
+لا تنتهِ الجلسة بمجرد قول "تم".
+
+قبل نهاية كل جلسة تنفيذية، يجب تنفيذ:
+
+```text
+IMPLEMENTED BATCHES
+→ FOCUSED TEST / VERIFY
+→ ACTUAL NEW HEAD
+→ UPDATE ops/AGHBARI-LATEST-EXECUTION-STATE.md
+→ UPDATE ops/AGHBARI-DEVELOPMENT-PROGRESS.md
+→ UPDATE PROJECT_MEMORY.md ONLY IF DURABLE CHANGE EXISTS
+→ UPDATE UI-REFERENCE-ASSET-INDEX.md IF REFERENCE COVERAGE CHANGED
+→ UPDATE CANONICAL OWNER IF A NEW REQUIREMENT / CONTRACT WAS DISCOVERED
+→ SET EXACT NEXT EXECUTABLE ACTION
+→ SET DO-NOT-REPEAT
+→ FINAL COMPACT SESSION RECORD
+```
+
+### منع الإغلاق بدون تقرير حالة
+
+إذا لم يتم تحديث **LATEST-EXECUTION-STATE** و **DEVELOPMENT-PROGRESS** بالحالة الفعلية للجلسة و**NEXT EXECUTABLE ACTION** المحدد، فالجلسة **غير مغلقة**.
+
+لا تكتب تقريرًا منفصلًا ضخمًا إذا كان يمكن تسجيل الخلاصة في الملفات canonical الحالية.
+
+### NEXT EXECUTABLE ACTION يجب أن يكون قابلًا للتنفيذ مباشرة
+
+ممنوع:
+
+```text
+Continue UI
+Continue development
+Continue testing
+```
+
+مسموح فقط بصيغة قابلة للتنفيذ، مثل:
+
+```text
+Implement [specific surface/subview] in [specific file],
+connect [specific service/contract],
+run [specific focused test],
+verify [specific browser/state],
+then continue to [specific next gap].
+```
+
+### SESSION HANDOFF INVARIANT
+
+أي مبرمج جديد يستطيع استئناف الجلسة التالية دون قراءة Chat History إذا قرأ:
+
+```text
+ACTUAL GIT HEAD
++
+PROJECT_MEMORY.md
++
+AGHBARI-LATEST-EXECUTION-STATE.md
++
+AGHBARI-DEVELOPMENT-PROGRESS.md
++
+RELEVANT CANONICAL DOCS
+```
+
+**لا تعتمد على أن "المبرمج سيتذكر". اجعل المستودع نفسه يحمل نقطة الاستئناف.**
+
 هذه الرسالة ليست طلب تحليل أو خطة أو تقرير.
 
 **الأمر هو: EXECUTE NOW.**
