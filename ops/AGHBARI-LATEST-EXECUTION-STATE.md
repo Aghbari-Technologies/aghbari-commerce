@@ -8,32 +8,29 @@ Production: `HOLD / NO TOUCH`
 Certification: `NOT CLAIMED`
 
 ## Current reality
-- Exact current main HEAD: `bc71199ed2edc188fd54ca9299ca80d36e2881f1`.
-- Active runtime remains `src/main.tsx -> AppV3Fixed`.
-- Customer Portal remains six canonical sections; Customer Templates is now a full collection workspace with search, sort, pagination, detail and destructive confirmation.
-- Staff workspace rail exposes full live subviews and explicit boundary links without truncation.
-- Admin Command Center structure is no longer truncated; Customer Directory, Admin Orders, Finance History, Inventory Activity, Supplier Ledger and Staff Access now expose richer collection controls.
-- Notification surface now has a real detail drawer while preserving existing server-side read authorization.
-- Category Directory exposes progressive detail; Pricing Matrix exposes validity and value/time sorting using the existing price contract.
-- No unsupported transaction authority was added; Production remains untouched.
-
-## Latest execution batch — 2026-09-28
-- Customer Templates: full collection UX + detail/delete confirmation.
-- Staff workspace: complete live/boundary subview exposure.
-- Admin Command Center: full canonical group rendering without the former 8-item cap.
-- Customer Directory: account sort + richer detail metadata.
-- Admin Orders / Finance History / Inventory Activity / Supplier Ledger / Staff Access: real sort/filter controls.
-- Notifications: real detail drawer and safe markup/componentization.
-- Categories: detail drawer for hierarchy nodes.
-- Pricing: validity filter and deterministic sorting.
-- Focused closure tests added/extended; affected Quality workflow includes the new contracts.
+- Exact current main HEAD: `a91bf39a7772eb82a122e44f87e02ca6e55c13a9`.
+- Active browser entrypoint remains `src/main.tsx -> AppV3Fixed`.
+- Customer Portal canonical sections remain six.
+- Customer Templates is now an explicit full collection surface with search, sort, pagination, detail and delete confirmation.
+- Customer Checkout is now an explicit review step over the existing real order-submit contract, with offline/quantity/min-max guards and automatic modal close after success.
+- Customer Catalog now supports authorized-price ascending/descending sorting.
+- Staff WorkspaceSurfaceRail exposes complete live subviews and explicit boundary links without truncation.
+- Admin Command Center renders complete canonical group contents without the previous group truncation and its navigation semantics are cleaned.
+- Admin Orders, Customer Directory, Finance History, Inventory Activity, Supplier Ledger, Staff Access, P## Latest execution batch — 2026-09-28
+- Implemented: full Staff workspace subview exposure and boundary routing.
+- Implemented: Customer Templates collection/detail/delete workflow.
+- Implemented: explicit Customer Checkout review step over the existing real submit function, plus success close.
+- Implemented: Admin collection sorting/filter controls across orders, customers, finance, inventory, suppliers, purchasing, receiving, access and warehouses.
+- Implemented: Customer authorized-price sorting.
+- Implemented: Command Center semantic cleanup and duplicate navigation removal.
+- Implemented: full low-stock work queue with search, warehouse filter and pagination.
+- Implemented: category detail drawer and notification detail surface.
+- Tests: focused UI closure contracts extended; Aghbari Quality includes the new UI contracts.
 
 ## Verification
-- Browser E2E / Exact Deployment for `bc71199ed2edc188fd54ca9299ca80d36e2881f1`: SUCCESS.
-- Security audit for `bc71199ed2edc188fd54ca9299ca80d36e2881f1`: SUCCESS.
-- Bootstrap lockfile for `bc71199ed2edc188fd54ca9299ca80d36e2881f1`: SUCCESS.
-- Aghbari Quality / application-quality / G1 / Test-the-Test for `bc71199ed2edc188fd54ca9299ca80d36e2881f1`: still executing or pending at last read; no premature PASS claimed.
-- Exact-source hosted visual certification remains unproven; Production remains HOLD / NO TOUCH.
+- Current exact-SHA proof lanes on this HEAD are active/pending; no premature Certification is claimed.
+- Recent exact-SHA Browser E2E completed successfully on preceding implementation checkpoints; current HEAD proof must remain tied to this exact SHA.
+- Production: HOLD / NO TOUCH.
 
 ## Open gaps
 1. Finish exact-SHA Quality/Test-the-Test/G1 matrix and fix only the first material failure.
@@ -48,8 +45,7 @@ Certification: `NOT CLAIMED`
 - Production remains untouched.
 
 ## NEXT EXECUTABLE ACTION
-Re-read exact `refs/heads/main`; inspect the completed Quality/G1/Test-the-Test result for `bc71199ed2edc188fd54ca9299ca80d36e2881f1`. If any job fails, fix only its root cause. Otherwise immediately execute the next uncovered canonical UI surface/subview and add its focused contract test.
-
+Re-read exact `refs/heads/main`; inspect Aghbari Quality / Test-the-Test / G1 / Security / Browser results for the exact HEAD. Fix only the first material failure. If proof lanes pass or remain externally blocked, continue the next uncovered canonical UI surface and immediately checkpoint the result.
 ## DO NOT REPEAT
 - Never transfer evidence across SHA.
 - Do not restore UI truncation caps.

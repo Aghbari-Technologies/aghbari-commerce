@@ -362,3 +362,15 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Blocked: hosted visual certification remains external/unproven; Production remains HOLD / NO TOUCH.
 - NEXT: inspect final exact-SHA proof matrix, repair only first material failure, then continue next canonical UI gap.
 - DO NOT REPEAT: do not reintroduce truncation caps or fabricate unsupported capabilities.
+
+
+## Run 2026-09-28 — Full UI closure continuation checkpoint
+- SHA: `a91bf39a7772eb82a122e44f87e02ca6e55c13a9`
+- Branch: `main`
+- Implemented: Customer templates, explicit checkout review, customer price sorting; complete Staff workspace subviews; Admin command-center semantic cleanup; collection sorting/filtering across orders/customers/finance/inventory/suppliers/purchasing/receiving/access/warehouses; untruncated low-stock queue; category and notification detail surfaces.
+- Verified: source-controlled on exact SHA; current proof workflows launched for the exact HEAD; production untouched.
+- Proven: implementation-level closure plus exact current workflow kickoff; final QA/Test-the-Test/G1/security/browser matrix remains pending at write-back.
+- Blocked: hosted visual certification remains outside the current proof lane; purchase/receipt 200→128 migration remains release-gated.
+- Certification: `NOT CLAIMED`
+- Production: `HOLD / NO TOUCH`
+- NEXT: inspect exact-current proof matrix, repair only first material failure, then continue next canonical UI gap.
