@@ -238,3 +238,15 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Certification: `NOT CLAIMED`
 - Production: `HOLD / NO TOUCH`
 - Next: exact-head quality/test-the-test/G1 evidence, first material failure only, then next canonical UI/core gap.
+
+## Run 2026-09-28 — UI + idempotency closure checkpoint
+- Run: 2026-09-28
+- SHA: `27d0f5b9469051ea17f0357ae8bc2175a5d06446`
+- Branch: `main`
+- Implemented: shared workspace surfaces, customer nested loading states, Admin loading surfaces, shared record-detail loading, idempotency conflict negatives.
+- Verified: Production untouched; no evidence transfer across SHA; free deployment path not force-retried.
+- Proven: current exact SHA proof pending.
+- Blocked: exact current hosted/runtime proof and purchase/receipt 8-way concurrency root cause.
+- Certification: NOT CLAIMED
+- Production: HOLD / NO TOUCH
+- Next: exact-head quality/Test-the-Test/G1 results → first material failure only → next canonical gap.
