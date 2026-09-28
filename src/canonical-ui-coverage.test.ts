@@ -70,6 +70,11 @@ describe('canonical UI coverage', () => {
       '#admin-boundaries',
     ]);
     for (const target of (railSource.matchAll(/target: '([^']+)'/g))) expect(knownTargets.has(target[1])).toBe(true);
+    const inventoryTargets = ['#admin-inventory-activity', '#admin-inventory-history', '#admin-warehouses'];
+    const purchasingTargets = ['#admin-purchasing', '#admin-suppliers', '#admin-receipts'];
+    for (const target of [...inventoryTargets, ...purchasingTargets]) expect(knownTargets.has(target)).toBe(true);
+    expect(railSource).toContain("targets: ['#admin-inventory-activity', '#admin-inventory-history', '#admin-warehouses']");
+    expect(railSource).toContain("targets: ['#admin-purchasing', '#admin-suppliers', '#admin-receipts']");
   });
 
   it('keeps the canonical customer capability list dynamically rendered by the shared customer surface', () => {
