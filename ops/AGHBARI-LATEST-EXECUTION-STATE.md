@@ -42,15 +42,43 @@ Certification: `NOT CLAIMED`
 - Existing SECURITY DEFINER warnings require function-by-function contract classification; do not treat generic advisor warnings as automatically defective.
 - Production remains untouched.
 
-
-
 ## 2026-09-28 — UI terminology closure batch
 - Implemented: corrected Customer Portal template terminology in `src/WorkspaceSurfaceRail.tsx` and `src/structure/customer-structure.ts`; removed the incorrect `مسحة` wording from the customer cart/template capability description.
 - Added: focused regression assertion in `src/workspace-surface-capability.test.ts`.
 - Resulting execution branch: `exec/20260928-commerce-ui-core-closure`.
-- Exact resulting HEAD: `0ff9b07c34ec2a5a149a58de6359747f2ecf1025`.
-- Proof: source change committed; GitHub Actions run is not yet visible for this SHA, so local/test runtime proof remains `NOT_PROVEN`.
+- Exact resulting code/test HEAD before this checkpoint: `0ff9b07c34ec2a5a149a58de6359747f2ecf1025`.
+- Proof: source change committed; no GitHub Actions run is currently visible for the candidate, so test/runtime proof remains `NOT_PROVEN`.
 - Production: HOLD / NO TOUCH.
 
 ## NEXT EXECUTABLE ACTION
-Run the focused workspace/customer capability test and typecheck against `0ff9b07c34ec2a5a149a58de6359747f2ecf1025`; then continue the next independently executable canonical Commerce gap. Do not transfer proof to another SHA.
+Re-read exact `refs/heads/main`; execute/fetch the bounded quality proof if an accessible runner exists. If unavailable, continue the next independent canonical UI/domain gap with a focused implementation + focused test, then write back the exact resulting SHA. Do not retry unchanged Vercel/Netlify paths.
+
+## DO NOT REPEAT
+- Do not transfer evidence between SHAs.
+- Do not rebuild or duplicate the 84 external screenshot corpus.
+- Do not fabricate unsupported Commerce transactions.
+- Do not mutate Production to bypass migration gates.
+- Do not retry unchanged hosted blockers.
+- Do not reopen closed Customer/Admin workspace, loading-state, catalog-filter, boundary-anchor or order-detail work without a regression/dependency/security/requirement trigger.
+
+
+## 2026-09-28 — Authentication and full live-surface UI batch
+- Implementation parent SHA: f674de0011701a66783feb288bc0bd24908b56a5.
+- Implemented on the active Aghbari runtime: full branded sign-in/recovery surface, password visibility control, real password-reset request, friendly Arabic auth failures, loading/success/error states, responsive/reduced-motion auth styling.
+- Added focused authentication contract test and bounded Quality inclusion.
+- Admin live workspace strip now exposes the complete role-authorized live-target set instead of the earlier 18-link cap.
+- Customer Portal terminology refined to make the saved-order-template surface explicit.
+- Exact current build/security/G1/Test-the-Test/browser proof must be read from the resulting HEAD; no historical evidence is transferred.
+- Production: HOLD / NO TOUCH.
+
+- Verification trigger: the final source includes the authentication regression guard; exact current workflow results must be read from this final SHA.
+
+
+## 2026-09-28 — Product-grade visual layer activated
+- Exact source HEAD: `2bb8703d1f6904768692d3e0f2885f272a72b64c`.
+- Implemented: `src/ui-final-product.css` and activated it from `src/main.tsx`.
+- Scope: active Customer Portal + Admin/Staff workspace visual hierarchy, typography, controls, cards, tables, navigation, responsive behavior and reduced-motion presentation.
+- This layer changes presentation only; no transactional authority or backend contract was altered.
+- Current exact-SHA automated proof: Aghbari Quality `success`; Browser E2E / Exact Deployment browser-contract `success`; G1 Domain Proof `success`; security-audit `success`; Test-the-Test remains in progress.
+- Browser E2E actual runtime execution remains skipped when no exact hosted deployment is available.
+- Production remains `HOLD / NO TOUCH`.
