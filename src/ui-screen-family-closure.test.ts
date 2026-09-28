@@ -40,3 +40,24 @@ describe('admin dashboard full structure', () => {
     expect(dashboard).toContain('const liveItems = group.items.filter((item) => item.status === \'live\');');
   });
 });
+
+
+describe('collection control parity', () => {
+  it('keeps administrative order sorting wired', () => {
+    const source = source('AdminPanel.tsx');
+    expect(source).toContain('orderSort');
+    expect(source).toContain('ترتيب الطلبات الإدارية');
+  });
+
+  it('keeps finance, inventory activity and supplier collection sorting wired', () => {
+    const finance = source('FinanceOperationsHistoryPanel.tsx');
+    const inventory = source('InventoryActivityPanel.tsx');
+    const supplier = source('SupplierLedgerPanel.tsx');
+    expect(finance).toContain("value={sort}");
+    expect(inventory).toContain("value={sort}");
+    expect(supplier).toContain("value={sort}");
+    expect(finance).toContain("sort==='highest'");
+    expect(inventory).toContain("sort==='oldest'");
+    expect(supplier).toContain("sort==='highest'");
+  });
+});
