@@ -22,6 +22,8 @@ on:
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
 
 concurrency:
   group: aghbari-browser-e2e-${{ github.event.deployment.sha || inputs.exact_sha || github.event.pull_request.head.sha || github.sha }}
@@ -136,3 +138,59 @@ jobs:
             test-results/
           if-no-files-found: ignore
           retention-days: 7
+
+  pages-exact-source:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    env:
+      TARGET_SHA: ${{ github.sha }}
+      GITHUB_PAGES: 'true'
+      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+    steps:
+      - name: Checkout exact main source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TARGET_SHA }}
+          fetch-depth: 1
+
+      - name: Verify exact source
+        shell: bash
+        run: |
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "$TARGET_SHA" || { echo "SHA MISMATCH: expected=$TARGET_SHA actual=$actual"; exit 1; }
+          echo "EXACT PAGES SOURCE SHA: $actual"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Build exact Pages artifact
+        run: npm run build
+
+      - name: Verify exact build metadata
+        shell: bash
+        run: |
+          node -e "const m=require('./dist/build-meta.json'); if(m.git_sha!==process.env.TARGET_SHA) { console.error(m); process.exit(1) }"
+          test -f dist/index.html
+          echo "EXACT PAGES ARTIFACT SHA: $TARGET_SHA"
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Deploy exact Pages artifact
+        id: deployment
+        uses: actions/deploy-pages@v4
