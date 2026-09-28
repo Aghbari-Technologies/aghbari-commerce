@@ -300,3 +300,12 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Certification: `NOT CLAIMED`
 - Production: `HOLD / NO TOUCH`
 - Next: continue the next independent canonical UI/domain gap after the current Test-the-Test result; do not reopen closed UI contracts.
+
+
+## Run 2026-09-28 — Full workspace visual finish
+- SHA: `d165798f1e9398a7608fb28a2ec499c5f8ae01f8`
+- Implemented: product-grade visual finish across live Customer Portal and Admin/Staff workspaces; dashboard/rail/finance/history/boundary surfaces and responsive behavior.
+- Verified: exact-SHA Aghbari Quality, G1, security-audit and Browser Contract all succeeded; production untouched.
+- Proven: exact current build/typecheck/focused tests/browser-contract are successful. Hosted visual runtime remains unproven; Test-the-Test is still active.
+- Certification: `NOT CLAIMED`
+- Production: `HOLD / NO TOUCH`
