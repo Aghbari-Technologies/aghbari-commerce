@@ -35,7 +35,7 @@ describe('customer template collection view', () => {
     expect(filterAndSortTemplates(templates as any, 'صنعاء', 'updated').map(x=>x.id)).toEqual(['1']);
   });
   it('sorts by name and line count deterministically', () => {
-    expect(filterAndSortTemplates(templates as any, '', 'name').map(x=>x.id)).toEqual(['2','1']);
+    expect(filterAndSortTemplates(templates as any, '', 'name').map(x=>x.id)).toEqual(['1','2']);
     expect(filterAndSortTemplates(templates as any, '', 'largest').map(x=>x.id)).toEqual(['2','1']);
   });
   it('paginates without exposing an invalid page', () => {

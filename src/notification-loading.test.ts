@@ -14,7 +14,7 @@ describe('notification loading surface', () => {
     const source = readFileSync(resolve(process.cwd(), 'src/NotificationPanel.tsx'), 'utf8');
     expect(source).toContain('notification-detail');
     expect(source).toContain('<RecordDetailDrawer');
-    expect(source).toContain('canMarkNotificationRead(row,audience,actorId)');
+    expect(source).toContain('canMarkNotificationRead(row, audience, actorId)');
     expect(source).toContain('selected.entity_type');
   });
 });
