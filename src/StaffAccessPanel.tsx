@@ -28,6 +28,9 @@ export default function StaffAccessPanel({ role }: { role: UserRole }) {
   const [users, setUsers] = useState<OrganizationUser[]>([]);
   const [drafts, setDrafts] = useState<Record<string, UserRole>>({});
   const [query, setQuery] = useState('');
+  const [accountType, setAccountType] = useState<'all' | 'staff' | 'customer'>('all');
+  const [roleFilter, setRoleFilter] = useState<'all' | UserRole>('all');
+  const [sort, setSort] = useState<'newest' | 'oldest' | 'email'>('newest');
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState<string | null>(null);
@@ -53,12 +56,22 @@ export default function StaffAccessPanel({ role }: { role: UserRole }) {
   }, []);
 
   useEffect(() => { void reload(); }, [reload]);
-  useEffect(() => { setPage(1); }, [query]);
+  useEffect(() => { setPage(1); }, [query, accountType, roleFilter, sort]);
 
   const filtered = useMemo(() => {
     const needle = query.trim().toLocaleLowerCase();
-    return users.filter((user) => !needle || user.user_id.toLocaleLowerCase().includes(needle) || user.email.toLocaleLowerCase().includes(needle) || ROLE_LABELS[user.role].toLocaleLowerCase().includes(needle));
-  }, [users, query]);
+    return users
+      .filter((user) =>
+        (accountType === 'all' || (accountType === 'staff' && !user.customer_id) || (accountType === 'customer' && Boolean(user.customer_id))) &&
+        (roleFilter === 'all' || user.role === roleFilter) &&
+        (!needle || user.user_id.toLocaleLowerCase().includes(needle) || user.email.toLocaleLowerCase().includes(needle) || ROLE_LABELS[user.role].toLocaleLowerCase().includes(needle))
+      )
+      .sort((a, b) => {
+        if (sort === 'email') return a.email.localeCompare(b.email, undefined, { sensitivity: 'base' });
+        const delta = new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        return sort === 'oldest' ? -delta : delta;
+      });
+  }, [accountType, query, roleFilter, sort, users]);
   const accessPages = Math.max(1, Math.ceil(filtered.length / 12));
   const activeAccessPage = Math.min(page, accessPages);
   const visible = filtered.slice((activeAccessPage - 1) * 12, activeAccessPage * 12);
@@ -89,6 +102,10 @@ export default function StaffAccessPanel({ role }: { role: UserRole }) {
     </div>
     <div className="operations-toolbar">
       <input aria-label="بحث مستخدمي المنظمة" placeholder="ابحث بالبريد أو معرف الحساب أو الدور…" value={query} onChange={(e) => setQuery(e.target.value)} />
+      <select aria-label="فلترة نوع الحساب" value={accountType} onChange={(e) => setAccountType(e.target.value as typeof accountType)} disabled={loading}><option value="all">كل الأنواع</option><option value="staff">الموظفون</option><option value="customer">العملاء</option></select>
+      <select aria-label="فلترة دور الحساب" value={roleFilter} onChange={(e) => setRoleFilter(e.target.value as typeof roleFilter)} disabled={loading}><option value="all">كل الأدوار</option>{(Object.keys(ROLE_LABELS) as UserRole[]).map(item => <option key={item} value={item}>{ROLE_LABELS[item]}</option>)}</select>
+      <select aria-label="ترتيب الحسابات" value={sort} onChange={(e) => setSort(e.target.value as typeof sort)} disabled={loading}><option value="newest">الأحدث</option><option value="oldest">الأقدم</option><option value="email">البريد الأبجدي</option></select>
+      <button type="button" className="ghost" onClick={() => { setQuery(''); setAccountType('all'); setRoleFilter('all'); setSort('newest'); }} disabled={loading || (!query && accountType === 'all' && roleFilter === 'all' && sort === 'newest')}>مسح</button>
       <button type="button" className="ghost" onClick={() => void reload()} disabled={loading}>إعادة تحميل</button>
       {!canManage && <span className="permission-hint">قراءة فقط · تغيير الدور يتطلب صلاحية المالك.</span>}
     </div>
