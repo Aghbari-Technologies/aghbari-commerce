@@ -79,3 +79,12 @@ describe('customer cart empty state', () => {
     expect(source).toContain('cart-empty-primary');
   });
 });
+
+
+describe('customer structure terminology', () => {
+  it('keeps the customer structure aligned with the canonical القوالب label', () => {
+    const structure = readFileSync(resolve(process.cwd(), 'src/structure/customer-structure.ts'), 'utf8');
+    expect(structure).toContain('الحفظ كقالب');
+    expect(structure).not.toContain('الحفظ كمسحة');
+  });
+});
