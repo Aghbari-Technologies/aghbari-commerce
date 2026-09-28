@@ -24,7 +24,7 @@ async function login(page: Page, email: string, password: string) {
   }
 
   await expect(portal).toBeVisible();
-  await expect(page.getByRole('button', { name: /السلة/ })).toBeVisible();
+  await expect(page.getByRole('banner').getByRole('button', { name: 'السلة', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'الإشعارات', exact: true })).toBeVisible();
 }
 
