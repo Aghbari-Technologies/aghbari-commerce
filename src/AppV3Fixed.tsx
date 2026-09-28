@@ -41,6 +41,14 @@ function getVisibleCustomerPortalSections(config: { showCredit: boolean; showTem
   sections.push('account', 'notifications');
   return sections;
 }
+
+export function normalizeCustomerPortalSection(
+  next: PortalSection,
+  config: { showCredit: boolean; showTemplates: boolean },
+): PortalSection {
+  const visible = getVisibleCustomerPortalSections(config);
+  return visible.includes(next) ? next : visible[0] ?? 'home';
+}
 const PORTAL_SECTIONS = new Set<PortalSection>(['home', 'catalog', 'orders', 'finance', 'templates', 'account', 'notifications']);
 const sectionFromHash = (): PortalSection => {
   if (typeof window === 'undefined') return 'home';
@@ -151,16 +159,19 @@ export default function AppV3Fixed(){
    return()=>{root.style.removeProperty('--aghbari-accent');delete root.dataset.aghbariDensity;};
  },[config.accentColor,config.compactMode]);
  useEffect(()=>{
-   const visible=getVisibleCustomerPortalSections(config);
-   if(!visible.includes(section) && visible.length) navigate(visible[0]);
+   const normalized=normalizeCustomerPortalSection(section,config);
+   if(normalized!==section){
+     setSection(normalized);
+     if(typeof window!=='undefined'&&window.location.hash!==('#'+normalized))window.history.replaceState(null,'','#'+normalized);
+   }
  },[config.showCredit,config.showTemplates,section]);
  useEffect(()=>{
-   const syncSectionFromUrl=()=>setSection(sectionFromHash());
+   const syncSectionFromUrl=()=>setSection(normalizeCustomerPortalSection(sectionFromHash(),config));
    window.addEventListener('hashchange',syncSectionFromUrl);
    window.addEventListener('popstate',syncSectionFromUrl);
    syncSectionFromUrl();
    return()=>{window.removeEventListener('hashchange',syncSectionFromUrl);window.removeEventListener('popstate',syncSectionFromUrl);};
- },[]);
+ },[config.showCredit,config.showTemplates]);
  useEffect(()=>{
    const onKeyDown=(event:KeyboardEvent)=>{
      if(event.key!=='Escape')return;
@@ -243,7 +254,14 @@ export default function AppV3Fixed(){
   }
   async function openOrderDetail(order:CustomerOrderSummary){setOrderDetailBusy(true);setError('');try{setSelectedOrder(await getCustomerOrderDetail(order.id));}catch(e){setError(e instanceof Error?e.message:'تعذر تحميل تفاصيل الطلب.');}finally{setOrderDetailBusy(false);}}
   async function refreshAccount(){if(!supabase)return;setBusy(true);setError('');try{const session=await getSession();if(!session)throw new Error('انتهت جلسة الحساب. سجّل الدخول مجددًا.');await loadIdentity(session.user.id);await loadData();setMessage('تم تحديث سياق الحساب والبيانات.');}catch(e){setError(e instanceof Error?e.message:'تعذر تحديث سياق الحساب.');}finally{setBusy(false);}}
-  function navigate(next:PortalSection){if(next!==section&&config.requireQuantityConfirmation&&cart.some(l=>!confirmed[l.product.id])){setError('اعتمد كميات السلة أولاً قبل الانتقال إلى قسم آخر.');setCartOpen(true);return;}setError('');setSection(next);if(typeof window!=='undefined'&&window.location.hash!==('#'+next))window.history.pushState(null,'','#'+next);}
+  function navigate(next:PortalSection){
+    const visibleNext=normalizeCustomerPortalSection(next,config);
+    if(next!==visibleNext){setError('هذا القسم غير متاح في إعدادات بوابة حسابك الحالية.');}
+    else if(next!==section&&config.requireQuantityConfirmation&&cart.some(l=>!confirmed[l.product.id])){setError('اعتمد كميات السلة أولاً قبل الانتقال إلى قسم آخر.');setCartOpen(true);return;}
+    else setError('');
+    setSection(visibleNext);
+    if(typeof window!=='undefined'&&window.location.hash!==('#'+visibleNext))window.history.pushState(null,'','#'+visibleNext);
+  }
   async function add(p:Product,q=1,openCart=true):Promise<boolean>{const price=effectivePrice(p,q);if(price<=0){setError('لا يوجد سعر مصرح به لهذا الصنف.');return false;}if(q<1||q>p.availableQuantity){setError('الكمية المطلوبة غير متاحة.');return false;}const existing=cart.find(l=>l.product.id===p.id);const next=Math.min((existing?.quantity??0)+q,p.availableQuantity);try{await setCartItem(p.id,next);setCart(c=>existing?c.map(l=>l.product.id===p.id?{...l,quantity:next,unitPrice:effectivePrice(p,next)}:l):[...c,{product:p,quantity:next,unitPrice:price}]);setQtyConfirmed(p.id,!config.requireQuantityConfirmation);setCartOpen(openCart);setCatalogQuantityDrafts(c=>({...c,[p.id]:String(next)}));setError('');return true;}catch(e){setError(e instanceof Error?e.message:'تعذر تحديث السلة.');return false;}}
   async function applyCatalogQuantity(p: PricedProduct, raw: string) {
     const issue = catalogQuantityError(raw, p.availableQuantity);
