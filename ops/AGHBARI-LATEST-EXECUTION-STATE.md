@@ -77,7 +77,7 @@ Re-read exact `refs/heads/main`; execute/fetch the bounded quality proof if an a
 
 
 ## 2026-09-28 — Full workspace visual finish checkpoint
-- Exact current HEAD: `d165798f1e9398a7608fb28a2ec499c5f8ae01f8`.
+- Exact current proof SHA: read from the execution evidence attached to the current `main` HEAD; do not treat historical SHAs in this file as current.
 - Implemented: final product visual layer extended across Customer Portal, Admin/Staff dashboard, workspaces, finance/history surfaces, boundaries, controls, cards, tables, responsive layouts and mobile breakpoints.
 - Verification on this exact SHA: Aghbari Quality `success` including typecheck, focused Vitest suite and production build; G1 `success`; security-audit `success`; Browser E2E / Exact Deployment `success`.
 - Test-the-Test is still running and remains the active exact-SHA security sensitivity gate.
