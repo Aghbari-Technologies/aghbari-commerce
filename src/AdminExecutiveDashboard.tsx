@@ -449,7 +449,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
               <SectionCard icon="▣" title="الأصناف والمخزون" description="الكتالوج والأسعار والمستودعات والحركات">
                 <Tile icon="▣" title="إدارة الأصناف" target="#admin-catalog" />
                 <Tile icon="$" title="محرك التسعير" target="#admin-pricing-matrix" />
-                <Tile icon="↻" title="مزامنة المخزون" target="#admin-inventory" tone="brand" />
+                <Tile icon="↻" title="المخزون التشغيلي" target="#admin-inventory" tone="brand" />
                 <Tile icon="⇄" title="التحويلات والحركات" target="#admin-inventory-history" />
                 <Tile icon="⌂" title="المستودعات والفروع" target="#admin-warehouses" />
               </SectionCard>
@@ -457,7 +457,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
 
             {canInventory && (
               <SectionCard icon="▤" title="إدارة البيانات" description="إدخال واسترجاع البيانات بشكل مضبوط">
-                <Tile icon="▣" title="مركز البيانات الموحد" target="#admin-catalog" />
+                <Tile icon="▣" title="مركز البيانات الموحد" target="#admin-import" />
                 <Tile icon="⇅" title="سجل الاستيراد" target="#admin-import" />
                 <Tile icon="↥" title="مركز التصدير" target="#admin-export" />
                 <Tile icon="◉" title="تحسين الصور" target="#admin-product-image" />
@@ -503,7 +503,6 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
             <div>
               {canOrders && <Tile icon="🧾" title="الطلبات" target="#admin-orders" />}
               {canCustomers && <Tile icon="♙" title="العملاء" target="#admin-customers" />}
-              {canCustomers && <Tile icon="♙" title="العملاء" target="#admin-customers" />}
               {canOrders && <Tile icon="▥" title="مساحة عمل المدير" target="#admin-orders" />}
             </div>
           </section>
@@ -513,8 +512,8 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
               <header><span>▣</span><h2>الأصناف والمخزون</h2></header>
               <div>
                 <Tile icon="▣" title="إدارة الأصناف" target="#admin-catalog" />
-                <Tile icon="$" title="محرك التسعير الذكي" target="#admin-pricing-matrix" />
-                <Tile icon="↻" title="مزامنة المخزون" target="#admin-inventory" />
+                <Tile icon="$" title="محرك التسعير" target="#admin-pricing-matrix" />
+                <Tile icon="↻" title="المخزون التشغيلي" target="#admin-inventory" />
                 <Tile icon="⇄" title="دفتر الحركات" target="#admin-inventory-history" />
                 <Tile icon="⌂" title="المستودعات والفروع" target="#admin-warehouses" />
               </div>
@@ -527,7 +526,7 @@ export default function AdminExecutiveDashboard({ role }: { role: UserRole }) {
               <div>
                 <Tile icon="▣" title="مركز البيانات الموحد" target="#admin-catalog" />
                 <Tile icon="▤" title="سجل الاستيراد" target="#admin-import" />
-                <Tile icon="⇅" title="مزامنة ونقل البيانات" target="#admin-export" />
+                <Tile icon="⇅" title="مركز التصدير" target="#admin-export" />
                 <Tile icon="🖼" title="تحسين الصور" target="#admin-product-image" />
                 <Tile icon="⌁" title="لوحة إدارة الحركات" target="#admin-inventory-activity" />
               </div>
