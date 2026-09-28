@@ -8,27 +8,27 @@ Production: `HOLD / NO TOUCH`
 Certification: `NOT CLAIMED`
 
 ## Current reality
+- Actual main HEAD verified before write-back: `6a01d5ec9484fcd8faeee18ab9c56c636f4bf2e6`.
 - Active browser entrypoint remains `src/main.tsx -> AppV3Fixed`.
 - Customer Portal canonical sections remain six: catalog, orders, finance, templates, account, notifications.
-- Shared `WorkspaceSurfaceRail` is now a real capability-navigation surface for both Customer and Staff contexts.
-- Customer WorkspaceSurfaceRail now derives nested capability cards directly from `AGHBARI_CUSTOMER_STRUCTURE`, so the active section visibly exposes its canonical live capabilities without inventing transactions.
-- Staff WorkspaceSurfaceRail now exposes live-target count, boundary count and session-role context while preserving server-side authorization as the authority.
-- Customer capability surface has focused contract coverage and is included in bounded Aghbari Quality.
-- External 84 PNG corpus remains visual/provenance input only; it is not treated as an 84-screen denominator.
-- Purchase/receipt source migration remains 16..128 but Production still exposes legacy 16..200; no Production mutation was performed.
+- Staff `WorkspaceSurfaceRail` now exposes every live capability belonging to each enabled workspace pack; subviews are no longer truncated to the first five.
+- Non-live staff capabilities remain explicitly reachable from the boundary workspace instead of being hidden or fabricated.
+- Existing Commerce authority, route/deep-link behavior and server-side authorization are unchanged.
+- Production remains untouched; external hosted blockers remain unchanged.
 
 ## Latest execution batch — 2026-09-28
-- Implemented: nested Customer capability map in `src/WorkspaceSurfaceRail.tsx` using canonical `AGHBARI_CUSTOMER_STRUCTURE`.
-- Implemented: responsive capability grid, next-section action, Staff workspace metadata in `src/workspace-surface.css`.
-- Added: `src/workspace-surface-capability.test.ts` covering canonical section parity, hidden-section safety and presentation-only capability mapping.
-- Updated: `.github/workflows/aghbari-quality.yml` to execute the new focused contract.
+- Implemented: staff workspace subview exposure in `src/WorkspaceSurfaceRail.tsx`; each live pack now renders all matching live capabilities as compact links using existing paths/targets.
+- Implemented: explicit boundary capability links for non-live staff items; no unsupported mutation or permission was added.
+- Implemented: responsive subview styling in `src/workspace-surface.css`.
+- Added: exact closure tests in `src/workspace-surface-capability.test.ts` for full live-pack parity and complete boundary exposure.
+
 
 ## Verification
-- Exact `refs/heads/main` re-read after the batch: `64e4b7161defc64d102d3dbeed57614e993c9f40`.
-- Latest commit contains the new quality-test inclusion exactly on the current SHA.
-- Connected workflow reader currently returns no workflow-run record for this push; therefore current build/typecheck/Vitest/browser runtime proof is `NOT_PROVEN`.
-- Combined commit status remains externally failed only on Vercel free-plan build-rate-limit/protection; do not retry unchanged.
-- Local direct GitHub clone/build is unavailable in this environment because GitHub DNS resolution is blocked; do not loop.
+- Exact source HEAD after implementation/write-back remains tied to this batch and must be re-read after the documentation commit.
+- Source contract/test coverage is present for the new staff subview exposure.
+- Current automated workflow runs for the implementation sequence are still in progress; therefore current build/typecheck/Vitest/browser runtime proof is `NOT_PROVEN` until an exact-SHA run completes.
+- Production remains untouched.
+
 
 ## Open gaps
 1. Execute exact-SHA bounded Quality/Test-the-Test/Concurrency/G1/Security proof through an accessible runtime path.
@@ -43,10 +43,12 @@ Certification: `NOT CLAIMED`
 - Production remains untouched.
 
 ## NEXT EXECUTABLE ACTION
-Re-read exact `refs/heads/main`; execute/fetch the bounded quality proof if an accessible runner exists. If unavailable, continue the next independent canonical UI/domain gap with a focused implementation + focused test, then write back the exact resulting SHA. Do not retry unchanged Vercel/Netlify paths.
+Re-read exact `refs/heads/main` after the write-back commit; inspect the exact-SHA Aghbari Quality / Test-the-Test / G1 / Security / Browser results. Fix only the first material failure. If the proof lane is blocked, continue the next independent canonical UI/domain gap with a focused implementation + focused test.
+
 
 ## DO NOT REPEAT
 - Do not transfer evidence between SHAs.
+- Do not truncate staff workspace subviews back to a partial list.
 - Do not rebuild or duplicate the 84 external screenshot corpus.
 - Do not fabricate unsupported Commerce transactions.
 - Do not mutate Production to bypass migration gates.

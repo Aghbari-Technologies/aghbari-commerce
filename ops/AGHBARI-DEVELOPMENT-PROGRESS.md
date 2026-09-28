@@ -335,3 +335,18 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Certification: NOT CLAIMED
 - Production: HOLD / NO TOUCH
 - Next: from current main HEAD, execute the next open UI surface/subview; after each batch update state/progress before continuing.
+
+
+## Run 2026-09-28 — Staff workspace subview closure
+- Run: `2026-09-28`
+- Implementation SHA before write-back: `6a01d5ec9484fcd8faeee18ab9c56c636f4bf2e6`
+- Branch: `main`
+- Implemented: full Staff `WorkspaceSurfaceRail` subview exposure; every enabled live pack now surfaces all matching live capabilities without truncation; non-live capabilities are individually reachable through the explicit boundary workspace.
+- Implemented files: `src/WorkspaceSurfaceRail.tsx`, `src/workspace-surface.css`, `src/workspace-surface-capability.test.ts`.
+- Verified: source structure re-read after mutation; existing paths/targets and server authorization contracts reused; no Production mutation.
+- Proven: focused source/test contract added; exact runtime/build/browser result remains `NOT_PROVEN` until the current exact-SHA workflow completes.
+- Blocked: current hosted/runtime lane is external; no unchanged Vercel retry.
+- Certification: `NOT CLAIMED`
+- Production: `HOLD / NO TOUCH`
+- NEXT EXECUTABLE ACTION: re-read exact main HEAD after write-back, inspect exact-SHA CI/proof matrix, then fix only the first material failure or continue the next independent UI/core gap.
+- DO NOT REPEAT: do not restore truncated staff subview lists; do not transfer evidence across SHA.

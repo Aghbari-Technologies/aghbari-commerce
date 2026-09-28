@@ -164,3 +164,10 @@
 - The latest execution state and development progress are mandatory write-back artifacts, not optional reports. Each session must leave an exact next executable action and do-not-repeat boundary for the next programmer/session.
 - Actual Git HEAD always overrides historical SHAs recorded in memory or logs. Logged SHAs are checkpoints/evidence references, never authority to resume an older state.
 - A session is not operationally closed when implementation is done but handoff state is missing; close-out requires state/progress write-back and an exact resumable next action.
+
+
+## 2026-09-28 — Staff workspace subview closure
+- Staff workspace navigation must expose every live capability associated with each enabled workspace pack instead of truncating the list; parameterized paths reuse the existing pack target when a concrete record ID is required.
+- Non-live Staff capabilities remain individually visible through the explicit boundary workspace, preserving the existing Commerce scope boundary.
+- This is presentation/navigation only and does not introduce new transaction authority.
+
