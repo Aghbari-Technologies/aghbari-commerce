@@ -118,3 +118,21 @@ On the next current HEAD, run the focused UI contract suite (Admin anchor/deep-l
 
 ## NEXT EXECUTABLE ACTION
 On next current HEAD, execute exact-SHA quality and browser workflows through an environment that actually triggers GitHub Actions; then run the affected UI suite. In parallel, prepare the non-production purchase/receipt 128-bound concurrency + 129-negative proof. Fix only first material failure.
+
+
+## 2026-09-29 — CURRENT UI closure checkpoint
+- Current exact HEAD: `01cf0728297301c8f9969514b38de5bc0b86b9cf`.
+- Closed in this lineage: Admin workspace single-owner anchors; Admin order deep-link + list-window fallback states; corrected data-center navigation; centralized Customer Portal visibility/navigation; customer notification offline fail-closed UX; 84-reference screen-pack accounting guard; latest main Customer Home responsive CSS absorbed.
+- Static contract result: Admin canonical navigation targets remain source-verified at 21 unique runtime owners; reference corpus remains 84 assets across 8 packs; runtime UI identity scan is clean for legacy product names.
+- Live runtime finding: Supabase purchase/receipt idempotency remains 16..200; source 16..128 migration is intentionally not applied without required concurrency/negative/Test-the-Test/exact-SHA evidence.
+- Proof state: VERIFIED source/static + LIVE SQL inspection; NOT_PROVEN local test/build/browser/runtime on this SHA because no executable repository environment is available and GitHub Actions produced no run for connector-created commits. Vercel status remains the existing free-plan build-rate-limit failure; no unchanged retry.
+- Certification: NOT CLAIMED.
+- Production: HOLD / NO TOUCH.
+
+## NEXT EXECUTABLE ACTION
+Run the exact-SHA GitHub quality/browser workflows in an execution environment that actually triggers Actions, then consume only the resulting evidence for this SHA. In parallel, execute non-production 128-bound purchase/receipt concurrency + 129-negative proof. Do not apply production migration until the full evidence bundle exists.
+
+## DO NOT REPEAT
+- Do not rebuild the already-live Customer Account/Finance/Orders subviews that are correctly nested under their parent workspaces.
+- Do not treat the existing Netlify 19-Sep production deploy as proof for this SHA; it has no commit_ref and is historical.
+- Do not transfer proof from any earlier SHA.
