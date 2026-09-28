@@ -39,64 +39,40 @@ Certification: `NOT CLAIMED`
 4. Purchase/receipt 16..128 migration with exact migration + negative + concurrency + Test-the-Test evidence.
 5. Full exact runtime/browser certification path without repeating unchanged hosted blockers.
 
+## 2026-09-28 — Comprehensive UI closure checkpoint
+- Exact code source SHA: `c5c5889345df6809bc401b09e4a73afe24b48ac2`.
+- Full Admin/Staff + Customer UI work executed in this cycle: complete staff workspace subviews; uncapped command-center groups; customer templates and checkout review; catalog price sorting; order/customer/finance/inventory/purchasing/receiving/access/warehouse collection controls; low-stock queue search/filter/pagination; category and notification details; inventory movement details; governance controls.
+- Active runtime remains `src/main.tsx -> AppV3Fixed`.
+- No unsupported Commerce transaction authority added; boundaries remain explicit.
+- Production remains `HOLD / NO TOUCH`.
+
+## Verification — exact code SHA
+- Aghbari Quality: SUCCESS.
+- Application Quality: SUCCESS.
+- Typecheck: SUCCESS.
+- Unit/integration: 69 test files / 373 tests PASS.
+- Lint: SUCCESS.
+- Production build: SUCCESS.
+- Release audit: SUCCESS.
+- G1 Domain Proof: SUCCESS.
+- Security audit: SUCCESS.
+- Browser Exact-Source Contract: SUCCESS.
+- Browser full E2E runtime: SKIPPED because no exact hosted deployment was available.
+- Test-the-Test / Exact SHA: IN PROGRESS on `c5c5889345df6809bc401b09e4a73afe24b48ac2`; Postgres startup/sensitivity mutations are not yet complete.
+
 ## Security state
 - No blanket revoke or test-driven security weakening.
 - Existing SECURITY DEFINER warnings remain function-by-function review items.
 - Production remains untouched.
 
 ## NEXT EXECUTABLE ACTION
-Re-read exact `refs/heads/main`; inspect Aghbari Quality / Test-the-Test / G1 / Security / Browser results for the exact HEAD. Fix only the first material failure. If proof lanes pass or remain externally blocked, continue the next uncovered canonical UI surface and immediately checkpoint the result.
+Re-read exact `refs/heads/main` after this documentation checkpoint. Run/inspect the exact-SHA proof matrix for the resulting HEAD. Complete Test-the-Test first; if it passes, continue only the next genuinely open canonical UI/core gap. If it fails, fix the first material root cause once.
+
 ## DO NOT REPEAT
 - Never transfer evidence across SHA.
-- Do not restore UI truncation caps.
-- Do not duplicate the 84-reference corpus.
-- Do not fabricate Commerce capabilities outside canonical contracts.
+- Do not restore any removed UI truncation caps.
+- Do not duplicate the 84-reference corpus or treat it as 84 screens.
+- Do not fabricate unsupported Commerce capabilities.
 - Do not mutate Production to bypass migration gates.
-- Do not retry unchanged Vercel/hosted blockers.
-- Do not reopen closed UI/security contracts without a material trigger.
-## 2026-09-28 — Authentication and full live-surface UI batch
-- Implementation parent SHA: f674de0011701a66783feb288bc0bd24908b56a5.
-- Implemented on the active Aghbari runtime: full branded sign-in/recovery surface, password visibility control, real password-reset request, friendly Arabic auth failures, loading/success/error states, responsive/reduced-motion auth styling.
-- Added focused authentication contract test and bounded Quality inclusion.
-- Admin live workspace strip now exposes the complete role-authorized live-target set instead of the earlier 18-link cap.
-- Customer Portal terminology refined to make the saved-order-template surface explicit.
-- Exact current build/security/G1/Test-the-Test/browser proof must be read from the resulting HEAD; no historical evidence is transferred.
-- Production: HOLD / NO TOUCH.
-
-- Verification trigger: the final source includes the authentication regression guard; exact current workflow results must be read from this final SHA.
-
-
-## 2026-09-28 — Product-grade visual layer activated
-- Exact source HEAD: `2bb8703d1f6904768692d3e0f2885f272a72b64c`.
-- Implemented: `src/ui-final-product.css` and activated it from `src/main.tsx`.
-- Scope: active Customer Portal + Admin/Staff workspace visual hierarchy, typography, controls, cards, tables, navigation, responsive behavior and reduced-motion presentation.
-- This layer changes presentation only; no transactional authority or backend contract was altered.
-- Current exact-SHA automated proof: Aghbari Quality `success`; Browser E2E / Exact Deployment browser-contract `success`; G1 Domain Proof `success`; security-audit `success`; Test-the-Test remains in progress.
-- Browser E2E actual runtime execution remains skipped when no exact hosted deployment is available.
-- Production remains `HOLD / NO TOUCH`.
-
-
-## 2026-09-28 — Full workspace visual finish checkpoint
-- Exact current proof SHA: read from the execution evidence attached to the current `main` HEAD; do not treat historical SHAs in this file as current.
-- Implemented: final product visual layer extended across Customer Portal, Admin/Staff dashboard, workspaces, finance/history surfaces, boundaries, controls, cards, tables, responsive layouts and mobile breakpoints.
-- Verification on this exact SHA: Aghbari Quality `success` including typecheck, focused Vitest suite and production build; G1 `success`; security-audit `success`; Browser E2E / Exact Deployment `success`.
-- Test-the-Test is still running and remains the active exact-SHA security sensitivity gate.
-- Production: `HOLD / NO TOUCH`.
-
-## 2026-09-28 — UI-first execution control update
-- Startup protocol strengthened to make reference-backed UI closure the primary execution lane for the active 120-minute window.
-- Every in-scope visual family now requires a real implementation or an explicit canonical boundary; route-only/navigation-only completion is invalid.
-- Requirements discovered from references/canonical docs must be attached to the correct product/UX/domain/security owner, with a new logical section created when no correct parent exists.
-- Current external 84-reference corpus remains provenance/accounting input; it is not an 84-screen denominator.
-
-## NEXT EXECUTABLE ACTION
-Resume from the actual main HEAD and execute the highest-value open UI surface first: implement the next missing Admin/Staff or Customer Portal screen/subview from the canonical capability map + UI reference packs, including real states/actions and responsive behavior; immediately run the focused affected proof, then move to the next UI gap. Only a critical security defect or direct dependency that blocks the current UI may preempt this lane.
-
-## 2026-09-28 — Mandatory boot/handoff continuity hardening
-- Actual latest main HEAD at this write: `5b71425720e56f38347fd2f8b820fb255cdf05e0`.
-- The startup protocol now explicitly requires the complete boot chain: AGHBARI-EXECUTION-START.md → PROJECT_MEMORY.md → LATEST-EXECUTION-STATE → DEVELOPMENT-PROGRESS → CANONICAL-DOCUMENT-SYSTEM → UI-REFERENCE-ASSET-INDEX → UX canonical → relevant specialist canonical document.
-- End-of-session write-back is mandatory: update LATEST-EXECUTION-STATE and DEVELOPMENT-PROGRESS, update PROJECT_MEMORY only for durable changes, update UI reference/canonical owners when coverage or requirements change, and set an exact NEXT EXECUTABLE ACTION plus DO-NOT-REPEAT.
-- A prior report/SHA can never override the actual Git HEAD. Historical gaps must not be resumed when already closed or superseded by current HEAD.
-
-## NEXT EXECUTABLE ACTION
-Start the next execution from the actual current main HEAD, read the mandatory boot chain, then execute the next open UI surface/subview with real states/actions; after each closure batch write the exact current SHA and resume pointer before moving forward.
+- Do not retry unchanged hosted blockers.
+- Do not reopen closed UI surfaces without a regression/dependency/security/requirement trigger.

@@ -392,7 +392,7 @@ The 84-image corpus remains provenance input, but 100% accounting is mandatory a
 
 
 ## 2026-09-28 — Latest implementation coverage checkpoint
-- Exact implementation checkpoint: `a91bf39a7772eb82a122e44f87e02ca6e55c13a9`
+- Exact implementation checkpoint: `c5c5889345df6809bc401b09e4a73afe24b48ac2`
 - Closed visual/workflow families this cycle: Customer Templates, Customer Checkout, Customer Catalog sorting, Staff workspace subviews, Admin command-center structure/navigation, Admin/Finance/Inventory/Purchasing/Receiving/Access collection controls, Low-stock work queue, Category details, Notification details.
 - Visual references remain provenance/visual-pattern inputs; no reference was converted into a duplicate implementation solely because of filename.
 - Exact-SHA runtime proof remains governed by CI/browser evidence for the current HEAD.

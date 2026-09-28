@@ -171,3 +171,10 @@
 - Non-live Staff capabilities remain individually visible through the explicit boundary workspace, preserving the existing Commerce scope boundary.
 - This is presentation/navigation only and does not introduce new transaction authority.
 
+
+
+## 2026-09-28 — UI closure durable decisions
+- Staff workspace navigation exposes all live canonical subviews without truncation; parameterized legacy detail paths stay on their parent live target.
+- Customer checkout is a dedicated review step over the existing order-submit contract; it does not create new transaction authority.
+- Collection surfaces use real search/filter/sort/pagination/progressive disclosure controls over existing server-backed data.
+- 84 visual references remain provenance/pattern input, not an 84-screen denominator; reusable visual patterns are implemented once through shared surfaces/components.
