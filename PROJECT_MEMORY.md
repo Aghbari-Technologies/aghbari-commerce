@@ -187,3 +187,6 @@
 
 ## 2026-09-29 — Customer statement view
 - Customer Finance includes a real read-only statement subview aggregating authorized invoices and recorded payments per currency, reusing existing Finance services and RLS-backed tables.
+
+## 2026-09-29 — Customer finance history
+- Customer Finance now includes a read-only payment-history subview backed by authorized invoice-scoped payment records; payment history stays inside the Finance section and introduces no new transaction authority.
