@@ -93,7 +93,7 @@ test('authenticated customer completes real search → catalog → cart → orde
   const addButton = page.getByRole('button', { name: 'إضافة للسلة', exact: true }).first();
   await expect(addButton).toBeEnabled();
   await addButton.click();
-  await expect(page.getByRole('button', { name: /السلة/ })).toContainText('1');
+  await expect(page.getByRole('banner').getByRole('button', { name: 'السلة', exact: true })).toContainText('1');
 
   const quantityConfirmation = page.getByRole('button', { name: 'اعتماد الكمية', exact: true }).first();
   await expect(quantityConfirmation).toBeEnabled();
