@@ -272,3 +272,14 @@ Read exact current main HEAD, fetch its Aghbari Quality + application-quality + 
 - Production: HOLD / NO TOUCH.
 ### NEXT EXECUTABLE ACTION
 On exact current HEAD `27d0f5b9469051ea17f0357ae8bc2175a5d06446`, inspect the first non-cancelled quality/application-quality/Test-the-Test/G1 result; fix only a material failure, then continue the next uncovered canonical UI state. For purchase/receipt, use the diagnostic concurrency run to identify the exact failing worker before touching SQL. 
+
+## 2026-09-28 — Exact current execution checkpoint
+- Actual current `main` HEAD: `58fe59eb6f71c6d2879dd7bd2d25910dd0fc5370`.
+- Implemented: full shared workspace navigation surface for Admin/Staff + Customer; feature-aware customer surface visibility; structural bootstrap/notification/address/order/invoice/admin finance/admin access/shared detail loading states; 84-reference pack contract test; boundary-anchor/alternative contract tests; hidden customer-section URL guard; purchase/receipt concurrency proof repaired and bounded; purchase/receipt same-key payload-conflict negatives.
+- Verified on exact SHA: Browser Contract source proof PASS; G1 domain proof PASS; security-audit PASS on prior exact SHA `536521e8...` only and not transferred; latest quality run is active.
+- Current proof state: latest exact SHA CI is still running at Typecheck; no PASS claimed until the current run completes.
+- Open: exact current Aghbari Quality/Test-the-Test/Concurrency proof completion; full browser visual runtime proof (browser-e2e remains separate); exact hosted runtime proof; production 200→128 migration remains unapplied.
+- Certification: NOT CLAIMED.
+- Production: HOLD / NO TOUCH.
+### NEXT EXECUTABLE ACTION
+On exact current HEAD `58fe59eb6f71c6d2879dd7bd2d25910dd0fc5370`, read the current Aghbari Quality result first; if failed, fix only its first material failure. If passed, read current Test-the-Test, Concurrency, G1, Security and Browser results on the same SHA, then record the exact proof matrix before opening the next uncovered canonical UI/core gap.
