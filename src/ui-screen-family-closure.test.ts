@@ -155,3 +155,14 @@ describe('inventory and warehouse full collection controls', () => {
     expect(sourceText).toContain('created_at');
   });
 });
+
+
+describe('inventory movement progressive disclosure', () => {
+  it('keeps dense history rows interactive through a real detail drawer', () => {
+    const sourceText = readRepoSource('InventoryHistoryPanel.tsx');
+    expect(sourceText).toContain('history-row-button');
+    expect(sourceText).toContain('selectedMovement');
+    expect(sourceText).toContain('<RecordDetailDrawer');
+    expect(sourceText).toContain('selectedMovement.source_type');
+  });
+});
