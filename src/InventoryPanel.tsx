@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { supabase } from './lib/supabase';
 import OperationalLoadingSkeleton from './OperationalLoadingSkeleton';
 import { completeStockCount, getLowStock, getOpenStockCount, getStockCountLines, setStockCountLine, setStockThreshold, startStockCount, transferInventory, type LowStockRow, type StockCountLine, type StockCountSession } from './services/inventory';
@@ -28,7 +28,7 @@ export default function InventoryPanel({ role }: { role: UserRole }) {
   const [barcode, setBarcode] = useState('');
   const [barcodeBusy, setBarcodeBusy] = useState(false);
   const [barcodeProductName, setBarcodeProductName] = useState('');
-  const [busy, setBusy] = useState(false); const [loading, setLoading] = useState(true);
+  const [lowStockQuery,setLowStockQuery]=useState(''); const [lowStockWarehouse,setLowStockWarehouse]=useState('all'); const [lowStockPage,setLowStockPage]=useState(1); const [busy, setBusy] = useState(false); const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -98,6 +98,11 @@ export default function InventoryPanel({ role }: { role: UserRole }) {
   const makeKey = (prefix: string) => `agh-${prefix}-${crypto.randomUUID()}`;
   const productName = new Map(products.map((p) => [p.id, `${p.name} · ${p.sku}`]));
   const countCompleted = stockLines.filter((line) => line.counted_quantity !== null).length;
+  useEffect(()=>{setLowStockPage(1);},[lowStockQuery,lowStockWarehouse]);
+  const lowStockRows=useMemo(()=>{const needle=lowStockQuery.trim().toLocaleLowerCase();return [...lowStock].filter(row=>lowStockWarehouse==='all'||row.warehouse_id===lowStockWarehouse).filter(row=>!needle||[row.product_name,row.sku,row.warehouse_name].join(' ').toLocaleLowerCase().includes(needle)).sort((a,b)=>Number(a.current_quantity)-Number(b.current_quantity)||String(a.product_name).localeCompare(String(b.product_name),'ar'));},[lowStock,lowStockQuery,lowStockWarehouse]);
+  const lowStockPages=Math.max(1,Math.ceil(lowStockRows.length/10));
+  const lowStockActivePage=Math.min(lowStockPage,lowStockPages);
+  const visibleLowStock=lowStockRows.slice((lowStockActivePage-1)*10,lowStockActivePage*10);
 
   return <div className="cart-panel" id="inventory">
     <div className="section-heading"><div><span className="eyebrow">المخزون</span><h2>النقل والجرد والتنبيهات التشغيلية</h2></div><span aria-live="polite">{loading ? 'جارٍ التحديث…' : `${lowStock.length} أصناف منخفضة`}</span></div>
@@ -143,7 +148,7 @@ export default function InventoryPanel({ role }: { role: UserRole }) {
         </div>}
       </div>
 
-      <div className="admin-card"><h3>الأصناف التي تحتاج إجراء</h3>{!lowStock.length ? <small>لا توجد أصناف تحت حدود إعادة الطلب.</small> : <div className="cart-lines">{lowStock.slice(0,20).map((row) => <article className="cart-line" key={`${row.warehouse_id}:${row.product_id}`}><div><strong>{row.product_name}</strong><small>{row.sku} · {row.warehouse_name}</small></div><div><strong>{row.current_quantity}</strong><small>الحد {row.min_quantity} · إعادة {row.reorder_quantity}</small></div><button type="button" className="ghost" onClick={() => { setProductId(row.product_id); setSource(row.warehouse_id); document.getElementById('inventory-transfer')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }}>استخدام في التحويل</button></article>)}</div>}</div>
+      <div className="admin-card low-stock-card"><div className="section-heading"><div><span className="eyebrow">Reorder Queue</span><h3>الأصناف التي تحتاج إجراء</h3></div><span>{lowStockRows.length}/{lowStock.length} نتيجة</span></div><div className="order-queue-toolbar"><input aria-label="بحث الأصناف منخفضة المخزون" value={lowStockQuery} onChange={e=>setLowStockQuery(e.target.value)} placeholder="الصنف أو SKU أو المستودع"/><select aria-label="تصفية المستودع للأصناف المنخفضة" value={lowStockWarehouse} onChange={e=>setLowStockWarehouse(e.target.value)}><option value="all">كل المستودعات</option>{warehouses.map(w=><option key={w.id} value={w.id}>{w.name}</option>)}</select><button type="button" className="ghost" onClick={()=>{setLowStockQuery('');setLowStockWarehouse('all')}} disabled={!lowStockQuery&&lowStockWarehouse==='all'}>مسح</button></div>{!lowStock.length ? <small>لا توجد أصناف تحت حدود إعادة الطلب.</small> : <div className="cart-lines">{visibleLowStock.map((row) => <article className="cart-line" key={`${row.warehouse_id}:${row.product_id}`}><div><strong>{row.product_name}</strong><small>{row.sku} · {row.warehouse_name}</small></div><div><strong>{row.current_quantity}</strong><small>الحد {row.min_quantity} · إعادة {row.reorder_quantity}</small></div><button type="button" className="ghost" onClick={() => { setProductId(row.product_id); setSource(row.warehouse_id); document.getElementById('inventory-transfer')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }}>استخدام في التحويل</button></article>)}</div>}</div>
     </div>}
     {error && <div className="error-banner" role="alert"><span>{error}</span><button type="button" className="ghost" onClick={() => void reload()} disabled={busy}>إعادة تحميل المخزون</button></div>}{message && <div className="success" role="status">{message}</div>}
   </div>;
