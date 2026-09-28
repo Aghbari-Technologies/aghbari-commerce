@@ -412,3 +412,16 @@ Inspect the newest exact-main check runs/logs, fix the first material failure on
 - Certification: `NOT CLAIMED`
 - Production: `HOLD / NO TOUCH`
 - Next: execute current exact-SHA Quality/Test-the-Test matrix; fix first material failure once, then continue next open UI/core gap. Do not re-run unchanged hosted blockers.
+
+
+## Run 2026-09-29 — Final customer-surface terminology sweep
+- Run: `2026-09-29`
+- Source HEAD before write-back: `c6c0c9729991aa73ed7228d9e48cd916210e3a1b`
+- Branch: `main`
+- Implemented: removed the last stale customer template copy from Account Workspace and the final stale template error text from AppV3; extended regression assertions.
+- Verified: all affected live customer/admin UI files are clean of stale `المسحات` / legacy identity text; canonical 84-reference static coverage remains 84 unique references; six customer sections and invitation acceptance remain represented.
+- Proven: source/static verification only for this exact lineage. Vercel status is `pending`; no browser/runtime claim. Supabase production was not changed.
+- Blocked: local exact test execution/browser proof/hosted exact-source proof unavailable through current tool access; production purchase/receipt migration remains unapplied by policy.
+- Certification: `NOT CLAIMED`
+- Production: `HOLD / NO TOUCH`
+- Next: execute the exact current-SHA quality/test-the-test matrix from main; on failure fix the first material root cause once, then continue the next independent core/UI gap.
