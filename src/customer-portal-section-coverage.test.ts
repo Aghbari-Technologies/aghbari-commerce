@@ -63,8 +63,8 @@ describe('customer checkout experience', () => {
 describe('customer catalog price sorting closure', () => {
   it('keeps price sorting tied to the authorized catalog price', () => {
     const sourceText = readRepoSource('AppV3Fixed.tsx');
-    expect(sourceText).toContain("value='price-high'");
-    expect(sourceText).toContain("value='price-low'");
+    expect(sourceText).toContain('value="price-high"');
+    expect(sourceText).toContain('value="price-low"');
     expect(sourceText).toContain("Number(y.authorizedPrice??0)-Number(x.authorizedPrice??0)");
     expect(sourceText).toContain("Number(x.authorizedPrice??0)-Number(y.authorizedPrice??0)");
   });
