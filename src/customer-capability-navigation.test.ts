@@ -8,7 +8,10 @@ const app = readFileSync(resolve(process.cwd(), 'src/AppV3Fixed.tsx'), 'utf8');
 
 describe('customer capability navigation closure', () => {
   it('exposes every canonical customer capability as an actionable control', () => {
-    expect(AGHBARI_CUSTOMER_STRUCTURE.every((item) => rail.includes('onOpenCapability') && rail.includes('className={item.status === \'live\' ? \'workspace-surface-capability is-live\' : \'workspace-surface-capability\'}'))).toBe(true);
+    expect(AGHBARI_CUSTOMER_STRUCTURE.length).toBeGreaterThan(20);
+    expect(new Set(AGHBARI_CUSTOMER_STRUCTURE.map((item) => item.id)).size).toBe(AGHBARI_CUSTOMER_STRUCTURE.length);
+    expect(rail).toContain("onOpenCapability?: (item: CustomerStructureItem) => void");
+    expect(rail).toContain('onClick={() => props.onOpenCapability?.(item)}');
   });
 
   it('connects the customer workspace rail to the live capability dispatcher', () => {
