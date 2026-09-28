@@ -64,3 +64,13 @@ Re-read exact `refs/heads/main`; execute/fetch the bounded quality proof if an a
 - Production: HOLD / NO TOUCH.
 
 - Verification trigger: the final source includes the authentication regression guard; exact current workflow results must be read from this final SHA.
+
+
+## 2026-09-28 — Product-grade visual layer activated
+- Exact source HEAD: `2bb8703d1f6904768692d3e0f2885f272a72b64c`.
+- Implemented: `src/ui-final-product.css` and activated it from `src/main.tsx`.
+- Scope: active Customer Portal + Admin/Staff workspace visual hierarchy, typography, controls, cards, tables, navigation, responsive behavior and reduced-motion presentation.
+- This layer changes presentation only; no transactional authority or backend contract was altered.
+- Current exact-SHA automated proof: Aghbari Quality `success`; Browser E2E / Exact Deployment browser-contract `success`; G1 Domain Proof `success`; security-audit `success`; Test-the-Test remains in progress.
+- Browser E2E actual runtime execution remains skipped when no exact hosted deployment is available.
+- Production remains `HOLD / NO TOUCH`.
