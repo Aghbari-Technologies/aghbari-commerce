@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { getAdminStructureForRole } from './structure/admin-structure';
-import { CUSTOMER_PORTAL_SECTIONS, type CustomerPortalSection } from './structure/customer-structure';
+import { AGHBARI_CUSTOMER_STRUCTURE, CUSTOMER_PORTAL_SECTIONS, type CustomerPortalSection } from './structure/customer-structure';
 import './workspace-surface.css';
 
 type StaffRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer';
@@ -27,6 +27,19 @@ const CUSTOMER_PACKS = [
   { id: 'account', label: 'الحساب والشركة', eyebrow: 'السياق', description: 'الملف، الشركة، العناوين والإعدادات.' },
   { id: 'notifications', label: 'الإشعارات', eyebrow: 'التشغيل', description: 'تنبيهات مرتبطة بالحساب والطلبات.' },
 ] as const;
+
+const CUSTOMER_NEXT_SECTION: Partial<Record<CustomerPortalSection, CustomerPortalSection>> = {
+  catalog: 'orders',
+  orders: 'catalog',
+  finance: 'account',
+  templates: 'catalog',
+  account: 'catalog',
+  notifications: 'orders',
+};
+
+export function getCustomerSurfaceItems(section: CustomerPortalSection, visibleSections: readonly CustomerPortalSection[] = CUSTOMER_PORTAL_SECTIONS) {
+  return AGHBARI_CUSTOMER_STRUCTURE.filter((item) => item.section === section && visibleSections.includes(item.section));
+}
 
 export default function WorkspaceSurfaceRail(props: WorkspaceSurfaceRailProps) {
   const [activeStaffTarget, setActiveStaffTarget] = useState(() =>
@@ -56,37 +69,48 @@ export default function WorkspaceSurfaceRail(props: WorkspaceSurfaceRailProps) {
   }, [props.variant === 'staff' ? props.role : 'customer']);
 
   if (props.variant === 'customer') {
+    const visibleSections = props.visibleSections ?? CUSTOMER_PORTAL_SECTIONS;
+    const activePackIndex = CUSTOMER_PACKS.findIndex((pack) => pack.id === props.section);
+    const surfaceItems = getCustomerSurfaceItems(props.section, visibleSections);
+    const nextSection = CUSTOMER_NEXT_SECTION[props.section];
+    const nextPack = nextSection ? CUSTOMER_PACKS.find((pack) => pack.id === nextSection) : undefined;
+
     return (
       <section className="workspace-surface-rail customer-surface-rail" aria-label="مسارات بوابة الأغبري">
         <div className="workspace-surface-rail-head">
           <div>
             <span className="eyebrow">تجربة الأغبري</span>
             <strong>مساحات العمل</strong>
-            <small>انتقل بين مراحل رحلة الشراء دون فقدان سياق الحساب.</small>
+            <small>انتقل بين مراحل رحلة الشراء مع كشف القدرات الفعلية للقسم الحالي.</small>
           </div>
-          <span className="workspace-surface-count">{(props.visibleSections ?? CUSTOMER_PORTAL_SECTIONS).length} مساحات</span>
+          <span className="workspace-surface-count">{visibleSections.length} مساحات · {surfaceItems.length} قدرات</span>
         </div>
         <div className="workspace-surface-grid">
-          {CUSTOMER_PACKS.filter((pack) => (props.visibleSections ?? CUSTOMER_PORTAL_SECTIONS).includes(pack.id)).map((pack) => {
+          {CUSTOMER_PACKS.filter((pack) => visibleSections.includes(pack.id)).map((pack) => {
             const active = props.section === pack.id;
+            const index = CUSTOMER_PACKS.filter((entry) => visibleSections.includes(entry.id)).findIndex((entry) => entry.id === pack.id);
             return (
-              <button
-                key={pack.id}
-                type="button"
-                className={active ? 'workspace-surface-item active' : 'workspace-surface-item'}
-                aria-current={active ? 'page' : undefined}
-                onClick={() => props.onSelect(pack.id)}
-              >
-                <span className="workspace-surface-index">{String((CUSTOMER_PACKS.filter((entry) => (props.visibleSections ?? CUSTOMER_PORTAL_SECTIONS).includes(entry.id)).findIndex((entry) => entry.id === pack.id)) + 1).padStart(2, '0')}</span>
-                <span className="workspace-surface-copy">
-                  <small>{pack.eyebrow}</small>
-                  <strong>{pack.label}</strong>
-                  <em>{pack.description}</em>
-                </span>
+              <button key={pack.id} type="button" className={active ? 'workspace-surface-item active' : 'workspace-surface-item'} aria-current={active ? 'page' : undefined} onClick={() => props.onSelect(pack.id)}>
+                <span className="workspace-surface-index">{String(index + 1).padStart(2, '0')}</span>
+                <span className="workspace-surface-copy"><small>{pack.eyebrow}</small><strong>{pack.label}</strong><em>{pack.description}</em></span>
                 <b aria-hidden="true">{active ? '●' : '↗'}</b>
               </button>
             );
           })}
+        </div>
+        <div className="workspace-surface-capabilities" aria-label={`قدرات قسم ${CUSTOMER_PACKS[activePackIndex]?.label ?? props.section}`}>
+          <div className="workspace-surface-capabilities-head">
+            <div><span className="eyebrow">تفاصيل القسم</span><strong>كل الوظائف المرتبطة بالمساحة الحالية</strong></div>
+            {nextPack && visibleSections.includes(nextPack.id) && <button type="button" className="workspace-surface-next" onClick={() => props.onSelect(nextPack.id)}>التالي: {nextPack.label} <span aria-hidden="true">→</span></button>}
+          </div>
+          <div className="workspace-surface-capability-list">
+            {surfaceItems.map((item) => (
+              <span key={item.id} className={item.status === 'live' ? 'workspace-surface-capability is-live' : 'workspace-surface-capability'}>
+                <b aria-hidden="true">{item.status === 'live' ? '✓' : '•'}</b>
+                <span><strong>{item.label}</strong><small>{item.description}</small></span>
+              </span>
+            ))}
+          </div>
         </div>
       </section>
     );
@@ -95,11 +119,7 @@ export default function WorkspaceSurfaceRail(props: WorkspaceSurfaceRailProps) {
   return (
     <section className="workspace-surface-rail staff-surface-rail" aria-label="مساحات عمل مركز التشغيل">
       <div className="workspace-surface-rail-head">
-        <div>
-          <span className="eyebrow">الأغبري · Control Surface</span>
-          <strong>كل مساحة تشغيل في طبقة واحدة</strong>
-          <small>روابط مرئية للشاشات الحية مع الحدود غير التنفيذية في مكانها.</small>
-        </div>
+        <div><span className="eyebrow">الأغبري · Control Surface</span><strong>كل مساحة تشغيل في طبقة واحدة</strong><small>روابط مرئية للشاشات الحية مع الحدود غير التنفيذية في مكانها.</small></div>
         <span className="workspace-surface-count">{allowedStaffTargets.size} وجهة مسموحة</span>
       </div>
       <div className="workspace-surface-grid">
@@ -108,22 +128,18 @@ export default function WorkspaceSurfaceRail(props: WorkspaceSurfaceRailProps) {
           const active = activeStaffTarget === pack.target;
           if (!enabled) return null;
           return (
-            <a
-              key={pack.id}
-              href={pack.target}
-              className={active ? `workspace-surface-item active tone-${pack.tone}` : `workspace-surface-item tone-${pack.tone}`}
-              aria-current={active ? 'page' : undefined}
-            >
+            <a key={pack.id} href={pack.target} className={active ? `workspace-surface-item active tone-${pack.tone}` : `workspace-surface-item tone-${pack.tone}`} aria-current={active ? 'page' : undefined}>
               <span className="workspace-surface-index">{String(index + 1).padStart(2, '0')}</span>
-              <span className="workspace-surface-copy">
-                <small>{pack.eyebrow}</small>
-                <strong>{pack.label}</strong>
-                <em>{pack.tone === 'boundary' ? 'قدرات خارج عقد Commerce الحالي' : 'فتح مساحة التشغيل الفعلية'}</em>
-              </span>
+              <span className="workspace-surface-copy"><small>{pack.eyebrow}</small><strong>{pack.label}</strong><em>{pack.tone === 'boundary' ? 'قدرات خارج عقد Commerce الحالي' : 'فتح مساحة التشغيل الفعلية'}</em></span>
               <b aria-hidden="true">{active ? '●' : '↗'}</b>
             </a>
           );
         })}
+      </div>
+      <div className="workspace-surface-staff-meta" aria-label="ملخص صلاحيات ومساحات التشغيل">
+        <span><b>{allowedStaffTargets.size}</b> وجهة حية</span>
+        <span><b>{getAdminStructureForRole(props.role).reduce((count, group) => count + group.items.filter((item) => item.status === 'boundary').length, 0)}</b> حدود واضحة</span>
+        <span><b>{props.role}</b> صلاحية الجلسة</span>
       </div>
     </section>
   );
