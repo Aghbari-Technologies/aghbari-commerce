@@ -154,11 +154,17 @@ select is(
 do $
 declare
   existing_receipt uuid;
+  existing_item uuid;
 begin
   select id into existing_receipt
   from public.purchase_receipts
   where organization_id='d3800000-0000-4000-8000-000000000010'::uuid
     and idempotency_key=repeat('r',128)
+  limit 1;
+  select purchase_order_item_id into existing_item
+  from public.purchase_receipt_items
+  where organization_id='d3800000-0000-4000-8000-000000000010'::uuid
+    and receipt_id=existing_receipt
   limit 1;
 
   begin
@@ -166,7 +172,7 @@ begin
       'd3800000-0000-4000-8000-000000000099'::uuid,
       repeat('r',128),
       jsonb_build_array(jsonb_build_object(
-        'purchase_order_item_id',v_item_id,
+        'purchase_order_item_id',existing_item,
         'product_id','d3800000-0000-4000-8000-000000000015'::uuid,
         'quantity',1
       ))
