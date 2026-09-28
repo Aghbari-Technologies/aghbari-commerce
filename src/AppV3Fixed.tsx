@@ -14,6 +14,7 @@ import { getCustomerOrderDetail, type CustomerOrderDetail, type CustomerOrderSum
 import { friendlyAuthError, getSession, resetPassword, signIn, signOut } from './services/auth';
 import { createOrderTemplate, deleteOrderTemplate, getOrderTemplates, applyOrderTemplate, type OrderTemplate } from './services/orderTemplates';
 import { filterAndSortTemplates, paginateTemplates, type TemplateViewSort } from './customer-template-view';
+import type { CustomerStructureItem } from './structure/customer-structure';
 import { supabase } from './lib/supabase';
 const AdminPanel = lazy(() => import('./AdminPanel'));
 import CustomerHomeWorkspace from './CustomerHomeWorkspace';
@@ -243,7 +244,106 @@ export default function AppV3Fixed(){
   }
   async function openOrderDetail(order:CustomerOrderSummary){setOrderDetailBusy(true);setError('');try{setSelectedOrder(await getCustomerOrderDetail(order.id));}catch(e){setError(e instanceof Error?e.message:'تعذر تحميل تفاصيل الطلب.');}finally{setOrderDetailBusy(false);}}
   async function refreshAccount(){if(!supabase)return;setBusy(true);setError('');try{const session=await getSession();if(!session)throw new Error('انتهت جلسة الحساب. سجّل الدخول مجددًا.');await loadIdentity(session.user.id);await loadData();setMessage('تم تحديث سياق الحساب والبيانات.');}catch(e){setError(e instanceof Error?e.message:'تعذر تحديث سياق الحساب.');}finally{setBusy(false);}}
-  function navigate(next:PortalSection){if(next!==section&&config.requireQuantityConfirmation&&cart.some(l=>!confirmed[l.product.id])){setError('اعتمد كميات السلة أولاً قبل الانتقال إلى قسم آخر.');setCartOpen(true);return;}setError('');setSection(next);if(typeof window!=='undefined'&&window.location.hash!==('#'+next))window.history.pushState(null,'','#'+next);}
+  function navigate(next:PortalSection):boolean{if(next!==section&&config.requireQuantityConfirmation&&cart.some(l=>!confirmed[l.product.id])){setError('اعتمد كميات السلة أولاً قبل الانتقال إلى قسم آخر.');setCartOpen(true);return false;}setError('');setSection(next);if(typeof window!=='undefined'&&window.location.hash!==('#'+next))window.history.pushState(null,'','#'+next);return true;}
+  function focusCustomerSurface(selector:string, focus=false){
+    window.setTimeout(()=>{
+      const node=document.querySelector(selector) as HTMLElement|null;
+      node?.scrollIntoView({behavior:'smooth',block:'center'});
+      if(focus && node && 'focus' in node) node.focus();
+    },0);
+  }
+  function clickCustomerTab(selector:string, label:string){
+    window.setTimeout(()=>{
+      const buttons=[...document.querySelectorAll<HTMLButtonElement>(selector)];
+      buttons.find((button)=>button.textContent?.trim()===label)?.click();
+    },0);
+  }
+  function openCustomerCapability(item:CustomerStructureItem){
+    if(item.section!=='home' && !navigate(item.section as PortalSection)) return;
+    switch(item.id){
+      case 'home':
+        navigate('home');
+        break;
+      case 'store':
+        focusCustomerSurface('.search-panel');
+        break;
+      case 'search':
+        focusCustomerSurface('.search-panel input[aria-label="البحث في الكتالوج"]',true);
+        break;
+      case 'categories':
+        focusCustomerSurface('.category-row');
+        break;
+      case 'product-detail':{
+        const product=products.find((candidate)=>candidate.status==='active' && candidate.availableQuantity>0)??products[0];
+        if(product) setSelectedProduct(product);
+        else setMessage('لا توجد أصناف محملة لفتح تفاصيلها الآن.');
+        break;
+      }
+      case 'cart':
+        setCartOpen(true);
+        break;
+      case 'checkout':
+        if(!cart.length){setError('السلة فارغة. أضف صنفًا واحدًا على الأقل قبل إتمام الطلب.');setCartOpen(true);break;}
+        setCheckoutOpen(true);
+        break;
+      case 'order-history':
+        navigate('orders');
+        break;
+      case 'order-detail':
+        if(orders[0]) void openOrderDetail(orders[0]);
+        else setMessage('لا يوجد طلب حالي لفتح تفاصيله.');
+        break;
+      case 'templates':
+        navigate('templates');
+        break;
+      case 'quick-order':
+        setQuickOpen(true);
+        break;
+      case 'pricing':
+        setPricingOpen(true);
+        break;
+      case 'profile':
+        clickCustomerTab('.customer-account-tabs button','الملف الشخصي');
+        break;
+      case 'company':
+        clickCustomerTab('.customer-account-tabs button','الشركة والحساب');
+        break;
+      case 'addresses':
+        clickCustomerTab('.customer-account-tabs button','العناوين');
+        break;
+      case 'account-settings':
+        clickCustomerTab('.customer-account-tabs button','إعدادات الحساب');
+        break;
+      case 'offline':
+        focusCustomerSurface('#offline-recovery-title');
+        break;
+      case 'invitations':
+        setMessage('قبول دعوات الحساب يتم عبر رابط الدعوة المباشر؛ لا يتم إنشاء دعوات من بوابة العميل.');
+        break;
+      case 'finance':
+        navigate('finance');
+        break;
+      case 'invoice-history':
+        clickCustomerTab('.history-tabs button','الفواتير والمدفوعات');
+        break;
+      case 'invoice-detail':
+        clickCustomerTab('.history-tabs button','الفواتير والمدفوعات');
+        focusCustomerSurface('.customer-invoice-grid');
+        break;
+      case 'statements':
+        clickCustomerTab('.history-tabs button','كشف الحساب');
+        break;
+      case 'payment-history':
+        clickCustomerTab('.history-tabs button','سجل الدفعات');
+        break;
+      case 'notifications':
+        navigate('notifications');
+        break;
+      default:
+        focusCustomerSurface('.customer-section-context');
+        break;
+    }
+  }
   async function add(p:Product,q=1,openCart=true):Promise<boolean>{const price=effectivePrice(p,q);if(price<=0){setError('لا يوجد سعر مصرح به لهذا الصنف.');return false;}if(q<1||q>p.availableQuantity){setError('الكمية المطلوبة غير متاحة.');return false;}const existing=cart.find(l=>l.product.id===p.id);const next=Math.min((existing?.quantity??0)+q,p.availableQuantity);try{await setCartItem(p.id,next);setCart(c=>existing?c.map(l=>l.product.id===p.id?{...l,quantity:next,unitPrice:effectivePrice(p,next)}:l):[...c,{product:p,quantity:next,unitPrice:price}]);setQtyConfirmed(p.id,!config.requireQuantityConfirmation);setCartOpen(openCart);setCatalogQuantityDrafts(c=>({...c,[p.id]:String(next)}));setError('');return true;}catch(e){setError(e instanceof Error?e.message:'تعذر تحديث السلة.');return false;}}
   async function applyCatalogQuantity(p: PricedProduct, raw: string) {
     const issue = catalogQuantityError(raw, p.availableQuantity);
@@ -311,7 +411,7 @@ export default function AppV3Fixed(){
   if(resolveAuthenticatedSurface(role,customerId)==='admin')return <><header className="staff-topbar"><strong>الأغبري · مركز التحكم التشغيلي</strong><div><span>الدور: {role==='viewer'?'مشاهد':role}</span><button onClick={()=>void logout()}>خروج</button></div></header><Suspense fallback={<OperationalLoadingSkeleton variant="app" />}><AdminPanel role={role as 'owner'|'admin'|'sales'|'warehouse'|'viewer'} userId={sessionUserId}/></Suspense></>;
   return <div className="customer-shell"><header className="portal-header"><div><span className="eyebrow">B2B ENTERPRISE</span><h1>بوابة الأغبري</h1><small>مرحبًا، {customerName}</small></div><div className="header-actions"><span className={`connection ${online?'':'connection-offline'}`} role="status">{online?(offlineSyncing?'↻ مزامنة…':'● متصل'):'○ غير متصل'}</span><button onClick={()=>setCartOpen(true)}>السلة <b>{cartCount}</b></button><button className="ghost" onClick={()=>void logout()}>خروج</button></div></header>
     <OperationalTruthStrip isOnline={online} customerTier={customerTier} warehouseLabel={warehouseName||'المستودع التشغيلي'} />
-    <WorkspaceSurfaceRail variant="customer" section={section} onSelect={navigate} visibleSections={getVisibleCustomerPortalSections(config)} />
+    <WorkspaceSurfaceRail variant="customer" section={section} onSelect={navigate} visibleSections={getVisibleCustomerPortalSections(config)} onOpenCapability={openCustomerCapability} />
     <div className="portal-body"><aside className="portal-nav"><button aria-current={section==='home'?'page':undefined} className={section==='home'?'active':''} onClick={()=>navigate('home')}>الرئيسية</button><button aria-current={section==='catalog'?'page':undefined} className={section==='catalog'?'active':''} onClick={()=>navigate('catalog')}>الكتالوج</button><button aria-current={section==='orders'?'page':undefined} className={section==='orders'?'active':''} onClick={()=>navigate('orders')}>طلباتي</button><button aria-current={section==='account'?'page':undefined} className={section==='account'?'active':''} onClick={()=>navigate('account')}>حسابي</button><button aria-current={section==='notifications'?'page':undefined} className={section==='notifications'?'active':''} onClick={()=>navigate('notifications')}>الإشعارات</button>{config.showTemplates&&<button aria-current={section==='templates'?'page':undefined} className={section==='templates'?'active':''} onClick={()=>navigate('templates')}>القوالب</button>}{config.showCredit&&<button aria-current={section==='finance'?'page':undefined} className={section==='finance'?'active':''} onClick={()=>navigate('finance')}>المركز المالي</button>}</aside><main className="portal-main">
       <section className="customer-section-context" aria-label="سياق القسم الحالي"><div><span className="eyebrow">{PORTAL_SECTION_META[section].eyebrow}</span><strong>{PORTAL_SECTION_META[section].label}</strong><small>{PORTAL_SECTION_META[section].hint}</small></div><div className="customer-context-actions"><button type="button" className="ghost" onClick={()=>setCartOpen(true)}>السلة <b>{cartCount}</b></button>{section!=='catalog'&&<button type="button" className="ghost" onClick={()=>navigate('catalog')}>الكتالوج</button>}</div></section>
       {section==='home'&&<CustomerHomeWorkspace
