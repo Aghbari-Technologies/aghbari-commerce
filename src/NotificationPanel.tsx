@@ -87,7 +87,7 @@ function NotificationRowView({
   );
 }
 
-export default function NotificationPanel({ audience }: { audience: Audience }) {
+export default function NotificationPanel({ audience, online = true }: { audience: Audience; online?: boolean }) {
   const [rows, setRows] = useState<NotificationRow[]>([]);
   const [query, setQuery] = useState('');
   const [kind, setKind] = useState<'all' | NotificationKind>('all');
@@ -124,8 +124,16 @@ export default function NotificationPanel({ audience }: { audience: Audience }) 
   }, []);
 
   useEffect(() => {
+    if (audience === 'customer' && !online) {
+      setRows([]);
+      setActorId(null);
+      setSelected(null);
+      setError(null);
+      setLoading(false);
+      return;
+    }
     void reload();
-  }, [reload]);
+  }, [audience, online, reload]);
 
   useEffect(() => {
     setPage(1);
@@ -221,6 +229,14 @@ export default function NotificationPanel({ audience }: { audience: Audience }) 
         <span>{unreadCount} غير مقروء</span>
       </div>
 
+      {audience === 'customer' && !online ? (
+        <div className="empty-state" role="status">
+          <strong>الإشعارات متوقفة دون اتصال</strong>
+          <span>لا يتم عرض بيانات إشعارات قديمة أو اعتبارها مصدرًا موثوقًا أثناء عدم الاتصال.</span>
+          <button type="button" onClick={() => { if (online) void reload(); }} disabled={!online}>بعد عودة الاتصال: إعادة التحميل</button>
+        </div>
+      ) : (
+      <>
       <div className="operations-toolbar">
         <input
           aria-label="بحث الإشعارات"
@@ -344,6 +360,9 @@ export default function NotificationPanel({ audience }: { audience: Audience }) 
           ]}
           onClose={() => setSelected(null)}
         />
+      )}
+
+      </>
       )}
 
       {error && !loading && (
