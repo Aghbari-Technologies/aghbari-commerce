@@ -104,7 +104,7 @@ export default function CustomerOrdersPanel({
           <div className="order-head"><div><span className="eyebrow">طلب B2B</span><strong>طلب #{order.order_number}</strong><small>{'حسابك الحالي'} · {new Date(order.created_at).toLocaleString('ar-YE')}</small></div><strong>{Number(order.total).toLocaleString('ar-YE')} {order.currency}</strong></div>
           <div className="order-status" data-status={order.status}>{STATUS_LABELS[order.status]??order.status}</div>
           {progress >= 0 && <div className="customer-order-timeline" aria-label={`تقدم الطلب: ${STATUS_LABELS[order.status]??order.status}`}>
-            {STATUS_ORDER.map((step,index)=><div className={index < progress ? 'is-complete' : index === progress-1 ? 'is-current' : ''} key={step}><span aria-hidden="true">{index < progress ? '✓' : index + 1}</span><small>{STATUS_LABELS[step]}</small></div>)}
+            {STATUS_ORDER.map((step,index)=>{const current=index===progress-1; const complete=index<progress-1; return <div className={current ? 'is-current' : complete ? 'is-complete' : ''} key={step}><span aria-hidden="true">{complete ? '✓' : index + 1}</span><small>{STATUS_LABELS[step]}</small></div>;})}
           </div>}
           {order.status === 'cancelled' && <div className="state-panel" data-state="error"><strong>الطلب ملغي</strong><small>يمكنك فتح التفاصيل لمعرفة حالة السجل، أو إعادة الطلب لإنشاء محاولة جديدة.</small></div>}
           <div className="order-footer"><button type="button" disabled={detailBusy} onClick={()=>onOpenDetail(order)}>عرض التفاصيل والتتبع</button><button type="button" className="ghost" disabled={loading} onClick={()=>onReorder(order)}>إعادة الطلب</button></div>
