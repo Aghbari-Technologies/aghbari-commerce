@@ -55,6 +55,15 @@ describe('canonical UI coverage', () => {
     for (const target of liveTargets) expect(adminSource).toContain(target);
   });
 
+  it('keeps every Staff surface pack bound to a live or explicit boundary target', () => {
+    const railSource = readFileSync(resolve(process.cwd(), 'src/WorkspaceSurfaceRail.tsx'), 'utf8');
+    const knownTargets = new Set([
+      ...getAdminStructureForRole('owner').flatMap((group) => group.items.filter((item) => item.status === 'live' && item.target).map((item) => item.target!.trim())),
+      '#admin-boundaries',
+    ]);
+    for (const target of (railSource.matchAll(/target: '([^']+)'/g))) expect(knownTargets.has(target[1])).toBe(true);
+  });
+
   it('keeps the canonical customer capability list dynamically rendered by the shared customer surface', () => {
     const railSource = readFileSync(resolve(process.cwd(), 'src/WorkspaceSurfaceRail.tsx'), 'utf8');
     expect(railSource).toContain('AGHBARI_CUSTOMER_STRUCTURE');
