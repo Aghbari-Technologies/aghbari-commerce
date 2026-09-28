@@ -154,3 +154,29 @@ The 84-asset count is provenance/accounting only. UI completion is measured by c
 - Customer visibility is derived from the same live presentation configuration already used by the portal; hidden Finance/Templates surfaces are not rendered when their feature is disabled.
 - Staff rail derives live targets from the canonical role-filtered Admin structure; the Boundary surface is shown only when the current role has declared non-live capabilities.
 - The rail is presentation/navigation only. It does not grant permissions or create transactional authority.
+
+## 2026-09-28 — UI-first full-surface closure gate
+
+For the active closure wave, UI is a product surface closure problem, not a route/navigation problem.
+
+An in-scope surface is closed only when its applicable path is implemented through:
+
+```text
+SCREEN / SUBVIEW
+→ REAL CONTENT CONTRACT
+→ REAL CONTROLS / FORMS
+→ REAL STATES
+→ REAL ACTIONS / PERSISTENCE
+→ PERMISSION BEHAVIOR
+→ RTL + RESPONSIVE
+→ ACCESSIBILITY
+→ FOCUSED TEST
+→ BROWSER / RUNTIME PROOF
+→ EXACT-SHA EVIDENCE
+```
+
+The Customer Portal and Admin/Staff surfaces are first-class product areas. Missing documented capabilities must be placed under their correct logical parent. When no correct parent exists, a new logical section/route is created instead of hiding the capability in an unrelated surface.
+
+The 84 supplied PNGs are a visual reference corpus. Every asset remains accounted for through the UI reference index, while duplicate/equivalent references share one implementation target. An in-scope visual family cannot be closed through a registry row, route existence, generic cards, or a visually similar placeholder.
+
+Requirements discovered from references or canonical specifications are not parked as notes: they are routed to the owning canonical contract and implemented in the same closure wave whenever they are in scope. Unsupported behavior is an explicit boundary, not a fake transaction.
