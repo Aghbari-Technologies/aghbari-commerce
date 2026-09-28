@@ -27,3 +27,12 @@ describe('purchase/receipt 128-bound migration source contract', () => {
     expect((migration.match(/errcode='40001'/g) ?? []).length).toBeGreaterThanOrEqual(2);
   });
 });
+
+
+describe('purchase receipt outbox aggregate contract', () => {
+  it('keeps purchase.received bound to the created receipt aggregate', () => {
+    const source = readFileSync(resolve(process.cwd(), 'supabase/migrations/20260927041500_normalize_purchase_receipt_idempotency_bound.sql'), 'utf8');
+    expect(source).toContain("o,'purchase_receipt',rec.id,'purchase.received'");
+    expect(source).not.toContain("o,'purchase_order',po.id,'purchase.received'");
+  });
+});
