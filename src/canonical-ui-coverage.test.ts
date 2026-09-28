@@ -32,8 +32,8 @@ describe('canonical UI coverage', () => {
     expect(packCounts).toEqual([5, 20, 7, 18, 13, 7, 9, 5]);
   });
 
-  it('keeps the customer portal at the canonical six sections with unique capabilities', () => {
-    expect(new Set(CUSTOMER_PORTAL_SECTIONS)).toEqual(new Set(['catalog', 'orders', 'finance', 'templates', 'account', 'notifications']));
+  it('keeps the customer portal at the canonical seven sections with unique capabilities', () => {
+    expect(new Set(CUSTOMER_PORTAL_SECTIONS)).toEqual(new Set(['home', 'catalog', 'orders', 'finance', 'templates', 'account', 'notifications']));
     expect(new Set(AGHBARI_CUSTOMER_STRUCTURE.map((item) => item.id)).size).toBe(AGHBARI_CUSTOMER_STRUCTURE.length);
     for (const section of CUSTOMER_PORTAL_SECTIONS) {
       expect(AGHBARI_CUSTOMER_STRUCTURE.some((item) => item.section === section)).toBe(true);
@@ -93,6 +93,8 @@ describe('canonical UI coverage', () => {
     const railSource = readFileSync(resolve(process.cwd(), 'src/WorkspaceSurfaceRail.tsx'), 'utf8');
     expect(railSource).toContain('AGHBARI_CUSTOMER_STRUCTURE');
     expect(railSource).toContain('getCustomerSurfaceItems');
+    expect(railSource).toContain("id: 'home', label: 'الرئيسية'");
+    expect(railSource).toContain("home: 'catalog'");
     expect(railSource).toContain('<strong>{item.label}</strong>');
     expect(customerSources).toContain('WorkspaceSurfaceRail');
   });
@@ -114,5 +116,28 @@ describe('canonical UI coverage', () => {
         }
       }
     }
+  });
+});
+
+
+describe('customer Home runtime contract', () => {
+  it('keeps Home as the default customer route with real summary actions', () => {
+    const source = readFileSync(resolve(process.cwd(), 'src/AppV3Fixed.tsx'), 'utf8');
+    const home = readFileSync(resolve(process.cwd(), 'src/CustomerHomeWorkspace.tsx'), 'utf8');
+    expect(source).toContain("type PortalSection = 'home' | 'catalog' | 'orders' | 'finance' | 'templates' | 'account' | 'notifications'");
+    expect(source).toContain("if (typeof window === 'undefined') return 'home';");
+    expect(source).toContain("return PORTAL_SECTIONS.has(value) ? value : 'home';");
+    expect(source).toContain('<CustomerHomeWorkspace');
+    expect(source).toContain('productsOnPage={products.length}');
+    expect(source).toContain('latestOrderNumber={orders[0]?.order_number}');
+    expect(home).toContain('id="customer-home"');
+    expect(home).toContain("onNavigate('catalog')");
+    expect(home).toContain("onNavigate('orders')");
+    expect(home).toContain("onNavigate('account')");
+    expect(home).toContain("onNavigate('notifications')");
+    expect(home).toContain("onNavigate('finance')");
+    expect(home).toContain("onNavigate('templates')");
+    expect(home).toContain('onOpenCart');
+    expect(home).not.toContain('المسحات');
   });
 });
