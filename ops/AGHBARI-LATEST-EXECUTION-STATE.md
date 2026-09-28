@@ -40,3 +40,21 @@ Run the exact current-SHA quality/test-the-test workflow for the quantity closur
 - Do not remove direct quantity entry or replace it with placeholder controls.
 - Do not reopen customer account/address/profile, checkout, catalog sorting, Staff subviews, notification or terminology closures without a regression/requirement trigger.
 - Do not retry unchanged hosted deployment blockers.
+
+
+## 2026-09-29 — Customer Finance + Pricing closure checkpoint
+- Code checkpoint: 7a27ca8be18743537467262b671315df895b1d63.
+- Later canonical write-back commits: Product requirements 142457808a4fa6e30068e8baf6db8df5e941c0b2; UX 7deff530465325f2eac9f44686986907f53883c1.
+- Implemented: direct B2B quantity workflow already present; real Customer Finance كشف الحساب + سجل الدفعات; dedicated Customer Catalog الأسعار dialog with authorized price/tier presentation; focused source contracts and canonical owner write-back.
+- Verified before this pricing write: Aghbari Quality, application-quality, Security, G1 and bootstrap passed on exact financial checkpoint 1869563ff22571fce6b0fa8436b02c2c6ad91716.
+- Not proven for pricing checkpoint: exact-SHA Quality/Test-the-Test/browser visual/runtime. Browser E2E on 1869563 failed because VERCEL_AUTOMATION_BYPASS_SECRET led to 50 redirects; no unchanged retry performed.
+- Production: HOLD / NO TOUCH; purchase/receipt 200→128 migration remains release-gated and unapplied.
+- UI corpus: 84 references remain provenance/accounting input; no duplicate screen implementation is justified by the count alone.
+
+## NEXT EXECUTABLE ACTION
+Run the exact-current-SHA Quality/Application Quality/Test-the-Test matrix for the pricing/finance closure lineage; fix only the first material failure. Then inspect current UI-reference/open-gap state and continue the next independent Customer/Admin/Core gap.
+
+## DO NOT REPEAT
+- Do not reopen closed Customer Account/Profile/Addresses, Checkout, Templates, Catalog sorting/filtering, Staff subviews, Admin collection/low-stock/category/notification surfaces without a regression or requirement trigger.
+- Do not retry the unchanged Vercel bypass-secret redirect path.
+- Do not transfer evidence from 1869563 or older SHAs to the new pricing/finance lineage.
