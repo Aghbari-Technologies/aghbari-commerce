@@ -163,6 +163,16 @@ jobs:
           EXPECTED_SHA: ${{ env.EXPECTED_SHA }}
         run: npx playwright test e2e/admin-control-plane.spec.ts --project=chromium
 
+      - name: Run UI reference-family browser proof against exact local artifact
+        env:
+          E2E_BASE_URL: http://127.0.0.1:4173
+          E2E_EMAIL: customer-a@test.local
+          E2E_PASSWORD: AghbariE2E!2026
+          E2E_ADMIN_EMAIL: admin-a@test.local
+          E2E_ADMIN_PASSWORD: AghbariE2E!2026
+          EXPECTED_SHA: ${{ env.EXPECTED_SHA }}
+        run: npx playwright test e2e/ui-reference-coverage.spec.ts --project=chromium
+
       - name: Upload local browser evidence
         if: always()
         uses: actions/upload-artifact@v4
