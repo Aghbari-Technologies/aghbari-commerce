@@ -54,6 +54,14 @@ describe('canonical UI coverage', () => {
     expect(customerSources).toContain('WorkspaceSurfaceRail');
   });
 
+  it('keeps customer invitation acceptance as a real live capability', () => {
+    const invitationSource = readFileSync(resolve(process.cwd(), 'src/InvitationAcceptance.tsx'), 'utf8');
+    expect(AGHBARI_CUSTOMER_STRUCTURE.find((item) => item.id === 'invitations')?.status).toBe('live');
+    expect(invitationSource).toContain('customer-invitations');
+    expect(invitationSource).toContain('action: \'accept\'');
+    expect(invitationSource).toContain('قبول الدعوة وتفعيل الحساب');
+  });
+
   it('keeps non-live admin capabilities explicitly routed to the boundary workspace', () => {
     const roles = ['owner', 'admin', 'sales', 'warehouse', 'viewer'] as const;
     for (const role of roles) {
