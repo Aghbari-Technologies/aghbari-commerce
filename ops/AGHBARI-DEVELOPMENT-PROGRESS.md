@@ -458,3 +458,17 @@ Proven: prior financial checkpoint 1869563 had Aghbari Quality/application-quali
 Blocked: Vercel protected exact runtime fails at bypass-secret redirect; Netlify exact-source deploy requires repo-local CLI source access.
 Certification: NOT CLAIMED | Production: HOLD / NO TOUCH
 Next: current exact-SHA Quality + Test-the-Test; then browser/runtime if executable; then next independent UI/core gap.
+
+
+## Run 2026-09-29 — Customer nested capability actionability closure
+- Run: 2026-09-29
+- Implementation SHA: `7866c474d305ed3d8b9e631180e15976ee3685af`
+- Branch: `main`
+- Implemented: canonical Customer Portal live capabilities are now actionable controls in WorkspaceSurfaceRail; catalog/search/category/product/cart/checkout, orders/detail, templates/quick-order, pricing, finance subviews, account subviews, offline recovery and invitation boundary all resolve through existing live surfaces.
+- Verified: merged to main from PR #158; Vercel status remains the known free-plan build-rate-limit failure and is not treated as code proof; no production mutation.
+- Proven: source/static implementation plus focused regression contract `src/customer-capability-navigation.test.ts`; exact local test/browser/runtime execution is not proven because the runtime cannot clone the repository.
+- Not proven: exact current-SHA Quality/Test-the-Test, browser visual/runtime and hosted exact-source certification.
+- Blocked: local GitHub DNS/network unavailable; Vercel exact-source hosted proof remains blocked; production purchase/receipt 200→128 migration remains unapplied.
+- Certification: NOT CLAIMED
+- Production: HOLD / NO TOUCH
+- Next: run the exact current-main Quality/Test-the-Test matrix when an executable CI/runtime lane is available; fix only the first material failure, then continue the next independent canonical UI/core gap.
