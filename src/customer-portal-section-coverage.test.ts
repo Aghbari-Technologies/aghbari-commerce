@@ -81,10 +81,15 @@ describe('customer cart empty state', () => {
 });
 
 
-describe('customer structure terminology', () => {
-  it('keeps the customer structure aligned with the canonical القوالب label', () => {
+describe('customer template terminology', () => {
+  it('keeps all live customer surfaces aligned with the canonical القوالب label', () => {
     const structure = readFileSync(resolve(process.cwd(), 'src/structure/customer-structure.ts'), 'utf8');
+    const settings = readFileSync(resolve(process.cwd(), 'src/ClientControlPanel.tsx'), 'utf8');
     expect(structure).toContain('الحفظ كقالب');
     expect(structure).not.toContain('الحفظ كمسحة');
+    expect(settings).toContain("showTemplates','القوالب'");
+    expect(settings).not.toContain("showTemplates','المسحات'");
+    expect(settings).toContain('<h3>القوالب</h3>');
+    expect(settings).not.toContain('<h3>المسحات</h3>');
   });
 });
