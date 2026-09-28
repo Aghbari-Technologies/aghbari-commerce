@@ -502,3 +502,13 @@ Next: current exact-SHA Quality + Test-the-Test; then browser/runtime if executa
 - Blocked: Vercel free-plan build-rate-limit; purchase/receipt live idempotency remains 200 pending approved proof/migration.
 - Certification: NOT CLAIMED | Production: HOLD / NO TOUCH
 - Next: exact-SHA quality/browser proof; non-production 128-bound concurrency + negative test.
+
+
+## Run 2026-09-29 — CURRENT UI closure checkpoint
+- Run: `2026-09-29` | SHA: `01cf0728297301c8f9969514b38de5bc0b86b9cf` | Branch: `execution/ui-full-closure-20260929` | PR: #157
+- Implemented: Admin navigation/deep-link integrity, Customer Portal navigation visibility contract, customer offline notification UX, 84-reference accounting guard.
+- Verified: source-level screen-family and workspace ownership controls; Customer Account/Finance/Orders subviews confirmed as nested live surfaces.
+- Proven: source/static + live SQL only; runtime/browser/build proof NOT_PROVEN on this SHA.
+- Blocked: Vercel free-plan build-rate-limit; GitHub Actions emitted no run for connector-created SHA; live purchase/receipt idempotency remains 200.
+- Certification: NOT CLAIMED | Production: HOLD / NO TOUCH
+- Next: exact-SHA quality/browser execution + non-production 128-bound concurrency/negative proof.
