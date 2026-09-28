@@ -1,6 +1,6 @@
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(6);
+select plan(8);
 
 insert into auth.users(id,instance_id,aud,role,email,encrypted_password,created_at,updated_at)
 values (
@@ -124,6 +124,67 @@ end $$;
 
 select ok((select purchase_128_ok from _purchase_receipt_runtime_proof),
   'runtime purchase idempotency: 128-character key accepted');
+do $
+begin
+  begin
+    perform * from public.create_purchase_order(
+      'd3800000-0000-4000-8000-000000000099'::uuid,
+      'd3800000-0000-4000-8000-000000000013'::uuid,
+      repeat('k',128),
+      jsonb_build_array(jsonb_build_object(
+        'product_id','d3800000-0000-4000-8000-000000000015'::uuid,
+        'quantity',1,
+        'unit_cost',100
+      ))
+    );
+    raise exception 'same-key purchase payload conflict was accepted';
+  exception when sqlstate '40001' then
+    null;
+  end;
+end $;
+
+select is(
+  (select count(*)::int from public.purchase_orders
+   where organization_id='d3800000-0000-4000-8000-000000000010'::uuid
+     and idempotency_key=repeat('k',128)),
+  1,
+  'same-key purchase payload conflict does not create a second purchase'
+);
+
+do $
+declare
+  existing_receipt uuid;
+begin
+  select id into existing_receipt
+  from public.purchase_receipts
+  where organization_id='d3800000-0000-4000-8000-000000000010'::uuid
+    and idempotency_key=repeat('r',128)
+  limit 1;
+
+  begin
+    perform * from public.receive_purchase_order(
+      'd3800000-0000-4000-8000-000000000099'::uuid,
+      repeat('r',128),
+      jsonb_build_array(jsonb_build_object(
+        'purchase_order_item_id',v_item_id,
+        'product_id','d3800000-0000-4000-8000-000000000015'::uuid,
+        'quantity',1
+      ))
+    );
+    raise exception 'same-key receipt payload conflict was accepted';
+  exception when sqlstate '40001' then
+    null;
+  end;
+end $;
+
+select is(
+  (select count(*)::int from public.purchase_receipts
+   where organization_id='d3800000-0000-4000-8000-000000000010'::uuid
+     and idempotency_key=repeat('r',128)),
+  1,
+  'same-key receipt payload conflict does not create a second receipt'
+);
+
 
 select ok((select purchase_129_ok from _purchase_receipt_runtime_proof),
   'runtime purchase idempotency: 129-character key rejected');
