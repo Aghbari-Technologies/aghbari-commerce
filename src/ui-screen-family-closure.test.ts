@@ -190,3 +190,19 @@ describe('supplier and history sort type safety', () => {
     expect(readRepoSource('InventoryActivityPanel.tsx')).not.toContain('(row:any)');
   });
 });
+
+
+describe('customer finance single-surface closure', () => {
+  it('keeps the customer finance workspace unified without a duplicate legacy ledger', () => {
+    const app = readRepoSource('AppV3Fixed.tsx');
+    const finance = readRepoSource('CustomerFinancePanel.tsx');
+    expect(app).toContain("<CustomerFinancePanel customerId={customerId} online={online} openFirstInvoiceRequest={customerInvoiceOpenRequest} />");
+    expect(app).not.toContain('visibleFinanceEntries');
+    expect(app).not.toContain('downloadStatement');
+    expect(finance).toContain('تنزيل العرض');
+    expect(finance).toContain('downloadCurrentView');
+    expect(finance).toContain('الفواتير والمدفوعات');
+    expect(finance).toContain('كشف الحساب');
+    expect(finance).toContain('سجل الدفعات');
+  });
+});
