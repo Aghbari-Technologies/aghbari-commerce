@@ -25,7 +25,7 @@ function statusLabel(value: number) {
   return value > 0 ? 'متوفر' : 'نفد المخزون';
 }
 
-export default function Storefront({ onLogin, signedIn = false }: StorefrontProps) {
+export default function Storefront({ onLogin, signedIn = false, favoriteIds = [], compareIds = [], onToggleFavorite, onToggleCompare }: StorefrontProps) {
   const [products, setProducts] = useState<StoreProduct[]>([]);
   const [categories, setCategories] = useState<CategoryOption[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
