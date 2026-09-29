@@ -1,3 +1,22 @@
+## 2026-09-29 — Final marketplace UI elevation wave
+- CURRENT EXACT HEAD BEFORE STATE WRITE-BACK: `71a64dcd805d92e28cf0932dc154eedf4d6ba777`
+- Implemented: Customer Home converted into an action-first B2B storefront entry using real loaded catalog products/categories; direct add-to-cart from Home through the existing authoritative cart path; category shortcuts now preserve catalog context; single canonical customer navigation; premium product/card/hero/search/filter styling; order/finance/account responsive visual hierarchy; mobile dock and dialogs; Staff/Admin rail and operational data surfaces; governance/boundary/import/inventory/receiving styling.
+- Verified at the prior exact UI lineage: Browser E2E and Security had successful exact-SHA runs; current source changes are committed and Production remains untouched.
+- NOT_PROVEN for this precise source SHA until the new write-back commit's workflows finish: current Visual Proof, current Quality/Test-the-Test/G1, and hosted exact-source certification.
+- External deployment: Netlify exact-source remains failed/unauthorized; Vercel free-plan path remains unchanged. No paid path used.
+- PRODUCTION: `HOLD / NO TOUCH`
+
+## NEXT EXECUTABLE ACTION
+Treat the next state-write SHA as the only valid evidence source. Finish its current Visual Proof + Quality/Test-the-Test/G1/Browser/Security matrix. Fix only the first material failure. After green exact-SHA proof, continue the next uncovered in-scope UI/core gap; purchase/receipt `200 → 128` Production migration remains release-gated by concurrency + negative + Test-the-Test evidence.
+
+## DO NOT REPEAT
+- Do not rebuild the canonical customer navigation or Home merchandising layer.
+- Do not reopen closed customer finance/account/order/catalog surfaces without regression/evidence invalidation/direct requirement change.
+- Do not treat the 84 reference files as an 84-screen requirement.
+- Do not transfer proof from prior SHAs to the next state-write SHA.
+- Do not mutate Production for the purchase/receipt idempotency migration.
+- Do not retry unchanged Vercel/Netlify external blockers.
+
 ## 2026-09-29 — Marketplace visual elevation + storefront home closure
 - CURRENT EXACT HEAD: `15d929176fa5368614b664aa7de528a3929a8930`
 - Implemented: premium visual system wave across Customer/Staff/Admin; single canonical customer navigation surface; richer B2B product cards; responsive mobile dock/dialog polish; stronger order/finance/account data surfaces; customer Home merchandising strip backed by real loaded catalog data; action-first Home command deck for cart/latest-order/account.

@@ -1,3 +1,19 @@
+# Run 2026-09-29 — Marketplace UI elevation final checkpoint
+- Run: `2026-09-29`
+- Code SHA before docs write-back: `71a64dcd805d92e28cf0932dc154eedf4d6ba777`
+- Branch: `main`
+- Implemented:
+  - Customer Home storefront merchandising from real catalog data.
+  - Direct add-to-cart and category-context navigation from Home.
+  - Premium marketplace design layer across Customer, Staff and Admin.
+  - Order, finance, account, governance, inventory, receiving and boundary visual hierarchy.
+  - Responsive mobile dock/dialog/data-table polish.
+- Verified: code is source-controlled; no production mutation.
+- Proven before docs write-back: Browser E2E + Security + G1 + Quality on the preceding code lineage; this write-back creates a new exact SHA requiring fresh proof.
+- Certification: `NOT CLAIMED`
+- Production: `HOLD / NO TOUCH`
+- Next: exact-current-SHA full matrix, first material failure only, then next gap.
+
 # Run 2026-09-29 — Marketplace visual elevation
 - Run: `2026-09-29`
 - SHA: `15d929176fa5368614b664aa7de528a3929a8930`
