@@ -20,7 +20,7 @@ values
 insert into public.branches(id,organization_id,name,is_active)
 values ('d3900000-0000-4000-8000-000000000013','d3900000-0000-4000-8000-000000000010','Order Address Branch',true);
 insert into public.warehouses(id,organization_id,branch_id,name,is_active)
-values ('d3900000-0000-4000-8000-000000000014','d3900000-0000-4000-8000-000000000013','d3900000-0000-4000-8000-000000000013','Order Address Warehouse',true);
+values ('d3900000-0000-4000-8000-000000000014','d3900000-0000-4000-8000-000000000010','d3900000-0000-4000-8000-000000000013','Order Address Warehouse',true);
 insert into public.products(id,organization_id,sku,name,unit,status)
 values ('d3900000-0000-4000-8000-000000000015','d3900000-0000-4000-8000-000000000010','ORD-ADDR-001','Order Address Product','unit','active');
 insert into public.price_lists(id,organization_id,tier,name,currency,is_active)

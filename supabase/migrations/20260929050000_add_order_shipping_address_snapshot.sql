@@ -49,7 +49,7 @@ DECLARE
   v_line_count integer;
   v_existing_count integer;
   v_cart_id uuid;
-  v_requested_key text := pg_catalog.btrim(pg_catalog.coalesce(p_idempotency_key, ''));
+  v_requested_key text := pg_catalog.btrim(coalesce(p_idempotency_key, ''));
   v_requested_payment text := pg_catalog.lower(pg_catalog.btrim(pg_catalog.coalesce(p_payment_method, '')));
   v_shipping_address jsonb := NULL;
 BEGIN
