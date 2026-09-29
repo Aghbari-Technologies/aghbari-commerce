@@ -21,5 +21,8 @@ describe('marketplace visual activation contract', () => {
     expect(eliteSource).toContain('.customer-shell .customer-order-summary-strip');
     expect(eliteSource).toContain('.admin-panel .operations-tabs');
     expect(eliteSource).toContain('.admin-panel .admin-boundary-center');
+    expect(mainSource).toContain('AGHBARI COMMERCE · B2B');
+    expect(mainSource).toContain('<h1>الأغبري</h1>');
+    expect(mainSource).toContain('Aghbari Commerce · مرحبًا، {customerName}');
   });
 });
