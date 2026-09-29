@@ -20,15 +20,15 @@ describe('UI screen-family closure contract', () => {
     expect(missing).toEqual([]);
   });
 
-  it('keeps all six customer portal sections mounted in the canonical app', () => {
+  it('keeps every customer portal section mounted in the canonical app', () => {
     const app = readRepoSource('AppV3Fixed.tsx');
     for (const section of CUSTOMER_PORTAL_SECTIONS) {
       expect(app).toContain("section==='" + section + "'");
     }
   });
 
-  it('does not silently lose the seven customer section model', () => {
-    expect(CUSTOMER_PORTAL_SECTIONS).toEqual(['home', 'catalog', 'orders', 'finance', 'templates', 'account', 'notifications']);
+  it('keeps the current customer section model including Saved Products', () => {
+    expect(CUSTOMER_PORTAL_SECTIONS).toEqual(['home', 'catalog', 'saved', 'orders', 'finance', 'templates', 'account', 'notifications']);
   });
 });
 
