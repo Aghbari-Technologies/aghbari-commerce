@@ -102,7 +102,7 @@ test.describe('UI reference-family browser coverage', () => {
     await page.screenshot({ path: 'test-results/ui-customer-account-profile-desktop.png', fullPage: true });
 
     await page.getByRole('tab', { name: 'العناوين' }).click();
-    await expect(page.getByRole('heading', { name: 'العناوين' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'عناوين التسليم' })).toBeVisible();
     await page.screenshot({ path: 'test-results/ui-customer-addresses-desktop.png', fullPage: true });
 
     await page.getByRole('tab', { name: 'إعدادات الحساب' }).click();
