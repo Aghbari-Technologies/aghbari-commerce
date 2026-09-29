@@ -36,7 +36,7 @@ on conflict (id) do nothing;
 
 insert into public.products(id,organization_id,category_id,sku,name,unit,status) values
   ('90000000-0000-4000-8000-000000000501','90000000-0000-4000-8000-000000000101','90000000-0000-4000-8000-000000000451','BROW-001','Browser Product A','unit','active'),
-  ('90000000-0000-4000-8000-000000000502','90000000-0000-4000-8000-000000000102','BROW-002','Browser Product B','unit','active'),
+  ('90000000-0000-4000-8000-000000000502','90000000-0000-4000-8000-000000000102',null,'BROW-002','Browser Product B','unit','active'),
   ('90000000-0000-4000-8000-000000000503','90000000-0000-4000-8000-000000000101','BROW-INACTIVE','Inactive Product','unit','inactive')
 on conflict (id) do nothing;
 
