@@ -15,7 +15,7 @@ const STAFF_PACKS = [
   { id: 'inventory', label: 'المخزون', eyebrow: 'الحركة والجرد', target: '#admin-inventory-activity', targets: ['#admin-inventory-activity', '#admin-inventory-history', '#admin-warehouses'], tone: 'live' },
   { id: 'purchasing', label: 'المشتريات والتوريد', eyebrow: 'التوريد والاستلام', target: '#admin-purchasing', targets: ['#admin-purchasing', '#admin-suppliers', '#admin-receipts'], tone: 'live' },
   { id: 'catalog', label: 'الكتالوج والتسعير', eyebrow: 'الأصناف', target: '#admin-catalog', targets: ['#admin-catalog', '#admin-pricing-matrix', '#admin-product-image'], tone: 'live' },
-  { id: 'finance', label: 'المالية التشغيلية', eyebrow: 'الحسابات', target: '#admin-finance', targets: ['#admin-finance'], tone: 'live' },
+  { id: 'finance', label: 'المالية التشغيلية', eyebrow: 'الحسابات', target: '#admin-finance', targets: ['#admin-finance', '#admin-finance-history'], tone: 'live' },
   { id: 'access', label: 'المستخدمون والصلاحيات', eyebrow: 'الحوكمة', target: '#admin-access', targets: ['#admin-access'], tone: 'live' },
   { id: 'settings', label: 'الإعدادات والهوية', eyebrow: 'التهيئة', target: '#admin-settings', targets: ['#admin-settings'], tone: 'live' },
   { id: 'governance', label: 'الحوكمة والتدقيق', eyebrow: 'الثقة', target: '#admin-governance', targets: ['#admin-governance', '#admin-notifications'], tone: 'mixed' },

@@ -307,7 +307,7 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
 {canInventory && <div className="admin-workspace-section" id="admin-receipts" data-label="10 · سجل الاستلام"><PurchaseReceiptHistoryPanel role={role as 'owner'|'admin'|'warehouse'} /></div>}
 {canInventory && <div className="admin-workspace-section" id="admin-suppliers" data-label="11 · الموردون والحساب التشغيلي"><SupplierLedgerPanel role={role as 'owner'|'admin'|'warehouse'} /></div>}
 {canFinance && <div className="admin-workspace-section" data-label="12 · المالية التشغيلية"><div id="admin-finance"><FinancePanel role={role} /></div></div>}
-{canFinance && <div className="admin-workspace-section" data-label="13 · سجل العمليات المالية"><FinanceOperationsHistoryPanel role={role as 'owner'|'admin'|'sales'} /></div>}
+{canFinance && <div className="admin-workspace-section" id="admin-finance-history" data-label="13 · سجل العمليات المالية"><FinanceOperationsHistoryPanel role={role as 'owner'|'admin'|'sales'} /></div>}
 {canInventory && <div className="admin-workspace-section" data-label="14 · التصدير ومركز البيانات"><div id="admin-export"><ExportPanel role={role}/></div></div>}
 {canCategory && <div className="admin-workspace-section" data-label="15 · تخصيص بوابة العميل"><div id="admin-settings"><ClientControlPanel role={role}/></div></div>}
 {canOrderWorkflow && <div className="admin-workspace-section" data-label="16 · الإشعارات التشغيلية"><div id="admin-notifications"><NotificationPanel audience="staff" /></div></div>}
