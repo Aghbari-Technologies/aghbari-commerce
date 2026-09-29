@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
+// Exact current-main proof marker.
 describe('admin operational loading surfaces', () => {
   it('keeps visual skeletons for inventory and purchasing instead of text-only loading placeholders', () => {
     const inventory = readFileSync(resolve(process.cwd(), 'src/InventoryPanel.tsx'), 'utf8');
