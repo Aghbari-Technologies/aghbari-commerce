@@ -26,7 +26,7 @@ select ok(not exists (
   join pg_namespace n on n.oid=p.pronamespace
   where n.nspname='public'
     and p.proname='create_purchase_order'
-    and replace(pg_get_functiondef(p.oid),' ','') like '%length(key)<16orlength(key)>200%'
+    and replace(replace(pg_get_functiondef(p.oid),' ',''),E'\n','') like '%length(key)>200or%'
 ), 'create_purchase_order no longer contains the legacy 200-character maximum');
 
 select ok(exists (
