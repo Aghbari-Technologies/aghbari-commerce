@@ -225,3 +225,15 @@
 - Catalog grid/compact selection is local device preference only; it never changes Commerce business data.
 - Saved/recent product memory is local personalization. Saved IDs are resolved against live authorized catalog data when entering the Saved workspace; unavailable entries are not fabricated.
 - Product sharing uses a stable catalog-product hash and resolves through the existing authorized catalog contract.
+
+
+## 2026-09-30 — Durable storefront product boundary
+- Aghbari Commerce root/store is customer-first ecommerce presentation, not the Admin/Staff control plane.
+- Public visitor UI must not fabricate product, price, stock, or transaction data. Authenticated customer storefront consumes the existing authorized catalog/cart/checkout services.
+- Storefront is a presentation shell over Commerce truth; customer catalog, cart, checkout, orders, templates, finance, account and permissions remain governed by existing canonical services/contracts.
+
+
+## 2026-09-30 — Storefront product direction
+- Aghbari Commerce is customer-first at the `/` and `/store` presentation surface; Admin/Staff remains a separate operational surface.
+- The storefront must feel like a full ecommerce website: merchandising composition, navigation, search, category discovery, product details, cart, checkout entry, account and order journeys, and responsive mobile navigation.
+- The storefront may only display catalog/price/stock data returned by the existing authorized Commerce contracts; public presentation cannot invent transactional data.
