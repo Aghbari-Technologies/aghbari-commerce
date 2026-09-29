@@ -311,6 +311,9 @@ export default function AppV3Fixed(){
       case 'home':
         navigate('home');
         break;
+      case 'saved-products':
+        navigate('saved');
+        break;
       case 'store':
         focusCustomerSurface('.search-panel');
         break;
