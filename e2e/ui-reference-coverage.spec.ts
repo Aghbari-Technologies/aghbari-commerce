@@ -112,7 +112,7 @@ test.describe('UI reference-family browser coverage', () => {
     await openCapability('اكتشاف وشراء', 'الطلب السريع');
     await expect(page.getByRole('dialog', { name: 'الطلب السريع' })).toBeVisible();
     await page.screenshot({ path: 'test-results/ui-customer-quick-order-desktop.png', fullPage: true });
-    await page.getByRole('button', { name: 'إغلاق' }).first().click();
+    await page.getByRole('dialog', { name: 'الطلب السريع' }).getByRole('button').first().click();
 
     await openCapability('اكتشاف وشراء', 'الأسعار');
     await expect(page.getByRole('dialog', { name: 'قائمة الأسعار' })).toBeVisible();
