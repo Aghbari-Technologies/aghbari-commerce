@@ -13,3 +13,16 @@ export async function getCustomerUnreadNotificationCount(customerId: string): Pr
   if (error) throw error;
   return Math.max(0, Number(count ?? 0));
 }
+
+
+export async function getUnreadNotificationCountForUser(userId: string): Promise<number> {
+  const normalized = userId.trim();
+  if (!UUID_PATTERN.test(normalized)) throw new Error('معرّف المستخدم غير صالح.');
+  const { count, error } = await requireSupabase()
+    .from('notifications')
+    .select('id', { count: 'exact', head: true })
+    .eq('recipient_user_id', normalized)
+    .is('read_at', null);
+  if (error) throw error;
+  return Math.max(0, Number(count ?? 0));
+}
