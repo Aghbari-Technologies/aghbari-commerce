@@ -1,7 +1,7 @@
 import { test, expect, type Page } from '@playwright/test';
 
 async function login(page: Page, email: string, password: string) {
-  await page.goto('/');
+  await page.goto('/?login=1');
   const loginForm = page.locator('form').filter({ has: page.locator('input[type="password"]') }).first();
   await loginForm.locator('input[type="email"]').fill(email);
   await loginForm.locator('input[type="password"]').fill(password);
