@@ -48,6 +48,15 @@ describe('customer order and notification collection export closure', () => {
   });
 });
 
+describe('admin navigation density closure', () => {
+  it('keeps one canonical staff surface rail and avoids duplicate mega-navigation bars', () => {
+    const admin = readRepoSource('AdminPanel.tsx');
+    expect((admin.match(/<WorkspaceSurfaceRail variant="staff"/g) ?? []).length).toBe(1);
+    expect(admin).not.toContain('className="admin-command-nav"');
+    expect(admin).not.toContain('className="admin-workspace-strip"');
+  });
+});
+
 describe('admin dashboard full structure', () => {
   it('does not truncate canonical structure groups before rendering', () => {
     const dashboard = readRepoSource('AdminExecutiveDashboard.tsx');

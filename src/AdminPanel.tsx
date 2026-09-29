@@ -192,41 +192,7 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
         <strong>{activeAdminTarget === '#admin-dashboard' ? 'مركز القيادة' : (getAdminStructureForRole(role).flatMap((group) => group.items).find((item) => item.target === activeAdminTarget)?.label ?? 'مساحة تشغيل')}</strong>
         <small>التنقل يغيّر مساحة العرض فقط؛ الصلاحيات والتنفيذ يظلان على الخادم.</small>
       </div>
-    <nav className="admin-command-nav" aria-label="تنقل مركز التشغيل">
-        <a className={activeAdminTarget === '#account' || activeAdminTarget === '#admin-dashboard' ? 'active' : ''} href="#admin-dashboard">المركز</a>
-        {canOrderWorkflow&&<a className={activeAdminTarget === '#admin-orders' ? 'active' : ''} href="#admin-orders">الطلبات وسير العمل</a>}
-        {canCatalog&&<a className={activeAdminTarget === '#admin-customers' ? 'active' : ''} href="#admin-customers">العملاء</a>}
-        {canCatalog&&<a className={activeAdminTarget === '#admin-catalog' ? 'active' : ''} href="#admin-catalog">الكتالوج والمنتجات</a>}
-        {canCategory&&<a className={activeAdminTarget === '#admin-categories' ? 'active' : ''} href="#admin-categories">دليل التصنيفات</a>}{canCategory&&<a className={activeAdminTarget === '#admin-category-create' ? 'active' : ''} href="#admin-category-create">إضافة تصنيف</a>}
-        {canCatalog&&<a className={activeAdminTarget === '#admin-pricing' ? 'active' : ''} href="#admin-pricing">التسعير</a>}{canCatalog&&<a className={activeAdminTarget === '#admin-pricing-matrix' ? 'active' : ''} href="#admin-pricing-matrix">مصفوفة الأسعار</a>}
-        {canCatalog&&<a className={activeAdminTarget === '#admin-product-image' ? 'active' : ''} href="#admin-product-image">صور المنتجات</a>}
-        {canCatalog&&<a className={activeAdminTarget === '#admin-import' ? 'active' : ''} href="#admin-import">الاستيراد الآمن</a>}
-        {canInventory&&<a className={activeAdminTarget === '#admin-inventory' ? 'active' : ''} href="#admin-inventory">المخزون</a>}
-        {canInventory&&<a className={activeAdminTarget === '#admin-inventory-adjust' ? 'active' : ''} href="#admin-inventory-adjust">تعديل المخزون</a>}{canInventory&&<a className={activeAdminTarget === '#admin-inventory-history' ? 'active' : ''} href="#admin-inventory-history">دفتر حركة المخزون</a>}{canInventory&&<a className={activeAdminTarget === '#admin-inventory-activity' ? 'active' : ''} href="#admin-inventory-activity">نشاط المخزون</a>}{canInventory&&<a className={activeAdminTarget === '#admin-warehouses' ? 'active' : ''} href="#admin-warehouses">المستودعات والفروع</a>}
-        {canInventory&&<a className={activeAdminTarget === '#admin-purchasing' ? 'active' : ''} href="#admin-purchasing">المشتريات والموردون</a>}{canInventory&&<a className={activeAdminTarget === '#admin-suppliers' ? 'active' : ''} href="#admin-suppliers">دليل الموردين والحساب</a>}{canInventory&&<a className={activeAdminTarget === '#admin-receipts' ? 'active' : ''} href="#admin-receipts">سجل الاستلام</a>}
-        {canFinance&&<a className={activeAdminTarget === '#admin-finance' ? 'active' : ''} href="#admin-finance">المالية</a>}{canFinance&&<a className={activeAdminTarget === '#admin-finance-history' ? 'active' : ''} href="#admin-finance-history">السجل المالي</a>}
-        {canInventory&&<a className={activeAdminTarget === '#admin-export' ? 'active' : ''} href="#admin-export">التصدير</a>}
-        {canCategory&&<a className={activeAdminTarget === '#admin-settings' ? 'active' : ''} href="#admin-settings">إعدادات العميل</a>}
-        {canOrderWorkflow&&<a className={activeAdminTarget === '#admin-notifications' ? 'active' : ''} href="#admin-notifications">الإشعارات</a>}
-        {canOrderWorkflow&&<a className={activeAdminTarget === '#admin-governance' ? 'active' : ''} href="#admin-governance">التدقيق والتكاملات</a>}
-        {userId&&<a className={activeAdminTarget === '#admin-recovery' ? 'active' : ''} href="#admin-recovery">التعارض والاسترداد</a>}
-        {canOrderWorkflow&&<a className={activeAdminTarget === '#admin-access' ? 'active' : ''} href="#admin-access">الأدوار والصلاحيات</a>}
-      </nav>
       <WorkspaceSurfaceRail variant="staff" role={role} />\n      <button type="button" className="admin-command-trigger" aria-haspopup="dialog" aria-expanded={commandOpen} onClick={() => { setCommandOpen(true); setCommandQuery(''); }}>⌘ مركز الأوامر <kbd>Ctrl K</kbd></button>
-      <div className="admin-workspace-strip" aria-label="مساحات العمل السريعة">
-        <div className="admin-workspace-strip-label">
-          <span className="eyebrow">مساحات العمل</span>
-          <strong>الوصول المباشر</strong>
-          <small>كل رابط يفتح القسم الفعلي في نفس مركز التشغيل.</small>
-        </div>
-        <div className="admin-workspace-links">
-          {getAdminStructureForRole(role).flatMap((group) => group.items.filter((item) => item.status === 'live' && item.target).map((item) => (
-            <a key={item.id} href={item.target} title={item.note ?? item.label}>
-              <span>{item.label}</span><i aria-hidden="true">↗</i>
-            </a>
-          )))}
-        </div>
-      </div>
       <section className="admin-command-overview" id="admin-dashboard" aria-label="موجز مساحات العمل">
         {role !== 'viewer' && <a href="#admin-orders"><span className="workspace-overview-icon" aria-hidden="true">🧾</span><div><small>المبيعات</small><strong>الطلبات والعملاء</strong><em>متابعة الدورة اليومية</em></div><b>↗</b></a>}
         {canCatalog && <a href="#admin-catalog"><span className="workspace-overview-icon" aria-hidden="true">▣</span><div><small>الكتالوج</small><strong>الأصناف والتسعير</strong><em>تحرير ونشر بيانات البيع</em></div><b>↗</b></a>}
