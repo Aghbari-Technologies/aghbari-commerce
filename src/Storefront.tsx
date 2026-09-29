@@ -1,7 +1,7 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import type { Product, CartLine } from './domain/types';
 
-export type StorefrontProduct = Product & { authorizedPrice?: number; priceCurrency?: string };
+export type StorefrontProduct = Product & { authorizedPrice?: number; priceCurrency?: string; barcode?: string | null };
 export type StorefrontCategory = { id: string; name: string };
 
 type StorefrontProps = {
