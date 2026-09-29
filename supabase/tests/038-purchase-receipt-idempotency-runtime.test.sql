@@ -101,7 +101,7 @@ begin
       ))
     );
   exception when others then
-    raise exception '128-character receipt key failed unexpectedly: %', sqlerrm;
+    raise exception '128-character receipt key failed unexpectedly: sqlstate=% message=% detail=% hint=%', SQLSTATE, SQLERRM, PG_EXCEPTION_DETAIL, PG_EXCEPTION_HINT;
   end;
   update _purchase_receipt_runtime_proof set receipt_128_ok=true;
 
