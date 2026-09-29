@@ -31,6 +31,7 @@ import './styles.css';
 import './customer-portal-v3.css';
 import './customer-portal-v3-dynamic.css';
 import './customer-account-catalog.css';
+import './ui-marketplace-elite.css';
 
 type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer' | 'customer';
 type PortalSection = 'home' | 'catalog' | 'orders' | 'finance' | 'templates' | 'account' | 'notifications';
