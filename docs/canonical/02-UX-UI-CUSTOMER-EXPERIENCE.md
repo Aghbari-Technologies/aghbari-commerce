@@ -216,3 +216,10 @@ Requirements discovered from references or canonical specifications are not park
 - Every live capability declared in `src/structure/customer-structure.ts` must be directly actionable from the active Customer Portal workspace rail.
 - A capability action must resolve to an existing live screen, tab, dialog, focus target or explicit safe boundary using the current Commerce contracts; it must not introduce fake data, new transaction authority or a second navigation model.
 - Cross-section capability actions continue through the existing cart-confirmation gate and server-backed state. Nested finance/account/callout surfaces remain inside their canonical parent sections to avoid duplicate screens.
+
+
+## 2026-09-29 — UI capability actionability + navigation density
+- Staff navigation uses one canonical `WorkspaceSurfaceRail` surface for role-aware contextual navigation; duplicate mega-navigation and workspace-strip layers are not reintroduced.
+- Customer live capabilities must terminate in an actual UI action. The `invitations` capability opens a safe explanatory dialog in the portal while actual invitation acceptance remains owned by the direct `InvitationAcceptance` flow; the portal must not fabricate invitation records or links.
+- Admin live-target coverage tests validate real DOM anchors (`id`) for every declared live target. Presence of a historical navigation label is not sufficient proof of runtime reachability.
+- Current visual proof baseline is exact-SHA specific and must not be transferred to later SHAs.

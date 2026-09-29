@@ -1,3 +1,14 @@
+## Run 2026-09-29 — UI closure + exact proof
+- Run: `2026-09-29`
+- SHA: `c65c22590305da9ab5248b7c0493d3c26e28241c`
+- Branch: `main`
+- Implemented: removed duplicate Staff navigation layers; made Customer invitation capability actionable via a real safe dialog; repaired Admin live-target test to assert real DOM anchors.
+- Verified: UI Visual Proof, Application Quality, Aghbari Quality, Security, G1, Browser Exact, Test-the-Test and bootstrap all succeeded on this exact SHA. Visual artifact: `11010402627`.
+- Blocked: Netlify Exact-Source deploy failed externally; Vercel free-plan protection/rate path remains blocked.
+- Certification: `NOT CLAIMED`
+- Production: `HOLD / NO TOUCH`
+- Next: close the purchase/receipt 200→128 migration proof set or the next independent unproven reference family; no reopening of proven UI without trigger.
+
 # 🔴 AGHBARI DEVELOPMENT PROGRESS — CANONICAL LIVE LEDGER
 
 ## Run 2026-09-27 — Active runtime + transactional/UI hardening

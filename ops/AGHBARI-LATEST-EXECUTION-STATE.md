@@ -1,3 +1,22 @@
+## 2026-09-29 — UI closure + exact-SHA proof checkpoint
+- CURRENT EXACT HEAD: `c65c22590305da9ab5248b7c0493d3c26e28241c`
+- Implemented: consolidated duplicated Staff navigation into the canonical WorkspaceSurfaceRail; made Customer invitation capability actionable through a real safe dialog; repaired canonical Admin live-target coverage test to verify real DOM anchors rather than legacy navigation labels.
+- Verified: UI Visual Proof `36513571607` = SUCCESS with exact SHA and artifact `11010402627`; Application Quality `36513571631` = SUCCESS; Aghbari Quality `36513571644` = SUCCESS; Security `36513571633` = SUCCESS; G1 `36513571747` = SUCCESS; Browser Exact `36513571635` = SUCCESS; Test-the-Test `36513571658` = SUCCESS; bootstrap `36513571690` = SUCCESS.
+- UI result: current exact-source visual proof refreshed the Customer + Admin visual surfaces; the live customer capability map has 25/25 canonical capability IDs dispatched in runtime source; the 84-reference corpus remains an 84-file provenance set, not 84 separate screens.
+- NOT_PROVEN: hosted exact-source deployment. Netlify Exact-Source run `36513571619` failed externally; Vercel free-plan deployment remains a separate protection/rate-limit blocker. Production remains untouched.
+- OPEN: purchase/receipt idempotency `200 → 128` migration lineage + concurrency + negative + Test-the-Test + exact-SHA evidence; any remaining reference-pack family not covered by the current visual proof; hosted exact-source certification.
+- PRODUCTION: `HOLD / NO TOUCH`
+
+## NEXT EXECUTABLE ACTION
+Close the next independent material gap: implement or prove the reviewed purchase/receipt idempotency 128-bound migration lineage and concurrency/negative checks in source/staging workflow; do not mutate Production until the required proof set is complete. In parallel, preserve the current UI baseline and only reopen a UI surface on regression, evidence invalidation, or a direct requirement change.
+
+## DO NOT REPEAT
+- Do not recreate the removed Staff mega-navigation or duplicate workspace strip.
+- Do not revert Customer invitation acceptance to a passive message; the real acceptance authority remains the direct InvitationAcceptance flow.
+- Do not restore the old Admin coverage assertion that depended on nav-label text instead of DOM anchors.
+- Do not retry unchanged Vercel/Netlify deployment blockers.
+- Do not transfer proof from `c65c2259` to any later SHA.
+
 ## 2026-09-29 — Final customer-surface terminology sweep
 - Source HEAD before write-back: `c6c0c9729991aa73ed7228d9e48cd916210e3a1b`.
 - Implemented: final stale template wording removed from Customer Account and AppV3; regression guard extended.
