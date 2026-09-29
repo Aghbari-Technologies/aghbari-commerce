@@ -2,9 +2,10 @@ import { requireSupabase } from '../lib/supabase';
 import type { OrderStatus } from '../domain/types';
 import { retryRead } from '../lib/retry';
 
+export interface CustomerShippingAddressSnapshot { id:string; label:string; recipient_name:string; phone:string; address_line1:string; address_line2:string|null; city:string; district:string|null; notes:string|null; }
 export interface CustomerOrderDetailItem { id:string; product_id:string; sku:string; name:string; unit:string; quantity:number; unit_price:number; line_total:number; currency:string; }
 export interface CustomerOrderTimelineStep { status:OrderStatus; label:string; active:boolean; }
-export interface CustomerOrderDetail extends CustomerOrderSummary { items:CustomerOrderDetailItem[]; timeline:CustomerOrderTimelineStep[]; statusLabel:string; }
+export interface CustomerOrderDetail extends CustomerOrderSummary { items:CustomerOrderDetailItem[]; timeline:CustomerOrderTimelineStep[]; statusLabel:string; shipping_address:CustomerShippingAddressSnapshot|null; }
 
 export interface CustomerOrderSummary {
   id: string;
@@ -63,6 +64,30 @@ export function buildCustomerOrderTimeline(orderStatus: OrderStatus, history: Cu
   }));
 }
 
+function assertShippingAddressSnapshot(value: unknown): CustomerShippingAddressSnapshot | null {
+  if (value == null) return null;
+  if (typeof value !== 'object') throw new Error('Snapshot عنوان التسليم غير صالح. لم يتم إثبات تفاصيل الطلب.');
+  const item = value as Record<string, unknown>;
+  if (typeof item.id !== 'string' || !UUID_PATTERN.test(item.id)) throw new Error('معرّف عنوان التسليم غير صالح. لم يتم إثبات تفاصيل الطلب.');
+  for (const key of ['label','recipient_name','phone','address_line1','city']) {
+    if (typeof item[key] !== 'string' || !(item[key] as string).trim()) throw new Error('بيانات عنوان التسليم ناقصة. لم يتم إثبات تفاصيل الطلب.');
+  }
+  for (const key of ['address_line2','district','notes']) {
+    if (item[key] !== null && item[key] !== undefined && typeof item[key] !== 'string') throw new Error('بيانات عنوان التسليم غير صالحة. لم يتم إثبات تفاصيل الطلب.');
+  }
+  return {
+    id:item.id as string,
+    label:item.label as string,
+    recipient_name:item.recipient_name as string,
+    phone:item.phone as string,
+    address_line1:item.address_line1 as string,
+    address_line2:(item.address_line2 as string|null|undefined) ?? null,
+    city:item.city as string,
+    district:(item.district as string|null|undefined) ?? null,
+    notes:(item.notes as string|null|undefined) ?? null,
+  };
+}
+
 function assertDetailNumber(value: unknown, label: string, integer = false): number {
   const normalized = typeof value === 'number' ? value : Number(value);
   if (!Number.isFinite(normalized) || normalized < 0 || (integer && !Number.isSafeInteger(normalized))) {
@@ -74,7 +99,7 @@ function assertDetailNumber(value: unknown, label: string, integer = false): num
 export async function getCustomerOrderDetail(orderId:string): Promise<CustomerOrderDetail> {
   if (!UUID_PATTERN.test(orderId)) throw new Error('معرّف الطلب غير صالح.');
   const client = requireSupabase();
-  const { data: order, error: orderError } = await client.from('orders').select('id,order_number,status,total,currency,created_at').eq('id',orderId).maybeSingle();
+  const { data: order, error: orderError } = await client.from('orders').select('id,order_number,status,total,currency,created_at,shipping_address').eq('id',orderId).maybeSingle();
   if (orderError) throw orderError;
   if (!order) throw new Error('الطلب غير موجود أو غير متاح لهذا الحساب.');
   const [{ data: items, error: itemsError }, { data: history, error: historyError }] = await Promise.all([
@@ -101,5 +126,6 @@ export async function getCustomerOrderDetail(orderId:string): Promise<CustomerOr
     return { ...entry, to_status: entry.to_status as OrderStatus };
   });
   const timeline = buildCustomerOrderTimeline(order.status as OrderStatus, safeHistory);
-  return { ...assertCustomerOrderSummary({...order, order_number:Number(order.order_number), total:Number(order.total)}), items:mappedItems, timeline, statusLabel:STATUS_LABELS[order.status]??order.status };
+  const shippingAddress = assertShippingAddressSnapshot(order.shipping_address);
+  return { ...assertCustomerOrderSummary({...order, order_number:Number(order.order_number), total:Number(order.total)}), items:mappedItems, timeline, statusLabel:STATUS_LABELS[order.status]??order.status, shipping_address:shippingAddress };
 }
