@@ -428,7 +428,7 @@ export default function AppV3Fixed(){
   useEffect(()=>{if(typeof window==='undefined'||!signedIn||storefrontOpen||!cart.length)return;const params=new URLSearchParams(window.location.search);if(params.get('checkout')!=='1')return;params.delete('checkout');window.history.replaceState({},'',window.location.pathname+'#catalog');setCheckoutOpen(true);},[cart.length,signedIn,storefrontOpen]);
 
   if(!ready)return <div className="customer-shell"><OperationalLoadingSkeleton variant="app" /></div>;
-  if(storefrontOpen)return <Storefront signedIn={signedIn} onLogin={()=>{setStorefrontOpen(false);window.history.replaceState({},'',window.location.pathname+'?login=1#catalog');setSection('catalog');}} />;
+  if(storefrontOpen)return <Storefront signedIn={signedIn} favoriteIds={favoriteIds} compareIds={compareIds} onToggleFavorite={toggleFavorite} onToggleCompare={toggleCompare} onLogin={()=>{setStorefrontOpen(false);window.history.replaceState({},'',window.location.pathname+'?login=1#catalog');setSection('catalog');}} />;
   if(!signedIn)return <div className="customer-shell auth-shell">
     <div className="auth-experience">
       <aside className="auth-brand-panel" aria-label="تعريف الأغبري">
