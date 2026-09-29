@@ -426,7 +426,7 @@ export default function AppV3Fixed(){
   async function logout(){await signOut();}
   if(!ready)return <div className="customer-shell"><OperationalLoadingSkeleton variant="app" /></div>;
   const publicStorefrontPath=typeof window!=='undefined'&&(window.location.pathname==='/'||window.location.pathname==='/store');
-  if(!signedIn&&showStorefront&&publicStorefrontPath)return <Storefront onLogin={()=>{setShowStorefront(false);window.history.replaceState({},'',window.location.pathname==='/store'?'/?login=1':'/?login=1');}} />;
+  if(!signedIn&&showStorefront&&publicStorefrontPath)return <Storefront onLogin={()=>{setShowStorefront(false);setSection('catalog');window.history.replaceState({},'',window.location.pathname==='/store'?'/?login=1#catalog':'/?login=1#catalog');}} />;
   if(!signedIn)return <div className="customer-shell auth-shell">
     <div className="auth-experience">
       <aside className="auth-brand-panel" aria-label="تعريف الأغبري">
