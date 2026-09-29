@@ -8,6 +8,32 @@ begin;
 
 select plan(12);
 
+select diag(
+  coalesce(
+    (
+      select string_agg(
+        format(
+          '%s | search_path=%s | anon_execute=%s',
+          p.oid::regprocedure,
+          coalesce((select value from unnest(coalesce(p.proconfig, ARRAY[]::text[])) c(value) where c.value like 'search_path=%' limit 1),''),
+          has_function_privilege('anon', p.oid, 'execute')
+        ),
+        E'\n'
+        order by p.oid::regprocedure::text
+      )
+      from pg_proc p
+      join pg_namespace n on n.oid = p.pronamespace
+      where n.nspname = 'public'
+        and p.prosecdef
+        and (
+          coalesce((select value from unnest(coalesce(p.proconfig, ARRAY[]::text[])) c(value) where c.value like 'search_path=%' limit 1),'') <> 'search_path=""'
+          or has_function_privilege('anon', p.oid, 'execute')
+        )
+    ),
+    'No public SECURITY DEFINER drift detected.'
+  )
+);
+
 select is(
   (select count(*)::int
      from pg_proc p

@@ -75,7 +75,7 @@ test.describe('UI reference-family browser coverage', () => {
     const openCapability = async (sectionLabel: string, capabilityLabel: string, section: string) => {
       await page.getByRole('button', { name: sectionLabel, exact: true }).first().click();
       await expect(page).toHaveURL(new RegExp('#' + section + '$'));
-      await page.getByRole('button', { name: capabilityLabel, exact: true }).first().click();
+      await page.getByRole('button', { name: new RegExp('^' + capabilityLabel + ' —') }).first().click();
     };
 
     await openCapability('اكتشاف وشراء', 'البحث', 'catalog');
