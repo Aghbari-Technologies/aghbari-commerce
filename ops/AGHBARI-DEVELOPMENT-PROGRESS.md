@@ -600,3 +600,9 @@ Next: current exact-SHA Quality + Test-the-Test; then browser/runtime if executa
 | Run | Date | SHA | Branch | Implemented | Verified | Proven | Blocked | Certification | Production | Next |
 |---|---|---|---|---|---|---|---|---|---|---|
 | UI-DETAIL-A11Y-20260929-04 | 2026-09-29 | d096d8a98f43fff8bf8c22ad9c7b81d3d3d98e5f | main | Catalog bulk selection ceiling 50; Product Detail favorite/compare/Copy-SKU quick actions; saved/recent shelf favorite truth + a11y state; focused regression tests | Aghbari Quality SUCCESS on exact tree; source audit complete; remaining exact-tree evidence lanes active | PARTIAL / NOT_PROVEN for final visual/runtime certification | Hosted deployment identity mismatch plus existing Netlify/Vercel external blockers | NOT CLAIMED | HOLD / NO TOUCH | Finish exact-tree Visual Proof/Test-the-Test/application-quality/Security/G1/Browser evidence; fix only first material source failure, then next independent gap |
+
+
+## Run 2026-09-29 — Exact UI detail/accessibility hardening
+| Run | Date | SHA | Branch | Implemented | Verified | Proven | Blocked | Certification | Production | Next |
+|---|---|---|---|---|---|---|---|---|---|---|
+| UI-DETAIL-A11Y-20260929-05 | 2026-09-29 | 6a8e5744ef697f6fef053a39f31dbe8af00bac6e | main | Product Detail favorite/compare/Copy-SKU; Catalog bulk cap 50; recent-shelf favorite state correctness; focused accessibility/source tests | Bootstrap SUCCESS; Browser Contract SUCCESS; fresh exact-SHA quality/security/G1/Test-the-Test/Visual lanes active; previous application-quality failure root-cause fixed | PARTIAL / NOT_PROVEN until fresh exact-SHA lanes complete | Hosted Netlify/Vercel blockers remain external | NOT CLAIMED | HOLD / NO TOUCH | Finish exact-SHA lanes; first material source failure only; then next independent transactional/UI gap |

@@ -300,3 +300,17 @@ Inspect the exact-tree `d096...` remaining Test-the-Test, UI Visual Proof, appli
 - Do not transfer prior visual/runtime proof to `d096...`.
 - Do not retry unchanged Vercel/Netlify external blockers.
 - Do not mutate Production for purchase/receipt idempotency.
+
+
+## 2026-09-29 — Exact UI micro-capability hardening checkpoint
+- CODE / EXACT TREE UNDER TEST: `6a8e5744ef697f6fef053a39f31dbe8af00bac6e`.
+- Implemented in this wave: Product Detail favorite/compare/Copy-SKU actions with existing real state; fail-closed Catalog bulk product selection at 50; recent-shelf favorite state now reflects the real local saved-product set; focused accessibility/source contracts added.
+- Exact evidence snapshot: the prior `d096...` application-quality failure was traced to a single incorrect test assertion; that test was corrected in `6a8e...`. On the new exact SHA, Bootstrap is SUCCESS and the fresh Application Quality / Aghbari Quality / Security / G1 / Test-the-Test / UI Visual Proof lanes are running. Browser Contract completed successfully; the deployment-status Browser E2E path is intentionally not treated as source proof when hosted artifact identity is mismatched.
+- Hosted blockers: Netlify exact-source credential path remains external; Vercel free-plan protection/rate-limit remains external. No unchanged hosted blocker was retried.
+- Production: `HOLD / NO TOUCH`.
+
+## CURRENT RESUME POINTER
+Continue from exact code tree `6a8e5744ef697f6fef053a39f31dbe8af00bac6e` (documentation write-back may advance main beyond this code tree). Do not transfer proof from older SHAs.
+
+## NEXT EXECUTABLE ACTION
+Inspect the exact-`6a8e...` workflow matrix to completion. Fix only the first material source failure. If green, continue the next independent in-scope transactional/UI gap; keep closed surfaces closed and do not touch Production.
