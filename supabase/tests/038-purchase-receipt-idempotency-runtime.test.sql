@@ -41,6 +41,8 @@ do $$
 declare
   v_purchase_id uuid;
   v_item_id uuid;
+  v_error_message text;
+  v_error_detail text;
 begin
   begin
     select purchase_order_id into v_purchase_id
@@ -101,7 +103,8 @@ begin
       ))
     );
   exception when others then
-    raise exception '128-character receipt key failed unexpectedly: sqlstate=% message=% detail=% hint=%', SQLSTATE, SQLERRM, PG_EXCEPTION_DETAIL, PG_EXCEPTION_HINT;
+    get stacked diagnostics v_error_message = MESSAGE_TEXT, v_error_detail = PG_EXCEPTION_DETAIL;
+    raise exception '128-character receipt key failed unexpectedly: sqlstate=% message=% detail=%', SQLSTATE, v_error_message, coalesce(v_error_detail,'');
   end;
   update _purchase_receipt_runtime_proof set receipt_128_ok=true;
 
