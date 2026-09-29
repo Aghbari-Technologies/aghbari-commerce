@@ -48,6 +48,16 @@ describe('customer order and notification collection export closure', () => {
   });
 });
 
+describe('customer invitation capability closure', () => {
+  it('opens a real safe dialog instead of a dead message action', () => {
+    const app = readRepoSource('AppV3Fixed.tsx');
+    expect(app).toContain('const [invitationOpen, setInvitationOpen] = useState(false);');
+    expect(app).toContain("case 'invitations':\n        setInvitationOpen(true);");
+    expect(app).toContain('id="invitation-help-title"');
+    expect(app).toContain('دعوات الحساب');
+  });
+});
+
 describe('admin navigation density closure', () => {
   it('keeps one canonical staff surface rail and avoids duplicate mega-navigation bars', () => {
     const admin = readRepoSource('AdminPanel.tsx');
