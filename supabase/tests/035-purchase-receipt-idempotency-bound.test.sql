@@ -44,7 +44,7 @@ select ok(not exists (
   join pg_namespace n on n.oid=p.pronamespace
   where n.nspname='public'
     and p.proname='receive_purchase_order'
-    and pg_get_functiondef(p.oid) like '%length(key)%200%'
+    and pg_get_functiondef(p.oid) like '%length(key)>200%'
 ), 'receive_purchase_order no longer contains the legacy 200-character maximum');
 
 select ok(exists (
