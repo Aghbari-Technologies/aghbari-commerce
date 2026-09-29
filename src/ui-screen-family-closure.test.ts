@@ -133,6 +133,15 @@ describe('finance invoice collection closure', () => {
     expect(sourceText).toContain("invoiceSort==='highest'");
     expect(sourceText).toContain('<OperationalLoadingSkeleton variant="collection" />');
   });
+
+
+  it('keeps finance operations history export scoped to the filtered current tab', () => {
+    const sourceText = readRepoSource('FinanceOperationsHistoryPanel.tsx');
+    expect(sourceText).toContain('exportCurrent');
+    expect(sourceText).toContain('تصدير CSV');
+    expect(sourceText).toContain('const headers=tab===');
+    expect(sourceText).toContain('current.map(row=>');
+  });
 });
 
 
