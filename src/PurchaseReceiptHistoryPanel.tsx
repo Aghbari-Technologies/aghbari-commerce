@@ -20,13 +20,15 @@ export default function PurchaseReceiptHistoryPanel({role}:{role:UserRole}){
   const [items,setItems]=useState<ReceiptItem[]>([]);
   const [products,setProducts]=useState<Map<string,Product>>(new Map());
   const [query,setQuery]=useState(''); const [sort,setSort]=useState<'newest'|'oldest'>('newest'); const [page,setPage]=useState(1); const [loading,setLoading]=useState(true); const [error,setError]=useState<string|null>(null); const [selectedReceipt,setSelectedReceipt]=useState<Receipt|null>(null);
-  const reload=useCallback(async()=>{if(!supabase||!canUse){setLoading(false);return;}setLoading(true);setError(null);try{const [r,w,o,s]=await Promise.all([
+  const reload=useCallback(async()=>{if(!supabase||!canUse){setLoading(false);return;}setLoading(true);setError(null);try{const [r,w,o,s,i,p]=await Promise.all([
     supabase.from('purchase_receipts').select('id,receipt_number,purchase_order_id,warehouse_id,received_by,received_at,notes').order('received_at',{ascending:false}).limit(300),
     supabase.from('warehouses').select('id,name').eq('is_active',true),
     supabase.from('purchase_orders').select('id,purchase_order_number,supplier_id').limit(300),
-    supabase.from('suppliers').select('id,name').eq('is_active',true).limit(300)
-  ]);if(r.error)throw r.error;if(w.error)throw w.error;if(o.error)throw o.error;if(s.error)throw s.error;
-    setReceipts((r.data??[]) as Receipt[]);setWarehouses(new Map(((w.data??[]) as Warehouse[]).map(x=>[x.id,x.name])));setOrders(new Map(((o.data??[]) as PurchaseOrder[]).map(x=>[x.id,x])));setSuppliers(new Map(((s.data??[]) as Supplier[]).map(x=>[x.id,x.name])));
+    supabase.from('suppliers').select('id,name').eq('is_active',true).limit(300),
+    supabase.from('purchase_receipt_items').select('id,receipt_id,product_id,quantity_received,unit_cost,line_total').order('created_at'),
+    supabase.from('products').select('id,name,sku').eq('status','active').limit(1000)
+  ]);if(r.error)throw r.error;if(w.error)throw w.error;if(o.error)throw o.error;if(s.error)throw s.error;if(i.error)throw i.error;if(p.error)throw p.error;
+    setReceipts((r.data??[]) as Receipt[]);setWarehouses(new Map(((w.data??[]) as Warehouse[]).map(x=>[x.id,x.name])));setOrders(new Map(((o.data??[]) as PurchaseOrder[]).map(x=>[x.id,x])));setSuppliers(new Map(((s.data??[]) as Supplier[]).map(x=>[x.id,x.name])));setItems((i.data??[]) as ReceiptItem[]);setProducts(new Map(((p.data??[]) as Product[]).map(x=>[x.id,x as Product])));
   }catch(e){setError(e instanceof Error?e.message:'تعذر تحميل سجل الاستلام.');}finally{setLoading(false);}},[canUse]);
   useEffect(()=>{void reload();},[reload]);useEffect(()=>{setPage(1);},[query,sort]);
   const filtered=useMemo(()=>{const needle=query.trim().toLocaleLowerCase();return receipts.filter(r=>{const o=orders.get(r.purchase_order_id);const supplier=o?suppliers.get(o.supplier_id):'';return !needle||[r.receipt_number,o?.purchase_order_number??'',supplier??'',warehouses.get(r.warehouse_id)??'',r.notes??''].join(' ').toLocaleLowerCase().includes(needle);}).sort((a,b)=>{const delta=new Date(b.received_at).getTime()-new Date(a.received_at).getTime();return sort==='oldest'?-delta:delta;});},[orders,query,receipts,sort,suppliers,warehouses]);

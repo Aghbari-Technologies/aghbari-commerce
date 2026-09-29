@@ -152,6 +152,7 @@ describe('purchasing, inventory and receiving collection closure', () => {
   it('keeps receipt history operationally deep with real receipt lines and export', () => {
     const sourceText = readRepoSource('PurchaseReceiptHistoryPanel.tsx');
     expect(sourceText).toContain("purchase_receipt_items");
+    expect(sourceText).toContain("supabase.from('purchase_receipt_items')");
     expect(sourceText).toContain('itemsFor(receipt.id)');
     expect(sourceText).toContain('تصدير CSV');
     expect(sourceText).toContain('receipt-detail-line-list');
@@ -174,8 +175,7 @@ describe('finance invoice collection closure', () => {
     expect(sourceText).toContain('exportCurrent');
     expect(sourceText).toContain('تصدير CSV');
     expect(sourceText).toContain('const headers=tab===');
-    expect(sourceText).toContain('(current as Supplier[])');
-    expect(sourceText).toContain('downloadRows(headers,rows');
+    expect(sourceText).toContain('current.map(row=>');
   });
 });
 
@@ -243,7 +243,8 @@ describe('supplier and history sort type safety', () => {
   it('keeps supplier ledger export scoped to the active tab', () => {
     const sourceText = readRepoSource('SupplierLedgerPanel.tsx');
     expect(sourceText).toContain('exportCurrent');
-    expect(sourceText).toContain('current.map(row=>');
+    expect(sourceText).toContain('(current as Supplier[])');
+    expect(sourceText).toContain('downloadRows(headers,rows');
     expect(sourceText).toContain('tab===\'suppliers\'');
   });
   it('keeps financial and inventory history rows typed', () => {
