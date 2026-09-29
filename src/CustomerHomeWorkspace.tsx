@@ -29,6 +29,8 @@ interface CustomerHomeWorkspaceProps {
   onOpenProduct?: (product: Product) => void;
   onAddProduct?: (product: Product) => Promise<boolean>;
   onSelectCategory?: (id: string) => void;
+  hasLatestOrder?: boolean;
+  onReorderLatest?: () => Promise<void>;
 }
 
 function HomeStat({
@@ -79,7 +81,15 @@ export default function CustomerHomeWorkspace({
   onOpenProduct,
   onAddProduct,
   onSelectCategory,
+  hasLatestOrder = false,
+  onReorderLatest,
 }: CustomerHomeWorkspaceProps) {
+  const [reorderingLatest, setReorderingLatest] = useState(false);
+  async function repeatLatestOrder() {
+    if (!onReorderLatest || !hasLatestOrder || reorderingLatest) return;
+    setReorderingLatest(true);
+    try { await onReorderLatest(); } finally { setReorderingLatest(false); }
+  }
   const [addingProductId, setAddingProductId] = useState<string | null>(null);
   const [addedProductId, setAddedProductId] = useState<string | null>(null);
 
@@ -152,11 +162,14 @@ export default function CustomerHomeWorkspace({
           <small>{cartCount ? cartCount.toLocaleString('ar-YE') + ' وحدة ضمن السلة الحالية' : 'انتقل مباشرة إلى الكتالوج واختصر وقت إعادة البحث.'}</small>
           <button type="button" onClick={() => cartCount ? onOpenCart() : onNavigate('catalog')}>{cartCount ? 'مراجعة السلة' : 'فتح الكتالوج'} ↗</button>
         </div>
-        <div className="customer-home-command-card">
+        <div className="customer-home-command-card customer-home-command-repeat">
           <span className="command-kicker">آخر طلب</span>
           <strong>{latestOrderNumber ? '#' + latestOrderNumber : 'لا يوجد طلب سابق'}</strong>
           <small>{latestOrderStatus ? 'الحالة: ' + latestOrderStatus : latestOrderDate ? new Date(latestOrderDate).toLocaleDateString('ar-YE') : 'سيظهر هنا بعد أول إرسال ناجح.'}</small>
-          <button type="button" onClick={() => onNavigate('orders')}>فتح الطلبات ↗</button>
+          <div className="customer-home-repeat-actions">
+            <button type="button" onClick={() => void repeatLatestOrder()} disabled={!hasLatestOrder || reorderingLatest}>{reorderingLatest ? 'جارٍ تجهيز السلة…' : 'إعادة الطلب'}</button>
+            <button type="button" className="ghost" onClick={() => onNavigate('orders')}>السجل ↗</button>
+          </div>
         </div>
         <div className="customer-home-command-card">
           <span className="command-kicker">الحساب</span>
