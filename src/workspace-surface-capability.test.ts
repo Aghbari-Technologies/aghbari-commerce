@@ -17,7 +17,10 @@ describe('workspace surface capability map', () => {
     expect(getCustomerSurfaceItems('templates', ['catalog', 'orders'])).toEqual([]);
   });
 
-  it('keeps the capability map presentation-only', () => {
+  it('uses customer-facing template terminology consistently', () => {
+    expect(AGHBARI_CUSTOMER_STRUCTURE.find((item) => item.id === 'cart')?.description).toContain('الحفظ كقالب');
+    expect(AGHBARI_CUSTOMER_STRUCTURE.find((item) => item.id === 'cart')?.description).not.toContain('مسحة');
+  });\n\n  it('keeps the capability map presentation-only', () => {
     const items = getCustomerSurfaceItems('orders');
     expect(items.every((item) => item.status === 'live' || item.status === 'boundary')).toBe(true);
     expect(items.some((item) => item.id === 'checkout')).toBe(true);
