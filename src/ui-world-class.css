@@ -222,3 +222,8 @@ button:disabled,input:disabled,select:disabled,textarea:disabled{cursor:not-allo
   .customer-home-command-card,.customer-shell .product-card,.admin-panel .admin-command-overview>a,.admin-panel .cart-line,
   .customer-shell .order-card,.customer-shell .customer-invoice-card,.customer-shell .template-card-rich,.customer-shell .account-panel{transition:none!important}
 }
+
+.product-detail-identity{display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap}
+.product-detail-quick-actions{display:flex;align-items:center;gap:.45rem;flex-wrap:wrap}
+.product-detail-quick-actions .ghost,.copy-sku-button{min-height:2.25rem}
+@media (max-width:640px){.product-detail-identity{align-items:stretch}.product-detail-quick-actions{width:100%}.product-detail-quick-actions button{flex:1}}
