@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { assertCustomerOrderSummary, buildCustomerOrderTimeline } from './customerOrders';
+import { assertCustomerOrderSummary, assertShippingAddressSnapshot, buildCustomerOrderTimeline } from './customerOrders';
 
 describe('customer order runtime contracts', () => {
   const valid = {
@@ -54,5 +54,31 @@ describe('customer order timeline', () => {
     expect(timeline.find((step) => step.status === 'preparing')?.active).toBe(false);
     expect(timeline.find((step) => step.status === 'ready')?.active).toBe(false);
     expect(timeline.find((step) => step.status === 'completed')?.active).toBe(false);
+  });
+});
+
+
+describe('customer order shipping snapshot', () => {
+  const validAddress = {
+    id: '123e4567-e89b-12d3-a456-426614174001',
+    label: 'المكتب',
+    recipient_name: 'المستلم',
+    phone: '777000000',
+    address_line1: 'شارع رئيسي',
+    address_line2: null,
+    city: 'صنعاء',
+    district: 'حدة',
+    notes: null,
+  };
+
+  it('accepts a trustworthy historical shipping snapshot', () => {
+    expect(assertShippingAddressSnapshot(validAddress)).toEqual(validAddress);
+  });
+
+  it('fails closed for malformed historical shipping snapshots', () => {
+    expect(() => assertShippingAddressSnapshot({ ...validAddress, id: 'bad-id' })).toThrow();
+    expect(() => assertShippingAddressSnapshot({ ...validAddress, city: '' })).toThrow();
+    expect(() => assertShippingAddressSnapshot({ ...validAddress, phone: null })).toThrow();
+    expect(assertShippingAddressSnapshot(null)).toBeNull();
   });
 });
