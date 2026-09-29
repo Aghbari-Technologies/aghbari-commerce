@@ -13,6 +13,7 @@ export interface CustomerStructureItem {
 
 export const AGHBARI_CUSTOMER_STRUCTURE: CustomerStructureItem[] = [
   { id: 'home', label: 'الرئيسية', section: 'home', status: 'live', description: 'ملخص الحساب، حالة التشغيل والاختصارات إلى الإجراء التالي.' },
+  { id: 'saved-products', label: 'المحفوظات والمفضلة', section: 'saved', status: 'live', description: 'قائمة محلية للمفضلة والأصناف التي شوهدت مؤخرًا مع إعادة فتح التفاصيل والإضافة للسلة.' },
   { id: 'store', label: 'المتجر / الكتالوج', section: 'catalog', status: 'live', description: 'اكتشاف الأصناف، البحث، التصنيف، الأسعار، المخزون والطلب السريع.' },
   { id: 'categories', label: 'التصنيفات', section: 'catalog', status: 'live', description: 'تصفية الكتالوج حسب التصنيف.' },
   { id: 'search', label: 'البحث', section: 'catalog', status: 'live', description: 'بحث بالاسم أو SKU أو باركود.' },
