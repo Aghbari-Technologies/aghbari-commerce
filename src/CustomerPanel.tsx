@@ -43,6 +43,27 @@ export default function CustomerPanel({ role }: { role: UserRole }) {
   }
   const visibleCustomers = useMemo(() => { const needle = customerQuery.trim().toLowerCase(); return customers.filter((customer) => (customerStatus === 'all' || (customerStatus === 'active' && customer.is_active) || (customerStatus === 'inactive' && !customer.is_active)) && (customerTierFilter === 'all' || customer.tier === customerTierFilter) && (!needle || customer.name.toLowerCase().includes(needle) || String(customer.phone ?? '').toLowerCase().includes(needle) || tierLabels[customer.tier].toLowerCase().includes(needle))).sort((a, b) => customerSort === 'name' ? a.name.localeCompare(b.name, 'ar') : customerSort === 'oldest' ? a.created_at.localeCompare(b.created_at) : b.created_at.localeCompare(a.created_at)); }, [customerQuery, customers, customerSort, customerStatus, customerTierFilter]);
   const CUSTOMER_PAGE_SIZE = 12; const customerPages = Math.max(1, Math.ceil(visibleCustomers.length / CUSTOMER_PAGE_SIZE)); const activeCustomerPage = Math.min(customerPage, customerPages); const pagedCustomers = visibleCustomers.slice((activeCustomerPage - 1) * CUSTOMER_PAGE_SIZE, activeCustomerPage * CUSTOMER_PAGE_SIZE);
+  function exportCurrentCustomers() {
+    if (!visibleCustomers.length) return;
+    const headers = ['العميل', 'الهاتف', 'الفئة', 'الحالة', 'تاريخ الإنشاء', 'آخر تحديث'];
+    const rows = visibleCustomers.map((customer) => [
+      customer.name,
+      customer.phone ?? '',
+      tierLabels[customer.tier],
+      customer.is_active ? 'نشط' : 'موقوف',
+      new Date(customer.created_at).toLocaleString('ar-YE'),
+      new Date(customer.updated_at).toLocaleString('ar-YE'),
+    ]);
+    const csv = '\ufeff' + [headers, ...rows]
+      .map((row) => row.map((value) => '"' + String(value ?? '').replaceAll('"', '""') + '"').join(','))
+      .join('\n');
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = 'aghbari-customers-' + new Date().toISOString().slice(0, 10) + '.csv';
+    anchor.click();
+    URL.revokeObjectURL(url);
+  }
   if (!canCreate && !canManage) return null;
   return <div className="cart-panel" id="customers">
     <div className="ops-metrics-strip" aria-label="ملخص العملاء"><article><small>إجمالي العملاء</small><strong>{customers.length.toLocaleString('ar')}</strong><span>الحسابات المحملة</span></article><article><small>نشط</small><strong>{customers.filter(c=>c.is_active).length.toLocaleString('ar')}</strong><span>يمكنه الشراء</span></article><article><small>موقوف</small><strong>{customers.filter(c=>!c.is_active).length.toLocaleString('ar')}</strong><span>خارج التشغيل</span></article><article><small>النتائج الحالية</small><strong>{visibleCustomers.length.toLocaleString('ar')}</strong><span>بعد الفلاتر</span></article></div>
@@ -56,7 +77,7 @@ export default function CustomerPanel({ role }: { role: UserRole }) {
         <button disabled={busy}>حفظ العميل</button>
       </form>}
       <div className="admin-card">
-        <h3>العملاء الحاليون</h3><div className="directory-toolbar"><input aria-label="بحث العملاء" placeholder="بحث بالاسم أو الهاتف أو الفئة" value={customerQuery} onChange={(e) => setCustomerQuery(e.target.value)} disabled={loading} /><select aria-label="فلترة حالة العملاء" value={customerStatus} onChange={(e) => setCustomerStatus(e.target.value as typeof customerStatus)} disabled={loading}><option value="all">كل الحالات</option><option value="active">نشط فقط</option><option value="inactive">موقوف فقط</option></select><select aria-label="فلترة فئة العملاء" value={customerTierFilter} onChange={(e) => setCustomerTierFilter(e.target.value as typeof customerTierFilter)} disabled={loading}><option value="all">كل الفئات</option>{tiers.map(item => <option key={item} value={item}>{tierLabels[item]}</option>)}</select><select aria-label="ترتيب العملاء" value={customerSort} onChange={(e) => setCustomerSort(e.target.value as typeof customerSort)} disabled={loading}><option value="newest">الأحدث تسجيلًا</option><option value="oldest">الأقدم تسجيلًا</option><option value="name">الاسم</option></select><button type="button" className="ghost" onClick={()=>{setCustomerQuery('');setCustomerStatus('all');setCustomerTierFilter('all');setCustomerSort('newest');}} disabled={loading||(!customerQuery&&customerStatus==='all'&&customerTierFilter==='all'&&customerSort==='newest')}>مسح الفلاتر</button></div>
+        <h3>العملاء الحاليون</h3><div className="directory-toolbar"><input aria-label="بحث العملاء" placeholder="بحث بالاسم أو الهاتف أو الفئة" value={customerQuery} onChange={(e) => setCustomerQuery(e.target.value)} disabled={loading} /><select aria-label="فلترة حالة العملاء" value={customerStatus} onChange={(e) => setCustomerStatus(e.target.value as typeof customerStatus)} disabled={loading}><option value="all">كل الحالات</option><option value="active">نشط فقط</option><option value="inactive">موقوف فقط</option></select><select aria-label="فلترة فئة العملاء" value={customerTierFilter} onChange={(e) => setCustomerTierFilter(e.target.value as typeof customerTierFilter)} disabled={loading}><option value="all">كل الفئات</option>{tiers.map(item => <option key={item} value={item}>{tierLabels[item]}</option>)}</select><select aria-label="ترتيب العملاء" value={customerSort} onChange={(e) => setCustomerSort(e.target.value as typeof customerSort)} disabled={loading}><option value="newest">الأحدث تسجيلًا</option><option value="oldest">الأقدم تسجيلًا</option><option value="name">الاسم</option></select><button type="button" className="ghost" onClick={exportCurrentCustomers} disabled={loading || !visibleCustomers.length}>تصدير CSV</button><button type="button" className="ghost" onClick={()=>{setCustomerQuery('');setCustomerStatus('all');setCustomerTierFilter('all');setCustomerSort('newest');}} disabled={loading||(!customerQuery&&customerStatus==='all'&&customerTierFilter==='all'&&customerSort==='newest')}>مسح الفلاتر</button></div>
         {loading ? <div className="customer-directory-loading-skeleton" role="status" aria-label="جارٍ تحميل العملاء">{Array.from({length:4}).map((_,index)=><article key={index}><div><i/><i/><i/></div><span/><span/></article>)}</div> : !customers.length ? <div className="empty-state"><strong>لا يوجد عملاء مسجلون بعد.</strong><button type="button" onClick={() => void reload()}>إعادة المحاولة</button></div> : !visibleCustomers.length ? <div className="empty-state"><strong>لا توجد نتائج مطابقة.</strong><button type="button" onClick={() => setCustomerQuery('')}>مسح البحث</button></div> : <div className="cart-lines">{pagedCustomers.map((customer) => <article className="cart-line" key={customer.id}>
           <div><strong>{customer.name}</strong><small>{customer.phone ?? 'بدون هاتف'} · {customer.is_active ? 'نشط' : 'موقوف'}</small></div>
           <button type="button" className="ghost" onClick={() => setSelectedCustomer(customer)}>التفاصيل</button>

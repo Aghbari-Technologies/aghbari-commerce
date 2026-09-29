@@ -87,6 +87,39 @@ export default function StaffOperationsPanel() {
     setPage(1);
   }
 
+  function exportCurrentGovernance() {
+    if (!activeRows.length) return;
+    const headers = tab === 'audit'
+      ? ['التاريخ', 'الإجراء', 'الهدف', 'النتيجة', 'Correlation ID', 'البيانات المقيدة']
+      : ['التاريخ', 'الحدث', 'Aggregate', 'الحالة', 'المحاولات', 'آخر خطأ مقيد'];
+    const rows = activeRows.map((row) => tab === 'audit'
+      ? [
+          new Date(row.created_at).toLocaleString('ar-YE'),
+          row.action,
+          row.target_type + (row.target_id ? ' · ' + row.target_id : ''),
+          RESULT_LABELS[row.result],
+          row.correlation_id ?? '',
+          JSON.stringify(redactAuditMetadata(row.metadata)),
+        ]
+      : [
+          new Date(row.created_at).toLocaleString('ar-YE'),
+          row.event_type,
+          row.aggregate_type + ' · ' + row.aggregate_id,
+          OUTBOX_LABELS[row.status],
+          row.attempts,
+          row.last_error ? redactSensitiveText(row.last_error) : '',
+        ]);
+    const csv = '\ufeff' + [headers, ...rows]
+      .map((row) => row.map((value) => '"' + String(value ?? '').replaceAll('"', '""') + '"').join(','))
+      .join('\n');
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = 'aghbari-governance-' + tab + '-' + new Date().toISOString().slice(0, 10) + '.csv';
+    anchor.click();
+    URL.revokeObjectURL(url);
+  }
+
   return (
     <>
       <section className="content-card operations-panel" id="admin-governance" aria-busy={loading}>
@@ -108,6 +141,7 @@ export default function StaffOperationsPanel() {
         <div className="operations-tabs" role="tablist" aria-label="حوكمة التشغيل">
           <button type="button" role="tab" aria-selected={tab === 'audit'} className={tab === 'audit' ? 'active' : ''} onClick={() => changeTab('audit')}>سجل التدقيق</button>
           <button type="button" role="tab" aria-selected={tab === 'outbox'} className={tab === 'outbox' ? 'active' : ''} onClick={() => changeTab('outbox')}>صندوق التكاملات</button>
+          <button type="button" className="ghost" onClick={exportCurrentGovernance} disabled={loading || !activeRows.length}>تصدير CSV</button>
           <button type="button" className="ghost" onClick={() => void reload()} disabled={loading}>إعادة تحميل</button>
         </div>
 

@@ -79,6 +79,25 @@ describe('collection control parity', () => {
 });
 
 
+describe('customer directory export closure', () => {
+  it('keeps customer export scoped to the filtered directory', () => {
+    const sourceText = readRepoSource('CustomerPanel.tsx');
+    expect(sourceText).toContain('exportCurrentCustomers');
+    expect(sourceText).toContain('تصدير CSV');
+    expect(sourceText).toContain('visibleCustomers.map');
+  });
+});
+
+describe('staff access export closure', () => {
+  it('keeps access export scoped to the organization directory without raw ids', () => {
+    const sourceText = readRepoSource('StaffAccessPanel.tsx');
+    expect(sourceText).toContain('exportCurrentAccess');
+    expect(sourceText).toContain('تصدير CSV');
+    expect(sourceText).toContain('filtered.map');
+    expect(sourceText).not.toContain('user.user_id,');
+  });
+});
+
 describe('staff access collection closure', () => {
   it('keeps account-type, role and sort filters wired to the live access directory', () => {
     const sourceText = readRepoSource('StaffAccessPanel.tsx');
@@ -221,6 +240,16 @@ describe('inventory movement progressive disclosure', () => {
   });
 });
 
+
+describe('governance export closure', () => {
+  it('keeps governance export redacted and scoped to the active tab', () => {
+    const sourceText = readRepoSource('StaffOperationsPanel.tsx');
+    expect(sourceText).toContain('exportCurrentGovernance');
+    expect(sourceText).toContain('تصدير CSV');
+    expect(sourceText).toContain('redactAuditMetadata');
+    expect(sourceText).toContain('redactSensitiveText');
+  });
+});
 
 describe('governance collection closure', () => {
   it('keeps audit/outbox sorting tied to created_at and retains a real loading surface', () => {

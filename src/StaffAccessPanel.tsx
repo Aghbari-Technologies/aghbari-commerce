@@ -75,6 +75,25 @@ export default function StaffAccessPanel({ role }: { role: UserRole }) {
   const accessPages = Math.max(1, Math.ceil(filtered.length / 12));
   const activeAccessPage = Math.min(page, accessPages);
   const visible = filtered.slice((activeAccessPage - 1) * 12, activeAccessPage * 12);
+  function exportCurrentAccess() {
+    if (!filtered.length) return;
+    const headers = ['الحساب', 'النوع', 'الدور', 'تاريخ الإنشاء'];
+    const rows = filtered.map((user) => [
+      user.email,
+      user.customer_id ? 'عميل' : 'موظف',
+      ROLE_LABELS[user.role],
+      new Date(user.created_at).toLocaleString('ar-YE'),
+    ]);
+    const csv = '\ufeff' + [headers, ...rows]
+      .map((row) => row.map((value) => '"' + String(value ?? '').replaceAll('"', '""') + '"').join(','))
+      .join('\n');
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = 'aghbari-access-' + new Date().toISOString().slice(0, 10) + '.csv';
+    anchor.click();
+    URL.revokeObjectURL(url);
+  }
 
   async function saveRole(user: OrganizationUser) {
     if (!supabase || !canManage) return;
@@ -105,6 +124,7 @@ export default function StaffAccessPanel({ role }: { role: UserRole }) {
       <select aria-label="فلترة نوع الحساب" value={accountType} onChange={(e) => setAccountType(e.target.value as typeof accountType)} disabled={loading}><option value="all">كل الأنواع</option><option value="staff">الموظفون</option><option value="customer">العملاء</option></select>
       <select aria-label="فلترة دور الحساب" value={roleFilter} onChange={(e) => setRoleFilter(e.target.value as typeof roleFilter)} disabled={loading}><option value="all">كل الأدوار</option>{(Object.keys(ROLE_LABELS) as UserRole[]).map(item => <option key={item} value={item}>{ROLE_LABELS[item]}</option>)}</select>
       <select aria-label="ترتيب الحسابات" value={sort} onChange={(e) => setSort(e.target.value as typeof sort)} disabled={loading}><option value="newest">الأحدث</option><option value="oldest">الأقدم</option><option value="email">البريد الأبجدي</option></select>
+      <button type="button" className="ghost" onClick={exportCurrentAccess} disabled={loading || !filtered.length}>تصدير CSV</button>
       <button type="button" className="ghost" onClick={() => { setQuery(''); setAccountType('all'); setRoleFilter('all'); setSort('newest'); }} disabled={loading || (!query && accountType === 'all' && roleFilter === 'all' && sort === 'newest')}>مسح</button>
       <button type="button" className="ghost" onClick={() => void reload()} disabled={loading}>إعادة تحميل</button>
       {!canManage && <span className="permission-hint">قراءة فقط · تغيير الدور يتطلب صلاحية المالك.</span>}
