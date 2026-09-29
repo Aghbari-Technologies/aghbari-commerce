@@ -58,6 +58,15 @@ describe('admin dashboard full structure', () => {
 });
 
 
+describe('admin order export closure', () => {
+  it('keeps admin order export scoped to the filtered order collection', () => {
+    const sourceText = readRepoSource('AdminPanel.tsx');
+    expect(sourceText).toContain('exportAdminOrders');
+    expect(sourceText).toContain('تصدير CSV');
+    expect(sourceText).toContain('visibleOrders.map');
+  });
+});
+
 describe('collection control parity', () => {
   it('keeps administrative order sorting wired', () => {
     const sourceText = readRepoSource('AdminPanel.tsx');
