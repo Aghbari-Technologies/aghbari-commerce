@@ -23,3 +23,14 @@ describe('customer input boundaries', () => {
     expect(validateCustomerTier('distributor')).toBe('distributor');
   });
 });
+
+
+describe('customer operational detail snapshot', () => {
+  it('exports a read-only operational snapshot loader', async () => {
+    const source = readFileSync(resolve(process.cwd(), 'src/services/customers.ts'), 'utf8');
+    expect(source).toContain('getCustomerOperationalSnapshot');
+    expect(source).toContain("from('orders')");
+    expect(source).toContain("from('customer_addresses')");
+    expect(source).toContain("eq('is_active', true)");
+  });
+});

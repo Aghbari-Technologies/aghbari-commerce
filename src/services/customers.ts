@@ -77,3 +77,24 @@ export async function setCustomerActive(customerId: string, isActive: boolean) {
   if (error) throw error;
   return data as StaffCustomer;
 }
+
+
+export interface CustomerOperationalSnapshot {
+  orderCount: number;
+  activeAddressCount: number;
+}
+
+export async function getCustomerOperationalSnapshot(customerId: string): Promise<CustomerOperationalSnapshot> {
+  const id = requireUuid(customerId, 'العميل');
+  const client = requireSupabase();
+  const [orders, addresses] = await Promise.all([
+    client.from('orders').select('id', { count: 'exact', head: true }).eq('customer_id', id),
+    client.from('customer_addresses').select('id', { count: 'exact', head: true }).eq('customer_id', id).eq('is_active', true),
+  ]);
+  if (orders.error) throw orders.error;
+  if (addresses.error) throw addresses.error;
+  return {
+    orderCount: Math.max(0, Number(orders.count ?? 0)),
+    activeAddressCount: Math.max(0, Number(addresses.count ?? 0)),
+  };
+}
