@@ -92,16 +92,16 @@ export default function StaffOperationsPanel() {
     const headers = tab === 'audit'
       ? ['التاريخ', 'الإجراء', 'الهدف', 'النتيجة', 'Correlation ID', 'البيانات المقيدة']
       : ['التاريخ', 'الحدث', 'Aggregate', 'الحالة', 'المحاولات', 'آخر خطأ مقيد'];
-    const rows = activeRows.map((row) => tab === 'audit'
-      ? [
+    const rows = tab === 'audit'
+      ? (activeRows as AuditRow[]).map((row) => [
           new Date(row.created_at).toLocaleString('ar-YE'),
           row.action,
           row.target_type + (row.target_id ? ' · ' + row.target_id : ''),
           RESULT_LABELS[row.result],
           row.correlation_id ?? '',
           JSON.stringify(redactAuditMetadata(row.metadata)),
-        ]
-      : [
+        ])
+      : (activeRows as OutboxRow[]).map((row) => [
           new Date(row.created_at).toLocaleString('ar-YE'),
           row.event_type,
           row.aggregate_type + ' · ' + row.aggregate_id,
