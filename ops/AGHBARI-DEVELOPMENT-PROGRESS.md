@@ -612,3 +612,9 @@ Next: current exact-SHA Quality + Test-the-Test; then browser/runtime if executa
 | Run | Date | SHA | Branch | Implemented | Verified | Proven | Blocked | Certification | Production | Next |
 |---|---|---|---|---|---|---|---|---|---|---|
 | UI-COMMERCE-20260929-06 | 2026-09-29 | 4ee6956247f6c6f56137ca6201c0087e2965bc0a | main | Global search suggestions; direct product card discovery; tier quantity shortcuts; dedicated saved-products workspace; Admin order/customer pulse filters; media-size regression guard; focused tests | Source integration checks; prior exact Browser Contract/quality signals on affected lineage; fresh 4ee6 workflows queued/in progress | NOT_PROVEN until exact-SHA UI Visual/Test-the-Test/quality matrix completes | Hosted Netlify/Vercel blockers remain external | NOT CLAIMED | HOLD / NO TOUCH | Finish exact 4ee6 proof matrix; fix first material source failure; then next uncovered canonical capability |
+
+
+## Run 2026-09-29 — UI/core continuation checkpoint
+| Run | Date | SHA | Branch | Implemented | Verified | Proven | Blocked | Certification | Production | Next |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| UI-CORE-CONT-20260929 | 2026-09-29 | 2607d0c7594026620e57421937dbb0a2704326cb | main | Full storefront/admin capability expansion; customer saved/search/notifications; checkout shipping snapshot; server-paged order history; purchasing/inventory/customer/pricing operational pulse UI | Browser E2E, Security, Bootstrap, Order Workflow SUCCESS on exact SHA | PARTIAL — exact current proof matrix still active | Netlify/Vercel hosted exact-source preview | NOT CERTIFIED | HOLD / NO TOUCH | Finish exact-2607 proof matrix; fix first material failure; next uncovered reference-backed UI gap |

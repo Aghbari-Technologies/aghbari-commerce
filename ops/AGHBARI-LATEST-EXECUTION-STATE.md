@@ -336,3 +336,23 @@ Inspect the completed/active workflows for `4ee6956247f6c6f56137ca6201c0087e2965
 - Do not transfer proof from older SHAs.
 - Do not retry unchanged Netlify/Vercel hosted blockers.
 - Do not mutate Production for purchase/receipt idempotency.
+
+
+## 2026-09-29 — Current storefront/admin continuation checkpoint
+- ACTUAL MAIN HEAD: `2607d0c7594026620e57421937dbb0a2704326cb`
+- EXACT FUNCTIONAL CODE BASELINE: `2607d0c7594026620e57421937dbb0a2704326cb` (docs-only changes may advance main beyond this code baseline).
+- Implemented: Customer saved-products workspace; live global catalog search suggestions; direct product-card discovery; tier quantity shortcuts; catalog floating cart; unread customer/staff notification badges; safe clear-cart action; customer operational detail snapshot; customer/admin pulse filters; warehouse pulse; pricing pulse; purchasing receipt-progress + receive acceleration; server-paged customer order history; Checkout delivery-address selection with immutable historical order snapshot; staff order detail delivery snapshot; related tests and canonical product/UX documentation.
+- PROVEN on exact 2607 tree: Browser E2E SUCCESS; Security SUCCESS; Bootstrap SUCCESS; Order Workflow SUCCESS. G1, Concurrency, Supabase Migration Proof, Test-the-Test, Aghbari Quality and UI Visual Proof are still active at checkpoint.
+- OPEN: exact-2607 proof matrix, especially migration/runtime address snapshot and visual proof. Production remains HOLD / NO TOUCH.
+- Hosted: latest READY Vercel preview remains older than current source; current source exact preview has not yet been produced by Vercel. Netlify path remains an external blocker. Do not treat older READY preview as exact-source evidence.
+
+## CURRENT RESUME POINTER
+Continue from exact functional code SHA `2607d0c7594026620e57421937dbb0a2704326cb`. Inspect completed exact-SHA proof results; fix only the first material source/test failure. Once the matrix is green, inspect the next uncovered canonical UI family from the 84-reference provenance packs rather than rebuilding closed surfaces.
+
+## NEXT EXECUTABLE ACTION
+Check the exact-2607 Concurrency / Supabase Migration / Test-the-Test / Aghbari Quality / UI Visual results. If a source failure exists, fix it once on a new functional commit. If green, continue the next open Customer/Admin reference-backed surface and keep the hosted preview mismatch separate from source proof.
+
+## DO NOT REPEAT
+- Do not claim cc910/6aa5 or any older Vercel READY deployment is exact 2607 UI proof.
+- Do not retry unchanged Vercel/Netlify deployment blockers.
+- Do not reopen saved-products, notification badges, server-paged orders, or shipping snapshot implementations without regression/direct requirement.

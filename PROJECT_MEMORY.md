@@ -213,3 +213,9 @@
 - The Customer Portal has a dedicated `saved` workspace for device-scoped saved products: favorites plus recently viewed catalog items.
 - This capability is presentation/personalization state only. It reuses already authorized catalog data and existing cart/detail actions; it never becomes order, price, inventory, or financial authority.
 - The saved workspace is exposed through the Customer structure registry, customer WorkspaceSurfaceRail, mobile More navigation, Command Center, and the canonical UX document.
+
+
+## 2026-09-29 — Commerce UI transaction-context decisions
+- Customer orders use server-paged history with a bounded "load older" action; the client no longer treats a fixed first page as the entire order history.
+- Checkout may carry a customer-owned delivery address identifier. The order command snapshots the address into immutable historical order context and includes the snapshot in idempotency payload matching.
+- Customer saved products, notification badges, cart shortcuts and UI pulse filters remain presentation/action layers over existing Commerce contracts; they do not become independent sources of transactional truth.
