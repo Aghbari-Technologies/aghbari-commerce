@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import type { Product } from './domain/types';
 
 export type CustomerHomeSection = 'catalog' | 'orders' | 'finance' | 'templates' | 'account' | 'notifications';
 
@@ -20,6 +21,9 @@ interface CustomerHomeWorkspaceProps {
   offlineSyncing: boolean;
   onNavigate: (section: CustomerHomeSection) => void;
   onOpenCart: () => void;
+  featuredProducts?: Array<Product & { authorizedPrice?: number; priceCurrency?: string }>;
+  categories?: Array<{ id: string; name: string }>;
+  onOpenProduct?: (product: Product) => void;
 }
 
 function HomeStat({
@@ -63,6 +67,9 @@ export default function CustomerHomeWorkspace({
   offlineSyncing,
   onNavigate,
   onOpenCart,
+  featuredProducts = [],
+  categories = [],
+  onOpenProduct,
 }: CustomerHomeWorkspaceProps) {
   return (
     <section id="customer-home" className="customer-home-workspace" aria-labelledby="customer-home-title">
@@ -113,6 +120,51 @@ export default function CustomerHomeWorkspace({
         />
       </section>
 
+      <section className="customer-home-merchandising" aria-label="مساحة الشراء السريع">
+        <div className="customer-home-merchandising-head">
+          <div>
+            <span className="eyebrow">متجر الأغبري</span>
+            <h3>ابدأ من الأصناف الجاهزة للطلب</h3>
+            <p>معاينة حقيقية من الكتالوج الحالي للحساب، مع الأسعار المصرح بها فقط.</p>
+          </div>
+          <button type="button" className="ghost" onClick={() => onNavigate('catalog')}>فتح الكتالوج الكامل ↗</button>
+        </div>
+        {featuredProducts.length ? (
+          <div className="customer-home-product-strip">
+            {featuredProducts.slice(0, 6).map((product) => (
+              <article className="customer-home-product-card" key={product.id}>
+                <button type="button" className="customer-home-product-visual" onClick={() => onOpenProduct?.(product)} aria-label={'فتح تفاصيل ' + product.name}>
+                  {product.imageUrl ? <img src={product.imageUrl} alt="" /> : <span aria-hidden="true">{product.name.slice(0, 1)}</span>}
+                  <i className={product.availableQuantity > 0 ? 'in-stock' : 'out-stock'}>{product.availableQuantity > 0 ? 'متوفر' : 'غير متوفر'}</i>
+                </button>
+                <div className="customer-home-product-copy">
+                  <small>{product.sku} · {product.unit}</small>
+                  <strong>{product.name}</strong>
+                  <span>{product.availableQuantity > 0 ? 'متاح ' + product.availableQuantity.toLocaleString('ar-YE') : 'غير متاح حاليًا'}</span>
+                  <div>
+                    {Number(product.authorizedPrice ?? 0) > 0
+                      ? <b>{new Intl.NumberFormat('ar-YE', { maximumFractionDigits: 0 }).format(Number(product.authorizedPrice))} ر.ي</b>
+                      : <em>السعر حسب حسابك</em>}
+                    <button type="button" onClick={() => onOpenProduct?.(product)}>التفاصيل</button>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="customer-home-merchandising-empty">
+            <strong>الكتالوج في انتظار التحميل</strong>
+            <span>عند توفر اتصال وبيانات أصناف صالحة ستظهر هنا معاينة شراء حقيقية.</span>
+            <button type="button" onClick={() => onNavigate('catalog')}>فتح الكتالوج</button>
+          </div>
+        )}
+        {categories.length > 0 && (
+          <div className="customer-home-category-strip" aria-label="تصنيفات سريعة">
+            <span>تصفح حسب التصنيف</span>
+            <div>{categories.slice(0, 8).map((category) => <button type="button" key={category.id} onClick={() => onNavigate('catalog')}>{category.name} <small>↗</small></button>)}</div>
+          </div>
+        )}
+      </section>
       <section className="portal-quick-actions customer-home-actions" aria-label="إجراءات سريعة">
         <div className="portal-quick-lead">
           <span className="eyebrow">تشغيل سريع</span>
