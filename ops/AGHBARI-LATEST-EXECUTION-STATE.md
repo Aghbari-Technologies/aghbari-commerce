@@ -229,3 +229,20 @@ Use the exact proven UI HEAD 105c3dbb052180b5745596d832b34d6ee8137cd5 as the UI 
 - OPEN: current-HHEAD visual proof + current-SHA test matrix; then continue next independent UI/core gap.
 - NEXT EXECUTABLE ACTION: run/inspect current-HEAD UI visual proof and quality matrix, fix first material failure, record exact SHA, then open the next highest-value uncovered UI surface.
 - DO NOT REPEAT: finance workspace consolidation, exact PNG duplicate audit, canonical seven-section E2E coverage wiring.
+
+
+## 2026-09-29 — UI world-class storefront/control-plane batch
+- CODE SHA: `6aa5f5de9d476ce01a4d099bfcab15453030be4b`
+- Implemented: new presentation layer `src/ui-world-class.css` across Customer/Staff/Admin; persistent customer global catalog search in `AppV3Fixed`; stronger storefront header hierarchy; responsive navigation/body layout; richer product-card, order/finance/template/account, modal/drawer, Admin command/workspace and auth styling; reduced-motion/focus-visible safeguards.
+- Verified: `main` points to the exact code SHA; Browser Exact, Security and bootstrap workflows for this SHA completed successfully.
+- NOT_PROVEN on this SHA: final UI Visual Proof, Aghbari Quality, application-quality, G1 and Test-the-Test were still in progress at checkpoint time; hosted exact-source certification remains unresolved.
+- Production: `HOLD / NO TOUCH`.
+
+## NEXT EXECUTABLE ACTION
+Finish the exact-SHA workflow matrix for `6aa5f5de9d476ce01a4d099bfcab15453030be4b`; fix only the first material failure. Then open the next independent uncovered UI/core capability. Do not reopen closed customer/account/order/finance surfaces without a regression, evidence invalidation or direct requirement change.
+
+## DO NOT REPEAT
+- Do not recreate the existing customer command palette or navigation rails.
+- Do not copy the external 84-image corpus into production assets.
+- Do not transfer proof from older SHAs.
+- Do not retry unchanged Vercel/Netlify blockers.
