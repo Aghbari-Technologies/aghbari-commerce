@@ -32,7 +32,7 @@
 .customer-shell .quick-editor button,
 .customer-shell .template-save button{background:var(--portal-accent)}
 .customer-shell .portal-nav button.active{border-color:var(--portal-accent)}
-.customer-shell .hero-card{background:linear-gradient(135deg,var(--portal-accent),#243b53)}
+.customer-shell .hero-card{background:linear-gradient(135deg,#102a43 0%,#243b53 72%,#314f67 100%);box-shadow:18px 18px 50px rgba(16,42,67,.16),inset 4px 0 0 var(--portal-accent)}
 .customer-shell .search-panel input:focus,
 .customer-shell .quick-editor input:focus,
 .customer-shell .template-save input:focus{border-color:var(--portal-accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--portal-accent) 15%,transparent)}
