@@ -1,13 +1,13 @@
 import { test, expect, type Page } from '@playwright/test';
 
 async function login(page: Page, email: string, password: string) {
-  await page.goto('/');
+  await page.goto('/?login=1');
   const loginForm = page.locator('form').filter({ has: page.locator('input[type="password"]') }).first();
   await loginForm.locator('input[type="email"]').fill(email);
   await loginForm.locator('input[type="password"]').fill(password);
   await loginForm.getByRole('button', { name: 'دخول إلى بوابة الأغبري' }).click();
 
-  const portal = page.getByRole('button', { name: 'الكتالوج', exact: true });
+  const portal = page.getByRole('complementary').getByRole('button', { name: 'الكتالوج', exact: true });
   const error = page.locator('.error-banner');
   await Promise.race([
     portal.waitFor({ state: 'visible', timeout: 5000 }),
@@ -20,7 +20,7 @@ async function login(page: Page, email: string, password: string) {
   }
 
   await expect(portal).toBeVisible();
-  await expect(page.getByRole('button', { name: /السلة/ })).toBeVisible();
+  await expect(page.getByRole('banner').getByRole('button', { name: 'السلة', exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'الإشعارات', exact: true })).toBeVisible();
 }
 
@@ -89,7 +89,7 @@ test('authenticated customer completes real search → catalog → cart → orde
   const addButton = page.getByRole('button', { name: 'إضافة للسلة', exact: true }).first();
   await expect(addButton).toBeEnabled();
   await addButton.click();
-  await expect(page.getByRole('button', { name: /السلة/ })).toContainText('1');
+  await expect(page.getByRole('banner').getByRole('button', { name: 'السلة', exact: true })).toContainText('1');
 
   const quantityConfirmation = page.getByRole('button', { name: 'اعتماد الكمية', exact: true }).first();
   await expect(quantityConfirmation).toBeEnabled();
