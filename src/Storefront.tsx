@@ -248,7 +248,7 @@ export default function Storefront({ onLogin, signedIn = false }: StorefrontProp
                         {product.imageUrl ? <img src={product.imageUrl} alt="" /> : <span>{product.name.slice(0, 1)}</span>}
                       </button>
                       <span className={available ? 'stock' : 'stock out'}>{statusLabel(product.available_quantity)}</span>
-                      <button type="button" className="heart" onClick={() => { goTo('saved'); }} aria-label="حفظ الصنف">♡</button>
+                      <button type="button" className="heart" onClick={() => goTo('saved')} aria-label="فتح المحفوظات">♡</button>
                     </div>
                     <div className="storefront-live-product-body">
                       <small>{product.sku} · {product.unit}</small>
