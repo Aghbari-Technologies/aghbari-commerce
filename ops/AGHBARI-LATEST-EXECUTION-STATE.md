@@ -356,3 +356,24 @@ Check the exact-2607 Concurrency / Supabase Migration / Test-the-Test / Aghbari 
 - Do not claim cc910/6aa5 or any older Vercel READY deployment is exact 2607 UI proof.
 - Do not retry unchanged Vercel/Netlify deployment blockers.
 - Do not reopen saved-products, notification badges, server-paged orders, or shipping snapshot implementations without regression/direct requirement.
+
+
+## 2026-09-29 — Storefront visual + capability continuation
+- ACTUAL MAIN HEAD: `a9a92cae2ddf143c0d256397b9a4bfef05fa2242`
+- Functional UI line now includes: saved workspace + cross-page saved-product resolution; saved/recent live counts; recent-history local cleanup; real grid/compact catalog density with persisted preference; product sharing with safe deep-link routing and replay guard; stronger Home hero contrast; real delivery-address checkout snapshot; server-paged order history; operational purchase receiving progress/quick jump; pricing and warehouse pulse filters; staff/customer notification badges.
+- PROVEN/VERIFIED on affected prior SHAs: Browser/Security/G1/Bootstrap/Order Workflow passed on multiple affected exact trees; current `a9a92cae2ddf143c0d256397b9a4bfef05fa2242` has no completed runs yet, so current HEAD is NOT_PROVEN until its new proof completes.
+- NOT_PROVEN: current exact visual/browser matrix on `a9a92cae2ddf143c0d256397b9a4bfef05fa2242`; hosted exact-source runtime remains unavailable. Netlify/Vercel hosted blockers remain separate and must not be used to claim source failure.
+- OPEN: complete exact-SHA proof for current HEAD, then continue remaining visual/interaction gaps only.
+- PRODUCTION: HOLD / NO TOUCH.
+
+## CURRENT RESUME POINTER
+Continue from actual `main` HEAD `a9a92cae2ddf143c0d256397b9a4bfef05fa2242`. Inspect only the new exact-SHA Quality/Test-the-Test/UI Visual/Browser/Security results. Fix the first material source/test failure, then continue the next open customer/admin visual capability.
+
+## NEXT EXECUTABLE ACTION
+Check workflows for `a9a92cae2ddf143c0d256397b9a4bfef05fa2242`; if Quality/Test-the-Test/Visual exposes a source contract failure, fix that exact failure once. If green, use the latest visual artifact to compare customer Home/Catalog/Checkout/Product Detail and the Admin control plane, then implement the next distinct missing interaction.
+
+## DO NOT REPEAT
+- Do not copy PASS/evidence from older SHAs to `a9a92cae2ddf143c0d256397b9a4bfef05fa2242`.
+- Do not re-open the closed 84-reference registry or rebuild duplicate screens.
+- Do not retry unchanged Netlify/Vercel blockers.
+- Do not claim the older READY Vercel deployment is current-source proof.

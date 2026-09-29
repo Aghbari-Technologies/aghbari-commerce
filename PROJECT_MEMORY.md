@@ -219,3 +219,9 @@
 - Customer orders use server-paged history with a bounded "load older" action; the client no longer treats a fixed first page as the entire order history.
 - Checkout may carry a customer-owned delivery address identifier. The order command snapshots the address into immutable historical order context and includes the snapshot in idempotency payload matching.
 - Customer saved products, notification badges, cart shortcuts and UI pulse filters remain presentation/action layers over existing Commerce contracts; they do not become independent sources of transactional truth.
+
+
+## 2026-09-29 — Durable storefront decisions
+- Catalog grid/compact selection is local device preference only; it never changes Commerce business data.
+- Saved/recent product memory is local personalization. Saved IDs are resolved against live authorized catalog data when entering the Saved workspace; unavailable entries are not fabricated.
+- Product sharing uses a stable catalog-product hash and resolves through the existing authorized catalog contract.

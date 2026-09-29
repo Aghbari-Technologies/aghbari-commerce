@@ -618,3 +618,9 @@ Next: current exact-SHA Quality + Test-the-Test; then browser/runtime if executa
 | Run | Date | SHA | Branch | Implemented | Verified | Proven | Blocked | Certification | Production | Next |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | UI-CORE-CONT-20260929 | 2026-09-29 | 2607d0c7594026620e57421937dbb0a2704326cb | main | Full storefront/admin capability expansion; customer saved/search/notifications; checkout shipping snapshot; server-paged order history; purchasing/inventory/customer/pricing operational pulse UI | Browser E2E, Security, Bootstrap, Order Workflow SUCCESS on exact SHA | PARTIAL — exact current proof matrix still active | Netlify/Vercel hosted exact-source preview | NOT CERTIFIED | HOLD / NO TOUCH | Finish exact-2607 proof matrix; fix first material failure; next uncovered reference-backed UI gap |
+
+
+## Run 2026-09-29 — Storefront continuation
+| Run | Date | SHA | Branch | Implemented | Verified | Proven | Blocked | Certification | Production | Next |
+|---|---|---|---|---|---|---|---|---|---|---|
+| STOREFRONT-CONT-20260929 | 2026-09-29 | a9a92cae2ddf143c0d256397b9a4bfef05fa2242 | main | Saved products cross-page resolution; compact catalog density + preference; product share deep-link; local recent-history cleanup; Home contrast; delivery-address checkout snapshot; server-paged order history; operational purchasing/pricing/warehouse UI | Earlier affected exact trees: Browser/Security/G1/Bootstrap/Order Workflow SUCCESS; current SHA awaits fresh proof | PARTIAL / current SHA NOT_PROVEN | Hosted exact-source preview remains unavailable | NOT CERTIFIED | HOLD / NO TOUCH | Verify current SHA proof; next distinct customer/admin visual gap |
