@@ -495,3 +495,15 @@ Next: current exact-SHA Quality + Test-the-Test; then browser/runtime if executa
 - Proven: source/static verification only. No browser/runtime PASS claimed.
 - Certification: NOT CLAIMED | Production: HOLD / NO TOUCH
 - Next: exact current-SHA Quality/Test-the-Test as soon as executable; then next independent UI/core gap.
+
+
+## Run 2026-09-29 — Exact Customer/Admin visual proof closure
+- Run: 2026-09-29
+- SHA: 105c3dbb052180b5745596d832b34d6ee8137cd5
+- Branch: main
+- Implemented: Customer navigation/accessibility fixes for canonical workspace rail; mobile finance action; UI-reference browser coverage selectors aligned with live UI.
+- Verified: exact local runtime + Supabase + build metadata + Playwright visual coverage.
+- Proven: Customer desktop 6 canonical surfaces + Customer mobile navigation/finance + Admin control plane visual screenshots; Artifact 11005568445.
+- Blocked: hosted exact-source deployment remains blocked by existing Vercel/Netlify credentials; production unchanged.
+- Certification: UI visual batch PROVEN; project certification NOT CLAIMED.
+- Next: move to next independent material domain/security/idempotency gap.
