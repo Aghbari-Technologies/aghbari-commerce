@@ -1,3 +1,21 @@
+## 2026-09-29 — Marketplace visual elevation + storefront home closure
+- CURRENT EXACT HEAD: `15d929176fa5368614b664aa7de528a3929a8930`
+- Implemented: premium visual system wave across Customer/Staff/Admin; single canonical customer navigation surface; richer B2B product cards; responsive mobile dock/dialog polish; stronger order/finance/account data surfaces; customer Home merchandising strip backed by real loaded catalog data; action-first Home command deck for cart/latest-order/account.
+- Verified: source committed to `main`; no production mutation; previous exact-SHA Browser E2E/Visual Proof baseline was green before this visual-only lineage.
+- NOT_PROVEN on this exact HEAD: current-SHA Visual Proof, Quality, Test-the-Test, Security, G1 and hosted exact-source certification.
+- Known external blocker: Netlify exact-source and Vercel hosted paths remain external; do not retry unchanged blockers.
+- PRODUCTION: `HOLD / NO TOUCH`
+
+## NEXT EXECUTABLE ACTION
+Run the full exact-current-SHA matrix for `15d929176fa5368614b664aa7de528a3929a8930`; fix only the first material failure. After green proof, continue the next visible uncovered reference-family/screen-quality gap, then close the purchase/receipt 200→128 migration proof gate.
+
+## DO NOT REPEAT
+- Do not recreate duplicate Staff mega-navigation.
+- Do not remove the new Home merchandising/command surfaces.
+- Do not treat the 84 references as 84 unique screens.
+- Do not transfer proof from earlier SHAs to `15d929176fa5368614b664aa7de528a3929a8930`.
+- Do not mutate Production for purchase/receipt idempotency until lineage + concurrency + negative + Test-the-Test + exact-SHA evidence are complete.
+
 ## 2026-09-29 — UI closure + exact-SHA proof checkpoint
 - CURRENT EXACT HEAD: `c65c22590305da9ab5248b7c0493d3c26e28241c`
 - Implemented: consolidated duplicated Staff navigation into the canonical WorkspaceSurfaceRail; made Customer invitation capability actionable through a real safe dialog; repaired canonical Admin live-target coverage test to verify real DOM anchors rather than legacy navigation labels.

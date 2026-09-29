@@ -1,3 +1,21 @@
+# Run 2026-09-29 — Marketplace visual elevation
+- Run: `2026-09-29`
+- SHA: `15d929176fa5368614b664aa7de528a3929a8930`
+- Branch: `main`
+- Implemented:
+  - Customer Portal premium marketplace visual layer.
+  - Single canonical customer workspace rail and mobile navigation polish.
+  - Product-card storefront treatment with quantity controls retained.
+  - Order/finance/account visual hierarchy and responsive data surfaces.
+  - Customer Home real merchandising preview from loaded products/categories.
+  - Customer Home action-first command deck.
+- Verified: source committed; Production untouched.
+- Proven: prior exact-SHA browser/UI proof only; this new visual lineage is `NOT_PROVEN` until current workflows finish.
+- Blocked: hosted exact-source deployment remains external/free-plan constrained.
+- Certification: `NOT CLAIMED`
+- Production: `HOLD / NO TOUCH`
+- Next: exact-current-SHA workflow matrix, first material failure only, then next uncovered UI family/core closure.
+
 ## Run 2026-09-29 — UI closure + exact proof
 - Run: `2026-09-29`
 - SHA: `c65c22590305da9ab5248b7c0493d3c26e28241c`
