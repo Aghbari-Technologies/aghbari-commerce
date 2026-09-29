@@ -578,7 +578,7 @@ export default function AppV3Fixed(){
         <div className="customer-mobile-more-grid">
           {config.showTemplates&&<button type="button" className={section==="templates"?"active":""} onClick={()=>{setMobileMoreOpen(false);navigate("templates")}}><span>▤</span><strong>القوالب</strong><small>طلباتك المحفوظة وإعادة استخدامها</small></button>}
           <button type="button" className={section==="notifications"?"active":""} onClick={()=>{setMobileMoreOpen(false);navigate("notifications")}}><span>🔔</span><strong>الإشعارات</strong><small>تنبيهات الحساب والطلبات</small></button>
-          {config.showCredit&&<button type="button" className={section==="finance"?"active":""} onClick={()=>{setMobileMoreOpen(false);navigate("finance")}}><span>◫</span><strong>المركز المالي</strong><small>الفواتير والمدفوعات والكشف</small></button>}
+          {config.showCredit&&<button type="button" aria-label="المركز المالي" className={section==="finance"?"active":""} onClick={()=>{setMobileMoreOpen(false);navigate("finance")}}><span>◫</span><strong>المركز المالي</strong><small>الفواتير والمدفوعات والكشف</small></button>}
         </div>
       </section>
     </div>}
