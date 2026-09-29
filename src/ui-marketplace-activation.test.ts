@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 describe('marketplace visual activation contract', () => {
   const mainSource = readFileSync(resolve(process.cwd(), 'src/main.tsx'), 'utf8');
+  const appSource = readFileSync(resolve(process.cwd(), 'src/AppV3Fixed.tsx'), 'utf8');
   const eliteSource = readFileSync(resolve(process.cwd(), 'src/ui-marketplace-elite.css'), 'utf8');
 
   it('keeps the elite visual layer active in the runtime stylesheet stack', () => {
@@ -21,8 +22,8 @@ describe('marketplace visual activation contract', () => {
     expect(eliteSource).toContain('.customer-shell .customer-order-summary-strip');
     expect(eliteSource).toContain('.admin-panel .operations-tabs');
     expect(eliteSource).toContain('.admin-panel .admin-boundary-center');
-    expect(mainSource).toContain('AGHBARI COMMERCE · B2B');
-    expect(mainSource).toContain('<h1>الأغبري</h1>');
-    expect(mainSource).toContain('Aghbari Commerce · مرحبًا، {customerName}');
+    expect(appSource).toContain('AGHBARI COMMERCE · B2B');
+    expect(appSource).toContain('<h1>الأغبري</h1>');
+    expect(appSource).toContain('Aghbari Commerce · مرحبًا، {customerName}');
   });
 });
