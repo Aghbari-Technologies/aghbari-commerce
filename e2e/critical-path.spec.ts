@@ -7,7 +7,7 @@ async function login(page: Page, email: string, password: string) {
   await loginForm.locator('input[type="password"]').fill(password);
   await loginForm.getByRole('button', { name: 'دخول إلى بوابة الأغبري' }).click();
 
-  const portal = page.getByRole('button', { name: 'الكتالوج', exact: true });
+  const portal = page.getByRole('complementary').getByRole('button', { name: 'الكتالوج', exact: true });
   const error = page.locator('.error-banner');
   await Promise.race([
     portal.waitFor({ state: 'visible', timeout: 5000 }),
