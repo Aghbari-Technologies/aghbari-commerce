@@ -32,7 +32,7 @@ test.describe('UI reference-family browser coverage', () => {
     for (const [section, label] of sections) {
       await page.getByRole('button', { name: label, exact: true }).first().click();
       await expect(page).toHaveURL(new RegExp('#' + section + '$'));
-      await page.screenshot({ path: `test-results/ui-customer-${section}-desktop.png`, fullPage: true });
+      await page.screenshot({ path: 'test-results/ui-customer-' + section + '-desktop.png', fullPage: true });
     }
   });
 
@@ -51,11 +51,12 @@ test.describe('UI reference-family browser coverage', () => {
     await expect(page.getByRole('dialog', { name: 'المزيد من بوابة الأغبري' })).toBeVisible();
     await page.screenshot({ path: 'test-results/ui-customer-mobile-navigation.png', fullPage: true });
 
-    await page.getByRole('dialog', { name: 'المزيد من بوابة الأغبري' }).getByRole('button', { name: 'المركز المالي', exact: true }).click();
+    await page.getByRole('dialog', { name: 'المزيد من بوابة الأغبري' })
+      .getByRole('button', { name: 'المركز المالي', exact: true })
+      .click();
     await expect(page.locator('.customer-finance-panel').first()).toBeVisible();
     await page.screenshot({ path: 'test-results/ui-customer-finance-mobile.png', fullPage: true });
   });
-
 
   test('customer portal: nested buying, account and finance surfaces are directly reachable', async ({ page }) => {
     const email = process.env.E2E_EMAIL;
@@ -67,59 +68,31 @@ test.describe('UI reference-family browser coverage', () => {
     await login(page, email!, password!);
     await expect(page.locator('.customer-shell')).toBeVisible();
 
-    const openCapability = async (section: string, label: string) => {
-      await page.getByRole('button', { name: section, exact: true }).first().click();
-      await expect(page).toHaveURL(new RegExp('#' + section + ', async ({ page }) => {
-    const email = process.env.E2E_ADMIN_EMAIL;
-    const password = process.env.E2E_ADMIN_PASSWORD;
-    expect(email).toBeTruthy();
-    expect(password).toBeTruthy();
-
-    await page.setViewportSize({ width: 1440, height: 1000 });
-    await login(page, email!, password!);
-    await expect(page.getByRole('heading', { name: 'مركز التحكم' }).first()).toBeVisible();
-
-    const liveTargets = [...new Set(
-      AGHBARI_ADMIN_LIVE_ITEMS
-        .map((item) => item.target)
-        .filter((target): target is string => Boolean(target))
-        .map((target) => target.replace(/^#/, '')),
-    )];
-
-    for (const id of liveTargets) {
-      const target = page.locator('#' + id).first();
-      await expect(target, `Missing live Admin anchor #${id}`).toBeVisible();
-      await target.scrollIntoViewIfNeeded();
-    }
-    await page.screenshot({ path: 'test-results/ui-admin-control-plane-full.png', fullPage: true });
-
-    await expect(page.getByText('العامري', { exact: false })).toHaveCount(0);
-    await page.screenshot({ path: 'test-results/ui-admin-control-plane-full.png', fullPage: true });
-  });
-});
-));
-      await page.getByRole('button', { name: new RegExp(label) }).first().click();
+    const openCapability = async (sectionLabel: string, capabilityLabel: string, section: string) => {
+      await page.getByRole('button', { name: sectionLabel, exact: true }).first().click();
+      await expect(page).toHaveURL(new RegExp('#' + section + '$'));
+      await page.getByRole('button', { name: capabilityLabel, exact: true }).first().click();
     };
 
-    await openCapability('اكتشاف وشراء', 'البحث');
+    await openCapability('اكتشاف وشراء', 'البحث', 'catalog');
     await expect(page.locator('input[aria-label="البحث في الكتالوج"]')).toBeFocused();
     await page.screenshot({ path: 'test-results/ui-customer-search-desktop.png', fullPage: true });
 
-    await openCapability('اكتشاف وشراء', 'التصنيفات');
+    await openCapability('اكتشاف وشراء', 'التصنيفات', 'catalog');
     await expect(page.locator('.category-row')).toBeVisible();
     await page.screenshot({ path: 'test-results/ui-customer-categories-desktop.png', fullPage: true });
 
-    await openCapability('اكتشاف وشراء', 'الطلب السريع');
+    await openCapability('اكتشاف وشراء', 'الطلب السريع', 'catalog');
     await expect(page.getByRole('dialog', { name: 'الطلب السريع' })).toBeVisible();
     await page.screenshot({ path: 'test-results/ui-customer-quick-order-desktop.png', fullPage: true });
     await page.getByRole('dialog', { name: 'الطلب السريع' }).getByRole('button').first().click();
 
-    await openCapability('اكتشاف وشراء', 'الأسعار');
+    await openCapability('اكتشاف وشراء', 'الأسعار', 'catalog');
     await expect(page.getByRole('dialog', { name: 'قائمة الأسعار' })).toBeVisible();
     await page.screenshot({ path: 'test-results/ui-customer-pricing-desktop.png', fullPage: true });
     await page.getByRole('button', { name: 'إغلاق قائمة الأسعار' }).click();
 
-    await openCapability('الحساب والشركة', 'الهوية والجلسة');
+    await openCapability('الحساب والشركة', 'الهوية والجلسة', 'account');
     await expect(page.locator('.customer-account-workspace')).toBeVisible();
     await expect(page.getByRole('tab', { name: 'الملف الشخصي' })).toBeVisible();
     await page.screenshot({ path: 'test-results/ui-customer-account-profile-desktop.png', fullPage: true });
@@ -143,6 +116,33 @@ test.describe('UI reference-family browser coverage', () => {
     await page.screenshot({ path: 'test-results/ui-customer-payment-history-desktop.png', fullPage: true });
   });
 
+  test('customer portal: cart and checkout surface is reachable from catalog', async ({ page }) => {
+    const email = process.env.E2E_EMAIL;
+    const password = process.env.E2E_PASSWORD;
+    expect(email).toBeTruthy();
+    expect(password).toBeTruthy();
+
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await login(page, email!, password!);
+    await page.getByRole('button', { name: 'الكتالوج', exact: true }).first().click();
+    await expect(page).toHaveURL(/#catalog$/);
+
+    const addButton = page.locator('.add-button').filter({ hasText: /إضافة للسلة|إضافة أخرى/ }).first();
+    await expect(addButton).toBeVisible();
+    await addButton.click();
+
+    await expect(page.getByRole('dialog', { name: /السلة ·/ })).toBeVisible();
+    await page.screenshot({ path: 'test-results/ui-customer-cart-desktop.png', fullPage: true });
+
+    const confirmQuantity = page.getByRole('button', { name: 'اعتماد الكمية', exact: true }).first();
+    if (await confirmQuantity.isVisible()) await confirmQuantity.click();
+
+    await page.getByRole('button', { name: 'متابعة إلى إتمام الطلب', exact: true }).click();
+    await expect(page.getByRole('dialog', { name: 'مراجعة وإرسال الطلب' })).toBeVisible();
+    await page.screenshot({ path: 'test-results/ui-customer-checkout-desktop.png', fullPage: true });
+    await page.getByRole('button', { name: 'العودة للسلة', exact: true }).click();
+  });
+
   test('admin control plane: live workspace families expose their actual anchors', async ({ page }) => {
     const email = process.env.E2E_ADMIN_EMAIL;
     const password = process.env.E2E_ADMIN_PASSWORD;
@@ -162,12 +162,11 @@ test.describe('UI reference-family browser coverage', () => {
 
     for (const id of liveTargets) {
       const target = page.locator('#' + id).first();
-      await expect(target, `Missing live Admin anchor #${id}`).toBeVisible();
+      await expect(target, 'Missing live Admin anchor #' + id).toBeVisible();
       await target.scrollIntoViewIfNeeded();
     }
-    await page.screenshot({ path: 'test-results/ui-admin-control-plane-full.png', fullPage: true });
 
-    await expect(page.getByText('العامري', { exact: false })).toHaveCount(0);
     await page.screenshot({ path: 'test-results/ui-admin-control-plane-full.png', fullPage: true });
+    await expect(page.getByText('العامري', { exact: false })).toHaveCount(0);
   });
 });
