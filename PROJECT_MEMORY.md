@@ -201,3 +201,9 @@
 - The Customer workspace rail now renders canonical live capabilities as real buttons rather than descriptive-only labels.
 - `openCustomerCapability()` routes those controls into existing catalog/order/finance/account/notification surfaces and reuses the current cart-confirmation gate.
 - This is UI navigation only; server authorization, transactional truth and existing service/RPC contracts remain authoritative.
+
+
+## 2026-09-29 durable UI decisions
+- Customer Finance is one canonical customer workspace: `CustomerFinancePanel` owns invoices, statements, payment history, detail, filtering, pagination, and current-view export; the app shell must not render a duplicate legacy finance ledger.
+- UI reference integrity: the repository currently contains 84 PNG references with no exact-content duplicate blobs; exact duplicate handling remains provenance-driven, not an 84-screen duplication rule.
+- Customer visual E2E coverage is driven by the canonical seven customer portal sections to prevent test drift.
