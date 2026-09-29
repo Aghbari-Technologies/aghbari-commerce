@@ -83,6 +83,18 @@ export async function bulkTransitionOrders(orderIds: string[], toStatus: OrderSt
 }
 
 
+export interface StaffShippingAddressSnapshot { id:string; label:string; recipient_name:string; phone:string; address_line1:string; address_line2:string|null; city:string; district:string|null; notes:string|null; }
+
+export function assertStaffShippingAddressSnapshot(value: unknown): StaffShippingAddressSnapshot | null {
+  if (value == null) return null;
+  if (typeof value !== 'object') throw new Error('Snapshot عنوان التسليم التشغيلي غير صالح.');
+  const item = value as Record<string, unknown>;
+  if (typeof item.id !== 'string' || !UUID_PATTERN.test(item.id)) throw new Error('معرّف عنوان التسليم التشغيلي غير صالح.');
+  for (const key of ['label','recipient_name','phone','address_line1','city']) if (typeof item[key] !== 'string' || !(item[key] as string).trim()) throw new Error('بيانات عنوان التسليم التشغيلي ناقصة.');
+  for (const key of ['address_line2','district','notes']) if (item[key] !== null && item[key] !== undefined && typeof item[key] !== 'string') throw new Error('بيانات عنوان التسليم التشغيلي غير صالحة.');
+  return { id:item.id as string,label:item.label as string,recipient_name:item.recipient_name as string,phone:item.phone as string,address_line1:item.address_line1 as string,address_line2:(item.address_line2 as string|null|undefined)??null,city:item.city as string,district:(item.district as string|null|undefined)??null,notes:(item.notes as string|null|undefined)??null };
+}
+
 export interface StaffOrderDetailItem {
   id: string;
   product_id: string;
@@ -99,6 +111,7 @@ export interface StaffOrderDetail extends StaffOrderSummary {
   subtotal: number;
   payment_method: string;
   items: StaffOrderDetailItem[];
+  shipping_address: StaffShippingAddressSnapshot | null;
 }
 
 function detailAmount(value: unknown): number {
@@ -141,7 +154,7 @@ export async function getStaffOrderDetail(orderId: string): Promise<StaffOrderDe
   const client = requireSupabase();
   const [{ data: order, error: orderError }, { data: itemRows, error: itemError }] = await Promise.all([
     client.from('orders')
-      .select('id,order_number,customer_id,warehouse_id,status,total,subtotal,currency,payment_method,created_at,updated_at,customers(name)')
+      .select('id,order_number,customer_id,warehouse_id,status,total,subtotal,currency,payment_method,shipping_address,created_at,updated_at,customers(name)')
       .eq('id', orderId).single(),
     client.from('order_items')
       .select('id,product_id,quantity,unit_price,pricing_tier,line_total,products(sku,name,unit)')
@@ -182,7 +195,8 @@ export async function getStaffOrderDetail(orderId: string): Promise<StaffOrderDe
     }),
     subtotal: detailAmount(row.subtotal),
     payment_method: typeof row.payment_method === 'string' ? row.payment_method : '—',
-    items
+    items,
+    shipping_address: assertStaffShippingAddressSnapshot(row.shipping_address)
   };
   if (detail.total < detail.subtotal) throw new Error('إجمالي الطلب غير متسق.');
   const computedLinesTotal = items.reduce((sum, item) => sum + item.line_total, 0);

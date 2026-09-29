@@ -283,6 +283,7 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
           ...(detailOrder ? [
             { label: 'الإجمالي الفرعي', value: formatMoney(detailOrder.subtotal) + ' ' + detailOrder.currency },
             { label: 'طريقة الدفع', value: detailOrder.payment_method },
+            ...(detailOrder.shipping_address ? [{ label: 'عنوان التسليم', value: detailOrder.shipping_address.label + ' · ' + detailOrder.shipping_address.recipient_name + ' · ' + detailOrder.shipping_address.phone + ' · ' + detailOrder.shipping_address.address_line1 + ' · ' + detailOrder.shipping_address.city + (detailOrder.shipping_address.district ? ' · ' + detailOrder.shipping_address.district : ''), wide: true, content: true }] : []),
             { label: 'بنود الطلب', value: lineSummary || 'لا توجد بنود مسجلة.', wide: true, content: true },
           ] : []),
         ];

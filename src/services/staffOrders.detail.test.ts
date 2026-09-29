@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { assertStaffOrderDetailItem, assertStaffOrderSummary, getStaffOrderDetail } from './staffOrders';
+import { assertStaffOrderDetailItem, assertStaffOrderSummary, assertStaffShippingAddressSnapshot, getStaffOrderDetail } from './staffOrders';
 
 const UUID_A = '11111111-1111-4111-8111-111111111111';
 const UUID_B = '22222222-2222-4222-8222-222222222222';
@@ -15,5 +15,19 @@ describe('staff order detail contract', () => {
   it('accepts a valid order line and operational summary', () => {
     expect(() => assertStaffOrderDetailItem({ id: UUID_A, product_id: UUID_B, sku: 'SKU-1', name: 'منتج', unit: 'كرتون', quantity: 2, unit_price: 10, line_total: 20, pricing_tier: 'wholesale' })).not.toThrow();
     expect(() => assertStaffOrderSummary({ id: UUID_A, order_number: 1, customer_id: UUID_B, customer_name: 'عميل', warehouse_id: UUID_C, status: 'pending', total: 100, currency: 'YER', created_at: '2026-09-27T00:00:00Z', updated_at: '2026-09-27T00:00:00Z' })).not.toThrow();
+  });
+});
+
+
+describe('staff order shipping snapshot', () => {
+  const valid = {
+    id: UUID_A, label: 'المكتب', recipient_name: 'المستلم', phone: '777000000',
+    address_line1: 'شارع رئيسي', address_line2: null, city: 'صنعاء', district: 'حدة', notes: null
+  };
+  it('accepts a valid snapshot and rejects malformed values', () => {
+    expect(assertStaffShippingAddressSnapshot(valid)).toEqual(valid);
+    expect(() => assertStaffShippingAddressSnapshot({ ...valid, id: 'bad' })).toThrow();
+    expect(() => assertStaffShippingAddressSnapshot({ ...valid, city: '' })).toThrow();
+    expect(assertStaffShippingAddressSnapshot(null)).toBeNull();
   });
 });
