@@ -58,6 +58,15 @@ describe('admin dashboard full structure', () => {
 });
 
 
+describe('category directory export closure', () => {
+  it('keeps category export scoped to the rendered hierarchical rows', () => {
+    const sourceText = readRepoSource('CategoryManagementPanel.tsx');
+    expect(sourceText).toContain('exportCategories');
+    expect(sourceText).toContain('تصدير CSV');
+    expect(sourceText).toContain('rows.map(({item,level,children})');
+  });
+});
+
 describe('admin order export closure', () => {
   it('keeps admin order export scoped to the filtered order collection', () => {
     const sourceText = readRepoSource('AdminPanel.tsx');
