@@ -38,7 +38,7 @@ import CustomerCartReadiness from './CustomerCartReadiness';
 import CustomerSavedShelf from './CustomerSavedShelf';
 import PwaInstallPrompt from './PwaInstallPrompt';
 import Storefront from './Storefront';
-import './storefront-world.css';
+import './storefront.css';
 import { MAX_RECENT_SEARCHES, normalizeSavedIds, pushRecentSearch, pushRecentlyViewed, toggleSavedProduct } from './customer-saved-view';
 import { getCustomerUnreadNotificationCount, getUnreadNotificationCountForUser } from './services/customerNotifications';
 import { getCustomerAddresses, type CustomerAddress } from './services/customerAddresses';
@@ -425,39 +425,8 @@ export default function AppV3Fixed(){
   async function login(e:FormEvent){e.preventDefault();if(busy)return;setBusy(true);setError('');setMessage('');try{const s=await signIn(email,password);if(!s)throw new Error('تعذر إنشاء جلسة دخول صالحة.');await loadIdentity(s.user.id);setSignedIn(true);setReady(true);}catch(e){setSignedIn(false);setReady(true);setError(friendlyAuthError(e));}finally{setBusy(false);}}
   async function requestPasswordReset(e:FormEvent){e.preventDefault();if(resetBusy)return;if(!email.trim())return setError('اكتب بريد الحساب أولًا لاستعادة كلمة المرور.');setResetBusy(true);setError('');setMessage('');setResetSent(false);try{await resetPassword(email,window.location.origin);setResetSent(true);setMessage('تم إرسال رابط استعادة كلمة المرور إلى بريد الحساب إن كان مسجلًا.');}catch(e){setError(friendlyAuthError(e));}finally{setResetBusy(false);}}
   async function logout(){await signOut();}
-  const customerSurfaceActive=Boolean(customerId);
-  if(!ready)return <div className="customer-shell"><OperationalLoadingSkeleton variant="app" /></div>;
-  if(storefrontOpen)return <Storefront
-    signedIn={customerSurfaceActive}
-    customerName={customerName}
-    organizationName={organizationName}
-    products={products}
-    categories={categories}
-    cart={cart}
-    cartTotal={total}
-    favoriteIds={favoriteIds}
-    compareIds={compareIds}
-    ordersCount={orders.length}
-    latestOrderNumber={orders[0]?.order_number}
-    availableCreditText={finance ? money(finance.available,finance.currency) : undefined}
-    financeReady={Boolean(finance)}
-    showCredit={config.showCredit}
-    showTemplates={config.showTemplates}
-    isOnline={online}
-    onLogin={()=>{setStorefrontOpen(false);window.history.replaceState({},'',window.location.pathname+'?login=1#catalog');setSection('catalog');}}
-    onNavigate={(next)=>{setStorefrontOpen(false);navigate(next);}}
-    onOpenCart={()=>setCartOpen(true)}
-    onOpenCheckout={()=>{setStorefrontOpen(false);if(!cart.length){setError('السلة فارغة. أضف صنفًا واحدًا على الأقل قبل إتمام الطلب.');setSection('catalog');return;}setCheckoutOpen(true);}}
-    onAddProduct={(product)=>add(product,1,false)}
-    onOpenProduct={(product)=>openProduct(product as PricedProduct)}
-    onToggleFavorite={toggleFavorite}
-    onToggleCompare={toggleCompare}
-    onOpenQuickOrder={()=>setQuickOpen(true)}
-    onOpenPricing={()=>setPricingOpen(true)}
-    onSearchCatalog={(value)=>{setQuery(value);setStorefrontOpen(false);setSection('catalog');window.history.replaceState({},'',window.location.pathname+'#catalog');}}
-    onSelectCategory={(id)=>setCategoryId(id)}
-    onOpenAdmin={resolveAuthenticatedSurface(role,customerId)==='admin'?()=>{setStorefrontOpen(false);window.location.hash='#admin-dashboard';}:undefined}
-  />;
+  const publicStorefrontPath=typeof window!=='undefined'&&(window.location.pathname==='/'||window.location.pathname==='/store');
+  if(!signedIn&&publicStorefrontPath&&storefrontOpen)return <Storefront onLogin={()=>{setStorefrontOpen(false);window.history.replaceState({},'',window.location.pathname+'?login=1#catalog');setSection('catalog');}} />;
   if(!signedIn)return <div className="customer-shell auth-shell">
     <div className="auth-experience">
       <aside className="auth-brand-panel" aria-label="تعريف الأغبري">
