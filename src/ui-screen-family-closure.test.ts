@@ -32,6 +32,22 @@ describe('UI screen-family closure contract', () => {
   });
 });
 
+describe('customer order and notification collection export closure', () => {
+  it('keeps customer order export scoped to the filtered collection', () => {
+    const sourceText = readRepoSource('CustomerOrdersPanel.tsx');
+    expect(sourceText).toContain('exportCurrent');
+    expect(sourceText).toContain('تصدير CSV');
+    expect(sourceText).toContain('filtered.map((order)');
+  });
+
+  it('keeps notification export scoped to the visible filtered page', () => {
+    const sourceText = readRepoSource('NotificationPanel.tsx');
+    expect(sourceText).toContain('exportCurrent');
+    expect(sourceText).toContain('تصدير CSV');
+    expect(sourceText).toContain('visible.map((row)');
+  });
+});
+
 describe('admin dashboard full structure', () => {
   it('does not truncate canonical structure groups before rendering', () => {
     const dashboard = readRepoSource('AdminExecutiveDashboard.tsx');
@@ -129,6 +145,8 @@ describe('purchasing, inventory and receiving collection closure', () => {
     expect(sourceText).toContain('ترتيب سجل الاستلام');
     expect(sourceText).toContain('received_at');
     expect(sourceText).toContain("sort==='oldest'");
+    expect(sourceText).toContain('تصدير CSV');
+    expect(sourceText).toContain('exportCurrent');
   });
 
   it('keeps receipt history operationally deep with real receipt lines and export', () => {

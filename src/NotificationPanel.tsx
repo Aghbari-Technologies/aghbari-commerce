@@ -175,6 +175,28 @@ export default function NotificationPanel({ audience }: { audience: Audience }) 
     }
   }
 
+  function exportCurrent() {
+    if (!visible.length) return;
+    const headers = ['التاريخ', 'النوع', 'العنوان', 'الحالة', 'المستلم', 'معرّف الكيان'];
+    const rows = visible.map((row) => [
+      new Date(row.created_at).toLocaleString('ar-YE'),
+      KIND_LABELS[row.kind],
+      row.title,
+      row.read_at ? 'مقروء' : 'غير مقروء',
+      row.recipient_user_id ?? '',
+      row.entity_id ?? '',
+    ]);
+    const csv = '\ufeff' + [headers, ...rows]
+      .map((row) => row.map((value) => '"' + String(value ?? '').replaceAll('"', '""') + '"').join(','))
+      .join('\n');
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = 'aghbari-notifications-' + audience + '-' + new Date().toISOString().slice(0, 10) + '.csv';
+    anchor.click();
+    URL.revokeObjectURL(url);
+  }
+
   async function markVisibleRead() {
     if (!supabase || !actionable.length || bulkBusy) return;
     setBulkBusy(true);
@@ -245,6 +267,14 @@ export default function NotificationPanel({ audience }: { audience: Audience }) 
           />
           غير مقروء فقط
         </label>
+        <button
+          type="button"
+          className="ghost"
+          onClick={exportCurrent}
+          disabled={loading || bulkBusy || !visible.length}
+        >
+          تصدير CSV
+        </button>
         <button
           type="button"
           className="ghost"

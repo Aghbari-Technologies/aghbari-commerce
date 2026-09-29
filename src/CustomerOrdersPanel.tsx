@@ -72,6 +72,27 @@ export default function CustomerOrdersPanel({
     setPage(1);
   }
 
+  function exportCurrent() {
+    if (!filtered.length) return;
+    const headers = ['رقم الطلب', 'الحالة', 'الإجمالي', 'العملة', 'تاريخ الإنشاء'];
+    const rows = filtered.map((order) => [
+      order.order_number,
+      STATUS_LABELS[order.status] ?? order.status,
+      order.total,
+      order.currency,
+      new Date(order.created_at).toLocaleString('ar-YE'),
+    ]);
+    const csv = '\ufeff' + [headers, ...rows]
+      .map((row) => row.map((value) => '"' + String(value ?? '').replaceAll('"', '""') + '"').join(','))
+      .join('\n');
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = 'aghbari-orders-' + new Date().toISOString().slice(0, 10) + '.csv';
+    anchor.click();
+    URL.revokeObjectURL(url);
+  }
+
   return <section className="content-card customer-orders-panel" aria-busy={loading}>
     <div className="section-title">
       <div><span className="eyebrow">التشغيل</span><h2>طلباتك وشحناتك</h2><p className="panel-note">{productsCount} أصناف محملة في سياق المتجر الحالي.</p></div>
@@ -90,6 +111,7 @@ export default function CustomerOrdersPanel({
       <label><span>الحالة</span><select aria-label="فلترة حالة الطلب" value={status} onChange={e=>setStatus(e.target.value)} disabled={loading}><option value="all">كل الحالات</option>{statuses.map(item=><option key={item} value={item}>{STATUS_LABELS[item]??item}</option>)}</select></label>
       <label><span>الترتيب</span><select aria-label="ترتيب الطلبات" value={sort} onChange={e=>setSort(e.target.value as SortMode)} disabled={loading}><option value="newest">الأحدث أولًا</option><option value="oldest">الأقدم أولًا</option><option value="highest">الأعلى قيمة</option><option value="lowest">الأقل قيمة</option></select></label>
       <button type="button" className="ghost" onClick={clearFilters} disabled={loading||(!query&&status==='all'&&sort==='newest')}>مسح</button>
+      <button type="button" className="ghost" onClick={exportCurrent} disabled={loading || !filtered.length}>تصدير CSV</button>
       <button type="button" className="ghost" onClick={onReload} disabled={loading}>إعادة تحميل</button>
       <div className="customer-order-density" role="group" aria-label="كثافة قائمة الطلبات"><button type="button" className={density==='comfortable'?'active':''} aria-pressed={density==='comfortable'} onClick={()=>setDensity('comfortable')}>مريح</button><button type="button" className={density==='compact'?'active':''} aria-pressed={density==='compact'} onClick={()=>setDensity('compact')}>مضغوط</button></div>
     </div>
