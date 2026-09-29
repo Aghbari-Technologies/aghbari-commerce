@@ -426,7 +426,7 @@ export default function AppV3Fixed(){
   async function requestPasswordReset(e:FormEvent){e.preventDefault();if(resetBusy)return;if(!email.trim())return setError('اكتب بريد الحساب أولًا لاستعادة كلمة المرور.');setResetBusy(true);setError('');setMessage('');setResetSent(false);try{await resetPassword(email,window.location.origin);setResetSent(true);setMessage('تم إرسال رابط استعادة كلمة المرور إلى بريد الحساب إن كان مسجلًا.');}catch(e){setError(friendlyAuthError(e));}finally{setResetBusy(false);}}
   async function logout(){await signOut();}
   const publicStorefrontPath=typeof window!=='undefined'&&(window.location.pathname==='/'||window.location.pathname==='/store');
-  if(!signedIn&&publicStorefrontPath&&storefrontOpen)return <Storefront onLogin={()=>{setStorefrontOpen(false);window.history.replaceState({},'',window.location.pathname+'?login=1#catalog');setSection('catalog');}} />;
+  if(publicStorefrontPath&&storefrontOpen)return <Storefront signedIn={signedIn} onLogin={()=>{setStorefrontOpen(false);window.history.replaceState({},'',window.location.pathname+'?login=1#catalog');setSection('catalog');}} />;
   if(!signedIn)return <div className="customer-shell auth-shell">
     <div className="auth-experience">
       <aside className="auth-brand-panel" aria-label="تعريف الأغبري">
