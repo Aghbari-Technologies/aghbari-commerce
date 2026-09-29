@@ -220,6 +220,49 @@ export default function CustomerFinancePanel({ customerId, online, openFirstInvo
     setPage(1);
   }
 
+  function downloadCurrentView() {
+    const rows = view === 'payments'
+      ? filteredPayments.map((row) => [
+          new Date(row.payment.paid_at).toLocaleString('ar-YE'),
+          row.invoice.invoice_number,
+          row.payment.amount,
+          PAYMENT_LABELS[row.payment.method] ?? row.payment.method,
+          row.payment.reference ?? '',
+        ])
+      : view === 'statement'
+        ? filteredStatement.map((line) => [
+            line.invoice.invoice_number,
+            new Date(line.invoice.created_at).toLocaleDateString('ar-YE'),
+            line.invoice.total,
+            line.paid,
+            line.outstanding,
+            STATUS_LABELS[line.invoice.status],
+            line.invoice.due_at ? new Date(line.invoice.due_at).toLocaleDateString('ar-YE') : '',
+          ])
+        : filtered.map((invoice) => [
+            invoice.invoice_number,
+            new Date(invoice.created_at).toLocaleDateString('ar-YE'),
+            invoice.total,
+            STATUS_LABELS[invoice.status],
+            invoice.due_at ? new Date(invoice.due_at).toLocaleDateString('ar-YE') : '',
+          ]);
+    if (!rows.length) return;
+    const headers = view === 'payments'
+      ? ['التاريخ','الفاتورة','المبلغ','طريقة الدفع','المرجع']
+      : view === 'statement'
+        ? ['الفاتورة','التاريخ','الإجمالي','المدفوع','المتبقي','الحالة','الاستحقاق']
+        : ['الفاتورة','تاريخ الإصدار','الإجمالي','الحالة','الاستحقاق'];
+    const csv = '\ufeff' + [headers, ...rows]
+      .map((row) => row.map((value) => '"' + String(value ?? '').replaceAll('"', '""') + '"').join(','))
+      .join('\n');
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = 'aghbari-finance-' + view + '-' + new Date().toISOString().slice(0, 10) + '.csv';
+    anchor.click();
+    URL.revokeObjectURL(url);
+  }
+
   if (!customerId) return null;
 
   if (!online) {
@@ -241,9 +284,14 @@ export default function CustomerFinancePanel({ customerId, online, openFirstInvo
           <h2>الفواتير والمدفوعات</h2>
           <p>سجل تشغيلي مرتبط مباشرة بحساب شركتك، للقراءة فقط.</p>
         </div>
-        <button className="ghost" type="button" onClick={() => { if (view === 'statement') void loadStatement(); else if (view === 'payments') void loadPayments(); else void load(); }} disabled={loading || statementLoading || paymentLoading}>
-          {loading || statementLoading || paymentLoading ? 'جارٍ التحديث…' : 'تحديث'}
-        </button>
+        <div className="customer-finance-head-actions">
+          <button className="ghost" type="button" onClick={downloadCurrentView} disabled={loading || statementLoading || paymentLoading || (view === 'statement' ? !filteredStatement.length : view === 'payments' ? !filteredPayments.length : !filtered.length)}>
+            تنزيل العرض
+          </button>
+          <button className="ghost" type="button" onClick={() => { if (view === 'statement') void loadStatement(); else if (view === 'payments') void loadPayments(); else void load(); }} disabled={loading || statementLoading || paymentLoading}>
+            {loading || statementLoading || paymentLoading ? 'جارٍ التحديث…' : 'تحديث'}
+          </button>
+        </div>
       </div>
 
       <div className="history-tabs" role="tablist" aria-label="العرض المالي">
