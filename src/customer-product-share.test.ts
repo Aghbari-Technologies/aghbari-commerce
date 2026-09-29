@@ -24,7 +24,8 @@ describe('customer shared product deep link', () => {
     expect(appSource).toContain("raw.startsWith('#catalog-product-')");
     expect(appSource).toContain('getCatalogProductById(sharedId');
     expect(appSource).toContain('setSelectedProduct(product)');
-    expect(catalogSource).toContain('getCatalogProductById(productId');
+    expect(catalogSource).toContain("from('products').select('id,sku')");
+    expect(catalogSource).toContain('p_search: identity.sku');
   });
 });
 

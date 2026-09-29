@@ -112,9 +112,15 @@ export async function getCatalogProductById(productId: string, warehouseId?: str
     if (!data?.id) throw new Error('لا يوجد مستودع تشغيلي نشط.');
     resolvedWarehouseId = data.id;
   }
+  const { data: identity, error: identityError } = await retryRead(async () => {
+    const result = await client.from('products').select('id,sku').eq('id', normalizedId).maybeSingle();
+    if (result.error) throw result.error;
+    return result;
+  });
+  if (!identity?.sku) return null;
   const { data } = await retryRead(async () => {
     const result = await client.rpc('get_catalog_with_barcode', {
-      p_search: normalizedId,
+      p_search: identity.sku,
       p_category_id: null,
       p_limit: 5,
       p_offset: 0,
