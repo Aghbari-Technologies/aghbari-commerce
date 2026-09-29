@@ -1,3 +1,28 @@
+# 🔴 2026-09-30 — FULL PRODUCT COMMERCE MODE
+
+## Product mandate
+Aghbari Commerce is a sellable B2B ecommerce product with two first-class surfaces:
+
+### Customer Storefront / Portal
+Home/merchandising, catalog, search, filters, categories, product detail, quantity, cart, checkout, orders/tracking/detail, reorder, templates, pricing, finance, invoices, payments, notifications, profile, company, addresses, account settings, offline/weak-network recovery.
+
+### Admin / Staff Control Center
+Command Center, orders/detail/bulk actions, customers/detail, catalog/products/categories, pricing/tiers, inventory/warehouses/transfers/stock count/history/reconciliation, suppliers/purchasing/receiving, statements/invoices/payments/expenses, import/export, roles/permissions/invitations, notifications/audit/outbox/governance, settings/appearance/branding, and explicit boundaries for unsupported external capabilities.
+
+## Surface rule
+The customer storefront is the primary commercial presentation at / and /store. Admin/Staff remains a separate operational surface. Never present the operational dashboard as the storefront.
+
+## World-class UI gate
+Every in-scope surface must use the applicable patterns of mature ecommerce/commerce software: strong information hierarchy, discovery/search, clear pricing/availability semantics, persistent cart access, obvious next action, contextual detail drawers/modals, dense readable tables, filters/sorting/pagination, bulk operations, responsive mobile/tablet behavior, keyboard accessibility and explicit loading/empty/error/success/disabled/permission/offline/retry states.
+
+## Reality gate
+No fake products, prices, stock, orders, payments, inventory, purchases, receipts or success states. Reuse existing Commerce contracts; implement an in-scope backend contract when genuinely required; otherwise document an explicit boundary.
+
+## 120-minute execution objective
+Treat each execution window as a concentrated closure window. Spend the available execution budget on real UI/core/security/QA work, close one material gap at a time, run focused proof immediately, write the exact SHA/state back, then continue to the next uncovered high-value Customer/Admin surface. Do not stop after cosmetic polish.
+
+---
+
 # 🔴 AGHBARI COMMERCE — MASTER EXECUTION PROTOCOL
 
 ## FINAL CLOSURE MODE — FULL UI + CORE + SECURITY + PROOF + MAXIMUM SPACE PRESERVATION
