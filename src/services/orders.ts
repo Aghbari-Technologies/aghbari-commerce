@@ -76,8 +76,9 @@ export async function createOrder(draft: OrderDraft, warehouseId?: unknown, opti
   const candidate = draft as Partial<OrderDraft>;
   const idempotencyKey = assertIdempotencyKey(candidate.idempotencyKey);
   const normalizedWarehouseId = warehouseId == null ? await resolveOperationalWarehouse() : assertUuid(warehouseId, 'المستودع');
+  const shippingAddressId = candidate.shippingAddressId == null ? null : assertUuid(candidate.shippingAddressId, 'عنوان التسليم');
   const lines = assertOrderLines(candidate.lines);
-  const { data, error } = await requireSupabase().rpc('create_order', { p_idempotency_key: idempotencyKey, p_warehouse_id: normalizedWarehouseId, p_lines: lines.map(({ productId, quantity }) => ({ product_id: productId, quantity })), p_payment_method: options.paymentMethod ?? 'credit' });
+  const { data, error } = await requireSupabase().rpc('create_order', { p_idempotency_key: idempotencyKey, p_warehouse_id: normalizedWarehouseId, p_lines: lines.map(({ productId, quantity }) => ({ product_id: productId, quantity })), p_payment_method: options.paymentMethod ?? 'credit', p_shipping_address_id: shippingAddressId });
   if (error) throw error;
   const row = data?.[0] as { order_id?: unknown; order_number?: unknown } | undefined;
   return assertCreatedOrderReference({ id: row?.order_id, order_number: row?.order_number });
