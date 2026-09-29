@@ -90,7 +90,7 @@ BEGIN
   );
 
   FOR v_line IN SELECT value FROM pg_catalog.jsonb_array_elements(p_lines) LOOP
-    IF case when pg_catalog.btrim(v_line->>'product_id') = ''::text then null::text else pg_catalog.btrim(v_line->>'product_id') end IS NULL THEN
+    IF pg_catalog.btrim(v_line->>'product_id') = ''::text OR v_line->>'product_id' IS NULL THEN
       RAISE EXCEPTION USING errcode='22023', message='product_id required';
     END IF;
     BEGIN
