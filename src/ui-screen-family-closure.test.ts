@@ -156,7 +156,8 @@ describe('finance invoice collection closure', () => {
     expect(sourceText).toContain('exportCurrent');
     expect(sourceText).toContain('تصدير CSV');
     expect(sourceText).toContain('const headers=tab===');
-    expect(sourceText).toContain('current.map(row=>');
+    expect(sourceText).toContain('(current as Supplier[])');
+    expect(sourceText).toContain('downloadRows(headers,rows');
   });
 });
 
