@@ -234,3 +234,6 @@ Requirements discovered from references or canonical specifications are not park
 
 ### محفوظات المشتري / Saved Products
 بوابة العميل تتضمن مساحة محفوظات مستقلة ضمن رحلة التسوق، تعتمد على التخصيص المحلي المقيد بسياق المؤسسة/العميل والجهاز، وتعرض المفضلة والأصناف التي شوهدت مؤخرًا. يجب أن تعيد هذه المساحة استخدام بيانات الكتالوج المصرح بها فقط، وتوفر إعادة فتح التفاصيل والإضافة للسلة وإدارة المفضلة، ولا تصبح مصدر حقيقة للطلب أو الأسعار أو المخزون.
+
+### Checkout delivery address
+Checkout exposes saved customer delivery addresses when available. Selecting one sends its identifier through the canonical order command, which stores a historical snapshot in the order. Address management remains in the Account workspace; Checkout never invents an address.
