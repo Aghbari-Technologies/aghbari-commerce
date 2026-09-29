@@ -51,7 +51,7 @@ test.describe('UI reference-family browser coverage', () => {
     await expect(page.getByRole('dialog', { name: 'المزيد من بوابة الأغبري' })).toBeVisible();
     await page.screenshot({ path: 'test-results/ui-customer-mobile-navigation.png', fullPage: true });
 
-    await page.getByRole('button', { name: 'المركز المالي', exact: true }).click();
+    await page.getByRole('dialog', { name: 'المزيد من بوابة الأغبري' }).getByRole('button', { name: 'المركز المالي', exact: true }).click();
     await expect(page.locator('.customer-finance-panel').first()).toBeVisible();
     await page.screenshot({ path: 'test-results/ui-customer-finance-mobile.png', fullPage: true });
   });
