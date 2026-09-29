@@ -70,10 +70,17 @@ begin
   insert into _purchase_receipt_runtime_proof(purchase_id,purchase_item_id,purchase_128_ok)
   values(v_purchase_id,v_item_id,true);
 
-  update public.purchase_orders
-  set status='approved'::public.purchase_order_status
-  where id=v_purchase_id
-    and organization_id='d3800000-0000-4000-8000-000000000010'::uuid;
+  perform * from public.submit_purchase_order(v_purchase_id);
+  perform * from public.approve_purchase_order(v_purchase_id);
+  if (not exists (
+    select 1
+    from public.purchase_orders
+    where id=v_purchase_id
+      and organization_id='d3800000-0000-4000-8000-000000000010'::uuid
+      and status='approved'::public.purchase_order_status
+  )) then
+    raise exception 'purchase order did not reach approved state through server commands';
+  end if;
 
   begin
     perform *
