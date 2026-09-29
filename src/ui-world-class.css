@@ -97,7 +97,7 @@ button:disabled,input:disabled,select:disabled,textarea:disabled{cursor:not-allo
   transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease!important
 }
 .customer-shell .product-card:hover{transform:translateY(-3px);border-color:#b8dce2!important;box-shadow:0 16px 34px rgba(12,61,77,.09)!important}
-.customer-shell .product-card>img,.customer-shell .product-card>.product-placeholder{width:100%!important;aspect-ratio:1.08!important;object-fit:cover!important;background:linear-gradient(145deg,#f2f8fa,#eaf5f7)!important}
+.customer-shell .product-card .product-media-button>img,.customer-shell .product-card .product-media-button>.product-placeholder{display:block;width:100%!important;aspect-ratio:1.08!important;object-fit:cover!important;background:linear-gradient(145deg,#f2f8fa,#eaf5f7)!important}
 .customer-shell .product-body{padding:13px!important}
 .customer-shell .product-body h3{font-size:14px!important;line-height:1.5!important}
 .customer-shell .product-body .sku{padding:4px 6px!important;border-radius:7px!important;background:#eef7f8!important}
