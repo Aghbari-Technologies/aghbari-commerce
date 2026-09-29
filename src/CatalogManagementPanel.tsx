@@ -5,6 +5,7 @@ import { upsertProduct } from './services/admin';
 import { supabase } from './lib/supabase';
 import './catalog-management.css';
 import RecordDetailDrawer from './RecordDetailDrawer';
+import { MAX_BULK_PRODUCT_SELECTION, canSelectBulkProduct } from './catalog-bulk-selection';
 
 type UserRole = 'owner' | 'admin' | 'sales' | 'warehouse' | 'viewer';
 type ProductStatus = 'active' | 'inactive';
@@ -136,7 +137,7 @@ export default function CatalogManagementPanel({ role }: { role: UserRole }) {
 
   async function applyBulkStatus() {
     if (!canToggle || bulkBusy || !selectedIds.length) return;
-    if (selectedIds.length > 50) { setBulkMessage('الحد الأقصى للعملية الجماعية هو 50 منتجًا في الدفعة الواحدة.'); return; }
+    if (selectedIds.length > MAX_BULK_PRODUCT_SELECTION) { setBulkMessage(`الحد الأقصى للعملية الجماعية هو ${MAX_BULK_PRODUCT_SELECTION} منتجًا في الدفعة الواحدة.`); return; }
     const targetIds = new Set(selectedIds);
     const targets = products.filter((product) => targetIds.has(product.id) && product.status !== bulkStatus);
     if (!targets.length) { setBulkMessage('لا توجد تغييرات فعلية في الاختيار الحالي.'); return; }
@@ -175,20 +176,20 @@ export default function CatalogManagementPanel({ role }: { role: UserRole }) {
     </div>
 
     {!loading && canToggle && filtered.length > 0 && <div className="bulk-action-center" aria-label="مركز العمليات الجماعية">
-      <div><strong>مركز العمليات الجماعية</strong><small>{selectedIds.length} محدد · الحد 50</small></div>
+      <div><strong>مركز العمليات الجماعية</strong><small>{selectedIds.length}/{MAX_BULK_PRODUCT_SELECTION} محدد</small></div>
       <label>الحالة الجديدة<select value={bulkStatus} onChange={e=>setBulkStatus(e.target.value as ProductStatus)}><option value="inactive">موقوف</option><option value="active">نشط</option></select></label>
-      <button type="button" disabled={bulkBusy || !selectedIds.length} onClick={()=>void applyBulkStatus()}>{bulkBusy?'جارٍ التنفيذ…':'معاينة واعتماد الحالة'}</button>
+      <button type="button" disabled={bulkBusy || !selectedIds.length || selectedIds.length > MAX_BULK_PRODUCT_SELECTION} onClick={()=>void applyBulkStatus()}>{bulkBusy?'جارٍ التنفيذ…':'معاينة واعتماد الحالة'}</button>
       <button type="button" className="ghost" disabled={!selectedIds.length||bulkBusy} onClick={()=>setSelectedIds([])}>مسح التحديد</button>
-      {selectedIds.length > 50 && <span role="alert">الاختيار يتجاوز الحد. قلل العدد قبل الاعتماد.</span>}
+      {selectedIds.length >= MAX_BULK_PRODUCT_SELECTION && <span role="status">تم الوصول إلى الحد الأقصى: {MAX_BULK_PRODUCT_SELECTION} منتجًا.</span>}
       {bulkMessage && <span role="status">{bulkMessage}</span>}
     </div>}
     {loading ? <OperationalLoadingSkeleton variant="collection" />
       : error ? <div className="empty-state"><strong>تعذر تحميل كتالوج المنتجات.</strong><span>{error}</span><button type="button" onClick={()=>void reload()}>إعادة المحاولة</button></div>
       : !filtered.length ? <div className="empty-state"><strong>لا توجد منتجات مطابقة.</strong><span>{products.length?'غيّر الفلاتر أو عبارة البحث.':'ابدأ بإضافة أول منتج من بطاقة المنتج الجديدة أعلاه.'}</span>{(query||categoryId||status!=='all')&&<button type="button" onClick={()=>{setQuery('');setCategoryId('');setStatus('all');}}>مسح الفلاتر</button>}</div>
       : <div className="catalog-table" role="table" aria-label="جدول المنتجات">
-          <div className="catalog-row catalog-head" role="row"><label className="catalog-select catalog-select-all"><input type="checkbox" aria-label="تحديد منتجات الصفحة" checked={visible.length>0&&visible.every(product=>selectedIds.includes(product.id))} onChange={(e)=>setSelectedIds(current=>e.target.checked?[...new Set([...current,...visible.map(product=>product.id)])]:current.filter(id=>!visible.some(product=>product.id===id)))} disabled={bulkBusy} /><span>الكل</span></label><span>المنتج</span><span>SKU / Barcode</span><span>التصنيف</span><span>الوحدة</span><span>الحالة</span><span>الإجراء</span></div>
+          <div className="catalog-row catalog-head" role="row"><label className="catalog-select catalog-select-all"><input type="checkbox" aria-label="تحديد منتجات الصفحة" checked={visible.length>0&&visible.every(product=>selectedIds.includes(product.id))} onChange={(e)=>setSelectedIds(current=>{ if(!e.target.checked) return current.filter(id=>!visible.some(product=>product.id===id)); const missing=visible.filter(product=>!current.includes(product.id)); if(!canSelectBulkProduct(current.length, missing.length)){ setBulkMessage(`الحد الأقصى للتحديد الجماعي هو ${MAX_BULK_PRODUCT_SELECTION} منتجًا.`); return current; } setBulkMessage(null); return [...new Set([...current,...visible.map(product=>product.id)])]; })} disabled={bulkBusy || (!visible.every(product=>selectedIds.includes(product.id)) && !canSelectBulkProduct(selectedIds.length, visible.filter(product=>!selectedIds.includes(product.id)).length))} /><span>الكل</span></label><span>المنتج</span><span>SKU / Barcode</span><span>التصنيف</span><span>الوحدة</span><span>الحالة</span><span>الإجراء</span></div>
           {visible.map(product=><article className="catalog-row" role="row" key={product.id}>
-            <label className="catalog-select"><input type="checkbox" aria-label={'تحديد '+product.name} checked={selectedIds.includes(product.id)} onChange={(e)=>setSelectedIds(current=>e.target.checked?[...new Set([...current,product.id])]:current.filter(id=>id!==product.id))} disabled={bulkBusy} /><span className="sr-only">تحديد</span></label>
+            <label className="catalog-select"><input type="checkbox" aria-label={'تحديد '+product.name} checked={selectedIds.includes(product.id)} onChange={(e)=>setSelectedIds(current=>{ if(!e.target.checked) return current.filter(id=>id!==product.id); if(!canSelectBulkProduct(current.length)){ setBulkMessage(`الحد الأقصى للتحديد الجماعي هو ${MAX_BULK_PRODUCT_SELECTION} منتجًا.`); return current; } setBulkMessage(null); return [...new Set([...current,product.id])]; })} disabled={bulkBusy || (!selectedIds.includes(product.id) && !canSelectBulkProduct(selectedIds.length))} /><span className="sr-only">تحديد</span></label>
             <div><strong>{product.name}</strong><small>{product.description||'بدون وصف'}</small></div>
             <code dir="ltr">{product.sku}{product.barcode?' · '+product.barcode:''}</code>
             <span>{product.category_id?categoryNames.get(product.category_id)??'تصنيف محذوف':'بدون تصنيف'}</span>
