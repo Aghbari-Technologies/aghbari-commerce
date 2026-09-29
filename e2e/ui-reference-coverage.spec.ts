@@ -67,6 +67,10 @@ test.describe('UI reference-family browser coverage', () => {
     await page.setViewportSize({ width: 1440, height: 1000 });
     await login(page, email!, password!);
     await expect(page.locator('.customer-shell')).toBeVisible();
+    await page.getByRole('button', { name: 'الرئيسية', exact: true }).first().click();
+    await expect(page).toHaveURL(/#home$/);
+    await expect(page.locator('.customer-home-workspace')).toBeVisible();
+    await page.screenshot({ path: 'test-results/ui-customer-home-desktop.png', fullPage: true });
 
     const openCapability = async (sectionLabel: string, capabilityLabel: string, section: string) => {
       await page.getByRole('button', { name: sectionLabel, exact: true }).first().click();
