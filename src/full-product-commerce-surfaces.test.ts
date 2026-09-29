@@ -17,6 +17,8 @@ describe('Aghbari full-product commerce surfaces', () => {
     expect(start).toContain('No fake products, prices, stock, orders, payments');
     expect(app).toContain("import Storefront from './Storefront';");
     expect(app).toContain('if(storefrontOpen)return <Storefront');
+    expect(app).toContain('setSignedIn(true);setReady(true);');
+    expect(app).not.toContain('setSignedIn(true);setReady(true);setStorefrontOpen(true)');
     expect(store).toContain('LIVE CATALOG');
     expect(store).toContain('السلة');
     expect(store).toContain('Checkout');
