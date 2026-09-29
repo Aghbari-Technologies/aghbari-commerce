@@ -9,6 +9,7 @@ describe('customer saved shelf accessibility contract', () => {
     expect(source).toContain('favoriteIds:readonly string[]');
     expect(source).toContain('aria-pressed={canRemoveFavorite || favoriteIds.includes(product.id)}');
     expect(source).toContain("aria-label={canRemoveFavorite || favoriteIds.includes(product.id)?'إزالة من المفضلة':'حفظ في المفضلة'}");
-    expect(source).toContain('favoriteIds={favoriteIds}');
+    const appSource = readFileSync(resolve(process.cwd(), 'src/AppV3Fixed.tsx'), 'utf8');
+    expect(appSource).toContain('favoriteIds={favoriteIds}');
   });
 });
