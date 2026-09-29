@@ -257,6 +257,22 @@ describe('inventory movement progressive disclosure', () => {
 });
 
 
+describe('inventory activity and finance invoice export closure', () => {
+  it('keeps inventory activity export scoped to the active operational tab', () => {
+    const sourceText = readRepoSource('InventoryActivityPanel.tsx');
+    expect(sourceText).toContain('exportCurrentInventoryActivity');
+    expect(sourceText).toContain('تصدير CSV');
+    expect(sourceText).toContain('source_fingerprint');
+  });
+
+  it('keeps finance invoice export scoped to filtered invoices', () => {
+    const sourceText = readRepoSource('FinancePanel.tsx');
+    expect(sourceText).toContain('exportInvoices');
+    expect(sourceText).toContain('تصدير CSV');
+    expect(sourceText).toContain('filteredInvoices.map');
+  });
+});
+
 describe('governance export closure', () => {
   it('keeps governance export redacted and scoped to the active tab', () => {
     const sourceText = readRepoSource('StaffOperationsPanel.tsx');
