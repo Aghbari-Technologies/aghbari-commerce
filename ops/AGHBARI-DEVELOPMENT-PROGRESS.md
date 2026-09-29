@@ -624,3 +624,9 @@ Next: current exact-SHA Quality + Test-the-Test; then browser/runtime if executa
 | Run | Date | SHA | Branch | Implemented | Verified | Proven | Blocked | Certification | Production | Next |
 |---|---|---|---|---|---|---|---|---|---|---|
 | STOREFRONT-CONT-20260929 | 2026-09-29 | a9a92cae2ddf143c0d256397b9a4bfef05fa2242 | main | Saved products cross-page resolution; compact catalog density + preference; product share deep-link; local recent-history cleanup; Home contrast; delivery-address checkout snapshot; server-paged order history; operational purchasing/pricing/warehouse UI | Earlier affected exact trees: Browser/Security/G1/Bootstrap/Order Workflow SUCCESS; current SHA awaits fresh proof | PARTIAL / current SHA NOT_PROVEN | Hosted exact-source preview remains unavailable | NOT CERTIFIED | HOLD / NO TOUCH | Verify current SHA proof; next distinct customer/admin visual gap |
+
+
+## Run 2026-09-30 — STOREFRONT WORLD-CLASS REBUILD
+| Run | Date | SHA | Branch | Implemented | Verified | Proven | Blocked | Certification | Production | Next |
+|---|---|---|---|---|---|---|---|---|---|---|
+| STOREFRONT-WORLDCLASS-20260930 | 2026-09-30 | 2aef369010635d3e3e3e0f378f197fb6aab3e6fb | execution/storefront-worldclass-20260930 | Customer-first ecommerce storefront shell; search/categories/product discovery; live authorized product cards; favorite/compare; cart/checkout/order/account/pricing/quick-order paths; responsive mobile dock; Admin separation | PR mergeable; current Vercel exact preview queued; local build unavailable due network isolation | NOT_PROVEN | Exact current browser/build proof pending | NOT CERTIFIED | HOLD / NO TOUCH | Verify same-SHA Preview/browser proof, fix first material failure, then continue store interaction coverage |
