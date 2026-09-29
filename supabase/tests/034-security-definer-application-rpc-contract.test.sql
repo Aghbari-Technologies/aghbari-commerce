@@ -19,7 +19,7 @@ select ok(exists (
     and 'search_path=""' = any(coalesce(p.proconfig,'{}'))
     and pg_get_functiondef(p.oid) ilike '%auth.uid() is null%'
     and pg_get_functiondef(p.oid) ilike '%v_role not in (%'
-    and pg_get_functiondef(p.oid) ilike '%organization_id=v_org%'
+    and pg_get_functiondef(p.oid) ilike '%organization_id = v_org%'
     and pg_get_functiondef(p.oid) ilike '%idempotency_key required%'
 ),'record_payment keeps authentication, tenant and idempotency guards');
 select is(has_function_privilege('anon','public.record_payment(uuid,numeric,public.payment_method,uuid,text,text)','execute'),false,'record_payment rejects anonymous execution');
