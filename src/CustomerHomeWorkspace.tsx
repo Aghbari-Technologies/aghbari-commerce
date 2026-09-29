@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { ReactNode } from 'react';
 import type { Product } from './domain/types';
 
-export type CustomerHomeSection = 'catalog' | 'orders' | 'finance' | 'templates' | 'account' | 'notifications';
+export type CustomerHomeSection = 'catalog' | 'saved' | 'orders' | 'finance' | 'templates' | 'account' | 'notifications';
 
 interface CustomerHomeWorkspaceProps {
   customerName: string;
@@ -236,6 +236,11 @@ export default function CustomerHomeWorkspace({
           <button type="button" className="portal-quick-item primary" onClick={() => onNavigate('catalog')}>
             <span aria-hidden="true">▣</span>
             <div><strong>ابدأ الشراء</strong><small>افتح الكتالوج والأسعار والمخزون</small></div>
+            <b>↗</b>
+          </button>
+          <button type="button" className="portal-quick-item" onClick={() => onNavigate('saved')}>
+            <span aria-hidden="true">♡</span>
+            <div><strong>المحفوظات والمفضلة</strong><small>عودة سريعة إلى أصنافك المحفوظة والمشاهدة مؤخرًا</small></div>
             <b>↗</b>
           </button>
           <button type="button" className="portal-quick-item" onClick={() => onOpenCart()}>
