@@ -89,3 +89,9 @@ The number of reference assets is not a completion denominator. Product closure 
 - Home is a read/read-through presentation layer over existing Commerce truth: customer identity, organization, warehouse, loaded catalog count, order count/latest order, cart state, authorized credit summary when available, template count, and connection/sync state.
 - Home provides navigation shortcuts to existing customer capabilities and opening the real cart; it adds no new transactional authority or synthetic business data.
 - Home remains fail-closed for financial/transactional meaning when offline and explicitly describes offline data as non-authoritative.
+
+
+## 2026-09-29 — Buyer acceleration memory
+- Customer Home and Catalog now expose local buyer-personalization helpers over real in-scope product records: favorites and recently viewed products.
+- Customer Catalog also retains a bounded recent-search list on the same device. These memories are scoped by organization/customer context and never become pricing, stock, order or account truth.
+- Saved/recent actions are convenience features only; they are fail-safe when local storage is unavailable and do not imply cross-device synchronization.

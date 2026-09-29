@@ -223,3 +223,10 @@ Requirements discovered from references or canonical specifications are not park
 - Customer live capabilities must terminate in an actual UI action. The `invitations` capability opens a safe explanatory dialog in the portal while actual invitation acceptance remains owned by the direct `InvitationAcceptance` flow; the portal must not fabricate invitation records or links.
 - Admin live-target coverage tests validate real DOM anchors (`id`) for every declared live target. Presence of a historical navigation label is not sufficient proof of runtime reachability.
 - Current visual proof baseline is exact-SHA specific and must not be transferred to later SHAs.
+
+
+## 2026-09-29 — World-class buyer acceleration patterns
+- The Customer Portal may use device-scoped buyer memory for in-scope catalog navigation: favorites, recently viewed products and recent searches.
+- Favorites can be added/removed from real catalog cards; recent products are captured when product details are opened; recent searches are recorded on deliberate search submission and can be replayed with one click.
+- These features must remain local convenience state, clearly labeled as device-saved, and must never become a source of truth for price, inventory, permissions, checkout or orders.
+- The existing global Command Center, product comparison and latest-order reorder patterns form the fast-path interaction layer across the Customer Portal.
