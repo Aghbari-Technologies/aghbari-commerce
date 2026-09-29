@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 
 interface StorefrontProps {
   onLogin: () => void;
+  signedIn?: boolean;
 }
 
 function StoreFeature({ icon, title, copy }: { icon: string; title: string; copy: string }) {
@@ -20,8 +21,8 @@ function StorePill({ children }: { children: ReactNode }) {
   return <span className="storefront-pill">{children}</span>;
 }
 
-export default function Storefront({ onLogin }: StorefrontProps) {
-  const goToLogin = () => onLogin();
+export default function Storefront({ onLogin, signedIn = false }: StorefrontProps) {
+  const goToLogin = () => { if (signedIn) window.location.hash = '#catalog'; else onLogin(); };
 
   return (
     <div className="storefront" dir="rtl">
@@ -45,7 +46,7 @@ export default function Storefront({ onLogin }: StorefrontProps) {
             <span>السلة</span>
             <b>0</b>
           </button>
-          <button type="button" className="storefront-login-button" onClick={goToLogin}>دخول الحساب</button>
+          <button type="button" className="storefront-login-button" onClick={goToLogin}>{signedIn ? 'فتح المتجر' : 'دخول الحساب'}</button>
         </div>
       </header>
 
