@@ -94,3 +94,40 @@ export async function getProductImageUrls(paths: Array<string | null>) {
   }
   return result;
 }
+
+
+export async function getCatalogProductById(productId: string, warehouseId?: string): Promise<CatalogItem | null> {
+  const normalizedId = productId.trim();
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(normalizedId)) throw new Error('معرّف الصنف غير صالح.');
+  const client = requireSupabase();
+  let resolvedWarehouseId = warehouseId;
+  if (!resolvedWarehouseId) {
+    const { data: userData, error: userError } = await client.auth.getUser();
+    if (userError) throw userError;
+    if (!userData.user) throw new Error('يجب تسجيل الدخول لاختيار المستودع التشغيلي.');
+    const { data: profile, error: profileError } = await client.from('profiles').select('organization_id').eq('id', userData.user.id).single();
+    if (profileError) throw profileError;
+    const { data, error } = await client.from('warehouses').select('id').eq('organization_id', profile.organization_id).eq('is_active', true).order('created_at').limit(1).maybeSingle();
+    if (error) throw error;
+    if (!data?.id) throw new Error('لا يوجد مستودع تشغيلي نشط.');
+    resolvedWarehouseId = data.id;
+  }
+  const { data } = await retryRead(async () => {
+    const result = await client.rpc('get_catalog_with_barcode', {
+      p_search: normalizedId,
+      p_category_id: null,
+      p_limit: 5,
+      p_offset: 0,
+      p_warehouse_id: resolvedWarehouseId
+    });
+    if (result.error) throw result.error;
+    return result;
+  });
+  const exact = (data ?? []).find((item: CatalogItem) => item.id === normalizedId);
+  if (!exact) return null;
+  return {
+    ...exact,
+    available_quantity: finiteNumber(exact.available_quantity),
+    authorized_price: exact.authorized_price == null ? null : finiteNumber(exact.authorized_price, 0),
+  };
+}

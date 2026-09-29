@@ -15,3 +15,15 @@ describe('customer product share action', () => {
     expect(source).toContain("e.name==='AbortError'");
   });
 });
+
+
+describe('customer shared product deep link', () => {
+  it('routes the shared product hash to Catalog and resolves a product by id', () => {
+    const appSource = readFileSync(resolve(process.cwd(), 'src/AppV3Fixed.tsx'), 'utf8');
+    const catalogSource = readFileSync(resolve(process.cwd(), 'src/services/catalog.ts'), 'utf8');
+    expect(appSource).toContain("raw.startsWith('#catalog-product-')");
+    expect(appSource).toContain('getCatalogProductById(sharedId');
+    expect(appSource).toContain('setSelectedProduct(product)');
+    expect(catalogSource).toContain('getCatalogProductById(productId');
+  });
+});
