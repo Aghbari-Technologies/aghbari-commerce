@@ -630,3 +630,9 @@ Next: current exact-SHA Quality + Test-the-Test; then browser/runtime if executa
 | Run | Date | SHA | Branch | Implemented | Verified | Proven | Blocked | Certification | Production | Next |
 |---|---|---|---|---|---|---|---|---|---|---|
 | STOREFRONT-WORLDCLASS-20260930 | 2026-09-30 | 2aef369010635d3e3e3e0f378f197fb6aab3e6fb | execution/storefront-worldclass-20260930 | Customer-first ecommerce storefront shell; search/categories/product discovery; live authorized product cards; favorite/compare; cart/checkout/order/account/pricing/quick-order paths; responsive mobile dock; Admin separation | PR mergeable; current Vercel exact preview queued; local build unavailable due network isolation | NOT_PROVEN | Exact current browser/build proof pending | NOT CERTIFIED | HOLD / NO TOUCH | Verify same-SHA Preview/browser proof, fix first material failure, then continue store interaction coverage |
+
+
+## Run 2026-09-30 — STOREFRONT WORLD-CLASS REBUILD
+| Run | Date | SHA | Branch | Implemented | Verified | Proven | Blocked | Certification | Production | Next |
+|---|---|---|---|---|---|---|---|---|---|---|
+| STOREFRONT-WORLDCLASS-20260930 | 2026-09-30 | 06957dc9e6d05b0fe1e485ff9e05a74c19ca3d71 | execution/storefront-worldclass-20260930 | Root customer-first ecommerce storefront; live catalog; search/categories; product details; real cart; checkout handoff; order/account/finance/template paths; mobile storefront | Source contract updated; Vercel exact preview building | NOT_PROVEN | Exact current browser/runtime proof pending | NOT CERTIFIED | HOLD / NO TOUCH | Verify same-SHA Preview/browser evidence and fix first material failure |
