@@ -64,7 +64,7 @@ export function buildCustomerOrderTimeline(orderStatus: OrderStatus, history: Cu
   }));
 }
 
-function assertShippingAddressSnapshot(value: unknown): CustomerShippingAddressSnapshot | null {
+export function assertShippingAddressSnapshot(value: unknown): CustomerShippingAddressSnapshot | null {
   if (value == null) return null;
   if (typeof value !== 'object') throw new Error('Snapshot عنوان التسليم غير صالح. لم يتم إثبات تفاصيل الطلب.');
   const item = value as Record<string, unknown>;
