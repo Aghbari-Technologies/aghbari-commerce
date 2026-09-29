@@ -9,7 +9,7 @@ select ok(
     join pg_namespace n on n.oid=p.pronamespace
     where n.nspname='public'
       and p.proname='bulk_transition_orders'
-      and pg_get_function_identity_arguments(p.oid)='p_idempotency_key text, p_order_ids uuid[], p_to_status public.order_status'
+      and regexp_replace(pg_get_function_identity_arguments(p.oid), '\\s+', '', 'g')='p_idempotency_key text,p_order_ids uuid[],p_to_status public.order_status'
   ),
   'bulk transition RPC keeps the canonical signature'
 );
