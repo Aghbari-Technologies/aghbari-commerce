@@ -159,9 +159,9 @@ export default function Storefront(props: StorefrontProps) {
           <button type="submit">بحث</button>
         </form>
         <div className="store-header-actions">
-          <button type="button" className="store-header-action" onClick={onOpenPricing}><span>ر.ي</span><small>الأسعار</small></button>
+          <button type="button" className="store-header-action" onClick={() => signedIn ? onOpenPricing() : onLogin()}><span>ر.ي</span><small>الأسعار</small></button>
           <button type="button" className="store-header-action" onClick={() => signedIn ? onNavigate('saved') : onLogin()}><span>♡</span><small>المفضلة</small><b>{favoriteIds.length}</b></button>
-          <button type="button" className="store-header-cart" onClick={onOpenCart}><span>🛒</span><small>السلة</small><b>{cartCount}</b></button>
+          <button type="button" className="store-header-cart" onClick={() => signedIn ? onOpenCart() : onLogin()}><span>🛒</span><small>السلة</small><b>{cartCount}</b></button>
         </div>
       </header>
 
@@ -174,7 +174,7 @@ export default function Storefront(props: StorefrontProps) {
             <div className="store-hero-actions">
               <button type="button" className="primary" onClick={() => onNavigate('catalog')}>ابدأ التسوق <span>←</span></button>
               <button type="button" className="ghost" onClick={onOpenQuickOrder}>طلب سريع <span>↗</span></button>
-              <button type="button" className="text" onClick={onOpenPricing}>عرض الأسعار</button>
+              <button type="button" className="text" onClick={() => signedIn ? onOpenPricing() : onLogin()}>عرض الأسعار</button>
             </div>
             <div className="store-hero-benefits">
               <span><b>✓</b> أسعار مرتبطة بحسابك</span>
@@ -191,7 +191,7 @@ export default function Storefront(props: StorefrontProps) {
                 {products.slice(0, 2).map(p => <button key={p.id} type="button" onClick={() => onOpenProduct(p)}><div>{p.imageUrl ? <img src={p.imageUrl} alt="" /> : <span>{p.name.slice(0,1)}</span>}</div><strong>{p.name}</strong><small>{money(p.authorizedPrice, p.priceCurrency) || 'حسب الحساب'}</small></button>)}
                 {!products.length && <><div className="store-demo-placeholder"><span>أ</span><strong>كتالوجك</strong><small>{signedIn ? 'جارٍ تحميل المنتجات…' : 'سجّل الدخول لفتح الكتالوج'}</small></div><div className="store-demo-placeholder"><span>🛒</span><strong>سلة الشراء</strong><small>من نفس تجربة المتجر</small></div></>}
               </div>
-              <div className="store-demo-total"><span>السلة</span><strong>{cartCount.toLocaleString('ar-YE')} وحدة</strong><button type="button" onClick={onOpenCheckout} disabled={!signedIn || cartCount === 0}>إتمام الطلب</button></div>
+              <div className="store-demo-total"><span>السلة</span><strong>{cartCount.toLocaleString('ar-YE')} وحدة</strong><button type="button" onClick={() => signedIn ? onOpenCheckout() : onLogin()} disabled={signedIn && cartCount === 0}>إتمام الطلب</button></div>
             </div>
             <div className="store-float-card one"><small>الحساب</small><strong>{signedIn ? 'مصرح' : 'زائر'}</strong><span>{organizationName || 'الأغبري'}</span></div>
             <div className="store-float-card two"><small>الطلبات</small><strong>{ordersCount.toLocaleString('ar-YE')}</strong><span>{latestOrderNumber ? `آخر طلب #${latestOrderNumber}` : 'ابدأ أول طلب'}</span></div>
@@ -220,7 +220,7 @@ export default function Storefront(props: StorefrontProps) {
         <section id="store-products" className="store-section">
           <div className="store-section-head store-product-head">
             <div><span className="store-kicker">PRODUCTS</span><h2>{activeCategory ? (categories.find(c => c.id === activeCategory)?.name || 'المنتجات') : 'مختارات من الكتالوج'}</h2><p>{signedIn ? 'أصناف فعلية من كتالوج الحساب الحالي.' : 'سجّل الدخول لعرض أصناف وأسعار حسابك.'}</p></div>
-            <div className="store-head-actions"><button type="button" className="store-secondary" onClick={onOpenQuickOrder}>طلب سريع</button><button type="button" className="primary" onClick={() => onNavigate('catalog')}>فتح الكتالوج الكامل</button></div>
+            <div className="store-head-actions"><button type="button" className="store-secondary" onClick={() => signedIn ? onOpenQuickOrder() : onLogin()}>طلب سريع</button><button type="button" className="primary" onClick={() => onNavigate('catalog')}>فتح الكتالوج الكامل</button></div>
           </div>
           {signedIn && visible.length ? <div className="store-product-grid">{visible.map(p => <ProductCard key={p.id} product={p} favorite={favoriteIds.includes(p.id)} compared={compareIds.includes(p.id)} busy={busyId === p.id} onAdd={item => void add(item as StorefrontProduct)} onOpen={onOpenProduct} onFavorite={onToggleFavorite} onCompare={onToggleCompare} />)}</div> : (
             <div className="store-locked">
@@ -235,8 +235,8 @@ export default function Storefront(props: StorefrontProps) {
           <div className="store-journey-grid">
             <button type="button" onClick={() => onNavigate('catalog')}><span>01</span><strong>اكتشف</strong><small>بحث وتصنيفات وكتالوج.</small></button>
             <button type="button" onClick={() => signedIn && products[0] ? onOpenProduct(products[0]) : onLogin()} disabled={signedIn && !products.length}><span>02</span><strong>راجع</strong><small>تفاصيل الصنف والسعر والكمية.</small></button>
-            <button type="button" onClick={onOpenCart}><span>03</span><strong>أضف</strong><small>{cartCount ? `${cartCount.toLocaleString('ar-YE')} وحدة في السلة` : 'ابنِ طلبك الحالي.'}</small></button>
-            <button type="button" onClick={onOpenCheckout} disabled={!signedIn || cartCount === 0}><span>04</span><strong>اعتمد</strong><small>Checkout وإنشاء الطلب الحقيقي.</small></button>
+            <button type="button" onClick={() => signedIn ? onOpenCart() : onLogin()}><span>03</span><strong>أضف</strong><small>{cartCount ? `${cartCount.toLocaleString('ar-YE')} وحدة في السلة` : 'ابنِ طلبك الحالي.'}</small></button>
+            <button type="button" onClick={() => signedIn ? onOpenCheckout() : onLogin()} disabled={signedIn && cartCount === 0}><span>04</span><strong>اعتمد</strong><small>Checkout وإنشاء الطلب الحقيقي.</small></button>
           </div>
         </section>
 
@@ -256,7 +256,7 @@ export default function Storefront(props: StorefrontProps) {
       <footer className="store-footer">
         <div className="store-footer-brand"><span className="store-brand-mark">أ</span><div><strong>الأغبري</strong><small>Aghbari Commerce · B2B</small></div></div>
         <div><b>المتجر</b><button type="button" onClick={() => onNavigate('catalog')}>المنتجات</button><button type="button" onClick={() => onNavigate('orders')}>الطلبات</button></div>
-        <div><b>الحساب</b><button type="button" onClick={() => signedIn ? onNavigate('account') : onLogin()}>حسابي</button><button type="button" onClick={onOpenCart}>السلة</button></div>
+        <div><b>الحساب</b><button type="button" onClick={() => signedIn ? onNavigate('account') : onLogin()}>حسابي</button><button type="button" onClick={() => signedIn ? onOpenCart() : onLogin()}>السلة</button></div>
         <div><b>الحالة</b><span>{isOnline ? '● متصل' : '○ غير متصل'}</span><small>البيانات التجارية المصرح بها فقط.</small></div>
         {signedIn && onOpenAdmin && <button type="button" className="store-admin-button" onClick={onOpenAdmin}>لوحة التشغيل ↗</button>}
       </footer>
