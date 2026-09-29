@@ -35,6 +35,10 @@ describe('order input boundaries', () => {
     await expect(createOrder({ idempotencyKey: 'checkout-warehouse', lines: [{ productId: UUID, quantity: 1 }] }, 123 as unknown as string)).rejects.toThrow('معرّف المستودع غير صالح');
   });
 
+  it('rejects malformed shipping address identifiers before checkout RPC', async () => {
+    await expect(createOrder({ idempotencyKey: 'checkout-address', shippingAddressId: 'not-a-uuid', lines: [{ productId: UUID, quantity: 1 }] }, UUID)).rejects.toThrow('معرّف عنوان التسليم غير صالح');
+  });
+
   it('rejects order quantities above the server operational ceiling before network use', async () => {
     await expect(createOrder({ idempotencyKey: 'checkout-quantity', lines: [{ productId: UUID, quantity: 10_001 }] }, UUID)).rejects.toThrow('بين 1 و10000');
   });
