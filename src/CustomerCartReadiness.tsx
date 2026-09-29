@@ -1,4 +1,3 @@
-import type { Product } from './domain/types';
 
 export default function CustomerCartReadiness({online,quantitiesConfirmed,minOrderValue,total,cartCount,cartLines,validLines,showPaymentMethods,paymentAvailable}:{online:boolean;quantitiesConfirmed:boolean;minOrderValue:number;total:number;cartCount:number;cartLines:number;validLines:boolean;showPaymentMethods:boolean;paymentAvailable:boolean}){
  const checks=[
