@@ -24,7 +24,7 @@ function dateKey(value: string) {
 
 export default function CustomerOrdersPanel({
   orders, loading, detailBusy, productsCount,
-  onOpenDetail, onReorder, onReload
+  onOpenDetail, onReorder, onReload, hasMore, loadingMore, onLoadMore
 }: {
   orders: CustomerOrderSummary[];
   loading: boolean;
@@ -33,6 +33,9 @@ export default function CustomerOrdersPanel({
   onOpenDetail: (order: CustomerOrderSummary) => void;
   onReorder: (order: CustomerOrderSummary) => void;
   onReload: () => void;
+  hasMore: boolean;
+  loadingMore: boolean;
+  onLoadMore: () => void;
 }) {
   const [query,setQuery] = useState('');
   const [status,setStatus] = useState('all');
@@ -132,6 +135,6 @@ export default function CustomerOrdersPanel({
           <div className="order-footer"><button type="button" disabled={detailBusy} onClick={()=>onOpenDetail(order)}>عرض التفاصيل والتتبع</button><button type="button" className="ghost" disabled={loading} onClick={()=>onReorder(order)}>إعادة الطلب</button></div>
         </article>;
       })}</div>
-      <div className="customer-orders-pagination" aria-label="صفحات الطلبات"><span>صفحة {activePage} / {pages} · عرض {((activePage-1)*PAGE_SIZE)+1}–{Math.min(activePage*PAGE_SIZE,filtered.length)} من {filtered.length}</span><div><button type="button" className="ghost" onClick={()=>setPage(value=>Math.max(1,value-1))} disabled={activePage===1}>السابق</button><button type="button" className="ghost" onClick={()=>setPage(value=>Math.min(pages,value+1))} disabled={activePage===pages}>التالي</button></div></div></>}
+      <div className="customer-orders-pagination" aria-label="صفحات الطلبات"><span>صفحة {activePage} / {pages} · عرض {((activePage-1)*PAGE_SIZE)+1}–${Math.min(activePage*PAGE_SIZE,filtered.length)} من {filtered.length}{hasMore?' · يوجد المزيد على الخادم':''}</span><div><button type="button" className="ghost" onClick={()=>setPage(value=>Math.max(1,value-1))} disabled={activePage===1}>السابق</button><button type="button" className="ghost" onClick={()=>setPage(value=>Math.min(pages,value+1))} disabled={activePage===pages}>التالي</button></div></div>{hasMore&&<div className="customer-orders-load-more"><button type="button" onClick={onLoadMore} disabled={loadingMore||loading}>{loadingMore?'جارٍ تحميل الطلبات الأقدم…':'تحميل الطلبات الأقدم'}</button></div>}</>}
   </section>;
 }

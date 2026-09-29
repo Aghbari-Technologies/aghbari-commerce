@@ -129,3 +129,23 @@ export async function getCustomerOrderDetail(orderId:string): Promise<CustomerOr
   const shippingAddress = assertShippingAddressSnapshot(order.shipping_address);
   return { ...assertCustomerOrderSummary({...order, order_number:Number(order.order_number), total:Number(order.total)}), items:mappedItems, timeline, statusLabel:STATUS_LABELS[order.status]??order.status, shipping_address:shippingAddress };
 }
+
+
+export async function getCustomerOrdersPage(offset = 0, limit = 30): Promise<CustomerOrderSummary[]> {
+  const safeOffset = Math.max(0, Math.trunc(offset));
+  const safeLimit = Math.min(Math.max(Math.trunc(limit), 1), 50);
+  const { data, error } = await retryRead(async () => {
+    const result = await requireSupabase()
+      .from('orders')
+      .select('id,order_number,status,total,currency,created_at')
+      .order('created_at', { ascending: false })
+      .range(safeOffset, safeOffset + safeLimit - 1);
+    if (result.error) throw result.error;
+    return result;
+  });
+  return (data ?? []).map((item) => assertCustomerOrderSummary({
+    ...item,
+    order_number: Number(item.order_number),
+    total: typeof item.total === 'number' ? item.total : Number(item.total)
+  }));
+}
