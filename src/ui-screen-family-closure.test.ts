@@ -106,6 +106,8 @@ describe('purchasing, inventory and receiving collection closure', () => {
     const sourceText = readRepoSource('InventoryHistoryPanel.tsx');
     expect(sourceText).toContain('ترتيب حركات المخزون');
     expect(sourceText).toContain("sort==='oldest'");
+    expect(sourceText).toContain('تصدير CSV');
+    expect(sourceText).toContain('exportCurrent');
   });
 
   it('keeps receipt history sorting tied to received_at', () => {
@@ -170,6 +172,8 @@ describe('inventory and warehouse full collection controls', () => {
     expect(sourceText).toContain('ترتيب المستودعات');
     expect(sourceText).toContain("sort==='name'");
     expect(sourceText).toContain('created_at');
+    expect(sourceText).toContain('تصدير CSV');
+    expect(sourceText).toContain('exportCurrent');
   });
 });
 
