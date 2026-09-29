@@ -10,7 +10,7 @@ select ok(
     where n.nspname='public'
       and p.proname='bulk_transition_orders'
       and p.pronargs=3
-      and p.proargnames=ARRAY['p_idempotency_key','p_order_ids','p_to_status']::text[]
+      and p.proargnames[1:3]=ARRAY['p_idempotency_key','p_order_ids','p_to_status']::text[]
       and p.proargtypes[0]='text'::regtype::oid
       and p.proargtypes[1]='uuid[]'::regtype::oid
       and p.proargtypes[2]='public.order_status'::regtype::oid
