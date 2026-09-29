@@ -22,6 +22,9 @@ describe('Aghbari full-product commerce surfaces', () => {
     expect(store).toContain('Checkout');
     expect(store).toContain('getCatalog');
     expect(store).toContain('getCart');
+    expect(store).toContain("?checkout=1#catalog");
+    expect(app).toContain("params.get('checkout')!=='1'");
+    expect(app).toContain('setCheckoutOpen(true)');
     expect(home).toContain('customer-home-merchandising');
     expect(home).toContain('customer-home-product-strip');
     expect(admin).toContain('admin-command-overview');
