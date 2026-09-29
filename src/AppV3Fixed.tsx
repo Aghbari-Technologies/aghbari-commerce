@@ -425,6 +425,8 @@ export default function AppV3Fixed(){
   async function login(e:FormEvent){e.preventDefault();if(busy)return;setBusy(true);setError('');setMessage('');try{const s=await signIn(email,password);if(!s)throw new Error('تعذر إنشاء جلسة دخول صالحة.');await loadIdentity(s.user.id);setSignedIn(true);setReady(true);setStorefrontOpen(true);window.history.replaceState({},'',window.location.pathname+'#store');}catch(e){setSignedIn(false);setReady(true);setError(friendlyAuthError(e));}finally{setBusy(false);}}
   async function requestPasswordReset(e:FormEvent){e.preventDefault();if(resetBusy)return;if(!email.trim())return setError('اكتب بريد الحساب أولًا لاستعادة كلمة المرور.');setResetBusy(true);setError('');setMessage('');setResetSent(false);try{await resetPassword(email,window.location.origin);setResetSent(true);setMessage('تم إرسال رابط استعادة كلمة المرور إلى بريد الحساب إن كان مسجلًا.');}catch(e){setError(friendlyAuthError(e));}finally{setResetBusy(false);}}
   async function logout(){await signOut();}
+  useEffect(()=>{if(typeof window==='undefined'||!signedIn||storefrontOpen||!cart.length)return;const params=new URLSearchParams(window.location.search);if(params.get('checkout')!=='1')return;params.delete('checkout');window.history.replaceState({},'',window.location.pathname+'#catalog');setCheckoutOpen(true);},[cart.length,signedIn,storefrontOpen]);
+
   if(!ready)return <div className="customer-shell"><OperationalLoadingSkeleton variant="app" /></div>;
   if(storefrontOpen)return <Storefront signedIn={signedIn} onLogin={()=>{setStorefrontOpen(false);window.history.replaceState({},'',window.location.pathname+'?login=1#catalog');setSection('catalog');}} />;
   if(!signedIn)return <div className="customer-shell auth-shell">
