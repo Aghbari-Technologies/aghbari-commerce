@@ -76,6 +76,14 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
   const productNameFor = (id: string) => products.find((product) => product.id === id)?.name ?? id;
   useEffect(()=>{ if (!selectedOrderItems.length) { setReceiveLines([{id:'receive-1',purchaseOrderItemId:'',productId:'',quantity:'1'}]); return; } setReceiveLines(current=>{ const valid=current.filter(line=>selectedOrderItems.some(item=>item.id===line.purchaseOrderItemId)); if(valid.length) return valid; const first=selectedOrderItems[0]; return [{id:'receive-1',purchaseOrderItemId:first.id,productId:first.product_id,quantity:'1'}]; }); },[selectedOrderItems.map(item=>item.id).join('|')]);
   const visibleOrders=useMemo(()=>{const needle=orderQuery.trim().toLocaleLowerCase();return orders.filter(o=>(orderStatus==='all'||o.status===orderStatus)&&(!needle||String(o.purchase_order_number).includes(needle)||(suppliers.find(s=>s.id===o.supplier_id)?.name??'').toLocaleLowerCase().includes(needle)||statusLabels[o.status].includes(needle))).sort((a,b)=>{if(orderSort==='highest')return Number(b.total)-Number(a.total);if(orderSort==='lowest')return Number(a.total)-Number(b.total);const delta=new Date(b.created_at).getTime()-new Date(a.created_at).getTime();return orderSort==='oldest'?-delta:delta;});},[orderQuery,orderSort,orderStatus,orders,suppliers]); const orderPages=Math.max(1,Math.ceil(visibleOrders.length/8)); const activeOrderPage=Math.min(orderPage,orderPages); const pagedOrders=visibleOrders.slice((activeOrderPage-1)*8,activeOrderPage*8);
+  function exportPurchaseOrders(){
+    if(!visibleOrders.length)return;
+    const headers=['رقم أمر الشراء','المورد','المستودع','الحالة','الإجمالي','العملة','تاريخ الإنشاء'];
+    const rows=visibleOrders.map(order=>[order.purchase_order_number,supplierNameFor(order.supplier_id),warehouses.find(w=>w.id===order.warehouse_id)?.name??'',statusLabels[order.status],order.total,order.currency,new Date(order.created_at).toLocaleString('ar-YE')]);
+    const csv='\\ufeff'+[headers,...rows].map(row=>row.map(value=>'"'+String(value??'').replaceAll('"','""')+'"').join(',')).join('\\n');
+    const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+    const anchor=document.createElement('a');anchor.href=url;anchor.download='aghbari-purchase-orders-'+new Date().toISOString().slice(0,10)+'.csv';anchor.click();URL.revokeObjectURL(url);
+  }
 
   if (!canManage) return null;
 
@@ -109,7 +117,7 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
           <select aria-label="ترتيب أوامر الشراء" value={orderSort} onChange={(e) => setOrderSort(e.target.value as typeof orderSort)} disabled={loading}>
             <option value="newest">الأحدث</option><option value="oldest">الأقدم</option><option value="highest">الأعلى قيمة</option><option value="lowest">الأقل قيمة</option>
           </select>
-          <button type="button" className="ghost" onClick={() => { setOrderQuery(''); setOrderStatus('all'); setOrderSort('newest'); }} disabled={!orderQuery && orderStatus === 'all' && orderSort === 'newest'}>مسح</button>
+          <button type="button" className="ghost" onClick={exportPurchaseOrders} disabled={loading || !visibleOrders.length}>تصدير CSV</button><button type="button" className="ghost" onClick={() => { setOrderQuery(''); setOrderStatus('all'); setOrderSort('newest'); }} disabled={!orderQuery && orderStatus === 'all' && orderSort === 'newest'}>مسح</button>
         </div>
         {orders.length === 0 ? (
           <div className="empty-state"><strong>لا توجد أوامر شراء بعد.</strong><button type="button" onClick={() => void load()}>إعادة المحاولة</button></div>

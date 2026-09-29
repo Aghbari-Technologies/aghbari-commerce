@@ -151,6 +151,22 @@ describe('purchasing, inventory and receiving collection closure', () => {
     expect(sourceText).toContain("orderSort==='highest'");
   });
 
+describe('inventory and purchasing operational export closure', () => {
+  it('keeps low-stock export scoped to the filtered reorder queue', () => {
+    const sourceText = readRepoSource('InventoryPanel.tsx');
+    expect(sourceText).toContain('exportLowStock');
+    expect(sourceText).toContain('تصدير CSV');
+    expect(sourceText).toContain('lowStockRows.map');
+  });
+
+  it('keeps purchase-order export scoped to the filtered order collection', () => {
+    const sourceText = readRepoSource('PurchasingPanel.tsx');
+    expect(sourceText).toContain('exportPurchaseOrders');
+    expect(sourceText).toContain('تصدير CSV');
+    expect(sourceText).toContain('visibleOrders.map');
+  });
+});
+
   it('keeps inventory history sorting tied to recorded movement timestamps', () => {
     const sourceText = readRepoSource('InventoryHistoryPanel.tsx');
     expect(sourceText).toContain('ترتيب حركات المخزون');
