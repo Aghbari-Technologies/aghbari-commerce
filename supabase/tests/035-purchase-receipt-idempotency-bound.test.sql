@@ -17,7 +17,7 @@ select ok(exists (
   join pg_namespace n on n.oid=p.pronamespace
   where n.nspname='public'
     and p.proname='create_purchase_order'
-    and pg_get_functiondef(p.oid) like '%length(key)%128%'
+    and replace(pg_get_functiondef(p.oid),' ','') like '%length(key)<16orlength(key)>128%'
 ), 'create_purchase_order accepts the canonical 128-character maximum');
 
 select ok(not exists (
@@ -26,7 +26,7 @@ select ok(not exists (
   join pg_namespace n on n.oid=p.pronamespace
   where n.nspname='public'
     and p.proname='create_purchase_order'
-    and pg_get_functiondef(p.oid) like '%length(key)%200%'
+    and replace(pg_get_functiondef(p.oid),' ','') like '%length(key)<16orlength(key)>200%'
 ), 'create_purchase_order no longer contains the legacy 200-character maximum');
 
 select ok(exists (
