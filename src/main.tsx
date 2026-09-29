@@ -13,6 +13,7 @@ import './customer-mobile-more.css';
 import './ui-final-product.css';
 import './ui-screen-family-closure.css';
 import './ui-world-class.css';
+import './ui-global-search.css';
 
 const invitationToken = new URLSearchParams(window.location.search).get('invite');
 const RootApp = invitationToken ? <InvitationAcceptance token={invitationToken} /> : <App />;

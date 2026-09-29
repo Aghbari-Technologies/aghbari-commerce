@@ -264,3 +264,18 @@ Complete the exact current-SHA workflow matrix for `edd83cc1aae28e3b68cf7af812df
 - Do not remove the global `/` search shortcut or make it hijack form/contenteditable controls.
 - Do not duplicate purchasing notes/email into unrelated state or create a second purchasing persistence path.
 - Do not transfer proof from any earlier SHA.
+
+
+## 2026-09-29 — Runtime wiring + exact handoff alignment
+- CURRENT EXACT HEAD: pending commit (next write below).
+- Implemented: activated the previously created `src/ui-global-search.css` in `src/main.tsx`; strengthened its source contract so the visual enhancement cannot remain an unreferenced artifact.
+- Verification intent: next exact-SHA CI matrix is the sole authority for this final aligned tree; previous SHA evidence is not transferred.
+- Production: `HOLD / NO TOUCH`.
+
+## NEXT EXECUTABLE ACTION
+Run/inspect the full exact-current-SHA matrix for the resulting head; fix only the first material failure. Then continue the next independent high-value UI/core gap, with purchase/receipt 200→128 remaining release-gated and unapplied.
+
+## DO NOT REPEAT
+- Do not leave `src/ui-global-search.css` unimported.
+- Do not transfer proof from any earlier SHA.
+- Do not retry unchanged hosted deployment blockers.

@@ -16,5 +16,7 @@ describe('customer global search accessibility contract', () => {
     expect(source).toContain("event.key !== '/'");
     expect(source).toContain('target?.isContentEditable');
     expect(source).toContain('aria-keyshortcuts="/"');
+    const entry = readFileSync(resolve(process.cwd(), 'src/main.tsx'), 'utf8');
+    expect(entry).toContain("import './ui-global-search.css';");
   });
 });
