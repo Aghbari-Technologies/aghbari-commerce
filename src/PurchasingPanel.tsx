@@ -10,7 +10,7 @@ type Status = 'draft' | 'submitted' | 'approved' | 'partially_received' | 'recei
 interface Product { id: string; sku: string; name: string; unit: string; }
 interface Warehouse { id: string; name: string; }
 interface Supplier { id: string; name: string; phone: string | null; }
-interface PurchaseOrder { id: string; purchase_order_number: number; supplier_id: string; warehouse_id: string; status: Status; total: number; currency: string; created_at: string; }
+interface PurchaseOrder { id: string; purchase_order_number: number; supplier_id: string; warehouse_id: string; status: Status; total: number; currency: string; created_at: string; notes?: string | null; }
 interface PurchaseItem { id: string; purchase_order_id: string; product_id: string; quantity_ordered: number; quantity_received: number; unit_cost: number; }
 
 const statusLabels: Record<Status, string> = {
@@ -48,7 +48,7 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
       supabase.from('products').select('id,sku,name,unit').eq('status', 'active').order('name').limit(500),
       supabase.from('warehouses').select('id,name').eq('is_active', true).order('created_at'),
       supabase.from('suppliers').select('id,name,phone').eq('is_active', true).order('name').limit(200),
-      supabase.from('purchase_orders').select('id,purchase_order_number,supplier_id,warehouse_id,status,total,currency,created_at').order('created_at', { ascending: false }).limit(100),
+      supabase.from('purchase_orders').select('id,purchase_order_number,supplier_id,warehouse_id,status,total,currency,created_at,notes').order('created_at', { ascending: false }).limit(100),
       supabase.from('purchase_order_items').select('id,purchase_order_id,product_id,quantity_ordered,quantity_received,unit_cost').order('created_at')
     ]);
     if (productError) throw productError;
@@ -164,7 +164,7 @@ export default function PurchasingPanel({ role }: { role: UserRole }) {
       </form>
     </div>}
     {error && <div className="error-banner" role="alert"><span>{error}</span><button type="button" className="ghost" onClick={() => void load()} disabled={loading}>إعادة تحميل المشتريات</button></div>}{message && <div className="success" role="status">{message}</div>}
-    {detailOrderId&&(()=>{const order=orders.find(item=>item.id===detailOrderId);if(!order)return null;const lines=items.filter(item=>item.purchase_order_id===order.id);return <RecordDetailDrawer eyebrow="Purchasing" title={`أمر شراء #${order.purchase_order_number}`} summary={`${supplierNameFor(order.supplier_id)} · ${statusLabels[order.status]}`} fields={[{label:'المورد',value:supplierNameFor(order.supplier_id)},{label:'المستودع',value:warehouses.find(w=>w.id===order.warehouse_id)?.name??'—'},{label:'الحالة',value:statusLabels[order.status]},{label:'الإجمالي',value:`${order.total} ${order.currency}`},{label:'عدد البنود',value:lines.length},{label:'المعرّف',value:order.id},{label:'البنود',value:<div className="record-detail-lines">{lines.length?lines.map(line=><div key={line.id}><span>{productNameFor(line.product_id)}</span><strong>{line.quantity_ordered} · استلم {line.quantity_received} · {line.unit_cost} {order.currency}</strong></div>):'لا توجد بنود مرتبطة بهذا الأمر.'}</div>,wide:true}]} onClose={()=>setDetailOrderId(null)}/>})()}
+    {detailOrderId&&(()=>{const order=orders.find(item=>item.id===detailOrderId);if(!order)return null;const lines=items.filter(item=>item.purchase_order_id===order.id);return <RecordDetailDrawer eyebrow="Purchasing" title={`أمر شراء #${order.purchase_order_number}`} summary={`${supplierNameFor(order.supplier_id)} · ${statusLabels[order.status]}`} fields={[{label:'المورد',value:supplierNameFor(order.supplier_id)},{label:'المستودع',value:warehouses.find(w=>w.id===order.warehouse_id)?.name??'—'},{label:'الحالة',value:statusLabels[order.status]},{label:'الإجمالي',value:`${order.total} ${order.currency}`},{label:'ملاحظات الأمر',value:order.notes?.trim()||'لا توجد ملاحظات.',wide:true,content:true},{label:'عدد البنود',value:lines.length},{label:'المعرّف',value:order.id},{label:'البنود',value:<div className="record-detail-lines">{lines.length?lines.map(line=><div key={line.id}><span>{productNameFor(line.product_id)}</span><strong>{line.quantity_ordered} · استلم {line.quantity_received} · {line.unit_cost} {order.currency}</strong></div>):'لا توجد بنود مرتبطة بهذا الأمر.'}</div>,wide:true}]} onClose={()=>setDetailOrderId(null)}/>})()}
 
   </div>;
 }
