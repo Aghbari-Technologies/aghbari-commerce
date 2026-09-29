@@ -435,7 +435,7 @@ export default function AppV3Fixed(){
         onNavigate={navigate}
         onOpenCart={()=>setCartOpen(true)}
       />}
-      {section==='catalog'&&<><section className="hero-card"><div><span className="eyebrow">تجارة جملة أسرع</span><h2>احتياج متجرك، في طلب واحد.</h2><p>ابحث بالاسم أو SKU أو الباركود، راجع شرائح السعر، ثم اعتمد الكميات وأرسل الطلب.</p></div><div className="hero-stat"><strong>{products.length}</strong><span>صنف في الصفحة</span></div></section>
+      {section==='catalog'&&<><section className="hero-card customer-catalog-hero" style={{background:'linear-gradient(135deg,#102a43 0%,#243b53 72%,#314f67 100%)',color:'#fff'}}><div><span className="eyebrow" style={{color:'#d9e6f2'}}>تجارة جملة أسرع</span><h2 style={{color:'#fff'}}>احتياج متجرك، في طلب واحد.</h2><p style={{color:'#d9e6f2'}}>ابحث بالاسم أو SKU أو الباركود، راجع شرائح السعر، ثم اعتمد الكميات وأرسل الطلب.</p></div><div className="hero-stat" style={{borderColor:'rgba(255,255,255,.22)'}}><strong style={{color:'#fff'}}>{products.length}</strong><span style={{color:'#d9e6f2'}}>صنف في الصفحة</span></div></section>
       <section className="customer-overview-strip" aria-label="ملخص حساب التاجر">
         <article className="customer-overview-card customer-overview-primary">
           <span className="overview-icon" aria-hidden="true">◫</span>
