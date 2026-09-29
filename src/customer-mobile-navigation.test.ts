@@ -8,6 +8,7 @@ describe('customer mobile navigation coverage', () => {
     expect(source).toContain('className="customer-mobile-dock"');
     expect(source).toContain('navigate("home")');
     expect(source).toContain('navigate("catalog")');
+    expect(source).toContain('navigate("saved")');
     expect(source).toContain('navigate("orders")');
     expect(source).toContain('setCartOpen(true)');
     expect(source).toContain('navigate("account")');
