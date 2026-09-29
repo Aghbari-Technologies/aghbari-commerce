@@ -32,6 +32,7 @@ import AdminBoundaryCenter from './AdminBoundaryCenter';
 import './admin-executive-dashboard.css';
 import { adminTargetForPath, getAdminStructureForRole } from './structure/admin-structure';
 import WorkspaceSurfaceRail from './WorkspaceSurfaceRail';
+import { MAX_BULK_ORDER_SELECTION, canSelectBulkOrder } from './admin-bulk-selection';
 
 interface StaffProduct { id: string; sku: string; name: string; unit: string; }
 interface Warehouse { id: string; name: string; }
@@ -93,7 +94,17 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
   function toggleOrderSelection(orderId: string) {
     setSelectedOrderIds((current) => {
       const next = new Set(current);
-      if (next.has(orderId)) next.delete(orderId); else next.add(orderId);
+      if (next.has(orderId)) {
+        next.delete(orderId);
+        setError(null);
+        return next;
+      }
+      if (!canSelectBulkOrder(current.size)) {
+        setError(`الحد الأقصى للعملية الجماعية هو ${MAX_BULK_ORDER_SELECTION} طلبًا. ألغِ تحديد طلب واحد على الأقل قبل إضافة طلب آخر.`);
+        return next;
+      }
+      next.add(orderId);
+      setError(null);
       return next;
     });
   }
@@ -180,7 +191,14 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
     setSelectedOrderIds((current) => {
       const next = new Set(current);
       if (allPageSelected) pageOrderIds.forEach((id) => next.delete(id));
-      else pageOrderIds.forEach((id) => next.add(id));
+      else {
+        const missing = pageOrderIds.filter((id) => !next.has(id));
+        if (next.size + missing.length > MAX_BULK_ORDER_SELECTION) {
+          setError(`لا يمكن تحديد أكثر من ${MAX_BULK_ORDER_SELECTION} طلبًا في العملية الجماعية.`);
+          return next;
+        }
+        pageOrderIds.forEach((id) => next.add(id));
+      }
       return next;
     });
   }
@@ -222,8 +240,8 @@ export default function AdminPanel({ role, userId }: { role: UserRole; userId: s
       </div>
       {canOrderWorkflow && <div className="cart-panel" id="admin-orders"><div className="section-heading"><div><span className="eyebrow">التشغيل</span><h2>إدارة الطلبات</h2></div><span>{visibleOrders.length}/{orders.length} طلبات</span></div><div className="admin-card admin-order-filter"><label htmlFor="admin-order-search">بحث الطلبات</label><div className="order-queue-toolbar"><input id="admin-order-search" value={orderQuery} onChange={(e) => setOrderQuery(e.target.value)} placeholder="رقم الطلب أو اسم العميل أو الحالة" /><select aria-label="فلترة حالة الطلب" value={orderStatusFilter} onChange={(e) => setOrderStatusFilter(e.target.value as 'all'|OrderStatus)}><option value="all">كل الحالات</option>{(Object.keys(STATUS_LABELS) as OrderStatus[]).map((key) => <option key={key} value={key}>{STATUS_LABELS[key]}</option>)}</select><select aria-label="ترتيب الطلبات الإدارية" value={orderSort} onChange={(e) => setOrderSort(e.target.value as typeof orderSort)}><option value="newest">الأحدث</option><option value="oldest">الأقدم</option><option value="highest">الأعلى قيمة</option><option value="lowest">الأقل قيمة</option></select><button type="button" className="ghost" onClick={exportAdminOrders} disabled={ordersLoading || !visibleOrders.length}>تصدير CSV</button><button type="button" className="ghost" onClick={() => { setOrderQuery(''); setOrderStatusFilter('all'); setOrderSort('newest'); setOrderPage(1); }} disabled={!orderQuery && orderStatusFilter === 'all' && orderSort === 'newest'}>مسح</button></div></div>{ordersLoading ? <div className="admin-orders-loading-skeleton" role="status" aria-label="جارٍ تحميل الطلبات التشغيلية">{Array.from({length:5}).map((_,index)=><article key={index}><div><i/><i/></div><i/><i/><span/></article>)}</div> : !orders.length ? <div className="cart-empty">لا توجد طلبات تشغيلية بعد.</div> : !visibleOrders.length ? <div className="cart-empty">لا توجد نتائج مطابقة للبحث.</div> : <div className="cart-lines">
         <div className="bulk-order-toolbar" aria-label="العمليات الجماعية">
-          <label className="bulk-order-select"><input type="checkbox" checked={allPageSelected} onChange={togglePageSelection} aria-label={allPageSelected ? 'إلغاء تحديد طلبات الصفحة' : 'تحديد طلبات الصفحة'} /><span>تحديد الصفحة</span></label>
-          <span className="bulk-order-count">{selectedOrders.length} محددة</span>
+          <label className="bulk-order-select"><input type="checkbox" checked={allPageSelected} onChange={togglePageSelection} aria-label={allPageSelected ? 'إلغاء تحديد طلبات الصفحة' : 'تحديد طلبات الصفحة'} disabled={!allPageSelected && selectedOrderIds.size + pageOrderIds.filter(id => !selectedOrderIds.has(id)).length > MAX_BULK_ORDER_SELECTION} /><span>تحديد الصفحة</span></label>
+          <span className="bulk-order-count">{selectedOrders.length}/{MAX_BULK_ORDER_SELECTION} محددة</span>
           <select aria-label="الانتقال الجماعي" value={bulkTargetStatus} onChange={(e) => setBulkTargetStatus(e.target.value as OrderStatus | '')} disabled={!selectedOrders.length || !bulkAllowedTargets.length || bulkBusy}>
             <option value="">اختر انتقالًا مشتركًا</option>
             {bulkAllowedTargets.map((next) => <option key={next} value={next}>{STATUS_LABELS[next]}</option>)}
