@@ -1,5 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 import { AGHBARI_ADMIN_LIVE_ITEMS } from '../src/structure/admin-structure';
+import { CUSTOMER_PORTAL_SECTIONS } from '../src/structure/customer-structure';
 
 async function login(page: Page, email: string, password: string) {
   await page.goto('/');
@@ -10,7 +11,7 @@ async function login(page: Page, email: string, password: string) {
 }
 
 test.describe('UI reference-family browser coverage', () => {
-  test('customer portal: all six canonical surfaces render with their primary state controls', async ({ page }) => {
+  test('customer portal: all seven canonical sections render with their primary state controls', async ({ page }) => {
     const email = process.env.E2E_EMAIL;
     const password = process.env.E2E_PASSWORD;
     expect(email).toBeTruthy();
@@ -20,16 +21,18 @@ test.describe('UI reference-family browser coverage', () => {
     await login(page, email!, password!);
     await expect(page.locator('.customer-shell')).toBeVisible();
 
-    const sections = [
-      ['catalog', 'الكتالوج'],
-      ['orders', 'طلباتي'],
-      ['finance', 'المركز المالي'],
-      ['templates', 'الطلبات المتكررة'],
-      ['account', 'حسابي'],
-      ['notifications', 'الإشعارات'],
-    ] as const;
+    const sectionLabels: Record<(typeof CUSTOMER_PORTAL_SECTIONS)[number], string> = {
+      home: 'الرئيسية',
+      catalog: 'الكتالوج',
+      orders: 'طلباتي',
+      finance: 'المركز المالي',
+      templates: 'الطلبات المتكررة',
+      account: 'حسابي',
+      notifications: 'الإشعارات',
+    };
 
-    for (const [section, label] of sections) {
+    for (const section of CUSTOMER_PORTAL_SECTIONS) {
+      const label = sectionLabels[section];
       await page.getByRole('button', { name: label, exact: true }).first().click();
       await expect(page).toHaveURL(new RegExp('#' + section + '$'));
       await page.screenshot({ path: 'test-results/ui-customer-' + section + '-desktop.png', fullPage: true });
@@ -70,7 +73,6 @@ test.describe('UI reference-family browser coverage', () => {
     await page.getByRole('button', { name: 'الرئيسية', exact: true }).first().click();
     await expect(page).toHaveURL(/#home$/);
     await expect(page.locator('.customer-home-workspace')).toBeVisible();
-    await page.screenshot({ path: 'test-results/ui-customer-home-desktop.png', fullPage: true });
 
     const openCapability = async (sectionLabel: string, capabilityLabel: string, section: string) => {
       await page.getByRole('button', { name: sectionLabel, exact: true }).first().click();
