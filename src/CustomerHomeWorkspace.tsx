@@ -18,6 +18,9 @@ interface CustomerHomeWorkspaceProps {
   availableCreditText: string;
   financeReady: boolean;
   templatesCount: number;
+  favoritesCount: number;
+  recentCount: number;
+  unreadNotifications: number;
   showCredit: boolean;
   showTemplates: boolean;
   isOnline: boolean;
@@ -70,6 +73,9 @@ export default function CustomerHomeWorkspace({
   availableCreditText,
   financeReady,
   templatesCount,
+  favoritesCount,
+  recentCount,
+  unreadNotifications,
   showCredit,
   showTemplates,
   isOnline,
@@ -240,7 +246,7 @@ export default function CustomerHomeWorkspace({
           </button>
           <button type="button" className="portal-quick-item" onClick={() => onNavigate('saved')}>
             <span aria-hidden="true">♡</span>
-            <div><strong>المحفوظات والمفضلة</strong><small>عودة سريعة إلى أصنافك المحفوظة والمشاهدة مؤخرًا</small></div>
+            <div><strong>المحفوظات والمفضلة</strong><small>{favoritesCount.toLocaleString('ar-YE')} مفضلة · {recentCount.toLocaleString('ar-YE')} شوهدت مؤخرًا</small></div>
             <b>↗</b>
           </button>
           <button type="button" className="portal-quick-item" onClick={() => onOpenCart()}>
@@ -274,7 +280,7 @@ export default function CustomerHomeWorkspace({
           </button>
           <button type="button" className="portal-quick-item" onClick={() => onNavigate('notifications')}>
             <span aria-hidden="true">🔔</span>
-            <div><strong>الإشعارات</strong><small>التنبيهات المرتبطة بالحساب</small></div>
+            <div><strong>الإشعارات</strong><small>{unreadNotifications>0?`${unreadNotifications.toLocaleString('ar-YE')} غير مقروء`:'لا توجد إشعارات غير مقروءة'}</small></div>
             <b>↗</b>
           </button>
         </div>

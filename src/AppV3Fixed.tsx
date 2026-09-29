@@ -463,6 +463,9 @@ export default function AppV3Fixed(){
         availableCreditText={finance ? money(finance.available, finance.currency) : '—'}
         financeReady={Boolean(finance)}
         templatesCount={templates.length}
+        favoritesCount={favoriteIds.length}
+        recentCount={recentProductIds.length}
+        unreadNotifications={unreadNotificationCount}
         showCredit={config.showCredit}
         showTemplates={config.showTemplates}
         isOnline={online}
