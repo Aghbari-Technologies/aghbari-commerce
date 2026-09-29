@@ -114,6 +114,14 @@ describe('purchasing, inventory and receiving collection closure', () => {
     expect(sourceText).toContain('received_at');
     expect(sourceText).toContain("sort==='oldest'");
   });
+
+  it('keeps receipt history operationally deep with real receipt lines and export', () => {
+    const sourceText = readRepoSource('PurchaseReceiptHistoryPanel.tsx');
+    expect(sourceText).toContain("purchase_receipt_items");
+    expect(sourceText).toContain('itemsFor(receipt.id)');
+    expect(sourceText).toContain('تصدير CSV');
+    expect(sourceText).toContain('receipt-detail-line-list');
+  });
 });
 
 
