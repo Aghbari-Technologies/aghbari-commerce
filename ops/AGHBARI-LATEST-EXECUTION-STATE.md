@@ -246,3 +246,21 @@ Finish the exact-SHA workflow matrix for `6aa5f5de9d476ce01a4d099bfcab15453030be
 - Do not copy the external 84-image corpus into production assets.
 - Do not transfer proof from older SHAs.
 - Do not retry unchanged Vercel/Netlify blockers.
+
+
+## 2026-09-29 — Continued world-class operations/customer UX batch
+- CODE HEAD: `edd83cc1aae28e3b68cf7af812dfba382e91f244`
+- Implemented in this lineage: bounded Admin bulk order selection at the canonical 100-order server limit with focused regression contract; global Customer catalog search shortcut `/` with form/contenteditable guards; completed purchasing operational context fields for supplier email, purchase-order notes and receiving notes using existing service contracts; persisted purchase-order notes are now visible in the real order detail drawer.
+- Verified by source audit: current UI controls map to existing service/RPC contracts; notes remain bounded to the existing 2000-character service contract; no new production authority or fake transaction was introduced.
+- NOT_PROVEN on this exact HEAD: final current-SHA UI Visual Proof / Quality / Test-the-Test / G1 / Browser runtime certification results were still running at checkpoint time.
+- External blockers: hosted deployment paths remain separate and unresolved; no unchanged blocker retry was performed.
+- PRODUCTION: `HOLD / NO TOUCH`
+
+## NEXT EXECUTABLE ACTION
+Complete the exact current-SHA workflow matrix for `edd83cc1aae28e3b68cf7af812dfba382e91f244`; fix only the first material failure. After green proof, continue the next independent high-value Customer/Admin/Core capability. Do not reopen closed surfaces without a regression, invalidated evidence or direct requirement change.
+
+## DO NOT REPEAT
+- Do not remove the 100-order bulk-selection ceiling or replace it with client-only bypasses.
+- Do not remove the global `/` search shortcut or make it hijack form/contenteditable controls.
+- Do not duplicate purchasing notes/email into unrelated state or create a second purchasing persistence path.
+- Do not transfer proof from any earlier SHA.
