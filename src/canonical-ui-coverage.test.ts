@@ -72,7 +72,10 @@ describe('canonical UI coverage', () => {
         }
       }
     }
-    for (const target of liveTargets) expect(adminSource).toContain(target);
+    for (const target of liveTargets) {
+      const anchorId = target.replace(/^#/, '');
+      expect(adminSource).toContain(`id="${anchorId}"`);
+    }
   });
 
   it('keeps every Staff surface pack bound to a live or explicit boundary target', () => {
