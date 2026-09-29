@@ -232,3 +232,9 @@
 - `/` and `/store` are customer commercial presentation surfaces; `/admin-*` is the operational control plane.
 - The 84 UI reference assets are visual references organized into screen packs; they do not authorize unsupported external business behavior. Implement unique families once and preserve provenance.
 - Existing Commerce services remain the only source of pricing, inventory, customer authorization, cart and transactional truth.
+
+
+## 2026-09-30 — Durable customer/admin surface decision
+- Aghbari Commerce is explicitly two first-class product surfaces: Customer Storefront/Portal for the buying journey and Admin/Staff Control Center for operations.
+- `/` and `/store` are customer-facing commercial surfaces; admin routes remain operational and must never be presented as the storefront.
+- World-class visual improvements are presentation-layer changes over canonical Commerce services. Product/price/stock/cart/order truth stays server-authoritative and tenant-scoped.
