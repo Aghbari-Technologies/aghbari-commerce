@@ -508,3 +508,8 @@
   .admin-panel .operation-record button{width:100%!important}
   .admin-panel .admin-boundary-center-heading{align-items:stretch!important;flex-direction:column!important}
 }
+
+.customer-home-product-actions{display:flex;align-items:center;gap:5px}
+.customer-home-product-copy .customer-home-product-actions button:first-child{background:linear-gradient(135deg,#0b91a4,#0a7c8e);color:#fff;border-color:#0b91a4}
+.customer-home-product-copy .customer-home-product-actions button:disabled{opacity:.55;cursor:not-allowed}
+@media(max-width:430px){.customer-home-product-actions{width:100%;flex-wrap:wrap}.customer-home-product-copy .customer-home-product-actions button{flex:1}}

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { ReactNode } from 'react';
 import type { Product } from './domain/types';
 
@@ -26,6 +27,8 @@ interface CustomerHomeWorkspaceProps {
   featuredProducts?: Array<Product & { authorizedPrice?: number; priceCurrency?: string }>;
   categories?: Array<{ id: string; name: string }>;
   onOpenProduct?: (product: Product) => void;
+  onAddProduct?: (product: Product) => Promise<boolean>;
+  onSelectCategory?: (id: string) => void;
 }
 
 function HomeStat({
@@ -74,7 +77,25 @@ export default function CustomerHomeWorkspace({
   featuredProducts = [],
   categories = [],
   onOpenProduct,
+  onAddProduct,
+  onSelectCategory,
 }: CustomerHomeWorkspaceProps) {
+  const [addingProductId, setAddingProductId] = useState<string | null>(null);
+  const [addedProductId, setAddedProductId] = useState<string | null>(null);
+
+  async function addFeaturedProduct(product: Product) {
+    if (!onAddProduct || addingProductId || product.availableQuantity < 1) return;
+    setAddingProductId(product.id);
+    try {
+      const added = await onAddProduct(product);
+      if (added) {
+        setAddedProductId(product.id);
+        window.setTimeout(() => setAddedProductId((current) => current === product.id ? null : current), 1400);
+      }
+    } finally {
+      setAddingProductId(null);
+    }
+  }
   return (
     <section id="customer-home" className="customer-home-workspace" aria-labelledby="customer-home-title">
       <section className="hero-card customer-home-hero">
@@ -169,7 +190,10 @@ export default function CustomerHomeWorkspace({
                     {Number(product.authorizedPrice ?? 0) > 0
                       ? <b>{new Intl.NumberFormat('ar-YE', { maximumFractionDigits: 0 }).format(Number(product.authorizedPrice))} ر.ي</b>
                       : <em>السعر حسب حسابك</em>}
-                    <button type="button" onClick={() => onOpenProduct?.(product)}>التفاصيل</button>
+                    <div className="customer-home-product-actions">
+                      <button type="button" onClick={() => void addFeaturedProduct(product)} disabled={!onAddProduct || product.availableQuantity < 1 || addingProductId !== null}>{addedProductId === product.id ? '✓ تمت الإضافة' : addingProductId === product.id ? 'جارٍ الإضافة…' : 'إضافة للسلة'}</button>
+                      <button type="button" onClick={() => onOpenProduct?.(product)}>التفاصيل</button>
+                    </div>
                   </div>
                 </div>
               </article>
@@ -185,7 +209,7 @@ export default function CustomerHomeWorkspace({
         {categories.length > 0 && (
           <div className="customer-home-category-strip" aria-label="تصنيفات سريعة">
             <span>تصفح حسب التصنيف</span>
-            <div>{categories.slice(0, 8).map((category) => <button type="button" key={category.id} onClick={() => onNavigate('catalog')}>{category.name} <small>↗</small></button>)}</div>
+            <div>{categories.slice(0, 8).map((category) => <button type="button" key={category.id} onClick={() => { onSelectCategory?.(category.id); onNavigate('catalog'); }}>{category.name} <small>↗</small></button>)}</div>
           </div>
         )}
       </section>

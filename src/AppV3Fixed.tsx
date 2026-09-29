@@ -440,6 +440,8 @@ export default function AppV3Fixed(){
         featuredProducts={products.slice(0,6)}
         categories={categories}
         onOpenProduct={(product)=>setSelectedProduct(product as PricedProduct)}
+        onAddProduct={(product)=>add(product, 1, true)}
+        onSelectCategory={(id)=>setCategoryId(id)}
       />}
       {section==='catalog'&&<><section className="hero-card customer-catalog-hero" style={{background:'linear-gradient(135deg,#102a43 0%,#243b53 72%,#314f67 100%)',color:'#fff'}}><div><span className="eyebrow" style={{color:'#d9e6f2'}}>تجارة جملة أسرع</span><h2 style={{color:'#fff'}}>احتياج متجرك، في طلب واحد.</h2><p style={{color:'#d9e6f2'}}>ابحث بالاسم أو SKU أو الباركود، راجع شرائح السعر، ثم اعتمد الكميات وأرسل الطلب.</p></div><div className="hero-stat" style={{borderColor:'rgba(255,255,255,.22)'}}><strong style={{color:'#fff'}}>{products.length}</strong><span style={{color:'#d9e6f2'}}>صنف في الصفحة</span></div></section>
       <section className="customer-overview-strip" aria-label="ملخص حساب التاجر">
