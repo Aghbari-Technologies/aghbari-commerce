@@ -377,3 +377,24 @@ Check workflows for `a9a92cae2ddf143c0d256397b9a4bfef05fa2242`; if Quality/Test-
 - Do not re-open the closed 84-reference registry or rebuild duplicate screens.
 - Do not retry unchanged Netlify/Vercel blockers.
 - Do not claim the older READY Vercel deployment is current-source proof.
+
+
+## 2026-09-30 — STOREFRONT WORLD-CLASS REBUILD
+- EXECUTION HEAD: 2aef369010635d3e3e3e0f378f197fb6aab3e6fb on execution/storefront-worldclass-20260930.
+- Dedicated customer-first storefront surface implemented at the root/store surface, separate from Admin/Staff.
+- Scope: ecommerce header/search, categories, live authorized product discovery, product details entry, favorites/compare, pricing, cart/checkout entry, quick order, orders, templates, finance/account entry points, responsive mobile dock.
+- Public mode does not fabricate products, prices, stock or transactions; authenticated customer mode uses existing Commerce catalog/cart/checkout authority.
+- EXACT-SHA PROOF: NOT_PROVEN yet. Current Vercel Preview is queued; local build could not run because outbound repository network is unavailable.
+- PRODUCTION: HOLD / NO TOUCH.
+
+## CURRENT RESUME POINTER
+Continue from PR #160 and exact head 2aef369010635d3e3e3e0f378f197fb6aab3e6fb. Check Vercel preview and browser/runtime evidence for the same SHA.
+
+## NEXT EXECUTABLE ACTION
+Verify the current exact-SHA Preview; if READY, browser-check / and #store plus customer catalog/product/cart entry and mobile viewport. If build fails, fix that exact build failure once.
+
+## DO NOT REPEAT
+- Do not copy PASS/evidence from older storefront SHAs.
+- Do not reopen the 84-reference provenance registry.
+- Do not replace authorized catalog data with fake public product data.
+- Do not retry unchanged historical Vercel/Netlify blockers.
