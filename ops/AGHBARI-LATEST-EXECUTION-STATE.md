@@ -127,3 +127,14 @@ Use the exact proven UI HEAD 105c3dbb052180b5745596d832b34d6ee8137cd5 as the UI 
 - Do not rerun the old Customer templates-label mismatch.
 - Do not rerun the old Mobile finance backdrop/selector failure.
 - Do not transfer this visual proof from 105c3dbb052180b5745596d832b34d6ee8137cd5 to any newer SHA.
+
+
+## 2026-09-29 UI closure checkpoint — exact HEAD eaa3b024d64424ab06773413a1b8ba7552e8c676
+
+- CURRENT HEAD: eaa3b024d64424ab06773413a1b8ba7552e8c676
+- Changed: unified Customer Finance into one canonical `CustomerFinancePanel`; removed duplicate legacy finance ledger/pagination from `AppV3Fixed.tsx`; added current-view CSV export + responsive header actions; added exact-content PNG integrity test (84 assets); made E2E customer visual coverage derive from the canonical seven sections.
+- Proven on earlier exact product-code SHA only: Browser E2E/Exact Deployment succeeded on `a1ddcf6b31ee012d979c54a7afbb663b7e618f2a`; exact Git blob audit found 84 PNGs and 0 exact-content duplicate groups on that source tree.
+- NOT_PROVEN on current HEAD: current-SHA visual/runtime evidence after the test-only commits `e677033f41ef55f0a7a83488f878d37b4bc52044` and `eaa3b024d64424ab06773413a1b8ba7552e8c676`.
+- OPEN: current-HHEAD visual proof + current-SHA test matrix; then continue next independent UI/core gap.
+- NEXT EXECUTABLE ACTION: run/inspect current-HEAD UI visual proof and quality matrix, fix first material failure, record exact SHA, then open the next highest-value uncovered UI surface.
+- DO NOT REPEAT: finance workspace consolidation, exact PNG duplicate audit, canonical seven-section E2E coverage wiring.
