@@ -32,8 +32,8 @@ describe('canonical UI coverage', () => {
     expect(packCounts).toEqual([5, 20, 7, 18, 13, 7, 9, 5]);
   });
 
-  it('keeps the customer portal at the canonical seven sections with unique capabilities', () => {
-    expect(new Set(CUSTOMER_PORTAL_SECTIONS)).toEqual(new Set(['home', 'catalog', 'orders', 'finance', 'templates', 'account', 'notifications']));
+  it('keeps the customer portal at the current sections with unique capabilities', () => {
+    expect(new Set(CUSTOMER_PORTAL_SECTIONS)).toEqual(new Set(['home', 'catalog', 'saved', 'orders', 'finance', 'templates', 'account', 'notifications']));
     expect(new Set(AGHBARI_CUSTOMER_STRUCTURE.map((item) => item.id)).size).toBe(AGHBARI_CUSTOMER_STRUCTURE.length);
     for (const section of CUSTOMER_PORTAL_SECTIONS) {
       expect(AGHBARI_CUSTOMER_STRUCTURE.some((item) => item.section === section)).toBe(true);
@@ -127,7 +127,7 @@ describe('customer Home runtime contract', () => {
   it('keeps Home as the default customer route with real summary actions', () => {
     const source = readFileSync(resolve(process.cwd(), 'src/AppV3Fixed.tsx'), 'utf8');
     const home = readFileSync(resolve(process.cwd(), 'src/CustomerHomeWorkspace.tsx'), 'utf8');
-    expect(source).toContain("type PortalSection = 'home' | 'catalog' | 'orders' | 'finance' | 'templates' | 'account' | 'notifications'");
+    expect(source).toContain("type PortalSection = 'home' | 'catalog' | 'saved' | 'orders' | 'finance' | 'templates' | 'account' | 'notifications'");
     expect(source).toContain("if (typeof window === 'undefined') return 'home';");
     expect(source).toContain("return PORTAL_SECTIONS.has(value) ? value : 'home';");
     expect(source).toContain('<CustomerHomeWorkspace');

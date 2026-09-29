@@ -17,7 +17,7 @@ describe('purchasing operational acceleration contract', () => {
   it('offers direct receive navigation for approved orders', () => {
     expect(source).toContain("order.status==='approved'||order.status==='partially_received'");
     expect(source).toContain("setSelectedOrderId(order.id)");
-    expect(source).toContain("id='purchase-receiving'");
+    expect(source).toContain('id="purchase-receiving"');
   });
 
   it('keeps the progress indicator compact on mobile', () => {
