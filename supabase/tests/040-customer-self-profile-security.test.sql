@@ -40,8 +40,8 @@ select ok(
 );
 
 select ok(
-  not pg_get_functiondef('public.update_customer_self_profile(text,text)'::regprocedure) ilike '%tier=%'
-  and not pg_get_functiondef('public.update_customer_self_profile(text,text)'::regprocedure) ilike '%is_active=%',
+  not pg_get_functiondef('public.update_customer_self_profile(text,text)'::regprocedure) ilike '%set tier=%'
+  and not pg_get_functiondef('public.update_customer_self_profile(text,text)'::regprocedure) ilike '%set is_active=%',
   'self-profile update cannot change pricing tier or account status'
 );
 

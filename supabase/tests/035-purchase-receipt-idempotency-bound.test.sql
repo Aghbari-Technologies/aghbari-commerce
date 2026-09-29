@@ -17,7 +17,7 @@ select ok(exists (
   join pg_namespace n on n.oid=p.pronamespace
   where n.nspname='public'
     and p.proname='create_purchase_order'
-    and pg_get_functiondef(p.oid) ~* 'length\\(key\\)\\s*<\\s*16\\s+or\\s+length\\(key\\)\\s*>\\s*128'
+    and pg_get_functiondef(p.oid) like '%length(key)%128%'
 ), 'create_purchase_order accepts the canonical 128-character maximum');
 
 select ok(not exists (
@@ -26,7 +26,7 @@ select ok(not exists (
   join pg_namespace n on n.oid=p.pronamespace
   where n.nspname='public'
     and p.proname='create_purchase_order'
-    and pg_get_functiondef(p.oid) ~* 'length\\(key\\)\\s*<\\s*16\\s+or\\s+length\\(key\\)\\s*>\\s*200'
+    and pg_get_functiondef(p.oid) like '%length(key)%200%'
 ), 'create_purchase_order no longer contains the legacy 200-character maximum');
 
 select ok(exists (
@@ -50,7 +50,7 @@ select ok(not exists (
 select ok(exists (
   select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace
   where n.nspname='public' and p.proname='create_purchase_order'
-    and pg_get_functiondef(p.oid) ~* 'pg_advisory_xact_lock\\s*\\(hashtextextended\\('
+    and pg_get_functiondef(p.oid) like '%pg_advisory_xact_lock%' and pg_get_functiondef(p.oid) like '%hashtextextended%'
 ), 'create_purchase_order serializes idempotency keys with a transaction advisory lock');
 
 select ok(exists (

@@ -21,7 +21,7 @@ select ok(
     where n.nspname='public'
       and p.proname='bulk_transition_orders'
       and p.prosecdef
-      and p.proconfig @> array['search_path=']
+      and p.proconfig @> array['search_path=""']
   ),
   'bulk transition uses SECURITY DEFINER with empty search_path'
 );
