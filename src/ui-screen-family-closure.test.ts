@@ -94,7 +94,9 @@ describe('staff access export closure', () => {
     expect(sourceText).toContain('exportCurrentAccess');
     expect(sourceText).toContain('تصدير CSV');
     expect(sourceText).toContain('filtered.map');
-    expect(sourceText).not.toContain('user.user_id,');
+    expect(sourceText).toContain('user.email,');
+    expect(sourceText).not.toContain('rows = filtered.map((user) => [user.user_id');
+
   });
 });
 
