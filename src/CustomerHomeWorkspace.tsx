@@ -10,6 +10,8 @@ interface CustomerHomeWorkspaceProps {
   productsOnPage: number;
   ordersCount: number;
   latestOrderNumber?: number;
+  latestOrderStatus?: string;
+  latestOrderDate?: string;
   cartCount: number;
   cartLines: number;
   availableCreditText: string;
@@ -56,6 +58,8 @@ export default function CustomerHomeWorkspace({
   productsOnPage,
   ordersCount,
   latestOrderNumber,
+  latestOrderStatus,
+  latestOrderDate,
   cartCount,
   cartLines,
   availableCreditText,
@@ -120,6 +124,26 @@ export default function CustomerHomeWorkspace({
         />
       </section>
 
+      <section className="customer-home-command-deck" aria-label="مركز القرار السريع">
+        <div className="customer-home-command-card customer-home-command-primary">
+          <span className="command-kicker">الخطوة التالية</span>
+          <strong>{cartCount ? 'السلة جاهزة للمراجعة' : latestOrderNumber ? 'ابدأ طلبك التالي' : 'ابدأ أول طلب تجاري'}</strong>
+          <small>{cartCount ? cartCount.toLocaleString('ar-YE') + ' وحدة ضمن السلة الحالية' : 'انتقل مباشرة إلى الكتالوج واختصر وقت إعادة البحث.'}</small>
+          <button type="button" onClick={() => cartCount ? onOpenCart() : onNavigate('catalog')}>{cartCount ? 'مراجعة السلة' : 'فتح الكتالوج'} ↗</button>
+        </div>
+        <div className="customer-home-command-card">
+          <span className="command-kicker">آخر طلب</span>
+          <strong>{latestOrderNumber ? '#' + latestOrderNumber : 'لا يوجد طلب سابق'}</strong>
+          <small>{latestOrderStatus ? 'الحالة: ' + latestOrderStatus : latestOrderDate ? new Date(latestOrderDate).toLocaleDateString('ar-YE') : 'سيظهر هنا بعد أول إرسال ناجح.'}</small>
+          <button type="button" onClick={() => onNavigate('orders')}>فتح الطلبات ↗</button>
+        </div>
+        <div className="customer-home-command-card">
+          <span className="command-kicker">الحساب</span>
+          <strong>{financeReady && showCredit ? availableCreditText : organizationName || 'حساب الأغبري'}</strong>
+          <small>{showCredit ? (financeReady ? 'رصيد متاح من الحساب المصرح.' : 'بيانات الائتمان بانتظار التحميل.') : 'السياق التجاري والهوية محفوظان للحساب.'}</small>
+          <button type="button" onClick={() => onNavigate(showCredit ? 'finance' : 'account')}>{showCredit ? 'فتح المركز المالي' : 'فتح الحساب'} ↗</button>
+        </div>
+      </section>
       <section className="customer-home-merchandising" aria-label="مساحة الشراء السريع">
         <div className="customer-home-merchandising-head">
           <div>

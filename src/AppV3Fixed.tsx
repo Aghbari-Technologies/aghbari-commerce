@@ -424,6 +424,8 @@ export default function AppV3Fixed(){
         productsOnPage={products.length}
         ordersCount={orders.length}
         latestOrderNumber={orders[0]?.order_number}
+        latestOrderStatus={orders[0]?.status}
+        latestOrderDate={orders[0]?.created_at}
         cartCount={cartCount}
         cartLines={cart.length}
         availableCreditText={finance ? money(finance.available, finance.currency) : '—'}
