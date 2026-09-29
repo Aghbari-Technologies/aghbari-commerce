@@ -1,3 +1,20 @@
+## 2026-09-29 — Global buyer features / command center + compare + repeat order
+- CURRENT CODE HEAD: `b93c788cae8466b481f901ce9263da2a69f7824f`
+- Implemented: customer Command Center (Ctrl/⌘+K), search across live navigation/actions and loaded catalog SKU/name; keyboard Arrow/Enter/Escape flow; product comparison up to three live catalog products; direct cart action from comparison; one-click repeat of the latest real order from Home and Command Center using current stock/authorization through existing reorder path.
+- Preserved: no new fake data, no new transactional backend, no production mutation, no reporting/BI scope crossover.
+- Exact-SHA pre-writeback signals: Browser E2E, Aghbari Quality, G1, Bootstrap and Security had succeeded on `b93c788cae8466b481f901ce9263da2a69f7824f`; Visual Proof/Test-the-Test/application-quality were still running when the state was checkpointed.
+- External: Netlify exact-source remains blocked/failed; Vercel free-plan constraints remain unchanged.
+- PRODUCTION: `HOLD / NO TOUCH`
+
+## NEXT EXECUTABLE ACTION
+Use only the next state-write SHA as proof identity. Run the complete exact-SHA Browser + Visual Proof + Quality + Test-the-Test + Security + G1 matrix. Fix only the first material failure. Then inspect the visual evidence for the customer storefront and continue the next canonical capability gap.
+
+## DO NOT REPEAT
+- Do not recreate the Command Center, comparison tray, latest-order repeat flow, canonical customer rail, or Home merchandising layer.
+- Do not interpret the 84 reference images as 84 separate screens.
+- Do not transfer proof between SHAs.
+- Do not mutate Production for the purchase/receipt 16..128 idempotency migration before its required concurrency/negative/Test-the-Test evidence.
+- Do not retry unchanged hosted deployment blockers.
 ## 2026-09-29 — Final marketplace UI elevation wave
 - CURRENT EXACT HEAD BEFORE STATE WRITE-BACK: `71a64dcd805d92e28cf0932dc154eedf4d6ba777`
 - Implemented: Customer Home converted into an action-first B2B storefront entry using real loaded catalog products/categories; direct add-to-cart from Home through the existing authoritative cart path; category shortcuts now preserve catalog context; single canonical customer navigation; premium product/card/hero/search/filter styling; order/finance/account responsive visual hierarchy; mobile dock and dialogs; Staff/Admin rail and operational data surfaces; governance/boundary/import/inventory/receiving styling.

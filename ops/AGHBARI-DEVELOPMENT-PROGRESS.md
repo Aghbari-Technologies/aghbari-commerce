@@ -1,3 +1,13 @@
+# Run 2026-09-29 — Global buyer capabilities checkpoint
+- Run: `2026-09-29`
+- Code SHA: `b93c788cae8466b481f901ce9263da2a69f7824f`
+- Branch: `main`
+- Implemented: buyer Command Center, product comparison (max 3), direct comparison-to-cart, latest-order repeat from Home/Command Center, plus prior storefront/order/finance/account/admin visual elevation.
+- Verified signals at code SHA: Browser E2E, Aghbari Quality, G1, Bootstrap, Security = SUCCESS; Visual Proof/Test-the-Test/application-quality were in progress.
+- Netlify exact-source = external failure; no production mutation.
+- Certification: NOT CLAIMED
+- Production: HOLD / NO TOUCH
+- Next: exact current state-write SHA proof matrix, then next capability gap.
 # Run 2026-09-29 — Marketplace UI elevation final checkpoint
 - Run: `2026-09-29`
 - Code SHA before docs write-back: `71a64dcd805d92e28cf0932dc154eedf4d6ba777`
