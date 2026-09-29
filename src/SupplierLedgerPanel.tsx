@@ -20,16 +20,26 @@ export default function SupplierLedgerPanel({role}:{role:UserRole}){
  const pages=Math.max(1,Math.ceil(current.length/10)); const activePage=Math.min(page,pages); const visible=current.slice((activePage-1)*10,activePage*10);
  function exportCurrent(){
    if(!current.length)return;
-   const headers=tab==='suppliers'?['المورد','الهاتف','البريد','العنوان','الحالة','تاريخ الإنشاء']:tab==='bills'?['الفاتورة','المورد','الحالة','العملة','الإجمالي','الاستحقاق','الملاحظات','التاريخ']:['المورد','المرجع','الوصف','مدين','دائن','العملة','تاريخ الاستحقاق','الحالة','التاريخ'];
-   const rows=current.map(row=>tab==='suppliers'
-     ? [row.name,row.phone??'',row.email??'',row.address??'',row.is_active?'نشط':'موقوف',row.created_at]
-     : tab==='bills'
-       ? [row.bill_number,names.get(row.supplier_id)??'',row.status,row.currency,row.total,row.due_at??'',row.notes??'',row.created_at]
-       : [names.get(row.supplier_id)??'',row.reference??'',row.description,row.debit,row.credit,row.currency,row.due_date??'',row.entry_status,row.created_at]
-   );
+   if(tab==='suppliers'){
+     const headers=['المورد','الهاتف','البريد','العنوان','الحالة','تاريخ الإنشاء'];
+     const rows=(current as Supplier[]).map(row=>[row.name,row.phone??'',row.email??'',row.address??'',row.is_active?'نشط':'موقوف',row.created_at]);
+     downloadRows(headers,rows,'suppliers');
+     return;
+   }
+   if(tab==='bills'){
+     const headers=['الفاتورة','المورد','الحالة','العملة','الإجمالي','الاستحقاق','الملاحظات','التاريخ'];
+     const rows=(current as Bill[]).map(row=>[row.bill_number,names.get(row.supplier_id)??'',row.status,row.currency,row.total,row.due_at??'',row.notes??'',row.created_at]);
+     downloadRows(headers,rows,'bills');
+     return;
+   }
+   const headers=['المورد','المرجع','الوصف','مدين','دائن','العملة','تاريخ الاستحقاق','الحالة','التاريخ'];
+   const rows=(current as Ledger[]).map(row=>[names.get(row.supplier_id)??'',row.reference??'',row.description,row.debit,row.credit,row.currency,row.due_date??'',row.entry_status,row.created_at]);
+   downloadRows(headers,rows,'ledger');
+ }
+ function downloadRows(headers:string[],rows:unknown[][],suffix:string){
    const csv='\\ufeff'+[headers,...rows].map(row=>row.map(value=>'"'+String(value??'').replaceAll('"','""')+'"').join(',')).join('\\n');
    const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
-   const anchor=document.createElement('a');anchor.href=url;anchor.download='aghbari-suppliers-'+tab+'-'+new Date().toISOString().slice(0,10)+'.csv';anchor.click();URL.revokeObjectURL(url);
+   const anchor=document.createElement('a');anchor.href=url;anchor.download='aghbari-suppliers-'+suffix+'-'+new Date().toISOString().slice(0,10)+'.csv';anchor.click();URL.revokeObjectURL(url);
  }
  if(!canUse)return null;
  return <section className='cart-panel' id='admin-suppliers'>
