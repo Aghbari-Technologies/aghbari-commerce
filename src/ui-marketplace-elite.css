@@ -568,3 +568,10 @@
 .recent-searches button{border:1px solid #d4e5e9;border-radius:999px;padding:6px 9px;background:#fff;color:#456773;font-size:8px;font-weight:900;cursor:pointer}
 .recent-searches button:hover{background:#eef8fa;border-color:#b8dbe1;color:#0b7788}
 .recent-searches .clear-recent-searches{color:#9a6870;border-color:#ead5d9;background:#fff8f9}
+
+.customer-cart-readiness{display:grid;gap:8px;margin:10px 0;padding:11px;border:1px solid #dbe8ec;border-radius:13px;background:#f8fcfd}
+.customer-cart-readiness-head{display:flex;justify-content:space-between;align-items:center;gap:8px}.customer-cart-readiness-head strong{display:block;color:#285667;font-size:11px}.customer-cart-readiness-head>b{min-width:28px;padding:5px;border-radius:8px;background:#e7f6f7;color:#0b7c8c;text-align:center;font-size:9px}
+.customer-cart-readiness-bar{height:4px;overflow:hidden;border-radius:999px;background:#e4ecef}.customer-cart-readiness-bar i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#0b91a4,#65cbd0);transition:width .2s ease}
+.customer-cart-readiness-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}.customer-cart-readiness-grid>div{display:flex;align-items:center;gap:6px;padding:6px;border:1px solid #e0eaed;border-radius:9px;background:#fff;min-width:0}.customer-cart-readiness-grid>div>span{width:20px;height:20px;display:grid;place-items:center;border-radius:50%;font-size:8px;font-weight:900}.customer-cart-readiness-grid .is-ok>span{background:#e9f8f2;color:#08785f}.customer-cart-readiness-grid .is-blocked>span{background:#fff1f2;color:#ad293f}.customer-cart-readiness-grid strong{display:block;font-size:8px;color:#365e6b}.customer-cart-readiness-grid small{display:block;margin-top:1px;font-size:7px;color:#8a9aa1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.customer-cart-readiness-note{font-size:7px;color:#8a9aa1;line-height:1.5}
+@media(max-width:600px){.customer-cart-readiness-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:390px){.customer-cart-readiness-grid{grid-template-columns:1fr}}
