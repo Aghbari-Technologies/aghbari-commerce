@@ -26,6 +26,7 @@ const STAFF_PACKS = [
 const CUSTOMER_PACKS = [
   { id: 'home', label: 'الرئيسية', eyebrow: 'مساحة التاجر', description: 'ملخص الحساب، حالة التشغيل والاختصارات إلى الإجراء التالي.' },
   { id: 'catalog', label: 'اكتشاف وشراء', eyebrow: 'الكتالوج', description: 'البحث، التصنيف، السعر، المخزون والطلب السريع.' },
+  { id: 'saved', label: 'المحفوظات', eyebrow: 'قائمة الشراء', description: 'المفضلة والأصناف التي شاهدتها مؤخرًا على هذا الجهاز.' },
   { id: 'orders', label: 'الطلبات والتتبع', eyebrow: 'المتابعة', description: 'السجل، التفاصيل، الحالة وإعادة الطلب.' },
   { id: 'finance', label: 'المركز المالي', eyebrow: 'الثقة المالية', description: 'الكشف والفواتير والمدفوعات المتاحة.' },
   { id: 'templates', label: 'الطلبات المتكررة', eyebrow: 'القوالب', description: 'حفظ السلة وإعادة التطبيق بسرعة.' },
@@ -35,7 +36,8 @@ const CUSTOMER_PACKS = [
 
 const CUSTOMER_NEXT_SECTION: Partial<Record<CustomerPortalSection, CustomerPortalSection>> = {
   home: 'catalog',
-  catalog: 'orders',
+  catalog: 'saved',
+  saved: 'orders',
   orders: 'catalog',
   finance: 'account',
   templates: 'catalog',
