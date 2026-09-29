@@ -1,0 +1,5 @@
+/* Aghbari Commerce — global command/search affordances. Presentation only. */
+.portal-global-search{transition:border-color .14s ease,box-shadow .14s ease,transform .14s ease}
+.portal-global-search:focus-within{border-color:#9bcfd7;box-shadow:0 0 0 3px rgba(14,145,164,.08),0 10px 24px rgba(12,59,76,.06);transform:translateY(-1px)}
+.portal-global-search .global-search-submit:hover{border-color:#8dc6cf;background:#f2fafb}
+@media(prefers-reduced-motion:reduce){.portal-global-search{transition:none}}
