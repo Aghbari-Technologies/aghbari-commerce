@@ -3,3 +3,5 @@
 .admin-panel .purchase-notes-field>span small{font-size:9px;color:#8a9ca4;font-weight:700}
 .admin-panel .purchase-notes-field textarea{width:100%;min-height:82px;resize:vertical}
 @media(max-width:700px){.admin-panel .purchase-notes-field textarea{min-height:72px}}
+
+.purchase-receipt-progress{display:grid;gap:3px;min-width:145px;margin-top:6px}.purchase-receipt-progress>span{display:block;height:5px;overflow:hidden;border-radius:999px;background:#e6eef0}.purchase-receipt-progress>span i{display:block;height:100%;border-radius:inherit;background:#0d8799}.purchase-receipt-progress>small{font-size:7px!important;color:#7a8f97!important;font-variant-numeric:tabular-nums}@media(max-width:650px){.purchase-receipt-progress{min-width:110px}}
