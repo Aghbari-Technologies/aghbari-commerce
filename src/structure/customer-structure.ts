@@ -1,6 +1,6 @@
 export type CustomerStructureStatus = 'live' | 'boundary';
 
-export const CUSTOMER_PORTAL_SECTIONS = ['home', 'catalog', 'orders', 'finance', 'templates', 'account', 'notifications'] as const;
+export const CUSTOMER_PORTAL_SECTIONS = ['home', 'catalog', 'saved', 'orders', 'finance', 'templates', 'account', 'notifications'] as const;
 export type CustomerPortalSection = typeof CUSTOMER_PORTAL_SECTIONS[number];
 
 export interface CustomerStructureItem {
