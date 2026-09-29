@@ -1584,3 +1584,8 @@ FULL REFERENCE COVERAGE
 
 # الأغبري ليس Demo.
 # الأغبري منتج B2B جاد يجب أن يُغلق فعليًا، لا أن يبدو مغلقًا.
+
+## 2026-09-30 — 84-reference full-product execution lock
+- `docs/ui-reference/` is treated as a visual contract. First reconcile the registered 84 assets into canonical screen families/packs, then implement once per unique family and cover meaningful variants/states without duplicate screens.
+- Closure target is not a page count: it is full Customer Storefront/Portal + full Admin/Staff Control Center + all applicable nested states/actions + exact-SHA proof.
+- The storefront must be the commercial presentation surface; the admin dashboard must remain an operational control center. Never substitute one for the other.
