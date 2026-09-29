@@ -267,7 +267,8 @@ Complete the exact current-SHA workflow matrix for `edd83cc1aae28e3b68cf7af812df
 
 
 ## 2026-09-29 — Runtime wiring + exact handoff alignment
-- CURRENT EXACT HEAD: pending commit (next write below).
+- CODE SHA: `c870bc54f7045eb17b2d69e246b5be3369097b55`.
+- MAIN HEAD at this documentation checkpoint will include only this state write-back; no implementation proof is transferred across the documentation SHA.
 - Implemented: activated the previously created `src/ui-global-search.css` in `src/main.tsx`; strengthened its source contract so the visual enhancement cannot remain an unreferenced artifact.
 - Verification intent: next exact-SHA CI matrix is the sole authority for this final aligned tree; previous SHA evidence is not transferred.
 - Production: `HOLD / NO TOUCH`.
