@@ -634,3 +634,286 @@
 @media(prefers-reduced-motion:reduce){
   .customer-shell .product-card,.customer-shell .portal-quick-item,.control-rail .control-tile{transition:none!important}
 }
+
+
+/* Elevation wave 2 — section chrome, mobile purchase controls and data surfaces */
+.customer-shell .customer-mobile-dock{
+  position:fixed!important;
+  inset:auto 10px 10px 10px!important;
+  z-index:120!important;
+  border:1px solid rgba(188,218,224,.95)!important;
+  border-radius:18px!important;
+  background:rgba(255,255,255,.94)!important;
+  box-shadow:0 18px 42px rgba(7,55,70,.18)!important;
+  backdrop-filter:blur(18px)!important;
+  padding:7px!important;
+}
+.customer-shell .customer-mobile-dock button{
+  border-radius:12px!important;
+  min-height:54px!important;
+  font-weight:900!important;
+  color:#5d7883!important;
+}
+.customer-shell .customer-mobile-dock button.active{
+  background:linear-gradient(145deg,#0b8799,#0ea5b5)!important;
+  color:#fff!important;
+  box-shadow:0 8px 18px rgba(9,121,139,.17)!important;
+}
+.customer-shell .customer-mobile-dock .dock-cart{
+  position:relative!important;
+  background:#ecf8fa!important;
+  color:#0b7c8e!important;
+}
+.customer-shell .customer-mobile-dock .dock-cart b{
+  position:absolute!important;
+  top:5px!important;
+  inset-inline-end:11px!important;
+  min-width:18px!important;
+  height:18px!important;
+  padding:0 4px!important;
+  display:grid!important;
+  place-items:center!important;
+  border-radius:999px!important;
+  background:#0c92a5!important;
+  color:#fff!important;
+  font-size:8px!important;
+}
+.customer-shell .customer-mobile-more-menu{
+  width:min(560px,calc(100% - 20px))!important;
+  border:1px solid #d6e6eb!important;
+  border-radius:20px!important;
+  box-shadow:0 24px 70px rgba(7,47,64,.19)!important;
+}
+.customer-shell .customer-mobile-more-grid button{
+  min-height:90px!important;
+  border-radius:15px!important;
+  border-color:#d7e6ea!important;
+  background:linear-gradient(180deg,#fff,#f7fbfc)!important;
+}
+.customer-shell .customer-mobile-more-grid button.active{
+  border-color:#9acfd6!important;
+  background:linear-gradient(145deg,#edf9fa,#fff)!important;
+}
+
+/* Dialogs and drawers should look like one product family */
+.customer-shell .modal,
+.customer-shell .cart-drawer{
+  border:1px solid #d5e6eb!important;
+  box-shadow:0 28px 90px rgba(6,43,58,.22)!important;
+}
+.customer-shell .modal{
+  border-radius:22px!important;
+  padding:0!important;
+  overflow:auto!important;
+}
+.customer-shell .modal .modal-head{
+  padding:18px 20px!important;
+  margin:0!important;
+  background:linear-gradient(180deg,#f0f9fa,#fff)!important;
+  border-bottom:1px solid #e1ecef!important;
+}
+.customer-shell .modal .modal-head .eyebrow{color:#0b8799!important}
+.customer-shell .modal .modal-head h2{font-size:22px!important;color:#0b3f54!important}
+.customer-shell .modal>.product-detail-grid,
+.customer-shell .modal>.product-detail-shell,
+.customer-shell .modal>.checkout-readiness,
+.customer-shell .modal>.checkout-lines,
+.customer-shell .modal>.checkout-summary-grid,
+.customer-shell .modal>.payment-box,
+.customer-shell .modal>.order-detail-summary,
+.customer-shell .modal>.timeline,
+.customer-shell .modal>.order-detail-lines,
+.customer-shell .modal>.order-detail-actions,
+.customer-shell .modal>p,
+.customer-shell .modal>.quick-editor,
+.customer-shell .modal>.excel-review,
+.customer-shell .modal>.catalog-filter-grid,
+.customer-shell .modal>.catalog-filter-preview,
+.customer-shell .modal>.customer-pricing-toolbar{
+  margin-inline:20px!important;
+}
+.customer-shell .modal>.order-detail-actions{padding-bottom:20px!important}
+.customer-shell .cart-drawer{
+  border-radius:22px 0 0 22px!important;
+  padding:20px!important;
+}
+.customer-shell .cart-drawer .drawer-head{
+  background:linear-gradient(180deg,#f0f9fa,#fff)!important;
+  border-radius:14px!important;
+  padding:12px!important;
+  margin-bottom:8px!important;
+}
+.customer-shell .cart-drawer .checkout{
+  position:sticky!important;
+  bottom:0!important;
+  box-shadow:0 -8px 18px rgba(255,255,255,.95)!important;
+}
+
+/* Customer finance */
+.customer-shell .customer-finance-panel .history-tabs{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:7px!important;
+  padding:6px!important;
+  border-radius:14px!important;
+  background:#f4fafb!important;
+  border:1px solid #deebee!important;
+}
+.customer-shell .customer-finance-panel .history-tabs button.active{
+  background:#0b91a4!important;
+  color:#fff!important;
+  border-color:#0b91a4!important;
+  box-shadow:0 7px 15px rgba(9,129,147,.14)!important;
+}
+.customer-shell .customer-finance-panel .ledger-table,
+.customer-shell .customer-finance-panel .finance-table{
+  border-radius:15px!important;
+  overflow:auto!important;
+  border:1px solid #dce8ec!important;
+  box-shadow:0 5px 17px rgba(8,51,67,.035)!important;
+}
+.customer-shell .customer-finance-panel .ledger-row,
+.customer-shell .customer-finance-panel .finance-row{
+  min-height:50px!important;
+  background:#fff!important;
+}
+.customer-shell .customer-finance-panel .ledger-row:first-child,
+.customer-shell .customer-finance-panel .finance-row:first-child{
+  background:#edf7f8!important;
+  font-weight:900!important;
+}
+.customer-shell .customer-finance-panel .ledger-row:hover,
+.customer-shell .customer-finance-panel .finance-row:hover{
+  background:#f7fbfc!important;
+}
+
+/* Customer account cards */
+.customer-shell .customer-account-workspace{
+  background:linear-gradient(180deg,#fff,#f8fcfd)!important;
+}
+.customer-shell .customer-account-hero{
+  padding:18px!important;
+  border-radius:18px!important;
+  background:linear-gradient(135deg,#eff9fa,#fff)!important;
+  border:1px solid #d6e7eb!important;
+}
+.customer-shell .customer-account-tabs{
+  padding:6px!important;
+  background:#f2f8f9!important;
+  border:1px solid #dce9ed!important;
+  border-radius:14px!important;
+}
+.customer-shell .customer-account-tabs button{
+  min-height:40px!important;
+  border-radius:10px!important;
+  padding:8px 13px!important;
+  font-weight:900!important;
+}
+.customer-shell .customer-account-tabs button.active{
+  background:#fff!important;
+  color:#0b7788!important;
+  box-shadow:0 5px 12px rgba(8,59,76,.07)!important;
+}
+
+/* Admin section chrome */
+.admin-panel .admin-workspace-section{
+  position:relative!important;
+  padding-top:18px!important;
+}
+.admin-panel .admin-workspace-section[data-label]::before{
+  content:attr(data-label);
+  display:inline-flex;
+  align-items:center;
+  min-height:28px;
+  margin:0 0 -3px;
+  padding:5px 10px;
+  border:1px solid #cfe3e8;
+  border-radius:999px;
+  background:#eff9fa;
+  color:#0a7486;
+  font-size:9px;
+  font-weight:900;
+  box-shadow:0 4px 12px rgba(8,58,74,.04);
+}
+.admin-panel .admin-workspace-section:nth-of-type(3n+1)::before{
+  background:#e8f7f9;
+}
+.admin-panel .admin-workspace-section .content-card,
+.admin-panel .admin-workspace-section .cart-panel,
+.admin-panel .admin-workspace-section .admin-card{
+  box-shadow:0 9px 26px rgba(8,53,69,.05)!important;
+}
+.admin-panel .admin-workspace-section h2{
+  font-size:23px!important;
+  letter-spacing:-.4px!important;
+}
+.admin-panel .admin-workspace-section .section-heading{
+  align-items:flex-end!important;
+}
+.admin-panel .admin-workspace-section .section-heading .eyebrow{
+  color:#0b8597!important;
+}
+
+/* Orders and operational queues */
+.admin-panel .order-queue-toolbar{
+  display:grid!important;
+  grid-template-columns:minmax(260px,1.5fr) 180px 180px 160px auto!important;
+  gap:8px!important;
+  padding:11px!important;
+  border:1px solid #dce9ed!important;
+  border-radius:14px!important;
+  background:#f7fbfc!important;
+}
+.admin-panel .order-queue-toolbar input,
+.admin-panel .order-queue-toolbar select{
+  min-height:42px!important;
+}
+.admin-panel .order-queue-toolbar button{
+  white-space:nowrap!important;
+}
+.admin-panel .cart-line{
+  border-radius:14px!important;
+  margin:6px 0!important;
+  padding:12px!important;
+  border:1px solid #dfeaec!important;
+}
+.admin-panel .status-actions{
+  gap:6px!important;
+}
+.admin-panel .status-actions button{
+  min-height:36px!important;
+}
+
+/* Accessibility / interaction */
+.customer-shell button:focus-visible,
+.customer-shell a:focus-visible,
+.admin-panel button:focus-visible,
+.admin-panel a:focus-visible{
+  outline:3px solid rgba(12,146,165,.22)!important;
+  outline-offset:2px!important;
+}
+.customer-shell button:disabled,
+.admin-panel button:disabled{cursor:not-allowed!important;filter:saturate(.65)!important}
+@media(max-width:760px){
+  .admin-panel .order-queue-toolbar{grid-template-columns:1fr!important}
+  .customer-shell .modal .modal-head{padding:15px 16px!important}
+  .customer-shell .modal>.product-detail-grid,
+  .customer-shell .modal>.product-detail-shell,
+  .customer-shell .modal>.checkout-readiness,
+  .customer-shell .modal>.checkout-lines,
+  .customer-shell .modal>.checkout-summary-grid,
+  .customer-shell .modal>.payment-box,
+  .customer-shell .modal>.order-detail-summary,
+  .customer-shell .modal>.timeline,
+  .customer-shell .modal>.order-detail-lines,
+  .customer-shell .modal>.order-detail-actions,
+  .customer-shell .modal>p,
+  .customer-shell .modal>.quick-editor,
+  .customer-shell .modal>.excel-review,
+  .customer-shell .modal>.catalog-filter-grid,
+  .customer-shell .modal>.catalog-filter-preview,
+  .customer-shell .modal>.customer-pricing-toolbar{
+    margin-inline:14px!important;
+  }
+  .customer-shell .cart-drawer{border-radius:18px!important;width:min(100%,460px)!important}
+}
