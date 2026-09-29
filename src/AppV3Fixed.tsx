@@ -21,6 +21,7 @@ import CustomerHomeWorkspace from './CustomerHomeWorkspace';
 import CustomerOrdersPanel from './CustomerOrdersPanel';
 import CustomerFinancePanel from './CustomerFinancePanel';
 import CustomerAccountWorkspace from './CustomerAccountWorkspace';
+import Storefront from './Storefront';
 import './customer-account-workspace.css';
 import './customer-orders.css';
 import NotificationPanel from './NotificationPanel';
@@ -32,6 +33,7 @@ import './customer-portal-v3.css';
 import './customer-portal-v3-dynamic.css';
 import './customer-account-catalog.css';
 import './ui-marketplace-elite.css';
+import './storefront.css';
 import CustomerCommandPalette from './CustomerCommandPalette';
 import ProductCompareTray from './ProductCompareTray';
 import CustomerCartReadiness from './CustomerCartReadiness';
@@ -422,6 +424,8 @@ export default function AppV3Fixed(){
   async function requestPasswordReset(e:FormEvent){e.preventDefault();if(resetBusy)return;if(!email.trim())return setError('اكتب بريد الحساب أولًا لاستعادة كلمة المرور.');setResetBusy(true);setError('');setMessage('');setResetSent(false);try{await resetPassword(email,window.location.origin);setResetSent(true);setMessage('تم إرسال رابط استعادة كلمة المرور إلى بريد الحساب إن كان مسجلًا.');}catch(e){setError(friendlyAuthError(e));}finally{setResetBusy(false);}}
   async function logout(){await signOut();}
   if(!ready)return <div className="customer-shell"><OperationalLoadingSkeleton variant="app" /></div>;
+  const publicStorefrontPath=typeof window!=='undefined'&&(window.location.pathname==='/'||window.location.pathname==='/store');
+  if(!signedIn&&showStorefront&&publicStorefrontPath)return <Storefront onLogin={()=>{setShowStorefront(false);window.history.replaceState({},'',window.location.pathname==='/store'?'/?login=1':'/?login=1');}} />;
   if(!signedIn)return <div className="customer-shell auth-shell">
     <div className="auth-experience">
       <aside className="auth-brand-panel" aria-label="تعريف الأغبري">
