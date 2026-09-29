@@ -27,3 +27,12 @@ describe('customer shared product deep link', () => {
     expect(catalogSource).toContain('getCatalogProductById(productId');
   });
 });
+
+describe('shared product deep-link replay guard', () => {
+  it('avoids refetching the same shared product after it has been resolved', () => {
+    const source = readFileSync(resolve(process.cwd(), 'src/AppV3Fixed.tsx'), 'utf8');
+    expect(source).toContain('sharedProductHandled.current===sharedId');
+    expect(source).toContain('sharedProductHandled.current=sharedId');
+    expect(source).toContain('sharedProductHandled.current=null');
+  });
+});
