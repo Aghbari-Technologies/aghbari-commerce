@@ -8,6 +8,10 @@ import { formatMoney } from './domain/pricing';
 interface StorefrontProps {
   onLogin: () => void;
   signedIn?: boolean;
+  favoriteIds?: string[];
+  compareIds?: string[];
+  onToggleFavorite?: (productId: string) => void;
+  onToggleCompare?: (productId: string) => void;
 }
 
 type StoreProduct = CatalogItem & { imageUrl?: string };
@@ -248,7 +252,7 @@ export default function Storefront({ onLogin, signedIn = false }: StorefrontProp
                         {product.imageUrl ? <img src={product.imageUrl} alt="" /> : <span>{product.name.slice(0, 1)}</span>}
                       </button>
                       <span className={available ? 'stock' : 'stock out'}>{statusLabel(product.available_quantity)}</span>
-                      <button type="button" className="heart" onClick={() => goTo('saved')} aria-label="فتح المحفوظات">♡</button>
+                      <button type="button" className={favoriteIds.includes(product.id) ? 'heart active' : 'heart'} onClick={() => signedIn && onToggleFavorite ? onToggleFavorite(product.id) : onLogin()} aria-label={favoriteIds.includes(product.id) ? 'إزالة من المفضلة' : 'إضافة إلى المفضلة'}>{favoriteIds.includes(product.id) ? '♥' : '♡'}</button>
                     </div>
                     <div className="storefront-live-product-body">
                       <small>{product.sku} · {product.unit}</small>
@@ -259,7 +263,7 @@ export default function Storefront({ onLogin, signedIn = false }: StorefrontProp
                         <strong>{price || 'السعر حسب الحساب'}</strong>
                         <button type="button" disabled={!available || !price || busyId === product.id} onClick={() => void addToCart(product)}>{busyId === product.id ? '...' : 'أضف للسلة'}</button>
                       </div>
-                      <button type="button" className="details" onClick={() => setSelected(product)}>عرض التفاصيل ↗</button>
+                      <div className="product-actions-row"><button type="button" className="details" onClick={() => setSelected(product)}>عرض التفاصيل ↗</button>{signedIn && onToggleCompare && <button type="button" className={compareIds.includes(product.id) ? 'compare active' : 'compare'} onClick={() => onToggleCompare(product.id)}>{compareIds.includes(product.id) ? 'في المقارنة' : 'قارن'}</button>}</div>
                     </div>
                   </article>;
                 })}
