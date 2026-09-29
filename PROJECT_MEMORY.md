@@ -207,3 +207,9 @@
 - Customer Finance is one canonical customer workspace: `CustomerFinancePanel` owns invoices, statements, payment history, detail, filtering, pagination, and current-view export; the app shell must not render a duplicate legacy finance ledger.
 - UI reference integrity: the repository currently contains 84 PNG references with no exact-content duplicate blobs; exact duplicate handling remains provenance-driven, not an 84-screen duplication rule.
 - Customer visual E2E coverage is driven by the canonical seven customer portal sections to prevent test drift.
+
+
+## 2026-09-29 — Saved Products customer capability
+- The Customer Portal has a dedicated `saved` workspace for device-scoped saved products: favorites plus recently viewed catalog items.
+- This capability is presentation/personalization state only. It reuses already authorized catalog data and existing cart/detail actions; it never becomes order, price, inventory, or financial authority.
+- The saved workspace is exposed through the Customer structure registry, customer WorkspaceSurfaceRail, mobile More navigation, Command Center, and the canonical UX document.

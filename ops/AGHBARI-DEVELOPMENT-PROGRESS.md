@@ -606,3 +606,9 @@ Next: current exact-SHA Quality + Test-the-Test; then browser/runtime if executa
 | Run | Date | SHA | Branch | Implemented | Verified | Proven | Blocked | Certification | Production | Next |
 |---|---|---|---|---|---|---|---|---|---|---|
 | UI-DETAIL-A11Y-20260929-05 | 2026-09-29 | 6a8e5744ef697f6fef053a39f31dbe8af00bac6e | main | Product Detail favorite/compare/Copy-SKU; Catalog bulk cap 50; recent-shelf favorite state correctness; focused accessibility/source tests | Bootstrap SUCCESS; Browser Contract SUCCESS; fresh exact-SHA quality/security/G1/Test-the-Test/Visual lanes active; previous application-quality failure root-cause fixed | PARTIAL / NOT_PROVEN until fresh exact-SHA lanes complete | Hosted Netlify/Vercel blockers remain external | NOT CLAIMED | HOLD / NO TOUCH | Finish exact-SHA lanes; first material source failure only; then next independent transactional/UI gap |
+
+
+## Run 2026-09-29 — Storefront + control-plane capability expansion
+| Run | Date | SHA | Branch | Implemented | Verified | Proven | Blocked | Certification | Production | Next |
+|---|---|---|---|---|---|---|---|---|---|---|
+| UI-COMMERCE-20260929-06 | 2026-09-29 | 4ee6956247f6c6f56137ca6201c0087e2965bc0a | main | Global search suggestions; direct product card discovery; tier quantity shortcuts; dedicated saved-products workspace; Admin order/customer pulse filters; media-size regression guard; focused tests | Source integration checks; prior exact Browser Contract/quality signals on affected lineage; fresh 4ee6 workflows queued/in progress | NOT_PROVEN until exact-SHA UI Visual/Test-the-Test/quality matrix completes | Hosted Netlify/Vercel blockers remain external | NOT CLAIMED | HOLD / NO TOUCH | Finish exact 4ee6 proof matrix; fix first material source failure; then next uncovered canonical capability |

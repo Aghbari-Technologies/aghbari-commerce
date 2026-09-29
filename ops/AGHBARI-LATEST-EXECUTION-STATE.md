@@ -314,3 +314,25 @@ Continue from exact code tree `6a8e5744ef697f6fef053a39f31dbe8af00bac6e` (docume
 
 ## NEXT EXECUTABLE ACTION
 Inspect the exact-`6a8e...` workflow matrix to completion. Fix only the first material source failure. If green, continue the next independent in-scope transactional/UI gap; keep closed surfaces closed and do not touch Production.
+
+
+## 2026-09-29 — Full storefront/control-plane continuation checkpoint
+- EXACT FUNCTIONAL CODE SHA: `4ee6956247f6c6f56137ca6201c0087e2965bc0a`.
+- Implemented: Customer global live-search suggestions; direct image/title product discovery; tier-quantity shortcuts; dedicated Saved Products workspace with favorites/recent items and counters; mobile + rail + Command Center integration; Admin order status pulse filters; Admin customer pulse filters; product-media style regression guard.
+- Implemented with real existing contracts only: no new transactional authority, no fake orders/payments/inventory, no unsupported Promotion/AI/BI/Onyx behavior.
+- Focused regression coverage added across catalog bulk bounds, Product Detail actions, saved-shelf accessibility/state, global search suggestions, product card discoverability/media sizing, tier quantity shortcuts, order-status pulse filters, customer pulse filters, and saved-products navigation/page shell.
+- Exact-SHA evidence snapshot: source-level checks and Browser Contract have been successful on recent functional lineages; on this precise SHA the fresh proof workflows are queued/in progress and must be completed before claiming final visual/runtime certification. Production remains `HOLD / NO TOUCH`.
+- Hosted blockers remain external and unchanged: Netlify exact-source credential path and Vercel free-plan deployment/protection path. The earlier hosted artifact SHA mismatch remains deployment evidence, not a source regression.
+
+## CURRENT RESUME POINTER
+Use exact functional code SHA `4ee6956247f6c6f56137ca6201c0087e2965bc0a`. Finish the exact-SHA quality/security/G1/Test-the-Test/UI Visual/Browser evidence; fix only the first material source failure. Then continue the next uncovered canonical UI/core gap without reopening closed work.
+
+## NEXT EXECUTABLE ACTION
+Inspect the completed/active workflows for `4ee6956247f6c6f56137ca6201c0087e2965bc0a`. If any source/test failure exists, fix that root cause once. If green, inspect the next unclosed Customer/Admin capability family and implement its missing state/action rather than adding another generic visual layer.
+
+## DO NOT REPEAT
+- Do not recreate the saved-products workspace or its navigation wiring.
+- Do not restore image/card presentation selectors that predate the product-media wrapper.
+- Do not transfer proof from older SHAs.
+- Do not retry unchanged Netlify/Vercel hosted blockers.
+- Do not mutate Production for purchase/receipt idempotency.
