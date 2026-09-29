@@ -168,6 +168,7 @@ export default function NotificationPanel({ audience }: { audience: Audience }) 
         item.id === row.id ? { ...item, read_at: readAt } : item
       )));
       setSelected((current) => current?.id === row.id ? { ...current, read_at: readAt } : current);
+      window.dispatchEvent(new CustomEvent('aghbari:notifications-changed'));
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'تعذر تحديث حالة الإشعار.');
     } finally {
@@ -216,6 +217,7 @@ export default function NotificationPanel({ audience }: { audience: Audience }) 
         ids.has(item.id) ? { ...item, read_at: readAt } : item
       )));
       setSelected((current) => current && ids.has(current.id) ? { ...current, read_at: readAt } : current);
+      window.dispatchEvent(new CustomEvent('aghbari:notifications-changed'));
     } catch (cause) {
       const ids = new Set(completed);
       if (completed.length) {
