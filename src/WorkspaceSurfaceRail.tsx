@@ -113,7 +113,7 @@ export default function WorkspaceSurfaceRail(props: WorkspaceSurfaceRailProps) {
             const active = props.section === pack.id;
             const index = CUSTOMER_PACKS.filter((entry) => visibleSections.includes(entry.id)).findIndex((entry) => entry.id === pack.id);
             return (
-              <button key={pack.id} type="button" className={active ? 'workspace-surface-item active' : 'workspace-surface-item'} aria-current={active ? 'page' : undefined} onClick={() => props.onSelect(pack.id)}>
+              <button key={pack.id} type="button" className={active ? 'workspace-surface-item active' : 'workspace-surface-item'} aria-label={pack.label} aria-current={active ? 'page' : undefined} onClick={() => props.onSelect(pack.id)}>
                 <span className="workspace-surface-index">{String(index + 1).padStart(2, '0')}</span>
                 <span className="workspace-surface-copy"><small>{pack.eyebrow}</small><strong>{pack.label}</strong><em>{pack.description}</em></span>
                 <b aria-hidden="true">{active ? '●' : '↗'}</b>
