@@ -107,3 +107,23 @@ Do not replace the real invoice drill-down with mock data or reopen closed finan
 Run exact current-main Quality/Test-the-Test for `customer-capability-navigation.test.ts` and affected customer Finance/UI files; fix only the first material failure, then continue the next independent UI/core gap.
 ## DO NOT REPEAT
 Do not reopen closed customer finance/account/catalog/checkout surfaces unless a regression or direct requirement change occurs; do not transfer evidence across SHAs; do not retry the unchanged Vercel blocker.
+
+
+## 2026-09-29 — Full Customer/Admin UI visual proof closure
+- Exact tested HEAD: 105c3dbb052180b5745596d832b34d6ee8137cd5.
+- UI Visual Proof run: 36501879038 — SUCCESS.
+- Proven on exact SHA: Customer desktop catalog/orders/finance/templates/account/notifications screenshots; Customer mobile navigation + finance screenshots; Admin control-plane full screenshot.
+- Runtime path proven: exact checkout → local Supabase → deterministic fixtures → production preview → Chromium/Playwright → 9 visual screenshots uploaded as Artifact 11005568445.
+- Customer UI fixes in this batch: login selector aligned with live DOM; Desktop templates navigation selector aligned; Mobile finance action targeted inside More dialog; explicit accessible labels added to Customer workspace navigation and Mobile finance action.
+- Overall UI Visual Proof: PROVEN for covered canonical reference-family screens.
+- Hosted deployment: NOT_PROVEN; existing Vercel deployment is older and Netlify exact-source token is unauthorized for the existing site.
+- Production: HOLD / NO TOUCH.
+
+## NEXT EXECUTABLE ACTION
+Use the exact proven UI HEAD 105c3dbb052180b5745596d832b34d6ee8137cd5 as the UI baseline. Open the next independent material gap (core/security/idempotency or unproven UI-reference family), without reopening the now-proven Customer/Admin visual surfaces unless regression/evidence invalidation/direct requirement change occurs.
+
+## DO NOT REPEAT
+- Do not rerun the obsolete login selector failure.
+- Do not rerun the old Customer templates-label mismatch.
+- Do not rerun the old Mobile finance backdrop/selector failure.
+- Do not transfer this visual proof from 105c3dbb052180b5745596d832b34d6ee8137cd5 to any newer SHA.
