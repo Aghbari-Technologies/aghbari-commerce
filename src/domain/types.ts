@@ -35,4 +35,5 @@ export interface OrderDraft {
   customerId?: string;
   idempotencyKey: string;
   lines: Array<{ productId: string; quantity: number }>;
+  shippingAddressId?: string | null;
 }
