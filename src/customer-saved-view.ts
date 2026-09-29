@@ -13,3 +13,10 @@ export function pushRecentlyViewed(ids:readonly string[],productId:string){
  const id=productId.trim();if(!id)return normalizeSavedIds(ids,MAX_RECENT_PRODUCT_IDS);
  return normalizeSavedIds([id,...ids.filter(x=>x!==id)],MAX_RECENT_PRODUCT_IDS);
 }
+
+export const MAX_RECENT_SEARCHES=8;
+export function pushRecentSearch(searches:readonly string[],query:string){
+ const value=query.trim();
+ if(value.length<2)return [...searches].slice(0,MAX_RECENT_SEARCHES);
+ return Array.from(new Set([value,...searches.map(x=>x.trim()).filter(Boolean)])).slice(0,MAX_RECENT_SEARCHES);
+}
