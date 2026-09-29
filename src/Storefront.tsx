@@ -1,272 +1,137 @@
-import { useMemo, useState, type ReactNode } from 'react';
-import type { Product, CartLine } from './domain/types';
+import type { ReactNode } from 'react';
 
-export type StorefrontProduct = Product & { authorizedPrice?: number; priceCurrency?: string; barcode?: string | null };
-export type StorefrontCategory = { id: string; name: string };
-
-type StorefrontProps = {
-  signedIn: boolean;
-  customerName: string;
-  organizationName: string;
-  products: StorefrontProduct[];
-  categories: StorefrontCategory[];
-  cart: CartLine[];
-  cartTotal: number;
-  favoriteIds: string[];
-  compareIds: string[];
-  ordersCount: number;
-  latestOrderNumber?: number;
-  availableCreditText?: string;
-  financeReady: boolean;
-  showCredit: boolean;
-  showTemplates: boolean;
-  isOnline: boolean;
+interface StorefrontProps {
   onLogin: () => void;
-  onNavigate: (section: 'home'|'catalog'|'saved'|'orders'|'finance'|'templates'|'account'|'notifications') => void;
-  onOpenCart: () => void;
-  onOpenCheckout: () => void;
-  onAddProduct: (product: Product) => Promise<boolean>;
-  onOpenProduct: (product: Product) => void;
-  onToggleFavorite: (productId: string) => void;
-  onToggleCompare: (productId: string) => void;
-  onOpenQuickOrder: () => void;
-  onOpenPricing: () => void;
-  onSearchCatalog: (query: string) => void;
-  onSelectCategory: (id: string | null) => void;
-  onOpenAdmin?: () => void;
-};
-
-function money(value: number | null | undefined, currency = 'YER') {
-  if (value == null || !Number.isFinite(value) || value <= 0) return null;
-  return `${new Intl.NumberFormat('ar-YE', { maximumFractionDigits: 0 }).format(value)} ${currency === 'YER' ? 'ر.ي' : currency}`;
 }
 
-function Icon({ children }: { children: ReactNode }) {
-  return <span className="store-icon" aria-hidden="true">{children}</span>;
-}
-
-function ProductCard(props: {
-  product: StorefrontProduct;
-  favorite: boolean;
-  compared: boolean;
-  busy: boolean;
-  onAdd: (product: Product) => void;
-  onOpen: (product: Product) => void;
-  onFavorite: (id: string) => void;
-  onCompare: (id: string) => void;
-}) {
-  const { product, favorite, compared, busy, onAdd, onOpen, onFavorite, onCompare } = props;
-  const price = money(product.authorizedPrice, product.priceCurrency);
-  const available = product.status === 'active' && product.availableQuantity > 0;
+function StoreFeature({ icon, title, copy }: { icon: string; title: string; copy: string }) {
   return (
-    <article className="store-product-card">
-      <div className="store-product-media">
-        <button type="button" className="store-product-image" onClick={() => onOpen(product)} aria-label={`تفاصيل ${product.name}`}>
-          {product.imageUrl ? <img src={product.imageUrl} alt="" /> : <span>{product.name.slice(0, 1)}</span>}
-        </button>
-        <div className="store-product-badges">
-          <span className={available ? 'stock-ok' : 'stock-out'}>{available ? 'متوفر' : 'غير متوفر'}</span>
-          {price && <span>سعر الحساب</span>}
-        </div>
-        <button type="button" className={favorite ? 'store-heart active' : 'store-heart'} onClick={() => onFavorite(product.id)} aria-label={favorite ? 'إزالة من المفضلة' : 'إضافة إلى المفضلة'}>{favorite ? '♥' : '♡'}</button>
-      </div>
-      <div className="store-product-body">
-        <small>{product.category || 'أصناف'} · {product.sku}</small>
-        <h3>{product.name}</h3>
-        <p>{product.description || 'معلومات الصنف من كتالوج الأغبري.'}</p>
-        <div className="store-product-facts">
-          <span>الوحدة <b>{product.unit}</b></span>
-          <span>المتاح <b>{product.availableQuantity.toLocaleString('ar-YE')}</b></span>
-        </div>
-        <div className="store-product-price-row">
-          <div>{price ? <strong>{price}</strong> : <em>السعر حسب الحساب</em>}</div>
-          <button type="button" disabled={!available || !price || busy} onClick={() => onAdd(product)}>{busy ? 'جارٍ الإضافة…' : 'أضف للسلة'}</button>
-        </div>
-        <div className="store-product-links">
-          <button type="button" onClick={() => onOpen(product)}>التفاصيل ↗</button>
-          <button type="button" className={compared ? 'active' : ''} onClick={() => onCompare(product.id)}>{compared ? 'في المقارنة' : 'قارن'}</button>
-        </div>
+    <article className="storefront-feature">
+      <span className="storefront-feature-icon" aria-hidden="true">{icon}</span>
+      <div>
+        <strong>{title}</strong>
+        <p>{copy}</p>
       </div>
     </article>
   );
 }
 
-export default function Storefront(props: StorefrontProps) {
-  const {
-    signedIn, customerName, organizationName, products, categories, cart, cartTotal, favoriteIds, compareIds,
-    ordersCount, latestOrderNumber, availableCreditText, financeReady, showCredit, showTemplates, isOnline,
-    onLogin, onNavigate, onOpenCart, onOpenCheckout, onAddProduct, onOpenProduct, onToggleFavorite,
-    onToggleCompare, onOpenQuickOrder, onOpenPricing, onSearchCatalog, onSelectCategory, onOpenAdmin,
-  } = props;
+function StorePill({ children }: { children: ReactNode }) {
+  return <span className="storefront-pill">{children}</span>;
+}
 
-  const [query, setQuery] = useState('');
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [busyId, setBusyId] = useState<string | null>(null);
-  const [allCategories, setAllCategories] = useState(false);
-
-  const visible = useMemo(() => {
-    let result = products.filter(p => p.status === 'active');
-    const categoryName = categories.find(c => c.id === activeCategory)?.name;
-    if (categoryName) result = result.filter(p => p.category === categoryName);
-    const needle = query.trim().toLocaleLowerCase();
-    if (needle) result = result.filter(p => p.name.toLocaleLowerCase().includes(needle) || p.sku.toLocaleLowerCase().includes(needle) || (p.barcode ?? '').toLocaleLowerCase().includes(needle));
-    return result.slice(0, 8);
-  }, [activeCategory, categories, products, query]);
-
-  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-
-  async function add(product: StorefrontProduct) {
-    if (busyId) return;
-    setBusyId(product.id);
-    try { await onAddProduct(product); } finally { setBusyId(null); }
-  }
-
-  function doSearch() {
-    const value = query.trim();
-    if (value) onSearchCatalog(value);
-    else onNavigate('catalog');
-  }
-
-  function chooseCategory(id: string | null) {
-    setActiveCategory(id);
-    onSelectCategory(id);
-    document.getElementById('store-products')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
+export default function Storefront({ onLogin }: StorefrontProps) {
+  const goToLogin = () => onLogin();
 
   return (
-    <div className="storefront-world" dir="rtl">
-      <div className="store-top-notice">
-        <span>الأغبري B2B</span>
-        <strong>{signedIn ? 'مرحبًا بك في متجر مؤسستك.' : 'واجهة الشراء متاحة؛ الأسعار والشراء يتطلبان حسابًا مصرحًا.'}</strong>
-        <button type="button" onClick={() => signedIn ? onNavigate('account') : onLogin()}>{signedIn ? 'حسابي ↗' : 'دخول الحساب ↗'}</button>
-      </div>
+    <div className="storefront" dir="rtl">
+      <header className="storefront-header">
+        <a className="storefront-brand" href="/" aria-label="الأغبري، الصفحة الرئيسية">
+          <span className="storefront-brand-mark"><img src="/icons/aghbari-192.svg" alt="" /></span>
+          <span><b>الأغبري</b><small>Aghbari Commerce</small></span>
+        </a>
 
-      <header className="store-main-header">
-        <button type="button" className="store-brand" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} aria-label="الأغبري">
-          <span className="store-brand-mark">أ</span>
-          <span><strong>الأغبري</strong><small>Aghbari Commerce</small></span>
-        </button>
-        <nav className="store-main-nav" aria-label="تنقل المتجر">
-          <button type="button" className="active" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>الرئيسية</button>
-          <button type="button" onClick={() => onNavigate('catalog')}>المنتجات</button>
-          <button type="button" onClick={() => document.getElementById('store-categories')?.scrollIntoView({ behavior: 'smooth' })}>التصنيفات</button>
-          <button type="button" onClick={() => onNavigate('orders')}>الطلبات</button>
+        <nav className="storefront-nav" aria-label="التنقل الرئيسي">
+          <a className="active" href="#store-home">الرئيسية</a>
+          <a href="#store-catalog" onClick={(event) => { event.preventDefault(); goToLogin(); }}>الكتالوج</a>
+          <a href="#store-how" >كيف يعمل</a>
+          <a href="#store-about">عن الأغبري</a>
         </nav>
-        <form className="store-header-search" onSubmit={e => { e.preventDefault(); doSearch(); }}>
-          <span>⌕</span>
-          <input value={query} onChange={e => setQuery(e.target.value)} placeholder="ابحث عن منتج، SKU أو باركود" aria-label="البحث في متجر الأغبري" />
-          {query && <button type="button" onClick={() => setQuery('')} aria-label="مسح البحث">×</button>}
-          <button type="submit">بحث</button>
-        </form>
-        <div className="store-header-actions">
-          <button type="button" className="store-header-action" onClick={() => signedIn ? onOpenPricing() : onLogin()}><span>ر.ي</span><small>الأسعار</small></button>
-          <button type="button" className="store-header-action" onClick={() => signedIn ? onNavigate('saved') : onLogin()}><span>♡</span><small>المفضلة</small><b>{favoriteIds.length}</b></button>
-          <button type="button" className="store-header-cart" onClick={() => signedIn ? onOpenCart() : onLogin()}><span>🛒</span><small>السلة</small><b>{cartCount}</b></button>
+
+        <div className="storefront-header-actions">
+          <button type="button" className="storefront-icon-button" aria-label="البحث" onClick={goToLogin}>⌕</button>
+          <button type="button" className="storefront-cart-button" onClick={goToLogin}>
+            <span aria-hidden="true">🛒</span>
+            <span>السلة</span>
+            <b>0</b>
+          </button>
+          <button type="button" className="storefront-login-button" onClick={goToLogin}>دخول الحساب</button>
         </div>
       </header>
 
-      <main className="store-main">
-        <section className="store-hero">
-          <div className="store-hero-copy">
-            <span className="store-kicker">AGHBARI COMMERCE · STOREFRONT</span>
-            <h1>كل ما يحتاجه متجرك،<br /><em>في واجهة شراء واحدة.</em></h1>
-            <p>اكتشف أصنافك، افحص السعر المصرح، اختر الكمية، ثم انتقل إلى السلة والطلب دون العودة إلى لوحة التشغيل.</p>
-            <div className="store-hero-actions">
-              <button type="button" className="primary" onClick={() => onNavigate('catalog')}>ابدأ التسوق <span>←</span></button>
-              <button type="button" className="ghost" onClick={onOpenQuickOrder}>طلب سريع <span>↗</span></button>
-              <button type="button" className="text" onClick={() => signedIn ? onOpenPricing() : onLogin()}>عرض الأسعار</button>
+      <main id="store-home">
+        <section className="storefront-hero">
+          <div className="storefront-hero-copy">
+            <StorePill>تجارة B2B • الأغبري</StorePill>
+            <h1>متجرك التجاري،<br /><em>بطريقة أبسط.</em></h1>
+            <p>
+              كتالوج واضح، أسعار مرتبطة بحسابك، وكميات جاهزة للطلب.
+              ابدأ من المتجر ثم أكمل الشراء بعد تسجيل الدخول إلى مؤسستك.
+            </p>
+            <div className="storefront-hero-actions">
+              <button type="button" className="storefront-primary" onClick={goToLogin}>ابدأ التسوق <span>←</span></button>
+              <a className="storefront-secondary" href="#store-how">اعرف كيف يعمل <span>↓</span></a>
             </div>
-            <div className="store-hero-benefits">
-              <span><b>✓</b> أسعار مرتبطة بحسابك</span>
-              <span><b>✓</b> مخزون مرتبط بالمستودع</span>
-              <span><b>✓</b> طلبات حقيقية</span>
+            <div className="storefront-trust-row" aria-label="مزايا المتجر">
+              <span><i aria-hidden="true">✓</i> أسعار مخصصة للحساب</span>
+              <span><i aria-hidden="true">✓</i> طلبات وكميات حقيقية</span>
+              <span><i aria-hidden="true">✓</i> متابعة الطلبات بعد الشراء</span>
             </div>
           </div>
-          <div className="store-hero-demo" aria-label="معاينة تجربة المتجر">
-            <div className="store-demo-window">
-              <div className="store-demo-head"><span>الأغبري</span><span>متجر الجملة</span></div>
-              <div className="store-demo-search"><span>⌕</span><span>{query || 'ابحث عن صنف أو SKU…'}</span></div>
-              <div className="store-demo-cats"><span>كل المنتجات</span><span>كتالوج المؤسسة</span><span>طلب سريع</span></div>
-              <div className="store-demo-grid">
-                {products.slice(0, 2).map(p => <button key={p.id} type="button" onClick={() => onOpenProduct(p)}><div>{p.imageUrl ? <img src={p.imageUrl} alt="" /> : <span>{p.name.slice(0,1)}</span>}</div><strong>{p.name}</strong><small>{money(p.authorizedPrice, p.priceCurrency) || 'حسب الحساب'}</small></button>)}
-                {!products.length && <><div className="store-demo-placeholder"><span>أ</span><strong>كتالوجك</strong><small>{signedIn ? 'جارٍ تحميل المنتجات…' : 'سجّل الدخول لفتح الكتالوج'}</small></div><div className="store-demo-placeholder"><span>🛒</span><strong>سلة الشراء</strong><small>من نفس تجربة المتجر</small></div></>}
+
+          <div className="storefront-hero-visual" aria-label="معاينة المتجر">
+            <div className="storefront-orb storefront-orb-one" aria-hidden="true" />
+            <div className="storefront-orb storefront-orb-two" aria-hidden="true" />
+            <div className="storefront-showcase">
+              <div className="storefront-showcase-top">
+                <span>الأغبري</span>
+                <span>متجر الجملة</span>
               </div>
-              <div className="store-demo-total"><span>السلة</span><strong>{cartCount.toLocaleString('ar-YE')} وحدة</strong><button type="button" onClick={() => signedIn ? onOpenCheckout() : onLogin()} disabled={signedIn && cartCount === 0}>إتمام الطلب</button></div>
+              <div className="storefront-showcase-search">
+                <span aria-hidden="true">⌕</span>
+                <span>ابحث عن صنف، SKU أو باركود…</span>
+              </div>
+              <div className="storefront-showcase-categories">
+                <span>كل المنتجات</span><span>الأكثر طلبًا</span><span>كتالوج شركتك</span>
+              </div>
+              <div className="storefront-showcase-grid">
+                <div className="storefront-demo-card"><div className="storefront-demo-image">أ</div><b>المنتج</b><small>السعر يظهر حسب الحساب</small><button type="button" onClick={goToLogin}>عرض التفاصيل</button></div>
+                <div className="storefront-demo-card"><div className="storefront-demo-image">ب</div><b>المنتج</b><small>المخزون والصلاحية حقيقيان</small><button type="button" onClick={goToLogin}>إضافة للسلة</button></div>
+              </div>
+              <div className="storefront-showcase-cart">
+                <span><i aria-hidden="true">🛒</i> السلة</span><b>الدخول لإضافة المنتجات</b>
+              </div>
             </div>
-            <div className="store-float-card one"><small>الحساب</small><strong>{signedIn ? 'مصرح' : 'زائر'}</strong><span>{organizationName || 'الأغبري'}</span></div>
-            <div className="store-float-card two"><small>الطلبات</small><strong>{ordersCount.toLocaleString('ar-YE')}</strong><span>{latestOrderNumber ? `آخر طلب #${latestOrderNumber}` : 'ابدأ أول طلب'}</span></div>
           </div>
         </section>
 
-        <section className="store-trust-grid" aria-label="مزايا المتجر">
-          <article><Icon>✓</Icon><div><strong>كتالوج مؤسسي</strong><small>المنتجات المعروضة من العقد التجاري للحساب.</small></div></article>
-          <article><Icon>ر.ي</Icon><div><strong>أسعار واضحة</strong><small>السعر المصرح فقط؛ لا نعرض سعرًا وهميًا للعميل.</small></div></article>
-          <article><Icon>↻</Icon><div><strong>شراء متكرر</strong><small>{latestOrderNumber ? `إعادة الطلب من #${latestOrderNumber}` : 'القوالب والطلبات السابقة في الحساب.'}</small></div></article>
-          <article><Icon>⌁</Icon><div><strong>متابعة الحساب</strong><small>{showCredit && financeReady ? availableCreditText || 'المركز المالي' : 'الطلبات والحساب والعناوين.'}</small></div></article>
-        </section>
-
-        <section id="store-categories" className="store-section">
-          <div className="store-section-head">
-            <div><span className="store-kicker">SHOP BY CATEGORY</span><h2>استكشف التصنيفات</h2><p>ابدأ من القسم الأقرب لما يحتاجه متجرك.</p></div>
-            {categories.length > 6 && <button type="button" className="store-link" onClick={() => setAllCategories(v => !v)}>{allCategories ? 'عرض أقل' : 'عرض الكل'} ↗</button>}
+        <section className="storefront-category-band" id="store-catalog">
+          <div className="storefront-section-heading">
+            <div><StorePill>كتالوج الشراء</StorePill><h2>ابدأ من المنتجات، لا من لوحة التحكم</h2></div>
+            <button type="button" className="storefront-text-link" onClick={goToLogin}>الدخول إلى الكتالوج الكامل ←</button>
           </div>
-          <div className="store-category-grid">
-            <button type="button" className={activeCategory === null ? 'active' : ''} onClick={() => chooseCategory(null)}><Icon>⌂</Icon><strong>كل المنتجات</strong><small>الكتالوج الكامل</small></button>
-            {categories.slice(0, allCategories ? categories.length : 6).map(c => <button type="button" className={activeCategory === c.id ? 'active' : ''} key={c.id} onClick={() => chooseCategory(c.id)}><Icon>◫</Icon><strong>{c.name}</strong><small>عرض المنتجات</small></button>)}
-            {!categories.length && <div className="store-category-empty"><strong>{signedIn ? 'جارٍ تجهيز التصنيفات' : 'تصنيفات المؤسسة تظهر بعد الدخول'}</strong><span>{signedIn ? 'بيانات المتجر الحقيقية قيد التحميل.' : 'لن نضع تصنيفات وهمية داخل متجر الأغبري.'}</span></div>}
+          <div className="storefront-entry-grid">
+            <button type="button" onClick={goToLogin}><span>◫</span><strong>كتالوج مؤسستك</strong><small>أصناف وأسعار حسب صلاحية حسابك</small><b>←</b></button>
+            <button type="button" onClick={goToLogin}><span>↗</span><strong>طلب سريع</strong><small>إدخال SKU والكمية عند الدخول</small><b>←</b></button>
+            <button type="button" onClick={goToLogin}><span>♡</span><strong>المحفوظات</strong><small>مفضلة وأصناف تعود إليها كثيرًا</small><b>←</b></button>
+            <button type="button" onClick={goToLogin}><span>🧾</span><strong>طلباتك</strong><small>تتبع الطلبات وإعادة الطلب</small><b>←</b></button>
           </div>
         </section>
 
-        <section id="store-products" className="store-section">
-          <div className="store-section-head store-product-head">
-            <div><span className="store-kicker">PRODUCTS</span><h2>{activeCategory ? (categories.find(c => c.id === activeCategory)?.name || 'المنتجات') : 'مختارات من الكتالوج'}</h2><p>{signedIn ? 'أصناف فعلية من كتالوج الحساب الحالي.' : 'سجّل الدخول لعرض أصناف وأسعار حسابك.'}</p></div>
-            <div className="store-head-actions"><button type="button" className="store-secondary" onClick={() => signedIn ? onOpenQuickOrder() : onLogin()}>طلب سريع</button><button type="button" className="primary" onClick={() => onNavigate('catalog')}>فتح الكتالوج الكامل</button></div>
+        <section className="storefront-how" id="store-how">
+          <div className="storefront-how-lead">
+            <StorePill>تجربة الشراء</StorePill>
+            <h2>من التصفح إلى الطلب<br />بدون تعقيد.</h2>
+            <p>المتجر العام يعرّفك بالتجربة، وعند الدخول تظهر المنتجات والأسعار والمخزون المصرّح بها لحساب مؤسستك.</p>
           </div>
-          {signedIn && visible.length ? <div className="store-product-grid">{visible.map(p => <ProductCard key={p.id} product={p} favorite={favoriteIds.includes(p.id)} compared={compareIds.includes(p.id)} busy={busyId === p.id} onAdd={item => void add(item as StorefrontProduct)} onOpen={onOpenProduct} onFavorite={onToggleFavorite} onCompare={onToggleCompare} />)}</div> : (
-            <div className="store-locked">
-              <div className="store-locked-mark">أ</div>
-              <div><span className="store-kicker">YOUR BUSINESS CATALOG</span><h3>{signedIn ? 'الكتالوج قيد التحميل' : 'افتح متجر مؤسستك'}</h3><p>{signedIn ? 'عند وصول البيانات ستظهر هنا المنتجات والصور والأسعار والمخزون من Commerce.' : 'تجربة المتجر كاملة مرتبطة بالحساب المصرح حتى تبقى الأسعار والمخزون والمعاملات صحيحة.'}</p><button type="button" className="primary" onClick={() => signedIn ? onNavigate('catalog') : onLogin()}>{signedIn ? 'فتح الكتالوج' : 'دخول وبدء التسوق'} ↗</button></div>
-            </div>
-          )}
-        </section>
-
-        <section className="store-journey">
-          <div className="store-journey-copy"><span className="store-kicker">SHOPPING FLOW</span><h2>تجربة متجر كاملة من أول نقرة إلى الطلب.</h2><p>المسارات التجارية تظهر للمشتري في مكان واحد، بينما تظل الإدارة والتشغيل منفصلين.</p></div>
-          <div className="store-journey-grid">
-            <button type="button" onClick={() => onNavigate('catalog')}><span>01</span><strong>اكتشف</strong><small>بحث وتصنيفات وكتالوج.</small></button>
-            <button type="button" onClick={() => signedIn && products[0] ? onOpenProduct(products[0]) : onLogin()} disabled={signedIn && !products.length}><span>02</span><strong>راجع</strong><small>تفاصيل الصنف والسعر والكمية.</small></button>
-            <button type="button" onClick={() => signedIn ? onOpenCart() : onLogin()}><span>03</span><strong>أضف</strong><small>{cartCount ? `${cartCount.toLocaleString('ar-YE')} وحدة في السلة` : 'ابنِ طلبك الحالي.'}</small></button>
-            <button type="button" onClick={() => signedIn ? onOpenCheckout() : onLogin()} disabled={signedIn && cartCount === 0}><span>04</span><strong>اعتمد</strong><small>Checkout وإنشاء الطلب الحقيقي.</small></button>
+          <div className="storefront-features">
+            <StoreFeature icon="01" title="تصفح" copy="واجهة متجر واضحة مع بحث وفئات ونتائج مرتبة." />
+            <StoreFeature icon="02" title="راجع" copy="تفاصيل الصنف والكمية والسعر المتاح للحساب." />
+            <StoreFeature icon="03" title="اطلب" copy="سلة وCheckout ثم إنشاء الطلب عبر المسار الحقيقي." />
           </div>
         </section>
 
-        <section className="store-business-band">
-          <div><span className="store-kicker">YOUR BUSINESS SPACE</span><h2>{signedIn ? `مرحبًا ${customerName}` : 'مساحة حسابك التجاري'}</h2><p>{signedIn ? `${organizationName || 'الأغبري'} · ${ordersCount.toLocaleString('ar-YE')} طلب` : 'بعد تسجيل الدخول تظهر طلباتك وقوالبك وحسابك المالي وعناوين التسليم.'}</p></div>
-          <div className="store-business-actions">
-            {signedIn ? <>
-              <button type="button" onClick={() => onNavigate('orders')}>طلباتي ↗</button>
-              <button type="button" onClick={() => onNavigate('saved')}>المفضلة <b>{favoriteIds.length}</b></button>
-              {showTemplates && <button type="button" onClick={() => onNavigate('templates')}>القوالب ↗</button>}
-              {showCredit && <button type="button" onClick={() => onNavigate('finance')}>المركز المالي ↗</button>}
-            </> : <button type="button" className="primary" onClick={onLogin}>دخول الحساب ↗</button>}
-          </div>
+        <section className="storefront-about" id="store-about">
+          <div><StorePill>الأغبري B2B</StorePill><h2>التجربة التي تراها هنا هي واجهة البيع، لا لوحة التشغيل.</h2><p>لوحة الإدارة مخصصة للموظفين والتشغيل. المتجر مخصص للمشتري، مع بقاء المخزون والأسعار والصلاحيات ومصدر الحقيقة التجاري على النظام.</p></div>
+          <button type="button" className="storefront-primary" onClick={goToLogin}>دخول وفتح المتجر <span>←</span></button>
         </section>
       </main>
 
-      <footer className="store-footer">
-        <div className="store-footer-brand"><span className="store-brand-mark">أ</span><div><strong>الأغبري</strong><small>Aghbari Commerce · B2B</small></div></div>
-        <div><b>المتجر</b><button type="button" onClick={() => onNavigate('catalog')}>المنتجات</button><button type="button" onClick={() => onNavigate('orders')}>الطلبات</button></div>
-        <div><b>الحساب</b><button type="button" onClick={() => signedIn ? onNavigate('account') : onLogin()}>حسابي</button><button type="button" onClick={() => signedIn ? onOpenCart() : onLogin()}>السلة</button></div>
-        <div><b>الحالة</b><span>{isOnline ? '● متصل' : '○ غير متصل'}</span><small>البيانات التجارية المصرح بها فقط.</small></div>
-        {signedIn && onOpenAdmin && <button type="button" className="store-admin-button" onClick={onOpenAdmin}>لوحة التشغيل ↗</button>}
+      <footer className="storefront-footer">
+        <div className="storefront-brand"><span className="storefront-brand-mark"><img src="/icons/aghbari-192.svg" alt="" /></span><span><b>الأغبري</b><small>Aghbari Commerce</small></span></div>
+        <span>متجر تجارة الجملة • واجهة عربية RTL</span>
+        <button type="button" onClick={goToLogin}>دخول الحساب ←</button>
       </footer>
-
-      <div className="store-mobile-dock">
-        <button type="button" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}><span>⌂</span>الرئيسية</button>
-        <button type="button" onClick={() => onNavigate('catalog')}><span>▦</span>المنتجات</button>
-        <button type="button" onClick={onOpenCart}><span>🛒</span>السلة<b>{cartCount}</b></button>
-        <button type="button" onClick={() => signedIn ? onNavigate('account') : onLogin()}><span>♙</span>حسابي</button>
-      </div>
     </div>
   );
 }
