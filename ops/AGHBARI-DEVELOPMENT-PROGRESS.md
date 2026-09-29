@@ -594,3 +594,9 @@ Next: current exact-SHA Quality + Test-the-Test; then browser/runtime if executa
 | Run | Date | SHA | Branch | Implemented | Verified | Proven | Blocked | Certification | Production | Next |
 |---|---|---|---|---|---|---|---|---|---|---|
 | UI-RUNTIME-ALIGN-20260929-03 | 2026-09-29 | c870bc54f7045eb17b2d69e246b5be3369097b55 | main | Runtime import for global-search enhancement; strengthened focused source assertion; exact state/progress handoff alignment | Source audit; exact current-SHA workflows to be checked after commit | NOT_PROVEN until exact-SHA matrix completes | Hosted exact-source deployment remains external | NOT CLAIMED | HOLD / NO TOUCH | Finish exact-SHA matrix; fix first material failure; then next independent high-value gap |
+
+
+## Run 2026-09-29 — Customer detail actions + saved-product accessibility
+| Run | Date | SHA | Branch | Implemented | Verified | Proven | Blocked | Certification | Production | Next |
+|---|---|---|---|---|---|---|---|---|---|---|
+| UI-DETAIL-A11Y-20260929-04 | 2026-09-29 | d096d8a98f43fff8bf8c22ad9c7b81d3d3d98e5f | main | Catalog bulk selection ceiling 50; Product Detail favorite/compare/Copy-SKU quick actions; saved/recent shelf favorite truth + a11y state; focused regression tests | Aghbari Quality SUCCESS on exact tree; source audit complete; remaining exact-tree evidence lanes active | PARTIAL / NOT_PROVEN for final visual/runtime certification | Hosted deployment identity mismatch plus existing Netlify/Vercel external blockers | NOT CLAIMED | HOLD / NO TOUCH | Finish exact-tree Visual Proof/Test-the-Test/application-quality/Security/G1/Browser evidence; fix only first material source failure, then next independent gap |

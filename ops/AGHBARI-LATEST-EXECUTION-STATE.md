@@ -280,3 +280,23 @@ Run/inspect the full exact-current-SHA matrix for the resulting head; fix only t
 - Do not leave `src/ui-global-search.css` unimported.
 - Do not transfer proof from any earlier SHA.
 - Do not retry unchanged hosted deployment blockers.
+
+
+## 2026-09-29 — Storefront detail actions + saved-product accessibility hardening
+- EXACT CURRENT CODE TREE: `d096d8a98f43fff8bf8c22ad9c7b81d3d3d98e5f` (current main tree also contains the functional lineage from `c693395816531408073ee7186e54a1107075d2ee` through `f163e5bddf3d57f23b314d17247edd677dcd58cc`, `c52378da80f41875529b8a6919c82be53b21fa05`, and `974d6a1c70aa7843b78bb9e7f0276d1b28ca6bbd`).
+- Implemented: Catalog bulk product selection is fail-closed at the canonical 50-item UI ceiling; Customer Product Detail now exposes real favorite/compare/Copy-SKU actions; the existing three-item compare limit remains enforced; Saved Products reflects the actual favorite state for both favorites and recently viewed items via assistive-technology state.
+- Focused tests: `src/catalog-bulk-selection.test.ts`, `src/customer-product-detail-actions.test.ts`, `src/customer-saved-shelf-a11y.test.ts`.
+- Verification snapshot: Aghbari Quality completed SUCCESS on `d096...`; Security/G1/Bootstrap/Application Quality/Visual Proof/Test-the-Test were still active or queued at checkpoint. Browser deployment-status run failed before browser execution because the served hosted artifact did not match the expected SHA; this is hosted deployment identity evidence, not a source-level product regression.
+- External blockers unchanged: Netlify exact-source credential path and the Vercel free-plan deployment/protection path remain blocked. No unchanged hosted blocker was retried.
+- Production: `HOLD / NO TOUCH`.
+
+## NEXT EXECUTABLE ACTION
+Inspect the exact-tree `d096...` remaining Test-the-Test, UI Visual Proof, application-quality, Security/G1 and Browser evidence. Treat a hosted artifact identity mismatch as hosted evidence failure unless a source-level failure is explicitly shown. Fix only the first material source failure, then continue the next independent in-scope core/UI gap.
+
+## DO NOT REPEAT
+- Do not reintroduce uncapped Catalog bulk selection beyond 50.
+- Do not remove Product Detail favorite/compare/Copy-SKU actions without a regression/requirement trigger.
+- Do not misreport recent-shelf favorite state when the current saved-product state is true.
+- Do not transfer prior visual/runtime proof to `d096...`.
+- Do not retry unchanged Vercel/Netlify external blockers.
+- Do not mutate Production for purchase/receipt idempotency.
