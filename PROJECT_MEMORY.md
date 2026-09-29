@@ -225,3 +225,10 @@
 - Catalog grid/compact selection is local device preference only; it never changes Commerce business data.
 - Saved/recent product memory is local personalization. Saved IDs are resolved against live authorized catalog data when entering the Saved workspace; unavailable entries are not fabricated.
 - Product sharing uses a stable catalog-product hash and resolves through the existing authorized catalog contract.
+
+
+## 2026-09-30 — Durable product direction
+- Aghbari Commerce is a two-surface sellable B2B commerce product: customer Storefront/Portal for discovery-to-checkout and Admin/Staff Control Center for operational control.
+- `/` and `/store` are customer commercial presentation surfaces; `/admin-*` is the operational control plane.
+- The 84 UI reference assets are visual references organized into screen packs; they do not authorize unsupported external business behavior. Implement unique families once and preserve provenance.
+- Existing Commerce services remain the only source of pricing, inventory, customer authorization, cart and transactional truth.
