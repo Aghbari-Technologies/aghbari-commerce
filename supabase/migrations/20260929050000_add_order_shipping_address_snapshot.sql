@@ -50,7 +50,7 @@ DECLARE
   v_existing_count integer;
   v_cart_id uuid;
   v_requested_key text := pg_catalog.btrim(coalesce(p_idempotency_key, ''));
-  v_requested_payment text := pg_catalog.lower(pg_catalog.btrim(pg_catalog.coalesce(p_payment_method, '')));
+  v_requested_payment text := pg_catalog.lower(pg_catalog.btrim(coalesce(p_payment_method, '')));
   v_shipping_address jsonb := NULL;
 BEGIN
   IF v_org IS NULL OR v_customer IS NULL THEN
@@ -247,7 +247,7 @@ BEGIN
     v_customer,
     p_warehouse_id,
     'pending',
-    pg_catalog.coalesce(v_currency, 'YER'),
+    coalesce(v_currency, 'YER'),
     v_subtotal,
     v_subtotal,
     v_requested_key,
