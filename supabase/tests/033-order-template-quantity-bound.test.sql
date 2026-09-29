@@ -23,7 +23,7 @@ select ok(exists (
 
 select is((select p.proconfig from pg_proc p join pg_namespace n on n.oid=p.pronamespace
   where n.nspname='public' and p.proname='apply_order_template' limit 1),
-  array['search_path='],'apply_order_template keeps empty search_path hardening');
+  array['search_path=""'],'apply_order_template keeps empty search_path hardening');
 
 select is(has_function_privilege('anon','public.apply_order_template(uuid,uuid,text)','execute'),false,'apply_order_template is not executable by anon');
 
