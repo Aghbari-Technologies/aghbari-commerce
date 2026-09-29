@@ -581,3 +581,42 @@
 .pwa-install-banner strong{display:block;color:#173f51;font-size:11px}.pwa-install-banner small{display:block;margin-top:2px;color:#82939b;font-size:8px;line-height:1.6}
 .pwa-install-banner button{min-height:36px;padding:8px 11px;border:0;border-radius:9px;background:#0b8fa1;color:#fff;font-size:8px;font-weight:900}.pwa-install-banner button:disabled{opacity:.55}
 @media(max-width:560px){.pwa-install-banner{grid-template-columns:auto minmax(0,1fr)}.pwa-install-banner button{grid-column:1/-1;width:100%}}
+
+/* Access Console — enterprise permission workspace */
+.admin-panel #admin-access.operations-panel{background:linear-gradient(180deg,#ffffff,#f6fafb)!important}
+.admin-panel #admin-access .section-title{align-items:flex-end!important}
+.admin-panel #admin-access .section-title h2{font-size:24px!important;letter-spacing:-.3px}
+.admin-panel #admin-access .section-title .panel-note{max-width:720px!important;line-height:1.8!important}
+.admin-panel #admin-access .access-table{display:grid!important;gap:5px!important;margin-top:10px!important;padding:6px!important;border:1px solid #dce9ed!important;border-radius:16px!important;background:#edf5f6!important}
+.admin-panel #admin-access .access-row{display:grid!important;grid-template-columns:minmax(230px,1.7fr) 90px 130px 105px 185px!important;align-items:center!important;gap:8px!important;padding:9px 10px!important;border:1px solid transparent!important;border-radius:11px!important;background:#fff!important}
+.admin-panel #admin-access .access-row:not(.access-head):hover{border-color:#c8e1e5!important;background:#fbfeff!important}
+.admin-panel #admin-access .access-row.access-head{position:sticky!important;top:0!important;z-index:2!important;background:#f7fbfc!important;color:#71878f!important;font-size:8px!important;font-weight:900!important}
+.admin-panel #admin-access .access-row>div{min-width:0!important}
+.admin-panel #admin-access .access-row>div strong{display:block!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;color:#214d5f!important;font-size:10px!important}
+.admin-panel #admin-access .access-row code{display:block!important;margin-top:2px!important;color:#9aaab0!important;font-size:7px!important}
+.admin-panel #admin-access .access-row>span,
+.admin-panel #admin-access .access-row>time{color:#728891!important;font-size:8px!important}
+.admin-panel #admin-access .access-row select{width:100%!important;min-height:34px!important;border-color:#d5e5e9!important;border-radius:9px!important;background:#fbfdfe!important;font-size:8px!important;font-weight:800!important}
+.admin-panel #admin-access .access-row button{min-height:34px!important;border-radius:9px!important;font-size:8px!important;font-weight:900!important}
+.admin-panel #admin-access .permission-hint{padding:7px 9px!important;border:1px dashed #d8e4e7!important;border-radius:9px!important;background:#fbfdfe!important;color:#8a9aa1!important;font-size:8px!important}
+.admin-panel #admin-access .permission-matrix{display:grid!important;gap:4px!important;margin-top:12px!important;padding:9px!important;border:1px solid #dbe8ec!important;border-radius:16px!important;background:#f7fbfc!important}
+.admin-panel #admin-access .matrix-title{display:flex!important;justify-content:space-between!important;align-items:end!important;gap:10px!important;padding:5px 6px 9px!important}
+.admin-panel #admin-access .matrix-title strong{color:#214d5f!important;font-size:11px!important}.admin-panel #admin-access .matrix-title small{color:#82939a!important;font-size:7px!important}
+.admin-panel #admin-access .matrix-row{display:grid!important;grid-template-columns:1.25fr repeat(5,minmax(70px,1fr))!important;gap:4px!important;align-items:stretch!important}
+.admin-panel #admin-access .matrix-row>span{display:flex!important;align-items:center!important;justify-content:center!important;min-height:34px!important;padding:5px!important;border:1px solid #e2ecef!important;border-radius:8px!important;background:#fff!important;color:#718790!important;font-size:7px!important;font-weight:800!important;text-align:center!important}
+.admin-panel #admin-access .matrix-row>span:first-child{justify-content:flex-start!important;color:#385f6d!important;font-size:8px!important}
+.admin-panel #admin-access .matrix-row>span.allowed{background:#eaf8f3!important;border-color:#c6e7da!important;color:#08785f!important}
+.admin-panel #admin-access .matrix-row>span.blocked{background:#fff5f6!important;border-color:#edd9dd!important;color:#a97780!important}
+@media(max-width:920px){
+ .admin-panel #admin-access .access-row{grid-template-columns:minmax(190px,1.5fr) 80px 120px 90px 150px!important}
+ .admin-panel #admin-access .matrix-row{grid-template-columns:1.1fr repeat(5,minmax(66px,1fr))!important;overflow:auto}
+ .admin-panel #admin-access .permission-matrix{overflow:auto}
+}
+@media(max-width:650px){
+ .admin-panel #admin-access .access-row{grid-template-columns:1fr 1fr!important}
+ .admin-panel #admin-access .access-row.access-head{display:none!important}
+ .admin-panel #admin-access .access-row>time{display:none!important}
+ .admin-panel #admin-access .access-row>button{width:100%!important}
+ .admin-panel #admin-access .permission-matrix{overflow-x:auto}
+ .admin-panel #admin-access .matrix-row{min-width:500px!important}
+}
