@@ -19,7 +19,7 @@ export default function PwaInstallPrompt(){
  async function install(){
   if(!promptEvent||busy)return;
   setBusy(true);
-  try{await promptEvent.prompt();const choice=await promptEvent.userChoice;if(choice.outcome==='accepted'){setInstalled(true);setPromptEvent(null);}}catch{}finally{setBusy(false);}
+  try{await promptEvent.prompt();const choice=await promptEvent.userChoice;if(choice.outcome==='accepted'){setInstalled(true);setPromptEvent(null);}}catch { /* installation is optional and must never block the storefront */ }finally{setBusy(false);}
  }
  return <aside className="pwa-install-banner" role="status"><div className="pwa-install-icon" aria-hidden="true">أ</div><div><strong>ثبّت الأغبري على جهازك</strong><small>وصول أسرع إلى الكتالوج والطلبات مع تجربة تشغيل مستقلة.</small></div><button type="button" onClick={()=>void install()} disabled={busy}>{busy?'جارٍ فتح نافذة التثبيت…':'تثبيت التطبيق'}</button></aside>;
 }
