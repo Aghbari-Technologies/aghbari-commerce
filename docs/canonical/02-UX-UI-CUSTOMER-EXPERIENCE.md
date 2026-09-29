@@ -230,3 +230,7 @@ Requirements discovered from references or canonical specifications are not park
 - Favorites can be added/removed from real catalog cards; recent products are captured when product details are opened; recent searches are recorded on deliberate search submission and can be replayed with one click.
 - These features must remain local convenience state, clearly labeled as device-saved, and must never become a source of truth for price, inventory, permissions, checkout or orders.
 - The existing global Command Center, product comparison and latest-order reorder patterns form the fast-path interaction layer across the Customer Portal.
+
+
+### محفوظات المشتري / Saved Products
+بوابة العميل تتضمن مساحة محفوظات مستقلة ضمن رحلة التسوق، تعتمد على التخصيص المحلي المقيد بسياق المؤسسة/العميل والجهاز، وتعرض المفضلة والأصناف التي شوهدت مؤخرًا. يجب أن تعيد هذه المساحة استخدام بيانات الكتالوج المصرح بها فقط، وتوفر إعادة فتح التفاصيل والإضافة للسلة وإدارة المفضلة، ولا تصبح مصدر حقيقة للطلب أو الأسعار أو المخزون.
