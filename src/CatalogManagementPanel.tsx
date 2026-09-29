@@ -72,6 +72,23 @@ export default function CatalogManagementPanel({ role }: { role: UserRole }) {
   const totalPages=Math.max(1,Math.ceil(filtered.length/PAGE_SIZE));
   const currentPage=Math.min(page,totalPages);
   const visible=filtered.slice((currentPage-1)*PAGE_SIZE,currentPage*PAGE_SIZE);
+  function exportCurrent(){
+    if(!filtered.length)return;
+    const headers=['SKU','المنتج','الباركود','التصنيف','الوحدة','الحالة','تاريخ الإنشاء','آخر تحديث'];
+    const rows=filtered.map(product=>[
+      product.sku,
+      product.name,
+      product.barcode??'',
+      product.category_id?categoryNames.get(product.category_id)??'':'',
+      product.unit,
+      STATUS_LABELS[product.status],
+      new Date(product.created_at).toLocaleString('ar-YE'),
+      new Date(product.updated_at).toLocaleString('ar-YE')
+    ]);
+    const csv='\\ufeff'+[headers,...rows].map(row=>row.map(value=>'"'+String(value??'').replaceAll('"','""')+'"').join(',')).join('\\n');
+    const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+    const anchor=document.createElement('a');anchor.href=url;anchor.download='aghbari-catalog-'+new Date().toISOString().slice(0,10)+'.csv';anchor.click();URL.revokeObjectURL(url);
+  }
   const activeCount=products.filter(p=>p.status==='active').length;
   const inactiveCount=products.length-activeCount;
 
@@ -154,7 +171,7 @@ export default function CatalogManagementPanel({ role }: { role: UserRole }) {
       <label><span>التصنيف</span><select aria-label="فلترة التصنيف" value={categoryId} onChange={e=>setCategoryId(e.target.value)}><option value="">كل التصنيفات</option>{categories.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select></label>
       <label><span>الحالة</span><select aria-label="فلترة الحالة" value={status} onChange={e=>setStatus(e.target.value as 'all'|ProductStatus)}><option value="all">كل الحالات</option><option value="active">نشط</option><option value="inactive">موقوف</option></select></label>
       <label><span>الترتيب</span><select aria-label="ترتيب المنتجات" value={sort} onChange={e=>setSort(e.target.value as typeof sort)}><option value="name">الاسم</option><option value="sku">SKU</option><option value="newest">الأحدث</option></select></label>
-      <button type="button" className="ghost" onClick={()=>void reload()} disabled={loading||Boolean(busyId)}>إعادة تحميل</button>
+      <button type="button" className="ghost" onClick={exportCurrent} disabled={loading||Boolean(busyId)||!filtered.length}>تصدير CSV</button><button type="button" className="ghost" onClick={()=>void reload()} disabled={loading||Boolean(busyId)}>إعادة تحميل</button>
     </div>
 
     {!loading && canToggle && filtered.length > 0 && <div className="bulk-action-center" aria-label="مركز العمليات الجماعية">

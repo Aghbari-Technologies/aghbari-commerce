@@ -84,12 +84,26 @@ describe('catalog and pricing surface closure', () => {
     expect(sourceText).toContain('selectedCategory');
   });
 
+  it('keeps the product collection export scoped to the current filtered catalogue', () => {
+    const sourceText = readRepoSource('CatalogManagementPanel.tsx');
+    expect(sourceText).toContain('exportCurrent');
+    expect(sourceText).toContain('تصدير CSV');
+    expect(sourceText).toContain('filtered.map(product=>');
+  });
+
   it('keeps pricing validity and sorting filters wired to the real price collection', () => {
     const sourceText = readRepoSource('PricingMatrixPanel.tsx');
     expect(sourceText).toContain('فلترة صلاحية السعر');
     expect(sourceText).toContain('ترتيب الأسعار');
     expect(sourceText).toContain('validityMatch');
     expect(sourceText).toContain("sort==='highest'");
+  });
+
+  it('keeps pricing export scoped to the current filtered price collection', () => {
+    const sourceText = readRepoSource('PricingMatrixPanel.tsx');
+    expect(sourceText).toContain('exportCurrent');
+    expect(sourceText).toContain('تصدير CSV');
+    expect(sourceText).toContain('filtered.map(row=>');
   });
 });
 
@@ -205,6 +219,13 @@ describe('supplier and history sort type safety', () => {
     const sourceText = readRepoSource('SupplierLedgerPanel.tsx');
     expect(sourceText).not.toContain('sort((a:any,b:any)');
     expect(sourceText).toContain('type SupplierHistoryRow = Supplier | Bill | Ledger');
+  });
+
+  it('keeps supplier ledger export scoped to the active tab', () => {
+    const sourceText = readRepoSource('SupplierLedgerPanel.tsx');
+    expect(sourceText).toContain('exportCurrent');
+    expect(sourceText).toContain('current.map(row=>');
+    expect(sourceText).toContain('tab===\'suppliers\'');
   });
   it('keeps financial and inventory history rows typed', () => {
     expect(readRepoSource('FinanceOperationsHistoryPanel.tsx')).not.toContain('(x:any)');
