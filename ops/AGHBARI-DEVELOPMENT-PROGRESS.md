@@ -1,3 +1,15 @@
+# Run 2026-09-29 — World-class storefront closure checkpoint
+- Run: `2026-09-29`
+- Code SHA: `f24eac8750d8a324a6d8bc86b7719f4e5d4d1c5b`
+- Branch: `main`
+- Implemented: buyer Command Center; 3-item product comparison; latest-order repeat; favorites/recent products/recent searches; SKU copy; cart readiness; installable PWA UX; enterprise Access Console visual layer; complete cross-screen marketplace/admin visual polish.
+- Verified: Browser E2E SUCCESS; Security SUCCESS; Bootstrap SUCCESS; G1 SUCCESS; Aghbari Quality SUCCESS; application-quality SUCCESS; UI Visual Proof SUCCESS; Test-the-Test SUCCESS.
+- Visual artifact: `11010704332` / `sha256:663fee2325b323aea2ce87b4d4af90bb4baaacfb98cddfaff74f423e93853b84`.
+- Blocked: Netlify Exact-Source external failure; no Production change.
+- Certification: `NOT CLAIMED` for hosted production.
+- Production: `HOLD / NO TOUCH`
+- Next: use the verified baseline above and continue the next canonical capability gap.
+
 # Run 2026-09-29 — Global buyer capabilities checkpoint
 - Run: `2026-09-29`
 - Code SHA: `b93c788cae8466b481f901ce9263da2a69f7824f`

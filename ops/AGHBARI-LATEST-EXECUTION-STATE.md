@@ -1,3 +1,21 @@
+## 2026-09-29 — World-class storefront acceleration + exact visual proof
+- CURRENT CODE HEAD: `f24eac8750d8a324a6d8bc86b7719f4e5d4d1c5b`
+- Implemented in this closure wave: Customer Command Center (Ctrl/⌘+K) with keyboard navigation; live SKU/name/category search; product comparison up to 3 items with direct cart action; latest-order repeat from Home/Command Center; device-scoped favorites, recently viewed products and recent searches; direct SKU copy; cart/checkout readiness gate; installable PWA prompt over the existing manifest/service worker; enterprise Access Console visual elevation; premium cross-screen RTL visual system across Customer/Staff/Admin.
+- Visual proof artifact: `aghbari-ui-visual-f24eac8750d8a324a6d8bc86b7719f4e5d4d1c5b`, artifact `11010704332`, digest `sha256:663fee2325b323aea2ce87b4d4af90bb4baaacfb98cddfaff74f423e93853b84`. Customer + Admin screenshots captured and uploaded from the exact source.
+- Exact-SHA verification on `f24eac8750d8a324a6d8bc86b7719f4e5d4d1c5b`: Browser E2E SUCCESS; Security SUCCESS; Bootstrap SUCCESS; G1 SUCCESS; Aghbari Quality SUCCESS; application-quality SUCCESS; UI Visual Proof SUCCESS; Test-the-Test SUCCESS.
+- Netlify Exact-Source remains an external failure/blocker. Production remains `HOLD / NO TOUCH`.
+- Purchase/receipt idempotency `200 → 128` remains source/release-gated until migration lineage + concurrency + negative + Test-the-Test + exact-SHA runtime evidence are completed. No Production mutation was made.
+
+## NEXT EXECUTABLE ACTION
+Use `f24eac8750d8a324a6d8bc86b7719f4e5d4d1c5b` as the verified code baseline. Open the next canonical gap only after targeted inspection; prioritize any remaining in-scope customer/admin nested-state or transactional gap. Do not rework the verified storefront layers above.
+
+## DO NOT REPEAT
+- Do not rebuild Command Center, comparison, latest-order repeat, saved/recent buyer memory, cart readiness, PWA install prompt, canonical customer rail, or Access Console without regression/direct requirement/evidence invalidation.
+- Do not treat the 84 reference images as 84 product screens.
+- Do not transfer evidence to another SHA.
+- Do not retry the unchanged Netlify/Vercel blockers.
+- Do not mutate Production for purchase/receipt idempotency.
+
 ## 2026-09-29 — Global buyer features / command center + compare + repeat order
 - CURRENT CODE HEAD: `b93c788cae8466b481f901ce9263da2a69f7824f`
 - Implemented: customer Command Center (Ctrl/⌘+K), search across live navigation/actions and loaded catalog SKU/name; keyboard Arrow/Enter/Escape flow; product comparison up to three live catalog products; direct cart action from comparison; one-click repeat of the latest real order from Home and Command Center using current stock/authorization through existing reorder path.
