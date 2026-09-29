@@ -24,7 +24,7 @@ test.describe('UI reference-family browser coverage', () => {
       ['catalog', 'الكتالوج'],
       ['orders', 'طلباتي'],
       ['finance', 'المركز المالي'],
-      ['templates', 'القوالب والطلبات المحفوظة'],
+      ['templates', 'الطلبات المتكررة'],
       ['account', 'حسابي'],
       ['notifications', 'الإشعارات'],
     ] as const;
