@@ -67,7 +67,7 @@ type ClientUiConfig = {
 };
 const DEFAULT_UI_CONFIG: ClientUiConfig = { accentColor:'#0e91a4', compactMode:false, showSearch:true, showCategories:true, showExcel:true, showCredit:true, showTemplates:true, showInventory:true, showRetailPrice:false, showQuickOrder:true, requireQuantityConfirmation:true, showTieredPricing:true, showSavingsCalculator:true, showImageSearch:false, showVoiceSearch:false, showPaymentMethods:true, paymentOnCredit:true, paymentCash:true, paymentTransfer:true, minOrderValue:0, maxOrderValue:0, maxTemplates:50 };
 const PAYMENT_OPTIONS = [{key:'credit' as const,label:'آجل / ائتمان',field:'paymentOnCredit' as const},{key:'cash' as const,label:'نقدي',field:'paymentCash' as const},{key:'transfer' as const,label:'حوالة',field:'paymentTransfer' as const}];
-type PricedProduct = Product & { authorizedPrice?: number; priceCurrency?: string };
+type PricedProduct = Product & { authorizedPrice?: number; priceCurrency?: string; barcode?: string | null };
 export type CatalogStockFilter = 'all' | 'available' | 'out';
 export type CatalogPriceFilter = 'all' | 'priced' | 'missing';
 
@@ -95,7 +95,7 @@ export function catalogQuantityError(value: string | number, availableQuantity: 
   if (quantity > availableQuantity) return `المخزون المتاح ${availableQuantity} فقط.`;
   return null;
 }
-function mapProduct(item: CatalogItem, categoryName: string, imageUrl?: string): PricedProduct { return { id:item.id, sku:item.sku, name:item.name, unit:item.unit, category:categoryName, description:item.description ?? undefined, availableQuantity:item.available_quantity, status:item.status === 'active' ? 'active' : 'inactive', imageUrl, authorizedPrice:item.authorized_price ?? undefined, priceCurrency:item.currency || undefined }; }
+function mapProduct(item: CatalogItem, categoryName: string, imageUrl?: string): PricedProduct { return { id:item.id, sku:item.sku, name:item.name, unit:item.unit, category:categoryName, description:item.description ?? undefined, availableQuantity:item.available_quantity, status:item.status === 'active' ? 'active' : 'inactive', imageUrl, barcode:item.barcode ?? null, authorizedPrice:item.authorized_price ?? undefined, priceCurrency:item.currency || undefined }; }
 function money(value:number,currency='YER'){return `${formatMoney(value)} ${currency==='YER'?'ر.ي':currency}`;}
 type QuickExcelLine = { identifier:string; quantity:number; product:Product|null; error:string|null };
 const CATALOG_PAGE_SIZE=24;
