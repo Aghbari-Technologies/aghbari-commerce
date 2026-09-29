@@ -400,3 +400,15 @@ Read the exact-353242 check-runs. If Quality fails, read its job log and fix onl
 - Do not copy proof from older SHAs.
 - Do not rebuild closed saved-products, notification, shipping-snapshot or order-pagination work without regression.
 - Do not fabricate public product/price/stock data.
+
+
+## 2026-09-30 — Final batch state at current UI head
+- CURRENT UI/STORE CODE HEAD: `d0ce0dd9c868d8e911115ff80efca2c9102c1f74`.
+- Customer surface: first-class Storefront `/` and `/store`, live authorized catalog, search/categories, product detail, real cart, Checkout handoff, live favorites/compare.
+- Admin surface: existing 33 live admin capabilities retained, with unified world-class presentation layer and explicit Storefront switch; no admin-first root regression.
+- Reference coverage: 84 supplied assets remain provenance input grouped into packs; in-scope Customer/Admin capabilities are canonical, and unsupported external behaviors remain explicit boundaries.
+- Current proof: NOT_PROVEN for this exact head until the latest Quality/Browser/Sensitivity/G1/Security/Vercel runs finish. No evidence transferred from older SHAs.
+- PRODUCTION: HOLD / NO TOUCH.
+
+## CURRENT RESUME POINTER
+Exact next head is `d0ce0dd9c868d8e911115ff80efca2c9102c1f74` on `execution/full-product-ui-worldclass-20260930`. Finish exact-SHA CI and Vercel proof, then perform browser/runtime checks of Storefront and Admin surfaces. Fix the first material failure only.
