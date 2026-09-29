@@ -52,9 +52,18 @@ function getVisibleCustomerPortalSections(config: { showCredit: boolean; showTem
   return sections;
 }
 const PORTAL_SECTIONS = new Set<PortalSection>(['home', 'catalog', 'saved', 'orders', 'finance', 'templates', 'account', 'notifications']);
+function sharedProductIdFromHash(): string | null {
+  if (typeof window === 'undefined') return null;
+  const raw = window.location.hash;
+  const prefix = '#catalog-product-';
+  if (!raw.startsWith(prefix)) return null;
+  try { return decodeURIComponent(raw.slice(prefix.length)) || null; } catch { return null; }
+}
 const sectionFromHash = (): PortalSection => {
   if (typeof window === 'undefined') return 'home';
-  const value = window.location.hash.replace(/^#/, '') as PortalSection;
+  const raw = window.location.hash;
+  if (raw.startsWith('#catalog-product-')) return 'catalog';
+  const value = raw.replace(/^#/, '') as PortalSection;
   return PORTAL_SECTIONS.has(value) ? value : 'home';
 };
 type PriceTier = { min_quantity: number; unit_price: number; currency: string };
