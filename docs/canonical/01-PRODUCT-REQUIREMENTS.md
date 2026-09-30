@@ -96,3 +96,37 @@ The number of reference assets is not a completion denominator. Product closure 
 - Customer Home and Catalog now expose local buyer-personalization helpers over real in-scope product records: favorites and recently viewed products.
 - Customer Catalog also retains a bounded recent-search list on the same device. These memories are scoped by organization/customer context and never become pricing, stock, order or account truth.
 - Saved/recent actions are convenience features only; they are fail-safe when local storage is unavailable and do not imply cross-device synchronization.
+
+
+## 2026-09-30 — Sellable Aghbari Commerce product surface
+Aghbari Commerce is required to present as a complete sellable B2B commerce product, with two first-class user experiences.
+
+Customer experience:
+1. storefront/merchandising Home;
+2. catalog discovery;
+3. search/filter/category navigation;
+4. product detail and quantity;
+5. persistent cart;
+6. checkout/order submission;
+7. order tracking/history/detail;
+8. reorder and templates;
+9. pricing tiers;
+10. finance/invoices/payments/statements;
+11. account/profile/company/addresses/settings;
+12. notifications and offline recovery.
+
+Admin/Staff experience:
+1. command center/dashboard;
+2. order operations and detail/bulk actions;
+3. customers and detail;
+4. catalog/products/categories;
+5. pricing and tiers;
+6. inventory/warehouses/transfers/stock count/history/reconciliation;
+7. suppliers/purchasing/receiving;
+8. statements/invoices/payments/expenses;
+9. import/export;
+10. roles/permissions/invitations;
+11. notifications/audit/outbox/governance;
+12. settings/appearance/branding.
+
+The quality target is parity with established commerce UX patterns, not unsupported ERP/BI/AI expansion. Business truth remains governed by the existing Aghbari domain contracts, tenant isolation, authorization and transactional services.

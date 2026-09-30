@@ -134,7 +134,7 @@ export async function getCustomerOrderDetail(orderId:string): Promise<CustomerOr
 export async function getCustomerOrdersPage(offset = 0, limit = 30): Promise<CustomerOrderSummary[]> {
   const safeOffset = Math.max(0, Math.trunc(offset));
   const safeLimit = Math.min(Math.max(Math.trunc(limit), 1), 50);
-  const { data, error } = await retryRead(async () => {
+  const { data } = await retryRead(async () => {
     const result = await requireSupabase()
       .from('orders')
       .select('id,order_number,status,total,currency,created_at')

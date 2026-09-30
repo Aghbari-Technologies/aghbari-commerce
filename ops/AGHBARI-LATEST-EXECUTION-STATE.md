@@ -377,3 +377,38 @@ Check workflows for `a9a92cae2ddf143c0d256397b9a4bfef05fa2242`; if Quality/Test-
 - Do not re-open the closed 84-reference registry or rebuild duplicate screens.
 - Do not retry unchanged Netlify/Vercel blockers.
 - Do not claim the older READY Vercel deployment is current-source proof.
+
+
+## 2026-09-30 — Full product UI / storefront / admin execution checkpoint
+- ACTUAL EXECUTION BRANCH: `execution/full-product-ui-worldclass-20260930`
+- CURRENT CODE HEAD: `353242a1ce9234b0d7dfc7f856ad93757836efea`
+- Implemented on this line: first-class `/` and `/store` Storefront entry, real authorized customer catalog surface, real cart presentation, product detail, search/category discovery, shared world-class visual system across Customer/Admin, explicit storefront↔admin switching, and updated execution/UX/product requirements.
+- The previous source corruption during an attempted fix was detected by exact-SHA Quality and corrected by restoring the full `AppV3Fixed.tsx` from `main` before reapplying only intended storefront changes.
+- PROVEN on this SHA: not yet. Browser-contract/security/G1 evidence for earlier SHA must not be transferred. Current GitHub checks have just restarted; Vercel exact-source preview also requires fresh completion.
+- BLOCKER: exact current Quality/Browser/Sensitivity/Vercel proof is pending.
+- PRODUCTION: `HOLD / NO TOUCH`.
+
+## CURRENT RESUME POINTER
+Continue from `353242a1ce9234b0d7dfc7f856ad93757836efea` on `execution/full-product-ui-worldclass-20260930`. Inspect only the exact-SHA checks. Fix the first material failure, then continue the next missing reference-backed Customer/Admin interaction.
+
+## NEXT EXECUTABLE ACTION
+Read the exact-353242 check-runs. If Quality fails, read its job log and fix only that root cause. If Quality is green, continue visual/browser evidence for `/`, `/store`, customer catalog/product/cart/checkout, then Admin dashboard/orders/catalog/inventory/finance at desktop and mobile.
+
+## DO NOT REPEAT
+- Do not restore the pre-storefront admin-first root.
+- Do not overwrite `AppV3Fixed.tsx` with connector-truncated content.
+- Do not copy proof from older SHAs.
+- Do not rebuild closed saved-products, notification, shipping-snapshot or order-pagination work without regression.
+- Do not fabricate public product/price/stock data.
+
+
+## 2026-09-30 — Final batch state at current UI head
+- CURRENT UI/STORE CODE HEAD: `d0ce0dd9c868d8e911115ff80efca2c9102c1f74`.
+- Customer surface: first-class Storefront `/` and `/store`, live authorized catalog, search/categories, product detail, real cart, Checkout handoff, live favorites/compare.
+- Admin surface: existing 33 live admin capabilities retained, with unified world-class presentation layer and explicit Storefront switch; no admin-first root regression.
+- Reference coverage: 84 supplied assets remain provenance input grouped into packs; in-scope Customer/Admin capabilities are canonical, and unsupported external behaviors remain explicit boundaries.
+- Current proof: NOT_PROVEN for this exact head until the latest Quality/Browser/Sensitivity/G1/Security/Vercel runs finish. No evidence transferred from older SHAs.
+- PRODUCTION: HOLD / NO TOUCH.
+
+## CURRENT RESUME POINTER
+Exact next head is `d0ce0dd9c868d8e911115ff80efca2c9102c1f74` on `execution/full-product-ui-worldclass-20260930`. Finish exact-SHA CI and Vercel proof, then perform browser/runtime checks of Storefront and Admin surfaces. Fix the first material failure only.

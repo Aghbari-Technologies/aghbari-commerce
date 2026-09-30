@@ -112,7 +112,7 @@ export async function getCatalogProductById(productId: string, warehouseId?: str
     if (!data?.id) throw new Error('لا يوجد مستودع تشغيلي نشط.');
     resolvedWarehouseId = data.id;
   }
-  const { data: identity, error: identityError } = await retryRead(async () => {
+  const { data: identity } = await retryRead(async () => {
     const result = await client.from('products').select('id,sku').eq('id', normalizedId).maybeSingle();
     if (result.error) throw result.error;
     return result;

@@ -237,3 +237,46 @@ Requirements discovered from references or canonical specifications are not park
 
 ### Checkout delivery address
 Checkout exposes saved customer delivery addresses when available. Selecting one sends its identifier through the canonical order command, which stores a historical snapshot in the order. Address management remains in the Account workspace; Checkout never invents an address.
+
+## 2026-09-30 — World-class commerce UI closure
+### Customer Storefront / Portal
+The customer surface is a first-class ecommerce experience, not an ERP dashboard. The landing surface must prioritize product discovery and buying actions while the authenticated portal carries the complete buyer lifecycle.
+
+Required in-scope patterns:
+- merchandising-oriented Home;
+- global product search with SKU/barcode support;
+- category discovery;
+- dense readable product cards with image, SKU, unit, authorized price and availability;
+- product detail with quantity and purchase actions;
+- persistent cart access and a real cart drawer/page;
+- checkout review and order submission through existing Commerce authority;
+- order history, order detail/tracking and reorder;
+- saved products/favorites;
+- quick order and templates;
+- pricing/tiers;
+- finance/invoices/payments/statements;
+- account/profile/company/addresses/settings;
+- notifications and offline/weak-network recovery.
+
+### Admin / Staff Control Center
+Admin is a first-class commerce operations product, not a collection of forms. The control center must provide:
+- command/search access;
+- operational KPIs and current-state summaries;
+- contextual quick actions;
+- orders/customer/catalog/inventory/purchasing/finance/access/governance workspaces;
+- dense searchable/filterable/sortable/paginated collections;
+- reusable detail drawers/modals;
+- safe bulk actions with preview/confirmation;
+- clear destructive-action boundaries;
+- role-aware visibility;
+- responsive desktop/tablet/mobile behavior.
+
+### Cross-surface quality bar
+For every applicable screen/subview:
+loading, empty, error, success, validation, disabled, permission denied, offline/retry, search, filtering, sorting, pagination, drawer/modal, confirmation/destructive action, async feedback, RTL, keyboard focus and responsive behavior.
+
+### Storefront/admin separation
+The visual shell must make the distinction obvious:
+Customer = discover → compare/save → quantity → cart → checkout → order tracking/account.
+Admin = command center → operations → data → inventory → purchasing → finance → governance.
+Neither surface may borrow unsupported business behavior from external reference applications.
